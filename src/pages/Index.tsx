@@ -115,7 +115,7 @@ export default function Index() {
 
       {/* LINHAS — superfície creme */}
       {linhas.length > 0 && (
-        <section className="surface-cream py-32">
+        <section className="surface-ivory py-32">
           <div className="container-western">
             <div className="flex items-end justify-between mb-16 flex-wrap gap-4">
               <div>
@@ -275,7 +275,7 @@ export default function Index() {
 
       {/* DESTAQUES — creme */}
       {featured.length > 0 && (
-        <section className="surface-cream py-32">
+        <section className="surface-ivory py-32">
           <div className="container-western">
             <div className="mb-16">
               <p className="text-eyebrow mb-4">Em destaque</p>
