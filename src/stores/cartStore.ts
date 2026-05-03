@@ -22,6 +22,7 @@ interface CartStore {
   isLoading: boolean;
   isSyncing: boolean;
   addItem: (item: Omit<CartItem, "lineId">) => Promise<void>;
+  addBundle: (items: Array<Omit<CartItem, "lineId">>) => Promise<void>;
   updateQuantity: (variantId: string, quantity: number) => Promise<void>;
   removeItem: (variantId: string) => Promise<void>;
   clearCart: () => void;
@@ -183,6 +184,14 @@ export const useCartStore = create<CartStore>()(
           console.error(e);
         } finally {
           set({ isLoading: false });
+        }
+      },
+
+      addBundle: async (newItems) => {
+        for (const item of newItems) {
+          // sequencial: cria/atualiza o cart item por item para manter consistência
+          // eslint-disable-next-line no-await-in-loop
+          await get().addItem(item);
         }
       },
 
