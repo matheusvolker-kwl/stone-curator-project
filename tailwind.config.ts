@@ -53,11 +53,14 @@ export default {
         western: {
           "green-deep": "hsl(var(--western-green-deep))",
           "green-mid": "hsl(var(--western-green-mid))",
+          "green-soft": "hsl(var(--western-green-soft))",
           gold: "hsl(var(--western-gold))",
           "gold-soft": "hsl(var(--western-gold-soft))",
           cream: "hsl(var(--western-cream))",
           "cream-muted": "hsl(var(--western-cream-muted))",
+          ivory: "hsl(var(--western-ivory))",
           "stone-dark": "hsl(var(--western-stone-dark))",
+          "stone-warm": "hsl(var(--western-stone-warm))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
