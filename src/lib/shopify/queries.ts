@@ -111,3 +111,18 @@ export async function fetchProducts(first = 50, query?: string): Promise<Shopify
   );
   return res?.data?.products?.edges ?? [];
 }
+
+export async function fetchProductsByHandles(handles: string[]): Promise<ShopifyProductNode[]> {
+  if (handles.length === 0) return [];
+  const results = await Promise.all(handles.map((h) => fetchProduct(h)));
+  return results.filter((p): p is ShopifyProductNode => !!p);
+}
+
+// Coleções sazonais: filtramos client-side por tag/handle.
+// Heurística: collection com tag "sazonal" OU handle começando com "colecao-".
+export function isSeasonal(c: { handle: string; description?: string }) {
+  return (
+    c.handle.startsWith("colecao-") ||
+    /sazonal|temporada|edicao|edição/i.test(c.description ?? "")
+  );
+}

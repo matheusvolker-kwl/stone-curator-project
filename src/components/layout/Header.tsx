@@ -1,20 +1,29 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
 import { ShoppingBag, User } from "lucide-react";
-import logo from "@/assets/logo-horizontal-bege.png";
+import logoBege from "@/assets/logo-horizontal-bege.png";
+import logoVerde from "@/assets/logo-horizontal-verde.png";
 import { useState, useEffect } from "react";
 
 const nav = [
+  { to: "/linhas", label: "Linhas" },
   { to: "/colecoes", label: "Coleções" },
-  { to: "/guia-de-compra", label: "Guia de compra" },
+  { to: "/guia-de-compra", label: "Guia" },
   { to: "/sobre", label: "Sobre" },
-  { to: "/contato", label: "Contato" },
+  { to: "/contato", label: "B2B" },
 ];
+
+// Rotas onde o header se sobrepõe a uma seção clara (creme/ivory) no topo
+const CREAM_ROUTES = ["/linhas", "/colecoes", "/guia-de-compra", "/parceiro"];
 
 export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   const items = useCartStore((s) => s.items);
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
   const [scrolled, setScrolled] = useState(false);
+  const { pathname } = useLocation();
+
+  const isCream =
+    CREAM_ROUTES.some((r) => pathname.startsWith(r)) && pathname !== "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -23,17 +32,30 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const textColor = isCream
+    ? "text-western-green-deep"
+    : "text-western-cream";
+  const hoverColor = isCream
+    ? "hover:text-western-gold"
+    : "hover:text-western-gold-soft";
+  const activeColor = isCream ? "text-western-gold" : "text-western-gold-soft";
+  const bgColor = scrolled
+    ? isCream
+      ? "bg-western-ivory/90 backdrop-blur-md border-b border-western-stone-warm/15"
+      : "bg-western-green-deep/90 backdrop-blur-md border-b border-western-gold/15"
+    : "bg-transparent";
+
   return (
     <header
-      className={`sticky top-0 z-40 transition-colors duration-500 ${
-        scrolled
-          ? "bg-western-green-deep/90 backdrop-blur-md border-b border-western-gold/15"
-          : "bg-transparent"
-      }`}
+      className={`sticky top-0 z-40 transition-colors duration-500 ${bgColor}`}
     >
       <div className="container-western flex items-center justify-between py-5 md:py-6">
-        <Link to="/" aria-label="Western Pools — Início" className="flex items-center">
-          <img src={logo} alt="Western Pools" className="h-8 md:h-9 w-auto" />
+        <Link to="/" aria-label="Western — Início" className="flex items-center">
+          <img
+            src={isCream ? logoVerde : logoBege}
+            alt="Western"
+            className="h-7 md:h-8 w-auto"
+          />
         </Link>
 
         <nav className="hidden md:flex items-center gap-10">
@@ -42,9 +64,9 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `link-underline font-mono text-xs uppercase tracking-[0.2em] ${
-                  isActive ? "text-western-gold-soft" : "text-western-cream"
-                }`
+                `link-underline font-mono text-xs uppercase tracking-[0.22em] ${
+                  isActive ? activeColor : `${textColor} ${hoverColor}`
+                } transition-colors`
               }
             >
               {item.label}
@@ -55,7 +77,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         <div className="flex items-center gap-3 md:gap-5">
           <Link
             to="/parceiro/login"
-            className="hidden md:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-western-cream hover:text-western-gold-soft transition-colors"
+            className={`hidden md:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] ${textColor} ${hoverColor} transition-colors`}
           >
             <User className="h-4 w-4" />
             Parceiro
@@ -63,7 +85,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           <button
             onClick={onCartOpen}
             aria-label="Abrir pedido"
-            className="relative inline-flex items-center gap-2 text-western-cream hover:text-western-gold-soft transition-colors"
+            className={`relative inline-flex items-center gap-2 ${textColor} ${hoverColor} transition-colors`}
           >
             <ShoppingBag className="h-5 w-5" />
             {totalItems > 0 && (

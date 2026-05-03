@@ -1,10 +1,17 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCollections, fetchProducts } from "@/lib/shopify/queries";
+import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/shopify/queries";
 import ProductCard from "@/components/product/ProductCard";
 import { ArrowRight } from "lucide-react";
 import brasao from "@/assets/brasao.png";
-import iconePedra from "@/assets/icone-pedra-bege.png";
+import iconePedraVerde from "@/assets/icone-pedra-verde.png";
+
+const FAMILIES = [
+  { num: "01", name: "Quartzo", desc: "Tom claro, leitoso, com brilho cristalino. Para projetos que pedem luz e leveza.", swatch: "hsl(38, 35%, 86%)" },
+  { num: "02", name: "Arenito", desc: "Areia quente, camadas sedimentares visíveis. Calor e textura para ambientes orgânicos.", swatch: "hsl(32, 36%, 65%)" },
+  { num: "03", name: "Moledo", desc: "Marrom médio terroso, textura rústica nobre. A pedra brasileira por excelência.", swatch: "hsl(20, 30%, 45%)" },
+  { num: "04", name: "Granito", desc: "Escuro, denso, mineral. A profundidade que ancora qualquer composição.", swatch: "hsl(140, 8%, 22%)" },
+];
 
 export default function Index() {
   const { data: collections = [] } = useQuery({
@@ -16,171 +23,303 @@ export default function Index() {
     queryFn: () => fetchProducts(6),
   });
 
+  const linhas = collections.filter((c) => !isSeasonal(c));
+  const sazonais = collections.filter((c) => isSeasonal(c));
+
   return (
     <>
-      {/* HERO */}
-      <section className="relative min-h-[90vh] flex items-center pt-20 pb-32 overflow-hidden">
+      {/* HERO — verde */}
+      <section className="surface-forest relative min-h-[92vh] flex items-center pt-16 pb-32 overflow-hidden">
         <div
-          className="absolute inset-0 -z-10 opacity-30"
+          className="absolute inset-0 -z-10 opacity-40"
           aria-hidden
           style={{
             backgroundImage:
-              "radial-gradient(ellipse at 70% 40%, hsl(var(--western-gold) / 0.15) 0%, transparent 60%)",
+              "radial-gradient(ellipse at 70% 40%, hsl(var(--western-gold) / 0.18) 0%, transparent 60%), radial-gradient(circle at 20% 90%, hsl(var(--western-stone-dark) / 0.5) 0%, transparent 50%)",
           }}
         />
         <div className="container-western grid md:grid-cols-12 gap-12 items-center">
           <div className="md:col-span-7 animate-fade-in-up">
-            <p className="text-eyebrow mb-8">Western Pools — Catálogo B2B</p>
-            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl leading-[0.95] tracking-tight text-western-cream">
-              A pedra que <br />
-              <span className="text-western-gold-soft italic font-light">se especifica.</span>
+            <p className="text-eyebrow mb-8">Pedras · Cascatas · Paisagismo</p>
+            <div className="w-12 h-px bg-western-gold mb-10" />
+            <h1 className="font-display text-5xl md:text-7xl lg:text-[5.5rem] leading-[1.02] tracking-tight text-western-cream">
+              A pedra <span className="text-western-gold-soft italic font-light">contempla</span>
+              <br />
+              antes de ser colocada.
             </h1>
-            <p className="mt-10 max-w-lg text-lg text-western-cream-muted leading-relaxed">
-              Composto mineral autoral, fabricado peça a peça em São Paulo. Para
-              quem projeta paisagens duradouras.
+            <p className="mt-12 max-w-xl text-lg text-western-cream-muted leading-relaxed">
+              Curadoria de pedras autorais para projetos de paisagismo premium —
+              quartzo, arenito, moledo e granito, selecionados peça por peça,
+              entregues sob encomenda para arquitetos e paisagistas.
             </p>
-            <div className="mt-12 flex flex-wrap gap-5">
-              <Link
-                to="/colecoes"
-                className="inline-flex items-center gap-3 px-8 py-4 bg-western-gold text-western-green-deep hover:bg-western-gold-soft transition-colors font-mono text-xs uppercase tracking-[0.25em]"
-              >
-                Ver coleções <ArrowRight className="h-4 w-4" />
+            <div className="mt-14 flex flex-wrap items-center gap-8">
+              <Link to="/linhas" className="btn-gold">
+                Explorar linhas <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                to="/parceiro/cadastro"
-                className="inline-flex items-center px-8 py-4 border border-western-gold/40 text-western-cream hover:border-western-gold transition-colors font-mono text-xs uppercase tracking-[0.25em]"
+                to="/sobre"
+                className="link-underline font-mono text-xs uppercase tracking-[0.22em] text-western-cream"
               >
-                Cadastro de parceiro
+                · Sobre a curadoria
               </Link>
             </div>
           </div>
           <div className="md:col-span-5 hidden md:flex justify-center animate-fade-in" style={{ animationDelay: "200ms" }}>
-            <img src={brasao} alt="Brasão Western Pools" className="w-72 lg:w-96 opacity-90" />
+            <img src={brasao} alt="" className="w-72 lg:w-96 opacity-90" />
           </div>
         </div>
-      </section>
-
-      {/* MANIFESTO */}
-      <section className="py-32 border-t border-western-gold/10">
-        <div className="container-western max-w-4xl text-center">
-          <img src={iconePedra} alt="" className="h-12 mx-auto mb-10 opacity-70" />
-          <p className="font-display text-3xl md:text-4xl leading-[1.4] text-western-cream">
-            Não extraímos pedra. Reproduzimos com fidelidade autoral a estética
-            das pedras naturais — em composto mineral de alta resistência,
-            artesanal, peça a peça.
-          </p>
+        <div className="absolute bottom-10 right-12 hidden lg:flex gap-6 text-spec text-western-cream-muted/70">
+          <span>Quartzo</span><span>·</span>
+          <span>Arenito</span><span>·</span>
+          <span>Moledo</span><span>·</span>
+          <span>Granito</span>
         </div>
       </section>
 
-      {/* COLLECTIONS */}
-      <section className="py-32 border-t border-western-gold/10">
+      {/* FAMÍLIAS DE ACABAMENTO — verde */}
+      <section className="surface-forest pt-32 pb-24 border-t border-western-gold/15">
         <div className="container-western">
-          <div className="flex items-end justify-between mb-16 flex-wrap gap-4">
-            <div>
-              <p className="text-eyebrow mb-4">Onze coleções</p>
-              <h2 className="font-display text-4xl md:text-5xl text-western-cream">
-                O catálogo, organizado.
-              </h2>
-            </div>
-            <Link to="/colecoes" className="link-underline font-mono text-xs uppercase tracking-[0.2em] text-western-cream">
-              Ver todas →
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
-            {collections.slice(0, 6).map((c) => (
-              <Link
-                key={c.handle}
-                to={`/colecoes/${c.handle}`}
-                className="group hairline-top block"
+          <p className="text-eyebrow mb-5">A curadoria · 04 acabamentos</p>
+          <div className="w-12 h-px bg-western-gold mb-8" />
+          <h2 className="font-display text-4xl md:text-6xl text-western-cream leading-[1.05] mb-20 max-w-3xl">
+            Quatro famílias de pedra,<br />uma única exigência.
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {FAMILIES.map((f) => (
+              <article
+                key={f.name}
+                className="border border-western-gold/15 bg-western-green-mid/40 p-8 flex flex-col h-full hover:border-western-gold/40 transition-colors group"
               >
-                <div className="frame-gallery aspect-[4/3] overflow-hidden mb-5">
-                  {c.image ? (
-                    <img
-                      src={c.image.url}
-                      alt={c.image.altText ?? c.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center surface-cream">
-                      <img src={iconePedra} alt="" className="h-16 opacity-40" />
-                    </div>
-                  )}
+                <div className="flex items-start justify-between mb-12">
+                  <span className="text-spec text-western-cream-muted">{f.num}</span>
+                  <span
+                    className="block w-10 h-10 rounded-full"
+                    style={{ background: f.swatch }}
+                  />
                 </div>
-                <h3 className="font-display text-2xl text-western-cream group-hover:text-western-gold-soft transition-colors">
-                  {c.title}
-                </h3>
-              </Link>
+                <h3 className="font-display text-3xl text-western-cream mb-4">{f.name}</h3>
+                <p className="text-western-cream-muted leading-relaxed text-sm flex-1">
+                  {f.desc}
+                </p>
+                <Link
+                  to={`/linhas`}
+                  className="text-eyebrow mt-8 inline-flex items-center gap-2 group-hover:text-western-gold transition-colors"
+                >
+                  Explorar acabamento →
+                </Link>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FEATURED PRODUCTS */}
-      {featured.length > 0 && (
-        <section className="py-32 border-t border-western-gold/10">
+      {/* LINHAS — superfície creme */}
+      {linhas.length > 0 && (
+        <section className="surface-cream py-32">
           <div className="container-western">
             <div className="flex items-end justify-between mb-16 flex-wrap gap-4">
               <div>
-                <p className="text-eyebrow mb-4">Em destaque</p>
-                <h2 className="font-display text-4xl md:text-5xl text-western-cream">
-                  Peças para especificar.
+                <p className="text-eyebrow mb-4">Linhas de produto</p>
+                <div className="w-12 h-px bg-western-gold mb-6" />
+                <h2 className="font-display text-4xl md:text-5xl text-western-green-deep">
+                  O catálogo, organizado.
                 </h2>
               </div>
+              <Link
+                to="/linhas"
+                className="link-underline font-mono text-xs uppercase tracking-[0.2em] text-western-green-deep"
+              >
+                Ver todas →
+              </Link>
             </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
-              {featured.slice(0, 6).map((p) => (
-                <ProductCard key={p.node.id} product={p.node} />
+              {linhas.slice(0, 6).map((c) => (
+                <Link
+                  key={c.handle}
+                  to={`/linhas/${c.handle}`}
+                  className="group block"
+                >
+                  <div className="frame-product aspect-[4/3] overflow-hidden mb-5">
+                    {c.image ? (
+                      <img
+                        src={c.image.url}
+                        alt={c.image.altText ?? c.title}
+                        loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <img src={iconePedraVerde} alt="" className="h-16 opacity-30" />
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="font-display text-2xl text-western-green-deep group-hover:text-western-gold transition-colors">
+                    {c.title}
+                  </h3>
+                  {c.description && (
+                    <p className="text-spec text-western-stone-warm mt-2 line-clamp-2">
+                      {c.description}
+                    </p>
+                  )}
+                </Link>
               ))}
             </div>
           </div>
         </section>
       )}
 
-      {/* PROCESS */}
-      <section className="py-32 border-t border-western-gold/10">
-        <div className="container-western">
-          <div className="max-w-2xl mb-16">
-            <p className="text-eyebrow mb-4">Como funciona</p>
-            <h2 className="font-display text-4xl md:text-5xl text-western-cream">
-              Quatro passos, sem ruído.
+      {/* SOBRE — verde */}
+      <section className="surface-forest py-32">
+        <div className="container-western grid md:grid-cols-2 gap-16 items-center">
+          <div>
+            <p className="text-eyebrow mb-5">Sobre · A Western</p>
+            <div className="w-12 h-px bg-western-gold mb-8" />
+            <h2 className="font-display text-4xl md:text-5xl text-western-cream leading-[1.1] mb-10">
+              Pedra é <span className="text-western-gold-soft italic">tempo</span> —<br />
+              nós só revelamos o<br />
+              que ela já é.
             </h2>
+            <div className="space-y-6 text-western-cream-muted leading-relaxed max-w-md">
+              <p>
+                A Western nasceu da observação paciente das pedreiras
+                brasileiras. Cada lote é visitado, cada peça é escolhida pela
+                mão de quem conhece o material há décadas — não pela conveniência
+                logística.
+              </p>
+              <p>
+                Trabalhamos sob encomenda, com tiragem limitada por estação. O
+                que entregamos não é volume: é procedência, consistência cromática
+                e a certeza de que a peça que chega ao canteiro é a peça que foi
+                especificada.
+              </p>
+            </div>
+            <Link
+              to="/sobre"
+              className="mt-10 link-underline font-mono text-xs uppercase tracking-[0.22em] text-western-gold-soft inline-flex items-center"
+            >
+              Conheça nosso processo —
+            </Link>
           </div>
-          <ol className="grid grid-cols-1 md:grid-cols-4 gap-12">
-            {[
-              { n: "01", t: "Cadastro", d: "Aprovação de parceiro em até 2 dias úteis." },
-              { n: "02", t: "Especificação", d: "Ficha técnica, modelo 3D e textura macro." },
-              { n: "03", t: "Pedido", d: "Pedido mínimo R$ 1.000. Pagamento antecipado." },
-              { n: "04", t: "Produção", d: "15 dias úteis. Retirada na fábrica ou frete." },
-            ].map((s) => (
-              <li key={s.n}>
-                <div className="text-spec text-western-gold mb-4">{s.n}</div>
-                <h3 className="font-display text-2xl text-western-cream mb-3">{s.t}</h3>
-                <p className="text-western-cream-muted leading-relaxed">{s.d}</p>
-              </li>
-            ))}
-          </ol>
+          <div className="frame-gallery aspect-[5/4] border-western-gold/30">
+            <img
+              src="https://images.unsplash.com/photo-1602002418082-a4443e081dd1?auto=format&fit=crop&w=1600&q=80"
+              alt="Cascata em pedra natural"
+              className="w-full h-full object-cover"
+            />
+          </div>
         </div>
       </section>
 
-      {/* PARTNER CTA */}
-      <section className="py-32 border-t border-western-gold/10">
+      {/* COLEÇÕES SAZONAIS — ivory */}
+      <section className="surface-ivory py-32">
         <div className="container-western">
-          <div className="frame-gallery p-12 md:p-20 text-center">
-            <p className="text-eyebrow mb-6 !text-western-stone-dark">Para quem projeta</p>
-            <h2 className="font-display text-4xl md:text-5xl text-western-green-deep mb-6">
-              Arquitetos, paisagistas e revendas qualificadas.
-            </h2>
-            <p className="text-western-stone-dark/80 max-w-2xl mx-auto mb-10 leading-relaxed">
-              Acesse condição comercial diferenciada, ficha técnica completa e
-              biblioteca SketchUp do catálogo.
-            </p>
+          <div className="flex items-end justify-between mb-16 flex-wrap gap-4">
+            <div>
+              <p className="text-eyebrow mb-4">Coleções · Sazonais</p>
+              <div className="w-12 h-px bg-western-gold mb-6" />
+              <h2 className="font-display text-4xl md:text-5xl text-western-green-deep max-w-2xl">
+                Edições de temporada, em tiragem limitada.
+              </h2>
+            </div>
             <Link
-              to="/parceiro/cadastro"
-              className="inline-flex items-center gap-3 px-8 py-4 bg-western-green-deep text-western-cream hover:bg-western-green-mid transition-colors font-mono text-xs uppercase tracking-[0.25em]"
+              to="/colecoes"
+              className="link-underline font-mono text-xs uppercase tracking-[0.2em] text-western-green-deep"
             >
-              Solicitar cadastro <ArrowRight className="h-4 w-4" />
+              Ver coleções →
+            </Link>
+          </div>
+
+          {sazonais.length === 0 ? (
+            <div className="border border-western-stone-warm/20 p-16 text-center max-w-2xl mx-auto">
+              <p className="text-eyebrow mb-4">Próxima edição</p>
+              <p className="font-display text-3xl text-western-green-deep mb-3">
+                Coleção Verão 26 · em breve
+              </p>
+              <p className="text-western-stone-warm">
+                Seja avisado quando a próxima curadoria sazonal abrir.
+              </p>
+              <Link to="/parceiro/cadastro" className="btn-outline-forest mt-8">
+                Quero ser avisado
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {sazonais.slice(0, 2).map((c) => (
+                <Link
+                  key={c.handle}
+                  to={`/colecoes/${c.handle}`}
+                  className="group block"
+                >
+                  <div className="frame-product aspect-[5/4] overflow-hidden mb-6">
+                    {c.image ? (
+                      <img
+                        src={c.image.url}
+                        alt={c.image.altText ?? c.title}
+                        loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="w-full h-full" />
+                    )}
+                  </div>
+                  <h3 className="font-display text-3xl text-western-green-deep group-hover:text-western-gold transition-colors">
+                    {c.title}
+                  </h3>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* DESTAQUES — creme */}
+      {featured.length > 0 && (
+        <section className="surface-cream py-32">
+          <div className="container-western">
+            <div className="mb-16">
+              <p className="text-eyebrow mb-4">Em destaque</p>
+              <div className="w-12 h-px bg-western-gold mb-6" />
+              <h2 className="font-display text-4xl md:text-5xl text-western-green-deep">
+                Peças para especificar.
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
+              {featured.slice(0, 6).map((p) => (
+                <ProductCard key={p.node.id} product={p.node} surface="cream" />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* B2B / PROCESSO — verde */}
+      <section className="surface-forest py-32">
+        <div className="container-western">
+          <div className="max-w-3xl mx-auto text-center mb-20">
+            <div className="w-12 h-px bg-western-gold mx-auto mb-8" />
+            <h2 className="font-display text-4xl md:text-5xl text-western-cream leading-[1.15]">
+              Trabalhamos exclusivamente<br />
+              com arquitetos, paisagistas<br />
+              e construtoras.
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+            {[
+              { eyebrow: "Pedido mínimo", t: "Sob consulta", d: "Variável por categoria de pedra e dimensão da peça." },
+              { eyebrow: "Prazo de produção", t: "15 a 30 dias", d: "Conforme disponibilidade do lote e acabamento." },
+              { eyebrow: "Pagamento", t: "30 / 60 / 90", d: "Faturado para CNPJ. Sinal opcional em peças exclusivas." },
+            ].map((s) => (
+              <div key={s.t} className="border-l border-western-gold/30 pl-8">
+                <p className="text-eyebrow mb-4">{s.eyebrow}</p>
+                <h3 className="font-display text-3xl text-western-cream mb-4">{s.t}</h3>
+                <p className="text-western-cream-muted leading-relaxed text-sm">{s.d}</p>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-20">
+            <Link to="/parceiro/cadastro" className="btn-outline-cream">
+              Solicitar credenciamento —
             </Link>
           </div>
         </div>
