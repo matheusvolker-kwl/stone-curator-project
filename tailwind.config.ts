@@ -59,6 +59,7 @@ export default {
           cream: "hsl(var(--western-cream))",
           "cream-muted": "hsl(var(--western-cream-muted))",
           ivory: "hsl(var(--western-ivory))",
+          paper: "hsl(var(--western-paper))",
           "stone-dark": "hsl(var(--western-stone-dark))",
           "stone-warm": "hsl(var(--western-stone-warm))",
         },
