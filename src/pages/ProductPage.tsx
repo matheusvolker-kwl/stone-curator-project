@@ -1,13 +1,12 @@
-import { useParams, Link, Navigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchProduct } from "@/lib/shopify/queries";
+import { fetchProduct, isSeasonal } from "@/lib/shopify/queries";
 import { useMemo, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ExternalLink, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { isSeasonal } from "@/lib/shopify/queries";
 
 export default function ProductPage() {
   const { handle = "" } = useParams();
