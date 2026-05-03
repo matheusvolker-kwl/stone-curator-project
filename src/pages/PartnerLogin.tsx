@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 
 export default function PartnerLogin() {
   return (
-    <div className="surface-cream">
+    <div className="surface-ivory">
       <div className="container-western py-20 md:py-28 max-w-md">
         <p className="text-eyebrow mb-5">Acesso de parceiro</p>
         <div className="w-12 h-px bg-western-gold mb-8" />

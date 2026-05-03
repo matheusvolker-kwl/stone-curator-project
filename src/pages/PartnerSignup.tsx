@@ -18,7 +18,7 @@ export default function PartnerSignup() {
 
   if (submitted) {
     return (
-      <div className="surface-cream">
+      <div className="surface-ivory">
         <div className="container-western py-32 max-w-2xl text-center">
           <p className="text-eyebrow mb-6">Cadastro recebido</p>
           <div className="w-12 h-px bg-western-gold mx-auto mb-8" />
@@ -35,7 +35,7 @@ export default function PartnerSignup() {
   }
 
   return (
-    <div className="surface-cream">
+    <div className="surface-ivory">
       <div className="container-western py-20 md:py-28 max-w-2xl">
         <p className="text-eyebrow mb-5">Cadastro B2B</p>
         <div className="w-12 h-px bg-western-gold mb-8" />

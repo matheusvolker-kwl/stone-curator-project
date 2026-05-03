@@ -12,7 +12,7 @@ export default function Linhas() {
   const linhas = data.filter((c) => !isSeasonal(c));
 
   return (
-    <div className="surface-cream">
+    <div className="surface-ivory">
       <div className="container-western py-20 md:py-28">
         <div className="max-w-3xl mb-20">
           <p className="text-eyebrow mb-5">Linhas de produto</p>
