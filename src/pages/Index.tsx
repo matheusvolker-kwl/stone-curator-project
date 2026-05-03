@@ -4,7 +4,6 @@ import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/shopify/queri
 import ProductCard from "@/components/product/ProductCard";
 import { ArrowRight } from "lucide-react";
 import brasao from "@/assets/brasao.png";
-import iconePedraBege from "@/assets/icone-pedra-bege.png";
 import iconePedraVerde from "@/assets/icone-pedra-verde.png";
 
 const FAMILIES = [
