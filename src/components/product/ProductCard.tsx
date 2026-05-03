@@ -35,7 +35,7 @@ export default function ProductCard({ product, surface = "cream" }: Props) {
             src={img.url}
             alt={img.altText ?? product.title}
             loading="lazy"
-            className="w-full h-full object-contain p-6 transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+            className="w-full h-full object-contain p-4 transition-transform duration-700 ease-out group-hover:scale-[1.04]"
           />
         ) : (
           <div className="w-full h-full" />
