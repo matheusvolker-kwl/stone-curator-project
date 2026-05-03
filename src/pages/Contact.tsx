@@ -1,6 +1,6 @@
 export default function Contact() {
   return (
-    <div className="surface-cream">
+    <div className="surface-ivory">
       <div className="container-western py-20 md:py-28 max-w-4xl">
         <p className="text-eyebrow mb-5">Contato</p>
         <div className="w-12 h-px bg-western-gold mb-8" />

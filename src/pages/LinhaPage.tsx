@@ -14,7 +14,7 @@ export default function LinhaPage() {
 
   if (!isLoading && !data) {
     return (
-      <div className="surface-cream">
+      <div className="surface-ivory">
         <div className="container-western py-32 text-center">
           <h1 className="font-display text-4xl text-western-green-deep">Linha não encontrada</h1>
           <Link to="/linhas" className="link-underline mt-6 inline-block text-western-gold">
@@ -28,7 +28,7 @@ export default function LinhaPage() {
   const products = data?.products?.edges ?? [];
 
   return (
-    <div className="surface-cream">
+    <div className="surface-ivory">
       <div className="container-western py-20 md:py-28">
         <Link
           to="/linhas"
