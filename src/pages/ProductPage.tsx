@@ -127,7 +127,7 @@ export default function ProductPage() {
                 <img
                   src={images[activeImage].url}
                   alt={images[activeImage].altText ?? product.title}
-                  className="w-full h-full object-contain p-8"
+                  className="w-full h-full object-contain p-4 md:p-8"
                 />
               )}
             </div>
