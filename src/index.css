@@ -182,6 +182,62 @@
     font-weight: 300;
   }
 
+  /* === PRODUCT EDITORIAL === */
+  .product-lead {
+    @apply font-display text-[1.35rem] md:text-[1.45rem] leading-[1.55] text-western-green-deep;
+    font-style: italic;
+    font-weight: 400;
+  }
+  .product-lead strong {
+    font-style: normal;
+    font-weight: 500;
+    color: hsl(var(--western-green-deep));
+  }
+  .product-lead::first-letter {
+    font-family: inherit;
+    font-style: normal;
+    font-size: 3.4em;
+    line-height: 0.85;
+    float: left;
+    padding: 0.05em 0.12em 0 0;
+    color: hsl(var(--western-gold));
+    font-weight: 400;
+  }
+
+  .product-list {
+    @apply space-y-2.5 text-[15px] leading-relaxed text-western-stone-warm;
+  }
+  .product-list li {
+    @apply relative pl-5;
+  }
+  .product-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.65em;
+    width: 6px;
+    height: 1px;
+    background: hsl(var(--western-gold));
+  }
+
+  .product-prose a {
+    color: hsl(var(--western-gold));
+    border-bottom: 1px solid hsl(var(--western-gold) / 0.4);
+    transition: border-color 250ms;
+  }
+  .product-prose a:hover {
+    border-bottom-color: hsl(var(--western-gold));
+  }
+  .product-prose p {
+    @apply text-spec leading-[1.8] text-western-stone-warm;
+  }
+
+  .spec-chip {
+    @apply inline-flex items-center px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] border;
+    border-color: hsl(var(--western-stone-warm) / 0.3);
+    color: hsl(var(--western-green-deep));
+  }
+
   .link-underline {
     @apply relative inline-block;
   }

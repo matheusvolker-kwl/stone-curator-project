@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProduct, isSeasonal } from "@/lib/shopify/queries";
+import { parseProductDescription, groupDimensions } from "@/lib/shopify/parseDescription";
 import { useMemo, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
@@ -11,7 +12,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ChevronLeft, ExternalLink, Loader2 } from "lucide-react";
+import { ChevronLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ProductPage() {
@@ -38,6 +39,11 @@ export default function ProductPage() {
       ) ?? variants[0]
     );
   }, [product, activeOptions]);
+
+  const parsed = useMemo(
+    () => parseProductDescription(product?.descriptionHtml),
+    [product?.descriptionHtml]
+  );
 
   if (isLoading) {
     return (
@@ -70,7 +76,6 @@ export default function ProductPage() {
 
   const images = product.images.edges.map((e) => e.node);
   const sku = variant?.sku ?? "";
-  const modelo3dUrl = product.modelo3d?.value;
   const collection = product.collections?.edges?.[0]?.node;
   const parentSeasonal = collection ? isSeasonal(collection) : false;
   const parentRoute = collection
@@ -94,6 +99,14 @@ export default function ProductPage() {
   const visibleOptions = product.options.filter(
     (o) => o.values.length > 1 || o.name.toLowerCase() !== "title"
   );
+
+  // Ficha técnica: agrupa dimensões e separa acabamentos
+  const dims = groupDimensions(parsed.ficha);
+  const fichaCleaned = parsed.ficha.filter(
+    (f) => !/comprimento|largura|altura/i.test(f.label)
+  );
+  const acabamentosRow = fichaCleaned.find((f) => /acabament/i.test(f.label));
+  const fichaRows = fichaCleaned.filter((f) => !/acabament/i.test(f.label));
 
   return (
     <div className="surface-ivory">
@@ -150,11 +163,40 @@ export default function ProductPage() {
               </p>
             )}
 
-            {/* Short description — sempre visível */}
-            {product.description && (
-              <p className="mt-8 text-western-stone-warm leading-[1.75] text-[15px] max-w-prose">
-                {product.description}
+            {/* Lead — editorial drop-cap */}
+            {parsed.lead && (
+              <p
+                className="product-lead mt-10"
+                dangerouslySetInnerHTML={{
+                  __html: parsed.lead.replace(
+                    new RegExp(`^A?\\s*${escapeRegExp(product.title)}\\s*`, "i"),
+                    ""
+                  ).charAt(0).toUpperCase() +
+                    parsed.lead.replace(
+                      new RegExp(`^A?\\s*${escapeRegExp(product.title)}\\s*`, "i"),
+                      ""
+                    ).slice(1),
+                }}
+              />
+            )}
+
+            {/* Intro secundário */}
+            {parsed.intro && (
+              <p className="mt-6 text-[15px] leading-[1.8] text-western-stone-warm max-w-[58ch]">
+                {parsed.intro}
               </p>
+            )}
+
+            {/* Aplicações */}
+            {parsed.aplicacoes.length > 0 && (
+              <div className="mt-12">
+                <p className="text-eyebrow mb-5">Aplicações</p>
+                <ul className="product-list">
+                  {parsed.aplicacoes.map((a) => (
+                    <li key={a}>{a}</li>
+                  ))}
+                </ul>
+              </div>
             )}
 
             {/* Options */}
@@ -191,7 +233,7 @@ export default function ProductPage() {
               </div>
             )}
 
-            {/* Price + Add — bloco compacto */}
+            {/* Price + Add */}
             <div className="mt-12 pt-8 border-t border-western-stone-warm/20">
               <div className="flex items-baseline justify-between mb-7">
                 <span className="text-eyebrow">Condição parceiro</span>
@@ -238,37 +280,71 @@ export default function ProductPage() {
               </p>
             </div>
 
-            {/* Accordions — detalhes secundários */}
+            {/* Accordions */}
             <Accordion
               type="single"
               collapsible
               className="mt-14 border-t border-western-stone-warm/20"
+              defaultValue="ficha"
             >
-              <ProductAccordion numeral="I" title="Ficha técnica" value="ficha">
-                <dl className="space-y-0">
-                  <SpecRow dt="Material" dd="Composto mineral de alta resistência" />
-                  <SpecRow dt="Acabamento" dd="Texturizado mineral" />
-                  <SpecRow dt="Garantia" dd="1 ano" />
-                  <SpecRow dt="Origem" dd="São Paulo · Brasil" />
-                </dl>
-              </ProductAccordion>
+              {(fichaRows.length > 0 || dims || acabamentosRow) && (
+                <ProductAccordion numeral="I" title="Ficha técnica" value="ficha">
+                  <dl className="space-y-0">
+                    {dims && <SpecRow dt="Dimensões" dd={dims} />}
+                    {fichaRows
+                      .filter((f) => !/acabament/i.test(f.label))
+                      .map((f) => (
+                        <SpecRow key={f.label} dt={f.label} dd={f.value} />
+                      ))}
+                  </dl>
+                  {acabamentosRow && (
+                    <div className="mt-6">
+                      <p className="text-eyebrow mb-3">Acabamentos disponíveis</p>
+                      <div className="flex flex-wrap gap-2">
+                        {acabamentosRow.value
+                          .split(/[·•|,]/)
+                          .map((v) => v.trim())
+                          .filter(Boolean)
+                          .map((v) => (
+                            <span key={v} className="spec-chip">
+                              {v}
+                            </span>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </ProductAccordion>
+              )}
 
-              <ProductAccordion numeral="II" title="Modelo 3D · SketchUp" value="modelo">
-                <p className="text-spec text-western-stone-warm leading-relaxed mb-5">
-                  Baixe o modelo desta peça para integrar diretamente em seu projeto
-                  arquitetônico.
-                </p>
-                <a
-                  href={modelo3dUrl ?? "https://3dwarehouse.sketchup.com/by/WesternPools"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 link-underline text-western-gold font-mono text-xs uppercase tracking-[0.2em]"
-                >
-                  Abrir no 3D Warehouse <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-              </ProductAccordion>
+              {parsed.observacoes.length > 0 && (
+                <ProductAccordion numeral="II" title="Observações" value="obs">
+                  <ul className="space-y-5">
+                    {parsed.observacoes.map((o, i) => (
+                      <li key={i}>
+                        {o.label && (
+                          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold mb-1.5">
+                            {o.label}
+                          </p>
+                        )}
+                        <p className="text-spec text-western-stone-warm leading-[1.8]">
+                          {o.text}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </ProductAccordion>
+              )}
 
-              <ProductAccordion numeral="III" title="Produção & entrega" value="entrega">
+              {parsed.modelo3dHtml && (
+                <ProductAccordion numeral="III" title="Modelo 3D · SketchUp" value="modelo">
+                  <div
+                    className="product-prose"
+                    dangerouslySetInnerHTML={{ __html: parsed.modelo3dHtml }}
+                  />
+                </ProductAccordion>
+              )}
+
+              <ProductAccordion numeral="IV" title="Produção & entrega" value="entrega">
                 <p className="text-spec text-western-stone-warm leading-[1.8]">
                   Cada peça é produzida sob encomenda em nosso ateliê em São Paulo.
                   Prazo de produção de 15 dias úteis após confirmação do pagamento.
@@ -276,7 +352,7 @@ export default function ProductPage() {
                 </p>
               </ProductAccordion>
 
-              <ProductAccordion numeral="IV" title="Cuidados" value="cuidados">
+              <ProductAccordion numeral="V" title="Cuidados" value="cuidados">
                 <p className="text-spec text-western-stone-warm leading-[1.8]">
                   Limpeza com pano macio levemente úmido. Evite produtos abrasivos
                   ou ácidos. Para uso externo, recomenda-se selante mineral a cada
@@ -284,11 +360,23 @@ export default function ProductPage() {
                 </p>
               </ProductAccordion>
             </Accordion>
+
+            {/* Fallback se padrão não bater */}
+            {parsed.rawHtml && (
+              <div
+                className="product-prose mt-10"
+                dangerouslySetInnerHTML={{ __html: parsed.rawHtml }}
+              />
+            )}
           </div>
         </div>
       </div>
     </div>
   );
+}
+
+function escapeRegExp(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function ProductAccordion({
@@ -303,13 +391,10 @@ function ProductAccordion({
   children: React.ReactNode;
 }) {
   return (
-    <AccordionItem
-      value={value}
-      className="border-b border-western-stone-warm/20"
-    >
+    <AccordionItem value={value} className="border-b border-western-stone-warm/20">
       <AccordionTrigger className="py-6 hover:no-underline group [&>svg]:text-western-stone-warm">
         <span className="flex items-baseline gap-5 text-left">
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-western-gold w-5">
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-western-gold w-6">
             {numeral}.
           </span>
           <span className="font-display text-xl text-western-green-deep group-hover:text-western-gold transition-colors">
@@ -317,16 +402,16 @@ function ProductAccordion({
           </span>
         </span>
       </AccordionTrigger>
-      <AccordionContent className="pb-8 pl-10">{children}</AccordionContent>
+      <AccordionContent className="pb-8 pl-11">{children}</AccordionContent>
     </AccordionItem>
   );
 }
 
 function SpecRow({ dt, dd }: { dt: string; dd: string }) {
   return (
-    <div className="flex justify-between border-b border-western-stone-warm/15 py-3 text-spec">
+    <div className="flex justify-between gap-6 border-b border-western-stone-warm/15 py-3 text-spec">
       <dt className="text-western-stone-warm">{dt}</dt>
-      <dd className="text-western-green-deep">{dd}</dd>
+      <dd className="text-western-green-deep text-right">{dd}</dd>
     </div>
   );
 }
