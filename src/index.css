@@ -184,7 +184,7 @@
 
   /* === PRODUCT EDITORIAL === */
   .product-lead {
-    @apply font-display text-[1.35rem] md:text-[1.45rem] leading-[1.55] text-western-green-deep;
+    @apply font-display text-[1.2rem] md:text-[1.45rem] leading-[1.55] text-western-green-deep;
     font-style: italic;
     font-weight: 400;
   }
@@ -196,12 +196,17 @@
   .product-lead::first-letter {
     font-family: inherit;
     font-style: normal;
-    font-size: 3.4em;
+    font-size: 2.8em;
     line-height: 0.85;
     float: left;
     padding: 0.05em 0.12em 0 0;
     color: hsl(var(--western-gold));
     font-weight: 400;
+  }
+  @media (min-width: 768px) {
+    .product-lead::first-letter {
+      font-size: 3.4em;
+    }
   }
 
   .product-list {

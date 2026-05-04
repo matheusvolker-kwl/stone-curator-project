@@ -127,7 +127,7 @@ export default function ProductPage() {
                 <img
                   src={images[activeImage].url}
                   alt={images[activeImage].altText ?? product.title}
-                  className="w-full h-full object-contain p-8"
+                  className="w-full h-full object-contain p-4 md:p-8"
                 />
               )}
             </div>
@@ -154,7 +154,7 @@ export default function ProductPage() {
             {/* Header */}
             {collection && <p className="text-eyebrow mb-5">{collection.title}</p>}
             <div className="w-12 h-px bg-western-gold mb-6" />
-            <h1 className="font-display text-4xl md:text-5xl leading-[1.05]">
+            <h1 className="font-display text-3xl md:text-5xl leading-[1.05]">
               {product.title}
             </h1>
             {sku && (
@@ -402,15 +402,15 @@ function ProductAccordion({
           </span>
         </span>
       </AccordionTrigger>
-      <AccordionContent className="pb-8 pl-11">{children}</AccordionContent>
+      <AccordionContent className="pb-8 pl-7 md:pl-11">{children}</AccordionContent>
     </AccordionItem>
   );
 }
 
 function SpecRow({ dt, dd }: { dt: string; dd: string }) {
   return (
-    <div className="flex justify-between gap-6 border-b border-western-stone-warm/15 py-3 text-spec">
-      <dt className="text-western-stone-warm">{dt}</dt>
+    <div className="flex justify-between gap-4 border-b border-western-stone-warm/15 py-3 text-spec">
+      <dt className="text-western-stone-warm flex-shrink-0">{dt}</dt>
       <dd className="text-western-green-deep text-right">{dd}</dd>
     </div>
   );
