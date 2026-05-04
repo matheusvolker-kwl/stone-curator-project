@@ -39,7 +39,7 @@ export default function PartnerSignup() {
       <div className="container-western py-20 md:py-28 max-w-2xl">
         <p className="text-eyebrow mb-5">Cadastro B2B</p>
         <div className="w-12 h-px bg-western-gold mb-8" />
-        <h1 className="font-display text-5xl md:text-6xl text-western-green-deep leading-[1.05] mb-6">
+        <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05] mb-6">
           Solicite acesso de parceiro.
         </h1>
         <p className="text-western-stone-warm text-lg leading-relaxed mb-12">

@@ -40,9 +40,9 @@ export default function CartDrawer({
         side="right"
         className="w-full sm:max-w-lg flex flex-col p-0 bg-western-green-mid border-l border-western-gold/20 text-western-cream"
       >
-        <SheetHeader className="px-8 pt-10 pb-6 border-b border-western-gold/15">
+        <SheetHeader className="px-5 md:px-8 pt-8 md:pt-10 pb-5 md:pb-6 border-b border-western-gold/15">
           <p className="text-eyebrow">Seu pedido</p>
-          <SheetTitle className="font-display text-3xl tracking-wide text-western-cream">
+          <SheetTitle className="font-display text-2xl md:text-3xl tracking-wide text-western-cream">
             Composição atual
           </SheetTitle>
           <SheetDescription className="text-western-cream-muted">
@@ -52,7 +52,7 @@ export default function CartDrawer({
           </SheetDescription>
         </SheetHeader>
 
-        <div className="flex-1 overflow-y-auto px-8 py-6">
+        <div className="flex-1 overflow-y-auto px-5 md:px-8 py-6">
           {items.length === 0 ? (
             <div className="h-full flex items-center justify-center text-center">
               <p className="text-western-cream-muted max-w-xs leading-relaxed">
@@ -62,8 +62,8 @@ export default function CartDrawer({
           ) : (
             <ul className="space-y-6">
               {items.map((item) => (
-                <li key={item.variantId} className="flex gap-4">
-                  <div className="frame-gallery w-20 h-20 flex-shrink-0">
+                <li key={item.variantId} className="relative flex gap-3 md:gap-4 pr-7">
+                  <div className="frame-gallery w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
                     {item.productImage && (
                       <img
                         src={item.productImage}
@@ -72,41 +72,43 @@ export default function CartDrawer({
                       />
                     )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-display text-lg leading-tight">{item.productTitle}</h4>
-                    <p className="text-spec text-western-cream-muted mt-0.5">
+                  <div className="flex-1 min-w-0 flex flex-col gap-1">
+                    <h4 className="font-display text-base md:text-lg leading-tight">
+                      {item.productTitle}
+                    </h4>
+                    <p className="text-spec text-western-cream-muted text-xs">
                       {item.selectedOptions.map((o) => o.value).join(" · ")}
                     </p>
-                    <p className="text-spec mt-2">
-                      {formatBRL(item.price.amount, item.price.currencyCode)}
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-end justify-between">
-                    <button
-                      onClick={() => removeItem(item.variantId)}
-                      className="text-western-cream-muted hover:text-western-gold-soft transition-colors"
-                      aria-label="Remover peça"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                    <div className="flex items-center border border-western-gold/30">
-                      <button
-                        onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
-                        className="px-2 py-1 hover:bg-western-gold/10 transition-colors"
-                        aria-label="Diminuir"
-                      >
-                        <Minus className="h-3 w-3" />
-                      </button>
-                      <span className="px-3 text-spec">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                        className="px-2 py-1 hover:bg-western-gold/10 transition-colors"
-                        aria-label="Aumentar"
-                      >
-                        <Plus className="h-3 w-3" />
-                      </button>
+                    <div className="flex items-center justify-between mt-2 gap-3 flex-wrap">
+                      <p className="text-spec">
+                        {formatBRL(item.price.amount, item.price.currencyCode)}
+                      </p>
+                      <div className="flex items-center border border-western-gold/30">
+                        <button
+                          onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
+                          className="h-9 w-9 flex items-center justify-center hover:bg-western-gold/10 transition-colors"
+                          aria-label="Diminuir"
+                        >
+                          <Minus className="h-3 w-3" />
+                        </button>
+                        <span className="px-3 text-spec min-w-[2ch] text-center">{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
+                          className="h-9 w-9 flex items-center justify-center hover:bg-western-gold/10 transition-colors"
+                          aria-label="Aumentar"
+                        >
+                          <Plus className="h-3 w-3" />
+                        </button>
+                      </div>
                     </div>
                   </div>
+                  <button
+                    onClick={() => removeItem(item.variantId)}
+                    className="absolute top-0 right-0 p-1.5 -m-1.5 text-western-cream-muted hover:text-western-gold-soft transition-colors"
+                    aria-label="Remover peça"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
                 </li>
               ))}
             </ul>
@@ -114,7 +116,7 @@ export default function CartDrawer({
         </div>
 
         {items.length > 0 && (
-          <div className="px-8 py-6 border-t border-western-gold/15 space-y-5">
+          <div className="px-5 md:px-8 py-6 border-t border-western-gold/15 space-y-5">
             <div>
               <div className="flex justify-between text-spec mb-2">
                 <span className="text-western-cream-muted">Pedido mínimo {formatBRL(MIN_ORDER)}</span>

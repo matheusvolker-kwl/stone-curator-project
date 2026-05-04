@@ -6,7 +6,7 @@ export default function About() {
       <div className="container-western py-20 md:py-28 max-w-4xl">
         <p className="text-eyebrow mb-5">Sobre · A Western</p>
         <div className="w-12 h-px bg-western-gold mb-8" />
-        <h1 className="font-display text-5xl md:text-6xl text-western-green-deep leading-[1.05] mb-12">
+        <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05] mb-12">
           Pedra é tempo —<br />
           nós só revelamos o que ela já é.
         </h1>
