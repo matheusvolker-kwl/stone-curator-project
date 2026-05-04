@@ -44,7 +44,7 @@ export default function BuyingGuide() {
       <div className="container-western py-20 md:py-28 max-w-4xl">
         <p className="text-eyebrow mb-5">Guia de compra · Monte um conjunto</p>
         <div className="w-12 h-px bg-western-gold mb-8" />
-        <h1 className="font-display text-5xl md:text-6xl text-western-green-deep leading-[1.05] mb-4">
+        <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05] mb-4">
           Componha seu projeto,<br />passo a passo.
         </h1>
         <p className="text-western-stone-warm text-lg leading-relaxed mb-12 max-w-2xl">

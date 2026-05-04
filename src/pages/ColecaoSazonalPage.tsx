@@ -50,7 +50,7 @@ export default function ColecaoSazonalPage() {
         <div className="max-w-3xl mb-20">
           <p className="text-eyebrow mb-5">Coleção sazonal</p>
           <div className="w-12 h-px bg-western-gold mb-8" />
-          <h1 className="font-display text-5xl md:text-6xl text-western-green-deep leading-[1.05]">
+          <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05]">
             {data?.title ?? "—"}
           </h1>
           {data?.description && (
