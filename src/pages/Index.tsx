@@ -29,7 +29,7 @@ export default function Index() {
   return (
     <>
       {/* HERO — verde */}
-      <section className="surface-forest relative min-h-[92vh] flex items-center pt-16 pb-32 overflow-hidden">
+      <section className="surface-forest relative min-h-[88vh] md:min-h-[92vh] flex items-center pt-10 pb-20 md:pt-16 md:pb-32 overflow-hidden">
         <div
           className="absolute inset-0 -z-10 opacity-40"
           aria-hidden
@@ -40,19 +40,19 @@ export default function Index() {
         />
         <div className="container-western grid md:grid-cols-12 gap-12 items-center">
           <div className="md:col-span-7 animate-fade-in-up">
-            <p className="text-eyebrow mb-8">Pedras · Cascatas · Paisagismo</p>
-            <div className="w-12 h-px bg-western-gold mb-10" />
-            <h1 className="font-display text-5xl md:text-7xl lg:text-[5.5rem] leading-[1.02] tracking-tight text-western-cream">
+            <p className="text-eyebrow text-[10px] md:text-xs mb-6 md:mb-8">Pedras · Cascatas · Paisagismo</p>
+            <div className="w-12 h-px bg-western-gold mb-8 md:mb-10" />
+            <h1 className="font-display text-4xl md:text-7xl lg:text-[5.5rem] leading-[1.05] md:leading-[1.02] tracking-tight text-western-cream">
               A pedra <span className="text-western-gold-soft italic font-light">contempla</span>
               <br />
               antes de ser colocada.
             </h1>
-            <p className="mt-12 max-w-xl text-lg text-western-cream-muted leading-relaxed">
+            <p className="mt-8 md:mt-12 max-w-xl text-base md:text-lg text-western-cream-muted leading-relaxed">
               Curadoria de pedras autorais para projetos de paisagismo premium —
               quartzo, arenito, moledo e granito, selecionados peça por peça,
               entregues sob encomenda para arquitetos e paisagistas.
             </p>
-            <div className="mt-14 flex flex-wrap items-center gap-8">
+            <div className="mt-10 md:mt-14 flex flex-col items-start gap-5 md:flex-row md:items-center md:gap-8">
               <Link to="/linhas" className="btn-gold">
                 Explorar linhas <ArrowRight className="h-4 w-4" />
               </Link>
@@ -77,20 +77,20 @@ export default function Index() {
       </section>
 
       {/* FAMÍLIAS DE ACABAMENTO — verde */}
-      <section className="surface-forest pt-32 pb-24 border-t border-western-gold/15">
+      <section className="surface-forest pt-20 pb-16 md:pt-32 md:pb-24 border-t border-western-gold/15">
         <div className="container-western">
           <p className="text-eyebrow mb-5">A curadoria · 04 acabamentos</p>
           <div className="w-12 h-px bg-western-gold mb-8" />
-          <h2 className="font-display text-4xl md:text-6xl text-western-cream leading-[1.05] mb-20 max-w-3xl">
-            Quatro famílias de pedra,<br />uma única exigência.
+          <h2 className="font-display text-4xl md:text-6xl text-western-cream leading-[1.05] mb-12 md:mb-20 max-w-3xl">
+            Quatro famílias de pedra, uma única exigência.
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
             {FAMILIES.map((f) => (
               <article
                 key={f.name}
-                className="border border-western-gold/15 bg-western-green-mid/40 p-8 flex flex-col h-full hover:border-western-gold/40 transition-colors group"
+                className="border border-western-gold/15 bg-western-green-mid/40 p-6 md:p-8 flex flex-col h-full hover:border-western-gold/40 transition-colors group"
               >
-                <div className="flex items-start justify-between mb-12">
+                <div className="flex items-start justify-between mb-8 md:mb-12">
                   <span className="text-spec text-western-cream-muted">{f.num}</span>
                   <span
                     className="block w-10 h-10 rounded-full"
@@ -115,9 +115,9 @@ export default function Index() {
 
       {/* LINHAS — superfície creme */}
       {linhas.length > 0 && (
-        <section className="surface-ivory py-32">
+        <section className="surface-ivory py-20 md:py-32">
           <div className="container-western">
-            <div className="flex items-end justify-between mb-16 flex-wrap gap-4">
+            <div className="flex items-end justify-between mb-12 md:mb-16 flex-wrap gap-4">
               <div>
                 <p className="text-eyebrow mb-4">Linhas de produto</p>
                 <div className="w-12 h-px bg-western-gold mb-6" />
@@ -133,7 +133,7 @@ export default function Index() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 md:gap-y-14">
               {linhas.slice(0, 6).map((c) => (
                 <Link
                   key={c.handle}
@@ -170,15 +170,13 @@ export default function Index() {
       )}
 
       {/* SOBRE — verde */}
-      <section className="surface-forest py-32">
-        <div className="container-western grid md:grid-cols-2 gap-16 items-center">
+      <section className="surface-forest py-20 md:py-32">
+        <div className="container-western grid md:grid-cols-2 gap-12 md:gap-16 items-center">
           <div>
             <p className="text-eyebrow mb-5">Sobre · A Western</p>
             <div className="w-12 h-px bg-western-gold mb-8" />
-            <h2 className="font-display text-4xl md:text-5xl text-western-cream leading-[1.1] mb-10">
-              Pedra é <span className="text-western-gold-soft italic">tempo</span> —<br />
-              nós só revelamos o<br />
-              que ela já é.
+            <h2 className="font-display text-4xl md:text-5xl text-western-cream leading-[1.1] mb-8 md:mb-10">
+              Pedra é <span className="text-western-gold-soft italic">tempo</span> — nós só revelamos o que ela já é.
             </h2>
             <div className="space-y-6 text-western-cream-muted leading-relaxed max-w-md">
               <p>
@@ -212,9 +210,9 @@ export default function Index() {
       </section>
 
       {/* COLEÇÕES SAZONAIS — ivory */}
-      <section className="surface-ivory py-32">
+      <section className="surface-ivory py-20 md:py-32">
         <div className="container-western">
-          <div className="flex items-end justify-between mb-16 flex-wrap gap-4">
+          <div className="flex items-end justify-between mb-12 md:mb-16 flex-wrap gap-4">
             <div>
               <p className="text-eyebrow mb-4">Coleções · Sazonais</p>
               <div className="w-12 h-px bg-western-gold mb-6" />
@@ -275,16 +273,16 @@ export default function Index() {
 
       {/* DESTAQUES — creme */}
       {featured.length > 0 && (
-        <section className="surface-ivory py-32">
+        <section className="surface-ivory py-20 md:py-32">
           <div className="container-western">
-            <div className="mb-16">
+            <div className="mb-12 md:mb-16">
               <p className="text-eyebrow mb-4">Em destaque</p>
               <div className="w-12 h-px bg-western-gold mb-6" />
               <h2 className="font-display text-4xl md:text-5xl text-western-green-deep">
                 Peças para especificar.
               </h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 md:gap-y-14">
               {featured.slice(0, 6).map((p) => (
                 <ProductCard key={p.node.id} product={p.node} surface="cream" />
               ))}
@@ -294,30 +292,28 @@ export default function Index() {
       )}
 
       {/* B2B / PROCESSO — verde */}
-      <section className="surface-forest py-32">
+      <section className="surface-forest py-20 md:py-32">
         <div className="container-western">
-          <div className="max-w-3xl mx-auto text-center mb-20">
+          <div className="max-w-3xl mx-auto text-center mb-14 md:mb-20">
             <div className="w-12 h-px bg-western-gold mx-auto mb-8" />
-            <h2 className="font-display text-4xl md:text-5xl text-western-cream leading-[1.15]">
-              Trabalhamos exclusivamente<br />
-              com arquitetos, paisagistas<br />
-              e construtoras.
+            <h2 className="font-display text-3xl md:text-5xl text-western-cream leading-[1.15]">
+              Trabalhamos exclusivamente com arquitetos, paisagistas e construtoras.
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 max-w-5xl mx-auto">
             {[
               { eyebrow: "Pedido mínimo", t: "Sob consulta", d: "Variável por categoria de pedra e dimensão da peça." },
               { eyebrow: "Prazo de produção", t: "15 a 30 dias", d: "Conforme disponibilidade do lote e acabamento." },
               { eyebrow: "Pagamento", t: "30 / 60 / 90", d: "Faturado para CNPJ. Sinal opcional em peças exclusivas." },
             ].map((s) => (
-              <div key={s.t} className="border-l border-western-gold/30 pl-8">
+              <div key={s.t} className="border-t md:border-t-0 md:border-l border-western-gold/30 pt-6 md:pt-0 md:pl-8">
                 <p className="text-eyebrow mb-4">{s.eyebrow}</p>
                 <h3 className="font-display text-3xl text-western-cream mb-4">{s.t}</h3>
                 <p className="text-western-cream-muted leading-relaxed text-sm">{s.d}</p>
               </div>
             ))}
           </div>
-          <div className="text-center mt-20">
+          <div className="text-center mt-14 md:mt-20">
             <Link to="/parceiro/cadastro" className="btn-outline-cream">
               Solicitar credenciamento —
             </Link>
