@@ -409,8 +409,8 @@ function ProductAccordion({
 
 function SpecRow({ dt, dd }: { dt: string; dd: string }) {
   return (
-    <div className="flex justify-between gap-6 border-b border-western-stone-warm/15 py-3 text-spec">
-      <dt className="text-western-stone-warm">{dt}</dt>
+    <div className="flex justify-between gap-4 border-b border-western-stone-warm/15 py-3 text-spec">
+      <dt className="text-western-stone-warm flex-shrink-0">{dt}</dt>
       <dd className="text-western-green-deep text-right">{dd}</dd>
     </div>
   );
