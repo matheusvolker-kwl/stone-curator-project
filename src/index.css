@@ -187,6 +187,9 @@
     @apply font-display text-[1.2rem] md:text-[1.45rem] leading-[1.55] text-western-green-deep;
     font-style: italic;
     font-weight: 400;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    overflow-wrap: break-word;
   }
   .product-lead strong {
     font-style: normal;
@@ -321,6 +324,14 @@
 }
 
 @layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
   .reveal {
     opacity: 0;
     transform: translateY(16px);
