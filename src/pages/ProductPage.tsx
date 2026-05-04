@@ -154,7 +154,7 @@ export default function ProductPage() {
             {/* Header */}
             {collection && <p className="text-eyebrow mb-5">{collection.title}</p>}
             <div className="w-12 h-px bg-western-gold mb-6" />
-            <h1 className="font-display text-4xl md:text-5xl leading-[1.05]">
+            <h1 className="font-display text-3xl md:text-5xl leading-[1.05]">
               {product.title}
             </h1>
             {sku && (
