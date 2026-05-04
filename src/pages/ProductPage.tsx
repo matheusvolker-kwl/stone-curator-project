@@ -132,12 +132,12 @@ export default function ProductPage() {
               )}
             </div>
             {images.length > 1 && (
-              <div className="flex gap-3 mt-4 overflow-x-auto">
+              <div className="flex gap-3 mt-4 overflow-x-auto scrollbar-hide -mx-2 px-2">
                 {images.map((img, idx) => (
                   <button
                     key={img.url}
                     onClick={() => setActiveImage(idx)}
-                    className={`frame-product w-20 h-20 flex-shrink-0 transition-opacity ${
+                    className={`frame-product w-16 h-16 md:w-20 md:h-20 flex-shrink-0 transition-opacity ${
                       idx === activeImage ? "opacity-100" : "opacity-60 hover:opacity-90"
                     }`}
                     aria-label={`Imagem ${idx + 1}`}
@@ -242,11 +242,11 @@ export default function ProductPage() {
                 </span>
               </div>
 
-              <div className="flex items-stretch gap-3">
-                <div className="flex items-center border border-western-stone-warm/30">
+              <div className="flex flex-col sm:flex-row items-stretch gap-3">
+                <div className="flex items-center justify-between sm:justify-start border border-western-stone-warm/30 h-12">
                   <button
                     onClick={() => setQty(Math.max(1, qty - 1))}
-                    className="px-4 hover:bg-western-gold/10 transition-colors text-western-green-deep"
+                    className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
                     aria-label="Diminuir"
                   >
                     −
@@ -254,7 +254,7 @@ export default function ProductPage() {
                   <span className="px-4 text-spec min-w-[2ch] text-center">{qty}</span>
                   <button
                     onClick={() => setQty(qty + 1)}
-                    className="px-4 hover:bg-western-gold/10 transition-colors text-western-green-deep"
+                    className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
                     aria-label="Aumentar"
                   >
                     +
@@ -410,8 +410,8 @@ function ProductAccordion({
 function SpecRow({ dt, dd }: { dt: string; dd: string }) {
   return (
     <div className="flex justify-between gap-4 border-b border-western-stone-warm/15 py-3 text-spec">
-      <dt className="text-western-stone-warm flex-shrink-0">{dt}</dt>
-      <dd className="text-western-green-deep text-right">{dd}</dd>
+      <dt className="text-western-stone-warm flex-shrink-0 min-w-0">{dt}</dt>
+      <dd className="text-western-green-deep text-right min-w-0 break-words">{dd}</dd>
     </div>
   );
 }
