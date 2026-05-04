@@ -5,6 +5,12 @@ import { useMemo, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { ChevronLeft, ExternalLink, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -85,6 +91,10 @@ export default function ProductPage() {
     });
   };
 
+  const visibleOptions = product.options.filter(
+    (o) => o.values.length > 1 || o.name.toLowerCase() !== "title"
+  );
+
   return (
     <div className="surface-ivory">
       <div className="container-western py-12 md:py-20">
@@ -96,9 +106,9 @@ export default function ProductPage() {
           {parentLabel}
         </Link>
 
-        <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-start">
+        <div className="grid md:grid-cols-2 gap-10 lg:gap-20 items-start">
           {/* Gallery */}
-          <div>
+          <div className="md:sticky md:top-24">
             <div className="frame-product aspect-square overflow-hidden">
               {images[activeImage] && (
                 <img
@@ -127,74 +137,82 @@ export default function ProductPage() {
           </div>
 
           {/* Details */}
-          <div className="md:py-4 text-western-green-deep">
+          <div className="md:py-2 text-western-green-deep">
+            {/* Header */}
             {collection && <p className="text-eyebrow mb-5">{collection.title}</p>}
             <div className="w-12 h-px bg-western-gold mb-6" />
-            <h1 className="font-display text-4xl md:text-5xl leading-tight">
+            <h1 className="font-display text-4xl md:text-5xl leading-[1.05]">
               {product.title}
             </h1>
-            {sku && <p className="text-spec text-western-stone-warm mt-3">SKU {sku}</p>}
+            {sku && (
+              <p className="text-spec text-western-stone-warm mt-3 tracking-[0.15em]">
+                SKU · {sku}
+              </p>
+            )}
 
+            {/* Short description — sempre visível */}
             {product.description && (
-              <p className="mt-8 text-western-stone-warm leading-relaxed">
+              <p className="mt-8 text-western-stone-warm leading-[1.75] text-[15px] max-w-prose">
                 {product.description}
               </p>
             )}
 
             {/* Options */}
-            {product.options
-              .filter((o) => o.values.length > 1 || o.name.toLowerCase() !== "title")
-              .map((option) => (
-                <div key={option.name} className="mt-10">
-                  <p className="text-eyebrow mb-4">{option.name}</p>
-                  <div className="flex flex-wrap gap-3">
-                    {option.values.map((val) => {
-                      const selected =
-                        (activeOptions[option.name] ??
-                          variant?.selectedOptions.find((o) => o.name === option.name)?.value) ===
-                        val;
-                      return (
-                        <button
-                          key={val}
-                          onClick={() =>
-                            setActiveOptions((prev) => ({ ...prev, [option.name]: val }))
-                          }
-                          className={`px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] border transition-all duration-300 ${
-                            selected
-                              ? "border-western-gold text-western-gold bg-western-gold/5"
-                              : "border-western-stone-warm/25 text-western-green-deep hover:border-western-gold/60"
-                          }`}
-                        >
-                          {val}
-                        </button>
-                      );
-                    })}
+            {visibleOptions.length > 0 && (
+              <div className="mt-12 space-y-8">
+                {visibleOptions.map((option) => (
+                  <div key={option.name}>
+                    <p className="text-eyebrow mb-4">{option.name}</p>
+                    <div className="flex flex-wrap gap-2.5">
+                      {option.values.map((val) => {
+                        const selected =
+                          (activeOptions[option.name] ??
+                            variant?.selectedOptions.find((o) => o.name === option.name)?.value) ===
+                          val;
+                        return (
+                          <button
+                            key={val}
+                            onClick={() =>
+                              setActiveOptions((prev) => ({ ...prev, [option.name]: val }))
+                            }
+                            className={`px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] border transition-all duration-300 ${
+                              selected
+                                ? "border-western-gold text-western-gold bg-western-gold/5"
+                                : "border-western-stone-warm/25 text-western-green-deep hover:border-western-gold/60"
+                            }`}
+                          >
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            )}
 
-            {/* Price + Add */}
+            {/* Price + Add — bloco compacto */}
             <div className="mt-12 pt-8 border-t border-western-stone-warm/20">
-              <div className="flex items-baseline justify-between mb-6">
+              <div className="flex items-baseline justify-between mb-7">
                 <span className="text-eyebrow">Condição parceiro</span>
                 <span className="font-display text-3xl text-western-green-deep">
                   {variant && formatBRL(variant.price.amount, variant.price.currencyCode)}
                 </span>
               </div>
 
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-stretch gap-3">
                 <div className="flex items-center border border-western-stone-warm/30">
                   <button
                     onClick={() => setQty(Math.max(1, qty - 1))}
-                    className="px-4 py-3 hover:bg-western-gold/10 transition-colors"
+                    className="px-4 hover:bg-western-gold/10 transition-colors text-western-green-deep"
                     aria-label="Diminuir"
                   >
                     −
                   </button>
-                  <span className="px-5 text-spec">{qty}</span>
+                  <span className="px-4 text-spec min-w-[2ch] text-center">{qty}</span>
                   <button
                     onClick={() => setQty(qty + 1)}
-                    className="px-4 py-3 hover:bg-western-gold/10 transition-colors"
+                    className="px-4 hover:bg-western-gold/10 transition-colors text-western-green-deep"
                     aria-label="Aumentar"
                   >
                     +
@@ -215,37 +233,57 @@ export default function ProductPage() {
                 </Button>
               </div>
 
-              <p className="text-spec text-western-stone-warm leading-relaxed">
-                Produção em 15 dias úteis após confirmação do pagamento. Pedido
-                mínimo de R$ 1.000.
+              <p className="text-spec text-western-stone-warm/80 leading-relaxed mt-5 text-xs">
+                Produção em 15 dias úteis · pedido mínimo R$ 1.000
               </p>
             </div>
 
-            {/* 3D Model */}
-            <div className="mt-10 p-6 border border-western-stone-warm/20">
-              <p className="text-eyebrow mb-2">Modelo 3D — SketchUp</p>
-              <p className="text-spec text-western-stone-warm mb-4">
-                Baixe o modelo desta peça para usar diretamente em seu projeto.
-              </p>
-              <a
-                href={modelo3dUrl ?? "https://3dwarehouse.sketchup.com/by/WesternPools"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 link-underline text-western-gold font-mono text-xs uppercase tracking-[0.2em]"
-              >
-                Abrir no 3D Warehouse <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-            </div>
+            {/* Accordions — detalhes secundários */}
+            <Accordion
+              type="single"
+              collapsible
+              className="mt-14 border-t border-western-stone-warm/20"
+            >
+              <ProductAccordion numeral="I" title="Ficha técnica" value="ficha">
+                <dl className="space-y-0">
+                  <SpecRow dt="Material" dd="Composto mineral de alta resistência" />
+                  <SpecRow dt="Acabamento" dd="Texturizado mineral" />
+                  <SpecRow dt="Garantia" dd="1 ano" />
+                  <SpecRow dt="Origem" dd="São Paulo · Brasil" />
+                </dl>
+              </ProductAccordion>
 
-            {/* Tech sheet */}
-            <div className="mt-10">
-              <p className="text-eyebrow mb-4">Ficha técnica</p>
-              <dl className="space-y-2 text-spec">
-                <Row dt="Material" dd="Composto mineral de alta resistência" />
-                <Row dt="Garantia" dd="1 ano" />
-                <Row dt="Origem" dd="São Paulo · Brasil" />
-              </dl>
-            </div>
+              <ProductAccordion numeral="II" title="Modelo 3D · SketchUp" value="modelo">
+                <p className="text-spec text-western-stone-warm leading-relaxed mb-5">
+                  Baixe o modelo desta peça para integrar diretamente em seu projeto
+                  arquitetônico.
+                </p>
+                <a
+                  href={modelo3dUrl ?? "https://3dwarehouse.sketchup.com/by/WesternPools"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 link-underline text-western-gold font-mono text-xs uppercase tracking-[0.2em]"
+                >
+                  Abrir no 3D Warehouse <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              </ProductAccordion>
+
+              <ProductAccordion numeral="III" title="Produção & entrega" value="entrega">
+                <p className="text-spec text-western-stone-warm leading-[1.8]">
+                  Cada peça é produzida sob encomenda em nosso ateliê em São Paulo.
+                  Prazo de produção de 15 dias úteis após confirmação do pagamento.
+                  Frete calculado conforme destino e dimensões.
+                </p>
+              </ProductAccordion>
+
+              <ProductAccordion numeral="IV" title="Cuidados" value="cuidados">
+                <p className="text-spec text-western-stone-warm leading-[1.8]">
+                  Limpeza com pano macio levemente úmido. Evite produtos abrasivos
+                  ou ácidos. Para uso externo, recomenda-se selante mineral a cada
+                  18 meses.
+                </p>
+              </ProductAccordion>
+            </Accordion>
           </div>
         </div>
       </div>
@@ -253,9 +291,40 @@ export default function ProductPage() {
   );
 }
 
-function Row({ dt, dd }: { dt: string; dd: string }) {
+function ProductAccordion({
+  numeral,
+  title,
+  value,
+  children,
+}: {
+  numeral: string;
+  title: string;
+  value: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex justify-between border-b border-western-stone-warm/15 py-2">
+    <AccordionItem
+      value={value}
+      className="border-b border-western-stone-warm/20"
+    >
+      <AccordionTrigger className="py-6 hover:no-underline group [&>svg]:text-western-stone-warm">
+        <span className="flex items-baseline gap-5 text-left">
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-western-gold w-5">
+            {numeral}.
+          </span>
+          <span className="font-display text-xl text-western-green-deep group-hover:text-western-gold transition-colors">
+            {title}
+          </span>
+        </span>
+      </AccordionTrigger>
+      <AccordionContent className="pb-8 pl-10">{children}</AccordionContent>
+    </AccordionItem>
+  );
+}
+
+function SpecRow({ dt, dd }: { dt: string; dd: string }) {
+  return (
+    <div className="flex justify-between border-b border-western-stone-warm/15 py-3 text-spec">
       <dt className="text-western-stone-warm">{dt}</dt>
       <dd className="text-western-green-deep">{dd}</dd>
     </div>
