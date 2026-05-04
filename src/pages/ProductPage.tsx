@@ -402,7 +402,7 @@ function ProductAccordion({
           </span>
         </span>
       </AccordionTrigger>
-      <AccordionContent className="pb-8 pl-11">{children}</AccordionContent>
+      <AccordionContent className="pb-8 pl-7 md:pl-11">{children}</AccordionContent>
     </AccordionItem>
   );
 }
