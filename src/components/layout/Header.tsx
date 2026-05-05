@@ -74,7 +74,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           <img
             src={isCream ? logoVerde : logoBege}
             alt="Western"
-            className="h-7 md:h-8 w-auto"
+            className="h-10 md:h-12 w-auto"
           />
         </Link>
 
