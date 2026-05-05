@@ -1,32 +1,3 @@
-@font-face {
-  font-family: "Berlin";
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url("/src/assets/fonts/Berlin-Light.ttf") format("truetype");
-}
-@font-face {
-  font-family: "Berlin";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/src/assets/fonts/Berlin-Regular.ttf") format("truetype");
-}
-@font-face {
-  font-family: "Berlin";
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("/src/assets/fonts/Berlin-Bold.ttf") format("truetype");
-}
-@font-face {
-  font-family: "Berlin";
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url("/src/assets/fonts/Berlin-ExtraBold.ttf") format("truetype");
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -113,7 +84,6 @@
   body {
     @apply bg-background text-foreground font-sans;
     font-feature-settings: "ss01", "ss02";
-    letter-spacing: -0.005em;
   }
 
   /* Subtle grain — globally fixed but very low opacity */
