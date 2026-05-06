@@ -46,3 +46,19 @@ export function formatBRL(amount: string | number, currency = "BRL") {
     minimumFractionDigits: 2,
   }).format(num);
 }
+
+/**
+ * Otimiza URLs de imagem do Shopify CDN: pede largura e formato webp.
+ * Reduz drasticamente o peso de imagens de produto/coleção.
+ */
+export function cdnImg(url: string | undefined | null, width = 800): string {
+  if (!url) return "";
+  if (!url.includes("cdn.shopify.com")) return url;
+  const sep = url.includes("?") ? "&" : "?";
+  return `${url}${sep}width=${width}&format=webp`;
+}
+
+export function cdnSrcSet(url: string | undefined | null, widths: number[] = [400, 800, 1200]): string {
+  if (!url) return "";
+  return widths.map((w) => `${cdnImg(url, w)} ${w}w`).join(", ");
+}
