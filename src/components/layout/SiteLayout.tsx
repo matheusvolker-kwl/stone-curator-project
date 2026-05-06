@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -10,6 +10,13 @@ import { useCartSync } from "@/hooks/useCartSync";
 export default function SiteLayout() {
   const [cartOpen, setCartOpen] = useState(false);
   useCartSync();
+
+  useEffect(() => {
+    const handler = () => setCartOpen(true);
+    window.addEventListener("western:open-cart", handler);
+    return () => window.removeEventListener("western:open-cart", handler);
+  }, []);
+
   return (
     <div className="relative min-h-screen flex flex-col bg-western-ivory">
       <TopBar />
