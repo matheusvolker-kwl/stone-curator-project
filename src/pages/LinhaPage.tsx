@@ -16,9 +16,9 @@ export default function LinhaPage() {
     return (
       <div className="surface-ivory">
         <div className="container-western py-32 text-center">
-          <h1 className="font-display text-4xl text-western-green-deep">Linha não encontrada</h1>
+          <h1 className="font-display text-4xl text-western-green-deep">Categoria não encontrada</h1>
           <Link to="/linhas" className="link-underline mt-6 inline-block text-western-gold">
-            Ver todas as linhas
+            Ver guia de compra
           </Link>
         </div>
       </div>
@@ -34,11 +34,11 @@ export default function LinhaPage() {
           to="/linhas"
           className="inline-flex items-center gap-2 text-western-stone-warm hover:text-western-gold transition-colors font-mono text-xs uppercase tracking-[0.2em] mb-10"
         >
-          <ChevronLeft className="h-4 w-4" /> Linhas
+          <ChevronLeft className="h-4 w-4" /> Guia de compra
         </Link>
 
         <div className="max-w-3xl mb-20">
-          <p className="text-eyebrow mb-5">Linha</p>
+          <p className="text-eyebrow mb-5">Guia de compra</p>
           <div className="w-12 h-px bg-western-gold mb-8" />
           <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05]">
             {data?.title ?? "—"}
