@@ -8,8 +8,8 @@ import ProjetosSection from "@/components/home/ProjetosSection";
 import ArtistaSection from "@/components/home/ArtistaSection";
 import RespiroSection from "@/components/home/RespiroSection";
 import { ArrowRight } from "lucide-react";
-import brasao from "@/assets/brasao.png";
 import iconePedraVerde from "@/assets/icone-pedra-verde.png";
+import heroCascata from "@/assets/hero-cascata.jpg";
 
 
 export default function Index() {
@@ -26,79 +26,90 @@ export default function Index() {
 
   return (
     <>
-      {/* HERO — verde */}
-      <section className="surface-forest relative min-h-[88vh] md:min-h-[92vh] flex items-center pt-10 pb-20 md:pt-16 md:pb-32 overflow-hidden">
-        {/* Camada 1: glow dourado + vinheta de profundidade */}
+      {/* HERO — full-bleed cinematográfico */}
+      <section className="relative w-full min-h-[88vh] md:min-h-[92vh] overflow-hidden bg-western-green-deep">
+        {/* Foto LCP */}
+        <img
+          src={heroCascata}
+          alt="Cascata escultural Western em borda de piscina natural com paisagismo tropical."
+          loading="eager"
+          fetchPriority="high"
+          width={1820}
+          height={1213}
+          className="absolute inset-0 w-full h-full object-cover object-center animate-hero-drift will-change-transform"
+        />
+
+        {/* Gradiente verde da base — leitura do texto */}
         <div
-          className="absolute inset-0 -z-10 opacity-50"
+          className="absolute inset-0 pointer-events-none"
           aria-hidden
           style={{
-            backgroundImage:
-              "radial-gradient(ellipse at 70% 38%, hsl(var(--western-gold) / 0.22) 0%, transparent 55%), radial-gradient(circle at 18% 88%, hsl(var(--western-stone-dark) / 0.55) 0%, transparent 50%), radial-gradient(ellipse at 50% 100%, hsl(var(--western-green-deep)) 0%, transparent 70%)",
+            background:
+              "linear-gradient(to top, hsl(var(--western-green-deep) / 0.9) 0%, hsl(var(--western-green-deep) / 0.5) 32%, transparent 62%)",
           }}
         />
-        {/* Camada 2: grão sutil (SVG noise) */}
+
+        {/* Vinheta lateral esquerda — assenta o bloco de texto */}
         <div
-          className="absolute inset-0 -z-10 opacity-[0.07] mix-blend-overlay pointer-events-none"
+          className="absolute inset-0 pointer-events-none"
+          aria-hidden
+          style={{
+            background:
+              "linear-gradient(to right, hsl(var(--western-stone-dark) / 0.45), transparent 45%)",
+          }}
+        />
+
+        {/* Grão sutil */}
+        <div
+          className="absolute inset-0 opacity-[0.07] mix-blend-overlay pointer-events-none"
           aria-hidden
           style={{
             backgroundImage:
               "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.85  0 0 0 0 0.78  0 0 0 0 0.55  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
           }}
         />
-        {/* Camada 3: linhas verticais minerais muito sutis */}
-        <div
-          className="absolute inset-0 -z-10 opacity-[0.06] pointer-events-none"
-          aria-hidden
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(90deg, hsl(var(--western-gold)) 0 1px, transparent 1px 140px)",
-          }}
-        />
-        {/* Camada 4: shimmer dourado horizontal lento */}
-        <div className="absolute top-0 left-0 right-0 h-px overflow-hidden -z-10" aria-hidden>
+
+        {/* Shimmer dourado no topo */}
+        <div className="absolute top-0 left-0 right-0 h-px overflow-hidden" aria-hidden>
           <div className="h-full w-1/3 bg-gradient-to-r from-transparent via-western-gold/60 to-transparent animate-hero-shimmer" />
         </div>
 
-        <div className="container-western grid md:grid-cols-12 gap-12 items-center relative">
-          <div className="md:col-span-7 animate-fade-in-up">
-            <p className="text-eyebrow text-[10px] md:text-xs mb-6 md:mb-8">Pedras · Cascatas · Paisagismo</p>
-            <div className="w-12 h-px bg-western-gold mb-8 md:mb-10" />
-            <h1 className="font-display text-4xl md:text-7xl lg:text-[5.5rem] leading-[1.05] md:leading-[1.02] tracking-tight text-western-cream">
-              A pedra <span className="text-western-gold-soft italic font-light">contempla</span>
-              <br />
-              antes de ser colocada.
-            </h1>
-            <p className="mt-8 md:mt-12 max-w-xl text-base md:text-lg text-western-cream-muted leading-relaxed">
-              Curadoria de pedras autorais para projetos de paisagismo premium —
-              quartzo, arenito, moledo e granito, selecionados peça por peça,
-              entregues sob encomenda para arquitetos e paisagistas.
-            </p>
-            <div className="mt-10 md:mt-14 flex flex-col items-start gap-5 md:flex-row md:items-center md:gap-8">
-              <Link to="/linhas" className="btn-gold">
-                Explorar linhas <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/sobre"
-                className="link-underline font-mono text-xs uppercase tracking-[0.22em] text-western-cream"
+        {/* Texto — canto inferior esquerdo */}
+        <div className="absolute inset-0 flex items-end">
+          <div className="container-western pb-16 md:pb-24 w-full">
+            <div className="max-w-2xl animate-fade-in-up">
+              <p className="text-eyebrow text-[10px] md:text-xs mb-6 md:mb-8 text-western-gold-soft">
+                Pedras · Cascatas · Paisagismo
+              </p>
+              <div className="w-12 h-px bg-western-gold mb-8 md:mb-10" />
+              <h1
+                className="font-display text-4xl md:text-7xl lg:text-[5.5rem] leading-[1.05] md:leading-[1.02] tracking-tight text-western-cream"
+                style={{ textShadow: "0 2px 28px rgba(0,0,0,0.45)" }}
               >
-                · Sobre a curadoria
-              </Link>
-            </div>
-          </div>
-          <div className="md:col-span-5 hidden md:flex justify-center animate-fade-in" style={{ animationDelay: "200ms" }}>
-            <div className="relative">
-              {/* halo etéreo atrás do brasão */}
-              <div
-                className="absolute inset-0 -m-12 rounded-full blur-3xl opacity-40"
-                style={{ background: "radial-gradient(circle, hsl(var(--western-gold) / 0.35), transparent 70%)" }}
-                aria-hidden
-              />
-              <img src={brasao} alt="" className="relative w-72 lg:w-96 opacity-90 animate-hero-drift" />
+                A pedra <span className="text-western-gold-soft italic font-light">contempla</span>
+                <br />
+                antes de ser colocada.
+              </h1>
+              <div className="mt-10 md:mt-14 flex flex-col items-start gap-5 md:flex-row md:items-center md:gap-8">
+                <Link to="/linhas" className="btn-gold">
+                  Explorar linhas <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  to="/sobre"
+                  className="link-underline font-mono text-xs uppercase tracking-[0.22em] text-western-cream"
+                >
+                  · Sobre a curadoria
+                </Link>
+              </div>
             </div>
           </div>
         </div>
-        <div className="absolute bottom-10 right-12 hidden lg:flex gap-6 text-spec text-western-cream-muted/70">
+
+        {/* Specs dos quatro acabamentos — canto inferior direito */}
+        <div
+          className="absolute bottom-10 right-12 hidden lg:flex gap-6 text-spec text-western-cream/80"
+          style={{ textShadow: "0 1px 12px rgba(0,0,0,0.5)" }}
+        >
           <span>Quartzo</span><span>·</span>
           <span>Arenito</span><span>·</span>
           <span>Moledo</span><span>·</span>
