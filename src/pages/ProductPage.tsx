@@ -224,10 +224,7 @@ export default function ProductPage() {
                     <p className="text-eyebrow mb-4">{option.name}</p>
                     <div className="flex flex-wrap gap-2.5">
                       {option.values.map((val) => {
-                        const selected =
-                          (activeOptions[option.name] ??
-                            variant?.selectedOptions.find((o) => o.name === option.name)?.value) ===
-                          val;
+                        const selected = activeOptions[option.name] === val;
                         return (
                           <button
                             key={val}
