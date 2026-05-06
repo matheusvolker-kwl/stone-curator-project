@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import respiroPedra from "@/assets/respiro-pedra.jpg";
+import respiroPedra from "@/assets/respiro-pedra.webp";
+import respiroPedraSm from "@/assets/respiro-pedra-sm.webp";
 
 /**
  * Respiro cinematográfico — pausa visual full-bleed entre Artista e Projetos.
