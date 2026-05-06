@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProduct } from "@/lib/shopify/queries";
 import { parseProductDescription, groupDimensions } from "@/lib/shopify/parseDescription";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
 import { Button } from "@/components/ui/button";
