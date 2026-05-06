@@ -9,7 +9,8 @@ import ArtistaSection from "@/components/home/ArtistaSection";
 import RespiroSection from "@/components/home/RespiroSection";
 import { ArrowRight } from "lucide-react";
 import iconePedraVerde from "@/assets/icone-pedra-verde.png";
-import heroCascata from "@/assets/hero-cascata.jpg";
+import heroCascata from "@/assets/hero-cascata.webp";
+import heroCascataSm from "@/assets/hero-cascata-sm.webp";
 
 
 export default function Index() {
