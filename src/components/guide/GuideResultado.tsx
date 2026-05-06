@@ -88,7 +88,7 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
   }, [product, acabamento]);
 
   const parsed = useMemo(() => {
-    return product?.descriptionHtml ? parseDescription(product.descriptionHtml) : null;
+    return product?.descriptionHtml ? parseProductDescription(product.descriptionHtml) : null;
   }, [product]);
 
   const galeriaImgs = product?.images.edges.slice(0, 4).map((e) => e.node.url) ?? [];
