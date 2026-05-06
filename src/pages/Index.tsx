@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/shopify/queries";
+// isSeasonal kept for filtering linhas only
+
 import ProductCard from "@/components/product/ProductCard";
 import { ArrowRight } from "lucide-react";
 import brasao from "@/assets/brasao.png";
@@ -23,8 +25,7 @@ export default function Index() {
     queryFn: () => fetchProducts(6),
   });
 
-  const linhas = collections.filter((c) => !isSeasonal(c));
-  const sazonais = collections.filter((c) => isSeasonal(c));
+  const linhas = collections.filter((c) => !isSeasonal(c) && c.handle !== "conjuntos");
 
   return (
     <>
@@ -209,67 +210,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* COLEÇÕES SAZONAIS — ivory */}
-      <section className="surface-ivory py-20 md:py-32">
-        <div className="container-western">
-          <div className="flex items-end justify-between mb-12 md:mb-16 flex-wrap gap-4">
-            <div>
-              <p className="text-eyebrow mb-4">Coleções · Sazonais</p>
-              <div className="w-12 h-px bg-western-gold mb-6" />
-              <h2 className="font-display text-4xl md:text-5xl text-western-green-deep max-w-2xl">
-                Edições de temporada, em tiragem limitada.
-              </h2>
-            </div>
-            <Link
-              to="/colecoes"
-              className="link-underline font-mono text-xs uppercase tracking-[0.2em] text-western-green-deep"
-            >
-              Ver coleções →
-            </Link>
-          </div>
-
-          {sazonais.length === 0 ? (
-            <div className="border border-western-stone-warm/20 p-16 text-center max-w-2xl mx-auto">
-              <p className="text-eyebrow mb-4">Próxima edição</p>
-              <p className="font-display text-3xl text-western-green-deep mb-3">
-                Coleção Verão 26 · em breve
-              </p>
-              <p className="text-western-stone-warm">
-                Seja avisado quando a próxima curadoria sazonal abrir.
-              </p>
-              <Link to="/parceiro/cadastro" className="btn-outline-forest mt-8">
-                Quero ser avisado
-              </Link>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {sazonais.slice(0, 2).map((c) => (
-                <Link
-                  key={c.handle}
-                  to={`/colecoes/${c.handle}`}
-                  className="group block"
-                >
-                  <div className="frame-product aspect-[5/4] overflow-hidden mb-6">
-                    {c.image ? (
-                      <img
-                        src={c.image.url}
-                        alt={c.image.altText ?? c.title}
-                        loading="lazy"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="w-full h-full" />
-                    )}
-                  </div>
-                  <h3 className="font-display text-3xl text-western-green-deep group-hover:text-western-gold transition-colors">
-                    {c.title}
-                  </h3>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
 
       {/* DESTAQUES — creme */}
       {featured.length > 0 && (

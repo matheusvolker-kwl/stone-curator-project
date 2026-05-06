@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchProduct, isSeasonal } from "@/lib/shopify/queries";
+import { fetchProduct } from "@/lib/shopify/queries";
 import { parseProductDescription, groupDimensions } from "@/lib/shopify/parseDescription";
 import { useMemo, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
@@ -77,11 +77,8 @@ export default function ProductPage() {
   const images = product.images.edges.map((e) => e.node);
   const sku = variant?.sku ?? "";
   const collection = product.collections?.edges?.[0]?.node;
-  const parentSeasonal = collection ? isSeasonal(collection) : false;
   const parentRoute = collection
-    ? parentSeasonal
-      ? `/colecoes/${collection.handle}`
-      : `/linhas/${collection.handle}`
+    ? `/linhas/${collection.handle}`
     : "/linhas";
   const parentLabel = collection?.title ?? "Linhas";
 
