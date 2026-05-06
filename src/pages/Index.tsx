@@ -243,6 +243,8 @@ export default function Index() {
         </div>
       </section>
 
+      {/* PROJETOS — verde */}
+      <ProjetosSection />
 
       {/* DESTAQUES — creme */}
       {featured.length > 0 && (
