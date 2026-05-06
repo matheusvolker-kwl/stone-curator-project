@@ -12,7 +12,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ChevronLeft, Loader2 } from "lucide-react";
+import { ChevronLeft, Loader2, Info } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ProductPage() {
