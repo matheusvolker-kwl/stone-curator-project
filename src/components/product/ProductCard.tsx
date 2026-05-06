@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import type { ShopifyProductNode } from "@/lib/shopify/types";
-import { formatBRL } from "@/lib/shopify/client";
+import { formatBRL, cdnImg, cdnSrcSet } from "@/lib/shopify/client";
 
 interface Props {
   product: ShopifyProductNode;
