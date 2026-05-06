@@ -1,4 +1,4 @@
-import retrato from "@/assets/ricardo-botelho.png";
+import retrato from "@/assets/ricardo-botelho.webp";
 
 export default function ArtistaSection() {
   return (

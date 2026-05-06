@@ -4,7 +4,7 @@ import { fetchProduct } from "@/lib/shopify/queries";
 import { parseProductDescription, groupDimensions } from "@/lib/shopify/parseDescription";
 import { useEffect, useMemo, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
-import { formatBRL } from "@/lib/shopify/client";
+import { formatBRL, cdnImg, cdnSrcSet } from "@/lib/shopify/client";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -157,8 +157,11 @@ export default function ProductPage() {
               {images[activeImage] && (
                 <img
                   key={activeImage}
-                  src={images[activeImage].url}
+                  src={cdnImg(images[activeImage].url, 1200)}
+                  srcSet={cdnSrcSet(images[activeImage].url, [600, 1000, 1400])}
+                  sizes="(min-width: 768px) 50vw, 100vw"
                   alt={images[activeImage].altText ?? product.title}
+                  decoding="async"
                   className="w-full h-full object-contain p-4 md:p-8 animate-fade-in"
                 />
               )}
@@ -174,7 +177,7 @@ export default function ProductPage() {
                     }`}
                     aria-label={`Imagem ${idx + 1}`}
                   >
-                    <img src={img.url} alt="" className="w-full h-full object-contain p-1" />
+                    <img src={cdnImg(img.url, 200)} alt="" loading="lazy" decoding="async" className="w-full h-full object-contain p-1" />
                   </button>
                 ))}
               </div>

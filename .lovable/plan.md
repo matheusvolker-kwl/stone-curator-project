@@ -1,64 +1,94 @@
-## Hero full-bleed — refatorar a seção superior da home
+# Otimização de Imagens — Western
 
-Substituir o hero atual de duas colunas (texto + brasão) por uma única fotografia full-bleed (borda a borda) com texto contemplativo ancorado no canto inferior esquerdo. Tratamento alinhado a Hermès, Aesop, Marcio Kogan: a imagem fala, a tipografia respira.
+## Diagnóstico
 
-### Asset
+Hoje os assets locais somam ~4.5MB. Os vilões do carregamento:
 
-- Copiar `user-uploads://Fotos-72.JPG` → `src/assets/hero-cascata.jpg` e importar como módulo ES6.
-- `loading="eager"` + `fetchPriority="high"` (é LCP da home).
-- `object-cover object-center` para garantir foco na cascata em qualquer viewport.
+| Arquivo | Tamanho atual | Uso |
+|---|---|---|
+| `ricardo-botelho.png` | **2.4 MB** | seção Artista |
+| `respiro-pedra.jpg` | **997 KB** | seção Respiro full-bleed |
+| `hero-cascata.jpg` | **890 KB** | Hero LCP |
+| `logo-vertical-verde.png` | 113 KB | logo |
+| `cover-lago.jpg` | 160 KB | projeto |
 
-### Anatomia da nova seção (em `src/pages/Index.tsx`)
+Imagens das **linhas, produtos e coleções vêm do Shopify CDN** (`cdn.shopify.com`) — ali a otimização é diferente (parâmetros de URL).
 
+## O que fazer onde
+
+**Aqui no projeto (Lovable):** otimizar os assets em `src/assets/` (hero, respiro, retrato, logos, capas de projeto). Esses são os mais pesados e não passam por Shopify.
+
+**No Shopify:** as imagens já são servidas otimizadas pelo CDN, mas podemos pedir tamanhos menores via parâmetros (`?width=800&format=webp`) na hora de montar o `<img>`.
+
+## Plano de execução
+
+### 1. Converter assets locais para WebP otimizado
+
+Rodar um script (sharp via npx) que:
+- Converte PNG/JPG → WebP com qualidade 78–82
+- Gera 2 tamanhos para os heros: `1600w` (desktop) e `900w` (mobile)
+- Mantém PNG só para logos com transparência (mas re-otimizados via `pngquant`)
+
+Resultado esperado:
+- `ricardo-botelho.png` 2.4MB → `ricardo-botelho.webp` ~120KB
+- `respiro-pedra.jpg` 997KB → `respiro-pedra.webp` ~140KB + versão `-sm.webp` ~60KB
+- `hero-cascata.jpg` 890KB → `hero-cascata.webp` ~150KB + `-sm.webp` ~70KB
+- Logos PNG: -60% em média
+
+**Total esperado: ~4.5MB → ~600KB** (≈87% de redução).
+
+### 2. Servir imagens responsivas
+
+Trocar `<img src=...>` por `<img>` com `srcset` + `sizes` nos heros:
+
+```tsx
+<img
+  src={heroCascataLg}
+  srcSet={`${heroCascataSm} 900w, ${heroCascataLg} 1600w`}
+  sizes="100vw"
+  ...
+/>
 ```
-┌────────────────────────────────────────────────┐
-│                                                │
-│        [ FOTO FULL-BLEED — cascata ]          │
-│                                                │
-│   ░░░░ gradiente verde da base p/ topo ░░░░   │
-│                                                │
-│  PEDRAS · CASCATAS · PAISAGISMO   (eyebrow)   │
-│  ─                                             │
-│  A pedra contempla                             │
-│  antes de ser colocada.                        │
-│                                                │
-│  [ EXPLORAR LINHAS → ]   · Sobre a curadoria  │
-└────────────────────────────────────────────────┘
+
+Faz com que mobile baixe a versão pequena (~70KB) e desktop a grande.
+
+### 3. Otimizar imagens vindas do Shopify
+
+No `ProductCard`, `Linhas`, `LinhaPage` e nas collections da Home, anexar parâmetros à URL do CDN:
+
+```ts
+const cdn = (url: string, w = 800) =>
+  `${url}${url.includes("?") ? "&" : "?"}width=${w}&format=webp`;
 ```
 
-- `<section>` com `relative min-h-[88vh] md:min-h-[92vh] w-full overflow-hidden` — mesma altura do hero atual, sem mexer no Header.
-- Foto absoluta `inset-0`, classe `object-cover`. Mantém o `animate-hero-drift` muito sutil (scale 1.03 → 1.06 em ~16s) para um respiro cinematográfico — coerente com o `RespiroSection` que já existe.
-- Sobre a foto, três camadas (de baixo pra cima):
-  1. Gradiente vertical: `linear-gradient(to top, hsl(var(--western-green-deep) / 0.85) 0%, hsl(var(--western-green-deep) / 0.45) 35%, transparent 65%)` — só na metade inferior, para garantir leitura sem escurecer a cascata.
-  2. Vinheta lateral esquerda muito leve: `linear-gradient(to right, hsl(var(--western-stone-dark) / 0.35), transparent 40%)` — assenta o bloco de texto.
-  3. Grão SVG (mesmo do hero atual) com `opacity-[0.06] mix-blend-overlay` — costura visual com o resto da home.
-- Shimmer dourado no topo (linha de 1px) preservado — é assinatura.
+E aplicar em `<img src={cdn(c.image.url, 600)} />` conforme o tamanho real do card. Isso evita baixar a imagem original (geralmente 2000–3000px de largura) para um card de 400px.
 
-### Bloco de texto (canto inferior esquerdo)
+### 4. Atributos de carregamento
 
-- Wrapper: `container-western` em `absolute inset-0 flex items-end pb-16 md:pb-24`.
-- `max-w-2xl animate-fade-in-up`:
-  - Eyebrow: `PEDRAS · CASCATAS · PAISAGISMO` (mesma classe `text-eyebrow`, cor `text-western-gold-soft` para contrastar com a foto clara).
-  - Régua dourada `w-12 h-px bg-western-gold mb-8`.
-  - Título: `font-display text-5xl md:text-7xl lg:text-[5.5rem] leading-[1.05] text-western-cream` com sombra discreta (`drop-shadow-[0_2px_24px_rgba(0,0,0,0.45)]`) para legibilidade sobre céu claro/água.
-    - "A pedra **contempla** antes de ser colocada." — "contempla" em itálico dourado-suave (já é o padrão).
-  - Subtítulo curto removido do hero (vai sobrecarregar visualmente sobre a foto). O parágrafo de curadoria já é repetido na seção SOBRE logo abaixo — não perdemos nada.
-  - CTA: `btn-gold` "Explorar linhas →" + link secundário `· Sobre a curadoria` em mono cream.
-- Specs do canto inferior direito (`Quartzo · Arenito · Moledo · Granito`) preservados, mas em `text-western-cream/80` com leve `drop-shadow` — mantém a marca dos quatro acabamentos sem competir com a foto.
+- Hero e respiro: `loading="eager"` + `fetchPriority="high"` no LCP, `low` nos demais.
+- Demais imagens: `loading="lazy"` + `decoding="async"` (já está em parte do código, padronizar).
+- Adicionar `width` e `height` em todas para evitar CLS.
 
-### Acessibilidade e performance
+### 5. Resposta à pergunta direta
 
-- `alt` descritivo da cascata: "Cascata escultural Western em borda de piscina natural com paisagismo tropical."
-- `prefers-reduced-motion`: desativa o `animate-hero-drift` (já é o comportamento padrão dos utilitários `animate-*` quando o usuário pede reduzido — confirmar no `tailwind.config.ts`; se necessário, envolver com classe condicional, mesmo padrão de `RespiroSection`).
-- Imagem como LCP: `eager` + `fetchPriority="high"` + dimensões intrínsecas via `width/height` no `<img>` para evitar CLS.
-- Sem novas dependências, sem mudanças no Tailwind config.
+> "fazemos isso por aqui ou no shopify?"
 
-### Arquivos afetados
+**Os dois lados, mas o ganho maior é aqui.** As imagens estáticas (hero, retrato do Ricardo, respiro, logos, capas de projeto) só dá pra otimizar neste repositório — é onde está o peso real hoje. As imagens de produto/coleção do Shopify já vêm de um CDN, então basta pedir o tamanho certo via URL no front — não precisa reupload.
 
-- **Editar** `src/pages/Index.tsx`: substituir todo o bloco `<section>` do HERO (atualmente do comentário `{/* HERO — verde */}` até o fechamento dessa seção) pelo novo hero full-bleed. Remover o import `brasao` se não usado em outro lugar do arquivo (é exclusivo do hero).
-- **Criar** `src/assets/hero-cascata.jpg` (cópia do upload).
+## Detalhes técnicos
 
-### Fora do escopo
+- Ferramenta: `sharp` rodado em script Node único em `/tmp` (não fica no repo).
+- Logos PNG mantém PNG (transparência), mas re-comprimidos.
+- Os imports atuais (`import heroCascata from "@/assets/hero-cascata.jpg"`) viram `.webp` — Vite resolve normalmente.
+- Helper `cdn()` fica em `src/lib/shopify/client.ts` para reuso.
+- Sem mudança de layout visual; apenas peso e tempo de carregamento.
 
-- Não mexer em `RespiroSection`, `ArtistaSection`, `ProjetosSection`, Header, Footer ou qualquer outra seção.
-- Não trocar fontes, paleta ou tokens.
+## Arquivos a editar
+
+- `src/assets/*` — substituir originais pelas versões `.webp` (e remover os `.jpg`/`.png` pesados)
+- `src/pages/Index.tsx` — srcset no hero, imports atualizados
+- `src/components/home/RespiroSection.tsx` — srcset
+- `src/components/home/ArtistaSection.tsx` — novo `.webp`
+- `src/components/product/ProductCard.tsx` — usar `cdn()`
+- `src/pages/Linhas.tsx`, `LinhaPage.tsx`, `ProductPage.tsx` — usar `cdn()`
+- `src/lib/shopify/client.ts` — adicionar helper `cdn()`

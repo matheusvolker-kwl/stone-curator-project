@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import respiroPedra from "@/assets/respiro-pedra.jpg";
+import respiroPedra from "@/assets/respiro-pedra.webp";
+import respiroPedraSm from "@/assets/respiro-pedra-sm.webp";
 
 /**
  * Respiro cinematográfico — pausa visual full-bleed entre Artista e Projetos.
@@ -89,8 +90,11 @@ export default function RespiroSection() {
         <img
           ref={imgRef}
           src={respiroPedra}
+          srcSet={`${respiroPedraSm} 900w, ${respiroPedra} 1800w`}
+          sizes="100vw"
           alt="Corredor arquitetônico entre paredes de pedra escavada, teto de bambu, piso de madeira e brita."
           loading="lazy"
+          decoding="async"
           fetchPriority="low"
           className={`absolute inset-0 w-full h-full object-cover object-center will-change-transform ${
             reduced ? "" : "animate-breathe-zoom"

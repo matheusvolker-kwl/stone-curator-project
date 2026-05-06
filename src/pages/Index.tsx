@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/shopify/queries";
+import { cdnImg, cdnSrcSet } from "@/lib/shopify/client";
 // isSeasonal kept for filtering linhas only
 
 import ProductCard from "@/components/product/ProductCard";
@@ -9,7 +10,8 @@ import ArtistaSection from "@/components/home/ArtistaSection";
 import RespiroSection from "@/components/home/RespiroSection";
 import { ArrowRight } from "lucide-react";
 import iconePedraVerde from "@/assets/icone-pedra-verde.png";
-import heroCascata from "@/assets/hero-cascata.jpg";
+import heroCascata from "@/assets/hero-cascata.webp";
+import heroCascataSm from "@/assets/hero-cascata-sm.webp";
 
 
 export default function Index() {
@@ -31,9 +33,12 @@ export default function Index() {
         {/* Foto LCP */}
         <img
           src={heroCascata}
+          srcSet={`${heroCascataSm} 900w, ${heroCascata} 1800w`}
+          sizes="100vw"
           alt="Cascata escultural Western em borda de piscina natural com paisagismo tropical."
           loading="eager"
           fetchPriority="high"
+          decoding="async"
           width={1820}
           height={1213}
           className="absolute inset-0 w-full h-full object-cover object-center animate-hero-drift will-change-transform"
@@ -148,9 +153,12 @@ export default function Index() {
                   <div className="frame-product aspect-[4/3] overflow-hidden mb-5">
                     {c.image ? (
                       <img
-                        src={c.image.url}
+                        src={cdnImg(c.image.url, 800)}
+                        srcSet={cdnSrcSet(c.image.url, [400, 800, 1200])}
+                        sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 90vw"
                         alt={c.image.altText ?? c.title}
                         loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     ) : (
