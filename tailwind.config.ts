@@ -88,6 +88,14 @@ export default {
         },
         "fade-in": { "0%": { opacity: "0" }, "100%": { opacity: "1" } },
         shimmer: { "0%": { backgroundPosition: "-200% 0" }, "100%": { backgroundPosition: "200% 0" } },
+        "hero-shimmer": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(400%)" },
+        },
+        "hero-drift": {
+          "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
+          "50%": { transform: "translateY(-14px) rotate(-1.2deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -95,6 +103,8 @@ export default {
         "fade-in-up": "fade-in-up 600ms cubic-bezier(0.4, 0, 0.2, 1) both",
         "fade-in": "fade-in 500ms ease-out both",
         shimmer: "shimmer 2s linear infinite",
+        "hero-shimmer": "hero-shimmer 9s ease-in-out infinite",
+        "hero-drift": "hero-drift 12s ease-in-out infinite",
       },
     },
   },
