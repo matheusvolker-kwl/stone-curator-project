@@ -7,9 +7,9 @@ import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 const nav = [
-  { to: "/linhas", label: "Linhas" },
+  { to: "/linhas", label: "Guia de compra" },
   { to: "/colecoes", label: "Coleções" },
-  { to: "/guia-de-compra", label: "Guia" },
+  { to: "/guia-de-compra", label: "Monte o seu" },
   { to: "/sobre", label: "Sobre" },
   { to: "/contato", label: "B2B" },
 ];
