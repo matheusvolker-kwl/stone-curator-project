@@ -441,31 +441,6 @@ export default function ProductPage() {
             )}
           </div>
         </div>
-
-        {/* Seletor de acabamento — bloco full-width abaixo da grade */}
-        {(() => {
-          const acabOption = visibleOptions.find((o) => /acabament/i.test(o.name));
-          if (!acabOption) return null;
-          return (
-            <section className="mt-20 md:mt-28 pt-14 md:pt-20 border-t border-western-stone-warm/20">
-              <p className="text-eyebrow mb-5">Acabamento</p>
-              <div className="w-12 h-px bg-western-gold mb-6" />
-              <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05] mb-3">
-                Escolha o tom <span className="italic font-light text-western-gold">da peça.</span>
-              </h2>
-              <p className="font-mono text-xs uppercase tracking-[0.22em] text-western-stone-warm mb-10 md:mb-14">
-                4 acabamentos · mesmo preço · sob encomenda
-              </p>
-              <FinishSelector
-                values={acabOption.values}
-                selected={activeOptions[acabOption.name] ?? null}
-                onSelect={(val) =>
-                  setActiveOptions((prev) => ({ ...prev, [acabOption.name]: val }))
-                }
-              />
-            </section>
-          );
-        })()}
       </div>
     </div>
   );
