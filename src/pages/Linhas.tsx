@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { fetchCollections, isSeasonal } from "@/lib/shopify/queries";
+import { cdnImg, cdnSrcSet } from "@/lib/shopify/client";
 import iconePedra from "@/assets/icone-pedra-verde.png";
 
 export default function Linhas() {
