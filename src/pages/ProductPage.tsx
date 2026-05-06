@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/accordion";
 import { ChevronLeft, Loader2, Info } from "lucide-react";
 import { toast } from "sonner";
+import FinishSelector from "@/components/product/FinishSelector";
 
 export default function ProductPage() {
   const { handle = "" } = useParams();
@@ -142,9 +143,10 @@ export default function ProductPage() {
             <div className="frame-product aspect-square overflow-hidden">
               {images[activeImage] && (
                 <img
+                  key={activeImage}
                   src={images[activeImage].url}
                   alt={images[activeImage].altText ?? product.title}
-                  className="w-full h-full object-contain p-4 md:p-8"
+                  className="w-full h-full object-contain p-4 md:p-8 animate-fade-in"
                 />
               )}
             </div>
@@ -216,34 +218,36 @@ export default function ProductPage() {
               </div>
             )}
 
-            {/* Options */}
-            {visibleOptions.length > 0 && (
+            {/* Options (exceto Acabamento — vai abaixo da grid em bloco próprio) */}
+            {visibleOptions.filter((o) => !/acabament/i.test(o.name)).length > 0 && (
               <div className="mt-12 space-y-8">
-                {visibleOptions.map((option) => (
-                  <div key={option.name}>
-                    <p className="text-eyebrow mb-4">{option.name}</p>
-                    <div className="flex flex-wrap gap-2.5">
-                      {option.values.map((val) => {
-                        const selected = activeOptions[option.name] === val;
-                        return (
-                          <button
-                            key={val}
-                            onClick={() =>
-                              setActiveOptions((prev) => ({ ...prev, [option.name]: val }))
-                            }
-                            className={`px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] border transition-all duration-300 ${
-                              selected
-                                ? "border-western-gold text-western-gold bg-western-gold/5"
-                                : "border-western-stone-warm/25 text-western-green-deep hover:border-western-gold/60"
-                            }`}
-                          >
-                            {val}
-                          </button>
-                        );
-                      })}
+                {visibleOptions
+                  .filter((o) => !/acabament/i.test(o.name))
+                  .map((option) => (
+                    <div key={option.name}>
+                      <p className="text-eyebrow mb-4">{option.name}</p>
+                      <div className="flex flex-wrap gap-2.5">
+                        {option.values.map((val) => {
+                          const selected = activeOptions[option.name] === val;
+                          return (
+                            <button
+                              key={val}
+                              onClick={() =>
+                                setActiveOptions((prev) => ({ ...prev, [option.name]: val }))
+                              }
+                              className={`px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] border transition-all duration-300 ${
+                                selected
+                                  ? "border-western-gold text-western-gold bg-western-gold/5"
+                                  : "border-western-stone-warm/25 text-western-green-deep hover:border-western-gold/60"
+                              }`}
+                            >
+                              {val}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             )}
 
@@ -414,6 +418,31 @@ export default function ProductPage() {
             )}
           </div>
         </div>
+
+        {/* Seletor de acabamento — bloco full-width abaixo da grade */}
+        {(() => {
+          const acabOption = visibleOptions.find((o) => /acabament/i.test(o.name));
+          if (!acabOption) return null;
+          return (
+            <section className="mt-20 md:mt-28 pt-14 md:pt-20 border-t border-western-stone-warm/20">
+              <p className="text-eyebrow mb-5">Acabamento</p>
+              <div className="w-12 h-px bg-western-gold mb-6" />
+              <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05] mb-3">
+                Escolha o tom <span className="italic font-light text-western-gold">da peça.</span>
+              </h2>
+              <p className="font-mono text-xs uppercase tracking-[0.22em] text-western-stone-warm mb-10 md:mb-14">
+                4 acabamentos · mesmo preço · sob encomenda
+              </p>
+              <FinishSelector
+                values={acabOption.values}
+                selected={activeOptions[acabOption.name] ?? null}
+                onSelect={(val) =>
+                  setActiveOptions((prev) => ({ ...prev, [acabOption.name]: val }))
+                }
+              />
+            </section>
+          );
+        })()}
       </div>
     </div>
   );
