@@ -62,7 +62,7 @@ export default function LinhaPage() {
             ))}
           </div>
         ) : products.length === 0 ? (
-          <p className="text-western-stone-warm">Nenhuma peça nesta linha ainda.</p>
+          <p className="text-western-stone-warm">Nenhuma peça nesta categoria ainda.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
             {products.map((p) => (

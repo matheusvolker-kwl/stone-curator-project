@@ -113,7 +113,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* LINHAS — superfície creme */}
+      {/* GUIA DE COMPRA — superfície creme */}
       {linhas.length > 0 && (
         <section className="surface-ivory py-20 md:py-32">
           <div className="container-western">
