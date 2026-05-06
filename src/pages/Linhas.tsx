@@ -42,9 +42,12 @@ export default function Linhas() {
                 <div className="frame-product aspect-[4/3] overflow-hidden mb-5">
                   {c.image ? (
                     <img
-                      src={c.image.url}
+                      src={cdnImg(c.image.url, 800)}
+                      srcSet={cdnSrcSet(c.image.url, [400, 800, 1200])}
+                      sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 90vw"
                       alt={c.image.altText ?? c.title}
                       loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
