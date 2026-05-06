@@ -41,14 +41,14 @@ export default function CartDrawer({
         className="w-full sm:max-w-lg flex flex-col p-0 bg-western-green-mid border-l border-western-gold/20 text-western-cream"
       >
         <SheetHeader className="px-5 md:px-8 pt-8 md:pt-10 pb-5 md:pb-6 border-b border-western-gold/15">
-          <p className="text-eyebrow">Seu pedido</p>
+          <p className="text-eyebrow">Seu orçamento</p>
           <SheetTitle className="font-display text-2xl md:text-3xl tracking-wide text-western-cream">
             Composição atual
           </SheetTitle>
           <SheetDescription className="text-western-cream-muted">
             {totalQty === 0
               ? "Nenhuma peça selecionada."
-              : `${totalQty} ${totalQty === 1 ? "peça" : "peças"} em cotação.`}
+              : `${totalQty} ${totalQty === 1 ? "peça" : "peças"} no orçamento.`}
           </SheetDescription>
         </SheetHeader>
 
