@@ -1,32 +1,27 @@
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
-import { ShoppingBag, User, Menu, X } from "lucide-react";
-import logoBege from "@/assets/logo-horizontal-bege.png";
+import { ShoppingBag, User, Menu, X, Search, Heart } from "lucide-react";
 import logoVerde from "@/assets/logo-horizontal-verde.png";
+import logoBege from "@/assets/logo-horizontal-bege.png";
 import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 const nav = [
-  { to: "/", label: "Início", end: true },
   { to: "/linhas", label: "Linhas" },
   { to: "/conjuntos", label: "Conjuntos" },
-  { to: "/guia-de-compra", label: "Guia de Compra" },
+  { to: "/guia-de-compra", label: "Guia" },
   { to: "/sobre", label: "Sobre" },
   { to: "/contato", label: "B2B" },
 ];
-
-// Rotas onde o header se sobrepõe a uma seção clara (creme/ivory) no topo
-const CREAM_ROUTES = ["/linhas", "/conjuntos", "/guia-de-compra", "/parceiro"];
 
 export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   const items = useCartStore((s) => s.items);
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const { pathname } = useLocation();
-
-  const isCream =
-    CREAM_ROUTES.some((r) => pathname.startsWith(r)) && pathname !== "/";
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -35,62 +30,46 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Fecha menu ao trocar de rota
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [pathname]);
+  useEffect(() => setMenuOpen(false), [pathname]);
 
-  const textColor = isCream
-    ? "text-western-green-deep"
-    : "text-western-cream";
-  const hoverColor = isCream
-    ? "hover:text-western-gold"
-    : "hover:text-western-gold-soft";
-  const activeColor = isCream ? "text-western-gold" : "text-western-gold-soft";
-  const bgColor = isCream
-    ? scrolled
-      ? "bg-western-ivory/90 backdrop-blur-md border-b border-western-stone-warm/15"
-      : "bg-western-ivory border-b border-western-stone-warm/10"
-    : scrolled
-      ? "bg-western-green-deep/90 backdrop-blur-md border-b border-western-gold/15"
-      : "bg-transparent";
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!query.trim()) return;
+    navigate(`/linhas?q=${encodeURIComponent(query.trim())}`);
+  };
 
   return (
     <header
-      className={`sticky top-0 z-40 transition-colors duration-500 ${bgColor}`}
+      className={`sticky top-0 z-40 transition-shadow duration-300 bg-western-ivory border-b border-western-stone-warm/15 ${
+        scrolled ? "shadow-[0_4px_20px_-12px_rgba(15,40,24,0.18)]" : ""
+      }`}
     >
-      <div className="container-western flex items-center justify-between py-2 lg:py-3">
-        {/* Hamburger — mobile/tablet */}
+      <div className="container-western flex items-center gap-4 lg:gap-8 py-3 lg:py-4">
+        {/* Hamburger mobile */}
         <button
           onClick={() => setMenuOpen(true)}
           aria-label="Abrir menu"
-          className={`lg:hidden -ml-2 p-2 ${textColor} ${hoverColor} transition-colors`}
+          className="lg:hidden -ml-2 p-2 text-western-green-deep hover:text-western-gold transition-colors"
         >
           <Menu className="h-5 w-5" />
         </button>
 
-        <Link
-          to="/"
-          aria-label="Western — Início"
-          className="flex items-center lg:flex-none absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0"
-        >
-          <img
-            src={isCream ? logoVerde : logoBege}
-            alt="Western"
-            className="h-16 lg:h-20 w-auto"
-          />
+        <Link to="/" aria-label="Western — Início" className="flex-shrink-0">
+          <img src={logoVerde} alt="Western" className="h-12 lg:h-14 w-auto" />
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-9">
+        {/* Nav desktop */}
+        <nav className="hidden lg:flex items-center gap-7 xl:gap-9">
           {nav.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.end}
               className={({ isActive }) =>
-                `link-underline font-mono text-xs uppercase tracking-[0.22em] whitespace-nowrap ${
-                  isActive ? activeColor : `${textColor} ${hoverColor}`
-                } transition-colors`
+                `link-underline font-mono text-xs uppercase tracking-[0.22em] whitespace-nowrap transition-colors ${
+                  isActive
+                    ? "text-western-gold"
+                    : "text-western-green-deep hover:text-western-gold"
+                }`
               }
             >
               {item.label}
@@ -98,18 +77,40 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           ))}
         </nav>
 
-        <div className="flex items-center gap-1 lg:gap-5">
+        {/* Search */}
+        <form
+          onSubmit={handleSearch}
+          className="hidden md:flex flex-1 max-w-sm ml-auto items-center gap-2 px-3 h-10 border border-western-stone-warm/25 bg-white focus-within:border-western-gold transition-colors"
+        >
+          <Search className="h-4 w-4 text-western-stone-warm flex-shrink-0" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            type="search"
+            placeholder="Buscar pedra, código, acabamento…"
+            className="flex-1 bg-transparent outline-none text-sm text-western-green-deep placeholder:text-western-stone-warm/60"
+          />
+        </form>
+
+        <div className="flex items-center gap-1 lg:gap-3 ml-auto md:ml-0">
           <Link
             to="/parceiro/login"
-            className={`hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] whitespace-nowrap ${textColor} ${hoverColor} transition-colors`}
+            aria-label="Área do parceiro"
+            className="hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors"
           >
-            <User className="h-4 w-4" />
-            Parceiro
+            <User className="h-4 w-4" /> Parceiro
+          </Link>
+          <Link
+            to="/parceiro/login"
+            aria-label="Lista de projetos"
+            className="hidden md:inline-flex p-2 text-western-green-deep hover:text-western-gold transition-colors"
+          >
+            <Heart className="h-5 w-5" />
           </Link>
           <button
             onClick={onCartOpen}
-            aria-label="Abrir pedido"
-            className={`relative inline-flex items-center justify-center -mr-2 p-2 ${textColor} ${hoverColor} transition-colors`}
+            aria-label="Abrir orçamento"
+            className="relative inline-flex items-center justify-center -mr-2 p-2 text-western-green-deep hover:text-western-gold transition-colors"
           >
             <ShoppingBag className="h-5 w-5" />
             {totalItems > 0 && (
@@ -130,7 +131,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
           <div className="flex flex-col h-full">
             <div className="flex items-center justify-between px-6 py-5 border-b border-western-gold/15">
-              <img src={logoBege} alt="Western" className="h-14 w-auto" />
+              <img src={logoBege} alt="Western" className="h-12 w-auto" />
               <button
                 onClick={() => setMenuOpen(false)}
                 aria-label="Fechar menu"
@@ -139,16 +140,12 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 <X className="h-5 w-5" />
               </button>
             </div>
-
             <nav className="flex-1 px-6 py-8 flex flex-col gap-1">
-              <p className="text-eyebrow mb-5 text-western-cream-muted">
-                Navegação
-              </p>
+              <p className="text-eyebrow mb-5 text-western-cream-muted">Catálogo</p>
               {nav.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
-                  end={item.end}
                   className={({ isActive }) =>
                     `font-display text-2xl py-3 transition-colors ${
                       isActive
@@ -160,45 +157,21 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                   {item.label}
                 </NavLink>
               ))}
-
               <div className="h-px bg-western-gold/15 my-6" />
-
-              <p className="text-eyebrow mb-3 text-western-cream-muted">
-                Parceiro
-              </p>
+              <p className="text-eyebrow mb-3 text-western-cream-muted">Parceiro</p>
               <Link
                 to="/parceiro/login"
                 className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
               >
-                <User className="h-4 w-4" />
-                Acessar conta
+                <User className="h-4 w-4" /> Acessar conta
               </Link>
               <Link
                 to="/parceiro/cadastro"
                 className="py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
               >
-                · Cadastro B2B
+                · Solicitar acesso B2B
               </Link>
             </nav>
-
-            <div className="px-6 py-6 border-t border-western-gold/15 space-y-3">
-              <a
-                href="https://wa.me/5511993403485"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block font-mono text-xs uppercase tracking-[0.22em] text-western-cream-muted hover:text-western-gold-soft transition-colors"
-              >
-                WhatsApp
-              </a>
-              <a
-                href="https://instagram.com/westernpools"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block font-mono text-xs uppercase tracking-[0.22em] text-western-cream-muted hover:text-western-gold-soft transition-colors"
-              >
-                Instagram
-              </a>
-            </div>
           </div>
         </SheetContent>
       </Sheet>

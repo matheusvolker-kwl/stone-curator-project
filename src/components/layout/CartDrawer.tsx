@@ -2,10 +2,10 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
-import { Minus, Plus, X, ExternalLink, Loader2 } from "lucide-react";
+import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle } from "lucide-react";
 import { useEffect } from "react";
 
-const MIN_ORDER = 1000;
+const MIN_ORDER = 2000;
 
 export default function CartDrawer({
   open,
@@ -41,14 +41,14 @@ export default function CartDrawer({
         className="w-full sm:max-w-lg flex flex-col p-0 bg-western-green-mid border-l border-western-gold/20 text-western-cream"
       >
         <SheetHeader className="px-5 md:px-8 pt-8 md:pt-10 pb-5 md:pb-6 border-b border-western-gold/15">
-          <p className="text-eyebrow">Seu pedido</p>
+          <p className="text-eyebrow">Seu orçamento</p>
           <SheetTitle className="font-display text-2xl md:text-3xl tracking-wide text-western-cream">
             Composição atual
           </SheetTitle>
           <SheetDescription className="text-western-cream-muted">
             {totalQty === 0
               ? "Nenhuma peça selecionada."
-              : `${totalQty} ${totalQty === 1 ? "peça" : "peças"} em cotação.`}
+              : `${totalQty} ${totalQty === 1 ? "peça" : "peças"} no orçamento.`}
           </SheetDescription>
         </SheetHeader>
 
@@ -142,21 +142,37 @@ export default function CartDrawer({
             </p>
 
             <Button
+              onClick={() => {
+                const lines = items
+                  .map(
+                    (i) =>
+                      `• ${i.quantity}× ${i.productTitle} (${i.selectedOptions.map((o) => o.value).join(" / ")})`
+                  )
+                  .join("%0A");
+                const msg = `Olá! Gostaria de solicitar orçamento:%0A%0A${lines}%0A%0ASubtotal: ${formatBRL(subtotal)}`;
+                window.open(`https://wa.me/5511993403485?text=${msg}`, "_blank");
+              }}
+              disabled={!meetsMinimum}
+              className="w-full h-12 bg-[#25D366] text-white hover:bg-[#1fb858] font-mono text-xs uppercase tracking-[0.25em] rounded-none"
+            >
+              <MessageCircle className="h-4 w-4 mr-2" /> Solicitar orçamento
+            </Button>
+
+            <button
               onClick={handleCheckout}
               disabled={isLoading || isSyncing || !meetsMinimum}
-              className="w-full h-12 bg-western-gold text-western-green-deep hover:bg-western-gold-soft font-mono text-xs uppercase tracking-[0.25em] rounded-none"
+              className="w-full h-10 border border-western-gold/40 text-western-cream hover:border-western-gold font-mono text-[11px] uppercase tracking-[0.22em] inline-flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isLoading || isSyncing ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <>
-                  Finalizar pedido <ExternalLink className="h-4 w-4 ml-2" />
-                </>
+                <>Pagar online <ExternalLink className="h-3.5 w-3.5" /></>
               )}
-            </Button>
+            </button>
+
             {!meetsMinimum && (
               <p className="text-spec text-western-cream-muted text-center">
-                Faltam {formatBRL(MIN_ORDER - subtotal)} para o pedido mínimo.
+                Faltam {formatBRL(MIN_ORDER - subtotal)} para fechar pedido.
               </p>
             )}
           </div>
