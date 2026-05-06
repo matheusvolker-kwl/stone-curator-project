@@ -1,40 +1,64 @@
-## Nova seção: "O artista por trás da Western"
+## Hero full-bleed — refatorar a seção superior da home
 
-Adicionar uma seção institucional na home apresentando Ricardo Botelho, com o retrato enviado.
+Substituir o hero atual de duas colunas (texto + brasão) por uma única fotografia full-bleed (borda a borda) com texto contemplativo ancorado no canto inferior esquerdo. Tratamento alinhado a Hermès, Aesop, Marcio Kogan: a imagem fala, a tipografia respira.
 
-### Onde entra na home
+### Asset
 
-Entre **SOBRE · A Western** e **PROJETOS** — sequência narrativa:
-1. Sobre (a marca) → 2. **Artista** (a mão por trás) → 3. Projetos (as obras realizadas)
+- Copiar `user-uploads://Fotos-72.JPG` → `src/assets/hero-cascata.jpg` e importar como módulo ES6.
+- `loading="eager"` + `fetchPriority="high"` (é LCP da home).
+- `object-cover object-center` para garantir foco na cascata em qualquer viewport.
 
-Faz sentido porque o "Sobre" termina falando de procedência/curadoria, e a seção do artista aprofunda o "quem faz a curadoria". Em seguida os projetos mostram o resultado.
+### Anatomia da nova seção (em `src/pages/Index.tsx`)
 
-### Anatomia visual
+```
+┌────────────────────────────────────────────────┐
+│                                                │
+│        [ FOTO FULL-BLEED — cascata ]          │
+│                                                │
+│   ░░░░ gradiente verde da base p/ topo ░░░░   │
+│                                                │
+│  PEDRAS · CASCATAS · PAISAGISMO   (eyebrow)   │
+│  ─                                             │
+│  A pedra contempla                             │
+│  antes de ser colocada.                        │
+│                                                │
+│  [ EXPLORAR LINHAS → ]   · Sobre a curadoria  │
+└────────────────────────────────────────────────┘
+```
 
-Mesma gramática das outras seções verde-escuras (surface-forest):
+- `<section>` com `relative min-h-[88vh] md:min-h-[92vh] w-full overflow-hidden` — mesma altura do hero atual, sem mexer no Header.
+- Foto absoluta `inset-0`, classe `object-cover`. Mantém o `animate-hero-drift` muito sutil (scale 1.03 → 1.06 em ~16s) para um respiro cinematográfico — coerente com o `RespiroSection` que já existe.
+- Sobre a foto, três camadas (de baixo pra cima):
+  1. Gradiente vertical: `linear-gradient(to top, hsl(var(--western-green-deep) / 0.85) 0%, hsl(var(--western-green-deep) / 0.45) 35%, transparent 65%)` — só na metade inferior, para garantir leitura sem escurecer a cascata.
+  2. Vinheta lateral esquerda muito leve: `linear-gradient(to right, hsl(var(--western-stone-dark) / 0.35), transparent 40%)` — assenta o bloco de texto.
+  3. Grão SVG (mesmo do hero atual) com `opacity-[0.06] mix-blend-overlay` — costura visual com o resto da home.
+- Shimmer dourado no topo (linha de 1px) preservado — é assinatura.
 
-- **Surface**: `surface-forest` (não cria duas seções verdes consecutivas, mas o "Sobre" já é verde — para evitar parede verde, esta seção do artista será **surface-ivory** (creme), criando respiro entre dois blocos verdes e dando destaque ao retrato).
-- **Layout**: `grid md:grid-cols-12` — retrato à esquerda (col-span-5), texto à direita (col-span-6, offset 1).
-- **Retrato**: enquadrado em `frame-gallery` com `aspect-[4/5]`, borda sutil `western-gold/30`. Sem filtros — cor natural.
-- **Eyebrow**: `AUTORIA · RICARDO BOTELHO` (bege/dourado, mono, letterspacing).
-- **Régua dourada** de 12px abaixo do eyebrow (padrão da home).
-- **Título serifado**: "O artista por trás da Western." — `font-display`, com "Western" em itálico dourado-suave para combinar com os outros títulos ("contempla", "tempo", "o projeto").
-- **Parágrafos**: dois blocos de texto exatamente como fornecidos pelo usuário, em `text-western-stone-warm` / leading-relaxed, max-width controlado (~prose-sm).
-- **Assinatura/caption discreta** abaixo do retrato: `Ricardo Botelho · Desenhista e escultor` em mono pequeno.
-- **Sem CTA** — é uma seção de presença, não de conversão. (Coerente com o tom contemplativo.)
+### Bloco de texto (canto inferior esquerdo)
 
-### Detalhes técnicos
+- Wrapper: `container-western` em `absolute inset-0 flex items-end pb-16 md:pb-24`.
+- `max-w-2xl animate-fade-in-up`:
+  - Eyebrow: `PEDRAS · CASCATAS · PAISAGISMO` (mesma classe `text-eyebrow`, cor `text-western-gold-soft` para contrastar com a foto clara).
+  - Régua dourada `w-12 h-px bg-western-gold mb-8`.
+  - Título: `font-display text-5xl md:text-7xl lg:text-[5.5rem] leading-[1.05] text-western-cream` com sombra discreta (`drop-shadow-[0_2px_24px_rgba(0,0,0,0.45)]`) para legibilidade sobre céu claro/água.
+    - "A pedra **contempla** antes de ser colocada." — "contempla" em itálico dourado-suave (já é o padrão).
+  - Subtítulo curto removido do hero (vai sobrecarregar visualmente sobre a foto). O parágrafo de curadoria já é repetido na seção SOBRE logo abaixo — não perdemos nada.
+  - CTA: `btn-gold` "Explorar linhas →" + link secundário `· Sobre a curadoria` em mono cream.
+- Specs do canto inferior direito (`Quartzo · Arenito · Moledo · Granito`) preservados, mas em `text-western-cream/80` com leve `drop-shadow` — mantém a marca dos quatro acabamentos sem competir com a foto.
 
-- **Asset**: copiar `user-uploads://image-21.png` para `src/assets/ricardo-botelho.webp` (ou `.jpg` mantendo extensão original do upload). Importar como módulo ES6.
-- **Componente novo**: `src/components/home/ArtistaSection.tsx` — mantém a home limpa e segue o padrão de `ProjetosSection.tsx`.
-- **Index.tsx**: importar e inserir `<ArtistaSection />` entre o bloco "SOBRE" e `<ProjetosSection />`.
-- **Responsivo**: em mobile, retrato acima do texto, ambos full-width com padding container padrão.
-- **Sem novas dependências, sem mudanças no Tailwind config.**
+### Acessibilidade e performance
 
-### Texto (exato como enviado)
+- `alt` descritivo da cascata: "Cascata escultural Western em borda de piscina natural com paisagismo tropical."
+- `prefers-reduced-motion`: desativa o `animate-hero-drift` (já é o comportamento padrão dos utilitários `animate-*` quando o usuário pede reduzido — confirmar no `tailwind.config.ts`; se necessário, envolver com classe condicional, mesmo padrão de `RespiroSection`).
+- Imagem como LCP: `eager` + `fetchPriority="high"` + dimensões intrínsecas via `width/height` no `<img>` para evitar CLS.
+- Sem novas dependências, sem mudanças no Tailwind config.
 
-Título: **O artista por trás da Western.**
+### Arquivos afetados
 
-Parágrafo 1: "A Western começa antes da fábrica. Começa no traço de Ricardo Botelho — desenhista, escultor e o autor dos projetos de cada peça do nosso catálogo. É dele a observação paciente da pedra natural que se traduz em forma, em proporção, em textura. É dele a decisão sobre como uma cascata vai escorrer, como um fóssil vai se revelar, como uma pedra de borda vai conversar com a água."
+- **Editar** `src/pages/Index.tsx`: substituir todo o bloco `<section>` do HERO (atualmente do comentário `{/* HERO — verde */}` até o fechamento dessa seção) pelo novo hero full-bleed. Remover o import `brasao` se não usado em outro lugar do arquivo (é exclusivo do hero).
+- **Criar** `src/assets/hero-cascata.jpg` (cópia do upload).
 
-Parágrafo 2: "Cada peça que sai da Western nasce de um desenho seu, passa por um modelo e curadoria, e só depois entra em produção em um composto mineral de alta resistência. Esse é o motivo de o nosso catálogo ter coerência visual com a natureza: existe um olhar único organizando o conjunto."
+### Fora do escopo
+
+- Não mexer em `RespiroSection`, `ArtistaSection`, `ProjetosSection`, Header, Footer ou qualquer outra seção.
+- Não trocar fontes, paleta ou tokens.
