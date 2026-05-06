@@ -47,11 +47,13 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
     ? "hover:text-western-gold"
     : "hover:text-western-gold-soft";
   const activeColor = isCream ? "text-western-gold" : "text-western-gold-soft";
-  const bgColor = scrolled
-    ? isCream
+  const bgColor = isCream
+    ? scrolled
       ? "bg-western-ivory/90 backdrop-blur-md border-b border-western-stone-warm/15"
-      : "bg-western-green-deep/90 backdrop-blur-md border-b border-western-gold/15"
-    : "bg-transparent";
+      : "bg-western-ivory border-b border-western-stone-warm/10"
+    : scrolled
+      ? "bg-western-green-deep/90 backdrop-blur-md border-b border-western-gold/15"
+      : "bg-transparent";
 
   return (
     <header
