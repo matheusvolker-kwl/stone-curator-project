@@ -29,12 +29,12 @@
     --surface-ivory: var(--western-ivory);
     --surface-paper: var(--western-paper);
 
-    /* Semantic tokens (default = forest) */
-    --background: var(--western-green-deep);
-    --foreground: var(--western-cream);
+    /* Semantic tokens (default = ivory / B2B showroom) */
+    --background: var(--western-ivory);
+    --foreground: var(--western-green-deep);
 
-    --card: var(--western-green-mid);
-    --card-foreground: var(--western-cream);
+    --card: 0 0% 100%;
+    --card-foreground: var(--western-green-deep);
 
     --popover: var(--western-green-mid);
     --popover-foreground: var(--western-cream);
