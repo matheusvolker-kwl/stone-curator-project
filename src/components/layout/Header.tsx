@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 const nav = [
+  { to: "/", label: "Início", end: true },
   { to: "/linhas", label: "Linhas" },
   { to: "/conjuntos", label: "Conjuntos" },
   { to: "/guia-de-compra", label: "Guia de Compra" },
