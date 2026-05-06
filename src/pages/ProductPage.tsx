@@ -177,7 +177,7 @@ export default function ProductPage() {
                     }`}
                     aria-label={`Imagem ${idx + 1}`}
                   >
-                    <img src={img.url} alt="" className="w-full h-full object-contain p-1" />
+                    <img src={cdnImg(img.url, 200)} alt="" loading="lazy" decoding="async" className="w-full h-full object-contain p-1" />
                   </button>
                 ))}
               </div>
