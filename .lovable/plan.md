@@ -1,30 +1,13 @@
 ## Diagnóstico
 
-O menu está bugado por dois motivos:
+Nos prints, o logo aparece bem menor que o texto do menu — está em `h-9 lg:h-10` (~36–40px), enquanto o menu + ícones ocupam altura visual maior. Preciso subir o logo e dar respiro ao header.
 
-1. **Breakpoint apertado**: o nav desktop ativa em `md` (768px). Com 5 itens + "Parceiro" + carrinho + logo, não cabe — o menu se sobrepõe ao logo (visível nos prints `/linhas` e `/colecoes`).
-2. **Logo desproporcional** no menu mobile (logo gigante centralizado ao lado do hambúrguer) e oscilando entre `h-10`/`h-12` sem padrão claro.
+## Mudanças em `src/components/layout/Header.tsx`
 
-Os arquivos de logo enviados (`WESTERN_BEGE_HORIZONTAL` e `WESTERN_VERDE_HORIZONTAL`) estão **corretos** — boa proporção, transparente, versões verde e bege. Vou substituir os atuais.
+1. **Logo principal**: `h-9 lg:h-10` → `h-12 lg:h-14` (48–56px). Fica proporcional ao menu sem dominar.
+2. **Padding do header**: `py-4 lg:py-5` → `py-3 lg:py-4` para compensar o logo maior e manter a barra enxuta.
+3. **Logo do drawer mobile**: `h-8` → `h-10`, casando com a nova proporção.
 
----
+Sem outras alterações — cores, breakpoint `lg` e estrutura permanecem.
 
-## Mudanças
-
-### 1. Substituir arquivos de logo
-- `src/assets/logo-horizontal-bege.png` ← `WESTERN_BEGE_HORIZONTAL-2.png`
-- `src/assets/logo-horizontal-verde.png` ← `WESTERN_VERDE_HORIZONTAL.png`
-
-### 2. `src/components/layout/Header.tsx`
-- **Subir breakpoint do nav desktop** de `md:` para `lg:` (1024px). Abaixo de 1024px o usuário usa o drawer hambúrguer — evita o aperto em tablets.
-- **Padronizar logo**: `h-9 lg:h-10 w-auto` em todas as resoluções (uma só altura consistente).
-- **Padronizar padding do header**: `py-4 lg:py-5`.
-- **Lógica de cor (já existe e está correta)**: `isCream` → logo verde + texto verde; caso contrário → logo bege + texto creme. Aplicada uniformemente em todas as rotas via array `CREAM_ROUTES`. Vou só **garantir consistência**: home (`/`) usa fundo verde → logo bege; `/linhas`, `/conjuntos`, `/guia-de-compra`, `/parceiro/*` usam fundo creme → logo verde; `/sobre`, `/contato`, `/produtos/:handle` ficam no padrão verde (header transparente sobre hero verde no topo).
-- **Adicionar `whitespace-nowrap`** nos links do nav para garantir que nunca quebrem em duas linhas.
-- **Drawer mobile**: ajustar a altura do logo do drawer também (`h-8`) para casar com a nova padronização.
-
-### 3. Verificar todas as rotas
-Após o ajuste, conferir visualmente em `/`, `/linhas`, `/conjuntos`, `/guia-de-compra`, `/sobre`, `/contato`, `/produtos/:handle`, `/parceiro/login`, `/parceiro/cadastro` que:
-- Logo aparece no mesmo tamanho
-- Cor do logo combina com a cor do menu (ambos verdes ou ambos beges)
-- Não há sobreposição de itens
+Se mesmo assim ficar pequeno, o próximo passo seria revisar os PNGs (eles podem ter muito padding transparente em volta do desenho, o que faz o logo "real" parecer menor que a altura do `<img>`). Nesse caso eu te aviso e você reenvia os arquivos cropados.
