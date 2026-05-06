@@ -79,6 +79,7 @@ export default function FinishSelector({ values, selected, onSelect }: Props) {
         {values.map((val, idx) => {
           const meta = metaFor(val, idx);
           const isSelected = selected === val;
+          const isBestseller = /moledo/i.test(val);
           return (
             <button
               key={val}
@@ -95,6 +96,11 @@ export default function FinishSelector({ values, selected, onSelect }: Props) {
                 }
               `}
             >
+              {isBestseller && (
+                <span className="absolute -top-2 -right-2 px-1.5 py-0.5 bg-western-gold text-western-green-deep font-mono text-[8px] uppercase tracking-[0.18em] leading-none rounded-sm shadow-sm">
+                  + vendido
+                </span>
+              )}
               <span
                 key={isSelected ? `sel-${val}` : `idle-${val}`}
                 className={`
