@@ -96,6 +96,19 @@ export default {
           "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
           "50%": { transform: "translateY(-14px) rotate(-1.2deg)" },
         },
+        "swatch-fill": {
+          "0%": { clipPath: "circle(0% at 50% 50%)", opacity: "0" },
+          "100%": { clipPath: "circle(60% at 50% 50%)", opacity: "1" },
+        },
+        "swatch-breathe": {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.04)" },
+        },
+        "swatch-splash": {
+          "0%": { transform: "scale(1)" },
+          "45%": { transform: "scale(1.15)" },
+          "100%": { transform: "scale(1)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -105,7 +118,11 @@ export default {
         shimmer: "shimmer 2s linear infinite",
         "hero-shimmer": "hero-shimmer 9s ease-in-out infinite",
         "hero-drift": "hero-drift 12s ease-in-out infinite",
+        "swatch-fill": "swatch-fill 400ms ease-out both",
+        "swatch-breathe": "swatch-breathe 2.5s ease-in-out infinite",
+        "swatch-splash": "swatch-splash 350ms cubic-bezier(0.34, 1.56, 0.64, 1)",
       },
+
     },
   },
   plugins: [require("tailwindcss-animate")],
