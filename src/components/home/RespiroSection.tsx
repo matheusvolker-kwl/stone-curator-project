@@ -90,8 +90,11 @@ export default function RespiroSection() {
         <img
           ref={imgRef}
           src={respiroPedra}
+          srcSet={`${respiroPedraSm} 900w, ${respiroPedra} 1800w`}
+          sizes="100vw"
           alt="Corredor arquitetônico entre paredes de pedra escavada, teto de bambu, piso de madeira e brita."
           loading="lazy"
+          decoding="async"
           fetchPriority="low"
           className={`absolute inset-0 w-full h-full object-cover object-center will-change-transform ${
             reduced ? "" : "animate-breathe-zoom"
