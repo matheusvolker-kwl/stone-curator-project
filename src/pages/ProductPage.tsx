@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/accordion";
 import { ChevronLeft, Loader2, Info } from "lucide-react";
 import { toast } from "sonner";
+import FinishSelector from "@/components/product/FinishSelector";
 
 export default function ProductPage() {
   const { handle = "" } = useParams();
@@ -142,9 +143,10 @@ export default function ProductPage() {
             <div className="frame-product aspect-square overflow-hidden">
               {images[activeImage] && (
                 <img
+                  key={activeImage}
                   src={images[activeImage].url}
                   alt={images[activeImage].altText ?? product.title}
-                  className="w-full h-full object-contain p-4 md:p-8"
+                  className="w-full h-full object-contain p-4 md:p-8 animate-fade-in"
                 />
               )}
             </div>
