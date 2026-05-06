@@ -1,5 +1,4 @@
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import type { Projeto } from "@/data/projetos";
 
 interface Props {
@@ -13,10 +12,8 @@ export default function ProjetoModal({ projeto, onClose }: Props) {
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-western-green-deep border border-western-gold/20 text-western-cream p-0">
         {projeto && (
           <>
-            <VisuallyHidden>
-              <DialogTitle>{projeto.titulo}</DialogTitle>
-              <DialogDescription>{projeto.snippet}</DialogDescription>
-            </VisuallyHidden>
+            <DialogTitle className="sr-only">{projeto.titulo}</DialogTitle>
+            <DialogDescription className="sr-only">{projeto.snippet}</DialogDescription>
 
             <div className="aspect-video w-full bg-black">
               <video
