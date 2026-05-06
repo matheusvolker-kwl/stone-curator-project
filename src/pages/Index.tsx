@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/shopify/queries";
+import { cdnImg, cdnSrcSet } from "@/lib/shopify/client";
 // isSeasonal kept for filtering linhas only
 
 import ProductCard from "@/components/product/ProductCard";
