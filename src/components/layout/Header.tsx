@@ -146,6 +146,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 <NavLink
                   key={item.to}
                   to={item.to}
+                  end={item.end}
                   className={({ isActive }) =>
                     `font-display text-2xl py-3 transition-colors ${
                       isActive
