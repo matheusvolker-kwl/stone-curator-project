@@ -22,7 +22,7 @@ export default function ColecoesSazonais() {
           <p className="mt-8 text-western-stone-warm text-lg leading-relaxed">
             Cada coleção é um recorte sazonal — combinações de acabamento,
             tamanhos e composições escolhidas para um momento. Quando a edição
-            encerra, as peças voltam ao catálogo permanente das Linhas.
+            encerra, as peças voltam ao catálogo permanente.
           </p>
         </div>
 
