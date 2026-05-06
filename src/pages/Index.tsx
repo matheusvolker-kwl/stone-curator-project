@@ -9,12 +9,6 @@ import { ArrowRight } from "lucide-react";
 import brasao from "@/assets/brasao.png";
 import iconePedraVerde from "@/assets/icone-pedra-verde.png";
 
-const FAMILIES = [
-  { num: "01", name: "Quartzo", desc: "Tom claro, leitoso, com brilho cristalino. Para projetos que pedem luz e leveza.", swatch: "hsl(38, 35%, 86%)" },
-  { num: "02", name: "Arenito", desc: "Areia quente, camadas sedimentares visíveis. Calor e textura para ambientes orgânicos.", swatch: "hsl(32, 36%, 65%)" },
-  { num: "03", name: "Moledo", desc: "Marrom médio terroso, textura rústica nobre. A pedra brasileira por excelência.", swatch: "hsl(20, 30%, 45%)" },
-  { num: "04", name: "Granito", desc: "Escuro, denso, mineral. A profundidade que ancora qualquer composição.", swatch: "hsl(140, 8%, 22%)" },
-];
 
 export default function Index() {
   const { data: collections = [] } = useQuery({
