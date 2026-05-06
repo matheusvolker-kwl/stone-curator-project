@@ -142,21 +142,37 @@ export default function CartDrawer({
             </p>
 
             <Button
+              onClick={() => {
+                const lines = items
+                  .map(
+                    (i) =>
+                      `• ${i.quantity}× ${i.productTitle} (${i.selectedOptions.map((o) => o.value).join(" / ")})`
+                  )
+                  .join("%0A");
+                const msg = `Olá! Gostaria de solicitar orçamento:%0A%0A${lines}%0A%0ASubtotal: ${formatBRL(subtotal)}`;
+                window.open(`https://wa.me/5511993403485?text=${msg}`, "_blank");
+              }}
+              disabled={!meetsMinimum}
+              className="w-full h-12 bg-[#25D366] text-white hover:bg-[#1fb858] font-mono text-xs uppercase tracking-[0.25em] rounded-none"
+            >
+              <MessageCircle className="h-4 w-4 mr-2" /> Solicitar orçamento
+            </Button>
+
+            <button
               onClick={handleCheckout}
               disabled={isLoading || isSyncing || !meetsMinimum}
-              className="w-full h-12 bg-western-gold text-western-green-deep hover:bg-western-gold-soft font-mono text-xs uppercase tracking-[0.25em] rounded-none"
+              className="w-full h-10 border border-western-gold/40 text-western-cream hover:border-western-gold font-mono text-[11px] uppercase tracking-[0.22em] inline-flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isLoading || isSyncing ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <>
-                  Finalizar pedido <ExternalLink className="h-4 w-4 ml-2" />
-                </>
+                <>Pagar online <ExternalLink className="h-3.5 w-3.5" /></>
               )}
-            </Button>
+            </button>
+
             {!meetsMinimum && (
               <p className="text-spec text-western-cream-muted text-center">
-                Faltam {formatBRL(MIN_ORDER - subtotal)} para o pedido mínimo.
+                Faltam {formatBRL(MIN_ORDER - subtotal)} para fechar pedido.
               </p>
             )}
           </div>
