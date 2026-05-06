@@ -116,9 +116,6 @@ export default function ProductPage() {
     });
   };
 
-  const visibleOptions = product.options.filter(
-    (o) => o.values.length > 1 || o.name.toLowerCase() !== "title"
-  );
 
   // Ficha técnica: agrupa dimensões e separa acabamentos
   const dims = groupDimensions(parsed.ficha);
