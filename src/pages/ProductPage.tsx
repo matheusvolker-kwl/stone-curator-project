@@ -157,8 +157,11 @@ export default function ProductPage() {
               {images[activeImage] && (
                 <img
                   key={activeImage}
-                  src={images[activeImage].url}
+                  src={cdnImg(images[activeImage].url, 1200)}
+                  srcSet={cdnSrcSet(images[activeImage].url, [600, 1000, 1400])}
+                  sizes="(min-width: 768px) 50vw, 100vw"
                   alt={images[activeImage].altText ?? product.title}
+                  decoding="async"
                   className="w-full h-full object-contain p-4 md:p-8 animate-fade-in"
                 />
               )}
