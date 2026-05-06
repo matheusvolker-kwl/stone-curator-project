@@ -12,7 +12,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ChevronLeft, Loader2, Info } from "lucide-react";
+import { ChevronLeft, Loader2, Info, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import FinishSelector from "@/components/product/FinishSelector";
 
@@ -359,9 +359,24 @@ export default function ProductPage() {
                       </Button>
                     </div>
 
-                    <p className="text-spec text-western-stone-warm/80 leading-relaxed mt-5 text-xs">
-                      Produção em 15 dias úteis · pedido mínimo R$ 1.000
-                    </p>
+                    <button
+                      onClick={() => {
+                        const msg = `Olá! Gostaria de falar sobre ${product.title}${sku ? ` (SKU ${sku})` : ""}.`;
+                        window.open(
+                          `https://wa.me/5511993403485?text=${encodeURIComponent(msg)}`,
+                          "_blank"
+                        );
+                      }}
+                      className="mt-3 w-full h-11 inline-flex items-center justify-center gap-2 border border-western-green-deep/25 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+                    >
+                      <MessageCircle className="h-4 w-4" /> Falar com consultor
+                    </button>
+
+                    <ul className="text-spec text-western-stone-warm/80 leading-relaxed mt-5 text-xs space-y-1">
+                      <li>· Produção sob demanda · 15 dias úteis</li>
+                      <li>· Pedido mínimo R$ 2.000 · pagamento antecipado</li>
+                      <li>· Frete CIF sob orçamento para todo o Brasil</li>
+                    </ul>
                   </>
                 );
               })()}
