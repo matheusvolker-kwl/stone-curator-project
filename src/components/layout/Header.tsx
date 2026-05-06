@@ -56,12 +56,12 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
     <header
       className={`sticky top-0 z-40 transition-colors duration-500 ${bgColor}`}
     >
-      <div className="container-western flex items-center justify-between py-4 md:py-6">
-        {/* Hamburger — mobile only */}
+      <div className="container-western flex items-center justify-between py-4 lg:py-5">
+        {/* Hamburger — mobile/tablet */}
         <button
           onClick={() => setMenuOpen(true)}
           aria-label="Abrir menu"
-          className={`md:hidden -ml-2 p-2 ${textColor} ${hoverColor} transition-colors`}
+          className={`lg:hidden -ml-2 p-2 ${textColor} ${hoverColor} transition-colors`}
         >
           <Menu className="h-5 w-5" />
         </button>
@@ -69,22 +69,22 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         <Link
           to="/"
           aria-label="Western — Início"
-          className="flex items-center md:flex-none absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0"
+          className="flex items-center lg:flex-none absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0"
         >
           <img
             src={isCream ? logoVerde : logoBege}
             alt="Western"
-            className="h-10 md:h-12 w-auto"
+            className="h-9 lg:h-10 w-auto"
           />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-10">
+        <nav className="hidden lg:flex items-center gap-8 xl:gap-10">
           {nav.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `link-underline font-mono text-xs uppercase tracking-[0.22em] ${
+                `link-underline font-mono text-xs uppercase tracking-[0.22em] whitespace-nowrap ${
                   isActive ? activeColor : `${textColor} ${hoverColor}`
                 } transition-colors`
               }
@@ -94,10 +94,10 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           ))}
         </nav>
 
-        <div className="flex items-center gap-1 md:gap-5">
+        <div className="flex items-center gap-1 lg:gap-5">
           <Link
             to="/parceiro/login"
-            className={`hidden md:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] ${textColor} ${hoverColor} transition-colors`}
+            className={`hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] whitespace-nowrap ${textColor} ${hoverColor} transition-colors`}
           >
             <User className="h-4 w-4" />
             Parceiro
@@ -126,7 +126,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
           <div className="flex flex-col h-full">
             <div className="flex items-center justify-between px-6 py-5 border-b border-western-gold/15">
-              <img src={logoBege} alt="Western" className="h-7 w-auto" />
+              <img src={logoBege} alt="Western" className="h-8 w-auto" />
               <button
                 onClick={() => setMenuOpen(false)}
                 aria-label="Fechar menu"
