@@ -1,9 +1,11 @@
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowUpRight, MessageCircle, RotateCcw } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowRight, Check, Loader2, MessageCircle, RotateCcw, ShoppingBag } from "lucide-react";
+import { toast } from "sonner";
 import {
   formatPreco,
-  nivelLabels,
-  PRODUCT_BASE_URL,
+  nivelMeta,
   tamanhoLabels,
   tipoLabels,
   whatsappConjunto,
@@ -12,7 +14,10 @@ import {
   type Tipo,
 } from "@/data/guideMap";
 import { fetchProduct } from "@/lib/shopify/queries";
-import { cdnImg } from "@/lib/shopify/client";
+import { cdnImg, formatBRL } from "@/lib/shopify/client";
+import { parseDescription } from "@/lib/shopify/parseDescription";
+import { buildCartItem, useCartStore } from "@/stores/cartStore";
+import FinishSelector from "@/components/product/FinishSelector";
 import UpsellGrid from "./UpsellGrid";
 
 interface Props {
@@ -27,14 +32,11 @@ function buildIndicadoPara(answers: GuideAnswers): string[] {
   if (tipo && tamanho && tamanhoLabels[tamanho]) {
     out.push(`${tipoLabels[tipo].toLowerCase()} de ${tamanhoLabels[tamanho].toLowerCase()}`);
   }
-  if (nivel) out.push(`composição ${nivelLabels[nivel].toLowerCase()}`);
+  if (tipo && nivel) out.push(`presença ${nivelMeta[tipo][nivel].label.toLowerCase()}`);
   if (composicao === "comNaturais") out.push("projeto que combina Western com pedras naturais");
-  if (jardim === "comFonte") out.push("jardim com fonte integrada");
-
+  if (jardim === "comFonte") out.push("jardim com elemento de água integrado");
   if (nivel === "essencial") out.push("primeiro pedido ou projeto piloto");
-  if (nivel === "equilibrada") out.push("projeto com boa presença visual");
   if (nivel === "completa") out.push("projeto cenográfico de alto impacto");
-  out.push("parceiros que desejam oferecer uma solução pronta");
   return out;
 }
 
@@ -59,27 +61,91 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
     retry: false,
   });
 
-  const imageUrl = product?.images.edges[0]?.node?.url;
+  const addItem = useCartStore((s) => s.addItem);
+  const cartLoading = useCartStore((s) => s.isLoading);
+
+  // Acabamento: lê opções reais do produto, fallback para padrão
+  const finishOption = product?.options.find((o) => /acabamento/i.test(o.name));
+  const finishValues = finishOption?.values ?? ["Quartzo", "Arenito", "Moledo", "Granito"];
+  const [acabamento, setAcabamento] = useState<string>(finishValues[0]);
+
+  useEffect(() => {
+    if (finishOption && !finishOption.values.includes(acabamento)) {
+      setAcabamento(finishOption.values[0]);
+    }
+  }, [finishOption, acabamento]);
+
+  // Variante correspondente ao acabamento escolhido
+  const selectedVariant = useMemo(() => {
+    if (!product) return null;
+    return (
+      product.variants.edges.find((e) =>
+        e.node.selectedOptions.some(
+          (o) => /acabamento/i.test(o.name) && o.value.toLowerCase() === acabamento.toLowerCase()
+        )
+      )?.node ?? product.variants.edges[0]?.node ?? null
+    );
+  }, [product, acabamento]);
+
+  const parsed = useMemo(() => {
+    return product?.descriptionHtml ? parseDescription(product.descriptionHtml) : null;
+  }, [product]);
+
+  const galeriaImgs = product?.images.edges.slice(0, 4).map((e) => e.node.url) ?? [];
+  const heroImg = galeriaImgs[0];
+
   const tipo = answers.tipo as Tipo;
   const bullets = buildIndicadoPara(answers);
-  const pdpUrl = `${PRODUCT_BASE_URL}/${conjunto.handle}`;
+  const precoReal = selectedVariant ? parseFloat(selectedVariant.price.amount) : conjunto.preco;
+  const moeda = selectedVariant?.price.currencyCode ?? "BRL";
+
+  const handleAddBundle = async () => {
+    if (!product || !selectedVariant) {
+      toast.error("Conjunto indisponível no momento. Fale com um consultor.");
+      return;
+    }
+    const item = buildCartItem(product, selectedVariant.id, 1);
+    if (!item) return;
+    await addItem(item);
+    toast.success(`${conjunto.nome} adicionado ao orçamento`, {
+      description: `Acabamento ${acabamento}. Acesse o orçamento no topo da página.`,
+    });
+    // Dispara evento global para que o SiteLayout possa abrir o drawer
+    window.dispatchEvent(new CustomEvent("western:open-cart"));
+  };
 
   return (
     <div className="animate-in fade-in duration-300">
       <div className="grid grid-cols-1 lg:grid-cols-[5fr_6fr] gap-10 lg:gap-16 items-start">
-        {/* Imagem */}
-        <div className="aspect-square w-full bg-western-green-deep overflow-hidden">
-          {isLoading ? (
-            <div className="w-full h-full animate-pulse bg-western-green-mid" />
-          ) : imageUrl ? (
-            <img
-              src={cdnImg(imageUrl, 1000)}
-              alt={conjunto.nome}
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-          ) : (
-            <PlaceholderImg />
+        {/* Galeria */}
+        <div className="space-y-3">
+          <div className="aspect-square w-full bg-western-green-deep overflow-hidden">
+            {isLoading ? (
+              <div className="w-full h-full animate-pulse bg-western-green-mid" />
+            ) : heroImg ? (
+              <img
+                src={cdnImg(heroImg, 1000)}
+                alt={conjunto.nome}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <PlaceholderImg />
+            )}
+          </div>
+          {galeriaImgs.length > 1 && (
+            <div className="grid grid-cols-3 gap-3">
+              {galeriaImgs.slice(1).map((url, i) => (
+                <div key={i} className="aspect-square bg-western-green-deep overflow-hidden">
+                  <img
+                    src={cdnImg(url, 400)}
+                    alt={`${conjunto.nome} – vista ${i + 2}`}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
           )}
         </div>
 
@@ -90,65 +156,111 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
           <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05] mb-3">
             {conjunto.nome}
           </h2>
-          <p className="text-spec text-western-stone-warm mb-8">
-            {conjunto.subtitulo}
-          </p>
+          <p className="text-spec text-western-stone-warm mb-8">{conjunto.subtitulo}</p>
 
-          <div className="mb-2">
-            <p className="text-spec text-western-stone-warm mb-1">A partir de</p>
+          <div className="mb-2 flex items-baseline gap-3 flex-wrap">
+            <p className="text-spec text-western-stone-warm">A partir de</p>
             <p className="font-display text-4xl text-western-green-deep">
-              {formatPreco(conjunto.preco)}
+              {formatBRL(precoReal, moeda)}
             </p>
           </div>
-          <p className="text-xs text-western-stone-warm/80 mb-10">
-            Disponível nos acabamentos Quartzo, Arenito, Moledo e Granito
+          <p className="text-xs text-western-stone-warm/80 mb-8">
+            Preço do conjunto base no acabamento selecionado · ajuste quantidades no orçamento
           </p>
 
-          <div className="border-t border-western-stone-warm/20 pt-6 mb-10">
+          {/* Acabamento */}
+          <div className="mb-8 border-t border-western-stone-warm/15 pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <p className="font-mono uppercase tracking-[0.18em] text-xs text-western-green-deep">
+                Acabamento
+              </p>
+              <p className="text-xs text-western-stone-warm">{acabamento}</p>
+            </div>
+            <FinishSelector
+              values={finishValues}
+              selected={acabamento}
+              onSelect={setAcabamento}
+            />
+          </div>
+
+          {/* Indicado para */}
+          <div className="border-t border-western-stone-warm/15 pt-6 mb-8">
             <p className="font-mono uppercase tracking-[0.18em] text-xs text-western-green-deep mb-4">
               Indicado para
             </p>
             <ul className="space-y-2">
               {bullets.map((b, i) => (
-                <li key={i} className="flex gap-3 text-western-stone-warm">
-                  <span className="text-western-gold mt-2 h-1 w-1 rounded-full bg-western-gold shrink-0" />
+                <li key={i} className="flex gap-3 text-western-stone-warm text-sm">
+                  <Check className="h-4 w-4 text-western-gold mt-0.5 shrink-0" />
                   <span>{b}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="flex flex-wrap gap-4 items-center mb-10">
-            <a
-              href={pdpUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-gold"
+          {/* Peças incluídas (do description estruturado) */}
+          {parsed?.aplicacoes && parsed.aplicacoes.length > 0 && (
+            <div className="border-t border-western-stone-warm/15 pt-6 mb-8">
+              <p className="font-mono uppercase tracking-[0.18em] text-xs text-western-green-deep mb-4">
+                Peças incluídas
+              </p>
+              <ul className="space-y-1.5">
+                {parsed.aplicacoes.slice(0, 8).map((p, i) => (
+                  <li key={i} className="text-sm text-western-stone-warm flex gap-3">
+                    <span className="text-western-gold/60 font-mono text-xs mt-0.5">·</span>
+                    <span>{p}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* CTAs */}
+          <div className="flex flex-col gap-3 mb-6">
+            <button
+              type="button"
+              onClick={handleAddBundle}
+              disabled={cartLoading || !selectedVariant}
+              className="btn-gold w-full justify-center disabled:opacity-60"
             >
-              Ver conjunto completo <ArrowUpRight className="h-4 w-4" />
-            </a>
+              {cartLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  <ShoppingBag className="h-4 w-4" /> Adicionar conjunto ao orçamento
+                </>
+              )}
+            </button>
             <a
-              href={whatsappConjunto(conjunto.nome)}
+              href={whatsappConjunto(`${conjunto.nome} (acabamento ${acabamento})`)}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-outline-forest"
+              className="btn-outline-forest w-full justify-center"
             >
               <MessageCircle className="h-4 w-4" /> Falar com consultor
             </a>
-            <button
-              type="button"
-              onClick={onReset}
-              className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors"
-            >
-              <RotateCcw className="h-3.5 w-3.5" /> Refazer guia
-            </button>
+            <div className="flex justify-between items-center pt-2">
+              {product && (
+                <Link
+                  to={`/produto/${product.handle}`}
+                  className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors"
+                >
+                  Ver detalhes do conjunto <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              )}
+              <button
+                type="button"
+                onClick={onReset}
+                className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors ml-auto"
+              >
+                <RotateCcw className="h-3.5 w-3.5" /> Refazer guia
+              </button>
+            </div>
           </div>
 
           <p className="text-xs text-western-stone-warm/70 leading-relaxed border-t border-western-stone-warm/15 pt-5">
-            Pedido mínimo R$ 2.000. Prazo de produção de 15 dias úteis após
-            confirmação do pagamento. Pagamento 100% antecipado via PIX, TED ou
-            boleto. Frete por transportadora terceirizada ou retirada gratuita
-            na fábrica (SP).
+            Pedido mínimo R$ 2.000 · Produção 15 dias úteis após pagamento ·
+            PIX, TED ou boleto · Frete por transportadora ou retirada gratuita em São Paulo.
           </p>
         </div>
       </div>
