@@ -218,9 +218,32 @@ export default function ProductPage() {
               </div>
             )}
 
-            {/* Options (exceto Acabamento — vai abaixo da grid em bloco próprio) */}
+            {/* Acabamento — seletor com swatches (inline na coluna de compra) */}
+            {(() => {
+              const acabOption = visibleOptions.find((o) => /acabament/i.test(o.name));
+              if (!acabOption) return null;
+              return (
+                <div className="mt-12">
+                  <div className="flex items-baseline justify-between mb-4 gap-3">
+                    <p className="text-eyebrow">Acabamento</p>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/80">
+                      mesmo preço
+                    </span>
+                  </div>
+                  <FinishSelector
+                    values={acabOption.values}
+                    selected={activeOptions[acabOption.name] ?? null}
+                    onSelect={(val) =>
+                      setActiveOptions((prev) => ({ ...prev, [acabOption.name]: val }))
+                    }
+                  />
+                </div>
+              );
+            })()}
+
+            {/* Outras opções (tamanho etc.) */}
             {visibleOptions.filter((o) => !/acabament/i.test(o.name)).length > 0 && (
-              <div className="mt-12 space-y-8">
+              <div className="mt-10 space-y-8">
                 {visibleOptions
                   .filter((o) => !/acabament/i.test(o.name))
                   .map((option) => (
