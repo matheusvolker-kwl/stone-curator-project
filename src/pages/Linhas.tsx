@@ -15,16 +15,16 @@ export default function Linhas() {
     <div className="surface-ivory">
       <div className="container-western py-20 md:py-28">
         <div className="max-w-3xl mb-20">
-          <p className="text-eyebrow mb-5">Linhas de produto</p>
+          <p className="text-eyebrow mb-5">Linhas de produtos</p>
           <div className="w-12 h-px bg-western-gold mb-8" />
           <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05]">
-            O catálogo permanente,<br />organizado por linha.
+            Nosso catálogo completo,<br />organizado por linhas.
           </h1>
           <p className="mt-8 text-western-stone-warm text-lg leading-relaxed">
-            As linhas são as categorias permanentes do catálogo — cascatas,
+            As linhas são nossas categorias permanentes do catálogo — cascatas,
             pedras grandes, fósseis decorativos, pisadas, bordas, fontes.
-            Disponíveis em todos os acabamentos: Quartzo, Arenito, Moledo e
-            Granito.
+            Todos são complementares e estão disponíveis em 04 tipos de
+            acabamentos: Quartzo, Arenito, Moledo e Granito.
           </p>
         </div>
 

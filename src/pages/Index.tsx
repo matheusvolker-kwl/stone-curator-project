@@ -112,7 +112,7 @@ export default function Index() {
           <div className="container-western">
             <div className="flex items-end justify-between mb-12 md:mb-16 flex-wrap gap-4">
               <div>
-                <p className="text-eyebrow mb-4">Linhas de produto</p>
+                <p className="text-eyebrow mb-4">Linhas de produtos</p>
                 <div className="w-12 h-px bg-western-gold mb-6" />
                 <h2 className="font-display text-4xl md:text-5xl text-western-green-deep">
                   O catálogo, organizado.
