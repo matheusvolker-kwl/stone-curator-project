@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/shopify/queries";
+
 import ProductCard from "@/components/product/ProductCard";
 import { ArrowRight } from "lucide-react";
 import brasao from "@/assets/brasao.png";

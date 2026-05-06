@@ -8,14 +8,14 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 const nav = [
   { to: "/linhas", label: "Linhas" },
-  { to: "/colecoes", label: "Coleções" },
-  { to: "/guia-de-compra", label: "Guia" },
+  { to: "/conjuntos", label: "Conjuntos" },
+  { to: "/guia-de-compra", label: "Guia de Compra" },
   { to: "/sobre", label: "Sobre" },
   { to: "/contato", label: "B2B" },
 ];
 
 // Rotas onde o header se sobrepõe a uma seção clara (creme/ivory) no topo
-const CREAM_ROUTES = ["/linhas", "/colecoes", "/guia-de-compra", "/parceiro"];
+const CREAM_ROUTES = ["/linhas", "/conjuntos", "/guia-de-compra", "/parceiro"];
 
 export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   const items = useCartStore((s) => s.items);

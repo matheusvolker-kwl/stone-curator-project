@@ -6,8 +6,7 @@ import SiteLayout from "@/components/layout/SiteLayout";
 import Index from "./pages/Index.tsx";
 import Linhas from "./pages/Linhas.tsx";
 import LinhaPage from "./pages/LinhaPage.tsx";
-import ColecoesSazonais from "./pages/ColecoesSazonais.tsx";
-import ColecaoSazonalPage from "./pages/ColecaoSazonalPage.tsx";
+import Conjuntos from "./pages/Conjuntos.tsx";
 import ProductPage from "./pages/ProductPage.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
@@ -30,8 +29,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/linhas" element={<Linhas />} />
             <Route path="/linhas/:handle" element={<LinhaPage />} />
-            <Route path="/colecoes" element={<ColecoesSazonais />} />
-            <Route path="/colecoes/:handle" element={<ColecaoSazonalPage />} />
+            <Route path="/conjuntos" element={<Conjuntos />} />
             <Route path="/produtos/:handle" element={<ProductPage />} />
             <Route path="/guia-de-compra" element={<BuyingGuide />} />
             <Route path="/sobre" element={<About />} />

@@ -77,11 +77,8 @@ export default function ProductPage() {
   const images = product.images.edges.map((e) => e.node);
   const sku = variant?.sku ?? "";
   const collection = product.collections?.edges?.[0]?.node;
-  const parentSeasonal = collection ? isSeasonal(collection) : false;
   const parentRoute = collection
-    ? parentSeasonal
-      ? `/colecoes/${collection.handle}`
-      : `/linhas/${collection.handle}`
+    ? `/linhas/${collection.handle}`
     : "/linhas";
   const parentLabel = collection?.title ?? "Linhas";
 
