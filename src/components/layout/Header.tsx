@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 const nav = [
+  { to: "/", label: "Início", end: true },
   { to: "/linhas", label: "Linhas" },
   { to: "/conjuntos", label: "Conjuntos" },
   { to: "/guia-de-compra", label: "Guia de Compra" },
@@ -56,7 +57,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
     <header
       className={`sticky top-0 z-40 transition-colors duration-500 ${bgColor}`}
     >
-      <div className="container-western flex items-center justify-between py-3 lg:py-4">
+      <div className="container-western flex items-center justify-between py-2 lg:py-3">
         {/* Hamburger — mobile/tablet */}
         <button
           onClick={() => setMenuOpen(true)}
@@ -74,15 +75,16 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           <img
             src={isCream ? logoVerde : logoBege}
             alt="Western"
-            className="h-12 lg:h-14 w-auto"
+            className="h-16 lg:h-20 w-auto"
           />
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-8 xl:gap-10">
+        <nav className="hidden lg:flex items-center gap-6 xl:gap-9">
           {nav.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
+              end={item.end}
               className={({ isActive }) =>
                 `link-underline font-mono text-xs uppercase tracking-[0.22em] whitespace-nowrap ${
                   isActive ? activeColor : `${textColor} ${hoverColor}`
@@ -126,7 +128,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
           <div className="flex flex-col h-full">
             <div className="flex items-center justify-between px-6 py-5 border-b border-western-gold/15">
-              <img src={logoBege} alt="Western" className="h-10 w-auto" />
+              <img src={logoBege} alt="Western" className="h-14 w-auto" />
               <button
                 onClick={() => setMenuOpen(false)}
                 aria-label="Fechar menu"
@@ -144,6 +146,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 <NavLink
                   key={item.to}
                   to={item.to}
+                  end={item.end}
                   className={({ isActive }) =>
                     `font-display text-2xl py-3 transition-colors ${
                       isActive

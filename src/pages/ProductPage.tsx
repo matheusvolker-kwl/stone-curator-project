@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProduct } from "@/lib/shopify/queries";
 import { parseProductDescription, groupDimensions } from "@/lib/shopify/parseDescription";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ChevronLeft, Loader2 } from "lucide-react";
+import { ChevronLeft, Loader2, Info } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ProductPage() {
@@ -29,16 +29,39 @@ export default function ProductPage() {
   const addItem = useCartStore((s) => s.addItem);
   const isLoadingCart = useCartStore((s) => s.isLoading);
 
+  const visibleOptions = useMemo(
+    () =>
+      product?.options.filter(
+        (o) => o.values.length > 1 || o.name.toLowerCase() !== "title"
+      ) ?? [],
+    [product]
+  );
+
+  const allOptionsSelected = useMemo(
+    () => visibleOptions.every((o) => !!activeOptions[o.name]),
+    [visibleOptions, activeOptions]
+  );
+
   const variant = useMemo(() => {
     if (!product) return null;
     const variants = product.variants.edges.map((e) => e.node);
-    if (Object.keys(activeOptions).length === 0) return variants[0];
+    if (visibleOptions.length === 0) return variants[0];
+    if (!allOptionsSelected) return null;
     return (
       variants.find((v) =>
         v.selectedOptions.every((o) => activeOptions[o.name] === o.value)
-      ) ?? variants[0]
+      ) ?? null
     );
-  }, [product, activeOptions]);
+  }, [product, activeOptions, visibleOptions, allOptionsSelected]);
+
+  // Sincroniza imagem com a variante selecionada (Shopify variant.image)
+  useEffect(() => {
+    if (!product || !variant?.image?.url) return;
+    const idx = product.images.edges.findIndex(
+      (e) => e.node.url === variant.image!.url
+    );
+    if (idx >= 0) setActiveImage(idx);
+  }, [variant?.image?.url, product]);
 
   const parsed = useMemo(
     () => parseProductDescription(product?.descriptionHtml),
@@ -93,9 +116,6 @@ export default function ProductPage() {
     });
   };
 
-  const visibleOptions = product.options.filter(
-    (o) => o.values.length > 1 || o.name.toLowerCase() !== "title"
-  );
 
   // Ficha técnica: agrupa dimensões e separa acabamentos
   const dims = groupDimensions(parsed.ficha);
@@ -204,10 +224,7 @@ export default function ProductPage() {
                     <p className="text-eyebrow mb-4">{option.name}</p>
                     <div className="flex flex-wrap gap-2.5">
                       {option.values.map((val) => {
-                        const selected =
-                          (activeOptions[option.name] ??
-                            variant?.selectedOptions.find((o) => o.name === option.name)?.value) ===
-                          val;
+                        const selected = activeOptions[option.name] === val;
                         return (
                           <button
                             key={val}
@@ -232,49 +249,79 @@ export default function ProductPage() {
 
             {/* Price + Add */}
             <div className="mt-12 pt-8 border-t border-western-stone-warm/20">
-              <div className="flex items-baseline justify-between mb-7">
-                <span className="text-eyebrow">Condição parceiro</span>
-                <span className="font-display text-3xl text-western-green-deep">
-                  {variant && formatBRL(variant.price.amount, variant.price.currencyCode)}
-                </span>
-              </div>
+              {(() => {
+                const pendingOption = visibleOptions.find(
+                  (o) => !activeOptions[o.name]
+                );
+                const priceDisplay = variant
+                  ? formatBRL(variant.price.amount, variant.price.currencyCode)
+                  : `a partir de ${formatBRL(
+                      product.priceRange.minVariantPrice.amount,
+                      product.priceRange.minVariantPrice.currencyCode
+                    )}`;
+                return (
+                  <>
+                    <div className="flex items-baseline justify-between mb-7 gap-4 flex-wrap">
+                      <span className="text-eyebrow">Condição parceiro</span>
+                      <span
+                        className={`font-display text-western-green-deep ${
+                          variant ? "text-3xl" : "text-xl text-western-stone-warm"
+                        }`}
+                      >
+                        {priceDisplay}
+                      </span>
+                    </div>
 
-              <div className="flex flex-col sm:flex-row items-stretch gap-3">
-                <div className="flex items-center justify-between sm:justify-start border border-western-stone-warm/30 h-12">
-                  <button
-                    onClick={() => setQty(Math.max(1, qty - 1))}
-                    className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
-                    aria-label="Diminuir"
-                  >
-                    −
-                  </button>
-                  <span className="px-4 text-spec min-w-[2ch] text-center">{qty}</span>
-                  <button
-                    onClick={() => setQty(qty + 1)}
-                    className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
-                    aria-label="Aumentar"
-                  >
-                    +
-                  </button>
-                </div>
-                <Button
-                  onClick={handleAdd}
-                  disabled={!variant?.availableForSale || isLoadingCart}
-                  className="flex-1 h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none"
-                >
-                  {isLoadingCart ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : variant?.availableForSale ? (
-                    "Adicionar ao pedido"
-                  ) : (
-                    "Indisponível"
-                  )}
-                </Button>
-              </div>
+                    {pendingOption && (
+                      <div className="mb-5 flex items-start gap-2.5 px-4 py-3 border border-western-gold/40 bg-western-gold/5">
+                        <Info className="h-4 w-4 text-western-gold mt-0.5 flex-shrink-0" />
+                        <p className="text-spec text-western-green-deep leading-relaxed">
+                          Escolha {pendingOption.name.toLowerCase() === "acabamento" ? "o acabamento" : `a opção de ${pendingOption.name.toLowerCase()}`} para ver o preço final e adicionar ao pedido.
+                        </p>
+                      </div>
+                    )}
 
-              <p className="text-spec text-western-stone-warm/80 leading-relaxed mt-5 text-xs">
-                Produção em 15 dias úteis · pedido mínimo R$ 1.000
-              </p>
+                    <div className="flex flex-col sm:flex-row items-stretch gap-3">
+                      <div className="flex items-center justify-between sm:justify-start border border-western-stone-warm/30 h-12">
+                        <button
+                          onClick={() => setQty(Math.max(1, qty - 1))}
+                          className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
+                          aria-label="Diminuir"
+                        >
+                          −
+                        </button>
+                        <span className="px-4 text-spec min-w-[2ch] text-center">{qty}</span>
+                        <button
+                          onClick={() => setQty(qty + 1)}
+                          className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
+                          aria-label="Aumentar"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <Button
+                        onClick={handleAdd}
+                        disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
+                        className="flex-1 h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
+                      >
+                        {isLoadingCart ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : pendingOption ? (
+                          `Selecione ${pendingOption.name.toLowerCase()}`
+                        ) : variant?.availableForSale ? (
+                          "Adicionar ao pedido"
+                        ) : (
+                          "Indisponível"
+                        )}
+                      </Button>
+                    </div>
+
+                    <p className="text-spec text-western-stone-warm/80 leading-relaxed mt-5 text-xs">
+                      Produção em 15 dias úteis · pedido mínimo R$ 1.000
+                    </p>
+                  </>
+                );
+              })()}
             </div>
 
             {/* Accordions */}
