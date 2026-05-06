@@ -110,42 +110,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* FAMÍLIAS DE ACABAMENTO — verde */}
-      <section className="surface-forest pt-20 pb-16 md:pt-32 md:pb-24 border-t border-western-gold/15">
-        <div className="container-western">
-          <p className="text-eyebrow mb-5">A curadoria · 04 acabamentos</p>
-          <div className="w-12 h-px bg-western-gold mb-8" />
-          <h2 className="font-display text-4xl md:text-6xl text-western-cream leading-[1.05] mb-12 md:mb-20 max-w-3xl">
-            Quatro famílias de pedra, uma única exigência.
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
-            {FAMILIES.map((f) => (
-              <article
-                key={f.name}
-                className="border border-western-gold/15 bg-western-green-mid/40 p-6 md:p-8 flex flex-col h-full hover:border-western-gold/40 transition-colors group"
-              >
-                <div className="flex items-start justify-between mb-8 md:mb-12">
-                  <span className="text-spec text-western-cream-muted">{f.num}</span>
-                  <span
-                    className="block w-10 h-10 rounded-full"
-                    style={{ background: f.swatch }}
-                  />
-                </div>
-                <h3 className="font-display text-3xl text-western-cream mb-4">{f.name}</h3>
-                <p className="text-western-cream-muted leading-relaxed text-sm flex-1">
-                  {f.desc}
-                </p>
-                <Link
-                  to={`/linhas`}
-                  className="text-eyebrow mt-8 inline-flex items-center gap-2 group-hover:text-western-gold transition-colors"
-                >
-                  Explorar acabamento →
-                </Link>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* LINHAS — superfície creme */}
       {linhas.length > 0 && (
