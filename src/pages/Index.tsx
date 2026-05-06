@@ -6,6 +6,7 @@ import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/shopify/queri
 import ProductCard from "@/components/product/ProductCard";
 import ProjetosSection from "@/components/home/ProjetosSection";
 import ArtistaSection from "@/components/home/ArtistaSection";
+import RespiroSection from "@/components/home/RespiroSection";
 import { ArrowRight } from "lucide-react";
 import brasao from "@/assets/brasao.png";
 import iconePedraVerde from "@/assets/icone-pedra-verde.png";
@@ -204,6 +205,9 @@ export default function Index() {
 
       {/* ARTISTA — creme */}
       <ArtistaSection />
+
+      {/* RESPIRO — full-bleed cinematográfico */}
+      <RespiroSection />
 
       {/* PROJETOS — verde */}
       <ProjetosSection />
