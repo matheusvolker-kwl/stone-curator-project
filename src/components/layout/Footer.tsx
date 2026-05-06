@@ -18,7 +18,7 @@ export default function Footer() {
           <div>
             <h4 className="text-eyebrow mb-5">Catálogo</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/linhas" className="link-underline text-western-cream">Guia de compra</Link></li>
+              <li><Link to="/linhas" className="link-underline text-western-cream">Linhas</Link></li>
               <li><Link to="/colecoes" className="link-underline text-western-cream">Coleções</Link></li>
               <li><Link to="/guia-de-compra" className="link-underline text-western-cream">Guia de compra</Link></li>
               <li><Link to="/sobre" className="link-underline text-western-cream">Sobre</Link></li>

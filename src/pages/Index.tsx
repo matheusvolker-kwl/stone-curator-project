@@ -54,7 +54,7 @@ export default function Index() {
             </p>
             <div className="mt-10 md:mt-14 flex flex-col items-start gap-5 md:flex-row md:items-center md:gap-8">
               <Link to="/linhas" className="btn-gold">
-                Guia de compra <ArrowRight className="h-4 w-4" />
+                Explorar linhas <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 to="/sobre"
@@ -113,13 +113,13 @@ export default function Index() {
         </div>
       </section>
 
-      {/* GUIA DE COMPRA — superfície creme */}
+      {/* LINHAS — superfície creme */}
       {linhas.length > 0 && (
         <section className="surface-ivory py-20 md:py-32">
           <div className="container-western">
             <div className="flex items-end justify-between mb-12 md:mb-16 flex-wrap gap-4">
               <div>
-                <p className="text-eyebrow mb-4">Guia de compra</p>
+                <p className="text-eyebrow mb-4">Linhas de produto</p>
                 <div className="w-12 h-px bg-western-gold mb-6" />
                 <h2 className="font-display text-4xl md:text-5xl text-western-green-deep">
                   O catálogo, organizado.

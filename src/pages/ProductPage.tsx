@@ -67,7 +67,7 @@ export default function ProductPage() {
         <div className="container-western py-32 text-center">
           <h1 className="font-display text-4xl text-western-green-deep">Peça não encontrada</h1>
           <Link to="/linhas" className="link-underline mt-6 inline-block text-western-gold">
-            Voltar para o guia
+            Voltar para linhas
           </Link>
         </div>
       </div>
@@ -83,7 +83,7 @@ export default function ProductPage() {
       ? `/colecoes/${collection.handle}`
       : `/linhas/${collection.handle}`
     : "/linhas";
-  const parentLabel = collection?.title ?? "Guia de compra";
+  const parentLabel = collection?.title ?? "Linhas";
 
   const handleAdd = async () => {
     if (!variant) return;
