@@ -25,6 +25,19 @@ export default function ProductPage() {
   });
 
   const [activeOptions, setActiveOptions] = useState<Record<string, string>>({});
+
+  // Pré-seleciona Moledo (acabamento mais vendido) quando o produto carrega
+  useEffect(() => {
+    if (!product) return;
+    const acab = product.options.find((o) => /acabament/i.test(o.name));
+    if (!acab) return;
+    const moledo = acab.values.find((v) => /moledo/i.test(v));
+    if (moledo) {
+      setActiveOptions((prev) =>
+        prev[acab.name] ? prev : { ...prev, [acab.name]: moledo }
+      );
+    }
+  }, [product]);
   const [activeImage, setActiveImage] = useState(0);
   const [qty, setQty] = useState(1);
   const addItem = useCartStore((s) => s.addItem);
