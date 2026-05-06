@@ -32,9 +32,12 @@ export default function Index() {
         {/* Foto LCP */}
         <img
           src={heroCascata}
+          srcSet={`${heroCascataSm} 900w, ${heroCascata} 1800w`}
+          sizes="100vw"
           alt="Cascata escultural Western em borda de piscina natural com paisagismo tropical."
           loading="eager"
           fetchPriority="high"
+          decoding="async"
           width={1820}
           height={1213}
           className="absolute inset-0 w-full h-full object-cover object-center animate-hero-drift will-change-transform"
