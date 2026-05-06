@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Play, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { PROJETOS, type Projeto } from "@/data/projetos";
 import ProjetoModal from "./ProjetoModal";
 
@@ -7,54 +7,58 @@ export default function ProjetosSection() {
   const [active, setActive] = useState<Projeto | null>(null);
 
   return (
-    <section className="surface-forest py-20 md:py-32 border-t border-western-gold/15">
+    <section className="surface-forest py-16 md:py-24 border-t border-western-gold/15">
       <div className="container-western">
-        <p className="text-eyebrow mb-5">Arquivo · Projetos</p>
-        <div className="w-12 h-px bg-western-gold mb-8" />
-        <h2 className="font-display text-4xl md:text-6xl text-western-cream leading-[1.05] mb-6 md:mb-8 max-w-3xl">
-          Onde a pedra encontra <span className="text-western-gold-soft italic font-light">o projeto.</span>
-        </h2>
-        <p className="max-w-xl text-western-cream-muted leading-relaxed mb-12 md:mb-16">
-          Curadoria de obras assinadas em que a Western foi a resposta técnica e estética.
-        </p>
+        <div className="flex items-end justify-between flex-wrap gap-4 mb-10 md:mb-14">
+          <div>
+            <p className="text-eyebrow mb-3">Projetos especificados</p>
+            <h2 className="font-display text-3xl md:text-5xl text-western-cream leading-[1.05] max-w-2xl">
+              Obras assinadas com{" "}
+              <span className="text-western-gold-soft italic font-light">Western.</span>
+            </h2>
+          </div>
+          <p className="text-western-cream-muted text-sm max-w-xs">
+            Prova social — projetos de arquitetos e paisagistas que escolheram a Western como resposta técnica e estética.
+          </p>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
           {PROJETOS.map((p) => (
             <button
               key={p.slug}
               onClick={() => setActive(p)}
-              className="group text-left border border-western-gold/15 bg-western-green-mid/30 hover:border-western-gold/40 transition-colors flex flex-col"
+              className="group text-left bg-western-green-mid/30 border border-western-gold/15 hover:border-western-gold/50 transition-colors flex flex-col"
             >
-              <div className="relative aspect-[4/3] overflow-hidden">
+              <div className="relative aspect-[4/5] overflow-hidden">
                 <img
                   src={p.cover}
                   alt={p.titulo}
                   loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                 />
                 <div
                   className="absolute inset-0 pointer-events-none"
                   style={{
                     background:
-                      "linear-gradient(to top, hsl(var(--western-green-deep) / 0.55) 0%, transparent 45%)",
+                      "linear-gradient(to top, hsl(var(--western-green-deep) / 0.85) 0%, transparent 55%)",
                   }}
                   aria-hidden
                 />
-                <span className="absolute bottom-4 right-4 h-11 w-11 rounded-full bg-western-gold/90 text-western-green-deep flex items-center justify-center shadow-lg backdrop-blur-sm transition-transform group-hover:scale-110">
-                  <Play className="h-4 w-4 fill-current" />
-                </span>
+                <div className="absolute bottom-3 left-3 right-3">
+                  <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-gold-soft mb-1">
+                    {p.eyebrow}
+                  </p>
+                  <h3 className="font-display text-base md:text-lg text-western-cream leading-tight line-clamp-2">
+                    {p.titulo}
+                  </h3>
+                </div>
               </div>
-              <div className="p-6 md:p-8 flex flex-col flex-1">
-                <p className="text-eyebrow mb-3">{p.eyebrow}</p>
-                <h3 className="font-display text-2xl md:text-3xl text-western-cream mb-3 group-hover:text-western-gold-soft transition-colors">
-                  {p.titulo}
-                </h3>
-                <p className="text-western-cream-muted leading-relaxed text-sm flex-1 mb-6">
-                  {p.snippet}
-                </p>
-                <span className="text-eyebrow inline-flex items-center gap-2 text-western-gold-soft group-hover:text-western-gold transition-colors">
-                  Ver projeto <ArrowRight className="h-3 w-3" />
+              <div className="px-3 py-2.5 border-t border-western-gold/10 flex items-center justify-between">
+                <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-cream-muted">
+                  Ver projeto
                 </span>
+                <ArrowRight className="h-3 w-3 text-western-gold-soft group-hover:translate-x-0.5 transition-transform" />
               </div>
             </button>
           ))}
