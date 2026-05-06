@@ -29,16 +29,39 @@ export default function ProductPage() {
   const addItem = useCartStore((s) => s.addItem);
   const isLoadingCart = useCartStore((s) => s.isLoading);
 
+  const visibleOptions = useMemo(
+    () =>
+      product?.options.filter(
+        (o) => o.values.length > 1 || o.name.toLowerCase() !== "title"
+      ) ?? [],
+    [product]
+  );
+
+  const allOptionsSelected = useMemo(
+    () => visibleOptions.every((o) => !!activeOptions[o.name]),
+    [visibleOptions, activeOptions]
+  );
+
   const variant = useMemo(() => {
     if (!product) return null;
     const variants = product.variants.edges.map((e) => e.node);
-    if (Object.keys(activeOptions).length === 0) return variants[0];
+    if (visibleOptions.length === 0) return variants[0];
+    if (!allOptionsSelected) return null;
     return (
       variants.find((v) =>
         v.selectedOptions.every((o) => activeOptions[o.name] === o.value)
-      ) ?? variants[0]
+      ) ?? null
     );
-  }, [product, activeOptions]);
+  }, [product, activeOptions, visibleOptions, allOptionsSelected]);
+
+  // Sincroniza imagem com a variante selecionada (Shopify variant.image)
+  useEffect(() => {
+    if (!product || !variant?.image?.url) return;
+    const idx = product.images.edges.findIndex(
+      (e) => e.node.url === variant.image!.url
+    );
+    if (idx >= 0) setActiveImage(idx);
+  }, [variant?.image?.url, product]);
 
   const parsed = useMemo(
     () => parseProductDescription(product?.descriptionHtml),
