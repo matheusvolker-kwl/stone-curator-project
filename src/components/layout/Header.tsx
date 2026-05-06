@@ -128,7 +128,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
           <div className="flex flex-col h-full">
             <div className="flex items-center justify-between px-6 py-5 border-b border-western-gold/15">
-              <img src={logoBege} alt="Western" className="h-10 w-auto" />
+              <img src={logoBege} alt="Western" className="h-14 w-auto" />
               <button
                 onClick={() => setMenuOpen(false)}
                 aria-label="Fechar menu"
