@@ -153,6 +153,87 @@ export const nivelLabels: Record<Nivel, string> = {
   completa: "Completa",
 };
 
+// Rótulos voltados ao usuário B2B — substitui o jargão "nível"
+export interface NivelMeta {
+  label: string;
+  tagline: string;
+  detalhe: string;
+  faixaPreco: string;
+  pecas: string;
+}
+
+export const nivelMeta: Record<Tipo, Record<Nivel, NivelMeta>> = {
+  lago: {
+    essencial: {
+      label: "Discreto",
+      tagline: "Composição enxuta, leitura clean",
+      detalhe: "Poucas peças, foco no destaque. Ideal para projetos com paisagismo abundante.",
+      faixaPreco: "R$ 2 mil – R$ 11 mil",
+      pecas: "4–6 peças",
+    },
+    equilibrada: {
+      label: "Marcante",
+      tagline: "Equilíbrio entre presença e investimento",
+      detalhe: "A escolha mais pedida — composição com volume e acabamento de destaque.",
+      faixaPreco: "R$ 4 mil – R$ 19 mil",
+      pecas: "7–11 peças",
+    },
+    completa: {
+      label: "Cenográfico",
+      tagline: "Alto impacto, leitura imersiva",
+      detalhe: "Composição mais robusta, pensada para projetos cenográficos e áreas amplas.",
+      faixaPreco: "R$ 7 mil – R$ 27 mil",
+      pecas: "12+ peças",
+    },
+  },
+  piscina: {
+    essencial: {
+      label: "Discreto",
+      tagline: "Detalhe pontual de pedras decorativas",
+      detalhe: "Conjunto enxuto para complementar a borda ou um canto da piscina.",
+      faixaPreco: "R$ 2,8 mil – R$ 12,5 mil",
+      pecas: "4–6 peças",
+    },
+    equilibrada: {
+      label: "Marcante",
+      tagline: "Cascata e presença visual definida",
+      detalhe: "Combinação balanceada com cascata e composição lateral.",
+      faixaPreco: "R$ 5 mil – R$ 20 mil",
+      pecas: "7–11 peças",
+    },
+    completa: {
+      label: "Cenográfico",
+      tagline: "Borda imersiva, leitura espetacular",
+      detalhe: "Para piscinas que viram peça-chave do paisagismo.",
+      faixaPreco: "R$ 8,5 mil – R$ 28,5 mil",
+      pecas: "12+ peças",
+    },
+  },
+  jardim: {
+    essencial: {
+      label: "Discreto",
+      tagline: "Pontuação leve e elegante",
+      detalhe: "Composição reduzida, ideal para canteiros e jardins compactos.",
+      faixaPreco: "R$ 2 mil – R$ 11,5 mil",
+      pecas: "3–5 peças",
+    },
+    equilibrada: {
+      label: "Marcante",
+      tagline: "Equilíbrio estético e volume",
+      detalhe: "Composição com presença visual definida e bom aproveitamento de área.",
+      faixaPreco: "R$ 3,5 mil – R$ 17,3 mil",
+      pecas: "6–9 peças",
+    },
+    completa: {
+      label: "Cenográfico",
+      tagline: "Acabamento premium, alto impacto",
+      detalhe: "Composição mais marcante, pensada para áreas nobres do paisagismo.",
+      faixaPreco: "R$ 5,5 mil – R$ 24,3 mil",
+      pecas: "10+ peças",
+    },
+  },
+};
+
 export const nivelDescricoes: Record<Tipo, Record<Nivel, string>> = {
   lago: {
     essencial: "Composição mais objetiva, indicada para projetos com menor volume de pedras ou primeiro pedido.",
