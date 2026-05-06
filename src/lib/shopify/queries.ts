@@ -11,7 +11,7 @@ const PRODUCT_FIELDS = `
   productType
   tags
   priceRange { minVariantPrice { amount currencyCode } }
-  images(first: 8) { edges { node { url altText width height } } }
+  images(first: 50) { edges { node { url altText width height } } }
   variants(first: 20) {
     edges {
       node {
