@@ -15,7 +15,7 @@ import {
 } from "@/data/guideMap";
 import { fetchProduct } from "@/lib/shopify/queries";
 import { cdnImg, formatBRL } from "@/lib/shopify/client";
-import { parseDescription } from "@/lib/shopify/parseDescription";
+import { parseProductDescription } from "@/lib/shopify/parseDescription";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import FinishSelector from "@/components/product/FinishSelector";
 import UpsellGrid from "./UpsellGrid";
