@@ -73,7 +73,7 @@ export default function UpsellGrid({ tipo }: { tipo: Tipo }) {
                 className="group flex flex-col bg-white border border-western-stone-warm/20 hover:border-western-gold/60 transition-colors overflow-hidden"
               >
                 <Link
-                  to={`/produto/${p.handle}`}
+                  to={`/produtos/${p.handle}`}
                   className="aspect-square bg-western-cream/40 overflow-hidden"
                 >
                   {img && (
@@ -86,7 +86,7 @@ export default function UpsellGrid({ tipo }: { tipo: Tipo }) {
                   )}
                 </Link>
                 <div className="flex-1 p-5 flex flex-col gap-3">
-                  <Link to={`/produto/${p.handle}`} className="block">
+                  <Link to={`/produtos/${p.handle}`} className="block">
                     <h3 className="font-display text-lg text-western-green-deep leading-tight">
                       {p.title}
                     </h3>

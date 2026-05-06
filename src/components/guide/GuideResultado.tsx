@@ -242,7 +242,7 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
             <div className="flex justify-between items-center pt-2">
               {product && (
                 <Link
-                  to={`/produto/${product.handle}`}
+                  to={`/produtos/${product.handle}`}
                   className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors"
                 >
                   Ver detalhes do conjunto <ArrowRight className="h-3.5 w-3.5" />
