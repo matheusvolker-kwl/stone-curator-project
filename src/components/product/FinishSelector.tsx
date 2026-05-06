@@ -68,29 +68,14 @@ export default function FinishSelector({ values, selected, onSelect }: Props) {
     return () => obs.disconnect();
   }, []);
 
+  const selectedMeta =
+    selected != null
+      ? metaFor(selected, values.findIndex((v) => v === selected))
+      : null;
+
   return (
     <div ref={sectionRef}>
-      {/* Mobile progress indicator */}
-      <div className="md:hidden flex gap-2 mb-5">
-        {values.map((v) => (
-          <span
-            key={v}
-            className={`h-px flex-1 transition-colors ${
-              selected === v ? "bg-western-gold" : "bg-western-stone-warm/25"
-            }`}
-          />
-        ))}
-      </div>
-
-      <div
-        className="
-          flex md:grid md:grid-cols-4 gap-4 md:gap-5
-          overflow-x-auto md:overflow-visible
-          snap-x snap-mandatory md:snap-none
-          -mx-4 md:mx-0 px-4 md:px-0
-          scrollbar-hide
-        "
-      >
+      <div className="grid grid-cols-2 gap-2.5">
         {values.map((val, idx) => {
           const meta = metaFor(val, idx);
           const isSelected = selected === val;
@@ -99,58 +84,60 @@ export default function FinishSelector({ values, selected, onSelect }: Props) {
               key={val}
               onClick={() => onSelect(val)}
               className={`
-                group relative text-left flex flex-col
-                min-w-[78%] md:min-w-0 snap-start
-                p-6 md:p-7
-                border bg-western-cream/60
+                group relative text-left flex items-center gap-3
+                px-3.5 py-3
+                border bg-western-cream/40
                 transition-all duration-300
-                hover:scale-[1.02] hover:shadow-sm
                 ${
                   isSelected
-                    ? "border-western-gold bg-western-gold/5 shadow-sm"
-                    : "border-western-stone-warm/20 hover:border-western-gold/50"
+                    ? "border-western-gold bg-western-gold/5"
+                    : "border-western-stone-warm/25 hover:border-western-gold/60"
                 }
               `}
             >
-              <div className="flex items-start justify-between mb-10 md:mb-14">
+              <span
+                key={isSelected ? `sel-${val}` : `idle-${val}`}
+                className={`
+                  flex-shrink-0 block w-7 h-7 rounded-full
+                  ${visible ? "animate-swatch-fill" : "opacity-0"}
+                  ${isSelected ? "animate-swatch-splash ring-2 ring-western-gold/50 ring-offset-2 ring-offset-western-cream" : "group-hover:animate-swatch-breathe"}
+                `}
+                style={{
+                  backgroundColor: `hsl(${meta.swatch})`,
+                  animationDelay: visible && !isSelected ? `${idx * 80}ms` : undefined,
+                  boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.08)",
+                }}
+                aria-hidden
+              />
+              <div className="flex flex-col min-w-0">
                 <span
-                  className={`font-mono text-xs tracking-[0.25em] transition-opacity ${
+                  className={`font-mono text-[9px] tracking-[0.22em] transition-opacity ${
                     isSelected ? "opacity-100 text-western-gold" : "opacity-50 group-hover:opacity-100 text-western-stone-warm"
                   }`}
                 >
                   {meta.num}
                 </span>
                 <span
-                  key={isSelected ? `sel-${val}` : `idle-${val}`}
-                  className={`
-                    block w-10 h-10 rounded-full
-                    ${visible ? "animate-swatch-fill" : "opacity-0"}
-                    ${isSelected ? "animate-swatch-splash ring-2 ring-western-gold/40 ring-offset-2 ring-offset-western-cream" : "group-hover:animate-swatch-breathe"}
-                  `}
-                  style={{
-                    backgroundColor: `hsl(${meta.swatch})`,
-                    animationDelay: visible && !isSelected ? `${idx * 80}ms` : undefined,
-                    boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.06)",
-                  }}
-                  aria-hidden
-                />
+                  className={`font-display text-base leading-tight transition-colors ${
+                    isSelected ? "text-western-gold" : "text-western-green-deep"
+                  }`}
+                >
+                  {val}
+                </span>
               </div>
-              <h4
-                className={`font-display text-2xl md:text-3xl mb-3 transition-colors ${
-                  isSelected ? "text-western-gold" : "text-western-green-deep"
-                }`}
-              >
-                {val}
-              </h4>
-              {meta.hint && (
-                <p className="text-sm leading-relaxed text-western-stone-warm">
-                  {meta.hint}
-                </p>
-              )}
             </button>
           );
         })}
       </div>
+
+      {selectedMeta?.hint && (
+        <p
+          key={selected}
+          className="mt-3 text-xs leading-relaxed text-western-stone-warm animate-fade-in"
+        >
+          {selectedMeta.hint}
+        </p>
+      )}
     </div>
   );
 }
