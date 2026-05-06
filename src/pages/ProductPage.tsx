@@ -249,49 +249,79 @@ export default function ProductPage() {
 
             {/* Price + Add */}
             <div className="mt-12 pt-8 border-t border-western-stone-warm/20">
-              <div className="flex items-baseline justify-between mb-7">
-                <span className="text-eyebrow">Condição parceiro</span>
-                <span className="font-display text-3xl text-western-green-deep">
-                  {variant && formatBRL(variant.price.amount, variant.price.currencyCode)}
-                </span>
-              </div>
+              {(() => {
+                const pendingOption = visibleOptions.find(
+                  (o) => !activeOptions[o.name]
+                );
+                const priceDisplay = variant
+                  ? formatBRL(variant.price.amount, variant.price.currencyCode)
+                  : `a partir de ${formatBRL(
+                      product.priceRange.minVariantPrice.amount,
+                      product.priceRange.minVariantPrice.currencyCode
+                    )}`;
+                return (
+                  <>
+                    <div className="flex items-baseline justify-between mb-7 gap-4 flex-wrap">
+                      <span className="text-eyebrow">Condição parceiro</span>
+                      <span
+                        className={`font-display text-western-green-deep ${
+                          variant ? "text-3xl" : "text-xl text-western-stone-warm"
+                        }`}
+                      >
+                        {priceDisplay}
+                      </span>
+                    </div>
 
-              <div className="flex flex-col sm:flex-row items-stretch gap-3">
-                <div className="flex items-center justify-between sm:justify-start border border-western-stone-warm/30 h-12">
-                  <button
-                    onClick={() => setQty(Math.max(1, qty - 1))}
-                    className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
-                    aria-label="Diminuir"
-                  >
-                    −
-                  </button>
-                  <span className="px-4 text-spec min-w-[2ch] text-center">{qty}</span>
-                  <button
-                    onClick={() => setQty(qty + 1)}
-                    className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
-                    aria-label="Aumentar"
-                  >
-                    +
-                  </button>
-                </div>
-                <Button
-                  onClick={handleAdd}
-                  disabled={!variant?.availableForSale || isLoadingCart}
-                  className="flex-1 h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none"
-                >
-                  {isLoadingCart ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : variant?.availableForSale ? (
-                    "Adicionar ao pedido"
-                  ) : (
-                    "Indisponível"
-                  )}
-                </Button>
-              </div>
+                    {pendingOption && (
+                      <div className="mb-5 flex items-start gap-2.5 px-4 py-3 border border-western-gold/40 bg-western-gold/5">
+                        <Info className="h-4 w-4 text-western-gold mt-0.5 flex-shrink-0" />
+                        <p className="text-spec text-western-green-deep leading-relaxed">
+                          Escolha {pendingOption.name.toLowerCase() === "acabamento" ? "o acabamento" : `a opção de ${pendingOption.name.toLowerCase()}`} para ver o preço final e adicionar ao pedido.
+                        </p>
+                      </div>
+                    )}
 
-              <p className="text-spec text-western-stone-warm/80 leading-relaxed mt-5 text-xs">
-                Produção em 15 dias úteis · pedido mínimo R$ 1.000
-              </p>
+                    <div className="flex flex-col sm:flex-row items-stretch gap-3">
+                      <div className="flex items-center justify-between sm:justify-start border border-western-stone-warm/30 h-12">
+                        <button
+                          onClick={() => setQty(Math.max(1, qty - 1))}
+                          className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
+                          aria-label="Diminuir"
+                        >
+                          −
+                        </button>
+                        <span className="px-4 text-spec min-w-[2ch] text-center">{qty}</span>
+                        <button
+                          onClick={() => setQty(qty + 1)}
+                          className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
+                          aria-label="Aumentar"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <Button
+                        onClick={handleAdd}
+                        disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
+                        className="flex-1 h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
+                      >
+                        {isLoadingCart ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : pendingOption ? (
+                          `Selecione ${pendingOption.name.toLowerCase()}`
+                        ) : variant?.availableForSale ? (
+                          "Adicionar ao pedido"
+                        ) : (
+                          "Indisponível"
+                        )}
+                      </Button>
+                    </div>
+
+                    <p className="text-spec text-western-stone-warm/80 leading-relaxed mt-5 text-xs">
+                      Produção em 15 dias úteis · pedido mínimo R$ 1.000
+                    </p>
+                  </>
+                );
+              })()}
             </div>
 
             {/* Accordions */}
