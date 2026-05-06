@@ -1,61 +1,71 @@
-## O que vamos ajustar
+## Seção "Projetos" na home
 
-### 1. Header — logo maior + item "Início"
-**`src/components/layout/Header.tsx`**
-- Adicionar `{ to: "/", label: "Início" }` como primeiro item do array `nav` (com `end` no NavLink para não ficar sempre ativo).
-- Aumentar o logo de `h-12 lg:h-14` para **`h-16 lg:h-20`** (≈64px / 80px) — visivelmente dominante.
-- Reduzir `py` para `py-2 lg:py-3` para compensar a altura.
-- Mobile drawer: logo de `h-10` → `h-14`.
-- Manter `whitespace-nowrap` e `gap-7 xl:gap-9` para caber Início + Linhas + Conjuntos + Guia de Compra + Sobre + B2B sem quebrar a 1024px+.
-- Validar visualmente nos breakpoints 1280, 1024, 768, 390 com o navegador.
+Nova seção verde-escura na home, entre **Sobre** e **Destaques**, com 4 cards (grid 2×2 desktop, stack mobile) que abrem modal lightbox com vídeo + texto completo.
 
-### 2. Hero da home — mais "ASMR" / textura
-**`src/pages/Index.tsx`** (seção hero)
-- Adicionar camadas sobrepostas ao fundo verde:
-  - Grão sutil (SVG noise inline, opacidade ~6%).
-  - Vinheta radial suave nos cantos (`bg-[radial-gradient(...)]`) para profundidade.
-  - Linha fina dourada animada (shimmer lento ~8s) acima do título — referência editorial.
-  - Cristal/wireframe da direita: leve pulse de opacidade (3–5%) + drift vertical lento (12s ease-in-out infinite).
-- Adicionar textura de "papel mineral" muito sutil (overlay PNG já existente em `/assets` ou gerada via SVG turbulence) com `mix-blend-overlay` em ~8%.
-- Tudo CSS/SVG — sem imagens novas, sem custo de assets.
+### 1. Assets — copiar uploads para o projeto
 
-### 3. Galeria do produto — sem limite artificial
-**`src/lib/shopify/queries.ts`**
-- Trocar `images(first: 8)` por **`images(first: 50)`** dentro de `PRODUCT_FIELDS` (Shopify aceita até 250; 50 cobre qualquer cenário real).
+Copiar para `src/assets/projetos/`:
 
-### 4. Imagem da galeria seguir a variante selecionada
-**`src/lib/shopify/queries.ts`**
-- Já buscamos `variant.image { url altText }` — só falta usar.
+| Arquivo origem | Destino |
+|---|---|
+| `Evandro-Mesquita.webp` | `src/assets/projetos/cover-cascata.webp` |
+| `pgm-tato-e-lucy-alves-...webp` | `src/assets/projetos/cover-casa-praia.webp` |
+| `maira-cardi-e-thiago-nigro.avif` | `src/assets/projetos/cover-piscina.avif` |
+| `neymar-jr-GettyImages-...jpg` | `src/assets/projetos/cover-lago.jpg` |
+| `evandro_mesquita.mp4` | `public/videos/projetos/cascata.mp4` |
+| `tato_falamansa.mp4` | `public/videos/projetos/casa-praia.mp4` |
+| `thiago_nigro.mp4` | `public/videos/projetos/piscina.mp4` |
+| `neymar.mp4` | `public/videos/projetos/lago.mp4` |
 
-**`src/pages/ProductPage.tsx`**
-- Quando o usuário seleciona uma opção (acabamento, tamanho), procurar `variant.image.url` e:
-  - encontrar o índice correspondente em `images` (match por `url`);
-  - se existir, fazer `setActiveImage(idx)` automaticamente via `useEffect([variant?.image?.url])`.
-- Isso respeita a vinculação feita no Shopify (cada variante → sua foto).
+Vídeos em `public/` (servidos diretos, não passam pelo bundler — melhor para mp4 grandes). Imagens de capa em `src/assets/` para hash + lazy.
 
-### 5. Variante padrão NÃO pré-selecionada + lembrete de acabamento
-**`src/pages/ProductPage.tsx`**
-- Mudar `variant` para retornar `null` enquanto **todas** as opções visíveis não estiverem escolhidas (em vez de cair no `variants[0]`).
-- Preço: mostrar o range (`priceRange.minVariantPrice` formatado com prefixo "a partir de") até o cliente selecionar.
-- Botão "Adicionar ao pedido": ficar desabilitado com texto **"Selecione o acabamento"** (ou o nome da primeira opção pendente) até todas as opções estarem definidas.
-- Acima do botão, quando faltar seleção, mostrar um aviso discreto:
-  > `· Escolha o acabamento para ver o preço final e adicionar ao pedido`
-  com cor `text-western-gold` e ícone pequeno.
-- Os chips de opção começam todos sem `selected` (já é o caso quando `activeOptions` está vazio — mas hoje o fallback marca o primeiro; remover esse fallback).
-- Toast existente de "adicionado" se mantém.
+> Obs.: as fotos enviadas são **retratos das pessoas**, não das obras. Vou usá-las como capa por enquanto (humaniza, ancora o nome). Quando você tiver foto da obra real (cascata, piscina, lago), basta substituir o arquivo no mesmo path.
 
-### Detalhes técnicos resumidos
+### 2. Dados — `src/data/projetos.ts`
+
+Array tipado com os 4 cases (eyebrow, título, snippet, texto completo do modal, ficha técnica em array, cover importada, vídeo path). Tudo o que está no briefing entra textual aqui — exatamente como você redigiu.
+
+### 3. Componente — `src/components/home/ProjetosSection.tsx`
+
+Renderiza:
+- **Eyebrow** `ARQUIVO · PROJETOS` + filete dourado
+- **Título** serifado: "Onde a pedra encontra o projeto." (mesma escala do "A pedra contempla")
+- **Intro** curta off-white
+- **Grid** `grid-cols-1 md:grid-cols-2 gap-6 md:gap-8` com 4 `<ProjetoCard>`
+
+**ProjetoCard** (mesmo arquivo):
+- `<button>` (acessível) que abre o modal
+- Frame 4/5 com `<img>` cover
+- Overlay gradiente sutil bottom-up para legibilidade
+- Ícone `Play` em círculo bege no canto inferior direito (sempre — todos têm vídeo)
+- Eyebrow bege caixa-alta + título serifado + snippet + microlink "Ver projeto →"
+- Hover: leve zoom da imagem + `border-western-gold/40`
+
+### 4. Modal lightbox — `src/components/home/ProjetoModal.tsx`
+
+Usa o `Dialog` do shadcn já presente. Conteúdo:
+- `<video controls preload="metadata" poster={cover}>` no topo (sem autoplay)
+- Eyebrow + título serifado grande
+- Texto completo (parágrafos)
+- Ficha técnica: lista horizontal com `·` separador, mono caixa-alta letterspacing
+- `DialogContent` em `bg-western-green-deep`, max-w-3xl, scroll interno
+
+Estado controlado via `useState<Projeto | null>` no `ProjetosSection`.
+
+### 5. Integração na home — `src/pages/Index.tsx`
+
+Importar e inserir `<ProjetosSection />` logo após a seção SOBRE e antes de DESTAQUES. Mantém o ritmo verde→creme→verde→creme.
+
+### 6. Detalhes técnicos resumidos
 
 ```text
-Header.nav  = [Início, Linhas, Conjuntos, Guia de Compra, Sobre, B2B]
-Logo height = h-16 lg:h-20  (mobile drawer h-14)
-Header py   = py-2 lg:py-3
-
-queries.ts  : images(first: 50)
-ProductPage : variant = null até todas opções escolhidas
-            : useEffect troca activeImage quando variant.image muda
-            : CTA dinâmico "Selecione {opção pendente}"
-Hero        : noise SVG + vinheta radial + shimmer dourado + drift do cristal
+src/data/projetos.ts        : 4 entries (slug, eyebrow, titulo, snippet, texto, ficha[], cover, video)
+src/components/home/
+  ProjetosSection.tsx       : eyebrow + título + grid + estado do modal
+  ProjetoModal.tsx          : Dialog com <video controls>, sem autoplay
+src/assets/projetos/*       : capas (webp/avif/jpg)
+public/videos/projetos/*    : mp4s
+src/pages/Index.tsx         : insere <ProjetosSection /> entre SOBRE e DESTAQUES
 ```
 
-Nada altera schema do Shopify nem stores; é tudo frontend.
+Sem novas libs. Sem alteração no Shopify. Sem rota nova (a página dedicada `/projetos/[slug]` fica para a Onda 4 conforme você indicou).
