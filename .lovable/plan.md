@@ -1,180 +1,111 @@
+## Guia de Composição Western — Wizard B2B
 
-# Pivot: Western como Showroom B2B Premium
+Vamos reconstruir a página `/guia-de-compra` (rota mantida) substituindo a lógica de "Conjuntos curados" atual por um wizard linear baseado em decision tree única, conforme spec. O atual `BuyingGuide.tsx` e `data/conjuntos.ts` serão aposentados/substituídos.
 
-## Sobre a dúvida do verde (resposta direta)
+### Arquitetura
 
-**Recomendação: inverter a hierarquia cromática.**
+```text
+/guia-de-compra
+├── GuideIntro          (tela inicial)
+├── GuideWizard         (controlador de etapas)
+│   ├── StepProjeto     (Etapa 1 — comum)
+│   ├── StepTamanho     (Etapa 2 — depende do tipo)
+│   ├── StepComposicao  (Lago: Western vs +naturais)
+│   ├── StepJardim      (Jardim: seco vs com fonte)
+│   └── StepNivel       (Etapa final — essencial/equilibrada/completa)
+├── GuideResultado      (card do conjunto + indicado para + upsell)
+└── GuideConsultor      (tela consultiva acima do limite)
+```
 
-Hoje o verde profundo é "fundo padrão" do site — isso empurra a estética para "marca de luxo / restaurante", não para e-commerce. Lojas premium funcionais (Salvatori, Vasap, Kallina, B&B Italia, Minotti shop) usam **base clara neutra** justamente porque:
+### Estrutura de dados
 
-- Foto de produto sobre fundo claro lê melhor (e a pedra é o herói).
-- Densidade de informação (preço, código, specs, filtros, badges) cansa em fundo escuro.
-- Fundo escuro vira "wow inicial" mas vira ruído depois do 3º scroll — ruim para sessão longa de catálogo.
+Novo arquivo `src/data/guideMap.ts` contendo:
+- `guideMap` (decision tree de 45 folhas + 3 caminhos `"consultor"`) exatamente como na spec.
+- `PRODUCT_BASE_URL` derivado de `SHOPIFY_DOMAIN` (vem do shopify client já existente — vou reusar o domínio em vez de hardcode).
+- `formatPreco(valor)` helper BRL.
+- `WHATSAPP_NUMBER = "5511993403485"` + helpers `whatsappConsultor(tipo, faixa)` e `whatsappConjunto(nome)`.
+- `upsellMap` (links de coleções/produtos por tipo de projeto).
+- `tamanhoLabels` (ex.: `"4-a-10" → "De 4 m² a 10 m²"`) para reuso na UI e na mensagem do WhatsApp.
 
-**Nova regra cromática:**
-- **Off-white / ivory (#F5F1E8 e #FAFAF7)** = base de toda página de catálogo, PDP, filtros, cards. ~80% da superfície do site.
-- **Verde profundo #0F2818** = chrome (topbar de benefícios, header, footer, hero overlay, drawer do carrinho, CTAs secundários sólidos). ~15%.
-- **Bege #A78862** = CTAs primários, números, swatches, acentos, código de produto. ~5%.
-- **Verde mid** desaparece quase por completo — vira só estado hover/borda.
+### Estado e fluxo
 
-O verde permanece como **assinatura da marca** (header sempre verde, footer verde, hero com overlay verde), mas o **corpo do site é claro**. É o mesmo movimento que Hermès faz: chrome escuro, conteúdo branco.
+`useReducer` local dentro de `GuideWizard`:
+```ts
+type State = {
+  step: number;
+  tipo?: "lago" | "piscina" | "jardim";
+  tamanho?: string;
+  composicao?: "somenteWestern" | "comNaturais"; // só lago
+  jardim?: "seco" | "comFonte";                  // só jardim
+  nivel?: "essencial" | "equilibrada" | "completa";
+};
+```
+- `BACK` decrementa step preservando respostas.
+- `RESET` zera tudo e volta para `GuideIntro`.
+- Total de etapas calculado por tipo (Lago: 4, Piscina: 3, Jardim: 4) → `Etapa X de Y`.
+- Resolução final navega via `useMemo` em `guideMap[tipo][tamanho]?...?[nivel]`. Se for `"consultor"`, renderiza `GuideConsultor`.
 
----
+### Telas
 
-## Escopo da refatoração
+**GuideIntro**: título "Guia de Composição Western", subtítulo, texto de apoio, CTA `Iniciar guia →` (variante gold sobre fundo ivory). Logo Western (reusa `logo-vertical-verde`).
 
-### Fase 1 — Chrome global (fundação)
+**Etapas (StepX)**: layout único reaproveitável `<StepShell number title onBack onReset>{children}</StepShell>` exibindo:
+- Indicador `Etapa N de Total` (text-eyebrow gold).
+- Pergunta em `font-display`.
+- Grid de cards clicáveis grandes (sm:grid-cols-2/3/4 conforme nº de opções; mobile = 1 coluna).
+- Card opcionalmente exibe descrição (níveis de composição).
+- Botão "Voltar" discreto (a partir da Etapa 2) e "Reiniciar guia" no rodapé.
+- Animação fade entre etapas (~250ms via `transition-opacity` + key no shell).
 
-**1.1 TopBar de benefícios** (`src/components/layout/TopBar.tsx`, novo)
-- Faixa fina (h-9), `bg-western-green-deep`, texto bege, ícones lucide line.
-- 4 itens estáticos em desktop, carrossel auto em mobile.
-- Itens: pedido mínimo R$ 2.000 · produção 15 dias · pagamento antecipado · 3D SketchUp.
+**GuideResultado**: 2 colunas desktop, 1 mobile.
+- Coluna esquerda: imagem buscada via Storefront API (`fetchProductByHandle`) com fallback SVG (silhueta de pedra sobre verde profundo). Reuso/extensão de `src/lib/shopify/queries.ts`.
+- Coluna direita:
+  - Eyebrow bege "Seu conjunto recomendado".
+  - Nome + subtítulo + preço "A partir de R$ X.XXX" (placeholder do guideMap; se a API trouxer preço real, sobrescreve).
+  - Legenda "Disponível nos acabamentos Quartzo, Arenito, Moledo e Granito".
+  - Bloco "Indicado para": bullets gerados dinamicamente a partir das respostas + tipo (regras simples por tipo).
+  - CTAs: primário "Ver conjunto completo" (link `target="_blank"` para PDP no domínio Shopify), secundário "Falar com consultor" (WhatsApp pré-preenchido com nome do conjunto), terciário texto "Refazer guia".
+  - Política B2B em texto pequeno no rodapé do card.
 
-**1.2 Header refatorado** (`src/components/layout/Header.tsx`)
-- Sempre **fundo claro (ivory)** com logo verde, exceto na home onde fica transparente sobre o hero e vira sólido no scroll.
-- Mega menu central: hover em "Linhas" abre painel full-width com 3 colunas (Estrutura / Composição / Especiais), cada link com mini-thumbnail e contador de produtos (puxado do Shopify via `fetchCollections`).
-- **Search persistente** ao lado do menu (input com placeholder "Buscar pedra, código, acabamento…"), submit → `/linhas?q=`.
-- Direita: Parceiro (User) · Wishlist (Heart) · Carrinho (ShoppingBag com badge).
+**GuideConsultor**: título, texto consultivo, CTA WhatsApp com `{TIPO}` e `{TAMANHO}` substituídos pelo label legível, botão secundário "Refazer guia".
 
-**1.3 WhatsApp flutuante** (`src/components/layout/WhatsAppFAB.tsx`, novo)
-- Botão fixo bottom-right, ícone WhatsApp, link `wa.me/5511993403485`, com microcópia "Falar com consultor" no hover.
+**Upsell "Complete sua composição"**: abaixo do resultado, separado por divisória fina. Grid 3 colunas desktop / 1 mobile, cards com nome da categoria + miniatura placeholder + "Ver categoria" → abre coleção Shopify em nova aba. Lista de links varia por `tipo` conforme spec.
 
-**1.4 SiteLayout** — injetar TopBar acima do Header e FAB no final.
+### Integração Shopify (fase 1 mínima)
 
-**1.5 Tokens CSS** (`src/index.css`)
-- Trocar `--background` default de `green-deep` para `ivory`. Conseqüência: paginação inteira fica clara por padrão; só `surface-forest` explícito vira verde.
-- Adicionar utilities: `.chip-finish` (4 swatches Quartzo/Arenito/Moledo/Granito), `.badge-code` (mono bege), `.btn-cta-primary` (bege sólido), `.btn-cta-secondary` (outline verde), `.card-product-b2b`.
+- Buscar imagem do conjunto pelo handle via Storefront API existente (já temos `fetchProductsByHandles` em `queries.ts`). Loading state com skeleton; fallback SVG se 404 ou produto draft. Não bloqueia exibição do card (preço/nome vêm do `guideMap`).
+- Link PDP usa `PRODUCT_BASE_URL` resolvido a partir do `SHOPIFY_DOMAIN` já configurado no projeto (sem hardcode).
 
-### Fase 2 — Home transacional
+### Limpeza / impactos colaterais
 
-**2.1 Hero reformulado** (`src/pages/Index.tsx`)
-- Altura **70vh** (não 92).
-- Mantém a foto da cascata, mas overlay verde só do lado esquerdo (gradiente lateral) para sustentar o bloco de texto.
-- Conteúdo:
-  - H1 sans/serif curto: "Pedras decorativas para projetos profissionais."
-  - Sub: "200 SKUs · 50 modelos · 4 acabamentos minerais."
-  - Dois CTAs: **Ver catálogo** (bege sólido) + **Seja parceiro** (outline cream).
-  - Cápsula inferior: "Atendemos arquitetos · paisagistas · construtoras · garden centers."
-- Remove: animação de drift, shimmer dourado, frase poética "A pedra contempla".
+- `src/pages/BuyingGuide.tsx`: reescrito como entrypoint do wizard.
+- `src/data/conjuntos.ts`: removido (deixa de ser referenciado).
+- `src/pages/Conjuntos.tsx` e rota `/conjuntos`: hoje listam os "conjuntos curados" antigos. Vou (a) checar se são alcançáveis pela navegação atual; se sim, simplifico a página para um redirect/CTA "Use o Guia de Composição" mantendo a rota, ou removo a rota se não houver links no Header/Footer. Decisão final ao implementar, sem quebrar links existentes.
+- Nenhuma mudança em Header/Footer/cart é necessária (o guia abre PDP no Shopify externamente; carrinho interno permanece como está).
 
-**2.2 Faixa "Destaques de Coleção"** (nova seção, `src/components/home/ColecoesGrid.tsx`)
-- Fundo ivory.
-- Grid responsivo das 11 coleções (3+4+4 desktop, scroll-snap horizontal mobile).
-- Card: imagem 4:3 + nome serif + contador "10 modelos" + linha descritor + hover com CTA "Explorar coleção".
+### Estilo
 
-**2.3 "Mais especificados"** (nova seção, reaproveita ProductCard refatorado)
-- Grid 4×2, fundo ivory, query `fetchProducts(8)`.
-- Cards no novo padrão B2B (ver 2.5).
+- Reusa tokens existentes: `surface-ivory`, `text-eyebrow`, `font-display`, `btn-gold`, `btn-outline-forest`, `link-underline`, `text-western-green-deep`, `text-western-stone-warm`, `border-western-stone-warm/20`.
+- Fundo da página: `surface-ivory` (alinhado à Onda 1).
+- Cards de opção: borda `western-stone-warm/25`, hover `western-gold`, selecionado com fundo `western-gold/5`.
+- Tom B2B/consultivo, sem termos lúdicos.
+- Acessibilidade: `aria-label` nos cards, foco visível padrão, navegação por teclado nativa em `<button>`.
 
-**2.4 Seções a manter (compactadas)**
-- ArtistaSection (Ricardo) — manter, encolher para 1 viewport, virar "Por trás da curadoria" com link para /sobre.
-- ProjetosSection — manter como prova social ("Projetos especificados com Western"), virar carrossel mais denso.
-- RespiroSection cinematográfico — **remover da home**. Sobra muito espaço sem função comercial. Pode migrar para /sobre.
-- Seção B2B (pedido mínimo / prazo / pagamento) — manter no fim, agora como **CTA de credenciamento** com formulário inline (nome, e-mail, CNPJ, "Solicitar acesso").
+### Entregáveis
 
-**2.5 ProductCard B2B** (`src/components/product/ProductCard.tsx`, refatorar)
-- Fundo card claro (ivory/white), borda hairline em hover.
-- Layout vertical: imagem `aspect-square` com `object-contain` e padding → nome **sans-serif** (não display) → linha de specs `text-spec` ("100×80×29 cm · 75 kg") puxada de metafields/variant title → 4 chips de acabamento (círculos coloridos pequenos com tooltip) → botão outline "Ver produto".
-- **Sem preço visível**. Microcópia: "Acesse para ver condições".
-- Código (CS, PG3) em mono bege no canto superior direito do card.
+Arquivos novos:
+- `src/data/guideMap.ts`
+- `src/pages/BuyingGuide.tsx` (reescrito)
+- `src/components/guide/StepShell.tsx`
+- `src/components/guide/OptionCard.tsx`
+- `src/components/guide/GuideResultado.tsx`
+- `src/components/guide/GuideConsultor.tsx`
+- `src/components/guide/UpsellGrid.tsx`
 
-### Fase 3 — Catálogo (`src/pages/Linhas.tsx` + nova `LinhaPage`)
+Arquivos removidos:
+- `src/data/conjuntos.ts`
 
-**3.1 Layout 2 colunas**
-- Esquerda (`w-72`, sticky): card ivory com filtros.
-  - Categoria (11 checkboxes, agrupados em 3 seções colapsáveis Estrutura/Composição/Especiais).
-  - Acabamento (4 swatches clicáveis Quartzo/Arenito/Moledo/Granito).
-  - Aplicação (Piscina, Lago, Jardim seco, Caminho, Parede, Fonte) — multi-checkbox.
-  - Comprimento (Slider radix, 0–300 cm).
-  - Peso (radio group: até 20kg / 20–50 / 50–100 / +100).
-  - Sistema hidráulico (toggle).
-  - Antiderrapante (toggle).
-  - Botão "Limpar filtros".
-- Direita: header com **ordenação** (Select: Mais especificados / A–Z / Maior / Menor / Mais recentes) + contador "Exibindo 24 de 50" + grid 3 col desktop / 2 mobile.
-- Paginação ou "Carregar mais" (cursor do Shopify).
+Arquivos possivelmente ajustados:
+- `src/pages/Conjuntos.tsx` / rota em `App.tsx` (decisão no momento da implementação; sem quebrar nav).
 
-**3.2 Lógica**
-- Estado dos filtros via URL (`useSearchParams`) para shareability.
-- Mapeamento dos filtros → queryString do Shopify Storefront ou client-side filter (escolha pragmática: client-side em cima de `fetchProducts(50)` por linha; suficiente para 200 SKUs).
-
-### Fase 4 — PDP (`src/pages/ProductPage.tsx`)
-
-**4.1 Layout 60/40**
-- Esquerda: galeria (imagem grande + 4 thumbs verticais à esquerda) + botão "Ver em 3D no SketchUp" abaixo.
-- Direita comercial:
-  - Código mono bege (`CÓD. CS`).
-  - Nome serif grande.
-  - Status: "Produção sob demanda · 15 dias úteis".
-  - **FinishSelector** com 4 swatches grandes (refatorar componente já existente para visual de botão, não dropdown).
-  - Quantidade (input numérico com +/-).
-  - CTA primário grande "Adicionar ao orçamento" (logged → "Adicionar ao pedido").
-  - CTA secundário outline "Falar com consultor" → WhatsApp com mensagem pré-preenchida (`Olá, gostaria de falar sobre {produto} código {sku}`).
-  - Microcópia: pedido mínimo / pagamento antecipado / frete.
-
-**4.2 Abaixo da dobra**
-- Tabs (Radix Tabs já tem): Descrição · Ficha Técnica · Aplicações · Modelo 3D · Garantia.
-- Conteúdo: HTML do `descriptionHtml` parseado por seções (`parseDescription.ts` já existe).
-- "Combina com" — 4 produtos relacionados (mesma collection ou complementares hard-coded).
-
-### Fase 5 — Carrinho B2B (`src/components/layout/CartDrawer.tsx`)
-
-- Renomear título para "Seu orçamento".
-- Para cada item: thumb + nome + código + acabamento + dimensão + qtd + subtotal **por item**.
-- Manter a barra de progresso (já existe), trocar valor para R$ 2.000 e copy: "R$ X de R$ 2.000 — faltam R$ Y para fechar pedido".
-- CTA final: **"Solicitar orçamento"** → abre WhatsApp com payload do carrinho serializado (lista de itens), em vez de redirect Shopify checkout. Manter o checkout Shopify como fallback secundário "Pagar online".
-
-### Fase 6 — Áreas auxiliares
-
-**6.1 Footer** (`src/components/layout/Footer.tsx`)
-- 5 colunas: Coleções (11 links) · Para parceiros · Western · Atendimento · Newsletter (input + botão).
-- Faixa final: CNPJ, endereço da fábrica, redes.
-
-**6.2 Parceiro** (`/parceiro/login` e `/parceiro/cadastro`)
-- Login: e-mail + senha + link "Solicitar acesso".
-- Cadastro: nome, CNPJ, segmento (select), volume estimado, e-mail, telefone — armazenar via Lovable Cloud (Supabase) — **decisão de auth para depois**, neste plano só preparamos a UI.
-
----
-
-## Arquivos afetados (resumo)
-
-| Arquivo | Ação |
-|---|---|
-| `src/components/layout/TopBar.tsx` | criar |
-| `src/components/layout/WhatsAppFAB.tsx` | criar |
-| `src/components/layout/MegaMenu.tsx` | criar |
-| `src/components/layout/Header.tsx` | refatorar (claro por padrão, mega menu, search) |
-| `src/components/layout/SiteLayout.tsx` | injetar TopBar + FAB |
-| `src/components/layout/Footer.tsx` | refatorar 5 colunas + newsletter |
-| `src/components/layout/CartDrawer.tsx` | renomear copy, ajustar mínimo, CTA WhatsApp |
-| `src/components/home/ColecoesGrid.tsx` | criar |
-| `src/components/home/RespiroSection.tsx` | remover da home (manter arquivo p/ /sobre) |
-| `src/components/product/ProductCard.tsx` | refatorar (B2B card, swatches, sem preço) |
-| `src/components/product/FinishSelector.tsx` | refatorar p/ swatches grandes |
-| `src/pages/Index.tsx` | hero novo + nova ordem de seções |
-| `src/pages/Linhas.tsx` | layout 2 colunas + filtros + ordenação |
-| `src/pages/LinhaPage.tsx` | mesmo padrão de Linhas |
-| `src/pages/ProductPage.tsx` | layout 60/40 + tabs + relacionados |
-| `src/pages/PartnerLogin.tsx` / `PartnerSignup.tsx` | reformatar UI |
-| `src/index.css` | inverter `--background`, novos utilities |
-| `tailwind.config.ts` | possíveis tokens novos (ivory exato pedido) |
-
----
-
-## Execução em ondas
-
-Pra não quebrar tudo de uma vez, sugiro implementar em 3 PRs lógicos dentro do build mode:
-
-1. **Onda 1 — Fundação clara**: tokens CSS invertidos, TopBar, Header refatorado com mega menu + search, Footer 5 colunas, FAB WhatsApp. (Já transforma o "feel" do site.)
-2. **Onda 2 — Home transacional**: hero novo, ColecoesGrid, ProductCard B2B, "Mais especificados", remover Respiro/encolher Artista.
-3. **Onda 3 — Catálogo + PDP + Carrinho**: filtros laterais, PDP 60/40 com tabs, drawer "orçamento" com WhatsApp.
-
-Posso fazer as 3 ondas de uma vez se preferir, mas separar dá ponto de checagem visual entre cada fase.
-
----
-
-## Confirmações antes de implementar
-
-1. **Verde como chrome, ivory como base** — confirmo a inversão proposta?
-2. **Search no header** — busca client-side em cima do catálogo carregado, ou implementa busca real do Shopify Storefront (mais robusta, mas pede `fetchSearch`)?
-3. **"Solicitar orçamento" via WhatsApp** vs manter checkout Shopify — qual prevalece como CTA primário do drawer?
-4. **Onda única ou 3 PRs sequenciais?**
+Pronto para implementar assim que aprovar.

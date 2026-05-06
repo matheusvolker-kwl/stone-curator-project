@@ -1,329 +1,294 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Check, Loader2 } from "lucide-react";
-import { resolveConjunto, type Conjunto } from "@/data/conjuntos";
-import { fetchProductsByHandles } from "@/lib/shopify/queries";
-import { buildCartItem, useCartStore } from "@/stores/cartStore";
-import { formatBRL } from "@/lib/shopify/client";
-import { toast } from "sonner";
+import { useMemo, useReducer } from "react";
+import { ArrowRight } from "lucide-react";
+import StepShell from "@/components/guide/StepShell";
+import OptionCard from "@/components/guide/OptionCard";
+import GuideResultado from "@/components/guide/GuideResultado";
+import GuideConsultor from "@/components/guide/GuideConsultor";
+import {
+  nivelDescricoes,
+  resolveConjunto,
+  totalEtapasPorTipo,
+  type Composicao,
+  type GuideAnswers,
+  type Jardim,
+  type Nivel,
+  type Tipo,
+} from "@/data/guideMap";
 
-const finishes = ["Quartzo", "Arenito", "Moledo", "Granito"];
-const sizes = [
-  { id: "small", label: "Pequeno", desc: "Detalhes e jardins compactos" },
-  { id: "medium", label: "Médio", desc: "Lagos e cantos contemplativos" },
-  { id: "large", label: "Grande", desc: "Cascatas e piscina praia" },
-];
-const locations = [
-  { id: "garden", label: "Jardim" },
-  { id: "pool", label: "Piscina" },
-  { id: "indoor", label: "Área interna" },
-];
+type State = GuideAnswers & { step: number; started: boolean };
+
+type Action =
+  | { type: "START" }
+  | { type: "SET_TIPO"; value: Tipo }
+  | { type: "SET_TAMANHO"; value: string }
+  | { type: "SET_COMPOSICAO"; value: Composicao }
+  | { type: "SET_JARDIM"; value: Jardim }
+  | { type: "SET_NIVEL"; value: Nivel }
+  | { type: "BACK" }
+  | { type: "RESET" };
+
+const initial: State = { step: 0, started: false };
+
+function reducer(s: State, a: Action): State {
+  switch (a.type) {
+    case "START":
+      return { ...s, started: true, step: 1 };
+    case "SET_TIPO":
+      return { ...s, tipo: a.value, step: 2 };
+    case "SET_TAMANHO": {
+      // Nas faixas "consultor" pulamos para o resultado direto
+      const next = { ...s, tamanho: a.value, step: 3 };
+      return next;
+    }
+    case "SET_COMPOSICAO":
+      return { ...s, composicao: a.value, step: 4 };
+    case "SET_JARDIM":
+      return { ...s, jardim: a.value, step: 4 };
+    case "SET_NIVEL":
+      return { ...s, nivel: a.value, step: 99 }; // 99 = resultado
+    case "BACK":
+      return { ...s, step: Math.max(1, s.step === 99 ? (s.tipo === "piscina" ? 3 : 4) : s.step - 1) };
+    case "RESET":
+      return initial;
+  }
+}
+
+const tamanhoOptions: Record<Tipo, Array<{ id: string; label: string }>> = {
+  lago: [
+    { id: "ate-4", label: "Até 4 m²" },
+    { id: "4-a-10", label: "De 4 m² a 10 m²" },
+    { id: "10-a-20", label: "De 10 m² a 20 m²" },
+    { id: "acima-20", label: "Acima de 20 m²" },
+  ],
+  piscina: [
+    { id: "ate-12", label: "Até 12 m²" },
+    { id: "12-a-32", label: "De 12 m² a 32 m²" },
+    { id: "32-a-60", label: "De 32 m² a 60 m²" },
+    { id: "acima-60", label: "Acima de 60 m²" },
+  ],
+  jardim: [
+    { id: "ate-2", label: "Até 2 m²" },
+    { id: "2-a-10", label: "De 2 m² a 10 m²" },
+    { id: "10-a-20", label: "De 10 m² a 20 m²" },
+    { id: "acima-20", label: "Acima de 20 m²" },
+  ],
+};
 
 export default function BuyingGuide() {
-  const [step, setStep] = useState(0);
-  const [location, setLocation] = useState("");
-  const [size, setSize] = useState("");
-  const [finish, setFinish] = useState("");
+  const [s, dispatch] = useReducer(reducer, initial);
 
-  const conjunto: Conjunto | null = useMemo(() => {
-    if (!location || !size || !finish) return null;
-    return resolveConjunto(location, size, finish);
-  }, [location, size, finish]);
+  const total = s.tipo ? totalEtapasPorTipo[s.tipo] : 4;
+  const onReset = () => dispatch({ type: "RESET" });
+  const onBack = () => dispatch({ type: "BACK" });
 
-  const next = () => setStep((s) => s + 1);
-  const restart = () => {
-    setStep(0);
-    setLocation("");
-    setSize("");
-    setFinish("");
-  };
+  const resolved = useMemo(() => resolveConjunto(s), [s]);
+  const showResult = s.step === 99 || resolved === "consultor";
 
   return (
-    <div className="surface-ivory">
-      <div className="container-western py-20 md:py-28 max-w-4xl">
-        <p className="text-eyebrow mb-5">Guia de compra · Monte um conjunto</p>
-        <div className="w-12 h-px bg-western-gold mb-8" />
-        <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05] mb-4">
-          Componha seu projeto,<br />passo a passo.
-        </h1>
-        <p className="text-western-stone-warm text-lg leading-relaxed mb-12 max-w-2xl">
-          Em três passos curados sugerimos um <em>Conjunto</em> — um kit de
-          peças que conversam entre si para um cenário específico. Você pode
-          adicionar tudo de uma vez ao pedido.
-        </p>
-
-        <div className="border border-western-stone-warm/20 bg-white p-10 md:p-16">
-          {step === 0 && (
-            <Step number="01" title="Onde será a instalação?">
-              <div className="grid sm:grid-cols-3 gap-4">
-                {locations.map((l) => (
-                  <Choice
-                    key={l.id}
-                    selected={location === l.id}
-                    onClick={() => {
-                      setLocation(l.id);
-                      next();
-                    }}
-                    title={l.label}
-                  />
-                ))}
-              </div>
-            </Step>
-          )}
-
-          {step === 1 && (
-            <Step number="02" title="Qual a escala do projeto?">
-              <div className="grid sm:grid-cols-3 gap-4">
-                {sizes.map((s) => (
-                  <Choice
-                    key={s.id}
-                    selected={size === s.id}
-                    onClick={() => {
-                      setSize(s.id);
-                      next();
-                    }}
-                    title={s.label}
-                    desc={s.desc}
-                  />
-                ))}
-              </div>
-            </Step>
-          )}
-
-          {step === 2 && (
-            <Step number="03" title="Qual acabamento?">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {finishes.map((f) => (
-                  <Choice
-                    key={f}
-                    selected={finish === f}
-                    onClick={() => {
-                      setFinish(f);
-                      next();
-                    }}
-                    title={f}
-                  />
-                ))}
-              </div>
-            </Step>
-          )}
-
-          {step === 3 && (
-            <ConjuntoResult conjunto={conjunto} onRestart={restart} finish={finish} />
-          )}
-        </div>
+    <div className="surface-ivory min-h-screen">
+      <div className="container-western py-16 md:py-24 max-w-5xl">
+        {!s.started ? (
+          <Intro onStart={() => dispatch({ type: "START" })} />
+        ) : (
+          <div className="border border-western-stone-warm/20 bg-white p-8 md:p-14">
+            {/* Resultado tem prioridade quando atinge consultor ou nivel definido */}
+            {showResult && resolved === "consultor" && s.tipo && s.tamanho ? (
+              <GuideConsultor tipo={s.tipo} tamanho={s.tamanho} onReset={onReset} />
+            ) : showResult && resolved && resolved !== "consultor" ? (
+              <GuideResultado conjunto={resolved} answers={s} onReset={onReset} />
+            ) : (
+              <Steps state={s} dispatch={dispatch} total={total} onBack={onBack} onReset={onReset} />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-function Step({
-  number,
-  title,
-  children,
-}: {
-  number: string;
-  title: string;
-  children: React.ReactNode;
-}) {
+function Intro({ onStart }: { onStart: () => void }) {
   return (
-    <div>
-      <p className="text-spec text-western-gold mb-3">{number} / 03</p>
-      <h2 className="font-display text-3xl md:text-4xl text-western-green-deep mb-10">
-        {title}
-      </h2>
-      {children}
+    <div className="max-w-3xl">
+      <p className="text-eyebrow mb-5">Guia de Composição Western</p>
+      <div className="w-12 h-px bg-western-gold mb-8" />
+      <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05] mb-6">
+        Encontre o conjunto<br />ideal para o seu projeto.
+      </h1>
+      <p className="text-western-stone-warm text-lg leading-relaxed mb-4 max-w-2xl">
+        Responda algumas perguntas e encontre o conjunto ideal para seu projeto,
+        revenda ou aplicação profissional.
+      </p>
+      <p className="text-sm text-western-stone-warm/80 leading-relaxed mb-12 max-w-2xl">
+        Composições autorais em composto mineral de alta resistência, prontas
+        para especificação. Atendimento exclusivo para parceiros B2B.
+      </p>
+      <button onClick={onStart} className="btn-gold">
+        Iniciar guia <ArrowRight className="h-4 w-4" />
+      </button>
     </div>
   );
 }
 
-function Choice({
-  title,
-  desc,
-  selected,
-  onClick,
+function Steps({
+  state,
+  dispatch,
+  total,
+  onBack,
+  onReset,
 }: {
-  title: string;
-  desc?: string;
-  selected: boolean;
-  onClick: () => void;
+  state: State;
+  dispatch: React.Dispatch<Action>;
+  total: number;
+  onBack: () => void;
+  onReset: () => void;
 }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`border p-6 text-left transition-all duration-300 ${
-        selected
-          ? "border-western-gold bg-western-gold/5"
-          : "border-western-stone-warm/25 hover:border-western-gold"
-      }`}
-    >
-      <span className="font-display text-2xl text-western-green-deep block mb-2">
-        {title}
-      </span>
-      {desc && <span className="text-spec text-western-stone-warm">{desc}</span>}
-    </button>
-  );
-}
+  const back = state.step > 1 ? onBack : undefined;
 
-function ConjuntoResult({
-  conjunto,
-  finish,
-  onRestart,
-}: {
-  conjunto: Conjunto | null;
-  finish: string;
-  onRestart: () => void;
-}) {
-  const handles = conjunto?.items.map((i) => i.handle) ?? [];
-  const { data: products = [], isLoading } = useQuery({
-    queryKey: ["bundle-products", handles.join(",")],
-    queryFn: () => fetchProductsByHandles(handles),
-    enabled: handles.length > 0,
-  });
-  const addBundle = useCartStore((s) => s.addBundle);
-  const isLoadingCart = useCartStore((s) => s.isLoading);
-
-  if (!conjunto) {
+  // Etapa 1: Tipo
+  if (state.step === 1) {
     return (
-      <div>
-        <p className="text-eyebrow mb-3">Sem conjunto curado</p>
-        <h2 className="font-display text-3xl text-western-green-deep mb-4">
-          Ainda não há um conjunto para essa combinação.
-        </h2>
-        <p className="text-western-stone-warm mb-8">
-          Fale com nosso time — montamos uma curadoria sob medida para o seu projeto.
-        </p>
-        <div className="flex gap-4">
-          <Link to="/contato" className="btn-outline-forest">Falar com curadoria</Link>
-          <button onClick={onRestart} className="link-underline font-mono text-xs uppercase tracking-[0.2em] text-western-green-deep">
-            Recomeçar
-          </button>
+      <StepShell current={1} total={total} pergunta="Qual tipo de projeto você quer atender?" onReset={onReset}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {(["lago", "piscina", "jardim"] as Tipo[]).map((t) => (
+            <OptionCard
+              key={t}
+              title={t === "lago" ? "Lago" : t === "piscina" ? "Piscina" : "Jardim"}
+              selected={state.tipo === t}
+              onClick={() => dispatch({ type: "SET_TIPO", value: t })}
+            />
+          ))}
         </div>
-      </div>
+      </StepShell>
     );
   }
 
-  const itemsResolved = conjunto.items.map((it) => {
-    const product = products.find((p) => p.handle === it.handle);
-    return { ...it, product };
-  });
+  if (!state.tipo) return null;
 
-  const total = itemsResolved.reduce((sum, it) => {
-    if (!it.product) return sum;
-    const price = parseFloat(it.product.priceRange.minVariantPrice.amount);
-    return sum + price * it.qty;
-  }, 0);
+  // Etapa 2: Tamanho
+  if (state.step === 2) {
+    const opts = tamanhoOptions[state.tipo];
+    const pergunta =
+      state.tipo === "lago"
+        ? "Qual o tamanho aproximado do lago?"
+        : state.tipo === "piscina"
+          ? "Qual o tamanho aproximado da piscina?"
+          : "Qual o tamanho aproximado da área de jardim?";
+    return (
+      <StepShell current={2} total={total} pergunta={pergunta} onBack={back} onReset={onReset}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {opts.map((o) => (
+            <OptionCard
+              key={o.id}
+              title={o.label}
+              selected={state.tamanho === o.id}
+              onClick={() => dispatch({ type: "SET_TAMANHO", value: o.id })}
+            />
+          ))}
+        </div>
+      </StepShell>
+    );
+  }
 
-  const allAvailable = itemsResolved.every((it) => it.product);
-
-  const handleAdd = async () => {
-    const cartItems = itemsResolved
-      .map((it) => {
-        if (!it.product) return null;
-        const variantId = it.product.variants.edges[0]?.node?.id;
-        if (!variantId) return null;
-        return buildCartItem(it.product, variantId, it.qty);
-      })
-      .filter((x): x is NonNullable<typeof x> => !!x);
-    if (cartItems.length === 0) return;
-    await addBundle(cartItems);
-    toast.success(`Conjunto "${conjunto.nome}" adicionado ao pedido`, {
-      description: `${cartItems.length} ${cartItems.length === 1 ? "peça" : "peças"} no carrinho`,
-      position: "top-right",
-    });
-  };
-
-  return (
-    <div>
-      <p className="text-eyebrow mb-3">Conjunto sugerido</p>
-      <h2 className="font-display text-4xl md:text-5xl text-western-green-deep leading-tight mb-2">
-        {conjunto.nome}
-      </h2>
-      <p className="text-spec text-western-stone-warm mb-8">{conjunto.ambiente}</p>
-      <p className="text-western-stone-warm leading-relaxed mb-10 max-w-2xl">
-        {conjunto.descricao}
-      </p>
-
-      {/* Lista de peças do conjunto */}
-      <div className="border-t border-western-stone-warm/20">
-        {itemsResolved.map((it) => (
-          <div
-            key={it.handle}
-            className="grid grid-cols-[80px_1fr_auto] gap-4 py-5 border-b border-western-stone-warm/15 items-center"
-          >
-            <div className="frame-product w-20 h-20">
-              {it.product?.images.edges[0]?.node && (
-                <img
-                  src={it.product.images.edges[0].node.url}
-                  alt={it.product.title}
-                  className="w-full h-full object-contain p-1"
-                />
-              )}
-            </div>
-            <div>
-              <p className="font-display text-xl text-western-green-deep">
-                {it.product?.title ?? it.handle}
-              </p>
-              {it.notaRapida && (
-                <p className="text-spec text-western-stone-warm mt-1">{it.notaRapida}</p>
-              )}
-            </div>
-            <div className="text-right">
-              <p className="text-spec text-western-stone-warm">qty</p>
-              <p className="font-display text-2xl text-western-green-deep">{it.qty}</p>
-            </div>
+  // Etapa 3 — depende do tipo
+  if (state.step === 3) {
+    if (state.tipo === "lago") {
+      return (
+        <StepShell
+          current={3}
+          total={total}
+          pergunta="O projeto usará somente produtos Western ou também pedras naturais e outros elementos?"
+          onBack={back}
+          onReset={onReset}
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <OptionCard
+              title="Somente produtos Western"
+              desc="Conjunto completo, com todas as peças da composição."
+              selected={state.composicao === "somenteWestern"}
+              onClick={() => dispatch({ type: "SET_COMPOSICAO", value: "somenteWestern" })}
+            />
+            <OptionCard
+              title="Western + pedras naturais e outros elementos"
+              desc="Conjunto reduzido, otimizado para combinar com pedras naturais."
+              selected={state.composicao === "comNaturais"}
+              onClick={() => dispatch({ type: "SET_COMPOSICAO", value: "comNaturais" })}
+            />
           </div>
+        </StepShell>
+      );
+    }
+    if (state.tipo === "jardim") {
+      return (
+        <StepShell
+          current={3}
+          total={total}
+          pergunta="Você deseja um jardim seco ou com fonte?"
+          onBack={back}
+          onReset={onReset}
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <OptionCard
+              title="Jardim seco"
+              selected={state.jardim === "seco"}
+              onClick={() => dispatch({ type: "SET_JARDIM", value: "seco" })}
+            />
+            <OptionCard
+              title="Jardim com fonte"
+              selected={state.jardim === "comFonte"}
+              onClick={() => dispatch({ type: "SET_JARDIM", value: "comFonte" })}
+            />
+          </div>
+        </StepShell>
+      );
+    }
+    // piscina: etapa 3 é o nível
+    return <StepNivel state={state} dispatch={dispatch} current={3} total={total} onBack={back} onReset={onReset} />;
+  }
+
+  // Etapa 4: nível (lago/jardim)
+  if (state.step === 4) {
+    return <StepNivel state={state} dispatch={dispatch} current={4} total={total} onBack={back} onReset={onReset} />;
+  }
+
+  return null;
+}
+
+function StepNivel({
+  state,
+  dispatch,
+  current,
+  total,
+  onBack,
+  onReset,
+}: {
+  state: State;
+  dispatch: React.Dispatch<Action>;
+  current: number;
+  total: number;
+  onBack?: () => void;
+  onReset: () => void;
+}) {
+  const tipo = state.tipo!;
+  const descs = nivelDescricoes[tipo];
+  return (
+    <StepShell
+      current={current}
+      total={total}
+      pergunta="Qual nível de composição deseja?"
+      onBack={onBack}
+      onReset={onReset}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {(["essencial", "equilibrada", "completa"] as Nivel[]).map((n) => (
+          <OptionCard
+            key={n}
+            title={n === "essencial" ? "Essencial" : n === "equilibrada" ? "Equilibrada" : "Completa"}
+            desc={descs[n]}
+            selected={state.nivel === n}
+            onClick={() => dispatch({ type: "SET_NIVEL", value: n })}
+          />
         ))}
       </div>
-
-      {/* Total */}
-      <div className="flex flex-wrap items-baseline justify-between gap-4 pt-8 mb-8">
-        <div>
-          <p className="text-eyebrow mb-2">Investimento estimado</p>
-          <p className="font-display text-4xl text-western-green-deep">
-            {isLoading ? "—" : formatBRL(total)}
-          </p>
-          <p className="text-spec text-western-stone-warm mt-2">
-            Sem frete · prazo de produção 15 a 30 dias úteis
-          </p>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap gap-4 items-center">
-        <button
-          onClick={handleAdd}
-          disabled={!allAvailable || isLoading || isLoadingCart}
-          className="btn-gold disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoadingCart ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <>
-              <Check className="h-4 w-4" /> Adicionar conjunto ao pedido
-            </>
-          )}
-        </button>
-        <Link
-          to="/linhas"
-          className="link-underline font-mono text-xs uppercase tracking-[0.2em] text-western-green-deep"
-        >
-          Ajustar manualmente <ArrowRight className="inline h-3 w-3 ml-1" />
-        </Link>
-        <button
-          onClick={onRestart}
-          className="link-underline font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm"
-        >
-          Refazer o guia
-        </button>
-      </div>
-
-      {!allAvailable && !isLoading && (
-        <p className="text-spec text-western-stone-warm mt-6">
-          Algumas peças deste conjunto ainda não estão no catálogo —
-          fale com a curadoria para uma cotação exclusiva ({finish}).
-        </p>
-      )}
-    </div>
+    </StepShell>
   );
 }
