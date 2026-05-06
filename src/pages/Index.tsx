@@ -4,6 +4,7 @@ import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/shopify/queri
 // isSeasonal kept for filtering linhas only
 
 import ProductCard from "@/components/product/ProductCard";
+import ProjetosSection from "@/components/home/ProjetosSection";
 import { ArrowRight } from "lucide-react";
 import brasao from "@/assets/brasao.png";
 import iconePedraVerde from "@/assets/icone-pedra-verde.png";
@@ -242,6 +243,8 @@ export default function Index() {
         </div>
       </section>
 
+      {/* PROJETOS — verde */}
+      <ProjetosSection />
 
       {/* DESTAQUES — creme */}
       {featured.length > 0 && (
