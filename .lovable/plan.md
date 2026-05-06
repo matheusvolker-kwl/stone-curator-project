@@ -1,96 +1,40 @@
-## Mover "04 Acabamentos" para a PDP como seletor interativo
+## Nova seção: "O artista por trás da Western"
 
-### 1. Remover da home
+Adicionar uma seção institucional na home apresentando Ricardo Botelho, com o retrato enviado.
 
-**`src/pages/Index.tsx`**
-- Remover a seção `FAMÍLIAS DE ACABAMENTO` inteira (incluindo o array `FAMILIES` no topo do arquivo).
-- O ritmo da home passa a ser: Hero → Linhas → Sobre → Projetos → Destaques → B2B.
+### Onde entra na home
 
-### 2. Novo componente `FinishSelector` na PDP
+Entre **SOBRE · A Western** e **PROJETOS** — sequência narrativa:
+1. Sobre (a marca) → 2. **Artista** (a mão por trás) → 3. Projetos (as obras realizadas)
 
-**Novo arquivo `src/components/product/FinishSelector.tsx`**
+Faz sentido porque o "Sobre" termina falando de procedência/curadoria, e a seção do artista aprofunda o "quem faz a curadoria". Em seguida os projetos mostram o resultado.
 
-Props:
-```ts
-{
-  values: string[];                  // valores Shopify da option "Acabamento"
-  selected: string | null;
-  onSelect: (val: string) => void;
-}
-```
+### Anatomia visual
 
-Mapa interno (constante no componente) que casa cada valor com `{ num, swatch, hint }`:
+Mesma gramática das outras seções verde-escuras (surface-forest):
 
-| Valor | num | swatch HSL | hint |
-|---|---|---|---|
-| Quartzo | 01 | `38 35% 86%` | Para composições que pedem luz e contraste com folhagem densa. |
-| Arenito | 02 | `32 36% 65%` | Conversa com madeiras claras, palhas e paisagismo tropical. |
-| Moledo | 03 | `20 30% 45%` | Acabamento rústico nobre — referência direta à pedra brasileira. |
-| Granito | 04 | `140 8% 22%` | Profundidade e ancoragem para projetos contemporâneos e minerais. |
+- **Surface**: `surface-forest` (não cria duas seções verdes consecutivas, mas o "Sobre" já é verde — para evitar parede verde, esta seção do artista será **surface-ivory** (creme), criando respiro entre dois blocos verdes e dando destaque ao retrato).
+- **Layout**: `grid md:grid-cols-12` — retrato à esquerda (col-span-5), texto à direita (col-span-6, offset 1).
+- **Retrato**: enquadrado em `frame-gallery` com `aspect-[4/5]`, borda sutil `western-gold/30`. Sem filtros — cor natural.
+- **Eyebrow**: `AUTORIA · RICARDO BOTELHO` (bege/dourado, mono, letterspacing).
+- **Régua dourada** de 12px abaixo do eyebrow (padrão da home).
+- **Título serifado**: "O artista por trás da Western." — `font-display`, com "Western" em itálico dourado-suave para combinar com os outros títulos ("contempla", "tempo", "o projeto").
+- **Parágrafos**: dois blocos de texto exatamente como fornecidos pelo usuário, em `text-western-stone-warm` / leading-relaxed, max-width controlado (~prose-sm).
+- **Assinatura/caption discreta** abaixo do retrato: `Ricardo Botelho · Desenhista e escultor` em mono pequeno.
+- **Sem CTA** — é uma seção de presença, não de conversão. (Coerente com o tom contemplativo.)
 
-Match case-insensitive; se o valor não bater no mapa, gera fallback (num pelo índice, swatch neutro `var(--western-stone-warm)`, sem hint) — assim funciona mesmo se o Shopify tiver "Quartzo Polido" etc.
+### Detalhes técnicos
 
-**Layout** (desktop): grid `md:grid-cols-4 gap-5`. Cada card é `<button>`:
-- Fundo: cream sutil (`bg-western-cream/60` quando na PDP — superfície clara) com borda `border-western-stone-warm/20`
-- Número `01-04` em mono, opacidade 50% por padrão → 100% no hover/selected
-- Círculo de cor 40px (canto superior direito)
-- Título serifado (nome do acabamento)
-- Hint em texto pequeno
-- Selecionado: borda `border-western-gold` + leve `bg-western-gold/5`
+- **Asset**: copiar `user-uploads://image-21.png` para `src/assets/ricardo-botelho.webp` (ou `.jpg` mantendo extensão original do upload). Importar como módulo ES6.
+- **Componente novo**: `src/components/home/ArtistaSection.tsx` — mantém a home limpa e segue o padrão de `ProjetosSection.tsx`.
+- **Index.tsx**: importar e inserir `<ArtistaSection />` entre o bloco "SOBRE" e `<ProjetosSection />`.
+- **Responsivo**: em mobile, retrato acima do texto, ambos full-width com padding container padrão.
+- **Sem novas dependências, sem mudanças no Tailwind config.**
 
-**Mobile**: `flex overflow-x-auto snap-x snap-mandatory` com `min-w-[78%]` por card; barra de progresso 01·02·03·04 acima (4 traços, o ativo em bege).
+### Texto (exato como enviado)
 
-### 3. Animações (Tailwind keyframes em `tailwind.config.ts`)
+Título: **O artista por trás da Western.**
 
-Adicionar:
-- `swatch-fill`: animação de preenchimento do círculo via `clip-path: circle(0% → 60%)` em 400ms ease-out — disparada por `IntersectionObserver` (toggle de classe).
-- `swatch-breathe`: `scale(1) → scale(1.04) → scale(1)` em 2.5s, `infinite`, aplicada ao círculo no hover do card.
-- `swatch-splash`: `scale(1) → 1.15 → 1` em 350ms `cubic-bezier(0.34,1.56,0.64,1)`, disparada via key change quando o valor selecionado muda.
-- `gallery-crossfade`: opacidade 0 → 1 em 600ms — aplicada na imagem da galeria via `key={activeImage}` com classe de fade.
+Parágrafo 1: "A Western começa antes da fábrica. Começa no traço de Ricardo Botelho — desenhista, escultor e o autor dos projetos de cada peça do nosso catálogo. É dele a observação paciente da pedra natural que se traduz em forma, em proporção, em textura. É dele a decisão sobre como uma cascata vai escorrer, como um fóssil vai se revelar, como uma pedra de borda vai conversar com a água."
 
-Stagger via `style={{ animationDelay: `${idx * 80}ms` }}` no swatch-fill.
-
-Hook utilitário inline no `FinishSelector` com `useRef + useEffect` para `IntersectionObserver` (single-shot: adiciona classe `is-visible` quando entra; remove o observer).
-
-### 4. Integração no `ProductPage.tsx`
-
-- Detectar a opção `Acabamento` (case-insensitive) em `visibleOptions`.
-- Renderizar `<FinishSelector />` para essa opção em vez dos chips. As demais opções (tamanho, etc.) continuam com os chips existentes.
-- Posicionamento: a seção do FinishSelector entra em **bloco próprio** logo abaixo da grade galeria/ficha — fora da coluna de detalhes — full width do `container-western`, com header próprio:
-  - Eyebrow `ACABAMENTO`
-  - Filete dourado
-  - Título serifado `Escolha o tom da peça.`
-  - Linha mono `4 acabamentos · mesmo preço · sob encomenda`
-- `onSelect` → `setActiveOptions(prev => ({ ...prev, [optionName]: val }))` (mesma assinatura do estado já existente). O resto do fluxo (imagem trocando via `useEffect` em `variant.image.url`, preço, botão CTA) continua funcionando intacto.
-- Para o crossfade da galeria: adicionar `key={activeImage}` + classe `animate-fade-in` (já existe no projeto) na `<img>` ativa.
-
-### 5. Estrutura final do JSX da PDP
-
-```
-<container>
-  <breadcrumb />
-  <grid 2-col>
-    <gallery />
-    <details (sem chips de acabamento, mantém demais opções, preço, CTA, accordions)>
-  </grid>
-
-  {hasAcabamento && (
-    <section class="mt-20 md:mt-28 border-t border-western-stone-warm/20 pt-16">
-      <header>ACABAMENTO / título / subtítulo</header>
-      <FinishSelector ... />
-    </section>
-  )}
-</container>
-```
-
-### 6. Detalhes técnicos resumidos
-
-```text
-src/pages/Index.tsx                       : remove seção FAMÍLIAS + array FAMILIES
-src/components/product/FinishSelector.tsx : novo, recebe values + selected + onSelect
-src/pages/ProductPage.tsx                 : extrai option Acabamento, renderiza FinishSelector full-width abaixo da grid
-                                          : key={activeImage} + animate-fade-in na <img> da galeria
-tailwind.config.ts                        : keyframes swatch-fill, swatch-breathe, swatch-splash
-```
-
-Sem novas dependências. Sem mudanças no Shopify ou no carrinho.
+Parágrafo 2: "Cada peça que sai da Western nasce de um desenho seu, passa por um modelo e curadoria, e só depois entra em produção em um composto mineral de alta resistência. Esse é o motivo de o nosso catálogo ter coerência visual com a natureza: existe um olhar único organizando o conjunto."
