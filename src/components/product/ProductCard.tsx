@@ -32,9 +32,12 @@ export default function ProductCard({ product, surface = "cream" }: Props) {
       >
         {img ? (
           <img
-            src={img.url}
+            src={cdnImg(img.url, 800)}
+            srcSet={cdnSrcSet(img.url, [400, 800, 1200])}
+            sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 90vw"
             alt={img.altText ?? product.title}
             loading="lazy"
+            decoding="async"
             className="w-full h-full object-contain p-4 transition-transform duration-700 ease-out group-hover:scale-[1.04]"
           />
         ) : (
