@@ -233,11 +233,18 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
                 </>
               )}
             </button>
+            <button
+              type="button"
+              onClick={() => setSketchOpen(true)}
+              className="btn-outline-forest w-full justify-center"
+            >
+              <FileDown className="h-4 w-4" /> Baixar prancha técnica (PDF + .skp)
+            </button>
             <a
               href={whatsappConjunto(`${conjunto.nome} (acabamento ${acabamento})`)}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-outline-forest w-full justify-center"
+              className="inline-flex items-center justify-center gap-2 h-11 font-mono text-xs uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep transition-colors"
             >
               <MessageCircle className="h-4 w-4" /> Falar com consultor
             </a>
