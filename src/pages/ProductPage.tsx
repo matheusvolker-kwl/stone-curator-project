@@ -413,8 +413,32 @@ export default function ProductPage() {
             >
               {(fichaRows.length > 0 || dims || acabamentosRow) && (
                 <ProductAccordion numeral="I" title="Ficha técnica" value="ficha">
+                  {dims && (
+                    <div className="mb-7">
+                      <p className="text-eyebrow mb-4">Dimensões</p>
+                      <div className="grid grid-cols-3 gap-px bg-western-stone-warm/15 border border-western-stone-warm/15">
+                        {[
+                          { rotulo: "Comprimento", sigla: "C", valor: dims.c },
+                          { rotulo: "Largura",     sigla: "L", valor: dims.l },
+                          { rotulo: "Altura",      sigla: "A", valor: dims.a },
+                        ].map((d) => (
+                          <div key={d.sigla} className="bg-western-cream p-4 text-center">
+                            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-2">
+                              {d.sigla} · {d.rotulo}
+                            </p>
+                            <p className="font-display text-xl text-western-green-deep tabular-nums">
+                              {d.valor || "—"}
+                              <span className="font-mono text-[10px] text-western-stone-warm/70 ml-1">cm</span>
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/60 mt-3 text-center">
+                        Variação artesanal de até ±3 cm por peça
+                      </p>
+                    </div>
+                  )}
                   <dl className="space-y-0">
-                    {dims && <SpecRow dt="Dimensões" dd={dims} />}
                     {fichaRows
                       .filter((f) => !/acabament/i.test(f.label))
                       .map((f) => (
@@ -439,6 +463,52 @@ export default function ProductPage() {
                   )}
                 </ProductAccordion>
               )}
+
+              <ProductAccordion numeral="II" title="Composição & material" value="composicao">
+                <p className="text-spec text-western-stone-warm leading-[1.8] mb-6">
+                  Toda peça Western é fabricada artesanalmente em composto mineral proprietário,
+                  desenvolvido há 33 anos no nosso ateliê. Reproduz fielmente a estética da pedra
+                  natural — sem nenhuma extração ambiental.
+                </p>
+
+                <ul className="space-y-5">
+                  {[
+                    {
+                      label: "Estrutura",
+                      text: "Cimento estrutural reforçado com fibra de fios de PET reciclado, formando uma teia tridimensional interna que dá leveza, resistência a impacto e durabilidade muito superiores ao cimento puro.",
+                    },
+                    {
+                      label: "Interior oco",
+                      text: "Pesa até 10× menos que pedra natural equivalente. Permite passar tubulação hidráulica, fiação de iluminação e bombas por dentro da peça — sem embutir nada na obra civil.",
+                    },
+                    {
+                      label: "Pintura mineral",
+                      text: "6 fases de pintura manual, com 5 cores sobrepostas a cada fase, simulando sedimentação geológica. Resiste a cloro, sol, chuva e variação térmica. Não desbota, não escama, manutenção zero.",
+                    },
+                    {
+                      label: "Resistência mecânica",
+                      text: "Suporta peso humano (pisar, sentar), perfuração com furadeira para passagem de fios e carga estrutural compatível com uso paisagístico. Não trinca, não estilhaça.",
+                    },
+                    {
+                      label: "Sustentabilidade",
+                      text: "Zero extração ambiental — o molde é tirado da pedra real no local sem mover a pedra. Cada peça incorpora plástico PET que iria para aterro como armadura estrutural.",
+                    },
+                    {
+                      label: "Garantia",
+                      text: "5 anos formais contra defeitos de fabricação. Histórico real: peças instaladas desde 1995 envelhecem melhor — musgo, oxidação ambiental e pátina natural valorizam o produto com o tempo.",
+                    },
+                  ].map((item) => (
+                    <li key={item.label}>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold mb-1.5">
+                        {item.label}
+                      </p>
+                      <p className="text-spec text-western-stone-warm leading-[1.8]">
+                        {item.text}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </ProductAccordion>
 
               {parsed.observacoes.length > 0 && (
                 <ProductAccordion numeral="II" title="Observações" value="obs">
