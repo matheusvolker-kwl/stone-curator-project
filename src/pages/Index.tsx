@@ -7,7 +7,7 @@ import ColecoesGrid from "@/components/home/ColecoesGrid";
 import ProjetosSection from "@/components/home/ProjetosSection";
 import ArtistaSection from "@/components/home/ArtistaSection";
 import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
-import { ArrowRight, ShieldCheck, Truck, Box } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import heroCascata from "@/assets/hero-cascata.webp";
 import heroCascataSm from "@/assets/hero-cascata-sm.webp";
 import { BUSINESS } from "@/config/business";
@@ -72,25 +72,6 @@ export default function Index() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Faixa de garantias logo após o hero */}
-      <section className="bg-white border-b border-western-stone-warm/10">
-        <div className="container-western py-5 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
-          {[
-            { Icon: ShieldCheck, t: `Pedido mínimo ${BUSINESS.pedidoMinimoLabel}`, d: "Exclusivo para profissionais com CNPJ." },
-            { Icon: Truck, t: "Produção em 15 dias úteis", d: "Após confirmação do pagamento antecipado." },
-            { Icon: Box, t: "Modelos 3D em SketchUp", d: "Para todos os produtos do catálogo." },
-          ].map(({ Icon, t, d }) => (
-            <div key={t} className="flex items-start gap-3">
-              <Icon className="h-5 w-5 text-western-gold mt-0.5 flex-shrink-0" strokeWidth={1.4} />
-              <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-western-green-deep">{t}</p>
-                <p className="text-xs text-western-stone-warm mt-0.5">{d}</p>
-              </div>
-            </div>
-          ))}
         </div>
       </section>
 
