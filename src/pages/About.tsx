@@ -193,7 +193,7 @@ export default function About() {
             </figure>
           </Reveal>
 
-          <div className="md:col-span-7 space-y-7 text-base md:text-lg text-western-stone-warm leading-relaxed">
+          <div className="md:col-span-8 space-y-7 text-base md:text-lg text-western-stone-warm leading-relaxed">
             <Reveal variant="fade-up" duration={750}>
               <p className="text-eyebrow mb-3">A família Botelho</p>
               <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05] mb-2">
