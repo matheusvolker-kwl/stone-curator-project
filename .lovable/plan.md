@@ -1,157 +1,161 @@
-## Diagnóstico do que está fraco hoje
 
-1. **Perguntas pedem ao cliente o que ele não sabe.** "Nível de composição: Essencial / Equilibrada / Completa" é jargão interno. O parceiro B2B pensa em **estilo**, **uso**, **orçamento**, **quantidade de pedras** — não em "nível".
-2. **Cards de opção são texto puro.** Sem imagem, sem referência visual, sem sensação de curadoria. Para uma marca que vende composição estética, isto é fatal.
-3. **Sem progresso visual real.** "Etapa 2 de 3" é correto mas frio — não dá sensação de jornada.
-4. **O resultado é uma página parada.** Mostra um único produto/imagem e joga para fora (Shopify externo). Não revela o que compõe o conjunto, não permite comprar dali, não sugere acabamento.
-5. **Upsell desconectado.** Hoje são links para coleções externas. Deveria ser "complete o conjunto" — produtos avulsos que somam ao mesmo carrinho.
-6. **Sem ação de venda.** O CTA principal (`Ver conjunto completo`) abre Shopify em outra aba. Quebra a operação B2B; o parceiro perde o contexto e o carrinho local.
+# Redesenho do Guia de Compra Western Pools
 
-## Visão da nova experiência
+Mantém a árvore de decisão atual (45 nós + caminho consultivo) intacta como lógica. Reescreve interface, captura e upsell. Migra os dados de `guideMap.ts` (hardcoded) para metafields no Shopify, para que a Western edite no admin sem deploy.
 
-Wizard com três pilares:
-- **Linguagem por intenção.** Substituir "nível de composição" por perguntas concretas sobre uso, estilo e densidade visual. Mapear internamente para `essencial | equilibrada | completa`.
-- **Cards visuais.** Cada opção tem miniatura (foto/ilustração) + título + 1 frase. Hover revela detalhe.
-- **Resultado que vende.** Galeria do conjunto, lista das peças que o compõem (cada uma com preço e quantidade), seletor de acabamento global, **"Adicionar conjunto ao carrinho"** que despeja todos os itens no carrinho local (já temos `addBundle` no `cartStore`), e upsell logo abaixo com "+" para adicionar ao mesmo carrinho.
-
-## Fluxo revisado
+## Nova arquitetura — 5 etapas, ordem revisada
 
 ```text
-Intro (hero forte, foto de referência, 1 CTA "Compor meu projeto")
-  │
-  ▼
-1. Para qual ambiente? ........... Lago • Piscina • Jardim   (cards com foto)
-  │
-  ▼
-2. Qual o tamanho da área? ....... faixas com ícone de escala
-  │
-  ▼
-3a. (Lago) Vai usar pedras naturais junto?      Sim, complemento • Não, só Western
-3b. (Jardim) O jardim terá água?                Seco • Com fonte
-  │
-  ▼
-4. Qual o estilo do projeto? ..... cards visuais — mapeia para "nivel"
-     • "Clean e econômico"          → essencial
-     • "Equilibrado e marcante"     → equilibrada
-     • "Cenográfico, alto impacto"  → completa
-   (cada card tem foto-mood + faixa de orçamento estimada para ancorar)
-  │
-  ▼
-5. Resumo + Resultado
-     [Galeria do conjunto]   [Card de venda]
-                              - Eyebrow + nome + subtítulo
-                              - Preço total do conjunto
-                              - Seletor de acabamento (Quartzo/Arenito/Moledo/Granito)
-                              - "Peças incluídas" (lista com qty + preço)
-                              - [ Adicionar conjunto ao carrinho ]  (primário)
-                              - [ Falar com consultor ]              (secundário)
-                              - Política B2B (pedido min, prazo, frete)
-
-     ── Complete sua composição ──
-     Grid de produtos avulsos contextuais, cada card com "+ Adicionar"
-     (vai pro mesmo carrinho)
-
-     [ Refazer guia ]   [ Salvar / compartilhar link ]
+1. Onde            (foto-mood, 4 cards: Lago • Piscina • Jardim • Outro)
+2. Quanto espaço   (slider 1–60 m² com vista isométrica em tempo real)
+3. Protagonismo    (comparativo visual de 3 fotos — substitui "estilo")
+4. Composição      (só lago/jardim — comparativo lado-a-lado)
+5. Recomendação    (conjunto + sketch download como lead-magnet + upsell em 3 camadas)
 ```
 
-## Mudanças concretas
+Mudança de ordem: hoje é Tipo → Tamanho → Composição/Jardim → Estilo. Passa a Tipo → Tamanho → **Protagonismo → Composição** → Resultado. Decisão estética antes da decisão técnica de mistura.
 
-### Conteúdo / linguagem
-- `nivelLabels` ganham **rótulos voltados ao usuário**: "Clean", "Equilibrado", "Cenográfico" + 1 frase + faixa de preço de referência ("a partir de R$ X").
-- Texto da pergunta de tamanho ganha referência de uso ("Equivale a uma área aprox. de uma vaga de garagem", etc.).
+## Etapa 1 — "Onde" como mood
 
-### Cards visuais
-- `OptionCard` reformulado com slot para `image` (string URL) e badge opcional (preço estimado, ícone). Mantém variante texto-puro para perguntas binárias.
-- Imagens iniciais: usar fotos já existentes em `src/assets` ou da Shopify (queremos o handle do produto-âncora de cada opção para puxar a imagem via Storefront).
+- Cards verticais com foto Western real cobrindo 80% da altura. Eyebrow + título embaixo.
+- Indicador silencioso de magnitude por card: "Geralmente 4–12 peças · R$ 5–15 mil".
+- **Quarto card "Outro / Projeto especial"** → formulário consultivo (fachada, balcão, hall, parede LED).
 
-### Progresso
-- Substituir "Etapa 2 de 3" por uma **trilha horizontal** com 4–5 pontos, marcando concluídos (preenchidos), atual (com anel dourado) e futuros (vazios). Mobile colapsa para "2 / 5".
-- Mostrar **breadcrumb das respostas anteriores** no topo (ex.: "Lago · 4–10 m² · Western + naturais"), clicável para voltar a qualquer etapa.
+## Etapa 2 — Slider de área com renderização viva
 
-### Resultado — peça central
-- Adicionar ao `guideMap` o array `composto: Array<{ handle, qty }>` em cada `ConjuntoLeaf` (handles dos produtos individuais que formam o kit).
-- Buscar via `fetchProductsByHandles` (já existe) → renderizar:
-  - **Galeria** (até 4 imagens, mosaico).
-  - **Lista de peças** com thumb, nome, qty, preço unitário, subtotal.
-  - **Total recalculado** a partir dos preços reais (fallback no `preco` do guideMap).
-- **Seletor de acabamento** global: ao trocar, troca a `variantId` selecionada de cada peça (todas as peças da Western têm a mesma opção "Acabamento").
-- **CTA primário "Adicionar conjunto ao carrinho"**: chama `useCartStore.addBundle(items)` com cada peça. Toast de sucesso + abre `CartDrawer`.
-- CTA secundário "Falar com consultor" (WhatsApp já com o nome do conjunto e acabamento escolhido).
-- Texto pequeno: "Você poderá ajustar quantidades no carrinho."
+- Slider horizontal 1–60 m² (range varia por tipo).
+- Acima: SVG isométrico de retângulo proporcional + silhueta humana 1,75 m fixa para escala. Textura sutil (água/vegetação) por tipo.
+- Em destaque: número exato em m² (display grande) + faixa de preço atualizada ao vivo (R$ 4.500–9.800).
+- Snap magnético leve em 1 / 4 / 10 / 20 / 40 m². Input numérico paralelo (sincronizado).
+- Se valor cair fora do range coberto pelos conjuntos → cai automaticamente no caminho consultivo (regra emergente, não hardcode).
 
-### Upsell consultivo
-- Trocar `upsellMap` (que aponta para coleções externas) por **lista curada de produtos por tipo+nível** com handles reais. Cada card:
-  - Imagem + nome + preço (Storefront).
-  - Botão "+ Adicionar" → entra no mesmo carrinho.
-  - Link discreto "Ver detalhes" → PDP interna (`/produto/[handle]`, já existe).
+## Etapa 3 — Protagonismo (sem rótulos abstratos)
 
-### Persistência e compartilhamento
-- Serializar respostas em querystring (`?t=lago&s=4-a-10&c=somenteWestern&n=equilibrada`) para o resultado ser compartilhável e o "Voltar do navegador" funcionar.
-- Ler querystring no mount → pular direto para o resultado se completo.
+- 3 imagens do **mesmo ambiente** com 3 níveis de presença Western, lado a lado. Cliente clica na imagem.
+- Coluna do meio com borda dourada + badge "Mais escolhido".
+- Linha de prova social nominal por tipo: "Eduardo Faisal especifica em 4 de 5 projetos" (lago), nomes equivalentes para piscina/jardim.
+- Para piscina: cascata visível ou não na própria imagem (alinha expectativa).
+- Fallback enquanto não há renders 3D: fotos de obras executadas; meta de produção 9 imagens (3×3) em SketchUp + V-Ray.
 
-### Componentes (estrutura)
+## Etapa 4 — Composição com comparativo
+
+- Só aparece para Lago e Jardim (piscina pula).
+- Lago: card "Só Western" vs "Western + naturais", cada um com foto + ficha (peças · preço · descrição honesta de complemento).
+- Jardim: "Seco" vs "Com fonte", cada card mostrando o acréscimo de preço pela água.
+
+## Etapa 5 — Resultado + lead-magnet + multi-CTA
+
+Banner de download em destaque: **"Baixe o sketch deste conjunto em alta resolução (.skp + .pdf)"** com thumb da prancha isométrica.
+
+Overlay de captura ao clicar:
+- Nome
+- E-mail (obrigatório)
+- WhatsApp (obrigatório)
+- Sou: arquiteto · paisagista · construtora · cliente final · outro (radio — segmenta lead)
+- Empresa / CNPJ (opcional)
+- Botão: **"Receber sketch + condição comercial"**
+
+Backend: link assinado válido 7 dias. Enquanto não houver os 45 .skp, entrega só PNG/PDF do render isométrico no momento e promete .skp por e-mail em 48h (gancho para o consultor ligar).
+
+CTAs no resultado, em hierarquia:
+1. Adicionar conjunto ao orçamento
+2. Baixar sketch (lead-magnet)
+3. Falar com consultor (WhatsApp pré-preenchido com contexto)
+4. Agendar visita ao ateliê
+5. Refazer guia
+
+## Upsell em 3 camadas (substitui UpsellGrid atual por tag)
+
+- **Camada A — "Falta para terminar"**: complementos contextuais (Pedra LED, sonora, pisada). Cada item com 1 frase de justificativa.
+- **Camada B — "Vale subir um nível?"**: aparece só para Essencial/Equilibrado. Mostra o conjunto imediatamente acima com diferença de preço explícita ("Por R$ 5.300 a mais…").
+- **Camada C — "Itens da casa que combinam"**: acessórios autorais (Champanheira, Torneira, Sonora) em scroller editorial sem CTA agressivo.
+
+Curadoria via metafields, não tag genérica.
+
+## Migração de dados — Shopify metafields
+
+`guideMap.ts` (45 nós hardcoded) é substituído por query GraphQL na coleção `conjuntos` lendo metafields no namespace `guide`:
 
 ```text
-src/pages/BuyingGuide.tsx                (rewrite leve: roteia querystring → wizard ou resultado)
-src/components/guide/
-  GuideIntro.tsx                          (hero + CTA, NEW)
-  GuideProgress.tsx                       (trilha + breadcrumb, NEW)
-  GuideWizard.tsx                         (extraído de BuyingGuide, controla steps)
-  StepShell.tsx                           (atualizado: usa GuideProgress, remove "Etapa X de Y" textual)
-  OptionCard.tsx                          (atualizado: image, badge, layout vertical)
-  steps/
-    StepAmbiente.tsx                      (NEW; cards visuais Lago/Piscina/Jardim)
-    StepTamanho.tsx                       (NEW; cards com ícone de escala)
-    StepComposicao.tsx                    (NEW; lago)
-    StepJardim.tsx                        (NEW; jardim)
-    StepEstilo.tsx                        (NEW; substitui StepNivel; intent-based)
-  GuideResultado.tsx                      (rewrite: galeria + peças + acabamento + add bundle)
-  ConjuntoPecasList.tsx                   (NEW; lista de itens com qty/preço)
-  AcabamentoSelector.tsx                  (NEW; reusa lógica de FinishSelector se aplicável)
-  UpsellGrid.tsx                          (rewrite: produtos reais com Add to cart)
-  GuideConsultor.tsx                      (mantém, ganha mock de "o que esperar")
+guide.tipo                  "lago" | "piscina" | "jardim"
+guide.tamanho_min           number (m²)
+guide.tamanho_max           number (m²)
+guide.composicao            "somente_western" | "com_naturais" | "n_a"
+guide.jardim_tipo           "seco" | "com_fonte" | "n_a"
+guide.protagonismo          "pontual" | "composta" | "imersiva"
+guide.pecas_count           number
+guide.cascata_inclusa       boolean
+guide.render_iso_url        file
+guide.sketch_skp_url        file
+guide.sketch_pdf_url        file
+guide.upgrade_to            reference (handle)
+guide.upsell_complementares list.references
+guide.descricao_curta       text
 ```
 
-### Dados (`src/data/guideMap.ts`)
-- Adicionar campos:
-  - `image?: string` (mood/foto da opção, para os cards de etapa)
-  - `composto: Array<{ handle: string; qty: number }>` em cada `ConjuntoLeaf`
-  - `nivelMeta: { label: string; tagline: string; faixaPreco: string; image: string }` por tipo
-- Adicionar helper `buildBundleItems(conjunto, products, acabamento)` → retorna array pronto pro `addBundle`.
+Match por filtro dinâmico:
+```ts
+conjuntos.find(c =>
+  c.tipo === answers.tipo &&
+  answers.tamanhoEmM2 >= c.tamanho_min &&
+  answers.tamanhoEmM2 <= c.tamanho_max &&
+  (c.composicao === answers.composicao || c.composicao === "n_a") &&
+  (c.jardim_tipo === answers.jardim || c.jardim_tipo === "n_a") &&
+  c.protagonismo === answers.protagonismo
+)
+```
 
-### Carrinho
-- `useCartStore.addBundle` já existe — usar.
-- Após adicionar bundle: `toast.success("Conjunto adicionado ao carrinho")` + abrir CartDrawer (expor `setOpen` global ou usar evento custom — checar `CartDrawer.tsx` na implementação).
+## Princípios de UX aplicados (resumo operacional)
 
-### Acessibilidade / responsivo
-- Cards visuais com `aria-label` descritivo, foco visível dourado, navegação por teclado.
-- Mobile: cards 1 coluna, galeria do resultado vira carrossel simples, peças em lista vertical.
-- Trilha de progresso colapsa para "Etapa N de Total" + chevrons.
+- Mostre, não rotule (etapas 3 e 4 viram fotos comparativas).
+- Esforço crescente: foto → slider → comparativo → comparativo → formulário (só ao final).
+- Reciprocidade antes de pedir contato (sketch em troca de e-mail).
+- Persistência em localStorage com TTL 72h + microcopy "Continuamos de onde você parou".
+- Específico > genérico: "faltam R$ 380 — uma Pedra LED resolve" em vez de "faltam alguns reais".
+- Âncora de preço comparativa: "Economia estimada de R$ 6.500 vs. pedra natural equivalente" abaixo do preço.
+- Multi-CTA hierárquico no resultado (5 caminhos, não 3).
+- Micro-loader 400ms entre etapas: "Calculando composição ideal…".
+- Barra de progresso nomeada e clicável (já existe parcial — refinar).
+- Mobile-first: slider tocável, comparativo empilha em coluna, fotos WebP com srcset 3 resoluções, <2s em 4G.
+- Tempo-alvo total: 90s para usuário decidido.
 
-### Não-objetivos / o que NÃO muda
-- Decision tree (handles dos conjuntos) e WhatsApp permanecem.
-- Caminho consultivo (`acima-20`/`acima-60`) continua, só ganha visual mais consultivo (foto + bullets do que o cliente recebe).
-- `Conjuntos.tsx` continua como está.
+## Roadmap por sprint
 
-## Riscos e validações antes de codar
-- Confirmar que cada `handle` de produto-peça citado em `composto` realmente existe no Shopify. Plano: na implementação, listar handles distintos e rodar `shopify--list_products` ou `fetchProductsByHandles` para validar; se algum não existir, esconder a peça com fallback "consultar disponibilidade" (sem quebrar UX).
-- Imagens das opções: na primeira passada usar **placeholders SVG estilizados** (mesmo padrão verde+dourado do `PlaceholderImg` atual), com hook claro para trocar por foto real depois. Evita parecer "vazio" sem inventar fotos.
+**Sprint 1 — Fundação Shopify (3–4 dias).** Refactor invisível: cria metafields, migra os 45 conjuntos do `guideMap.ts` para o admin do Shopify, troca a fonte de dados por GraphQL. Sem mudança de UI. Reduz bug surface antes de qualquer mudança visual.
 
-## Entrega em ondas
+**Sprint 2 — UI das etapas 1–3 (4–5 dias).** Cards "Onde" com foto-mood + 4ª opção. Slider de área com SVG isométrico ao vivo. Comparativo de composição (lago/jardim). Mantém etapa de "estilo" antiga para A/B test contra versão atual.
 
-**Onda 1 — Linguagem + visual do wizard (alto impacto, baixo risco)**
-- Reescrever rótulos de "nível" → estilo + tagline + faixa de preço.
-- `OptionCard` com imagem/placeholder + badge.
-- `GuideProgress` com trilha + breadcrumb clicável.
-- Steps refatorados para os novos rótulos.
+**Sprint 3 — Protagonismo + lead-magnet (3–4 dias).** Comparativo de 3 fotos substituindo "estilo". Banner de sketch + overlay de captura + envio de link assinado por e-mail. Sprint que mais mexe em conversão.
 
-**Onda 2 — Resultado que vende**
-- Adicionar `composto` ao `guideMap`.
-- `ConjuntoPecasList`, `AcabamentoSelector`, novo `GuideResultado` com galeria, total real e **Adicionar conjunto ao carrinho** (`addBundle` + toast + abrir drawer).
+**Sprint 4 — Upsell + microcopy + persistência (3 dias).** UpsellGrid em 3 camadas. Frases de prova social nominal. Âncora de economia vs. pedra natural. Persistência localStorage. Micro-loader de pensamento.
 
-**Onda 3 — Upsell + persistência**
-- `UpsellGrid` com produtos reais e botão "+ Adicionar".
-- Querystring persistente / compartilhável.
-- Polimento mobile e microcopy B2B.
+## Detalhes técnicos
 
-Aprovação para seguir nesta direção? Se quiser, posso ajustar os rótulos da Etapa 4 (estilo) antes de implementar — me diz se prefere "Clean / Equilibrado / Cenográfico", ou algo como "Discreto / Marcante / Imponente", ou outra dupla de palavras.
+- Nova store `guideStore.ts` (Zustand) com persistência localStorage TTL 72h.
+- `BuyingGuide.tsx` vira shell que orquestra steps; cada step em arquivo próprio (`StepOnde`, `StepArea`, `StepProtagonismo`, `StepComposicao`, `StepResultado`).
+- `StepArea`: SVG inline com `viewBox` proporcional, animação via `transform: scale()`. Sem dependência 3D.
+- `StepProtagonismo`: usa `render_iso_url` do conjunto candidato de cada nível (3 queries paralelas filtrando só por tipo+tamanho).
+- Lead-magnet: edge function `request-sketch` (Lovable Cloud) — recebe formulário, persiste em `leads`, gera link assinado da URL do sketch (válido 7d via JWT-like token), dispara e-mail transacional pela infra Lovable Emails. Tabela `leads` com RLS (insert público, select restrito).
+- Caminho consultivo emerge quando `find()` não retorna conjunto → componente `GuideConsultor` já existente, só passa contexto (tipo + m² digitado + protagonismo + segmento do lead).
+- Fonte de "produtos complementares" e "upgrade_to": já vem por metafield, sem heurística por tag.
+- `UpsellGrid` reescrito em 3 seções (`UpsellComplementos`, `UpsellUpgrade`, `UpsellMarca`).
+
+## Não muda
+
+- Decision tree conceitual (45 conjuntos + caminho consultivo).
+- Carrinho local (`cartStore` + `addItem`).
+- WhatsApp como canal consultivo.
+- Páginas de produto e coleções.
+
+## Riscos & validações antes de codar
+
+- Confirmar que a coleção `conjuntos` no Shopify tem os 45 produtos certos (rodar `shopify--list_products` na fase Sprint 1).
+- Validar com a Western quem assina cada frase de prova social (Faisal/Hayasaki/Luidi) por tipo de ambiente.
+- Definir com a Western se o sketch entrega `.skp` real ou só `.pdf` na fase 1 (afeta o microcopy do banner).
+- Lovable Emails precisa estar habilitado para o lead-magnet — habilitar no Sprint 3.
+
+## Decisões abertas para você
+
+1. **Sprint 1 (migração para metafields) vai junto agora ou prefere começar pela UI mantendo `guideMap.ts` por enquanto?** A migração é o investimento certo a longo prazo, mas atrasa o ganho visível em ~4 dias.
+2. **Os renders 3D (3 níveis × 3 ambientes = 9 imagens)** ficam como dependência da Western ou começo com fotos de obras executadas e a gente troca depois?
+3. **Lead-magnet no Sprint 3 entrega `.skp` real ou só `.pdf`/PNG do render** na primeira versão? Define o microcopy do banner.
