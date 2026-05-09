@@ -139,7 +139,16 @@ export default function BuyingGuide() {
     <div className="surface-ivory min-h-screen">
       <div className={`container-western py-12 md:py-20 ${isAssembly ? "max-w-7xl pb-32 xl:pb-20" : "max-w-5xl"}`}>
         {step === "intro" ? (
-          <Intro onStart={start} onResume={showResume ? () => goto((tipo ? "base" : "tipo") as GuideStep) : undefined} onReset={reset} hasProgress={showResume} />
+          <Intro
+            onStart={() => { if (showResume) reset(); start(); }}
+            onResume={showResume ? () => {
+              // Retomar: ir para a etapa mais avançada possível com as respostas
+              const target: GuideStep = nivel ? "base" : tipo ? (areaM2 ? "protagonismo" : "area") : "tipo";
+              goto(target);
+            } : undefined}
+            onReset={reset}
+            hasProgress={showResume}
+          />
         ) : step === "especial" ? (
           <div className="border border-western-stone-warm/20 bg-white p-6 md:p-12">
             <GuideEspecial />
