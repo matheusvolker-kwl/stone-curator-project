@@ -274,7 +274,7 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
         </div>
       </div>
 
-      <UpsellGrid tipo={tipo} />
+      <UpsellGrid answers={answers} precoBase={precoReal} />
 
       <SketchLeadModal
         open={sketchOpen}
