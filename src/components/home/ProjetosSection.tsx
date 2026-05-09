@@ -46,12 +46,24 @@ export default function ProjetosSection() {
                   aria-hidden
                 />
                 <div className="absolute bottom-3 left-3 right-3">
-                  <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-gold-soft mb-1">
-                    {p.eyebrow}
-                  </p>
-                  <h3 className="font-display text-base md:text-lg text-western-cream leading-tight line-clamp-2">
-                    {p.titulo}
-                  </h3>
+                  {(() => {
+                    const [nome, contexto] = p.eyebrow.split("·").map((s) => s.trim());
+                    return (
+                      <>
+                        <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-gold-soft mb-1.5">
+                          {p.titulo}
+                        </p>
+                        <h3 className="font-display text-xl md:text-2xl text-western-cream leading-[1.1] line-clamp-2">
+                          {nome}
+                        </h3>
+                        {contexto && (
+                          <p className="text-[11px] text-western-cream-muted mt-1 line-clamp-1">
+                            {contexto}
+                          </p>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
               <div className="px-3 py-2.5 border-t border-western-gold/10 flex items-center justify-between">
