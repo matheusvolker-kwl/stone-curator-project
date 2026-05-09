@@ -16,6 +16,7 @@ import iconePedraBranco from "@/assets/icone-pedra-branco.png";
 import { BUSINESS } from "@/config/business";
 
 export default function Index() {
+  const scrollY = useScrollY();
   const { data: collections = [] } = useQuery({
     queryKey: ["collections"],
     queryFn: () => fetchCollections(20),
@@ -26,6 +27,10 @@ export default function Index() {
   });
 
   const linhas = collections.filter((c) => !isSeasonal(c) && c.handle !== "conjuntos");
+
+  // Parallax sutil — imagem desce mais devagar que o scroll, símbolo flutua
+  const heroParallax = `translate3d(0, ${scrollY * 0.18}px, 0) scale(${1 + scrollY * 0.0003})`;
+  const symbolParallax = `translate3d(0, calc(-50% + ${scrollY * -0.08}px), 0)`;
 
   return (
     <>
