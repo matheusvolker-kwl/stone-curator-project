@@ -235,7 +235,7 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
               </>
             ) : (
               <>
-                <ShoppingBag className="h-4 w-4" /> Adicionar conjunto ao orçamento
+                <ShoppingBag className="h-4 w-4" /> Reservar este conjunto
               </>
             )}
           </button>
