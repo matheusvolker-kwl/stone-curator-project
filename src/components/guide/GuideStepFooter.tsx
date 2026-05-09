@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
-import { formatBRL } from "@/lib/shopify/client";
+import GatedPrice from "@/components/shared/GatedPrice";
 
 interface Props {
   onBack?: () => void;
