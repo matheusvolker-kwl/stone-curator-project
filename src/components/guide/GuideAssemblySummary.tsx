@@ -71,6 +71,7 @@ function ItemRow({ item }: { item: ReturnType<typeof useCartStore.getState>["ite
 }
 
 function TotalDisplay({ total, totalQty }: { total: number; totalQty: number }) {
+  const { isApproved } = useAuth();
   const prevTotal = useRef(total);
   const [pulse, setPulse] = useState(false);
 
@@ -86,15 +87,19 @@ function TotalDisplay({ total, totalQty }: { total: number; totalQty: number }) 
   return (
     <div>
       <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
-        Orçamento parcial · {totalQty} {totalQty === 1 ? "item" : "itens"}
+        {isApproved ? "Orçamento parcial" : "Itens no projeto"} · {totalQty} {totalQty === 1 ? "item" : "itens"}
       </p>
-      <motion.p
-        animate={pulse ? { scale: [1, 1.06, 1], color: ["#1f3a26", "#b8924f", "#1f3a26"] } : {}}
-        transition={{ duration: 0.6 }}
-        className="font-display text-2xl text-western-green-deep leading-tight"
-      >
-        {formatBRL(total, "BRL")}
-      </motion.p>
+      {isApproved ? (
+        <motion.p
+          animate={pulse ? { scale: [1, 1.06, 1], color: ["#1f3a26", "#b8924f", "#1f3a26"] } : {}}
+          transition={{ duration: 0.6 }}
+          className="font-display text-2xl text-western-green-deep leading-tight"
+        >
+          {formatBRL(total, "BRL")}
+        </motion.p>
+      ) : (
+        <GatedPrice amount={total} variant="block" className="font-display text-2xl text-western-green-deep leading-tight" />
+      )}
     </div>
   );
 }
