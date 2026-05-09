@@ -3,8 +3,8 @@
 
 export const BUSINESS = {
   // Pedido mínimo B2B (em BRL)
-  pedidoMinimoBRL: 2000,
-  pedidoMinimoLabel: "R$ 2.000",
+  pedidoMinimoBRL: 700,
+  pedidoMinimoLabel: "R$ 700",
 
   // Prazo de produção
   prazoProducaoDias: 15,
