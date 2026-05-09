@@ -52,6 +52,10 @@ export default function StepCasa({ onBack, onNext }: Props) {
           Peças exclusivas que viram presente para o cliente final, ponto focal de
           living e geram margem expressiva para revenda especificada.
         </p>
+        <p className="text-sm text-western-stone-warm/80 italic max-w-2xl mt-3">
+          Faisal especifica esses itens em quase todos os projetos premiados —
+          são detalhes que fazem o cliente lembrar de quem assinou o ambiente.
+        </p>
       </header>
 
       {isLoading ? (
