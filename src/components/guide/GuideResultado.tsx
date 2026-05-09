@@ -275,6 +275,15 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
       </div>
 
       <UpsellGrid tipo={tipo} />
+
+      <SketchLeadModal
+        open={sketchOpen}
+        onClose={() => setSketchOpen(false)}
+        conjuntoNome={conjunto.nome}
+        conjuntoHandle={conjunto.handle}
+        acabamento={acabamento}
+        contexto={{ tipo: answers.tipo, areaM2: undefined }}
+      />
     </div>
   );
 }
