@@ -12,7 +12,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ChevronLeft, Loader2, Info, MessageCircle } from "lucide-react";
+import { ChevronLeft, Loader2, Info, MessageCircle, Download } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { toast } from "sonner";
 import FinishSelector from "@/components/product/FinishSelector";
@@ -372,6 +372,27 @@ export default function ProductPage() {
                     >
                       <MessageCircle className="h-4 w-4" /> Falar com consultor
                     </button>
+
+                    {(() => {
+                      const url = product.modelo3d?.value?.trim() || BUSINESS.sketchupWarehouse;
+                      const isProductSpecific = !!product.modelo3d?.value?.trim();
+                      return (
+                        <div className="mt-4">
+                          <p className="text-spec text-western-stone-warm/80 text-xs mb-2 leading-relaxed">
+                            Modele a composição inteira no SketchUp do seu estúdio antes de comprar.
+                          </p>
+                          <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full h-11 inline-flex items-center justify-center gap-2 border border-western-gold/60 text-western-gold hover:bg-western-gold hover:text-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+                          >
+                            <Download className="h-4 w-4" />
+                            {isProductSpecific ? "Baixar modelo 3D (.skp)" : "Modelos no 3D Warehouse"}
+                          </a>
+                        </div>
+                      );
+                    })()}
 
                     <ul className="text-spec text-western-stone-warm/80 leading-relaxed mt-5 text-xs space-y-1">
                       <li>· Produção sob demanda · {BUSINESS.prazoProducaoDias} dias úteis</li>

@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import logo from "@/assets/logo-horizontal-bege.png";
-import { Mail, Send } from "lucide-react";
+import { Mail, Send, Loader2 } from "lucide-react";
 import { BUSINESS } from "@/config/business";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const COLECOES: { label: string; handle: string }[] = [
   { label: "Cascatas", handle: "cascatas" },
@@ -20,6 +22,28 @@ const COLECOES: { label: string; handle: string }[] = [
 
 export default function Footer() {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleNewsletter = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setLoading(true);
+    const { error } = await supabase.from("leads").insert({
+      type: "newsletter",
+      email,
+      origem: "site/footer/newsletter",
+    });
+    setLoading(false);
+    if (error) {
+      toast.error("Não foi possível inscrever agora.");
+      return;
+    }
+    setEmail("");
+    toast.success("Inscrição confirmada", {
+      description: "Você receberá lançamentos e novidades.",
+    });
+  };
+
   return (
     <footer className="surface-forest border-t border-western-gold/15 pt-16 pb-10 mt-0">
       <div className="container-western">
@@ -96,11 +120,7 @@ export default function Footer() {
               Receba lançamentos e tabelas técnicas atualizadas.
             </p>
             <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!email) return;
-                setEmail("");
-              }}
+              onSubmit={handleNewsletter}
               className="flex border border-western-gold/30 focus-within:border-western-gold transition-colors"
             >
               <div className="flex items-center px-3 text-western-gold-soft">
@@ -114,8 +134,13 @@ export default function Footer() {
                 placeholder="seu@email.com"
                 className="flex-1 bg-transparent outline-none text-sm py-2.5 text-western-cream placeholder:text-western-cream-muted/60"
               />
-              <button type="submit" aria-label="Enviar" className="px-3 hover:bg-western-gold/10 text-western-gold-soft transition-colors">
-                <Send className="h-4 w-4" />
+              <button
+                type="submit"
+                disabled={loading}
+                aria-label="Enviar"
+                className="px-3 hover:bg-western-gold/10 text-western-gold-soft transition-colors disabled:opacity-50"
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </button>
             </form>
           </div>
