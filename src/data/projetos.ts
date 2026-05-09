@@ -2,8 +2,6 @@ import coverCascata from "@/assets/projetos/cover-cascata.webp";
 import coverCasaPraia from "@/assets/projetos/cover-casa-praia.webp";
 import coverPiscina from "@/assets/projetos/cover-piscina.avif";
 import coverLago from "@/assets/projetos/cover-lago.webp";
-import coverDiogo from "@/assets/projetos/cover-diogo-nogueira.webp";
-import coverCaito from "@/assets/projetos/cover-caito-maia.webp";
 
 export interface Projeto {
   slug: string;
