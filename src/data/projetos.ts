@@ -88,32 +88,4 @@ export const PROJETOS: Projeto[] = [
     cover: coverLago,
     video: "/videos/projetos/lago.mp4",
   },
-  {
-    slug: "residencia-diogo-nogueira",
-    eyebrow: "Diogo Nogueira · Residencial",
-    titulo: "Composição na Área de Lazer",
-    snippet:
-      "Composição autoral integrada à área de lazer da residência. Peças Western em paleta de areia compondo borda de piscina e jardim tropical.",
-    texto: [
-      "Projeto residencial com composição autoral em pedras Western articulada à área de lazer da casa. As peças foram especificadas para conviver com o paisagismo tropical sem competir com ele — borda de piscina, conjunto de pedras maiores e detalhes de jardim em tons de areia que ganham vida com a luz do fim de tarde.",
-      "Detalhes adicionais sob acordo de confidencialidade. Outras informações mediante consulta direta com a Western.",
-    ],
-    ficha: ["Residencial · alto padrão", "Composição em borda de piscina", "Acabamento em paleta de areia"],
-    cover: coverDiogo,
-    confidencial: true,
-  },
-  {
-    slug: "residencia-caito-maia",
-    eyebrow: "Caito Maia · Residencial",
-    titulo: "Cascata em Jardim Seco",
-    snippet:
-      "Projeto residencial de alto padrão com cascata Western e composição em jardim seco contemporâneo.",
-    texto: [
-      "Residência de alto padrão com cascata Western como peça central de um jardim seco contemporâneo. A composição mineral foi desenhada para emoldurar o acesso à área de lazer, com pedras de diferentes volumes em tons de moledo conduzindo o fluxo da água.",
-      "Detalhes adicionais sob acordo de confidencialidade. Outras informações mediante consulta direta com a Western.",
-    ],
-    ficha: ["Residencial · alto padrão", "Cascata em jardim seco", "Composição em moledo"],
-    cover: coverCaito,
-    confidencial: true,
-  },
 ];
