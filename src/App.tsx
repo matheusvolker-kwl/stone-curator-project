@@ -12,6 +12,7 @@ import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import BuyingGuide from "./pages/BuyingGuide.tsx";
 import PartnerSignup from "./pages/PartnerSignup.tsx";
+import ParceirosArquitetos from "./pages/ParceirosArquitetos.tsx";
 import PartnerLogin from "./pages/PartnerLogin.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/guia-de-compra" element={<BuyingGuide />} />
             <Route path="/sobre" element={<About />} />
             <Route path="/contato" element={<Contact />} />
+            <Route path="/parceiros-arquitetos" element={<ParceirosArquitetos />} />
             <Route path="/parceiro/cadastro" element={<PartnerSignup />} />
             <Route path="/parceiro/login" element={<PartnerLogin />} />
             <Route path="*" element={<NotFound />} />
