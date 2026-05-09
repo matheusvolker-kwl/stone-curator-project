@@ -253,8 +253,8 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
       <GuideStepFooter
         onBack={onBack}
         onNext={onNext}
-        nextLabel={baseAdded ? "Avançar para complementos" : "Avançar sem o conjunto"}
-        skipLabel={!baseAdded ? "Pular esta etapa" : undefined}
+        nextLabel={baseAdded ? "Seguir para complementos" : "Seguir só com o conjunto base"}
+        skipLabel={!baseAdded ? "Ainda não quero adicionar" : undefined}
         onSkip={!baseAdded ? onNext : undefined}
         addedCount={baseAdded ? 1 : 0}
       />
