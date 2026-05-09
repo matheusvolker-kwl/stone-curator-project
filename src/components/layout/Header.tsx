@@ -10,6 +10,7 @@ const nav = [
   { to: "/linhas", label: "Linhas" },
   { to: "/conjuntos", label: "Conjuntos" },
   { to: "/guia-de-compra", label: "Guia" },
+  { to: "/pedir-amostras", label: "Amostras" },
   { to: "/sobre", label: "Sobre" },
   { to: "/contato", label: "B2B" },
 ];

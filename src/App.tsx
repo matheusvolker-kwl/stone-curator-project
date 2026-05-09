@@ -14,6 +14,8 @@ import BuyingGuide from "./pages/BuyingGuide.tsx";
 import PartnerSignup from "./pages/PartnerSignup.tsx";
 import ParceirosArquitetos from "./pages/ParceirosArquitetos.tsx";
 import PartnerLogin from "./pages/PartnerLogin.tsx";
+import PedirAmostras from "./pages/PedirAmostras.tsx";
+import AgendarVisita from "./pages/AgendarVisita.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient({
@@ -38,6 +40,8 @@ const App = () => (
             <Route path="/parceiros-arquitetos" element={<ParceirosArquitetos />} />
             <Route path="/parceiro/cadastro" element={<PartnerSignup />} />
             <Route path="/parceiro/login" element={<PartnerLogin />} />
+            <Route path="/pedir-amostras" element={<PedirAmostras />} />
+            <Route path="/visitar" element={<AgendarVisita />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
