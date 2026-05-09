@@ -1,6 +1,7 @@
-import { ArrowRight, Sparkles, Layers } from "lucide-react";
+import { ArrowRight, Sparkles, Layers, RotateCcw, PlayCircle } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import StepOnde from "@/components/guide/StepOnde";
+import GuideAssemblySummary from "@/components/guide/GuideAssemblySummary";
 import StepArea from "@/components/guide/StepArea";
 import StepProtagonismo from "@/components/guide/StepProtagonismo";
 import StepComposicao from "@/components/guide/StepComposicao";
