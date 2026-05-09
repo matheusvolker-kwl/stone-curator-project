@@ -354,11 +354,13 @@ export default function ProductPage() {
                       </div>
                       <Button
                         onClick={handleAdd}
-                        disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
+                        disabled={!isApproved || !variant?.availableForSale || isLoadingCart || !!pendingOption}
                         className="flex-1 h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
                       >
                         {isLoadingCart ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : !isApproved ? (
+                          "Login para pedir"
                         ) : pendingOption ? (
                           `Selecione ${pendingOption.name.toLowerCase()}`
                         ) : variant?.availableForSale ? (
