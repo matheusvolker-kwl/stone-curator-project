@@ -13,6 +13,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ChevronLeft, Loader2, Info, MessageCircle } from "lucide-react";
+import { BUSINESS } from "@/config/business";
 import { toast } from "sonner";
 import FinishSelector from "@/components/product/FinishSelector";
 
@@ -373,8 +374,8 @@ export default function ProductPage() {
                     </button>
 
                     <ul className="text-spec text-western-stone-warm/80 leading-relaxed mt-5 text-xs space-y-1">
-                      <li>· Produção sob demanda · 15 dias úteis</li>
-                      <li>· Pedido mínimo R$ 2.000 · pagamento antecipado</li>
+                      <li>· Produção sob demanda · {BUSINESS.prazoProducaoDias} dias úteis</li>
+                      <li>· Pedido mínimo {BUSINESS.pedidoMinimoLabel} · pagamento antecipado</li>
                       <li>· Frete CIF sob orçamento para todo o Brasil</li>
                     </ul>
                   </>
@@ -448,8 +449,8 @@ export default function ProductPage() {
 
               <ProductAccordion numeral="IV" title="Produção & entrega" value="entrega">
                 <p className="text-spec text-western-stone-warm leading-[1.8]">
-                  Cada peça é produzida sob encomenda em nosso ateliê em São Paulo.
-                  Prazo de produção de 15 dias úteis após confirmação do pagamento.
+                  Cada peça é produzida sob encomenda em nosso ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
+                  Prazo de produção de {BUSINESS.prazoProducaoDias} dias úteis após confirmação do pagamento.
                   Frete calculado conforme destino e dimensões.
                 </p>
               </ProductAccordion>
