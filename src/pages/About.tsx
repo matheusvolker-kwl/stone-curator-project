@@ -1,13 +1,16 @@
 import { Link } from "react-router-dom";
+import logoCobasi from "@/assets/parceiros/cobasi.png";
+import logoUnique from "@/assets/parceiros/unique-garden.png";
+import logoCristal from "@/assets/parceiros/cristal-pool.png";
+import logoBiopet from "@/assets/parceiros/biopet.png";
 
-// TODO substituir os wordmarks tipográficos por logos oficiais (SVG/PNG)
-// das marcas institucionais quando os arquivos chegarem.
+// TODO Genesis: arquivo recebido veio em branco — exibido como wordmark até receber logo válido.
 const PARCEIROS_INSTITUCIONAIS = [
-  { nome: "Cobasi", site: "https://www.cobasi.com.br" },
-  { nome: "Unique Garden", site: "https://www.uniquegarden.com.br" },
-  { nome: "Cristal Pool", site: "https://www.cristalpool.com.br" },
-  { nome: "Genesis Ecossistemas", site: "https://genesisecossistemas.com" },
-  { nome: "Biopet Lagos", site: "https://bplagos.com.br" },
+  { nome: "Cobasi", site: "https://www.cobasi.com.br", logo: logoCobasi },
+  { nome: "Unique Garden", site: "https://www.uniquegarden.com.br", logo: logoUnique },
+  { nome: "Cristal Pool", site: "https://www.cristalpool.com.br", logo: logoCristal },
+  { nome: "Genesis Ecossistemas", site: "https://genesisecossistemas.com", logo: null },
+  { nome: "Biopet Lagos", site: "https://bplagos.com.br", logo: logoBiopet },
 ];
 
 export default function About() {
