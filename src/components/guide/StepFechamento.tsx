@@ -96,8 +96,9 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
           {firstName ? <>Pronto, {firstName}.<br />Seu projeto está montado.</> : <>Pronto. Seu projeto<br />está montado.</>}
         </h2>
         <p className="text-western-stone-warm leading-relaxed max-w-2xl mb-6 text-lg">
-          {totalQty} {totalQty === 1 ? "item curado" : "itens curados"}, {formatBRL(total, "BRL")} em
-          composição autoral. Envie para o cliente final, abra o orçamento ou fale direto com
+          {totalQty} {totalQty === 1 ? "item curado" : "itens curados"}
+          {isApproved ? <>, {formatBRL(total, "BRL")} em composição autoral.</> : <> em composição autoral.</>}{" "}
+          Envie para o cliente final, abra o orçamento ou fale direto com
           um consultor para fechar a condição comercial.
         </p>
 
