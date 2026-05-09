@@ -84,7 +84,7 @@ export default function About() {
             <div className="aspect-[4/5] overflow-hidden border border-western-gold/30 max-w-[340px]">
               <img
                 src={retrato}
-                alt="Ricardo Botelho, segunda geração da família fundadora da Western"
+                alt="Ricardo e Luiz Carlos Botelho — segunda geração à frente da Western"
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover"
