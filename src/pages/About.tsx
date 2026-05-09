@@ -155,7 +155,7 @@ export default function About() {
               <p className="text-eyebrow mb-3">A família Botelho</p>
               <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05] mb-2">
                 Uma empresa familiar que sobreviveu a três décadas num segmento que praticamente
-                todas as concorrentes <em className="text-western-gold-soft font-light not-italic">— sublinhe —</em> abandonaram.
+                <span className="italic text-western-gold-soft font-light"> todas as concorrentes abandonaram.</span>
               </h2>
             </Reveal>
             <Reveal variant="fade-up" delay={100} duration={750}>
