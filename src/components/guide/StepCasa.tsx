@@ -52,6 +52,10 @@ export default function StepCasa({ onBack, onNext }: Props) {
           Peças exclusivas que viram presente para o cliente final, ponto focal de
           living e geram margem expressiva para revenda especificada.
         </p>
+        <p className="text-sm text-western-stone-warm/80 italic max-w-2xl mt-3">
+          Faisal especifica esses itens em quase todos os projetos premiados —
+          são detalhes que fazem o cliente lembrar de quem assinou o ambiente.
+        </p>
       </header>
 
       {isLoading ? (
@@ -119,10 +123,10 @@ export default function StepCasa({ onBack, onNext }: Props) {
         onNext={onNext}
         nextLabel={
           addedCount > 0
-            ? `Concluir com ${addedCount} ${addedCount === 1 ? "item autoral" : "itens autorais"}`
-            : "Concluir sem itens autorais"
+            ? `Finalizar com ${addedCount} ${addedCount === 1 ? "item autoral" : "itens autorais"}`
+            : "Finalizar meu projeto"
         }
-        skipLabel={addedCount === 0 ? "Pular esta etapa" : undefined}
+        skipLabel={addedCount === 0 ? "Não preciso disso agora" : undefined}
         onSkip={addedCount === 0 ? onNext : undefined}
         addedCount={addedCount}
       />

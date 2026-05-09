@@ -133,8 +133,8 @@ export default function StepUpgrade({ answers, precoBase, onBack, onNext }: Prop
       <GuideStepFooter
         onBack={onBack}
         onNext={onNext}
-        nextLabel={inCart ? "Avançar com upgrade" : "Avançar sem upgrade"}
-        skipLabel={!inCart ? "Pular esta etapa" : undefined}
+        nextLabel={inCart ? "Seguir com o upgrade" : "Manter o conjunto base"}
+        skipLabel={!inCart ? "Não, pode seguir" : undefined}
         onSkip={!inCart ? onNext : undefined}
         addedCount={inCart ? 1 : 0}
       />

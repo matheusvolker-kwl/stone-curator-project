@@ -80,9 +80,13 @@ export default function StepComplementos({ tipo, onBack, onNext }: Props) {
         <h2 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight mb-3">
           Peças que somam ao conjunto
         </h2>
-        <p className="text-western-stone-warm leading-relaxed max-w-2xl mb-5">
+        <p className="text-western-stone-warm leading-relaxed max-w-2xl mb-3">
           Otimizam o frete (mesmo pedido), ampliam a composição e fecham a leitura
           do projeto. Ajuste a quantidade e adicione o que fizer sentido.
+        </p>
+        <p className="text-sm text-western-stone-warm/80 italic max-w-2xl mb-5">
+          Faisal recomenda ao menos 2 complementos para que a composição não
+          pareça interrompida — esferas e cascalhos costumam fechar a leitura.
         </p>
         {produtos && produtos.length > 1 && (
           <button
@@ -91,7 +95,7 @@ export default function StepComplementos({ tipo, onBack, onNext }: Props) {
             disabled={cartLoading}
             className="btn-outline-forest disabled:opacity-60"
           >
-            <Plus className="h-4 w-4" /> Adicionar todos ({formatBRL(totalSelecionado, "BRL")})
+            <Plus className="h-4 w-4" /> Reservar todos ({formatBRL(totalSelecionado, "BRL")})
           </button>
         )}
       </header>
@@ -190,10 +194,10 @@ export default function StepComplementos({ tipo, onBack, onNext }: Props) {
         onNext={onNext}
         nextLabel={
           addedCount > 0
-            ? `Avançar com ${addedCount} ${addedCount === 1 ? "complemento" : "complementos"}`
-            : "Avançar sem complementos"
+            ? `Seguir com ${addedCount} ${addedCount === 1 ? "complemento" : "complementos"}`
+            : "Seguir só com o conjunto base"
         }
-        skipLabel={addedCount === 0 ? "Pular esta etapa" : undefined}
+        skipLabel={addedCount === 0 ? "Não preciso disso agora" : undefined}
         onSkip={addedCount === 0 ? onNext : undefined}
         addedCount={addedCount}
       />

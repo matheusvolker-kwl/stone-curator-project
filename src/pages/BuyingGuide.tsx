@@ -1,6 +1,7 @@
-import { ArrowRight, Sparkles, Layers } from "lucide-react";
+import { ArrowRight, Sparkles, Layers, RotateCcw, PlayCircle } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import StepOnde from "@/components/guide/StepOnde";
+import GuideAssemblySummary from "@/components/guide/GuideAssemblySummary";
 import StepArea from "@/components/guide/StepArea";
 import StepProtagonismo from "@/components/guide/StepProtagonismo";
 import StepComposicao from "@/components/guide/StepComposicao";
@@ -32,9 +33,17 @@ import {
 
 const ASSEMBLY_STEPS: GuideStep[] = ["base", "complementos", "upgrade", "casa", "fechamento"];
 
+const ASSEMBLY_LABELS: Record<string, string> = {
+  base: "Etapa 05 · Conjunto",
+  complementos: "Etapa 06 · Complementos",
+  upgrade: "Etapa 07 · Upgrade",
+  casa: "Etapa 08 · Assinatura",
+  fechamento: "Etapa 09 · Fechamento",
+};
+
 export default function BuyingGuide() {
   const state = useGuideStore();
-  const { step, tipo, areaM2, nivel, composicao, jardim, start, goto, reset } = state;
+  const { step, tipo, areaM2, nivel, composicao, jardim, savedAt, start, goto, reset } = state;
   const containerRef = useRef<HTMLDivElement>(null);
   const [acabamentoAtual, setAcabamentoAtual] = useState("Quartzo");
 
@@ -121,11 +130,25 @@ export default function BuyingGuide() {
 
   const baseFallback: GuideStep = tipo === "piscina" ? "protagonismo" : "composicao";
 
+  const isAssembly = ASSEMBLY_STEPS.includes(step as GuideStep);
+  const showResume =
+    step === "intro" && !!savedAt && (!!tipo || !!areaM2 || !!nivel);
+  const stepLabel = ASSEMBLY_LABELS[step] ?? "Seu projeto";
+
   return (
     <div className="surface-ivory min-h-screen">
-      <div className="container-western py-12 md:py-20 max-w-5xl">
+      <div className={`container-western py-12 md:py-20 ${isAssembly ? "max-w-7xl pb-32 xl:pb-20" : "max-w-5xl"}`}>
         {step === "intro" ? (
-          <Intro onStart={start} />
+          <Intro
+            onStart={() => { if (showResume) reset(); start(); }}
+            onResume={showResume ? () => {
+              // Retomar: ir para a etapa mais avançada possível com as respostas
+              const target: GuideStep = nivel ? "base" : tipo ? (areaM2 ? "protagonismo" : "area") : "tipo";
+              goto(target);
+            } : undefined}
+            onReset={reset}
+            hasProgress={showResume}
+          />
         ) : step === "especial" ? (
           <div className="border border-western-stone-warm/20 bg-white p-6 md:p-12">
             <GuideEspecial />
@@ -133,63 +156,67 @@ export default function BuyingGuide() {
         ) : (
           <div className="space-y-8" ref={containerRef}>
             {progressSteps.length > 0 && <GuideProgress steps={progressSteps} />}
-            <div className="border border-western-stone-warm/20 bg-white p-6 md:p-12">
-              {step === "tipo" && <StepOnde />}
-              {step === "area" && <StepArea />}
-              {step === "protagonismo" && <StepProtagonismo />}
-              {step === "composicao" && <StepComposicao />}
+            <div className={isAssembly ? "grid xl:grid-cols-[1fr_320px] gap-8 items-start" : ""}>
+              <div className="border border-western-stone-warm/20 bg-white p-6 md:p-12 min-w-0">
+                {step === "tipo" && <StepOnde />}
+                {step === "area" && <StepArea />}
+                {step === "protagonismo" && <StepProtagonismo />}
+                {step === "composicao" && <StepComposicao />}
 
-              {step === "base" && (
-                <>
-                  {isAreaConsultor && tipo && areaM2 ? (
-                    <GuideConsultor tipo={tipo} tamanho={`${areaM2} m²`} onReset={reset} />
-                  ) : resolved && resolved !== "consultor" ? (
-                    <StepBase
-                      conjunto={resolved}
-                      answers={answers}
-                      onBack={() => goto(baseFallback)}
-                      onNext={handleNext}
-                      onAcabamentoChange={setAcabamentoAtual}
-                    />
-                  ) : (
-                    <NoResolution onReset={reset} />
-                  )}
-                </>
-              )}
+                {step === "base" && (
+                  <>
+                    {isAreaConsultor && tipo && areaM2 ? (
+                      <GuideConsultor tipo={tipo} tamanho={`${areaM2} m²`} onReset={reset} />
+                    ) : resolved && resolved !== "consultor" ? (
+                      <StepBase
+                        conjunto={resolved}
+                        answers={answers}
+                        onBack={() => goto(baseFallback)}
+                        onNext={handleNext}
+                        onAcabamentoChange={setAcabamentoAtual}
+                      />
+                    ) : (
+                      <NoResolution onReset={reset} />
+                    )}
+                  </>
+                )}
 
-              {step === "complementos" && tipo && (
-                <StepComplementos
-                  tipo={tipo}
-                  onBack={() => handlePrevAssembly(baseFallback)}
-                  onNext={handleNext}
-                />
-              )}
+                {step === "complementos" && tipo && (
+                  <StepComplementos
+                    tipo={tipo}
+                    onBack={() => handlePrevAssembly(baseFallback)}
+                    onNext={handleNext}
+                  />
+                )}
 
-              {step === "upgrade" && resolved && resolved !== "consultor" && (
-                <StepUpgrade
-                  answers={answers}
-                  precoBase={resolved.preco}
-                  onBack={() => handlePrevAssembly(baseFallback)}
-                  onNext={handleNext}
-                />
-              )}
+                {step === "upgrade" && resolved && resolved !== "consultor" && (
+                  <StepUpgrade
+                    answers={answers}
+                    precoBase={resolved.preco}
+                    onBack={() => handlePrevAssembly(baseFallback)}
+                    onNext={handleNext}
+                  />
+                )}
 
-              {step === "casa" && (
-                <StepCasa
-                  onBack={() => handlePrevAssembly(baseFallback)}
-                  onNext={handleNext}
-                />
-              )}
+                {step === "casa" && (
+                  <StepCasa
+                    onBack={() => handlePrevAssembly(baseFallback)}
+                    onNext={handleNext}
+                  />
+                )}
 
-              {step === "fechamento" && resolved && resolved !== "consultor" && (
-                <StepFechamento
-                  conjunto={resolved}
-                  answers={answers}
-                  acabamento={acabamentoAtual}
-                  onBack={() => handlePrevAssembly(baseFallback)}
-                  onReset={reset}
-                />
-              )}
+                {step === "fechamento" && resolved && resolved !== "consultor" && (
+                  <StepFechamento
+                    conjunto={resolved}
+                    answers={answers}
+                    acabamento={acabamentoAtual}
+                    onBack={() => handlePrevAssembly(baseFallback)}
+                    onReset={reset}
+                  />
+                )}
+              </div>
+
+              {isAssembly && <GuideAssemblySummary stepLabel={stepLabel} />}
             </div>
           </div>
         )}
@@ -211,7 +238,17 @@ function NoResolution({ onReset }: { onReset: () => void }) {
   );
 }
 
-function Intro({ onStart }: { onStart: () => void }) {
+function Intro({
+  onStart,
+  onResume,
+  onReset,
+  hasProgress,
+}: {
+  onStart: () => void;
+  onResume?: () => void;
+  onReset: () => void;
+  hasProgress?: boolean;
+}) {
   return (
     <div className="grid md:grid-cols-[3fr_2fr] gap-12 lg:gap-20 items-center">
       <div>
@@ -233,10 +270,34 @@ function Intro({ onStart }: { onStart: () => void }) {
           <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-western-gold" /> ~90 segundos</span>
           <span className="flex items-center gap-2"><Layers className="h-4 w-4 text-western-gold" /> 45 conjuntos curados</span>
         </div>
+
+        {hasProgress && onResume ? (
+          <div className="mb-8 p-5 border border-western-gold/40 bg-western-cream/40 max-w-2xl animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-2">
+              Você tem um projeto em andamento
+            </p>
+            <p className="text-sm text-western-stone-warm leading-relaxed mb-4">
+              Continue exatamente de onde parou — suas escolhas e o orçamento parcial estão salvos.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <button onClick={onResume} className="btn-gold">
+                <PlayCircle className="h-4 w-4" /> Continuar projeto
+              </button>
+              <button
+                onClick={onReset}
+                className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors"
+              >
+                <RotateCcw className="h-3.5 w-3.5" /> Recomeçar do zero
+              </button>
+            </div>
+          </div>
+        ) : null}
+
         <button onClick={onStart} className="btn-gold">
-          Compor meu projeto <ArrowRight className="h-4 w-4" />
+          {hasProgress ? "Iniciar novo projeto" : "Compor meu projeto"} <ArrowRight className="h-4 w-4" />
         </button>
       </div>
+
       <div className="hidden md:block aspect-[4/5] bg-western-green-deep relative overflow-hidden">
         <svg viewBox="0 0 400 500" className="w-full h-full" aria-hidden="true">
           <rect width="400" height="500" fill="hsl(var(--western-green-deep))" />
