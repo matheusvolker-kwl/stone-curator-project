@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import logo from "@/assets/logo-horizontal-bege.png";
-import { Mail, Send } from "lucide-react";
+import { Mail, Send, Loader2 } from "lucide-react";
 import { BUSINESS } from "@/config/business";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const COLECOES: { label: string; handle: string }[] = [
   { label: "Cascatas", handle: "cascatas" },
@@ -20,6 +22,28 @@ const COLECOES: { label: string; handle: string }[] = [
 
 export default function Footer() {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleNewsletter = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setLoading(true);
+    const { error } = await supabase.from("leads").insert({
+      type: "newsletter",
+      email,
+      origem: "site/footer/newsletter",
+    });
+    setLoading(false);
+    if (error) {
+      toast.error("Não foi possível inscrever agora.");
+      return;
+    }
+    setEmail("");
+    toast.success("Inscrição confirmada", {
+      description: "Você receberá lançamentos e novidades.",
+    });
+  };
+
   return (
     <footer className="surface-forest border-t border-western-gold/15 pt-16 pb-10 mt-0">
       <div className="container-western">
