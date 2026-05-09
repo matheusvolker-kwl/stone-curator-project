@@ -70,6 +70,8 @@ export const useGuideStore = create<GuideState>()(
 
       setJardim: (j) => set({ jardim: j, step: "base", savedAt: Date.now() }),
 
+      setNome: (n) => set({ nome: n.trim() || undefined, savedAt: Date.now() }),
+
       goto: (s) => set({ step: s, savedAt: Date.now() }),
 
       back: () => {
