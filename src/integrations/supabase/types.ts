@@ -14,16 +14,154 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      leads: {
+        Row: {
+          cep: string | null
+          cidade: string | null
+          cnpj: string | null
+          created_at: string
+          email: string | null
+          empresa: string | null
+          endereco: string | null
+          id: string
+          mensagem: string | null
+          nome: string | null
+          origem: string | null
+          payload: Json
+          segmento: string | null
+          telefone: string | null
+          type: Database["public"]["Enums"]["lead_type"]
+          uf: string | null
+          user_id: string | null
+        }
+        Insert: {
+          cep?: string | null
+          cidade?: string | null
+          cnpj?: string | null
+          created_at?: string
+          email?: string | null
+          empresa?: string | null
+          endereco?: string | null
+          id?: string
+          mensagem?: string | null
+          nome?: string | null
+          origem?: string | null
+          payload?: Json
+          segmento?: string | null
+          telefone?: string | null
+          type: Database["public"]["Enums"]["lead_type"]
+          uf?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          cep?: string | null
+          cidade?: string | null
+          cnpj?: string | null
+          created_at?: string
+          email?: string | null
+          empresa?: string | null
+          endereco?: string | null
+          id?: string
+          mensagem?: string | null
+          nome?: string | null
+          origem?: string | null
+          payload?: Json
+          segmento?: string | null
+          telefone?: string | null
+          type?: Database["public"]["Enums"]["lead_type"]
+          uf?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      partner_profiles: {
+        Row: {
+          approved_at: string | null
+          cidade: string | null
+          cnpj: string | null
+          created_at: string
+          empresa: string | null
+          id: string
+          nome: string | null
+          segmento: string | null
+          site: string | null
+          status: Database["public"]["Enums"]["partner_status"]
+          telefone: string | null
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          cidade?: string | null
+          cnpj?: string | null
+          created_at?: string
+          empresa?: string | null
+          id?: string
+          nome?: string | null
+          segmento?: string | null
+          site?: string | null
+          status?: Database["public"]["Enums"]["partner_status"]
+          telefone?: string | null
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          cidade?: string | null
+          cnpj?: string | null
+          created_at?: string
+          empresa?: string | null
+          id?: string
+          nome?: string | null
+          segmento?: string | null
+          site?: string | null
+          status?: Database["public"]["Enums"]["partner_status"]
+          telefone?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "partner"
+      lead_type:
+        | "partner_signup"
+        | "newsletter"
+        | "amostras"
+        | "visita"
+        | "contato"
+      partner_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +288,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "partner"],
+      lead_type: [
+        "partner_signup",
+        "newsletter",
+        "amostras",
+        "visita",
+        "contato",
+      ],
+      partner_status: ["pending", "approved", "rejected"],
+    },
   },
 } as const
