@@ -511,7 +511,7 @@ export default function ProductPage() {
               </ProductAccordion>
 
               {parsed.observacoes.length > 0 && (
-                <ProductAccordion numeral="II" title="Observações" value="obs">
+                <ProductAccordion numeral="III" title="Observações" value="obs">
                   <ul className="space-y-5">
                     {parsed.observacoes.map((o, i) => (
                       <li key={i}>
@@ -530,7 +530,7 @@ export default function ProductPage() {
               )}
 
               {parsed.modelo3dHtml && (
-                <ProductAccordion numeral="III" title="Modelo 3D · SketchUp" value="modelo">
+                <ProductAccordion numeral="IV" title="Modelo 3D · SketchUp" value="modelo">
                   <div
                     className="product-prose"
                     dangerouslySetInnerHTML={{ __html: parsed.modelo3dHtml }}
@@ -538,19 +538,20 @@ export default function ProductPage() {
                 </ProductAccordion>
               )}
 
-              <ProductAccordion numeral="IV" title="Produção & entrega" value="entrega">
+              <ProductAccordion numeral="V" title="Produção & entrega" value="entrega">
                 <p className="text-spec text-western-stone-warm leading-[1.8]">
                   Cada peça é produzida sob encomenda em nosso ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
                   Prazo de produção de {BUSINESS.prazoProducaoDias} dias úteis após confirmação do pagamento.
-                  Frete calculado conforme destino e dimensões.
+                  Instalação simples com argamassa C3 (loja de bairro). Kit de pintura para
+                  retoque incluso. Frete calculado conforme destino e dimensões.
                 </p>
               </ProductAccordion>
 
-              <ProductAccordion numeral="V" title="Cuidados" value="cuidados">
+              <ProductAccordion numeral="VI" title="Cuidados" value="cuidados">
                 <p className="text-spec text-western-stone-warm leading-[1.8]">
-                  Limpeza com pano macio levemente úmido. Evite produtos abrasivos
-                  ou ácidos. Para uso externo, recomenda-se selante mineral a cada
-                  18 meses.
+                  Manutenção zero. Limpeza com pano macio levemente úmido ou jato de água.
+                  Evite produtos abrasivos ou ácidos. A pintura mineral resiste a cloro de
+                  piscina, intempéries e raios UV — não escama, não desbota.
                 </p>
               </ProductAccordion>
             </Accordion>
