@@ -194,10 +194,10 @@ export default function StepComplementos({ tipo, onBack, onNext }: Props) {
         onNext={onNext}
         nextLabel={
           addedCount > 0
-            ? `Avançar com ${addedCount} ${addedCount === 1 ? "complemento" : "complementos"}`
-            : "Avançar sem complementos"
+            ? `Seguir com ${addedCount} ${addedCount === 1 ? "complemento" : "complementos"}`
+            : "Seguir só com o conjunto base"
         }
-        skipLabel={addedCount === 0 ? "Pular esta etapa" : undefined}
+        skipLabel={addedCount === 0 ? "Não preciso disso agora" : undefined}
         onSkip={addedCount === 0 ? onNext : undefined}
         addedCount={addedCount}
       />
