@@ -231,9 +231,11 @@ export default function GuideAssemblySummary({ stepLabel }: Props) {
                 <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-western-stone-warm">
                   {totalQty} {totalQty === 1 ? "item" : "itens"} no projeto
                 </p>
-                <p className="font-display text-base text-western-green-deep leading-tight truncate">
-                  {formatBRL(total, "BRL")}
-                </p>
+                <GatedPrice
+                  amount={total}
+                  variant="block"
+                  className="font-display text-base text-western-green-deep leading-tight truncate"
+                />
               </div>
             </div>
             <ChevronUp className="h-4 w-4 text-western-stone-warm shrink-0" />
