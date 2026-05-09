@@ -16,9 +16,12 @@ import { ChevronLeft, Loader2, Info, MessageCircle, Download } from "lucide-reac
 import { BUSINESS } from "@/config/business";
 import { toast } from "sonner";
 import FinishSelector from "@/components/product/FinishSelector";
+import PriceGate from "@/components/shared/PriceGate";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ProductPage() {
   const { handle = "" } = useParams();
+  const { isApproved } = useAuth();
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", handle],
     queryFn: () => fetchProduct(handle),
