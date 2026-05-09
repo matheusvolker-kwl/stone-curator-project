@@ -123,7 +123,7 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
       </h2>
 
       {/* HERO EDITORIAL */}
-      <div className="relative w-full aspect-[16/9] md:aspect-[21/9] bg-western-green-deep overflow-hidden mb-6">
+      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] bg-western-green-deep overflow-hidden mb-6">
         {isLoading ? (
           <div className="w-full h-full animate-pulse bg-western-green-mid" />
         ) : heroImg ? (
@@ -182,18 +182,18 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
         </div>
 
         {/* Swatch do acabamento atual */}
-        <div className="absolute top-5 right-5 flex items-center gap-2 bg-western-green-deep/60 backdrop-blur-sm px-3 py-2 border border-western-cream/15">
+        <div className="absolute top-3 right-3 sm:top-5 sm:right-5 flex items-center gap-1.5 sm:gap-2 bg-western-green-deep/60 backdrop-blur-sm px-2 py-1.5 sm:px-3 sm:py-2 border border-western-cream/15 max-w-[55%]">
           <motion.span
             key={acabamento}
             initial={{ scale: 0.7 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 320, damping: 22 }}
-            className="block w-5 h-5 rounded-full ring-1 ring-western-cream/30"
+            className="block w-4 h-4 sm:w-5 sm:h-5 rounded-full ring-1 ring-western-cream/30 shrink-0"
             style={{ backgroundColor: `hsl(${tint})` }}
             aria-hidden
           />
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-cream">
-            Acabamento {acabamento}
+          <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.18em] sm:tracking-[0.2em] text-western-cream truncate">
+            <span className="hidden sm:inline">Acabamento </span>{acabamento}
           </span>
         </div>
       </div>
