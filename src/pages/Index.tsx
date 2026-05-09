@@ -26,7 +26,15 @@ export default function Index() {
     queryFn: () => fetchProducts(8),
   });
 
-  const linhas = collections.filter((c) => !isSeasonal(c) && c.handle !== "conjuntos");
+  const linhasAll = collections.filter((c) => !isSeasonal(c) && c.handle !== "conjuntos");
+  // Home: mostra no máx 8 (2 linhas × 4 col), sem "Fontes para Jardim", com "Pisadas".
+  const semFontes = linhasAll.filter((c) => c.handle !== "fontes-para-jardim");
+  const pisadas = linhasAll.find((c) => c.handle === "pisadas");
+  const linhas = (
+    pisadas && !semFontes.some((c) => c.handle === "pisadas")
+      ? [...semFontes, pisadas]
+      : semFontes
+  ).slice(0, 8);
 
   // Parallax sutil — imagem desce mais devagar que o scroll, símbolo flutua
   const heroParallax = `translate3d(0, ${scrollY * 0.18}px, 0) scale(${1 + scrollY * 0.0003})`;
