@@ -157,7 +157,7 @@ export default function BuyingGuide() {
 
   return (
     <div className="surface-ivory min-h-screen">
-      <div className={`container-western py-12 md:py-20 ${isAssembly ? "max-w-7xl pb-32 xl:pb-20" : "max-w-5xl"}`}>
+      <div className={`container-western py-12 md:py-20 ${isAssembly ? "max-w-7xl pb-44 xl:pb-20" : "max-w-5xl"}`}>
         {step === "intro" ? (
           <Intro
             onStart={() => { if (showResume) reset(); start(); }}
