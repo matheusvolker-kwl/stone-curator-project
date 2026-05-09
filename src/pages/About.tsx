@@ -33,6 +33,17 @@ export default function About() {
           </p>
         </div>
 
+        <ArquitetosStrip
+          eyebrow="Especificada por"
+          titulo={<>Arquitetos que assinam<br />com a Western.</>}
+          descricao={
+            <>
+              Estúdios de referência nacional que tornam Western parte recorrente
+              do repertório em residências de alto padrão e hospitalidade de luxo.
+            </>
+          }
+        />
+
         <MarcasInstitucionais
           eyebrow="Atendemos há mais de uma década"
           titulo={<>Marcas que escolheram<br />repetir a Western.</>}
