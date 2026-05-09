@@ -58,11 +58,18 @@ export default function StepUpgrade({ answers, precoBase, onBack, onNext }: Prop
   });
 
   const addItem = useCartStore((s) => s.addItem);
+  const removeItem = useCartStore((s) => s.removeItem);
   const cartItems = useCartStore((s) => s.items);
   const cartLoading = useCartStore((s) => s.isLoading);
 
+  // B1: skip via effect, nunca durante o render
+  useEffect(() => {
+    if (!upgrade || !meta || !metaBase || !baseConjunto || baseConjunto === "consultor") {
+      onNext();
+    }
+  }, [upgrade, meta, metaBase, baseConjunto, onNext]);
+
   if (!upgrade || !meta || !metaBase || !baseConjunto || baseConjunto === "consultor") {
-    onNext();
     return null;
   }
 
@@ -72,7 +79,7 @@ export default function StepUpgrade({ answers, precoBase, onBack, onNext }: Prop
   const inCart = cartItems.some((i) => i.productHandle === upgrade.handle);
   const baseInCart = cartItems.some((i) => i.productHandle === baseConjunto.handle);
 
-  const handleSwap = async () => {
+  const addUpgradeOnly = async () => {
     if (!upProduct) {
       toast.error("Conjunto indisponível. Fale com um consultor.");
       return;
@@ -82,10 +89,28 @@ export default function StepUpgrade({ answers, precoBase, onBack, onNext }: Prop
     const item = buildCartItem(upProduct, variantId, 1);
     if (!item) return;
     await addItem(item);
-    toast.success(`Upgrade adicionado: ${upgrade.nome}`, {
-      description: baseInCart
-        ? "Você pode remover o conjunto base no orçamento, se preferir."
-        : undefined,
+    toast.success(`Upgrade adicionado: ${upgrade.nome}`);
+  };
+
+  // C6: trocar base pelo upgrade — remove o base do orçamento
+  const swapBaseForUpgrade = async () => {
+    if (!upProduct) {
+      toast.error("Conjunto indisponível. Fale com um consultor.");
+      return;
+    }
+    const variantId = upProduct.variants.edges[0]?.node.id;
+    if (!variantId) return;
+    const item = buildCartItem(upProduct, variantId, 1);
+    if (!item) return;
+
+    // Remove todas as variantes do conjunto base que estiverem no carrinho
+    const baseLines = cartItems.filter((i) => i.productHandle === baseConjunto.handle);
+    for (const line of baseLines) {
+      await removeItem(line.variantId);
+    }
+    await addItem(item);
+    toast.success(`Upgrade aplicado: ${upgrade.nome}`, {
+      description: "Conjunto base substituído no orçamento.",
     });
   };
 
