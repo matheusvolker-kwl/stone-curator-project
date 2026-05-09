@@ -1,7 +1,7 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ArrowRight, Loader2, ShoppingBag, TrendingUp, Check, Plus, Sparkles } from "lucide-react";
+import { ArrowRight, Loader2, ShoppingBag, TrendingUp, Check, Plus, Sparkles, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { fetchProduct } from "@/lib/shopify/queries";
@@ -58,11 +58,18 @@ export default function StepUpgrade({ answers, precoBase, onBack, onNext }: Prop
   });
 
   const addItem = useCartStore((s) => s.addItem);
+  const removeItem = useCartStore((s) => s.removeItem);
   const cartItems = useCartStore((s) => s.items);
   const cartLoading = useCartStore((s) => s.isLoading);
 
+  // B1: skip via effect, nunca durante o render
+  useEffect(() => {
+    if (!upgrade || !meta || !metaBase || !baseConjunto || baseConjunto === "consultor") {
+      onNext();
+    }
+  }, [upgrade, meta, metaBase, baseConjunto, onNext]);
+
   if (!upgrade || !meta || !metaBase || !baseConjunto || baseConjunto === "consultor") {
-    onNext();
     return null;
   }
 
@@ -72,7 +79,7 @@ export default function StepUpgrade({ answers, precoBase, onBack, onNext }: Prop
   const inCart = cartItems.some((i) => i.productHandle === upgrade.handle);
   const baseInCart = cartItems.some((i) => i.productHandle === baseConjunto.handle);
 
-  const handleSwap = async () => {
+  const addUpgradeOnly = async () => {
     if (!upProduct) {
       toast.error("Conjunto indisponível. Fale com um consultor.");
       return;
@@ -82,10 +89,28 @@ export default function StepUpgrade({ answers, precoBase, onBack, onNext }: Prop
     const item = buildCartItem(upProduct, variantId, 1);
     if (!item) return;
     await addItem(item);
-    toast.success(`Upgrade adicionado: ${upgrade.nome}`, {
-      description: baseInCart
-        ? "Você pode remover o conjunto base no orçamento, se preferir."
-        : undefined,
+    toast.success(`Upgrade adicionado: ${upgrade.nome}`);
+  };
+
+  // C6: trocar base pelo upgrade — remove o base do orçamento
+  const swapBaseForUpgrade = async () => {
+    if (!upProduct) {
+      toast.error("Conjunto indisponível. Fale com um consultor.");
+      return;
+    }
+    const variantId = upProduct.variants.edges[0]?.node.id;
+    if (!variantId) return;
+    const item = buildCartItem(upProduct, variantId, 1);
+    if (!item) return;
+
+    // Remove todas as variantes do conjunto base que estiverem no carrinho
+    const baseLines = cartItems.filter((i) => i.productHandle === baseConjunto.handle);
+    for (const line of baseLines) {
+      await removeItem(line.variantId);
+    }
+    await addItem(item);
+    toast.success(`Upgrade aplicado: ${upgrade.nome}`, {
+      description: "Conjunto base substituído no orçamento.",
     });
   };
 
@@ -212,26 +237,38 @@ export default function StepUpgrade({ answers, precoBase, onBack, onNext }: Prop
                   </span>
                 )}
               </div>
-              <div className="mt-4 flex flex-col sm:flex-row gap-2">
+              <div className="mt-4 flex flex-col gap-2">
                 <button
                   type="button"
-                  onClick={handleSwap}
+                  onClick={baseInCart ? swapBaseForUpgrade : addUpgradeOnly}
                   disabled={cartLoading || !upProduct}
                   className="flex-1 inline-flex items-center justify-center gap-2 h-11 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors disabled:opacity-60"
                 >
                   {cartLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : inCart ? (
-                    <><Check className="h-4 w-4" /> Adicionado</>
+                    <><Check className="h-4 w-4" /> Upgrade no orçamento</>
+                  ) : baseInCart ? (
+                    <><RefreshCw className="h-4 w-4" /> Trocar base pelo upgrade</>
                   ) : (
                     <><ShoppingBag className="h-4 w-4" /> Reservar upgrade</>
                   )}
                 </button>
+                {baseInCart && !inCart && (
+                  <button
+                    type="button"
+                    onClick={addUpgradeOnly}
+                    disabled={cartLoading || !upProduct}
+                    className="inline-flex items-center justify-center gap-2 h-10 border border-western-cream/30 text-western-cream/80 hover:border-western-gold hover:text-western-gold font-mono text-[10px] uppercase tracking-[0.2em] transition-colors disabled:opacity-60"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> Adicionar upgrade sem remover base
+                  </button>
+                )}
                 <Link
                   to={`/produtos/${upgrade.handle}`}
-                  className="inline-flex items-center justify-center gap-2 h-11 px-3 border border-western-cream/30 text-western-cream hover:border-western-gold hover:text-western-gold font-mono text-[10px] uppercase tracking-[0.22em] transition-colors"
+                  className="inline-flex items-center justify-center gap-2 h-9 text-western-cream/60 hover:text-western-gold font-mono text-[10px] uppercase tracking-[0.22em] transition-colors"
                 >
-                  Detalhes <ArrowRight className="h-3 w-3" />
+                  Ver detalhes <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
             </div>

@@ -24,6 +24,7 @@ export interface GuideState {
   nivel?: Nivel;
   composicao?: Composicao;
   jardim?: Jardim;
+  nome?: string;
   savedAt?: number;
 
   start: () => void;
@@ -32,6 +33,7 @@ export interface GuideState {
   setNivel: (n: Nivel) => void;
   setComposicao: (c: Composicao) => void;
   setJardim: (j: Jardim) => void;
+  setNome: (n: string) => void;
   goto: (s: GuideStep) => void;
   back: () => void;
   reset: () => void;
@@ -68,6 +70,8 @@ export const useGuideStore = create<GuideState>()(
 
       setJardim: (j) => set({ jardim: j, step: "base", savedAt: Date.now() }),
 
+      setNome: (n) => set({ nome: n.trim() || undefined, savedAt: Date.now() }),
+
       goto: (s) => set({ step: s, savedAt: Date.now() }),
 
       back: () => {
@@ -96,6 +100,7 @@ export const useGuideStore = create<GuideState>()(
           nivel: undefined,
           composicao: undefined,
           jardim: undefined,
+          nome: undefined,
           savedAt: undefined,
         }),
     }),

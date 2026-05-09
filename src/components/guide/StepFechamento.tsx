@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, FileDown, MessageCircle, RotateCcw, ShoppingBag, Sparkles, TrendingDown } from "lucide-react";
+import { ArrowLeft, FileDown, MessageCircle, RotateCcw, ShoppingBag, Sparkles, TrendingDown, User } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+import { useGuideStore } from "@/stores/guideStore";
 import { cdnImg, formatBRL } from "@/lib/shopify/client";
 import { whatsappConjunto, type ConjuntoLeaf, type GuideAnswers } from "@/data/guideMap";
 import SketchLeadModal from "./SketchLeadModal";
@@ -15,39 +16,46 @@ interface Props {
 }
 
 // Confete leve: partículas douradas em CSS, sem dependências.
+// Respeita prefers-reduced-motion e memoiza partículas.
 function Confetti() {
-  const pieces = Array.from({ length: 24 });
+  const pieces = useMemo(
+    () =>
+      Array.from({ length: 24 }, () => ({
+        left: Math.random() * 100,
+        delay: Math.random() * 0.6,
+        duration: 1.6 + Math.random() * 1.2,
+        drift: (Math.random() - 0.5) * 80,
+        size: 4 + Math.random() * 5,
+        isGold: Math.random() > 0.3,
+      })),
+    []
+  );
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      {pieces.map((_, i) => {
-        const left = Math.random() * 100;
-        const delay = Math.random() * 0.6;
-        const duration = 1.6 + Math.random() * 1.2;
-        const drift = (Math.random() - 0.5) * 80;
-        const size = 4 + Math.random() * 5;
-        const isGold = Math.random() > 0.3;
-        return (
-          <motion.span
-            key={i}
-            initial={{ y: -20, x: 0, opacity: 0, rotate: 0 }}
-            animate={{ y: "120%", x: drift, opacity: [0, 1, 1, 0], rotate: 360 }}
-            transition={{ duration, delay, ease: "easeOut" }}
-            className="absolute top-0 block"
-            style={{
-              left: `${left}%`,
-              width: size,
-              height: size * 0.4,
-              backgroundColor: isGold ? "hsl(var(--western-gold))" : "hsl(var(--western-cream))",
-            }}
-          />
-        );
-      })}
+    <div className="pointer-events-none absolute inset-0 overflow-hidden motion-reduce:hidden" aria-hidden>
+      {pieces.map((p, i) => (
+        <motion.span
+          key={i}
+          initial={{ y: -20, x: 0, opacity: 0, rotate: 0 }}
+          animate={{ y: "120%", x: p.drift, opacity: [0, 1, 1, 0], rotate: 360 }}
+          transition={{ duration: p.duration, delay: p.delay, ease: "easeOut" }}
+          className="absolute top-0 block"
+          style={{
+            left: `${p.left}%`,
+            width: p.size,
+            height: p.size * 0.4,
+            backgroundColor: p.isGold ? "hsl(var(--western-gold))" : "hsl(var(--western-cream))",
+          }}
+        />
+      ))}
     </div>
   );
 }
 
 export default function StepFechamento({ conjunto, answers, acabamento, onBack, onReset }: Props) {
   const items = useCartStore((s) => s.items);
+  const nome = useGuideStore((s) => s.nome);
+  const setNome = useGuideStore((s) => s.setNome);
+  const areaM2 = useGuideStore((s) => s.areaM2);
   const total = items.reduce(
     (acc, i) => acc + parseFloat(i.price.amount) * i.quantity,
     0
@@ -55,6 +63,7 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
   const totalQty = items.reduce((acc, i) => acc + i.quantity, 0);
   const [sketchOpen, setSketchOpen] = useState(false);
   const [showConfetti, setShowConfetti] = useState(true);
+  const [nameDraft, setNameDraft] = useState(nome ?? "");
 
   useEffect(() => {
     const t = setTimeout(() => setShowConfetti(false), 3000);
@@ -63,9 +72,15 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
 
   const openCart = () => window.dispatchEvent(new CustomEvent("western:open-cart"));
 
+  const commitName = () => {
+    const trimmed = nameDraft.trim();
+    if (trimmed && trimmed !== nome) setNome(trimmed);
+  };
+
   // Estimativa simples de economia vs. pedra natural (multiplicador conservador 1.7x)
   const estimadoNatural = Math.round(total * 1.7);
   const economia = estimadoNatural - total;
+  const firstName = nome ? nome.split(/\s+/)[0] : "";
 
   return (
     <div className="relative">
@@ -74,13 +89,37 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
         <p className="text-eyebrow mb-3">Etapa 09 · Fechamento</p>
         <h2 className="font-display text-4xl md:text-5xl text-western-green-deep leading-[1.05] mb-4">
-          Pronto. Seu projeto<br />está montado.
+          {firstName ? <>Pronto, {firstName}.<br />Seu projeto está montado.</> : <>Pronto. Seu projeto<br />está montado.</>}
         </h2>
-        <p className="text-western-stone-warm leading-relaxed max-w-2xl mb-10 text-lg">
+        <p className="text-western-stone-warm leading-relaxed max-w-2xl mb-6 text-lg">
           {totalQty} {totalQty === 1 ? "item curado" : "itens curados"}, {formatBRL(total, "BRL")} em
           composição autoral. Envie para o cliente final, abra o orçamento ou fale direto com
           um consultor para fechar a condição comercial.
         </p>
+
+        {!nome && (
+          <div className="mb-10 inline-flex items-center gap-3 border border-western-stone-warm/20 bg-white pl-4 pr-1 py-1 max-w-md">
+            <User className="h-4 w-4 text-western-gold shrink-0" />
+            <input
+              type="text"
+              value={nameDraft}
+              onChange={(e) => setNameDraft(e.target.value)}
+              onBlur={commitName}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); commitName(); } }}
+              placeholder="Como podemos chamar você?"
+              maxLength={60}
+              className="flex-1 bg-transparent py-2 text-sm text-western-green-deep placeholder:text-western-stone-warm/60 focus:outline-none"
+              aria-label="Seu nome para personalizar o fechamento"
+            />
+            <button
+              type="button"
+              onClick={commitName}
+              className="font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-2 text-western-stone-warm hover:text-western-green-deep transition-colors"
+            >
+              Salvar
+            </button>
+          </div>
+        )}
       </motion.div>
 
       <div className="grid lg:grid-cols-[1.3fr_1fr] gap-10">
@@ -241,7 +280,8 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
         conjuntoNome={conjunto.nome}
         conjuntoHandle={conjunto.handle}
         acabamento={acabamento}
-        contexto={{ tipo: answers.tipo, areaM2: undefined }}
+        contexto={{ tipo: answers.tipo, areaM2 }}
+        nomePreFill={nome}
       />
     </div>
   );
