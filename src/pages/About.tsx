@@ -5,6 +5,7 @@ import Reveal from "@/components/shared/Reveal";
 import { useScrollY } from "@/hooks/useScrollY";
 import { ArrowRight, Layers, Mountain, Recycle, Hammer, Quote } from "lucide-react";
 import retrato from "@/assets/ricardo-luiz-carlos.webp";
+import irmaosGruta from "@/assets/irmaos-botelho-gruta.webp";
 import heroCascata from "@/assets/hero-cascata.webp";
 import respiroPedra from "@/assets/respiro-pedra.webp";
 import projetoLago from "@/assets/projetos/cover-lago.webp";
@@ -118,13 +119,56 @@ export default function About() {
         </div>
       </section>
 
+      {/* IRMÃOS BOTELHO — abertura atmosférica widescreen */}
+      <section className="surface-paper py-20 md:py-28">
+        <div className="container-western max-w-[1600px]">
+          <Reveal variant="fade-up" duration={800}>
+            <div className="max-w-3xl mb-10 md:mb-14">
+              <p className="text-eyebrow mb-3">Os irmãos Botelho</p>
+              <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
+                Ricardo no desenho, Luiz Carlos na engenharia.
+                <span className="italic text-western-gold-soft font-light"> Trinta anos do mesmo ateliê, da mesma família.</span>
+              </h2>
+            </div>
+          </Reveal>
+
+          <Reveal variant="fade-up" delay={120} duration={900}>
+            <figure className="relative overflow-hidden shadow-2xl shadow-western-green-deep/25">
+              <div className="aspect-[21/9] w-full">
+                <img
+                  src={irmaosGruta}
+                  alt="Ricardo e Luiz Carlos Botelho entre formações de pedra Western, com cascata ao fundo"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div
+                className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
+                aria-hidden
+                style={{
+                  background:
+                    "linear-gradient(180deg, transparent 0%, hsl(var(--western-green-deep) / 0.65) 100%)",
+                }}
+              />
+              <figcaption className="absolute bottom-5 left-5 md:bottom-8 md:left-8 bg-western-green-deep/85 backdrop-blur-sm px-4 py-3 md:px-5 md:py-4 max-w-[320px]">
+                <p className="text-eyebrow text-western-gold-soft mb-1">2ª geração · Cajamar/SP</p>
+                <p className="font-display text-base md:text-lg text-western-cream leading-tight">
+                  Ricardo &amp; Luiz Carlos Botelho
+                </p>
+              </figcaption>
+            </figure>
+          </Reveal>
+        </div>
+      </section>
+
       {/* FAMÍLIA BOTELHO — editorial, sem moldura quadrada */}
       <section className="surface-ivory py-24 md:py-32 relative overflow-hidden">
         {/* Fio dourado decorativo */}
         <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-western-gold/30 to-transparent hidden md:block" />
 
         <div className="container-western max-w-6xl grid md:grid-cols-12 gap-12 md:gap-16 items-start">
-          <Reveal variant="fade-right" duration={900} className="md:col-span-5">
+          <Reveal variant="fade-right" duration={900} className="md:col-span-4">
             <figure className="relative">
               {/* Selo "33 anos" sutil */}
               <div className="absolute -top-4 -left-4 z-10 bg-western-green-deep text-western-cream px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] shadow-lg">
@@ -149,7 +193,7 @@ export default function About() {
             </figure>
           </Reveal>
 
-          <div className="md:col-span-7 space-y-7 text-base md:text-lg text-western-stone-warm leading-relaxed">
+          <div className="md:col-span-8 space-y-7 text-base md:text-lg text-western-stone-warm leading-relaxed">
             <Reveal variant="fade-up" duration={750}>
               <p className="text-eyebrow mb-3">A família Botelho</p>
               <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05] mb-2">
