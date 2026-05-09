@@ -1,9 +1,19 @@
 import { toast } from "sonner";
 
 export const SHOPIFY_API_VERSION = "2025-07";
-export const SHOPIFY_STORE_PERMANENT_DOMAIN = "wj2evd-dr.myshopify.com";
+export const SHOPIFY_STORE_PERMANENT_DOMAIN =
+  import.meta.env.VITE_SHOPIFY_DOMAIN ?? "wj2evd-dr.myshopify.com";
 export const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
-export const SHOPIFY_STOREFRONT_TOKEN = "b5707155f839d5a686c4bb2356f31e0d";
+export const SHOPIFY_STOREFRONT_TOKEN =
+  (import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN as string | undefined) ??
+  "b5707155f839d5a686c4bb2356f31e0d";
+
+if (!SHOPIFY_STOREFRONT_TOKEN) {
+  // eslint-disable-next-line no-console
+  console.error(
+    "VITE_SHOPIFY_STOREFRONT_TOKEN não configurado. Defina em .env (ver .env.example)."
+  );
+}
 
 export async function storefrontApiRequest<T = any>(
   query: string,
