@@ -5,6 +5,7 @@ import Reveal from "@/components/shared/Reveal";
 import { useScrollY } from "@/hooks/useScrollY";
 import { ArrowRight, Layers, Mountain, Recycle, Hammer, Quote } from "lucide-react";
 import retrato from "@/assets/ricardo-luiz-carlos.webp";
+import irmaosGruta from "@/assets/irmaos-botelho-gruta.webp";
 import heroCascata from "@/assets/hero-cascata.webp";
 import respiroPedra from "@/assets/respiro-pedra.webp";
 import projetoLago from "@/assets/projetos/cover-lago.webp";
