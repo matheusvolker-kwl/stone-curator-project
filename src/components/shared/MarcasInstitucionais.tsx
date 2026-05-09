@@ -8,14 +8,16 @@ interface Marca {
   nome: string;
   site: string;
   logo: string;
+  /** Altura específica em px (max-h). Default 56. */
+  altura?: number;
 }
 
 const PARCEIROS: Marca[] = [
-  { nome: "Cobasi", site: "https://www.cobasi.com.br", logo: logoCobasi },
-  { nome: "Unique Garden", site: "https://www.uniquegarden.com.br", logo: logoUnique },
-  { nome: "Cristal Pool", site: "https://www.cristalpool.com.br", logo: logoCristal },
-  { nome: "Genesis Ecossistemas", site: "https://genesisecossistemas.com", logo: logoGenesis },
-  { nome: "Biopet Lagos", site: "https://bplagos.com.br", logo: logoBiopet },
+  { nome: "Cobasi", site: "https://www.cobasi.com.br", logo: logoCobasi, altura: 44 },
+  { nome: "Unique Garden", site: "https://www.uniquegarden.com.br", logo: logoUnique, altura: 64 },
+  { nome: "Cristal Pool", site: "https://www.cristalpool.com.br", logo: logoCristal, altura: 56 },
+  { nome: "Genesis Ecossistemas", site: "https://genesisecossistemas.com", logo: logoGenesis, altura: 80 },
+  { nome: "Biopet Lagos", site: "https://bplagos.com.br", logo: logoBiopet, altura: 60 },
 ];
 
 interface Props {
@@ -51,23 +53,24 @@ export default function MarcasInstitucionais({
         </>
       )}
 
-      <div className="border-y border-western-stone-warm/20">
-        <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-px bg-western-stone-warm/15">
+      <div className="surface-forest border border-western-gold/15">
+        <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-px bg-western-gold/15">
           {PARCEIROS.map((p) => (
-            <li key={p.nome} className="bg-western-cream">
+            <li key={p.nome} className="surface-forest">
               <a
                 href={p.site}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={p.nome}
                 title={p.nome}
-                className="group flex items-center justify-center h-28 md:h-32 px-5 hover:bg-western-paper transition-colors"
+                className="group flex items-center justify-center h-32 md:h-36 px-6 hover:bg-western-green-mid/40 transition-colors"
               >
                 <img
                   src={p.logo}
                   alt={p.nome}
                   loading="lazy"
-                  className="max-h-12 md:max-h-14 max-w-[140px] w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity"
+                  style={{ maxHeight: `${p.altura ?? 56}px` }}
+                  className="w-auto max-w-[170px] object-contain opacity-85 group-hover:opacity-100 transition-opacity"
                 />
               </a>
             </li>
@@ -75,7 +78,6 @@ export default function MarcasInstitucionais({
         </ul>
       </div>
 
-      {/* Lista textual acessível, neutra */}
       <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mt-4 text-center">
         Cobasi · Unique Garden · Cristal Pool · Genesis Ecossistemas · Biopet Lagos
       </p>
