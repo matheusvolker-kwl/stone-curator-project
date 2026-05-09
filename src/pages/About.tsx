@@ -141,9 +141,9 @@ export default function About() {
               </div>
               {/* Linha de assinatura */}
               <div className="mt-5 pl-1 border-l-2 border-western-gold">
-                <p className="pl-4 text-spec text-western-stone-warm/80 leading-relaxed max-w-[340px]">
+                <p className="pl-4 text-spec text-western-stone-warm/80 leading-relaxed max-w-[360px]">
                   <span className="text-western-green-deep font-semibold">Ricardo & Luiz Carlos Botelho</span><br />
-                  Segunda geração à frente do ateliê — desenho, escultura e direção desde 1996.
+                  Segunda geração à frente do ateliê desde 1996. Ricardo na direção criativa e no desenho das peças; Luiz Carlos na engenharia do composto e na tecnologia de produção.
                 </p>
               </div>
             </figure>
@@ -153,36 +153,40 @@ export default function About() {
             <Reveal variant="fade-up" duration={750}>
               <p className="text-eyebrow mb-3">A família Botelho</p>
               <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05] mb-2">
-                Uma empresa familiar que sobreviveu a três décadas num segmento que praticamente
-                <span className="italic text-western-gold-soft font-light"> todas as concorrentes abandonaram.</span>
+                A família que trouxe uma tecnologia do Arizona —
+                <span className="italic text-western-gold-soft font-light"> e construiu três décadas de ateliê em torno dela.</span>
               </h2>
             </Reveal>
             <Reveal variant="fade-up" delay={100} duration={750}>
               <p>
                 Em 1993, <strong className="text-western-green-deep font-semibold">Luiz Duarte
-                Botelho</strong> e um sócio identificaram a tecnologia desenvolvida por um artista
-                plástico americano sediado no Arizona — autor de obras icônicas em Las Vegas e nos
-                parques da Disney. Trouxeram para o Brasil os primeiros moldes, tintas e
-                formulações, e fundaram a Western em São Paulo.
+                Botelho</strong> identificou nos Estados Unidos uma técnica de pedra artesanal
+                desenvolvida pelo artista plástico responsável por obras de Las Vegas e dos
+                parques da Disney. Trouxe os primeiros moldes, tintas e formulações para o
+                Brasil e fundou a Western em São Paulo.
               </p>
             </Reveal>
             <Reveal variant="fade-up" delay={180} duration={750}>
               <p>
                 Em 1996, <strong className="text-western-green-deep font-semibold">Ricardo
                 Botelho</strong> e <strong className="text-western-green-deep font-semibold">Luiz
-                Carlos Botelho</strong>, filhos do fundador, retornaram do Japão trazendo a
-                metodologia de produção que organizou a fábrica. Sob a segunda geração, a Western
-                reduziu o tempo de uma matriz de 40 dias para cerca de 1 dia, ampliou o catálogo
-                para 50 modelos rastreáveis e tornou-se referência nacional do paisagismo de alto
-                padrão.
+                Carlos Botelho</strong>, filhos do fundador, voltaram do Japão e assumiram o
+                ateliê em duas frentes complementares. Ricardo conduz o desenho, a escultura e
+                a direção criativa — é dele a leitura estética de cada peça, do gesto da matriz
+                à composição do conjunto. Luiz Carlos responde pela engenharia do produto: foi
+                sob a coordenação dele que a Western desenvolveu o composto de cimento
+                estrutural com fibra de PET reciclado, reduziu o tempo de uma matriz de 40 dias
+                para cerca de 1 dia, e refinou o método que torna a peça leve, resistente e
+                simples de instalar.
               </p>
             </Reveal>
             <Reveal variant="fade-up" delay={240} duration={750}>
               <p>
-                Em 2026, a empresa completa <strong className="text-western-green-deep font-semibold">
-                33 anos de operação ininterrupta</strong> no ateliê de {BUSINESS.cidadeAtelie}/
-                {BUSINESS.ufAtelie} — uma das poucas no Brasil que sobrevive desde os anos 1990
-                num segmento que praticamente todas as concorrentes descontinuaram.
+                Em 2026, são <strong className="text-western-green-deep font-semibold">33 anos
+                de ateliê ininterrupto</strong> em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie},
+                com 50 modelos catalogados e um lugar firmado no paisagismo brasileiro de alto
+                padrão — uma operação familiar que atravessou três décadas sem trocar de mão,
+                de método ou de assinatura.
               </p>
             </Reveal>
           </div>
