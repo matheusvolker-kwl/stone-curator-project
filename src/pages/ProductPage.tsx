@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProduct } from "@/lib/shopify/queries";
-import { parseProductDescription, groupDimensions } from "@/lib/shopify/parseDescription";
+import { parseProductDescription } from "@/lib/shopify/parseDescription";
 import { useEffect, useMemo, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { formatBRL, cdnImg, cdnSrcSet } from "@/lib/shopify/client";
@@ -132,8 +132,8 @@ export default function ProductPage() {
   };
 
 
-  // Ficha técnica: agrupa dimensões e separa acabamentos
-  const dims = groupDimensions(parsed.ficha);
+  // Ficha técnica: extrai dimensões individuais e separa acabamentos
+  const dims = extractDimensions(parsed.ficha);
   const fichaCleaned = parsed.ficha.filter(
     (f) => !/comprimento|largura|altura/i.test(f.label)
   );
