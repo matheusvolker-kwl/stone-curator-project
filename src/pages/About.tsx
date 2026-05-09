@@ -8,10 +8,13 @@ import retrato from "@/assets/ricardo-luiz-carlos.webp";
 import irmaosGruta from "@/assets/irmaos-botelho-gruta.webp";
 import heroCascata from "@/assets/hero-cascata.webp";
 import respiroPedra from "@/assets/respiro-pedra.webp";
-import projetoLago from "@/assets/projetos/cover-lago.webp";
 import projetoCascata from "@/assets/projetos/cover-cascata.webp";
-import projetoPiscina from "@/assets/projetos/cover-piscina.avif";
-import projetoCasaPraia from "@/assets/projetos/cover-casa-praia.webp";
+import obraCascataTropical from "@/assets/about-projetos/cascata-tropical.jpg";
+import obraCascataMirante from "@/assets/about-projetos/cascata-mirante.jpg";
+import obraPiscinaPraia from "@/assets/about-projetos/piscina-praia.jpg";
+import obraDetalheMatriz from "@/assets/about-projetos/detalhe-matriz.jpg";
+import obraBordaPedra from "@/assets/about-projetos/borda-pedra.jpg";
+import obraCascataEscalonada from "@/assets/about-projetos/cascata-escalonada.jpg";
 import iconePedraBranco from "@/assets/icone-pedra-branco.png";
 import { BUSINESS } from "@/config/business";
 
@@ -303,64 +306,78 @@ export default function About() {
         </div>
       </section>
 
-      {/* GALERIA — projetos em layout asymmetric, sem moldura */}
+      {/* GALERIA — Mural editorial de obras */}
       <section className="surface-ivory py-24 md:py-28 border-t border-western-stone-warm/10">
         <div className="container-western max-w-6xl">
           <Reveal variant="fade-up" duration={750}>
-            <div className="max-w-2xl mb-14">
-              <p className="text-eyebrow mb-3">Repertório</p>
-              <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
-                Obras que assinamos<br />nas últimas décadas.
-              </h2>
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-end mb-12 md:mb-16">
+              <div>
+                <p className="text-eyebrow mb-3">Repertório</p>
+                <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
+                  Obras que assinamos<br />nas últimas décadas.
+                </h2>
+              </div>
+              <p className="text-western-stone-warm leading-relaxed text-sm md:text-base max-w-md md:justify-self-end">
+                Cascatas, prainhas, lagos ornamentais e bordas integradas em residências de alto padrão, hospitalidade de luxo e paisagismo autoral pelo Brasil.
+              </p>
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-12 gap-3 md:gap-5">
-            <Reveal variant="fade-up" duration={800} className="col-span-12 md:col-span-7">
-              <div className="aspect-[4/3] overflow-hidden group">
-                <img
-                  src={projetoLago}
-                  alt="Lago artificial paisagístico com pedras Western"
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-105"
-                />
+          {(() => {
+            const obras = [
+              { src: obraCascataTropical, alt: "Cascata em pedra Western em piscina tropical", tipologia: "Cascata Tropical", local: "Residencial · Pedra moldada" },
+              { src: obraCascataMirante, alt: "Cascata Western escalonada com vista de serra", tipologia: "Cascata Mirante", local: "Vista de serra · SC" },
+              { src: obraPiscinaPraia, alt: "Piscina-praia com pedra sonora aplicada", tipologia: "Piscina-Praia", local: "Pedra sonora aplicada" },
+              { src: obraDetalheMatriz, alt: "Detalhe de matriz Western com acabamento natural", tipologia: "Detalhe de Matriz", local: "Acabamento autoral" },
+              { src: obraBordaPedra, alt: "Borda de pedra integrada à piscina", tipologia: "Borda Integrada", local: "Pool · Acabamento natural" },
+              { src: obraCascataEscalonada, alt: "Cascata escalonada em projeto residencial", tipologia: "Cascata Escalonada", local: "Composição autoral" },
+            ];
+
+            const Tile = ({ i, aspect, className = "" }: { i: number; aspect: string; className?: string }) => (
+              <Reveal variant="fade-up" delay={i * 70} duration={750} className={className}>
+                <figure className={`relative overflow-hidden group h-full ${aspect}`}>
+                  <img
+                    src={obras[i].src}
+                    alt={obras[i].alt}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]"
+                  />
+                  <figcaption
+                    className="absolute inset-x-0 bottom-0 p-4 md:p-5 pt-12 md:pt-16 transition-opacity duration-500 md:opacity-0 md:group-hover:opacity-100"
+                    style={{
+                      background:
+                        "linear-gradient(to top, hsl(var(--western-green-deep) / 0.92) 0%, hsl(var(--western-green-deep) / 0.55) 55%, transparent 100%)",
+                    }}
+                  >
+                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold-soft mb-1">
+                      {obras[i].tipologia}
+                    </p>
+                    <p className="text-western-cream text-xs md:text-sm">{obras[i].local}</p>
+                  </figcaption>
+                </figure>
+              </Reveal>
+            );
+
+            return (
+              <div className="space-y-1.5 md:space-y-2">
+                {/* Linha 1: HERO vertical (8) + coluna direita (4) com 2 tiles empilhados */}
+                <div className="grid grid-cols-12 gap-1.5 md:gap-2">
+                  <Tile i={0} aspect="aspect-[4/5]" className="col-span-12 md:col-span-8 md:row-span-2" />
+                  <div className="col-span-12 md:col-span-4 grid grid-cols-2 md:grid-cols-1 gap-1.5 md:gap-2">
+                    <Tile i={1} aspect="aspect-[4/5] md:aspect-[5/4]" />
+                    <Tile i={2} aspect="aspect-square" />
+                  </div>
+                </div>
+                {/* Linha 2: vertical (4) + duas panorâmicas empilhadas (8) */}
+                <div className="grid grid-cols-12 gap-1.5 md:gap-2">
+                  <Tile i={3} aspect="aspect-[3/4]" className="col-span-6 md:col-span-4 md:row-span-2" />
+                  <Tile i={4} aspect="aspect-[16/9]" className="col-span-6 md:col-span-8" />
+                  <Tile i={5} aspect="aspect-[16/9]" className="col-span-12 md:col-span-8 md:col-start-5" />
+                </div>
               </div>
-            </Reveal>
-            <Reveal variant="fade-up" delay={100} duration={800} className="col-span-12 md:col-span-5">
-              <div className="aspect-[3/4] overflow-hidden group h-full">
-                <img
-                  src={projetoCascata}
-                  alt="Cascata Western em projeto residencial"
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-105"
-                />
-              </div>
-            </Reveal>
-            <Reveal variant="fade-up" delay={60} duration={800} className="col-span-6 md:col-span-4">
-              <div className="aspect-[3/4] overflow-hidden group">
-                <img
-                  src={projetoCasaPraia}
-                  alt="Casa de praia com paisagismo em pedra Western"
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-105"
-                />
-              </div>
-            </Reveal>
-            <Reveal variant="fade-up" delay={140} duration={800} className="col-span-6 md:col-span-8">
-              <div className="aspect-[16/10] overflow-hidden group h-full">
-                <img
-                  src={projetoPiscina}
-                  alt="Piscina com bordas e composições em pedra Western"
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-105"
-                />
-              </div>
-            </Reveal>
-          </div>
+            );
+          })()}
         </div>
       </section>
 
