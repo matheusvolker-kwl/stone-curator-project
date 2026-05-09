@@ -7,6 +7,8 @@ import { cdnImg, formatBRL } from "@/lib/shopify/client";
 import { whatsappConjunto, type ConjuntoLeaf, type GuideAnswers } from "@/data/guideMap";
 import SketchLeadModal from "./SketchLeadModal";
 import { BUSINESS } from "@/config/business";
+import GatedPrice from "@/components/shared/GatedPrice";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Props {
   conjunto: ConjuntoLeaf;
