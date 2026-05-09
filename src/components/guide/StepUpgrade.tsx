@@ -1,11 +1,10 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
 import { ArrowRight, Loader2, ShoppingBag, TrendingUp, Check, Plus, Sparkles, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { fetchProduct } from "@/lib/shopify/queries";
-import { cdnImg, formatBRL } from "@/lib/shopify/client";
+import { cdnImg } from "@/lib/shopify/client";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import {
   resolveConjunto,
@@ -14,6 +13,8 @@ import {
   type GuideAnswers,
   type Tipo,
 } from "@/data/guideMap";
+import GatedPrice from "@/components/shared/GatedPrice";
+import GuideProductQuickView from "./GuideProductQuickView";
 import GuideStepFooter from "./GuideStepFooter";
 
 interface Props {
@@ -61,6 +62,7 @@ export default function StepUpgrade({ answers, precoBase, onBack, onNext }: Prop
   const removeItem = useCartStore((s) => s.removeItem);
   const cartItems = useCartStore((s) => s.items);
   const cartLoading = useCartStore((s) => s.isLoading);
+  const [quickOpen, setQuickOpen] = useState(false);
 
   // B1: skip via effect, nunca durante o render
   useEffect(() => {
@@ -169,9 +171,12 @@ export default function StepUpgrade({ answers, precoBase, onBack, onNext }: Prop
             </h4>
             <p className="text-xs text-western-stone-warm mb-4">{metaBase.pecas}</p>
             <div className="mt-auto">
-              <p className="font-display text-2xl text-western-green-deep">
-                {formatBRL(precoBase, "BRL")}
-              </p>
+              <GatedPrice
+                amount={precoBase}
+                currency="BRL"
+                className="font-display text-2xl text-western-green-deep"
+                variant="block"
+              />
               <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm mt-1">
                 Conjunto base
               </p>
@@ -228,13 +233,19 @@ export default function StepUpgrade({ answers, precoBase, onBack, onNext }: Prop
 
             <div className="mt-auto">
               <div className="flex items-baseline gap-3 flex-wrap">
-                <p className="font-display text-2xl text-western-gold">
-                  {formatBRL(upgrade.preco, "BRL")}
-                </p>
+                <GatedPrice
+                  amount={upgrade.preco}
+                  currency="BRL"
+                  className="font-display text-2xl text-western-gold"
+                  lockedLabel="Login para preço"
+                />
                 {delta > 0 && (
-                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-cream/70">
-                    +{formatBRL(delta, "BRL")}
-                  </span>
+                  <GatedPrice
+                    amount={delta}
+                    currency="BRL"
+                    className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-cream/70"
+                    variant="hidden"
+                  />
                 )}
               </div>
               <div className="mt-4 flex flex-col gap-2">
@@ -264,12 +275,13 @@ export default function StepUpgrade({ answers, precoBase, onBack, onNext }: Prop
                     <Plus className="h-3.5 w-3.5" /> Adicionar upgrade sem remover base
                   </button>
                 )}
-                <Link
-                  to={`/produtos/${upgrade.handle}`}
+                <button
+                  type="button"
+                  onClick={() => setQuickOpen(true)}
                   className="inline-flex items-center justify-center gap-2 h-9 text-western-cream/60 hover:text-western-gold font-mono text-[10px] uppercase tracking-[0.22em] transition-colors"
                 >
                   Ver detalhes <ArrowRight className="h-3 w-3" />
-                </Link>
+                </button>
               </div>
             </div>
           </div>
@@ -287,6 +299,12 @@ export default function StepUpgrade({ answers, precoBase, onBack, onNext }: Prop
         skipLabel={!inCart ? "Não, pode seguir" : undefined}
         onSkip={!inCart ? onNext : undefined}
         addedCount={inCart ? 1 : 0}
+      />
+
+      <GuideProductQuickView
+        handle={upgrade.handle}
+        open={quickOpen}
+        onOpenChange={setQuickOpen}
       />
     </motion.div>
   );

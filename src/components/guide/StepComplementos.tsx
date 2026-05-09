@@ -1,13 +1,14 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
 import { Minus, Plus, Check } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { fetchProductsByHandles } from "@/lib/shopify/queries";
-import { cdnImg, formatBRL } from "@/lib/shopify/client";
+import { cdnImg } from "@/lib/shopify/client";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { complementosPorTipo, type Tipo } from "@/data/guideMap";
+import GatedPrice from "@/components/shared/GatedPrice";
+import GuideProductQuickView from "./GuideProductQuickView";
 import GuideStepFooter from "./GuideStepFooter";
 
 interface Props {
@@ -29,6 +30,7 @@ export default function StepComplementos({ tipo, onBack, onNext }: Props) {
   const cartItems = useCartStore((s) => s.items);
   const cartLoading = useCartStore((s) => s.isLoading);
   const [qtys, setQtys] = useState<Record<string, number>>({});
+  const [quickHandle, setQuickHandle] = useState<string | null>(null);
 
   const setQty = (h: string, q: number) =>
     setQtys((prev) => ({ ...prev, [h]: Math.max(1, q) }));
@@ -96,7 +98,7 @@ export default function StepComplementos({ tipo, onBack, onNext }: Props) {
             disabled={cartLoading}
             className="btn-outline-forest disabled:opacity-60"
           >
-            <Plus className="h-4 w-4" /> Reservar todos ({formatBRL(totalSelecionado, "BRL")})
+            <Plus className="h-4 w-4" /> Reservar todos ({produtos.length} peças)
           </button>
         )}
       </header>
@@ -135,7 +137,12 @@ export default function StepComplementos({ tipo, onBack, onNext }: Props) {
                   inCart ? "border-western-gold" : "border-western-stone-warm/20 hover:border-western-gold/60"
                 }`}
               >
-                <Link to={`/produtos/${p.handle}`} className="aspect-square bg-western-cream/40 overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setQuickHandle(p.handle)}
+                  className="aspect-square bg-western-cream/40 overflow-hidden block w-full"
+                  aria-label={`Ver detalhes de ${p.title}`}
+                >
                   {img && (
                     <img
                       src={cdnImg(img, 600)}
@@ -144,17 +151,23 @@ export default function StepComplementos({ tipo, onBack, onNext }: Props) {
                       loading="lazy"
                     />
                   )}
-                </Link>
+                </button>
                 <div className="flex-1 p-5 flex flex-col gap-3">
-                  <Link to={`/produtos/${p.handle}`}>
-                    <h4 className="font-display text-lg text-western-green-deep leading-tight">
+                  <button
+                    type="button"
+                    onClick={() => setQuickHandle(p.handle)}
+                    className="text-left"
+                  >
+                    <h4 className="font-display text-lg text-western-green-deep leading-tight hover:text-western-gold transition-colors">
                       {p.title}
                     </h4>
-                  </Link>
-                  <p className="text-spec text-western-stone-warm">
-                    {formatBRL(price.amount, price.currencyCode)}{" "}
-                    <span className="opacity-60">/ un.</span>
-                  </p>
+                  </button>
+                  <GatedPrice
+                    amount={price.amount}
+                    currency={price.currencyCode}
+                    suffix="/ un."
+                    className="text-spec text-western-stone-warm"
+                  />
 
                   <div className="mt-auto flex items-stretch gap-2">
                     <div className="flex items-center border border-western-stone-warm/30">
@@ -213,6 +226,12 @@ export default function StepComplementos({ tipo, onBack, onNext }: Props) {
         skipLabel={addedCount === 0 ? "Não preciso disso agora" : undefined}
         onSkip={addedCount === 0 ? onNext : undefined}
         addedCount={addedCount}
+      />
+
+      <GuideProductQuickView
+        handle={quickHandle}
+        open={!!quickHandle}
+        onOpenChange={(o) => !o && setQuickHandle(null)}
       />
     </div>
   );
