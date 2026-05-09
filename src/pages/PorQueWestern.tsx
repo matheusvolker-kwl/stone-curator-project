@@ -45,7 +45,7 @@ const OBJEÇÕES: { q: string; a: string }[] = [
   },
   {
     q: "Não tenho como ir até a fábrica para ver.",
-    a: "Sem problema. Mandamos amostra de acabamento gratuita por correio — uma peça pequena de cada acabamento (Quartzo, Arenito, Moledo, Granito) para você sentir a textura na mão. Também mandamos catálogo completo digital, vídeos de obras executadas, e fazemos videochamada do showroom em Cajamar se quiser ver os tamanhos grandes ao vivo.",
+    a: "Sem problema. Mandamos amostra de acabamento gratuita por correio — uma peça pequena de cada acabamento (Quartzo, Arenito, Moledo, Granito) para você sentir a textura na mão. Também mandamos catálogo completo digital, vídeos de obras executadas, e fazemos videochamada do showroom em Cotia/SP se quiser ver os tamanhos grandes ao vivo. Cotia fica a 30 minutos de São Paulo capital — visita ao ateliê é sempre bem-vinda.",
   },
   {
     q: "E se o cliente final não gostar?",

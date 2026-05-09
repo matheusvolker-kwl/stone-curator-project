@@ -16,11 +16,15 @@ export const BUSINESS = {
   // Desconto em conjuntos pré-montados
   descontoConjuntosPercent: 3,
 
-  // Localização — ateliê em Cajamar/SP
-  cidadeAtelie: "Cajamar",
+  // Localização — ateliê em Cotia/SP (a ~30 min de São Paulo capital)
+  cidadeAtelie: "Cotia",
   ufAtelie: "SP",
-  enderecoAtelieCompleto: "Rua Colina, 38 — Jardim Paraíso, Cajamar/SP · CEP 07794-075",
+  enderecoAtelieCompleto: "Ateliê Western Pools · Cotia/SP · Grande São Paulo",
   horarioAtelie: "Seg–Sex · 9h às 17h",
+
+  // Empresa
+  fundadaEm: 1993,
+  anosOperacao: 2026 - 1993,
 
   // Contato
   whatsappFabrica: "5511993403485",
