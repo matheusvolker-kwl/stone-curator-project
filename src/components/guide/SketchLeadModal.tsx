@@ -27,6 +27,7 @@ interface Props {
   conjuntoHandle: string;
   acabamento: string;
   contexto?: { tipo?: string; areaM2?: number };
+  nomePreFill?: string;
 }
 
 export default function SketchLeadModal({
@@ -36,9 +37,10 @@ export default function SketchLeadModal({
   conjuntoHandle,
   acabamento,
   contexto,
+  nomePreFill,
 }: Props) {
   const [form, setForm] = useState({
-    nome: "",
+    nome: nomePreFill ?? "",
     email: "",
     whatsapp: "",
     segmento: "",
