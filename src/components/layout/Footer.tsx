@@ -120,11 +120,7 @@ export default function Footer() {
               Receba lançamentos e tabelas técnicas atualizadas.
             </p>
             <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!email) return;
-                setEmail("");
-              }}
+              onSubmit={handleNewsletter}
               className="flex border border-western-gold/30 focus-within:border-western-gold transition-colors"
             >
               <div className="flex items-center px-3 text-western-gold-soft">
@@ -138,8 +134,13 @@ export default function Footer() {
                 placeholder="seu@email.com"
                 className="flex-1 bg-transparent outline-none text-sm py-2.5 text-western-cream placeholder:text-western-cream-muted/60"
               />
-              <button type="submit" aria-label="Enviar" className="px-3 hover:bg-western-gold/10 text-western-gold-soft transition-colors">
-                <Send className="h-4 w-4" />
+              <button
+                type="submit"
+                disabled={loading}
+                aria-label="Enviar"
+                className="px-3 hover:bg-western-gold/10 text-western-gold-soft transition-colors disabled:opacity-50"
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </button>
             </form>
           </div>
