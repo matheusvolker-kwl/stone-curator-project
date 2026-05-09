@@ -108,14 +108,14 @@ export const useGuideStore = create<GuideState>()(
 );
 
 // Util: lista as etapas visíveis (depende do tipo) para o GuideProgress
-export function getProgressSteps(tipo?: Tipo) {
-  const base = [
-    { key: "tipo" as const, label: "Onde" },
-    { key: "area" as const, label: "Tamanho" },
-    { key: "protagonismo" as const, label: "Protagonismo" },
+export function getProgressSteps(tipo?: Tipo): Array<{ key: GuideStep; label: string }> {
+  const base: Array<{ key: GuideStep; label: string }> = [
+    { key: "tipo", label: "Onde" },
+    { key: "area", label: "Tamanho" },
+    { key: "protagonismo", label: "Protagonismo" },
   ];
   if (tipo && tipo !== "piscina") {
-    base.push({ key: "composicao" as const, label: "Composição" });
+    base.push({ key: "composicao", label: "Composição" });
   }
   return base;
 }
