@@ -53,6 +53,9 @@ function Confetti() {
 
 export default function StepFechamento({ conjunto, answers, acabamento, onBack, onReset }: Props) {
   const items = useCartStore((s) => s.items);
+  const nome = useGuideStore((s) => s.nome);
+  const setNome = useGuideStore((s) => s.setNome);
+  const areaM2 = useGuideStore((s) => s.areaM2);
   const total = items.reduce(
     (acc, i) => acc + parseFloat(i.price.amount) * i.quantity,
     0
@@ -60,6 +63,7 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
   const totalQty = items.reduce((acc, i) => acc + i.quantity, 0);
   const [sketchOpen, setSketchOpen] = useState(false);
   const [showConfetti, setShowConfetti] = useState(true);
+  const [nameDraft, setNameDraft] = useState(nome ?? "");
 
   useEffect(() => {
     const t = setTimeout(() => setShowConfetti(false), 3000);
@@ -68,9 +72,15 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
 
   const openCart = () => window.dispatchEvent(new CustomEvent("western:open-cart"));
 
+  const commitName = () => {
+    const trimmed = nameDraft.trim();
+    if (trimmed && trimmed !== nome) setNome(trimmed);
+  };
+
   // Estimativa simples de economia vs. pedra natural (multiplicador conservador 1.7x)
   const estimadoNatural = Math.round(total * 1.7);
   const economia = estimadoNatural - total;
+  const firstName = nome ? nome.split(/\s+/)[0] : "";
 
   return (
     <div className="relative">
@@ -79,13 +89,37 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
         <p className="text-eyebrow mb-3">Etapa 09 · Fechamento</p>
         <h2 className="font-display text-4xl md:text-5xl text-western-green-deep leading-[1.05] mb-4">
-          Pronto. Seu projeto<br />está montado.
+          {firstName ? <>Pronto, {firstName}.<br />Seu projeto está montado.</> : <>Pronto. Seu projeto<br />está montado.</>}
         </h2>
-        <p className="text-western-stone-warm leading-relaxed max-w-2xl mb-10 text-lg">
+        <p className="text-western-stone-warm leading-relaxed max-w-2xl mb-6 text-lg">
           {totalQty} {totalQty === 1 ? "item curado" : "itens curados"}, {formatBRL(total, "BRL")} em
           composição autoral. Envie para o cliente final, abra o orçamento ou fale direto com
           um consultor para fechar a condição comercial.
         </p>
+
+        {!nome && (
+          <div className="mb-10 inline-flex items-center gap-3 border border-western-stone-warm/20 bg-white pl-4 pr-1 py-1 max-w-md">
+            <User className="h-4 w-4 text-western-gold shrink-0" />
+            <input
+              type="text"
+              value={nameDraft}
+              onChange={(e) => setNameDraft(e.target.value)}
+              onBlur={commitName}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); commitName(); } }}
+              placeholder="Como podemos chamar você?"
+              maxLength={60}
+              className="flex-1 bg-transparent py-2 text-sm text-western-green-deep placeholder:text-western-stone-warm/60 focus:outline-none"
+              aria-label="Seu nome para personalizar o fechamento"
+            />
+            <button
+              type="button"
+              onClick={commitName}
+              className="font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-2 text-western-stone-warm hover:text-western-green-deep transition-colors"
+            >
+              Salvar
+            </button>
+          </div>
+        )}
       </motion.div>
 
       <div className="grid lg:grid-cols-[1.3fr_1fr] gap-10">
