@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
+import ArquitetosStrip from "@/components/shared/ArquitetosStrip";
 
 export default function About() {
   return (
@@ -31,6 +32,17 @@ export default function About() {
             garden centers e revendas qualificadas mediante credenciamento.
           </p>
         </div>
+
+        <ArquitetosStrip
+          eyebrow="Especificada por"
+          titulo={<>Arquitetos que assinam<br />com a Western.</>}
+          descricao={
+            <>
+              Estúdios de referência nacional que tornam Western parte recorrente
+              do repertório em residências de alto padrão e hospitalidade de luxo.
+            </>
+          }
+        />
 
         <MarcasInstitucionais
           eyebrow="Atendemos há mais de uma década"
