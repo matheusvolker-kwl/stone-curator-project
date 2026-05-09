@@ -244,8 +244,8 @@ export default function About() {
             src={respiroPedra}
             alt=""
             aria-hidden
-            className="absolute inset-0 w-full h-full object-cover will-change-transform"
-            style={{ transform: `translate3d(0, ${(scrollY - 800) * 0.08}px, 0)` }}
+            className="absolute left-0 top-[-12%] w-full h-[124%] object-cover will-change-transform"
+            style={{ transform: `translate3d(0, ${(scrollY - 800) * 0.05}px, 0)` }}
           />
           <div
             className="absolute inset-0"
