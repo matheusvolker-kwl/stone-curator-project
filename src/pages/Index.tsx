@@ -145,6 +145,32 @@ export default function Index() {
       {/* PROJETOS — prova social */}
       <ProjetosSection />
 
+      {/* Faixa institucional — Camadas 2 e 3 */}
+      <section className="surface-paper border-t border-western-stone-warm/15 py-10 md:py-14">
+        <div className="container-western max-w-4xl text-center">
+          <p className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.28em] text-western-stone-warm leading-[2]">
+            Especificada por{" "}
+            <Link to="/parceiros-arquitetos" className="text-western-green-deep hover:text-western-gold transition-colors">
+              Marcelo Faisal
+            </Link>
+            ,{" "}
+            <Link to="/parceiros-arquitetos" className="text-western-green-deep hover:text-western-gold transition-colors">
+              Fabiano Hayasaki
+            </Link>
+            ,{" "}
+            <Link to="/parceiros-arquitetos" className="text-western-green-deep hover:text-western-gold transition-colors">
+              Ronaldo Luidi
+            </Link>{" "}
+            e outros estúdios.
+            <br className="hidden md:inline" />{" "}
+            Atende{" "}
+            <Link to="/sobre" className="text-western-green-deep hover:text-western-gold transition-colors">
+              Cobasi, Unique Garden, Cristal Pool, Genesis Ecossistemas e Biopet Lagos.
+            </Link>
+          </p>
+        </div>
+      </section>
+
       {/* ARTISTA — Ricardo */}
       <ArtistaSection />
 

@@ -19,9 +19,8 @@ export const BUSINESS = {
   // Localização — ateliê em Cajamar/SP
   cidadeAtelie: "Cajamar",
   ufAtelie: "SP",
-  // TODO confirmar com Western: endereço completo e horário do ateliê
-  enderecoAtelieCompleto: "Cajamar · SP",
-  horarioAtelie: "Seg–Sex · 9h às 18h",
+  enderecoAtelieCompleto: "Rua Colina, 38 — Jardim Paraíso, Cajamar/SP · CEP 07794-075",
+  horarioAtelie: "Seg–Sex · 9h às 17h",
 
   // Contato
   whatsappFabrica: "5511993403485",

@@ -15,16 +15,29 @@ export default function ProjetoModal({ projeto, onClose }: Props) {
             <DialogTitle className="sr-only">{projeto.titulo}</DialogTitle>
             <DialogDescription className="sr-only">{projeto.snippet}</DialogDescription>
 
-            <div className="aspect-video w-full bg-black">
-              <video
-                key={projeto.slug}
-                src={projeto.video}
-                poster={projeto.cover}
-                controls
-                preload="metadata"
-                playsInline
-                className="w-full h-full object-contain"
-              />
+            <div className="aspect-video w-full bg-black relative">
+              {projeto.video ? (
+                <video
+                  key={projeto.slug}
+                  src={projeto.video}
+                  poster={projeto.cover}
+                  controls
+                  preload="metadata"
+                  playsInline
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <img
+                  src={projeto.cover}
+                  alt={projeto.titulo}
+                  className="w-full h-full object-cover"
+                />
+              )}
+              {projeto.confidencial && (
+                <span className="absolute top-3 right-3 font-mono text-[10px] uppercase tracking-[0.22em] bg-western-green-deep/85 border border-western-gold/30 text-western-gold-soft px-2.5 py-1.5">
+                  Sob confidencialidade
+                </span>
+              )}
             </div>
 
             <div className="p-6 md:p-10">
