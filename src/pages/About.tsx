@@ -57,7 +57,27 @@ export default function About() {
         </div>
       </section>
 
-      {/* HISTÓRIA — fundador & geração 2 */}
+      {/* NÚMEROS — escala da operação */}
+      <section className="surface-cream py-12 md:py-14 border-y border-western-stone-warm/10">
+        <div className="container-western max-w-5xl">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-px bg-western-stone-warm/15">
+            {[
+              { n: "33", l: "anos de operação ininterrupta" },
+              { n: "50", l: "modelos catalogados" },
+              { n: "11", l: "coleções" },
+              { n: "200", l: "SKUs com 4 acabamentos" },
+              { n: "5", l: "anos de garantia formal" },
+            ].map((s) => (
+              <div key={s.l} className="bg-western-cream p-5 md:p-6 text-center">
+                <p className="font-display text-3xl md:text-4xl text-western-green-deep tabular-nums">{s.n}</p>
+                <p className="text-spec text-western-stone-warm/80 mt-2 leading-snug">{s.l}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
       <section className="surface-ivory py-20 md:py-24">
         <div className="container-western max-w-5xl grid md:grid-cols-12 gap-10 md:gap-14 items-start">
           <div className="md:col-span-4">
