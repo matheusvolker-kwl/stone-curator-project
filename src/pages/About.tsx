@@ -118,77 +118,133 @@ export default function About() {
         </div>
       </section>
 
-      {/* FAMÍLIA BOTELHO — editorial, sem moldura quadrada */}
+      {/* FAMÍLIA BOTELHO — editorial com timeline */}
       <section className="surface-ivory py-24 md:py-32 relative overflow-hidden">
         {/* Fio dourado decorativo */}
         <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-western-gold/30 to-transparent hidden md:block" />
 
-        <div className="container-western max-w-6xl grid md:grid-cols-12 gap-12 md:gap-16 items-start">
-          <Reveal variant="fade-right" duration={900} className="md:col-span-5">
-            <figure className="relative">
-              {/* Selo "33 anos" sutil */}
-              <div className="absolute -top-4 -left-4 z-10 bg-western-green-deep text-western-cream px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] shadow-lg">
-                Desde 1996
-              </div>
-              <div className="aspect-[4/5] overflow-hidden shadow-2xl shadow-western-green-deep/20">
-                <img
-                  src={retrato}
-                  alt="Ricardo e Luiz Carlos Botelho — segunda geração à frente da Western"
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover transition-transform duration-[1500ms] ease-out hover:scale-[1.03]"
-                />
-              </div>
-              {/* Linha de assinatura */}
-              <div className="mt-5 pl-1 border-l-2 border-western-gold">
-                <p className="pl-4 text-spec text-western-stone-warm/80 leading-relaxed max-w-[360px]">
-                  <span className="text-western-green-deep font-semibold">Ricardo & Luiz Carlos Botelho</span><br />
-                  Segunda geração à frente do ateliê desde 1996. Ricardo na direção criativa e no desenho das peças; Luiz Carlos na engenharia do composto e na tecnologia de produção.
-                </p>
-              </div>
-            </figure>
-          </Reveal>
+        {/* Marca-d'água editorial */}
+        <div
+          aria-hidden
+          className="absolute -bottom-10 right-0 font-display text-western-green-deep/[0.04] leading-none pointer-events-none select-none whitespace-nowrap hidden md:block"
+          style={{ fontSize: "clamp(120px, 18vw, 280px)" }}
+        >
+          1993—2026
+        </div>
 
-          <div className="md:col-span-7 space-y-7 text-base md:text-lg text-western-stone-warm leading-relaxed">
-            <Reveal variant="fade-up" duration={750}>
-              <p className="text-eyebrow mb-3">A família Botelho</p>
-              <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05] mb-2">
+        <div className="container-western max-w-6xl relative">
+          {/* Cabeçalho editorial */}
+          <Reveal variant="fade-up" duration={750}>
+            <div className="max-w-4xl mb-16 md:mb-20">
+              <p className="text-eyebrow mb-4">A família Botelho</p>
+              <div className="w-12 h-px bg-western-gold mb-8" />
+              <h2 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.02]">
                 A família que trouxe uma tecnologia do Arizona —
                 <span className="italic text-western-gold-soft font-light"> e construiu três décadas de ateliê em torno dela.</span>
               </h2>
+            </div>
+          </Reveal>
+
+          <div className="grid md:grid-cols-12 gap-12 md:gap-16 items-start">
+            {/* Coluna foto */}
+            <Reveal variant="fade-right" duration={900} className="md:col-span-5 md:sticky md:top-24">
+              <figure className="relative">
+                <div className="aspect-[4/5] overflow-hidden shadow-[0_30px_80px_-30px_hsl(var(--western-green-deep)/0.35)]">
+                  <img
+                    src={retrato}
+                    alt="Ricardo e Luiz Carlos Botelho — segunda geração à frente da Western"
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* Selo Desde 1996 — canto inferior direito, editorial */}
+                <div className="absolute -bottom-3 -right-3 z-10 bg-western-green-deep text-western-cream px-5 py-3 font-mono text-[10px] uppercase tracking-[0.22em] shadow-xl">
+                  Desde 1996
+                </div>
+                <div className="mt-8 pl-1 border-l-2 border-western-gold">
+                  <p className="pl-4 text-spec text-western-stone-warm/80 leading-relaxed">
+                    <span className="text-western-green-deep font-semibold">Ricardo & Luiz Carlos Botelho</span><br />
+                    Segunda geração à frente do ateliê desde 1996. Ricardo na direção criativa e no desenho das peças; Luiz Carlos na engenharia do composto e na tecnologia de produção.
+                  </p>
+                </div>
+              </figure>
             </Reveal>
-            <Reveal variant="fade-up" delay={100} duration={750}>
-              <p>
-                Em 1993, <strong className="text-western-green-deep font-semibold">Luiz Duarte
-                Botelho</strong> identificou nos Estados Unidos uma técnica de pedra artesanal
-                desenvolvida pelo artista plástico responsável por obras de Las Vegas e dos
-                parques da Disney. Trouxe os primeiros moldes, tintas e formulações para o
-                Brasil e fundou a Western em São Paulo.
-              </p>
-            </Reveal>
-            <Reveal variant="fade-up" delay={180} duration={750}>
-              <p>
-                Em 1996, <strong className="text-western-green-deep font-semibold">Ricardo
-                Botelho</strong> e <strong className="text-western-green-deep font-semibold">Luiz
-                Carlos Botelho</strong>, filhos do fundador, voltaram do Japão e assumiram o
-                ateliê em duas frentes complementares. Ricardo conduz o desenho, a escultura e
-                a direção criativa — é dele a leitura estética de cada peça, do gesto da matriz
-                à composição do conjunto. Luiz Carlos responde pela engenharia do produto: foi
-                sob a coordenação dele que a Western desenvolveu o composto de cimento
-                estrutural com fibra de PET reciclado, reduziu o tempo de uma matriz de 40 dias
-                para cerca de 1 dia, e refinou o método que torna a peça leve, resistente e
-                simples de instalar.
-              </p>
-            </Reveal>
-            <Reveal variant="fade-up" delay={240} duration={750}>
-              <p>
-                Em 2026, são <strong className="text-western-green-deep font-semibold">33 anos
-                de ateliê ininterrupto</strong> em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie},
-                com 50 modelos catalogados e um lugar firmado no paisagismo brasileiro de alto
-                padrão — uma operação familiar que atravessou três décadas sem trocar de mão,
-                de método ou de assinatura.
-              </p>
-            </Reveal>
+
+            {/* Coluna timeline narrativa */}
+            <div className="md:col-span-7 relative">
+              {/* Filete vertical conectando os marcos */}
+              <div className="absolute left-[2px] top-3 bottom-3 w-px bg-gradient-to-b from-western-gold/40 via-western-gold/20 to-western-gold/40 hidden md:block" />
+
+              <div className="space-y-16 md:space-y-20">
+                {/* MARCO 1993 */}
+                <Reveal variant="fade-up" delay={100} duration={750}>
+                  <div className="relative md:pl-12">
+                    <div className="hidden md:flex absolute left-0 top-1 items-center">
+                      <span className="block w-2 h-2 rounded-full bg-western-gold ring-4 ring-western-ivory" />
+                    </div>
+                    <p className="font-display text-5xl md:text-6xl text-western-gold/70 leading-none mb-3 tabular-nums">1993</p>
+                    <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm mb-5">Origem · Luiz Duarte Botelho</p>
+                    <p className="text-base md:text-lg text-western-stone-warm leading-relaxed">
+                      <span className="float-left font-display text-6xl md:text-7xl leading-[0.85] text-western-gold-soft mr-3 mt-1">E</span>
+                      m 1993, <strong className="text-western-green-deep font-semibold">Luiz Duarte
+                      Botelho</strong> identificou nos Estados Unidos uma técnica de pedra artesanal
+                      desenvolvida pelo artista plástico responsável por obras de Las Vegas e dos
+                      parques da Disney. Trouxe os primeiros moldes, tintas e formulações para o
+                      Brasil e fundou a Western em São Paulo.
+                    </p>
+                  </div>
+                </Reveal>
+
+                {/* MARCO 1996 */}
+                <Reveal variant="fade-up" delay={140} duration={750}>
+                  <div className="relative md:pl-12">
+                    <div className="hidden md:flex absolute left-0 top-1 items-center">
+                      <span className="block w-2 h-2 rounded-full bg-western-gold ring-4 ring-western-ivory" />
+                    </div>
+                    <p className="font-display text-5xl md:text-6xl text-western-gold/70 leading-none mb-3 tabular-nums">1996</p>
+                    <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm mb-5">Segunda geração · duas frentes</p>
+                    <p className="text-base md:text-lg text-western-stone-warm leading-relaxed mb-7">
+                      <strong className="text-western-green-deep font-semibold">Ricardo Botelho</strong> e <strong className="text-western-green-deep font-semibold">Luiz Carlos Botelho</strong>, filhos do fundador, voltaram do Japão e assumiram o ateliê em duas frentes complementares — a leitura estética e a engenharia do produto.
+                    </p>
+
+                    {/* Mini-cards Ricardo / Luiz Carlos */}
+                    <div className="grid sm:grid-cols-2 gap-px bg-western-stone-warm/15">
+                      <div className="bg-western-ivory p-6 border-t-2 border-western-gold/60 transition-colors hover:border-western-gold">
+                        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm mb-2">Ricardo Botelho</p>
+                        <p className="font-display text-xl text-western-green-deep mb-3 leading-tight">Direção criativa</p>
+                        <p className="text-sm text-western-stone-warm leading-relaxed">
+                          Desenho, escultura e leitura estética de cada peça — do gesto da matriz à composição do conjunto.
+                        </p>
+                      </div>
+                      <div className="bg-western-ivory p-6 border-t-2 border-western-gold/60 transition-colors hover:border-western-gold">
+                        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm mb-2">Luiz Carlos Botelho</p>
+                        <p className="font-display text-xl text-western-green-deep mb-3 leading-tight">Engenharia do produto</p>
+                        <p className="text-sm text-western-stone-warm leading-relaxed">
+                          Composto de cimento estrutural com fibra de PET reciclado. Matriz: de 40 dias para cerca de 1.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </Reveal>
+
+                {/* MARCO 2026 — fechamento destacado */}
+                <Reveal variant="fade-up" delay={180} duration={750}>
+                  <div className="relative md:pl-12">
+                    <div className="hidden md:flex absolute left-0 top-1 items-center">
+                      <span className="block w-2 h-2 rounded-full bg-western-green-deep ring-4 ring-western-ivory" />
+                    </div>
+                    <p className="font-display text-5xl md:text-6xl text-western-green-deep leading-none mb-3 tabular-nums">2026</p>
+                    <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm mb-5">33 anos de ateliê ininterrupto</p>
+                    <div className="surface-cream border-l-2 border-western-gold p-6 md:p-8">
+                      <p className="text-lg md:text-xl text-western-green-deep leading-relaxed font-light">
+                        São <strong className="font-semibold">33 anos de ateliê ininterrupto</strong> em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}, com 50 modelos catalogados e um lugar firmado no paisagismo brasileiro de alto padrão — uma operação familiar que atravessou três décadas sem trocar de mão, de método ou de assinatura.
+                      </p>
+                    </div>
+                  </div>
+                </Reveal>
+              </div>
+            </div>
           </div>
         </div>
       </section>
