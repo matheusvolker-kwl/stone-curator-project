@@ -1,77 +1,71 @@
-## Diagnóstico
+# Sprint 1 — Integridade comercial
 
-Três classes de bug aparecem nos prints e se repetem em outras telas:
+Trabalho mecânico de unificação de constantes, correção de localização (Cajamar/SP), terminologia (Conjuntos), CNPJ, token via env e links do footer. Sem mudança de lógica de negócio — apenas fonte única de verdade e textos.
 
-**1. Overflow horizontal global**  
-`html`/`body` em `src/index.css` não têm `overflow-x: hidden` nem `max-width: 100vw`. Qualquer filho que estoure 390px (decorações, `whitespace-nowrap` longo, grids fixos, sombras absolutas) faz a página inteira rolar lateralmente — é o que vemos nas imagens 23–25 (PDP) e por que aparece scrollbar horizontal no print.
+## Pré-requisitos (precisamos confirmar antes de começar)
 
-Suspeitos já mapeados:
-- `TopBar.tsx`: faixa `animate-[shimmer]` em `whitespace-nowrap`, ok porque o pai tem `overflow-hidden`, mas vale revalidar.
-- `ProductPage.tsx`: linha de thumbs já tem `overflow-x-auto`, mas a coluna de acabamentos / botão "Adicionar" / linha "Produção sob demanda · …" usa `whitespace-nowrap` ou texto largo sem `min-w-0` no flex pai → empurra a coluna.
-- `StepFechamento.tsx:171`: `whitespace-nowrap` em parágrafo dentro de coluna estreita.
-- `Header.tsx`: navegação com `whitespace-nowrap` em flex sem `min-w-0`.
+Pergunto antes de implementar para evitar deixar `[CONFIRMAR: ...]` no código:
 
-**2. Badge "ACABAMENTO QUARTZO" cobrindo o eyebrow do card no Step 5** (img 26)  
-`StepBase.tsx:185` posiciona o badge em `absolute top-5 right-5` sobre o card hero. No mobile o pill (com label "Acabamento Quartzo" + tracking 0.2em) ocupa metade da largura do card e cobre o eyebrow "COMPOSIÇÃO EQUILIBRADA" e parte do título. Decisão do usuário: manter no canto, só caber.
+1. **Pedido mínimo** — confirmar R$ 2.000 (valor que aparece em 5 dos 6 lugares; o R$ 1.000 em `LinhaPage.tsx` parece bug)?
+2. **Endereço completo do ateliê em Cajamar** (rua, número, bairro, CEP)?
+3. **Horário de atendimento do ateliê**?
+4. **WhatsApp** — manter `+55 11 99340-3485` (já no código) ou outro número?
+5. **E-mail comercial e newsletter** — manter `comercial@westernpools.com.br` / `contato@westernpools.com.br`?
+6. **CNPJ real** — informar para exibir, ou esconder a linha por enquanto?
+7. **Desconto de conjuntos** — 3% confirmado?
 
-**3. Footer sticky escondendo conteúdo no fim das etapas** (img 27)  
-`GuideStepFooter.tsx` renderiza CTA sticky em `fixed bottom: 76px` (acima da barra mobile do carrinho de 76px). Total ~140px ocupados, mas o `<main>` do guia não tem `padding-bottom` mobile equivalente — a última linha do conteúdo fica oculta. Decisão: adicionar `padding-bottom` no container do passo apenas no mobile.
+Posso iniciar com placeholders sensatos e marcar `// TODO confirmar` se preferir não esperar — basta avisar.
 
-## Plano de execução
+## Etapas
 
-### A. Blindar overflow global
-1. Em `src/index.css`, adicionar a `html, body`:
-   ```css
-   overflow-x: hidden;
-   max-width: 100vw;
-   ```
-   (correção defensiva — não substitui consertar a causa, mas evita que qualquer regressão futura quebre o layout inteiro).
+### 1. Criar fonte única — `src/config/business.ts`
+Constante `BUSINESS` com pedido mínimo, prazo, garantia, ateliê, contatos, formas de pagamento, acabamentos, link SketchUp Warehouse. Tipado `as const`.
 
-### B. Auditar e consertar elementos que estouram no mobile
-Varredura por `whitespace-nowrap`, grids `grid-cols-[Npx_…]` fixos e `flex` sem `min-w-0`. Correções pontuais previstas:
+### 2. Refatorar para usar `BUSINESS`
+Substituir literais em:
+- `src/components/layout/CartDrawer.tsx` (`MIN_ORDER = 2000`)
+- `src/components/layout/TopBar.tsx` (texto "R$ 2.000")
+- `src/components/guide/GuideResultado.tsx` (R$ 2.000 + "São Paulo" da retirada)
+- `src/pages/LinhaPage.tsx` (R$ 1.000 → corrigir)
+- `src/pages/Index.tsx` (duas ocorrências)
+- `src/pages/ProductPage.tsx` (R$ 2.000 e referência São Paulo)
 
-1. **`ProductPage.tsx`** (causa imagens 23–25):
-   - Coluna de detalhes: garantir `min-w-0` no item flex pai e remover/condicionar `whitespace-nowrap` da linha de meta ("Produção sob demanda · 15 dias úteis · …") — quebrar em 2 linhas no mobile.
-   - Bloco "Acabamentos disponíveis" (chips): trocar por `flex-wrap` + chips com `whitespace-nowrap` individual (chips podem ficar nowrap, o container envolve).
-   - Botão "ADICIONAR" e "FALAR": garantir que o container do CTA não ultrapasse `w-full` (verificar se algum pai tem `min-w` indevido).
-   - Hero da imagem do produto: confirmar `overflow-hidden` na moldura e `max-w-full` na `<img>`.
+Validação: `grep -rn "R\$ 1.000\|R\$ 2.000" src` retorna vazio.
 
-2. **`StepFechamento.tsx:171`**: remover `whitespace-nowrap` do parágrafo (deixar quebrar) ou trocar por `truncate` se for um único item visual.
+### 3. Localização Cajamar/SP
+- `Footer.tsx`: trocar "Fábrica em São Paulo · Brasil" por endereço do ateliê em Cajamar.
+- `Contact.tsx`: bloco "Fábrica" → Cajamar, SP + endereço + horário + "Retirada gratuita mediante agendamento".
+- `ProductPage.tsx` e `GuideResultado.tsx`: "retirada gratuita em São Paulo" → "retirada gratuita em Cajamar/SP".
+- Manter "fabricado em São Paulo" se aparecer em contexto institucional amplo.
 
-3. **`Header.tsx` / `TopBar.tsx`**: adicionar `min-w-0` nos containers flex do header desktop e confirmar `overflow-hidden` da faixa de marquee.
+### 4. Terminologia "Conjuntos"
+- `Conjuntos.tsx`: H1 "Kits prontos para começar com confiança" → "Conjuntos para começar com confiança". Revisar copy do parágrafo.
+- `grep -rin "\bkit" src` e julgar caso a caso, preservando "kit de amostras".
 
-4. Outras telas (`Linhas`, `LinhaPage`, `Sobre`, `Index`): rodar checagem rápida do mesmo padrão e aplicar `min-w-0` / `flex-wrap` onde necessário.
+### 5. CNPJ
+- `Footer.tsx`: substituir `00.000.000/0001-00` por `BUSINESS.cnpj` ou esconder a linha conforme decisão acima.
 
-### C. Badge de acabamento no Step 5
-Em `StepBase.tsx:185`:
-- Reduzir o badge no mobile: esconder a palavra "Acabamento" (manter só o nome do acabamento) ou diminuir tracking + padding em telas `<sm`.
-- Usar `max-w-[60%]` + `truncate` para garantir que nunca cubra mais da metade do card.
-- Mantém `absolute top-5 right-5` no canto superior direito do hero, conforme escolhido.
+### 6. Token Shopify via env
+- `src/lib/shopify/client.ts`: trocar token hardcoded por `import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN` com guard.
+- Criar `.env.example` com `VITE_SHOPIFY_STOREFRONT_TOKEN` e `VITE_SHOPIFY_DOMAIN`.
+- Verificar `.gitignore` (provavelmente já cobre `.env`).
+- **Risco**: o token publishable hoje funciona em qualquer browser; mover para env não muda postura de segurança real (continua público no bundle), só facilita rotação. Confirmar se quer mesmo migrar ou se prefere deixar como está e tratar no Sprint 5.
 
-### D. Padding-bottom no conteúdo do Guia
-Em `BuyingGuide.tsx`, no container do passo (próximo à linha 179):
-- Adicionar `pb-44 xl:pb-0` (≈ 176px) para reservar espaço do footer sticky (≈ 60px) + margem + barra do carrinho mobile (76px). Valor exato calibrado contra `bottom: 76px` do footer.
-- Validar que o `<main>` por trás do `GuideAssemblySummary` mobile (Sheet) não fica com gap.
+### 7. Footer — links de coleção e remoção de links falsos
+- Mapear cada item de "Coleções" para `/linhas/{handle}` (cascatas, fontes, pedra-led, pedras-grandes, pedras-medias, pedras-pequenas, pedras-de-borda, revestimentos, pisadas, acessorios, fosseis-decorativos).
+- Antes de hardcodar: validar handles reais via Shopify (preciso autenticar a conexão Shopify quando começarmos).
+- Comentar no JSX com `// TODO Sprint 4` os links que hoje apontam falsamente para `/guia-de-compra` (Política comercial, Política de entrega, Trocas e avarias, FAQ, Guias técnicos).
 
-### E. Validação visual
-Com viewport 390×844 (mobile), navegar e revisar:
-- `/` (home), `/sobre`, `/linhas`, `/linhas/:slug`, `/produto/:handle` (com 23/24/25 como referência), `/guia` percorrendo as 9 etapas (focar 5, 6 e 9).
-- Confirmar ausência de scrollbar horizontal e ausência de conteúdo coberto pelo footer.
+### 8. Validação final
+- `grep` checks listados nos critérios.
+- Build/TS limpo.
+- Smoke visual: `/`, `/conjuntos`, `/linhas/cascatas`, `/contato`, footer, abrir CartDrawer.
 
-## Detalhes técnicos
+## Arquivos tocados
 
-- **Padrão `min-w-0`**: itens de flexbox em coluna/row têm `min-width: auto` por padrão, o que impede o filho de encolher abaixo do conteúdo intrínseco. `min-w-0` no item flex (não no pai) libera a redução e evita estouro lateral.
-- **`overflow-x: hidden` no body**: aceita-se trade-off de bloquear scroll horizontal intencional (não há nenhum no app). Não afeta `position: sticky`.
-- **Padding bottom do guia**: usar Tailwind arbitrário se necessário (`pb-[180px] xl:pb-0`). Se um passo já tem `GuideStepFooter` in-flow, o sticky só aparece quando o footer in-flow sai da viewport (controlado por IntersectionObserver), então o padding extra só é "desperdiçado" quando o footer in-flow está visível — aceitável.
-- **Badge mobile-first**: classes propostas — `text-[9px] sm:text-[10px] px-2 py-1 max-w-[60%] truncate`, com `<span className="hidden sm:inline">Acabamento </span>` antes do nome.
+Novos: `src/config/business.ts`, `.env.example`
+Editados: `CartDrawer.tsx`, `TopBar.tsx`, `Footer.tsx`, `Contact.tsx`, `Conjuntos.tsx`, `Index.tsx`, `ProductPage.tsx`, `LinhaPage.tsx`, `GuideResultado.tsx`, `lib/shopify/client.ts`, possivelmente `.gitignore`.
 
-## Arquivos previstos para edição
+## Fora de escopo
 
-- `src/index.css` — overflow-x + max-width
-- `src/pages/ProductPage.tsx` — `min-w-0`, `flex-wrap`, remoção de `whitespace-nowrap` da linha meta
-- `src/pages/BuyingGuide.tsx` — padding-bottom mobile no container do passo
-- `src/components/guide/StepBase.tsx` — badge responsivo
-- `src/components/guide/StepFechamento.tsx` — remover `whitespace-nowrap` da linha 171
-- `src/components/layout/Header.tsx` / `TopBar.tsx` — `min-w-0` defensivo (se necessário)
-
-Sem mudanças de lógica de negócio, dados ou store. Apenas CSS/markup de apresentação.
+Sprints 2–6 (prova social, leads, conteúdo institucional, SEO/perf, refino de carrinho).
