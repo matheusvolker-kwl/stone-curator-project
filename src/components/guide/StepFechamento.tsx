@@ -6,6 +6,7 @@ import { useGuideStore } from "@/stores/guideStore";
 import { cdnImg, formatBRL } from "@/lib/shopify/client";
 import { whatsappConjunto, type ConjuntoLeaf, type GuideAnswers } from "@/data/guideMap";
 import SketchLeadModal from "./SketchLeadModal";
+import { BUSINESS } from "@/config/business";
 
 interface Props {
   conjunto: ConjuntoLeaf;

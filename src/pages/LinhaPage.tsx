@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { BUSINESS } from "@/config/business";
 
 const FINISHES = [
   { key: "quartzo", label: "Quartzo", swatch: "38 35% 86%" },
