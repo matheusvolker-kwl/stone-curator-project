@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
 import ArquitetosStrip from "@/components/shared/ArquitetosStrip";
 import { ArrowRight, Layers, Mountain, Recycle, Hammer } from "lucide-react";
-import retrato from "@/assets/ricardo-botelho.webp";
+import retrato from "@/assets/ricardo-luiz-carlos.webp";
 import { BUSINESS } from "@/config/business";
 
 const PILARES = [
