@@ -1,121 +1,127 @@
-## Status do Guia
+## Revisão completa do Guia de Composição
 
-A jornada de 9 etapas está **funcionalmente completa** no frontend (Ondas A + B + C entregues). O que falta para sair do "demo encantador" e virar **produção** mora **fora do código**: catálogo Shopify alinhado e migração de conteúdo editorial para metafields.
-
----
-
-## 1. O que ainda falta no código (pequenos polimentos opcionais)
-
-Não é bloqueador, mas vale entrar numa próxima onda:
-
-- **Captura de nome no SketchLeadModal** e reuso no Headline da Etapa 09 (*"Pronto, [Nome]"*) — hoje o nome ainda não é puxado.
-- **Animação fly-to-cart com `layoutId`** — implementamos pulse + slide-in, mas o arco da miniatura voando para o painel ainda não.
-- **`react-countup`** no total do painel lateral (hoje muda direto, sem contagem animada).
-- **Cálculo real de economia vs. pedra natural** na Etapa 09 — hoje usa multiplicador fixo (~1.7x). Idealmente vira metafield por conjunto.
-- **Testes E2E** do fluxo completo (Playwright) — útil antes de divulgar para a rede de arquitetos.
+Li ponta a ponta os 9 steps + painel de orçamento + footer + progress + store. Abaixo o que está sólido, o que tem **bug real** e o que merece polimento — em ordem de prioridade.
 
 ---
 
-## 2. O que fazer DENTRO do Shopify (catálogo)
+## Bugs e inconsistências reais (corrigir)
 
-Esta é a parte crítica. O `guideMap.ts` referencia **45 handles de conjunto** + complementos + itens autorais. Cada um precisa existir como produto real.
+### B1. `StepUpgrade` chama `onNext()` durante o render
+Em `StepUpgrade.tsx:64-67`, quando não há upgrade disponível, o componente chama `onNext()` no corpo do render e retorna `null`. Isso dispara `setState` em outro componente durante a renderização → warning do React + risco de loop infinito de navegação. Além disso, o `skips.skipUpgrade` em `BuyingGuide.tsx:69` já filtra esse caso via `upgradeAvailable`, então o `early return` é redundante e perigoso.
+**Fix:** trocar por `useEffect(() => { if (!upgrade) onNext(); }, [upgrade])` ou simplesmente confiar no skip e renderizar fallback.
 
-### 2.1. Conjuntos (45 produtos)
+### B2. `StepUpgrade.tsx:67` retorna sem renderizar `GuideStepFooter`
+Quando o early return acontece numa transição rápida, o usuário vê uma tela em branco por um frame.
 
-Para cada combinação Tipo × Tamanho × Composição × Nível, criar um produto:
+### B3. `StepFechamento` ignora a área do projeto no contexto do SketchLeadModal
+`StepFechamento.tsx:244` passa `areaM2: undefined` mesmo tendo a info no `useGuideStore`. Lead chega no CRM sem o m² — perda de qualificação.
+**Fix:** ler `areaM2` da store e passar.
 
-```
-Lago: 3 tamanhos × 2 composições × 3 níveis = 18 conjuntos
-Piscina: 3 tamanhos × 3 níveis = 9 conjuntos
-Jardim: 3 tamanhos × 2 jardins × 3 níveis = 18 conjuntos
-```
+### B4. Persistência: `useGuideStore` salva mas o **carrinho** não rehidrata na mesma janela
+O `cartStore` (não vi o conteúdo, mas pelo comportamento) provavelmente persiste em paralelo. Confirmar: ao "Continuar projeto" do banner do Intro, o carrinho parcial reaparece? Se não, o "vivo" do painel lateral some.
 
-**Handle obrigatório:** exatamente como em `guideMap.ts` (ex.: `conjunto-lago-itacare-equilibrado`). Se um handle não bater, o Step 05 quebra.
+### B5. Atalhos de teclado podem disparar em `Intro` se o foco estiver no botão
+`BuyingGuide.tsx:134` filtra apenas inputs/textareas. Se o usuário pressionar ← na intro, dispara `back()` indevidamente. O guard `ASSEMBLY_STEPS.includes(step)` previne, mas vale revisar — está ok.
 
-**Campos por produto:**
-- Title, Description (HTML editorial)
-- Pelo menos 4 imagens (1 hero 21:9 + 3 ambientações para o carrossel)
-- Variantes por **acabamento** (Quartzo, Arenito, Calcário, Basalto) — opção `Acabamento`
-- Preço base (= valor em `guideMap.preco`)
-- Tags: `conjunto`, `tipo:lago|piscina|jardim`, `nivel:essencial|equilibrada|completa`
+### B6. Tint do acabamento usa keys que podem não bater
+`StepBase.tsx:30-39` mapeia `quartzo|arenito|moledo|granito`. Se o produto Shopify tiver "Quartzo Branco" ou "Arenito Texturizado", o split pega só a primeira palavra — funciona, mas se vier "Pedra Quartzo" o key fica `pedra` → cai no fallback cinza. Risco baixo, vale documentar.
 
-### 2.2. Complementos e itens autorais
+### B7. `GuideAssemblySummary` reserva 320px de coluna, mas só aparece em xl (≥1280)
+`BuyingGuide.tsx:179` usa `xl:grid-cols-[1fr_320px]`. Em telas 1280-1366 (laptops), o card central fica apertado e o hero do StepBase (21:9) compete por espaço. Vale conferir visualmente — pode ficar feio em 1280.
 
-Já referenciados por handle:
-- `pedra-led`, `pedra-sonora`, `pisada`, `cascata-pequena`
-- `pedra-champanheira`, `pedra-torneira`, `pedra-sonora`
-
-Garantir que existem com imagens, preço, descrição e estoque.
-
-### 2.3. Coleções para o Upsell (Step Complementos)
-
-O `upsellMap` aponta para handles de coleção:
-`pedras-pequenas`, `pedras-medias`, `cascatas`, `pedra-led`, `acessorios`, `fontes-para-jardim`, `pedras-de-borda`, `pisadas`.
-
-Criar/conferir cada coleção com produtos atribuídos.
+### B8. Mobile sticky cart bar (76px) + sticky CTA do footer (bottom: 76px)
+`GuideStepFooter.tsx:101` posiciona o CTA acima da barra mobile. Confirma-se visualmente que não há sobreposição em telas pequenas (320px). O `pb-44` do container (`BuyingGuide.tsx:160`) cobre, mas vale validar.
 
 ---
 
-## 3. Migração para Metafields (a parte estratégica)
+## Inconsistências de conteúdo / UX
 
-Hoje muito conteúdo editorial vive **hardcoded** em `guideMap.ts` e nos componentes. Para a Western editar sem mexer em código, migrar para metafields Shopify.
+### C1. Footer "Voltar" duplicado em StepFechamento
+A Etapa 09 já tem "Voltar" + "Refazer guia" no rodapé próprio (`StepFechamento.tsx:221-236`), mas **não usa** `GuideStepFooter`. Ok funcionalmente, mas o sticky mobile CTA não aparece nessa etapa — pode confundir quem aprendeu o padrão nas etapas 5-8.
 
-### 3.1. Metafields por **produto-conjunto**
+### C2. Headline genérica na Etapa 09
+`"Pronto. Seu projeto está montado."` — o plano original previa **capturar nome no SketchLeadModal e reusar** ("Pronto, [Nome]."). Hoje o nome só é coletado quando o usuário clica em baixar prancha — tarde demais.
+**Fix sugerido:** mover a captura de nome (apenas first name) para a entrada da Etapa 05 ou 09, opcional, num input inline discreto.
 
-Criar definições no Shopify Admin (Settings → Custom data → Products):
+### C3. Economia hardcoded (1.7x) na Etapa 09
+`StepFechamento.tsx:67`. Já listado no plano de metafields. Fica como TODO conhecido.
 
-| Namespace.key | Tipo | Uso na UI |
-|---|---|---|
-| `guide.subtitulo` | single_line | Subtítulo do conjunto (Step 05) |
-| `guide.pecas_incluidas` | json (lista de `{nome, qtd, dimensao}`) | Lista numerada com tooltip |
-| `guide.indicado_para` | json (lista de strings) | Chip-strip "Lago · 8m² · Marcante" |
-| `guide.assinatura_faisal` | multi_line | Linha em itálico "Faisal recomenda..." |
-| `guide.hero_image` | file_reference | Imagem hero 21:9 do Step 05 |
-| `guide.economia_pedra_natural` | money | Valor real de economia (substitui multiplicador 1.7x) |
-| `guide.prazo_dias` | number_integer | Prazo de produção exibido no fechamento |
-| `guide.sketch_pdf` | file_reference | PDF do sketch (lead magnet) |
-| `guide.sketch_skp` | file_reference | Arquivo SketchUp |
+### C4. "45 conjuntos curados" no Intro
+`BuyingGuide.tsx:291` — número correto (validei pelo guideMap), mas se a Western adicionar/remover conjuntos no futuro, vai dessincronizar. Pode virar `Object.keys()` derivado.
 
-### 3.2. Metafields por **variante** (acabamento)
+### C5. Microcopy ainda inconsistente em alguns CTAs
+- `StepUpgrade.tsx:227` "Reservar upgrade" ✓
+- `StepBase.tsx:275` "Reservar este conjunto" ✓
+- `StepComplementos.tsx:99` "Reservar todos" ✓
+- Mas `StepCasa.tsx:42` ainda usa toast "adicionado" sem o tom premium dos outros — sem grande dano.
 
-| Namespace.key | Tipo | Uso |
-|---|---|---|
-| `acabamento.cor_hsl` | single_line (`"34 28% 62%"`) | Tinta no hero do Step 05 (substitui `tintFor()` hardcoded) |
-| `acabamento.descricao_curta` | single_line | "textura suave, tom areia" |
-| `acabamento.imagem_swatch` | file_reference | Swatch 96×96 |
+### C6. Sem feedback visual quando o upgrade é adicionado mas o conjunto base segue no carrinho
+Etapa 07: o usuário pode acabar com **base + upgrade** no orçamento sem perceber. O `handleSwap` (`StepUpgrade.tsx:75`) só adiciona o upgrade — não remove a base. O toast menciona, mas é fácil ignorar.
+**Fix sugerido:** oferecer toggle ou "trocar pelo upgrade" (remove base + adiciona upgrade) vs. "adicionar upgrade".
 
-### 3.3. Metafields por **coleção** (Upsell)
+### C7. Painel lateral não destaca o item recém-adicionado no scroll
+Quando o usuário adiciona em complementos com a página rolada, o item entra no painel desktop com animação — mas o painel mantém a posição de scroll. Se houver muitos itens, o novo pode entrar fora da viewport interna.
+**Fix:** scroll automático para o item recém-entrado dentro do `flex-1 overflow-y-auto`.
 
-| Namespace.key | Tipo | Uso |
-|---|---|---|
-| `upsell.eyebrow` | single_line | Texto curto acima do título |
-| `upsell.imagem_capa` | file_reference | Hero da seção no Step 06 |
-
-### 3.4. Refactor no código (depois que os metafields estiverem populados)
-
-- Atualizar `PRODUCT_FIELDS` em `src/lib/shopify/queries.ts` para puxar os novos metafields.
-- Migrar `tintFor()` (hoje em `StepBase.tsx`) para ler de `variant.acabamento.cor_hsl`.
-- Migrar `sketchAssetsFor()` em `guideMap.ts` para ler `guide.sketch_pdf/skp` do produto.
-- Migrar economia da Etapa 09 para ler `guide.economia_pedra_natural` por conjunto.
-- Migrar `nivelMeta` (descrições, faixa de preço, peças) — opcional, pode ficar no código já que é padrão por nível.
+### C8. Sem indicador visual de skip nas etapas
+Quando `skips.skipUpgrade=true`, a etapa Upgrade some do progress — bom. Mas o usuário não sabe que isso aconteceu. Considerar tooltip "Sua escolha já é a composição mais robusta" no progress, ou nota discreta.
 
 ---
 
-## 4. Ordem recomendada de execução
+## Acessibilidade (revisão)
 
-1. **Você (Western no Shopify):** criar os 45 produtos-conjunto com handles exatos + imagens + variantes de acabamento.
-2. **Você:** criar/revisar coleções do upsell e produtos de complemento.
-3. **Você:** definir os metafields no Shopify Admin (sem precisar populá-los todos de imediato).
-4. **Eu (Lovable):** atualizar a query GraphQL para incluir os metafields novos.
-5. **Eu:** refatorar componentes (`StepBase`, `StepFechamento`, `sketchAssetsFor`) para consumir metafields com fallback nos valores atuais — assim nada quebra durante a migração gradual.
-6. **Você:** popular metafields produto a produto, no seu ritmo. A UI vai trocando automaticamente conforme cada produto recebe seus dados.
+- ✅ `aria-current="step"` no GuideProgress
+- ✅ `aria-live="polite"` no painel lateral
+- ✅ `aria-label` nos cards do StepProtagonismo
+- ⚠️ Confetti em `StepFechamento` não tem `prefers-reduced-motion` guard. Deveria respeitar.
+- ⚠️ Atalhos ←/→ não estão documentados em lugar nenhum. Adicionar nota visual discreta nos primeiros segundos da Etapa 05 (tooltip de onboarding).
+- ⚠️ Os toasts do Sonner podem ser perdidos por screen readers se a região live não estiver configurada (Sonner geralmente cuida disso, mas vale auditar).
 
 ---
 
-## 5. Resposta direta às suas perguntas
+## Performance
 
-- **Finalizamos 100% do guia?** O **frontend** sim, no nível de UX. Falta o **catálogo real** e a **camada de conteúdo editável** (metafields) para virar produção.
-- **O que fazer no Shopify?** Criar os 45 conjuntos com os handles do `guideMap.ts`, complementos, coleções de upsell e definir os metafields da seção 3.
-- **Migração para metafields?** Faço em duas etapas: primeiro atualizo a query e os componentes para *ler* metafields com fallback (não quebra nada), depois vocês populam no Shopify no ritmo de vocês.
+- ✅ Imagens via `cdnImg()` com width otimizado e webp.
+- ✅ `lazy` loading nas imagens.
+- ✅ `staleTime` configurado nos useQuery.
+- ⚠️ `StepFechamento` gera 24 partículas de confete com `Math.random()` no render — recalcula em cada render. Memoizar com `useMemo`.
+- ⚠️ O painel lateral usa `useCartStore` em 3 componentes filhos (`useTotals` em PanelInner + GuideAssemblySummary + ItemRow indireto). Cada subscription causa re-render. Selector único no topo evitaria.
 
-Posso já preparar a **lista CSV dos 45 handles + nomes + preços** para vocês importarem no Shopify de uma vez, e na sequência fazer o refactor da query para metafields. Quer que eu siga por aí?
+---
+
+## Pontos sólidos (não mexer)
+
+- Arquitetura do `guideStore` com `persist` + TTL — limpa.
+- `getProgressSteps()` derivando dos skips — ótima abstração.
+- `GuideAssemblySummary` mobile/desktop com Sheet — UX correta.
+- Comparativo lado a lado em StepUpgrade — visualmente forte.
+- Stamp animation no GuideProgress — sutil e elegante.
+- Hover preview no StepProtagonismo — diferencial real.
+
+---
+
+## Priorização sugerida (próxima onda de ajustes)
+
+**Crítico (corrigir antes de divulgar):**
+1. B1 — `onNext()` no render do StepUpgrade (risco de loop)
+2. B3 — areaM2 ausente no SketchLeadModal (qualificação de lead)
+3. C6 — base + upgrade duplicado no carrinho (confunde orçamento)
+
+**Importante (UX/qualidade):**
+4. C2 — captura de nome para personalizar Etapa 09
+5. C7 — auto-scroll para item recém-adicionado no painel
+6. Confetti respeitar `prefers-reduced-motion`
+
+**Polimento:**
+7. C5 — uniformizar tom dos toasts
+8. C8 — informar quando uma etapa foi pulada
+9. Memoizar partículas do confetti
+10. Validação visual em 1280px (B7)
+
+---
+
+## Resposta direta
+
+O guia está em **excelente estado** — UX coesa, animações bem dosadas, fluxo intuitivo. Os 3 bugs críticos (B1, B3, C6) são pontuais e rápidos de resolver. O resto é polimento de quem quer 10/10 em vez de 9/10.
+
+Quer que eu execute a **lista crítica (1-3) + importante (4-6)** como próxima entrega?
