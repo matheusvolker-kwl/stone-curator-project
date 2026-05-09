@@ -9,6 +9,7 @@ import ArtistaSection from "@/components/home/ArtistaSection";
 import { ArrowRight, ShieldCheck, Truck, Box } from "lucide-react";
 import heroCascata from "@/assets/hero-cascata.webp";
 import heroCascataSm from "@/assets/hero-cascata-sm.webp";
+import { BUSINESS } from "@/config/business";
 
 export default function Index() {
   const { data: collections = [] } = useQuery({
@@ -96,7 +97,7 @@ export default function Index() {
       <section className="bg-white border-b border-western-stone-warm/10">
         <div className="container-western py-5 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
           {[
-            { Icon: ShieldCheck, t: "Pedido mínimo R$ 2.000", d: "Exclusivo para profissionais com CNPJ." },
+            { Icon: ShieldCheck, t: `Pedido mínimo ${BUSINESS.pedidoMinimoLabel}`, d: "Exclusivo para profissionais com CNPJ." },
             { Icon: Truck, t: "Produção em 15 dias úteis", d: "Após confirmação do pagamento antecipado." },
             { Icon: Box, t: "Modelos 3D em SketchUp", d: "Para todos os produtos do catálogo." },
           ].map(({ Icon, t, d }) => (
@@ -168,7 +169,7 @@ export default function Index() {
             </div>
             <div className="grid grid-cols-2 gap-px bg-western-gold/15">
               {[
-                { eyebrow: "Pedido mínimo", t: "R$ 2.000" },
+                { eyebrow: "Pedido mínimo", t: BUSINESS.pedidoMinimoLabel },
                 { eyebrow: "Prazo", t: "15 dias úteis" },
                 { eyebrow: "Pagamento", t: "100% antecipado" },
                 { eyebrow: "Frete", t: "Transportadora ou retirada" },

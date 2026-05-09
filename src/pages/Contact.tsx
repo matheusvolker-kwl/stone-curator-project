@@ -1,3 +1,5 @@
+import { BUSINESS } from "@/config/business";
+
 export default function Contact() {
   return (
     <div className="surface-ivory">
@@ -10,10 +12,10 @@ export default function Contact() {
 
         <div className="grid sm:grid-cols-2 gap-10 mt-16">
           {[
-            { eyebrow: "WhatsApp", value: "+55 11 99340.3485", href: "https://wa.me/5511993403485" },
+            { eyebrow: "WhatsApp", value: BUSINESS.whatsappLabel, href: `https://wa.me/${BUSINESS.whatsappFabrica}` },
             { eyebrow: "Instagram", value: "@westernpools", href: "https://instagram.com/westernpools" },
-            { eyebrow: "E-mail", value: "contato@westernpools.com.br", href: "mailto:contato@westernpools.com.br" },
-            { eyebrow: "Modelos 3D", value: "SketchUp 3D Warehouse →", href: "https://3dwarehouse.sketchup.com/by/WesternPools" },
+            { eyebrow: "E-mail", value: BUSINESS.emailComercial, href: `mailto:${BUSINESS.emailComercial}` },
+            { eyebrow: "Modelos 3D", value: "SketchUp 3D Warehouse →", href: BUSINESS.sketchupWarehouse },
           ].map((c) => (
             <div key={c.eyebrow} className="border-t border-western-stone-warm/20 pt-8">
               <p className="text-eyebrow mb-3">{c.eyebrow}</p>
@@ -28,10 +30,10 @@ export default function Contact() {
             </div>
           ))}
           <div className="border-t border-western-stone-warm/20 pt-8 sm:col-span-2">
-            <p className="text-eyebrow mb-3">Fábrica</p>
+            <p className="text-eyebrow mb-3">Ateliê</p>
             <p className="text-western-green-deep text-lg leading-relaxed">
-              São Paulo · Brasil <br />
-              Retirada gratuita mediante agendamento.
+              {BUSINESS.enderecoAtelieCompleto} · Brasil <br />
+              {BUSINESS.horarioAtelie} · Retirada gratuita mediante agendamento.
             </p>
           </div>
         </div>

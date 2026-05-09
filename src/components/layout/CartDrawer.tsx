@@ -4,8 +4,9 @@ import { useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
 import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle } from "lucide-react";
 import { useEffect } from "react";
+import { BUSINESS } from "@/config/business";
 
-const MIN_ORDER = 2000;
+const MIN_ORDER = BUSINESS.pedidoMinimoBRL;
 
 export default function CartDrawer({
   open,

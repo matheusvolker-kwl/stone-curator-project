@@ -2,6 +2,21 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import logo from "@/assets/logo-horizontal-bege.png";
 import { Mail, Send } from "lucide-react";
+import { BUSINESS } from "@/config/business";
+
+const COLECOES: { label: string; handle: string }[] = [
+  { label: "Cascatas", handle: "cascatas" },
+  { label: "Fontes", handle: "fontes" },
+  { label: "Pedra LED", handle: "pedra-led" },
+  { label: "Pedras Grandes", handle: "pedras-grandes" },
+  { label: "Pedras Médias", handle: "pedras-medias" },
+  { label: "Pedras Pequenas", handle: "pedras-pequenas" },
+  { label: "Pedras de Borda", handle: "pedras-de-borda" },
+  { label: "Revestimentos", handle: "revestimentos" },
+  { label: "Pisadas", handle: "pisadas" },
+  { label: "Acessórios", handle: "acessorios" },
+  { label: "Fósseis Decorativos", handle: "fosseis-decorativos" },
+];
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -13,22 +28,10 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-1">
             <h4 className="text-eyebrow mb-5">Coleções</h4>
             <ul className="space-y-2.5 text-sm">
-              {[
-                "Cascatas",
-                "Fontes",
-                "Pedra LED",
-                "Pedras Grandes",
-                "Pedras Médias",
-                "Pedras Pequenas",
-                "Pedras de Borda",
-                "Revestimentos",
-                "Pisadas",
-                "Acessórios",
-                "Fósseis Decorativos",
-              ].map((c) => (
-                <li key={c}>
-                  <Link to="/linhas" className="text-western-cream hover:text-western-gold-soft transition-colors">
-                    {c}
+              {COLECOES.map((c) => (
+                <li key={c.handle}>
+                  <Link to={`/linhas/${c.handle}`} className="text-western-cream hover:text-western-gold-soft transition-colors">
+                    {c.label}
                   </Link>
                 </li>
               ))}
@@ -40,9 +43,11 @@ export default function Footer() {
             <h4 className="text-eyebrow mb-5">Para parceiros</h4>
             <ul className="space-y-2.5 text-sm">
               <li><Link to="/guia-de-compra" className="text-western-cream hover:text-western-gold-soft transition-colors">Como comprar</Link></li>
-              <li><Link to="/guia-de-compra" className="text-western-cream hover:text-western-gold-soft transition-colors">Política comercial</Link></li>
-              <li><Link to="/guia-de-compra" className="text-western-cream hover:text-western-gold-soft transition-colors">Política de entrega</Link></li>
-              <li><Link to="/guia-de-compra" className="text-western-cream hover:text-western-gold-soft transition-colors">Trocas e avarias</Link></li>
+              {/* TODO Sprint 4 — criar páginas de Política comercial, Política de entrega e Trocas e avarias antes de reativar
+              <li><Link to="/politica-comercial" className="text-western-cream hover:text-western-gold-soft transition-colors">Política comercial</Link></li>
+              <li><Link to="/politica-de-entrega" className="text-western-cream hover:text-western-gold-soft transition-colors">Política de entrega</Link></li>
+              <li><Link to="/trocas-e-avarias" className="text-western-cream hover:text-western-gold-soft transition-colors">Trocas e avarias</Link></li>
+              */}
               <li><Link to="/parceiro/cadastro" className="text-western-cream hover:text-western-gold-soft transition-colors">Solicitar acesso B2B</Link></li>
             </ul>
           </div>
@@ -53,8 +58,10 @@ export default function Footer() {
             <ul className="space-y-2.5 text-sm">
               <li><Link to="/sobre" className="text-western-cream hover:text-western-gold-soft transition-colors">Sobre</Link></li>
               <li><Link to="/contato" className="text-western-cream hover:text-western-gold-soft transition-colors">Contato</Link></li>
-              <li><Link to="/guia-de-compra" className="text-western-cream hover:text-western-gold-soft transition-colors">FAQ</Link></li>
-              <li><Link to="/guia-de-compra" className="text-western-cream hover:text-western-gold-soft transition-colors">Guias técnicos</Link></li>
+              {/* TODO Sprint 4 — criar páginas FAQ e Guias técnicos antes de reativar
+              <li><Link to="/faq" className="text-western-cream hover:text-western-gold-soft transition-colors">FAQ</Link></li>
+              <li><Link to="/guias-tecnicos" className="text-western-cream hover:text-western-gold-soft transition-colors">Guias técnicos</Link></li>
+              */}
             </ul>
           </div>
 
@@ -63,16 +70,16 @@ export default function Footer() {
             <h4 className="text-eyebrow mb-5">Atendimento</h4>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <a href="https://wa.me/5511993403485" target="_blank" rel="noopener noreferrer" className="text-western-cream hover:text-western-gold-soft transition-colors">
-                  WhatsApp · (11) 99340-3485
+                <a href={`https://wa.me/${BUSINESS.whatsappFabrica}`} target="_blank" rel="noopener noreferrer" className="text-western-cream hover:text-western-gold-soft transition-colors">
+                  WhatsApp · {BUSINESS.whatsappLabel}
                 </a>
               </li>
               <li>
-                <a href="mailto:comercial@westernpools.com.br" className="text-western-cream hover:text-western-gold-soft transition-colors">
-                  comercial@westernpools.com.br
+                <a href={`mailto:${BUSINESS.emailComercial}`} className="text-western-cream hover:text-western-gold-soft transition-colors">
+                  {BUSINESS.emailComercial}
                 </a>
               </li>
-              <li className="text-western-cream-muted">Seg–Sex · 9h às 18h</li>
+              <li className="text-western-cream-muted">{BUSINESS.horarioAtelie}</li>
               <li>
                 <a href="https://instagram.com/westernpools" target="_blank" rel="noopener noreferrer" className="text-western-cream hover:text-western-gold-soft transition-colors">
                   Instagram @westernpools
@@ -117,7 +124,7 @@ export default function Footer() {
           <div className="flex items-center gap-5">
             <img src={logo} alt="Western" className="h-8 w-auto opacity-90" />
             <p className="text-spec text-western-cream-muted text-xs leading-snug">
-              CNPJ 00.000.000/0001-00 · Fábrica em São Paulo · Brasil
+              {BUSINESS.cnpj && <>CNPJ {BUSINESS.cnpj} · </>}Ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · Brasil
             </p>
           </div>
           <p className="text-spec text-western-cream-muted text-xs">

@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { BUSINESS } from "@/config/business";
 
 const FINISHES = [
   { key: "quartzo", label: "Quartzo", swatch: "38 35% 86%" },
@@ -188,7 +189,7 @@ export default function LinhaPage() {
 
             <div className="pt-2 border-t border-western-stone-warm/15 space-y-3">
               <p className="text-spec text-western-stone-warm/80 text-xs leading-relaxed">
-                Pedido mínimo R$ 1.000 · produção 15 dias úteis · pagamento antecipado.
+                Pedido mínimo {BUSINESS.pedidoMinimoLabel} · produção {BUSINESS.prazoProducaoDias} dias úteis · pagamento antecipado.
               </p>
               {hasFilters && (
                 <button
