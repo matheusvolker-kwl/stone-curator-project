@@ -2,6 +2,21 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import logo from "@/assets/logo-horizontal-bege.png";
 import { Mail, Send } from "lucide-react";
+import { BUSINESS } from "@/config/business";
+
+const COLECOES: { label: string; handle: string }[] = [
+  { label: "Cascatas", handle: "cascatas" },
+  { label: "Fontes", handle: "fontes" },
+  { label: "Pedra LED", handle: "pedra-led" },
+  { label: "Pedras Grandes", handle: "pedras-grandes" },
+  { label: "Pedras Médias", handle: "pedras-medias" },
+  { label: "Pedras Pequenas", handle: "pedras-pequenas" },
+  { label: "Pedras de Borda", handle: "pedras-de-borda" },
+  { label: "Revestimentos", handle: "revestimentos" },
+  { label: "Pisadas", handle: "pisadas" },
+  { label: "Acessórios", handle: "acessorios" },
+  { label: "Fósseis Decorativos", handle: "fosseis-decorativos" },
+];
 
 export default function Footer() {
   const [email, setEmail] = useState("");
