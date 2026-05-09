@@ -86,7 +86,7 @@ export default function Index() {
               <div>
                 <p className="text-eyebrow mb-3">Em destaque</p>
                 <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
-                  Mais especificados pelos parceiros.
+                  Produtos mais comprados.
                 </h2>
               </div>
               <Link
