@@ -20,7 +20,7 @@ const nav = [
   { to: "/guia-de-compra", label: "Guia" },
   { to: "/pedir-amostras", label: "Amostras" },
   { to: "/sobre", label: "Sobre" },
-  { to: "/contato", label: "B2B" },
+  { to: "/contato", label: "Contato" },
 ];
 
 export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
