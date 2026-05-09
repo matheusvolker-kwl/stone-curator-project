@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, FileDown, MessageCircle, RotateCcw, ShoppingBag, Sparkles, TrendingDown } from "lucide-react";
+import { ArrowLeft, FileDown, MessageCircle, RotateCcw, ShoppingBag, Sparkles, TrendingDown, User } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+import { useGuideStore } from "@/stores/guideStore";
 import { cdnImg, formatBRL } from "@/lib/shopify/client";
 import { whatsappConjunto, type ConjuntoLeaf, type GuideAnswers } from "@/data/guideMap";
 import SketchLeadModal from "./SketchLeadModal";
