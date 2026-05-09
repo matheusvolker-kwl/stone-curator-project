@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
 import ArquitetosStrip from "@/components/shared/ArquitetosStrip";
 import { ArrowRight, Layers, Mountain, Recycle, Hammer } from "lucide-react";
-import retrato from "@/assets/ricardo-botelho.webp";
+import retrato from "@/assets/ricardo-luiz-carlos.webp";
 import { BUSINESS } from "@/config/business";
 
 const PILARES = [
@@ -84,7 +84,7 @@ export default function About() {
             <div className="aspect-[4/5] overflow-hidden border border-western-gold/30 max-w-[340px]">
               <img
                 src={retrato}
-                alt="Ricardo Botelho, segunda geração da família fundadora da Western"
+                alt="Ricardo e Luiz Carlos Botelho — segunda geração à frente da Western"
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover"

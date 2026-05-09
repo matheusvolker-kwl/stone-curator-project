@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import retrato from "@/assets/ricardo-botelho.webp";
+import retrato from "@/assets/ricardo-luiz-carlos.webp";
 
 export default function ArtistaSection() {
   return (
@@ -10,7 +10,7 @@ export default function ArtistaSection() {
           <div className="relative aspect-[4/5] overflow-hidden border border-western-gold/30 max-w-[380px]">
             <img
               src={retrato}
-              alt="Ricardo Botelho — segunda geração da família fundadora da Western"
+              alt="Ricardo e Luiz Carlos Botelho — segunda geração à frente da Western"
               loading="lazy"
               decoding="async"
               className="w-full h-full object-cover"
