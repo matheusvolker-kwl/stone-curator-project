@@ -1,27 +1,43 @@
 import { ArrowRight, Sparkles, Layers } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import StepOnde from "@/components/guide/StepOnde";
 import StepArea from "@/components/guide/StepArea";
 import StepProtagonismo from "@/components/guide/StepProtagonismo";
 import StepComposicao from "@/components/guide/StepComposicao";
+import StepBase from "@/components/guide/StepBase";
+import StepComplementos from "@/components/guide/StepComplementos";
+import StepUpgrade from "@/components/guide/StepUpgrade";
+import StepCasa from "@/components/guide/StepCasa";
+import StepFechamento from "@/components/guide/StepFechamento";
 import GuideProgress from "@/components/guide/GuideProgress";
-import GuideResultado from "@/components/guide/GuideResultado";
 import GuideConsultor from "@/components/guide/GuideConsultor";
 import GuideEspecial from "@/components/guide/GuideEspecial";
-import { useGuideStore, getProgressSteps, type GuideStep } from "@/stores/guideStore";
 import {
+  useGuideStore,
+  getProgressSteps,
+  nextAssemblyStep,
+  prevAssemblyStep,
+  type GuideStep,
+  type AssemblySkips,
+} from "@/stores/guideStore";
+import {
+  complementosPorTipo,
   m2ToTamanhoId,
   nivelMeta,
   resolveConjunto,
+  resolveUpgrade,
   tipoLabels,
   type GuideAnswers,
 } from "@/data/guideMap";
-import { useMemo } from "react";
+
+const ASSEMBLY_STEPS: GuideStep[] = ["base", "complementos", "upgrade", "casa", "fechamento"];
 
 export default function BuyingGuide() {
   const state = useGuideStore();
   const { step, tipo, areaM2, nivel, composicao, jardim, start, goto, reset } = state;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [acabamentoAtual, setAcabamentoAtual] = useState("Quartzo");
 
-  // Compõe answers no formato do guideMap
   const answers: GuideAnswers = useMemo(() => {
     const tamanho = tipo && areaM2 ? m2ToTamanhoId(tipo, areaM2) : undefined;
     return {
@@ -35,11 +51,22 @@ export default function BuyingGuide() {
 
   const isAreaConsultor = tipo && areaM2 ? m2ToTamanhoId(tipo, areaM2) === "consultor" : false;
   const resolved = useMemo(() => resolveConjunto(answers), [answers]);
+  const upgradeAvailable = useMemo(() => !!resolveUpgrade(answers), [answers]);
 
+  // Skips de etapas de montagem
+  const skips: AssemblySkips = useMemo(
+    () => ({
+      skipComplementos: !tipo || (complementosPorTipo[tipo]?.length ?? 0) === 0,
+      skipUpgrade: !upgradeAvailable,
+      skipCasa: false,
+    }),
+    [tipo, upgradeAvailable]
+  );
+
+  // Progress bar
   const progressSteps = useMemo(() => {
     if (!tipo || step === "intro" || step === "especial") return [];
-    const items = getProgressSteps(tipo);
-    const isResult = step === "resultado";
+    const items = getProgressSteps(tipo, skips);
 
     const valueByKey: Record<string, string | undefined> = {
       tipo: tipo ? tipoLabels[tipo] : undefined,
@@ -66,9 +93,9 @@ export default function BuyingGuide() {
 
     return items.map((item, idx) => {
       const value = valueByKey[item.key];
-      const done = isResult || (currentIdx >= 0 && idx < currentIdx);
-      const current = !isResult && step === item.key;
-      const canNavigate = !!value && (done || isResult);
+      const done = currentIdx > idx;
+      const current = step === item.key;
+      const canNavigate = done || (idx < currentIdx);
       return {
         key: item.key,
         label: item.label,
@@ -78,7 +105,21 @@ export default function BuyingGuide() {
         onClick: canNavigate ? () => goto(item.key as GuideStep) : undefined,
       };
     });
-  }, [step, tipo, areaM2, nivel, composicao, jardim, goto]);
+  }, [step, tipo, areaM2, nivel, composicao, jardim, skips, goto]);
+
+  // Scroll to top of wizard on step change
+  useEffect(() => {
+    if (containerRef.current && ASSEMBLY_STEPS.includes(step as GuideStep)) {
+      containerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [step]);
+
+  const handleNext = () =>
+    goto(nextAssemblyStep(step as GuideStep, skips));
+  const handlePrevAssembly = (fallback: GuideStep) =>
+    goto(prevAssemblyStep(step as GuideStep, skips, fallback));
+
+  const baseFallback: GuideStep = tipo === "piscina" ? "protagonismo" : "composicao";
 
   return (
     <div className="surface-ivory min-h-screen">
@@ -90,39 +131,82 @@ export default function BuyingGuide() {
             <GuideEspecial />
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-8" ref={containerRef}>
             {progressSteps.length > 0 && <GuideProgress steps={progressSteps} />}
             <div className="border border-western-stone-warm/20 bg-white p-6 md:p-12">
               {step === "tipo" && <StepOnde />}
               {step === "area" && <StepArea />}
               {step === "protagonismo" && <StepProtagonismo />}
               {step === "composicao" && <StepComposicao />}
-              {step === "resultado" && (
+
+              {step === "base" && (
                 <>
                   {isAreaConsultor && tipo && areaM2 ? (
-                    <GuideConsultor
-                      tipo={tipo}
-                      tamanho={`${areaM2} m²`}
-                      onReset={reset}
-                    />
+                    <GuideConsultor tipo={tipo} tamanho={`${areaM2} m²`} onReset={reset} />
                   ) : resolved && resolved !== "consultor" ? (
-                    <GuideResultado conjunto={resolved} answers={answers} onReset={reset} />
+                    <StepBase
+                      conjunto={resolved}
+                      answers={answers}
+                      onBack={() => goto(baseFallback)}
+                      onNext={handleNext}
+                      onAcabamentoChange={setAcabamentoAtual}
+                    />
                   ) : (
-                    <div className="text-center py-12">
-                      <p className="text-western-stone-warm">
-                        Não foi possível resolver um conjunto com as respostas atuais.
-                      </p>
-                      <button onClick={reset} className="btn-outline-forest mt-6">
-                        Refazer guia
-                      </button>
-                    </div>
+                    <NoResolution onReset={reset} />
                   )}
                 </>
+              )}
+
+              {step === "complementos" && tipo && (
+                <StepComplementos
+                  tipo={tipo}
+                  onBack={() => handlePrevAssembly(baseFallback)}
+                  onNext={handleNext}
+                />
+              )}
+
+              {step === "upgrade" && resolved && resolved !== "consultor" && (
+                <StepUpgrade
+                  answers={answers}
+                  precoBase={resolved.preco}
+                  onBack={() => handlePrevAssembly(baseFallback)}
+                  onNext={handleNext}
+                />
+              )}
+
+              {step === "casa" && (
+                <StepCasa
+                  onBack={() => handlePrevAssembly(baseFallback)}
+                  onNext={handleNext}
+                />
+              )}
+
+              {step === "fechamento" && resolved && resolved !== "consultor" && (
+                <StepFechamento
+                  conjunto={resolved}
+                  answers={answers}
+                  acabamento={acabamentoAtual}
+                  onBack={() => handlePrevAssembly(baseFallback)}
+                  onReset={reset}
+                />
               )}
             </div>
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function NoResolution({ onReset }: { onReset: () => void }) {
+  return (
+    <div className="text-center py-12">
+      <p className="text-western-stone-warm">
+        Não foi possível resolver um conjunto com as respostas atuais.
+      </p>
+      <button onClick={onReset} className="btn-outline-forest mt-6">
+        Refazer guia
+      </button>
     </div>
   );
 }

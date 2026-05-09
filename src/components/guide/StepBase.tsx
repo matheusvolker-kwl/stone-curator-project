@@ -1,14 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ArrowRight, Check, FileDown, Loader2, MessageCircle, RotateCcw, ShoppingBag } from "lucide-react";
+import { ArrowRight, Check, Loader2, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import {
-  formatPreco,
   nivelMeta,
   tamanhoLabels,
   tipoLabels,
-  whatsappConjunto,
   type ConjuntoLeaf,
   type GuideAnswers,
   type Tipo,
@@ -18,13 +16,14 @@ import { cdnImg, formatBRL } from "@/lib/shopify/client";
 import { parseProductDescription } from "@/lib/shopify/parseDescription";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import FinishSelector from "@/components/product/FinishSelector";
-import UpsellGrid from "./UpsellGrid";
-import SketchLeadModal from "./SketchLeadModal";
+import GuideStepFooter from "./GuideStepFooter";
 
 interface Props {
   conjunto: ConjuntoLeaf;
   answers: GuideAnswers;
-  onReset: () => void;
+  onBack: () => void;
+  onNext: () => void;
+  onAcabamentoChange?: (acabamento: string) => void;
 }
 
 function buildIndicadoPara(answers: GuideAnswers): string[] {
@@ -55,7 +54,7 @@ function PlaceholderImg() {
   );
 }
 
-export default function GuideResultado({ conjunto, answers, onReset }: Props) {
+export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamentoChange }: Props) {
   const { data: product, isLoading } = useQuery({
     queryKey: ["guide-product", conjunto.handle],
     queryFn: () => fetchProduct(conjunto.handle),
@@ -63,10 +62,9 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
   });
 
   const addItem = useCartStore((s) => s.addItem);
+  const cartItems = useCartStore((s) => s.items);
   const cartLoading = useCartStore((s) => s.isLoading);
-  const [sketchOpen, setSketchOpen] = useState(false);
 
-  // Acabamento: lê opções reais do produto, fallback para padrão
   const finishOption = product?.options.find((o) => /acabamento/i.test(o.name));
   const finishValues = finishOption?.values ?? ["Quartzo", "Arenito", "Moledo", "Granito"];
   const [acabamento, setAcabamento] = useState<string>(finishValues[0]);
@@ -77,7 +75,10 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
     }
   }, [finishOption, acabamento]);
 
-  // Variante correspondente ao acabamento escolhido
+  useEffect(() => {
+    onAcabamentoChange?.(acabamento);
+  }, [acabamento, onAcabamentoChange]);
+
   const selectedVariant = useMemo(() => {
     if (!product) return null;
     return (
@@ -96,12 +97,14 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
   const galeriaImgs = product?.images.edges.slice(0, 4).map((e) => e.node.url) ?? [];
   const heroImg = galeriaImgs[0];
 
-  const tipo = answers.tipo as Tipo;
   const bullets = buildIndicadoPara(answers);
   const precoReal = selectedVariant ? parseFloat(selectedVariant.price.amount) : conjunto.preco;
   const moeda = selectedVariant?.price.currencyCode ?? "BRL";
 
-  const handleAddBundle = async () => {
+  // Conjunto base já está no carrinho?
+  const baseAdded = cartItems.some((i) => i.productHandle === conjunto.handle);
+
+  const handleAdd = async () => {
     if (!product || !selectedVariant) {
       toast.error("Conjunto indisponível no momento. Fale com um consultor.");
       return;
@@ -109,16 +112,19 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
     const item = buildCartItem(product, selectedVariant.id, 1);
     if (!item) return;
     await addItem(item);
-    toast.success(`${conjunto.nome} adicionado ao orçamento`, {
-      description: `Acabamento ${acabamento}. Acesse o orçamento no topo da página.`,
+    toast.success(`${conjunto.nome} adicionado`, {
+      description: `Acabamento ${acabamento}.`,
     });
-    // Dispara evento global para que o SiteLayout possa abrir o drawer
-    window.dispatchEvent(new CustomEvent("western:open-cart"));
   };
 
   return (
     <div className="animate-in fade-in duration-300">
-      <div className="grid grid-cols-1 lg:grid-cols-[5fr_6fr] gap-10 lg:gap-16 items-start">
+      <p className="text-eyebrow mb-3">Etapa 05 · Seu conjunto</p>
+      <h2 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight mb-8">
+        Confirme o conjunto base
+      </h2>
+
+      <div className="grid grid-cols-1 lg:grid-cols-[5fr_6fr] gap-10 lg:gap-12 items-start">
         {/* Galeria */}
         <div className="space-y-3">
           <div className="aspect-square w-full bg-western-green-deep overflow-hidden">
@@ -153,26 +159,25 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
 
         {/* Conteúdo */}
         <div>
-          <p className="text-eyebrow mb-5">Seu conjunto recomendado</p>
-          <div className="w-12 h-px bg-western-gold mb-6" />
-          <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05] mb-3">
+          <div className="w-12 h-px bg-western-gold mb-5" />
+          <h3 className="font-display text-2xl md:text-3xl text-western-green-deep leading-[1.1] mb-2">
             {conjunto.nome}
-          </h2>
-          <p className="text-spec text-western-stone-warm mb-8">{conjunto.subtitulo}</p>
+          </h3>
+          <p className="text-spec text-western-stone-warm mb-6">{conjunto.subtitulo}</p>
 
-          <div className="mb-2 flex items-baseline gap-3 flex-wrap">
+          <div className="mb-1 flex items-baseline gap-3 flex-wrap">
             <p className="text-spec text-western-stone-warm">A partir de</p>
-            <p className="font-display text-4xl text-western-green-deep">
+            <p className="font-display text-3xl text-western-green-deep">
               {formatBRL(precoReal, moeda)}
             </p>
           </div>
-          <p className="text-xs text-western-stone-warm/80 mb-8">
-            Preço do conjunto base no acabamento selecionado · ajuste quantidades no orçamento
+          <p className="text-xs text-western-stone-warm/80 mb-6">
+            Conjunto base · acabamento selecionado
           </p>
 
           {/* Acabamento */}
-          <div className="mb-8 border-t border-western-stone-warm/15 pt-6">
-            <div className="flex items-center justify-between mb-4">
+          <div className="mb-6 border-t border-western-stone-warm/15 pt-5">
+            <div className="flex items-center justify-between mb-3">
               <p className="font-mono uppercase tracking-[0.18em] text-xs text-western-green-deep">
                 Acabamento
               </p>
@@ -186,8 +191,8 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
           </div>
 
           {/* Indicado para */}
-          <div className="border-t border-western-stone-warm/15 pt-6 mb-8">
-            <p className="font-mono uppercase tracking-[0.18em] text-xs text-western-green-deep mb-4">
+          <div className="border-t border-western-stone-warm/15 pt-5 mb-6">
+            <p className="font-mono uppercase tracking-[0.18em] text-xs text-western-green-deep mb-3">
               Indicado para
             </p>
             <ul className="space-y-2">
@@ -200,14 +205,13 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
             </ul>
           </div>
 
-          {/* Peças incluídas (do description estruturado) */}
           {parsed?.aplicacoes && parsed.aplicacoes.length > 0 && (
-            <div className="border-t border-western-stone-warm/15 pt-6 mb-8">
-              <p className="font-mono uppercase tracking-[0.18em] text-xs text-western-green-deep mb-4">
+            <div className="border-t border-western-stone-warm/15 pt-5 mb-6">
+              <p className="font-mono uppercase tracking-[0.18em] text-xs text-western-green-deep mb-3">
                 Peças incluídas
               </p>
               <ul className="space-y-1.5">
-                {parsed.aplicacoes.slice(0, 8).map((p, i) => (
+                {parsed.aplicacoes.slice(0, 6).map((p, i) => (
                   <li key={i} className="text-sm text-western-stone-warm flex gap-3">
                     <span className="text-western-gold/60 font-mono text-xs mt-0.5">·</span>
                     <span>{p}</span>
@@ -217,72 +221,42 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
             </div>
           )}
 
-          {/* CTAs */}
-          <div className="flex flex-col gap-3 mb-6">
-            <button
-              type="button"
-              onClick={handleAddBundle}
-              disabled={cartLoading || !selectedVariant}
-              className="btn-gold w-full justify-center disabled:opacity-60"
+          <button
+            type="button"
+            onClick={handleAdd}
+            disabled={cartLoading || !selectedVariant}
+            className={`w-full justify-center mb-3 ${baseAdded ? "btn-outline-forest" : "btn-gold"} disabled:opacity-60`}
+          >
+            {cartLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : baseAdded ? (
+              <>
+                <Check className="h-4 w-4" /> Adicionado · adicionar novamente
+              </>
+            ) : (
+              <>
+                <ShoppingBag className="h-4 w-4" /> Adicionar conjunto ao orçamento
+              </>
+            )}
+          </button>
+          {product && (
+            <Link
+              to={`/produtos/${product.handle}`}
+              className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors"
             >
-              {cartLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <>
-                  <ShoppingBag className="h-4 w-4" /> Adicionar conjunto ao orçamento
-                </>
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={() => setSketchOpen(true)}
-              className="btn-outline-forest w-full justify-center"
-            >
-              <FileDown className="h-4 w-4" /> Baixar prancha técnica (PDF + .skp)
-            </button>
-            <a
-              href={whatsappConjunto(`${conjunto.nome} (acabamento ${acabamento})`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 h-11 font-mono text-xs uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep transition-colors"
-            >
-              <MessageCircle className="h-4 w-4" /> Falar com consultor
-            </a>
-            <div className="flex justify-between items-center pt-2">
-              {product && (
-                <Link
-                  to={`/produtos/${product.handle}`}
-                  className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors"
-                >
-                  Ver detalhes do conjunto <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              )}
-              <button
-                type="button"
-                onClick={onReset}
-                className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors ml-auto"
-              >
-                <RotateCcw className="h-3.5 w-3.5" /> Refazer guia
-              </button>
-            </div>
-          </div>
-
-          <p className="text-xs text-western-stone-warm/70 leading-relaxed border-t border-western-stone-warm/15 pt-5">
-            Pedido mínimo R$ 2.000 · Produção 15 dias úteis após pagamento ·
-            PIX, TED ou boleto · Frete por transportadora ou retirada gratuita em São Paulo.
-          </p>
+              Ver detalhes do conjunto <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          )}
         </div>
       </div>
 
-      <UpsellGrid answers={answers} precoBase={precoReal} />
-
-      <SketchLeadModal
-        open={sketchOpen}
-        onClose={() => setSketchOpen(false)}
-        conjuntoNome={conjunto.nome}
-        conjuntoHandle={conjunto.handle}
-        acabamento={acabamento}
-        contexto={{ tipo: answers.tipo, areaM2: undefined }}
+      <GuideStepFooter
+        onBack={onBack}
+        onNext={onNext}
+        nextLabel={baseAdded ? "Avançar para complementos" : "Avançar sem o conjunto"}
+        skipLabel={!baseAdded ? "Pular esta etapa" : undefined}
+        onSkip={!baseAdded ? onNext : undefined}
+        addedCount={baseAdded ? 1 : 0}
       />
     </div>
   );

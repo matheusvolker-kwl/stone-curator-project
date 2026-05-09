@@ -10,7 +10,11 @@ export type GuideStep =
   | "area"
   | "protagonismo"
   | "composicao"
-  | "resultado"
+  | "base"
+  | "complementos"
+  | "upgrade"
+  | "casa"
+  | "fechamento"
   | "especial";
 
 export interface GuideState {
@@ -33,11 +37,9 @@ export interface GuideState {
   reset: () => void;
 }
 
-const stepOrder: GuideStep[] = ["intro", "tipo", "area", "protagonismo", "composicao", "resultado"];
-
 function nextAfterProtagonismo(tipo?: Tipo): GuideStep {
-  // Piscina pula composicao
-  return tipo === "piscina" ? "resultado" : "composicao";
+  // Piscina pula composicao; jardim e lago seguem para composição
+  return tipo === "piscina" ? "base" : "composicao";
 }
 
 export const useGuideStore = create<GuideState>()(
@@ -62,9 +64,9 @@ export const useGuideStore = create<GuideState>()(
         set({ nivel: n, step: nextAfterProtagonismo(tipo), savedAt: Date.now() });
       },
 
-      setComposicao: (c) => set({ composicao: c, step: "resultado", savedAt: Date.now() }),
+      setComposicao: (c) => set({ composicao: c, step: "base", savedAt: Date.now() }),
 
-      setJardim: (j) => set({ jardim: j, step: "resultado", savedAt: Date.now() }),
+      setJardim: (j) => set({ jardim: j, step: "base", savedAt: Date.now() }),
 
       goto: (s) => set({ step: s, savedAt: Date.now() }),
 
@@ -76,7 +78,11 @@ export const useGuideStore = create<GuideState>()(
           area: "tipo",
           protagonismo: "area",
           composicao: "protagonismo",
-          resultado: tipo === "piscina" ? "protagonismo" : "composicao",
+          base: tipo === "piscina" ? "protagonismo" : "composicao",
+          complementos: "base",
+          upgrade: "complementos",
+          casa: "upgrade",
+          fechamento: "casa",
           especial: "tipo",
         };
         set({ step: map[step] });
@@ -94,9 +100,8 @@ export const useGuideStore = create<GuideState>()(
         }),
     }),
     {
-      name: "western-guide-v2",
+      name: "western-guide-v3",
       storage: createJSONStorage(() => localStorage),
-      // Custom rehydration: descarta estado expirado (>72h)
       onRehydrateStorage: () => (state) => {
         if (!state?.savedAt) return;
         if (Date.now() - state.savedAt > TTL_MS) {
@@ -107,8 +112,8 @@ export const useGuideStore = create<GuideState>()(
   )
 );
 
-// Util: lista as etapas visíveis (depende do tipo) para o GuideProgress
-export function getProgressSteps(tipo?: Tipo): Array<{ key: GuideStep; label: string }> {
+// Etapas de descoberta (Onde → Composição)
+export function getDiscoverySteps(tipo?: Tipo): Array<{ key: GuideStep; label: string }> {
   const base: Array<{ key: GuideStep; label: string }> = [
     { key: "tipo", label: "Onde" },
     { key: "area", label: "Tamanho" },
@@ -118,4 +123,49 @@ export function getProgressSteps(tipo?: Tipo): Array<{ key: GuideStep; label: st
     base.push({ key: "composicao", label: "Composição" });
   }
   return base;
+}
+
+// Etapas de montagem do orçamento (Conjunto → Fechamento)
+export interface AssemblySkips {
+  skipComplementos?: boolean;
+  skipUpgrade?: boolean;
+  skipCasa?: boolean;
+}
+export function getAssemblySteps(
+  skips: AssemblySkips = {}
+): Array<{ key: GuideStep; label: string }> {
+  const out: Array<{ key: GuideStep; label: string }> = [
+    { key: "base", label: "Conjunto" },
+  ];
+  if (!skips.skipComplementos) out.push({ key: "complementos", label: "Complementos" });
+  if (!skips.skipUpgrade) out.push({ key: "upgrade", label: "Upgrade" });
+  if (!skips.skipCasa) out.push({ key: "casa", label: "Assinatura" });
+  out.push({ key: "fechamento", label: "Fechamento" });
+  return out;
+}
+
+// Lista completa para o GuideProgress
+export function getProgressSteps(
+  tipo?: Tipo,
+  skips?: AssemblySkips
+): Array<{ key: GuideStep; label: string }> {
+  return [...getDiscoverySteps(tipo), ...getAssemblySteps(skips)];
+}
+
+// Helpers de navegação que respeitam skips
+export function nextAssemblyStep(current: GuideStep, skips: AssemblySkips): GuideStep {
+  const order = getAssemblySteps(skips).map((s) => s.key);
+  const idx = order.indexOf(current);
+  if (idx < 0 || idx === order.length - 1) return current;
+  return order[idx + 1];
+}
+export function prevAssemblyStep(
+  current: GuideStep,
+  skips: AssemblySkips,
+  fallback: GuideStep
+): GuideStep {
+  const order = getAssemblySteps(skips).map((s) => s.key);
+  const idx = order.indexOf(current);
+  if (idx <= 0) return fallback;
+  return order[idx - 1];
 }
