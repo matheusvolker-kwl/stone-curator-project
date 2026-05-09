@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { ArrowLeft, FileDown, MessageCircle, RotateCcw, ShoppingBag } from "lucide-react";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, FileDown, MessageCircle, RotateCcw, ShoppingBag, Sparkles, TrendingDown } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { cdnImg, formatBRL } from "@/lib/shopify/client";
-import { whatsappConjunto, type ConjuntoLeaf, type GuideAnswers, type Tipo } from "@/data/guideMap";
+import { whatsappConjunto, type ConjuntoLeaf, type GuideAnswers } from "@/data/guideMap";
 import SketchLeadModal from "./SketchLeadModal";
 
 interface Props {
@@ -13,6 +14,38 @@ interface Props {
   onReset: () => void;
 }
 
+// Confete leve: partículas douradas em CSS, sem dependências.
+function Confetti() {
+  const pieces = Array.from({ length: 24 });
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+      {pieces.map((_, i) => {
+        const left = Math.random() * 100;
+        const delay = Math.random() * 0.6;
+        const duration = 1.6 + Math.random() * 1.2;
+        const drift = (Math.random() - 0.5) * 80;
+        const size = 4 + Math.random() * 5;
+        const isGold = Math.random() > 0.3;
+        return (
+          <motion.span
+            key={i}
+            initial={{ y: -20, x: 0, opacity: 0, rotate: 0 }}
+            animate={{ y: "120%", x: drift, opacity: [0, 1, 1, 0], rotate: 360 }}
+            transition={{ duration, delay, ease: "easeOut" }}
+            className="absolute top-0 block"
+            style={{
+              left: `${left}%`,
+              width: size,
+              height: size * 0.4,
+              backgroundColor: isGold ? "hsl(var(--western-gold))" : "hsl(var(--western-cream))",
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
 export default function StepFechamento({ conjunto, answers, acabamento, onBack, onReset }: Props) {
   const items = useCartStore((s) => s.items);
   const total = items.reduce(
@@ -21,26 +54,41 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
   );
   const totalQty = items.reduce((acc, i) => acc + i.quantity, 0);
   const [sketchOpen, setSketchOpen] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowConfetti(false), 3000);
+    return () => clearTimeout(t);
+  }, []);
 
   const openCart = () => window.dispatchEvent(new CustomEvent("western:open-cart"));
 
+  // Estimativa simples de economia vs. pedra natural (multiplicador conservador 1.7x)
+  const estimadoNatural = Math.round(total * 1.7);
+  const economia = estimadoNatural - total;
+
   return (
-    <div className="animate-in fade-in duration-300">
-      <p className="text-eyebrow mb-3">Etapa 09 · Fechamento</p>
-      <h2 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight mb-3">
-        Seu projeto está montado
-      </h2>
-      <p className="text-western-stone-warm leading-relaxed max-w-2xl mb-10">
-        Confira o resumo, baixe a prancha técnica para enviar ao cliente final ou
-        fale direto com um consultor para fechar a condição comercial.
-      </p>
+    <div className="relative">
+      <AnimatePresence>{showConfetti && items.length > 0 && <Confetti />}</AnimatePresence>
+
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+        <p className="text-eyebrow mb-3">Etapa 09 · Fechamento</p>
+        <h2 className="font-display text-4xl md:text-5xl text-western-green-deep leading-[1.05] mb-4">
+          Pronto. Seu projeto<br />está montado.
+        </h2>
+        <p className="text-western-stone-warm leading-relaxed max-w-2xl mb-10 text-lg">
+          {totalQty} {totalQty === 1 ? "item curado" : "itens curados"}, {formatBRL(total, "BRL")} em
+          composição autoral. Envie para o cliente final, abra o orçamento ou fale direto com
+          um consultor para fechar a condição comercial.
+        </p>
+      </motion.div>
 
       <div className="grid lg:grid-cols-[1.3fr_1fr] gap-10">
         {/* Resumo */}
         <div className="border border-western-stone-warm/20 bg-white">
           <div className="px-5 py-4 border-b border-western-stone-warm/15 flex items-center justify-between">
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-green-deep">
-              Resumo do orçamento
+              Resumo do projeto
             </p>
             <p className="text-xs text-western-stone-warm">
               {totalQty} {totalQty === 1 ? "item" : "itens"}
@@ -55,8 +103,14 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
             </div>
           ) : (
             <ul className="divide-y divide-western-stone-warm/15">
-              {items.map((i) => (
-                <li key={i.variantId} className="flex gap-4 p-4">
+              {items.map((i, idx) => (
+                <motion.li
+                  key={i.variantId}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.08, duration: 0.3 }}
+                  className="flex gap-4 p-4"
+                >
                   <div className="w-16 h-16 bg-western-cream/40 shrink-0 overflow-hidden">
                     {i.productImage && (
                       <img
@@ -78,7 +132,7 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
                   <p className="text-sm text-western-green-deep font-mono whitespace-nowrap">
                     {formatBRL(parseFloat(i.price.amount) * i.quantity, i.price.currencyCode)}
                   </p>
-                </li>
+                </motion.li>
               ))}
             </ul>
           )}
@@ -87,43 +141,81 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-green-deep">
               Total parcial
             </p>
-            <p className="font-display text-2xl text-western-green-deep">
+            <motion.p
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: items.length * 0.08, type: "spring", stiffness: 280 }}
+              className="font-display text-3xl text-western-green-deep"
+            >
               {formatBRL(total, "BRL")}
-            </p>
+            </motion.p>
           </div>
+
+          {economia > 0 && items.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.4 }}
+              className="px-5 py-4 border-t border-western-gold/30 bg-western-cream/40 flex items-start gap-3"
+            >
+              <TrendingDown className="h-4 w-4 text-western-gold mt-0.5 shrink-0" />
+              <div>
+                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-1">
+                  Economia estimada
+                </p>
+                <p className="text-sm text-western-stone-warm leading-snug">
+                  Cerca de <strong className="text-western-green-deep">{formatBRL(economia, "BRL")}</strong>{" "}
+                  versus equivalente em pedra natural — e ~40 dias mais rápido na produção.
+                </p>
+              </div>
+            </motion.div>
+          )}
         </div>
 
         {/* CTAs */}
-        <div className="space-y-3">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.4 }}
+          className="space-y-4"
+        >
           <button
             type="button"
             onClick={openCart}
             disabled={items.length === 0}
-            className="btn-gold w-full justify-center disabled:opacity-60"
+            className="w-full inline-flex items-center justify-center gap-3 h-16 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-display text-lg transition-colors disabled:opacity-50 shadow-[0_18px_40px_-20px_rgba(184,146,79,0.6)]"
           >
-            <ShoppingBag className="h-4 w-4" /> Abrir orçamento completo
+            <ShoppingBag className="h-5 w-5" />
+            Solicitar proposta com este orçamento
           </button>
+
           <button
             type="button"
             onClick={() => setSketchOpen(true)}
-            className="btn-outline-forest w-full justify-center"
+            className="w-full inline-flex items-center justify-center gap-2 h-12 border border-western-green-deep text-western-green-deep hover:bg-western-green-deep hover:text-western-cream font-mono text-xs uppercase tracking-[0.22em] transition-colors"
           >
             <FileDown className="h-4 w-4" /> Baixar prancha técnica (PDF + .skp)
           </button>
+
           <a
             href={whatsappConjunto(`${conjunto.nome} (acabamento ${acabamento})`)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 h-11 w-full font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep border border-western-green-deep/20 hover:border-western-green-deep transition-colors"
+            className="inline-flex items-center justify-center gap-2 w-full font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep transition-colors py-2"
           >
-            <MessageCircle className="h-4 w-4" /> Falar com consultor
+            <MessageCircle className="h-4 w-4" /> Falar com um consultor
           </a>
 
-          <p className="text-xs text-western-stone-warm/80 leading-relaxed pt-4">
-            Pedido mínimo R$ 2.000 · Produção 15 dias úteis após pagamento ·
-            PIX, TED ou boleto · Frete por transportadora ou retirada gratuita em São Paulo.
-          </p>
-        </div>
+          <div className="pt-4 border-t border-western-stone-warm/15">
+            <div className="flex items-start gap-2">
+              <Sparkles className="h-4 w-4 text-western-gold mt-0.5 shrink-0" />
+              <p className="text-xs text-western-stone-warm/85 leading-relaxed">
+                Pedido mínimo R$ 2.000 · Produção 15 dias úteis após pagamento ·
+                PIX, TED ou boleto · Frete por transportadora ou retirada gratuita em São Paulo.
+              </p>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
       <div className="mt-12 pt-6 border-t border-western-stone-warm/15 flex items-center justify-between flex-wrap gap-4">
