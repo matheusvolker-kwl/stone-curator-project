@@ -1,102 +1,79 @@
-# Sprint 1 — Finalização + Sprint 2 — Prova social completa
+Vou refazer três áreas com tratamento visual coerente com o resto do site (editorial, sóbrio, dourado discreto), padronizar logos e propagar para a home.
 
-## Parte A — Fechar Sprint 1
+## 1. Logo Genesis (novo upload)
 
-Atualizar `src/config/business.ts` com os valores definitivos:
+- Copiar `user-uploads://image-33.png` → `src/assets/parceiros/genesis.png` (sobrescrever o branco anterior).
+- Como é branco-sobre-preto, vai precisar de placa escura (ver item 2).
 
-- `enderecoAtelieCompleto`: "Rua Colina, 38 — Jardim Paraíso, Cajamar/SP · CEP 07794-075"
-- `horarioAtelie`: "Seg–Sex · 9h às 17h"
-- Remover os `// TODO confirmar` correspondentes
+## 2. Marcas institucionais — `src/pages/About.tsx` + nova seção compartilhada
 
-Esses dois campos já são consumidos por `Footer.tsx` e `Contact.tsx` — nenhuma outra mudança necessária.
+Hoje: grid de 5 caixas creme, logos com alturas/proporções diferentes, Genesis em wordmark, Cobasi (vermelho), Unique (escuro), Biopet (colorido), Cristal — visualmente bagunçado.
 
----
+Refazer como **faixa institucional editorial**:
 
-## Parte B — Sprint 2
+- Criar componente reutilizável `src/components/shared/MarcasInstitucionais.tsx` para ser usado em About **e** na Home (consistência total).
+- Layout: grid `grid-cols-2 sm:grid-cols-3 md:grid-cols-5`, cada célula com:
+  - Fundo escuro `surface-forest` (verde profundo) — neutraliza diferenças de cor entre logos coloridos.
+  - Cada logo recebe filtro CSS para virar branco/cream uniforme: `filter: brightness(0) invert(1) opacity(0.78)` + `hover:opacity-100`. Isso força paleta única e resolve o problema das 5 cores diferentes.
+  - Altura travada (`h-10 md:h-12`), `w-auto`, `object-contain`, centralizado.
+  - Borda fina dourada entre células (`gap-px bg-western-gold/15`).
+  - Hover: levanta opacidade + sublinha o nome (caption mono pequena abaixo, oculta por padrão? — não, manter visível e discreta para acessibilidade/SEO).
+- Genesis (logo já branco): aplicar `mix-blend-mode: screen` ou simplesmente não aplicar o filtro invert, condicional via prop `jaEhBranco: true`.
+- Eyebrow + título acima permanecem; ajustar copy se necessário.
+- Variante prop `tom: "claro" | "escuro"` para usar tanto sobre `surface-ivory` (About) quanto sobre `surface-paper` (Home) — internamente o componente sempre usa placas escuras para uniformizar logos, então funciona em qualquer fundo.
 
-### B.1 Camada 1 — adicionar Diogo Nogueira e Caito Maia em `src/data/projetos.ts`
+## 3. Cards dos arquitetos — `src/pages/ParceirosArquitetos.tsx`
 
-Duas novas entradas (`PROJETOS` array). Como não há fotos liberadas:
+Hoje: foto solta num `aspect-[4/5]` com borda fina dourada, texto solto ao lado, sem nenhum tratamento de superfície, sem shadow, sem hierarquia visual. Parece wireframe.
 
-- Gerar 2 covers cinematográficos via `imagegen` salvos em `src/assets/projetos/cover-diogo-nogueira.webp` e `cover-caito-maia.webp`. Cenas neutras de Western (composição mineral em jardim seco / cascata em área de lazer), sem rostos, sem placas identificáveis.
-- Snippet curto + texto com tom de "projeto sob acordo de confidencialidade — detalhes mediante consulta".
-- Sem campo `video` próprio (atualizar interface `Projeto` para `video?: string` opcional, e o `ProjetoModal` para esconder o player quando ausente).
+Refazer cada card como **artigo editorial encaixado em superfície**:
 
-### B.2 Camada 2 — nova página `/parceiros-arquitetos`
+- Container externo do artigo: `surface-paper` (creme escuro sutil) ou `bg-western-cream` com:
+  - Borda `border border-western-stone-warm/15`
+  - Sombra discreta `shadow-[0_24px_60px_-30px_rgba(0,0,0,0.25)]`
+  - Padding interno generoso `p-8 md:p-12`
+  - Hover sutil: sombra cresce, borda dourada aparece (`hover:border-western-gold/40 transition`)
+- Foto:
+  - Continua `aspect-[4/5]`, mas dentro de uma moldura: borda dourada dupla fina (`ring-1 ring-western-gold/30 ring-offset-2 ring-offset-western-cream`) e leve `shadow-xl`.
+  - Filtro `grayscale-[15%]` para harmonia cromática (sutil, não preto-e-branco), some no hover.
+  - Tag dourada flutuante no canto superior: pequena placa `font-mono text-[10px] tracking-[0.22em]` com a cidade (ex.: `SÃO PAULO · SP`), substituindo o texto solto que está hoje acima do nome.
+- Bloco de texto:
+  - Eyebrow `Arquiteto parceiro · 0X` numerado (01, 02, 03) em mono dourado.
+  - Filete dourado `w-10 h-px` mantém-se.
+  - Nome em display, mantém tamanho.
+  - Parágrafo em `text-western-stone-warm`.
+  - Linha técnica abaixo: três pequenas chips mono separadas por `·` (ex.: `RESIDENCIAL ALTO PADRÃO · CASCATAS · PISCINAS`) — dá densidade editorial sem inventar dados.
+- Alternância par/ímpar mantida (foto à esquerda/direita).
+- Espaçamento entre artigos um pouco menor (`space-y-16` em vez de `space-y-28`) já que cada card agora tem peso visual próprio.
 
-**Novo arquivo**: `src/pages/ParceirosArquitetos.tsx` em estilo editorial coerente com `About.tsx`:
+## 4. Home — `src/pages/Index.tsx`
 
-- Hero: eyebrow "Especificada por", H1 "Arquitetos que confiam na Western.", regra dourada, parágrafo introdutório curto.
-- 3 cards horizontais empilhados (alterna lado da foto: esq / dir / esq) — cada um:
-  - Foto profissional do arquiteto (carrego via web search/fontes oficiais e salvo em `src/assets/arquitetos/eduardo-faisal.webp`, `fabiano-hayasaki.webp`, `ronaldo-luidi.webp`)
-  - Nome em `font-display` grande
-  - Cidade em mono uppercase
-  - Parágrafo descritivo (texto rascunho do briefing — Western valida depois)
-  - Citação curta entre aspas em itálico (placeholder marcado `// TODO citação` enquanto Western não fornece)
-- Bloco CTA final remetendo a `/parceiro/cadastro`
+Hoje a faixa institucional é só texto pequeno em mono. Substituir por:
 
-**Fonte das fotos**: usar `websearch--web_search` para localizar retratos oficiais de cada arquiteto em sites/perfis públicos; baixar com `curl` e salvar em `src/assets/arquitetos/`. Se não achar foto adequada para algum dos três, gerar avatar tipográfico (iniciais em frame dourado) como fallback temporário marcado `// TODO substituir`.
+- Manter o eyebrow textual "Especificada por … " (pequeno, acima).
+- Logo abaixo, instanciar `<MarcasInstitucionais variante="compacta" />` — mesma faixa de logos da About, versão sem o grande título acima.
+- Manter o link para `/parceiros-arquitetos` e `/sobre` no rodapé da seção.
+- Resultado: a home passa a mostrar visualmente as 5 marcas, não só o nome em texto corrido.
 
-**Roteamento**: adicionar `<Route path="/parceiros-arquitetos" element={<ParceirosArquitetos />} />` em `App.tsx`.
+## 5. Detalhes técnicos
 
-**Navegação**: adicionar item "Arquitetos parceiros" em `Footer.tsx` na coluna "Western" e considerar item no `Header.tsx` (decidir caso o menu fique pesado — se sim, deixar só no footer).
-
-### B.3 Camada 3 — seção institucional dentro de `/sobre`
-
-Editar `src/pages/About.tsx` adicionando uma seção depois do bloco de texto e antes do CTA:
-
-- Eyebrow: "Atendemos há mais de uma década"
-- H2: "Marcas que escolheram repetir a Western"
-- Parágrafo introdutório do briefing (Cobasi não fica anos com fornecedor que falha…)
-- Grid responsivo de 5 logos (`grid-cols-2 sm:grid-cols-3 md:grid-cols-5`)
-- Cada item: frame neutro com logo oficial centralizado + nome em texto pequeno abaixo (acessibilidade/SEO)
-
-**Fonte dos logos**: para cada uma das 5 marcas (Cristal Pool, Genesis Ecossistemas, Biopet Lagos, Cobasi, Unique Garden) usar `websearch--web_search` (`site:` da marca, ou "logo png/svg") e baixar versões oficiais — preferir SVG quando disponível. Salvar em `src/assets/parceiros/cristal-pool.svg`, `genesis-ecossistemas.svg`, `biopet-lagos.svg`, `cobasi.svg`, `unique-garden.svg`. Se algum não tiver SVG público, usar PNG transparente. Fallback: gerar wordmark tipográfico marcado `// TODO substituir`.
-
-Renderizar com `filter` neutro (sem dessaturar) já que temos autorização de uso.
-
-### B.4 Menção textual na Home
-
-Adicionar uma faixa discreta em `src/pages/Index.tsx` entre `<ProjetosSection />` e `<ArtistaSection />`:
-
-```
-Especificada por Eduardo Faisal, Fabiano Hayasaki, Ronaldo Luidi e outros estúdios.
-Atende Cobasi, Unique Garden, Cristal Pool, Genesis Ecossistemas e Biopet Lagos.
-```
-
-Em uma única faixa horizontal, fundo `surface-paper` ou `surface-ivory`, font mono uppercase tracked, cor `text-western-stone-warm`, padding generoso. Sem ícones gritantes. Centralizado, max-w-4xl. Os nomes dos arquitetos viram links para `/parceiros-arquitetos`.
-
-### B.5 Acertos pequenos
-
-- Atualizar `src/data/projetos.ts` interface: `video?: string` (opcional).
-- `ProjetoModal.tsx`: renderizar player apenas se `projeto.video` existir; caso contrário, mostrar imagem cover em destaque + texto.
-
----
+- Tudo em tokens semânticos do `index.css` (`western-gold`, `western-green-deep`, `western-cream`, `western-stone-warm`). Nenhuma cor hardcoded.
+- Filtro de uniformização de logos via classe Tailwind arbitrária `[filter:brightness(0)_invert(1)]` ou utility no `index.css` — vou criar `.logo-mono` no `index.css` para reutilização.
+- Todas as imagens com `loading="lazy"` (já estão).
+- Sem mexer em rotas, dados ou backend. Mudança puramente de UI/presentation.
 
 ## Arquivos tocados
 
-Novos:
-- `src/pages/ParceirosArquitetos.tsx`
-- `src/assets/arquitetos/{eduardo-faisal, fabiano-hayasaki, ronaldo-luidi}.webp` (ou .jpg)
-- `src/assets/parceiros/{cristal-pool, genesis-ecossistemas, biopet-lagos, cobasi, unique-garden}.svg` (ou .png)
-- `src/assets/projetos/cover-{diogo-nogueira,caito-maia}.webp`
+Novo:
+- `src/components/shared/MarcasInstitucionais.tsx`
 
 Editados:
-- `src/config/business.ts` (endereço/horário definitivos)
-- `src/data/projetos.ts` (+ 2 entradas, video opcional)
-- `src/components/home/ProjetoModal.tsx` (suporte a video opcional)
-- `src/pages/Index.tsx` (faixa de prova social)
-- `src/pages/About.tsx` (seção Camada 3)
-- `src/App.tsx` (rota nova)
-- `src/components/layout/Footer.tsx` (link "Arquitetos parceiros")
+- `src/assets/parceiros/genesis.png` (sobrescrever)
+- `src/index.css` (adicionar `.logo-mono`)
+- `src/pages/About.tsx` (consumir componente)
+- `src/pages/Index.tsx` (consumir componente)
+- `src/pages/ParceirosArquitetos.tsx` (redesign cards)
 
-## Riscos e ressalvas
+## Pergunta antes de implementar
 
-- **Direitos de imagem**: você confirmou autorização. Mesmo assim, vou usar fontes públicas oficiais (sites pessoais, Instagram verificado, imprensa) e registrar a origem em comentário ao lado de cada `import` para auditoria futura.
-- **Citações dos arquitetos**: ficam como `// TODO` até Western enviar — não invento aspas atribuídas a pessoas reais.
-- **Números aproximados de projetos especificados** ("há mais de uma década", "X projetos"): omito se não tivermos a fonte; mantenho linguagem qualitativa segura.
-- **Logos não encontrados em SVG/PNG limpo**: caem para wordmark tipográfico marcado para substituição, sem bloquear o sprint.
-
-## Fora de escopo
-
-Sprint 3 (leads), 4 (institucional), 5 (SEO/perf), 6 (carrinho).
+Sobre o tom da faixa de logos: prefere **placa escura** (`surface-forest`, logos branco-cream uniformes — mais editorial e "marca que respeita marca", esconde diferença de cor) ou **placa clara** (fundo creme, logos em cinza/preto uniformes — mais B2B clássico, tipo página de "clientes" de agência)? Vou seguir com **escura** por padrão se você não responder, porque combina com a lógica do site (verde profundo + dourado) e resolve melhor o problema do Genesis branco.
