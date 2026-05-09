@@ -3,6 +3,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronUp, ShoppingBag, Truck, Sparkles } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { cdnImg, formatBRL } from "@/lib/shopify/client";
+import GatedPrice from "@/components/shared/GatedPrice";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Sheet,
   SheetContent,
