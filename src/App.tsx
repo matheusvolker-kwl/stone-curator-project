@@ -18,6 +18,7 @@ import PedirAmostras from "./pages/PedirAmostras.tsx";
 import AgendarVisita from "./pages/AgendarVisita.tsx";
 import PorQueWestern from "./pages/PorQueWestern.tsx";
 import AplicacoesComerciais from "./pages/AplicacoesComerciais.tsx";
+import FAQ from "./pages/FAQ.tsx";
 import PoliticaComercial from "./pages/legal/PoliticaComercial.tsx";
 import PoliticaEntrega from "./pages/legal/PoliticaEntrega.tsx";
 import TrocasAvarias from "./pages/legal/TrocasAvarias.tsx";
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/visitar" element={<AgendarVisita />} />
             <Route path="/por-que-western" element={<PorQueWestern />} />
             <Route path="/aplicacoes-comerciais" element={<AplicacoesComerciais />} />
+            <Route path="/faq" element={<FAQ />} />
             <Route path="/politica-comercial" element={<PoliticaComercial />} />
             <Route path="/politica-de-entrega" element={<PoliticaEntrega />} />
             <Route path="/trocas-e-avarias" element={<TrocasAvarias />} />
