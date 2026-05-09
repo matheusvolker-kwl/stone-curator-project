@@ -100,42 +100,50 @@ export default function Index() {
             { Icon: ShieldCheck, t: `Pedido mínimo ${BUSINESS.pedidoMinimoLabel}`, d: "Exclusivo para profissionais com CNPJ." },
             { Icon: Truck, t: "Produção em 15 dias úteis", d: "Após confirmação do pagamento antecipado." },
             { Icon: Box, t: "Modelos 3D em SketchUp", d: "Para todos os produtos do catálogo." },
-          ].map(({ Icon, t, d }) => (
-            <div key={t} className="flex items-start gap-3">
-              <Icon className="h-5 w-5 text-western-gold mt-0.5 flex-shrink-0" strokeWidth={1.4} />
-              <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-western-green-deep">{t}</p>
-                <p className="text-xs text-western-stone-warm mt-0.5">{d}</p>
+          ].map(({ Icon, t, d }, i) => (
+            <Reveal key={t} variant="fade-up" delay={i * 80} duration={600} distance={16}>
+              <div className="flex items-start gap-3">
+                <Icon className="h-5 w-5 text-western-gold mt-0.5 flex-shrink-0" strokeWidth={1.4} />
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-western-green-deep">{t}</p>
+                  <p className="text-xs text-western-stone-warm mt-0.5">{d}</p>
+                </div>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
 
       {/* COLEÇÕES — destaques */}
-      <ColecoesGrid collections={linhas} />
+      <Reveal variant="fade-up" duration={800}>
+        <ColecoesGrid collections={linhas} />
+      </Reveal>
 
       {/* MAIS ESPECIFICADOS */}
       {featured.length > 0 && (
         <section className="surface-paper py-16 md:py-24 border-t border-western-stone-warm/10">
           <div className="container-western">
-            <div className="flex items-end justify-between mb-10 md:mb-12 flex-wrap gap-4">
-              <div>
-                <p className="text-eyebrow mb-3">Em destaque</p>
-                <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
-                  Produtos mais comprados.
-                </h2>
+            <Reveal variant="fade-up" duration={700}>
+              <div className="flex items-end justify-between mb-10 md:mb-12 flex-wrap gap-4">
+                <div>
+                  <p className="text-eyebrow mb-3">Em destaque</p>
+                  <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
+                    Produtos mais comprados.
+                  </h2>
+                </div>
+                <Link
+                  to="/linhas"
+                  className="link-underline font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep"
+                >
+                  Ver catálogo completo →
+                </Link>
               </div>
-              <Link
-                to="/linhas"
-                className="link-underline font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep"
-              >
-                Ver catálogo completo →
-              </Link>
-            </div>
+            </Reveal>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-              {featured.slice(0, 8).map((p) => (
-                <ProductCard key={p.node.id} product={p.node} />
+              {featured.slice(0, 8).map((p, i) => (
+                <Reveal key={p.node.id} variant="fade-up" delay={(i % 4) * 90} duration={650} distance={20}>
+                  <ProductCard product={p.node} />
+                </Reveal>
               ))}
             </div>
           </div>
@@ -143,24 +151,30 @@ export default function Index() {
       )}
 
       {/* PROJETOS — prova social */}
-      <ProjetosSection />
+      <Reveal variant="fade-up" duration={800}>
+        <ProjetosSection />
+      </Reveal>
 
       {/* Faixa institucional — Camadas 2 e 3 */}
       <section className="surface-paper border-t border-western-stone-warm/15 py-16 md:py-20">
         <div className="container-western max-w-5xl">
-          <div className="text-center mb-10">
-            <p className="text-eyebrow mb-4">Prova de procedência</p>
-            <div className="w-12 h-px bg-western-gold mx-auto mb-6" />
-            <p className="font-display text-2xl md:text-3xl text-western-green-deep leading-[1.15] max-w-2xl mx-auto">
-              Especificada por{" "}
-              <Link to="/parceiros-arquitetos" className="underline decoration-western-gold/40 underline-offset-4 hover:decoration-western-gold transition-colors">
-                Marcelo Faisal, Fabiano Hayasaki e Ronaldo Luidi
-              </Link>
-              . Atende marcas institucionais há mais de uma década.
-            </p>
-          </div>
+          <Reveal variant="fade-up" duration={750}>
+            <div className="text-center mb-10">
+              <p className="text-eyebrow mb-4">Prova de procedência</p>
+              <div className="w-12 h-px bg-western-gold mx-auto mb-6" />
+              <p className="font-display text-2xl md:text-3xl text-western-green-deep leading-[1.15] max-w-2xl mx-auto">
+                Especificada por{" "}
+                <Link to="/parceiros-arquitetos" className="underline decoration-western-gold/40 underline-offset-4 hover:decoration-western-gold transition-colors">
+                  Marcelo Faisal, Fabiano Hayasaki e Ronaldo Luidi
+                </Link>
+                . Atende marcas institucionais há mais de uma década.
+              </p>
+            </div>
+          </Reveal>
 
-          <MarcasInstitucionais compacta />
+          <Reveal variant="fade-up" delay={120} duration={750}>
+            <MarcasInstitucionais compacta />
+          </Reveal>
 
           <div className="text-center mt-8">
             <Link to="/sobre" className="link-underline font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep">
@@ -172,40 +186,46 @@ export default function Index() {
 
 
       {/* ARTISTA — Ricardo */}
-      <ArtistaSection />
+      <Reveal variant="fade-up" duration={800}>
+        <ArtistaSection />
+      </Reveal>
 
       {/* B2B — credenciamento */}
       <section className="surface-forest py-16 md:py-24">
         <div className="container-western">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <p className="text-eyebrow mb-4">Seja parceiro Western</p>
-              <h2 className="font-display text-3xl md:text-5xl text-western-cream leading-[1.1] mb-6">
-                Tabela de preços, condições comerciais e modelos 3D liberados após credenciamento.
-              </h2>
-              <p className="text-western-cream-muted leading-relaxed max-w-md mb-8">
-                Trabalhamos exclusivamente com arquitetos, paisagistas, construtoras e garden centers com CNPJ ativo.
-              </p>
-              <Link
-                to="/parceiro/cadastro"
-                className="inline-flex items-center gap-2 h-12 px-7 bg-western-gold text-western-green-deep hover:bg-western-gold-soft font-mono text-xs uppercase tracking-[0.22em] transition-colors"
-              >
-                Solicitar acesso B2B <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-px bg-western-gold/15">
-              {[
-                { eyebrow: "Pedido mínimo", t: BUSINESS.pedidoMinimoLabel },
-                { eyebrow: "Prazo", t: "15 dias úteis" },
-                { eyebrow: "Pagamento", t: "100% antecipado" },
-                { eyebrow: "Frete", t: "Transportadora ou retirada" },
-              ].map((s) => (
-                <div key={s.t} className="bg-western-green-deep p-6 md:p-8">
-                  <p className="text-eyebrow mb-3">{s.eyebrow}</p>
-                  <h3 className="font-display text-2xl md:text-3xl text-western-cream">{s.t}</h3>
-                </div>
-              ))}
-            </div>
+            <Reveal variant="fade-right" duration={750}>
+              <div>
+                <p className="text-eyebrow mb-4">Seja parceiro Western</p>
+                <h2 className="font-display text-3xl md:text-5xl text-western-cream leading-[1.1] mb-6">
+                  Tabela de preços, condições comerciais e modelos 3D liberados após credenciamento.
+                </h2>
+                <p className="text-western-cream-muted leading-relaxed max-w-md mb-8">
+                  Trabalhamos exclusivamente com arquitetos, paisagistas, construtoras e garden centers com CNPJ ativo.
+                </p>
+                <Link
+                  to="/parceiro/cadastro"
+                  className="inline-flex items-center gap-2 h-12 px-7 bg-western-gold text-western-green-deep hover:bg-western-gold-soft font-mono text-xs uppercase tracking-[0.22em] transition-colors"
+                >
+                  Solicitar acesso B2B <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </Reveal>
+            <Reveal variant="fade-left" delay={120} duration={750}>
+              <div className="grid grid-cols-2 gap-px bg-western-gold/15">
+                {[
+                  { eyebrow: "Pedido mínimo", t: BUSINESS.pedidoMinimoLabel },
+                  { eyebrow: "Prazo", t: "15 dias úteis" },
+                  { eyebrow: "Pagamento", t: "100% antecipado" },
+                  { eyebrow: "Frete", t: "Transportadora ou retirada" },
+                ].map((s) => (
+                  <div key={s.t} className="bg-western-green-deep p-6 md:p-8">
+                    <p className="text-eyebrow mb-3">{s.eyebrow}</p>
+                    <h3 className="font-display text-2xl md:text-3xl text-western-cream">{s.t}</h3>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>
