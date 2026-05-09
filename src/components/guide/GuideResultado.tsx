@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ArrowRight, Check, Loader2, MessageCircle, RotateCcw, ShoppingBag } from "lucide-react";
+import { ArrowRight, Check, FileDown, Loader2, MessageCircle, RotateCcw, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import {
   formatPreco,
@@ -19,6 +19,7 @@ import { parseProductDescription } from "@/lib/shopify/parseDescription";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import FinishSelector from "@/components/product/FinishSelector";
 import UpsellGrid from "./UpsellGrid";
+import SketchLeadModal from "./SketchLeadModal";
 
 interface Props {
   conjunto: ConjuntoLeaf;
