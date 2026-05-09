@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,13 +13,15 @@ export default function PartnerLogin() {
   const [loading, setLoading] = useState(false);
   const [showReset, setShowReset] = useState(false);
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const next = params.get("next") || "/parceiro/conta";
 
-  // If already logged in, send to home
+  // If already logged in, send to next/account
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate("/", { replace: true });
+      if (data.session) navigate(next, { replace: true });
     });
-  }, [navigate]);
+  }, [navigate, next]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +49,7 @@ export default function PartnerLogin() {
     } else {
       toast.success(`Bem-vindo${profile?.empresa ? `, ${profile.empresa}` : ""}.`);
     }
-    navigate("/", { replace: true });
+    navigate(next, { replace: true });
   };
 
   const handleReset = async (e: React.FormEvent) => {
@@ -58,7 +60,7 @@ export default function PartnerLogin() {
     }
     setLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/parceiro/login`,
+      redirectTo: `${window.location.origin}/parceiro/redefinir-senha`,
     });
     setLoading(false);
     if (error) toast.error(error.message);

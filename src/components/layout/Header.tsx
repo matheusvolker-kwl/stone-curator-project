@@ -1,10 +1,18 @@
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
-import { ShoppingBag, User, Menu, X, Search, Heart } from "lucide-react";
+import { ShoppingBag, User, Menu, X, Search, Heart, ShieldCheck, LogOut } from "lucide-react";
 import logoVerde from "@/assets/logo-horizontal-verde.png";
 import logoBege from "@/assets/logo-horizontal-bege.png";
 import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const nav = [
   { to: "/linhas", label: "Linhas" },
@@ -23,6 +31,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   const [query, setQuery] = useState("");
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { session, isAdmin, empresa, signOut, user } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -94,13 +103,48 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         </form>
 
         <div className="flex items-center gap-1 lg:gap-3 ml-auto md:ml-0">
-          <Link
-            to="/parceiro/login"
-            aria-label="Área do parceiro"
-            className="hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors"
-          >
-            <User className="h-4 w-4" /> Parceiro
-          </Link>
+          {session ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  aria-label="Minha conta"
+                  className="hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors"
+                >
+                  <User className="h-4 w-4" />
+                  <span className="max-w-[140px] truncate normal-case tracking-normal">
+                    {empresa || user?.email?.split("@")[0] || "Conta"}
+                  </span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={() => navigate("/parceiro/conta")}>
+                  <User className="h-4 w-4 mr-2" /> Minha conta
+                </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem onClick={() => navigate("/admin")}>
+                    <ShieldCheck className="h-4 w-4 mr-2" /> Painel admin
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={async () => {
+                    await signOut();
+                    navigate("/", { replace: true });
+                  }}
+                >
+                  <LogOut className="h-4 w-4 mr-2" /> Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link
+              to="/parceiro/login"
+              aria-label="Área do parceiro"
+              className="hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors"
+            >
+              <User className="h-4 w-4" /> Parceiro
+            </Link>
+          )}
           <Link
             to="/parceiro/login"
             aria-label="Lista de projetos"

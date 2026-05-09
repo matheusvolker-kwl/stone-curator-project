@@ -16,9 +16,12 @@ import { ChevronLeft, Loader2, Info, MessageCircle, Download } from "lucide-reac
 import { BUSINESS } from "@/config/business";
 import { toast } from "sonner";
 import FinishSelector from "@/components/product/FinishSelector";
+import PriceGate from "@/components/shared/PriceGate";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ProductPage() {
   const { handle = "" } = useParams();
+  const { isApproved } = useAuth();
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", handle],
     queryFn: () => fetchProduct(handle),
@@ -305,16 +308,22 @@ export default function ProductPage() {
                     )}`;
                 return (
                   <>
-                    <div className="flex items-baseline justify-between mb-7 gap-4 flex-wrap">
-                      <span className="text-eyebrow">Condição parceiro</span>
-                      <span
-                        className={`font-display text-western-green-deep ${
-                          variant ? "text-3xl" : "text-xl text-western-stone-warm"
-                        }`}
-                      >
-                        {priceDisplay}
-                      </span>
-                    </div>
+                    {isApproved ? (
+                      <div className="flex items-baseline justify-between mb-7 gap-4 flex-wrap">
+                        <span className="text-eyebrow">Condição parceiro</span>
+                        <span
+                          className={`font-display text-western-green-deep ${
+                            variant ? "text-3xl" : "text-xl text-western-stone-warm"
+                          }`}
+                        >
+                          {priceDisplay}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="mb-7">
+                        <PriceGate variant="block" />
+                      </div>
+                    )}
 
                     {pendingOption && (
                       <div className="mb-5 flex items-start gap-2.5 px-4 py-3 border border-western-gold/40 bg-western-gold/5">
@@ -345,11 +354,13 @@ export default function ProductPage() {
                       </div>
                       <Button
                         onClick={handleAdd}
-                        disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
+                        disabled={!isApproved || !variant?.availableForSale || isLoadingCart || !!pendingOption}
                         className="flex-1 h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
                       >
                         {isLoadingCart ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : !isApproved ? (
+                          "Login para pedir"
                         ) : pendingOption ? (
                           `Selecione ${pendingOption.name.toLowerCase()}`
                         ) : variant?.availableForSale ? (
