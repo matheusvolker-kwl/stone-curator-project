@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
+import ArquitetosStrip from "@/components/shared/ArquitetosStrip";
 
 export default function About() {
   return (
