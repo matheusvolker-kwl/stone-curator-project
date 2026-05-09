@@ -280,7 +280,8 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
         conjuntoNome={conjunto.nome}
         conjuntoHandle={conjunto.handle}
         acabamento={acabamento}
-        contexto={{ tipo: answers.tipo, areaM2: undefined }}
+        contexto={{ tipo: answers.tipo, areaM2 }}
+        nomePreFill={nome}
       />
     </div>
   );
