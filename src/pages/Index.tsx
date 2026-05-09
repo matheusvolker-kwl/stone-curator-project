@@ -146,30 +146,30 @@ export default function Index() {
       <ProjetosSection />
 
       {/* Faixa institucional — Camadas 2 e 3 */}
-      <section className="surface-paper border-t border-western-stone-warm/15 py-10 md:py-14">
-        <div className="container-western max-w-4xl text-center">
-          <p className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.28em] text-western-stone-warm leading-[2]">
-            Especificada por{" "}
-            <Link to="/parceiros-arquitetos" className="text-western-green-deep hover:text-western-gold transition-colors">
-              Marcelo Faisal
+      <section className="surface-paper border-t border-western-stone-warm/15 py-16 md:py-20">
+        <div className="container-western max-w-5xl">
+          <div className="text-center mb-10">
+            <p className="text-eyebrow mb-4">Prova de procedência</p>
+            <div className="w-12 h-px bg-western-gold mx-auto mb-6" />
+            <p className="font-display text-2xl md:text-3xl text-western-green-deep leading-[1.15] max-w-2xl mx-auto">
+              Especificada por{" "}
+              <Link to="/parceiros-arquitetos" className="underline decoration-western-gold/40 underline-offset-4 hover:decoration-western-gold transition-colors">
+                Marcelo Faisal, Fabiano Hayasaki e Ronaldo Luidi
+              </Link>
+              . Atende marcas institucionais há mais de uma década.
+            </p>
+          </div>
+
+          <MarcasInstitucionais compacta />
+
+          <div className="text-center mt-8">
+            <Link to="/sobre" className="link-underline font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep">
+              Sobre a Western →
             </Link>
-            ,{" "}
-            <Link to="/parceiros-arquitetos" className="text-western-green-deep hover:text-western-gold transition-colors">
-              Fabiano Hayasaki
-            </Link>
-            ,{" "}
-            <Link to="/parceiros-arquitetos" className="text-western-green-deep hover:text-western-gold transition-colors">
-              Ronaldo Luidi
-            </Link>{" "}
-            e outros estúdios.
-            <br className="hidden md:inline" />{" "}
-            Atende{" "}
-            <Link to="/sobre" className="text-western-green-deep hover:text-western-gold transition-colors">
-              Cobasi, Unique Garden, Cristal Pool, Genesis Ecossistemas e Biopet Lagos.
-            </Link>
-          </p>
+          </div>
         </div>
       </section>
+
 
       {/* ARTISTA — Ricardo */}
       <ArtistaSection />
