@@ -3,8 +3,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { Lock } from "lucide-react";
 
 interface Props {
-  /** Conteúdo exibido para parceiros aprovados/admin (preço real) */
-  children: React.ReactNode;
+  /** Conteúdo exibido para parceiros aprovados/admin (preço real). Opcional para variant="block". */
+  children?: React.ReactNode;
   /** Estilo compacto (cards) ou completo (PDP) */
   variant?: "inline" | "block";
   /** Texto do CTA */
