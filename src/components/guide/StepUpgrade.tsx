@@ -1,7 +1,7 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ArrowRight, Loader2, ShoppingBag, TrendingUp, Check, Plus, Sparkles } from "lucide-react";
+import { ArrowRight, Loader2, ShoppingBag, TrendingUp, Check, Plus, Sparkles, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { fetchProduct } from "@/lib/shopify/queries";
