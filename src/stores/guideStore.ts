@@ -24,6 +24,7 @@ export interface GuideState {
   nivel?: Nivel;
   composicao?: Composicao;
   jardim?: Jardim;
+  nome?: string;
   savedAt?: number;
 
   start: () => void;
@@ -32,6 +33,7 @@ export interface GuideState {
   setNivel: (n: Nivel) => void;
   setComposicao: (c: Composicao) => void;
   setJardim: (j: Jardim) => void;
+  setNome: (n: string) => void;
   goto: (s: GuideStep) => void;
   back: () => void;
   reset: () => void;
