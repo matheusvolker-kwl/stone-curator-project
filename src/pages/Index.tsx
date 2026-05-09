@@ -46,7 +46,8 @@ export default function Index() {
           decoding="async"
           width={1820}
           height={1213}
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="absolute inset-0 w-full h-full object-cover object-center will-change-transform"
+          style={{ transform: heroParallax }}
         />
         {/* Overlay vertical para leitura */}
         <div
@@ -58,12 +59,13 @@ export default function Index() {
           }}
         />
 
-        {/* Marca-d'água — símbolo Western em opacidade leve */}
+        {/* Marca-d'água — símbolo Western em opacidade leve, com flutuação no scroll */}
         <img
           src={iconePedraBranco}
           alt=""
           aria-hidden
-          className="absolute right-[6%] top-1/2 -translate-y-1/2 w-[42vw] max-w-[560px] opacity-[0.07] pointer-events-none select-none mix-blend-screen"
+          className="absolute right-[6%] top-1/2 w-[42vw] max-w-[560px] opacity-[0.14] pointer-events-none select-none mix-blend-screen will-change-transform"
+          style={{ transform: symbolParallax }}
         />
 
         <div className="absolute inset-0 flex items-center">
