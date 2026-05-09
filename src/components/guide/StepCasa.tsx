@@ -1,13 +1,14 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
 import { Plus, Sparkles, Check } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { fetchProductsByHandles } from "@/lib/shopify/queries";
-import { cdnImg, formatBRL } from "@/lib/shopify/client";
+import { cdnImg } from "@/lib/shopify/client";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { itensCasaHandles } from "@/data/guideMap";
+import GatedPrice from "@/components/shared/GatedPrice";
+import GuideProductQuickView from "./GuideProductQuickView";
 import GuideStepFooter from "./GuideStepFooter";
 
 interface Props {
@@ -25,6 +26,7 @@ export default function StepCasa({ onBack, onNext }: Props) {
   const addItem = useCartStore((s) => s.addItem);
   const cartItems = useCartStore((s) => s.items);
   const cartLoading = useCartStore((s) => s.isLoading);
+  const [quickHandle, setQuickHandle] = useState<string | null>(null);
 
   const addedCount = useMemo(
     () => cartItems.filter((i) => itensCasaHandles.includes(i.productHandle)).length,
@@ -88,7 +90,12 @@ export default function StepCasa({ onBack, onNext }: Props) {
                   inCart ? "border-western-gold" : "border-western-stone-warm/20 hover:border-western-gold/60"
                 }`}
               >
-                <Link to={`/produtos/${p.handle}`} className="aspect-[4/5] overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setQuickHandle(p.handle)}
+                  className="aspect-[4/5] overflow-hidden block w-full"
+                  aria-label={`Ver detalhes de ${p.title}`}
+                >
                   {img && (
                     <img
                       src={cdnImg(img, 700)}
@@ -97,19 +104,25 @@ export default function StepCasa({ onBack, onNext }: Props) {
                       loading="lazy"
                     />
                   )}
-                </Link>
+                </button>
                 <div className="flex-1 p-5 flex flex-col gap-3">
                   <span className="inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.22em] text-western-gold w-fit">
                     <Sparkles className="h-3 w-3" /> Edição autoral
                   </span>
-                  <Link to={`/produtos/${p.handle}`}>
-                    <h4 className="font-display text-lg text-western-green-deep leading-tight">
+                  <button
+                    type="button"
+                    onClick={() => setQuickHandle(p.handle)}
+                    className="text-left"
+                  >
+                    <h4 className="font-display text-lg text-western-green-deep leading-tight hover:text-western-gold transition-colors">
                       {p.title}
                     </h4>
-                  </Link>
-                  <p className="text-spec text-western-stone-warm">
-                    {formatBRL(price.amount, price.currencyCode)}
-                  </p>
+                  </button>
+                  <GatedPrice
+                    amount={price.amount}
+                    currency={price.currencyCode}
+                    className="text-spec text-western-stone-warm"
+                  />
                   <button
                     type="button"
                     onClick={() => handleAdd(p.handle)}
@@ -140,6 +153,12 @@ export default function StepCasa({ onBack, onNext }: Props) {
         skipLabel={addedCount === 0 ? "Não preciso disso agora" : undefined}
         onSkip={addedCount === 0 ? onNext : undefined}
         addedCount={addedCount}
+      />
+
+      <GuideProductQuickView
+        handle={quickHandle}
+        open={!!quickHandle}
+        onOpenChange={(o) => !o && setQuickHandle(null)}
       />
     </div>
   );

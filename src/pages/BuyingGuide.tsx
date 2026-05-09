@@ -1,5 +1,6 @@
 import { ArrowRight, Sparkles, Layers, RotateCcw, PlayCircle } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import StepOnde from "@/components/guide/StepOnde";
 import GuideAssemblySummary from "@/components/guide/GuideAssemblySummary";
 import StepArea from "@/components/guide/StepArea";
@@ -41,11 +42,24 @@ const ASSEMBLY_LABELS: Record<string, string> = {
   fechamento: "Etapa 09 · Fechamento",
 };
 
+const VALID_STEPS: GuideStep[] = [
+  "intro", "tipo", "area", "protagonismo", "composicao",
+  "base", "complementos", "upgrade", "casa", "fechamento", "especial",
+];
+
+const DISCOVERY_STEPS: GuideStep[] = ["tipo", "area", "protagonismo", "composicao"];
+
+function isValidStep(s: string | null): s is GuideStep {
+  return !!s && (VALID_STEPS as string[]).includes(s);
+}
+
 export default function BuyingGuide() {
   const state = useGuideStore();
   const { step, tipo, areaM2, nivel, composicao, jardim, savedAt, start, goto, reset } = state;
   const containerRef = useRef<HTMLDivElement>(null);
   const [acabamentoAtual, setAcabamentoAtual] = useState("Quartzo");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialMount = useRef(true);
 
   const answers: GuideAnswers = useMemo(() => {
     const tamanho = tipo && areaM2 ? m2ToTamanhoId(tipo, areaM2) : undefined;
@@ -71,6 +85,60 @@ export default function BuyingGuide() {
     }),
     [tipo, upgradeAvailable]
   );
+
+  // === URL <-> step sync ===
+  // 1) URL → step (no mount e em cada mudança de URL via back/forward do navegador)
+  useEffect(() => {
+    const urlStep = searchParams.get("step");
+    if (!isValidStep(urlStep)) {
+      // URL sem step válido = intro
+      if (step !== "intro" && initialMount.current) {
+        // Não força reset se já temos progresso interno; só usa o que vier da URL no mount.
+      }
+      if (urlStep && !isValidStep(urlStep)) {
+        // URL inválida — limpa
+        const next = new URLSearchParams(searchParams);
+        next.delete("step");
+        setSearchParams(next, { replace: true });
+      }
+      initialMount.current = false;
+      return;
+    }
+    if (urlStep !== step) {
+      // Validação de pré-requisitos
+      const requiresTipo: GuideStep[] = ["area", "protagonismo", "composicao", "base", "complementos", "upgrade", "casa", "fechamento"];
+      const requiresArea: GuideStep[] = ["protagonismo", "composicao", "base", "complementos", "upgrade", "casa", "fechamento"];
+      const requiresNivel: GuideStep[] = ["base", "complementos", "upgrade", "casa", "fechamento"];
+      if (requiresTipo.includes(urlStep) && !tipo) {
+        goto("tipo");
+        return;
+      }
+      if (requiresArea.includes(urlStep) && !areaM2) {
+        goto("area");
+        return;
+      }
+      if (requiresNivel.includes(urlStep) && !nivel) {
+        goto("protagonismo");
+        return;
+      }
+      goto(urlStep);
+    }
+    initialMount.current = false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  // 2) step → URL
+  useEffect(() => {
+    const desired = step === "intro" ? "" : step;
+    const current = searchParams.get("step") ?? "";
+    if (desired === current) return;
+    const next = new URLSearchParams(searchParams);
+    if (desired) next.set("step", desired);
+    else next.delete("step");
+    // replace no primeiro mount (não polui histórico), push depois
+    setSearchParams(next, { replace: initialMount.current });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
 
   // Progress bar
   const progressSteps = useMemo(() => {
@@ -130,23 +198,30 @@ export default function BuyingGuide() {
 
   const baseFallback: GuideStep = tipo === "piscina" ? "protagonismo" : "composicao";
 
-  // Atalhos de teclado: ←/→ para voltar/avançar nas etapas de montagem
+  // Atalhos de teclado: ←/→ nas etapas de montagem E descoberta
   useEffect(() => {
-    if (!ASSEMBLY_STEPS.includes(step as GuideStep)) return;
+    const isAssembly = ASSEMBLY_STEPS.includes(step as GuideStep);
+    const isDiscovery = DISCOVERY_STEPS.includes(step as GuideStep);
+    if (!isAssembly && !isDiscovery) return;
+
     const handler = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
-      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)) return;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.tagName === "SELECT" || target.isContentEditable)) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      if (e.key === "ArrowRight") {
+      // ← sempre volta uma etapa via store.back()
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        if (isAssembly) handlePrevAssembly(baseFallback);
+        else state.back();
+      } else if (e.key === "ArrowRight" && isAssembly) {
+        // → só avança nas etapas de montagem (nas de descoberta a próxima depende de seleção)
         e.preventDefault();
         handleNext();
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        handlePrevAssembly(baseFallback);
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, skips, baseFallback]);
 
 
@@ -162,12 +237,13 @@ export default function BuyingGuide() {
           <Intro
             onStart={() => { if (showResume) reset(); start(); }}
             onResume={showResume ? () => {
-              // Retomar: ir para a etapa mais avançada possível com as respostas
               const target: GuideStep = nivel ? "base" : tipo ? (areaM2 ? "protagonismo" : "area") : "tipo";
               goto(target);
             } : undefined}
             onReset={reset}
             hasProgress={showResume}
+            answers={{ tipo, areaM2, nivel, composicao, jardim }}
+            goto={goto}
           />
         ) : step === "especial" ? (
           <div className="border border-western-stone-warm/20 bg-white p-6 md:p-12">
@@ -258,17 +334,39 @@ function NoResolution({ onReset }: { onReset: () => void }) {
   );
 }
 
+interface IntroAnswers {
+  tipo?: string;
+  areaM2?: number;
+  nivel?: string;
+  composicao?: string;
+  jardim?: string;
+}
+
 function Intro({
   onStart,
   onResume,
   onReset,
   hasProgress,
+  answers,
+  goto,
 }: {
   onStart: () => void;
   onResume?: () => void;
   onReset: () => void;
   hasProgress?: boolean;
+  answers: IntroAnswers;
+  goto: (s: GuideStep) => void;
 }) {
+  const chips: Array<{ label: string; step: GuideStep }> = [];
+  if (answers.tipo) chips.push({ label: tipoLabels[answers.tipo as keyof typeof tipoLabels] ?? answers.tipo, step: "tipo" });
+  if (answers.areaM2) chips.push({ label: `${answers.areaM2} m²`, step: "area" });
+  if (answers.nivel && answers.tipo) {
+    const meta = nivelMeta[answers.tipo as keyof typeof nivelMeta]?.[answers.nivel as "essencial" | "equilibrada" | "completa"];
+    if (meta) chips.push({ label: meta.label, step: "protagonismo" });
+  }
+  if (answers.composicao) chips.push({ label: answers.composicao === "somenteWestern" ? "Só Western" : "Western + naturais", step: "composicao" });
+  if (answers.jardim) chips.push({ label: answers.jardim === "seco" ? "Jardim seco" : "Com fonte", step: "composicao" });
+
   return (
     <div className="grid md:grid-cols-[3fr_2fr] gap-12 lg:gap-20 items-center">
       <div>
@@ -299,6 +397,20 @@ function Intro({
             <p className="text-sm text-western-stone-warm leading-relaxed mb-4">
               Continue exatamente de onde parou — suas escolhas e o orçamento parcial estão salvos.
             </p>
+            {chips.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-4">
+                {chips.map((c, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => goto(c.step)}
+                    className="font-mono text-[10px] uppercase tracking-[0.18em] px-2.5 py-1 border border-western-stone-warm/25 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold transition-colors"
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="flex flex-wrap gap-3">
               <button onClick={onResume} className="btn-gold">
                 <PlayCircle className="h-4 w-4" /> Continuar projeto

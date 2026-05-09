@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
 import { ArrowRight, Check, Loader2, ShoppingBag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -12,10 +11,12 @@ import {
   type GuideAnswers,
 } from "@/data/guideMap";
 import { fetchProduct } from "@/lib/shopify/queries";
-import { cdnImg, formatBRL } from "@/lib/shopify/client";
+import { cdnImg } from "@/lib/shopify/client";
 import { parseProductDescription } from "@/lib/shopify/parseDescription";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import FinishSelector from "@/components/product/FinishSelector";
+import GatedPrice from "@/components/shared/GatedPrice";
+import GuideProductQuickView from "./GuideProductQuickView";
 import GuideStepFooter from "./GuideStepFooter";
 
 interface Props {
@@ -101,6 +102,7 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
   const tint = tintFor(acabamento);
 
   const baseAdded = cartItems.some((i) => i.productHandle === conjunto.handle);
+  const [quickOpen, setQuickOpen] = useState(false);
 
   const handleAdd = async () => {
     if (!product || !selectedVariant) {
@@ -251,9 +253,14 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
         <div className="lg:sticky lg:top-24 self-start">
           <div className="bg-western-cream/40 border border-western-stone-warm/20 p-6">
             <p className="text-spec text-western-stone-warm mb-1">A partir de</p>
-            <p className="font-display text-4xl text-western-green-deep mb-1">
-              {formatBRL(precoReal, moeda)}
-            </p>
+            <div className="mb-1">
+              <GatedPrice
+                amount={precoReal}
+                currency={moeda}
+                className="font-display text-4xl text-western-green-deep"
+                variant="block"
+              />
+            </div>
             <p className="text-xs text-western-stone-warm/80 mb-6">
               Conjunto base · acabamento {acabamento.toLowerCase()}
             </p>
@@ -278,12 +285,13 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
             </button>
 
             {product && (
-              <Link
-                to={`/produtos/${product.handle}`}
+              <button
+                type="button"
+                onClick={() => setQuickOpen(true)}
                 className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors"
               >
                 Ver detalhes do conjunto <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+              </button>
             )}
 
             <p className="mt-6 pt-5 border-t border-western-stone-warm/15 text-xs text-western-stone-warm/80 italic leading-relaxed">
@@ -301,6 +309,12 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
         skipLabel={!baseAdded ? "Ainda não quero adicionar" : undefined}
         onSkip={!baseAdded ? onNext : undefined}
         addedCount={baseAdded ? 1 : 0}
+      />
+
+      <GuideProductQuickView
+        handle={product?.handle ?? null}
+        open={quickOpen}
+        onOpenChange={setQuickOpen}
       />
     </motion.div>
   );
