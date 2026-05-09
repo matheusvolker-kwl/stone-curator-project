@@ -8,10 +8,13 @@ import retrato from "@/assets/ricardo-luiz-carlos.webp";
 import irmaosGruta from "@/assets/irmaos-botelho-gruta.webp";
 import heroCascata from "@/assets/hero-cascata.webp";
 import respiroPedra from "@/assets/respiro-pedra.webp";
-import projetoLago from "@/assets/projetos/cover-lago.webp";
 import projetoCascata from "@/assets/projetos/cover-cascata.webp";
-import projetoPiscina from "@/assets/projetos/cover-piscina.avif";
-import projetoCasaPraia from "@/assets/projetos/cover-casa-praia.webp";
+import obraCascataTropical from "@/assets/about-projetos/cascata-tropical.jpg";
+import obraCascataMirante from "@/assets/about-projetos/cascata-mirante.jpg";
+import obraPiscinaPraia from "@/assets/about-projetos/piscina-praia.jpg";
+import obraDetalheMatriz from "@/assets/about-projetos/detalhe-matriz.jpg";
+import obraBordaPedra from "@/assets/about-projetos/borda-pedra.jpg";
+import obraCascataEscalonada from "@/assets/about-projetos/cascata-escalonada.jpg";
 import iconePedraBranco from "@/assets/icone-pedra-branco.png";
 import { BUSINESS } from "@/config/business";
 
