@@ -33,9 +33,17 @@ import {
 
 const ASSEMBLY_STEPS: GuideStep[] = ["base", "complementos", "upgrade", "casa", "fechamento"];
 
+const ASSEMBLY_LABELS: Record<string, string> = {
+  base: "Etapa 05 · Conjunto",
+  complementos: "Etapa 06 · Complementos",
+  upgrade: "Etapa 07 · Upgrade",
+  casa: "Etapa 08 · Assinatura",
+  fechamento: "Etapa 09 · Fechamento",
+};
+
 export default function BuyingGuide() {
   const state = useGuideStore();
-  const { step, tipo, areaM2, nivel, composicao, jardim, start, goto, reset } = state;
+  const { step, tipo, areaM2, nivel, composicao, jardim, savedAt, start, goto, reset } = state;
   const containerRef = useRef<HTMLDivElement>(null);
   const [acabamentoAtual, setAcabamentoAtual] = useState("Quartzo");
 
