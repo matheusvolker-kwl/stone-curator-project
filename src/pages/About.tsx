@@ -448,8 +448,8 @@ export default function About() {
             src={projetoCascata}
             alt=""
             aria-hidden
-            className="absolute inset-0 w-full h-full object-cover opacity-25 will-change-transform"
-            style={{ transform: `translate3d(0, ${(scrollY - 2500) * 0.06}px, 0)` }}
+            className="absolute left-0 top-[-12%] w-full h-[124%] object-cover opacity-25 will-change-transform"
+            style={{ transform: `translate3d(0, ${(scrollY - 2500) * 0.04}px, 0)` }}
           />
           <div
             className="absolute inset-0 pointer-events-none"
