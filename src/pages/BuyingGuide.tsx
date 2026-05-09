@@ -229,7 +229,17 @@ function NoResolution({ onReset }: { onReset: () => void }) {
   );
 }
 
-function Intro({ onStart }: { onStart: () => void }) {
+function Intro({
+  onStart,
+  onResume,
+  onReset,
+  hasProgress,
+}: {
+  onStart: () => void;
+  onResume?: () => void;
+  onReset: () => void;
+  hasProgress?: boolean;
+}) {
   return (
     <div className="grid md:grid-cols-[3fr_2fr] gap-12 lg:gap-20 items-center">
       <div>
@@ -251,10 +261,34 @@ function Intro({ onStart }: { onStart: () => void }) {
           <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-western-gold" /> ~90 segundos</span>
           <span className="flex items-center gap-2"><Layers className="h-4 w-4 text-western-gold" /> 45 conjuntos curados</span>
         </div>
+
+        {hasProgress && onResume ? (
+          <div className="mb-8 p-5 border border-western-gold/40 bg-western-cream/40 max-w-2xl animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-2">
+              Você tem um projeto em andamento
+            </p>
+            <p className="text-sm text-western-stone-warm leading-relaxed mb-4">
+              Continue exatamente de onde parou — suas escolhas e o orçamento parcial estão salvos.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <button onClick={onResume} className="btn-gold">
+                <PlayCircle className="h-4 w-4" /> Continuar projeto
+              </button>
+              <button
+                onClick={onReset}
+                className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors"
+              >
+                <RotateCcw className="h-3.5 w-3.5" /> Recomeçar do zero
+              </button>
+            </div>
+          </div>
+        ) : null}
+
         <button onClick={onStart} className="btn-gold">
-          Compor meu projeto <ArrowRight className="h-4 w-4" />
+          {hasProgress ? "Iniciar novo projeto" : "Compor meu projeto"} <ArrowRight className="h-4 w-4" />
         </button>
       </div>
+
       <div className="hidden md:block aspect-[4/5] bg-western-green-deep relative overflow-hidden">
         <svg viewBox="0 0 400 500" className="w-full h-full" aria-hidden="true">
           <rect width="400" height="500" fill="hsl(var(--western-green-deep))" />
