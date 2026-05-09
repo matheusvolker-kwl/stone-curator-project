@@ -56,6 +56,7 @@ function Confetti() {
 
 export default function StepFechamento({ conjunto, answers, acabamento, onBack, onReset }: Props) {
   const items = useCartStore((s) => s.items);
+  const { isApproved } = useAuth();
   const nome = useGuideStore((s) => s.nome);
   const setNome = useGuideStore((s) => s.setNome);
   const areaM2 = useGuideStore((s) => s.areaM2);
