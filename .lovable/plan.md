@@ -1,149 +1,121 @@
-# Auditoria de UX do Guia — onde está bom, onde dá pra subir o nível
+## Status do Guia
 
-O esqueleto está sólido (wizard claro, cart parcial visível, etapas com skip inteligente). Mas faltam camadas de **desejo, ritmo e prova** que separam um formulário guiado de uma experiência que dá vontade de comprar. Abaixo o que eu mudaria, em ordem de impacto.
+A jornada de 9 etapas está **funcionalmente completa** no frontend (Ondas A + B + C entregues). O que falta para sair do "demo encantador" e virar **produção** mora **fora do código**: catálogo Shopify alinhado e migração de conteúdo editorial para metafields.
 
 ---
 
-## 1. O resumo do orçamento precisa ser um "carrinho lateral vivo", não um rodapé
+## 1. O que ainda falta no código (pequenos polimentos opcionais)
 
-**Hoje:** o total parcial aparece pequeno no `GuideStepFooter`. O cliente adiciona peças e não vê o "projeto se formando".
+Não é bloqueador, mas vale entrar numa próxima onda:
 
-**Proposta:** painel lateral fixo (desktop ≥1280px) à direita de cada step de montagem (5–9), mostrando:
-- Miniaturas reais das peças adicionadas, empilhando com animação `slide-in-from-right` quando entram
-- Linha de total que sobe com micro-animação de contagem (ex: `react-countup`)
-- Indicador "frete otimizado · pedido único" quando há ≥2 itens
-- Botão "Ver orçamento completo" sempre visível
+- **Captura de nome no SketchLeadModal** e reuso no Headline da Etapa 09 (*"Pronto, [Nome]"*) — hoje o nome ainda não é puxado.
+- **Animação fly-to-cart com `layoutId`** — implementamos pulse + slide-in, mas o arco da miniatura voando para o painel ainda não.
+- **`react-countup`** no total do painel lateral (hoje muda direto, sem contagem animada).
+- **Cálculo real de economia vs. pedra natural** na Etapa 09 — hoje usa multiplicador fixo (~1.7x). Idealmente vira metafield por conjunto.
+- **Testes E2E** do fluxo completo (Playwright) — útil antes de divulgar para a rede de arquitetos.
 
-No mobile, vira uma **barra inferior sticky** (~64px) com avatar empilhado dos últimos 3 itens + total + chevron que abre um sheet com o resumo.
+---
 
-Efeito: cada clique tem **feedback visual imediato fora do card** — a pessoa *vê o projeto crescer*.
+## 2. O que fazer DENTRO do Shopify (catálogo)
 
-## 2. Feedback de adição precisa ser muito mais satisfatório
+Esta é a parte crítica. O `guideMap.ts` referencia **45 handles de conjunto** + complementos + itens autorais. Cada um precisa existir como produto real.
 
-**Hoje:** `toast.success` discreto no canto.
+### 2.1. Conjuntos (45 produtos)
 
-**Proposta:**
-- Animação "fly to cart": miniatura da peça faz um arco curto até o painel lateral (200ms, easing suave). Biblioteca: `framer-motion` com `layoutId`.
-- Pulso dourado no contador do painel quando o total muda
-- No botão do card: micro-transição "Adicionar" → checkmark verde → "Adicionado" (sem trocar layout)
-- Haptic `navigator.vibrate(10)` no mobile
-
-## 3. Etapa 05 (StepBase) está pesada — falta storytelling visual
-
-**Hoje:** galeria 1 foto grande + 3 miniaturas frias + lista "Indicado para".
-
-**Proposta:**
-- Hero único, full-width dentro do card, com **overlay editorial**: nome do conjunto em display grande sobre a imagem, eyebrow "Curadoria Western · Composição NN"
-- Trocar grade de miniaturas por **carrossel horizontal** com snap (mais cinematográfico, mostra ambientação)
-- "Indicado para" vira **chip-strip** colorida (`Lago 8m² · Marcante · Western+naturais`) em vez de bullets — confirma as escolhas com orgulho
-- "Peças incluídas" como **lista numerada com ícone de pedra** + tooltip de dimensão ao passar o mouse
-
-## 4. Acabamento merece prévia visual real
-
-**Hoje:** `FinishSelector` troca um label de texto.
-
-**Proposta:** ao trocar Quartzo→Arenito, a imagem hero faz **crossfade** para a foto correspondente do acabamento (mapping no metafield do produto, ou fallback para swatch sobreposto). Mesmo sem fotos por acabamento, mostre uma **swatch grande (96×96px)** com nome, descrição curta ("textura suave, tom areia"), e indicação de prazo se diferente.
-
-## 5. Etapa 07 (Upgrade) não está convencendo
-
-**Hoje:** card escuro bonito, mas o cliente não *vê* a diferença concreta.
-
-**Proposta:** **comparativo lado a lado**:
+Para cada combinação Tipo × Tamanho × Composição × Nível, criar um produto:
 
 ```
-┌─────────────────┬─────────────────┐
-│   BASE          │   UPGRADE       │
-│  [foto]         │  [foto +glow]   │
-│  6 peças        │  10 peças  +4   │
-│  R$ 8.400       │  R$ 13.200      │
-│                 │  +R$ 4.800      │
-│                 │  ✓ + cascata    │
-│                 │  ✓ + pedras     │
-│                 │  ✓ + iluminação │
-└─────────────────┴─────────────────┘
+Lago: 3 tamanhos × 2 composições × 3 níveis = 18 conjuntos
+Piscina: 3 tamanhos × 3 níveis = 9 conjuntos
+Jardim: 3 tamanhos × 2 jardins × 3 níveis = 18 conjuntos
 ```
 
-Frase de prova social fixa abaixo: *"73% dos arquitetos que pediram lago marcante escolheram esta composição"* (mesmo que mockup inicial).
+**Handle obrigatório:** exatamente como em `guideMap.ts` (ex.: `conjunto-lago-itacare-equilibrado`). Se um handle não bater, o Step 05 quebra.
 
-## 6. Microcopy precisa de **calor + autoridade**
+**Campos por produto:**
+- Title, Description (HTML editorial)
+- Pelo menos 4 imagens (1 hero 21:9 + 3 ambientações para o carrossel)
+- Variantes por **acabamento** (Quartzo, Arenito, Calcário, Basalto) — opção `Acabamento`
+- Preço base (= valor em `guideMap.preco`)
+- Tags: `conjunto`, `tipo:lago|piscina|jardim`, `nivel:essencial|equilibrada|completa`
 
-Trocar:
-- "Avançar sem complementos" → "Seguir só com o conjunto base"
-- "Pular esta etapa" → "Não preciso disso agora"
-- "Adicionar conjunto ao orçamento" → "Reservar este conjunto" (linguagem de exclusividade B2B)
-- "Concluir sem itens autorais" → "Finalizar meu projeto"
+### 2.2. Complementos e itens autorais
 
-E adicionar **assinatura humana** em cada etapa: pequena linha em itálico tipo *"Faisal recomenda combinar com 2–3 esferas para fechar a leitura."* Cria voz de curador.
+Já referenciados por handle:
+- `pedra-led`, `pedra-sonora`, `pisada`, `cascata-pequena`
+- `pedra-champanheira`, `pedra-torneira`, `pedra-sonora`
 
-## 7. Transições entre etapas — celebrar o progresso
+Garantir que existem com imagens, preço, descrição e estoque.
 
-**Hoje:** `animate-in fade-in duration-300` genérico.
+### 2.3. Coleções para o Upsell (Step Complementos)
 
-**Proposta:**
-- Ao avançar, o número da etapa atual no `GuideProgress` faz uma animação de "stamp" (escala 1 → 1.3 → 1) com flash dourado
-- Trilha de ouro que se preenche entre os pontos com `transition: width 600ms ease-out`
-- A cada 3 etapas concluídas, micro-momento: **"Composição 60% pronta · faltam 4 etapas"** com barra fina de progresso adicional
+O `upsellMap` aponta para handles de coleção:
+`pedras-pequenas`, `pedras-medias`, `cascatas`, `pedra-led`, `acessorios`, `fontes-para-jardim`, `pedras-de-borda`, `pisadas`.
 
-## 8. Step de protagonismo precisa de "consequência visual"
-
-A crítica original sobre Discreto/Marcante/Cenográfico continua válida. Reforço:
-- Ao **passar o mouse** sobre cada cartão, o exemplo visual do *próprio mood* (renderização ou foto) aparece como background do step inteiro com 15% de opacidade — a pessoa "experimenta" antes de clicar
-- Adicionar bullet "Ideal para clientes que..." abaixo de cada opção (perfil de cliente final, não auto-rótulo)
-
-## 9. Fechamento (Etapa 09) precisa ser um momento
-
-**Hoje:** resumo + 3 botões empilhados.
-
-**Proposta:**
-- Headline maior: *"Pronto, [Nome]. Seu projeto está montado."* (capturar nome no SketchLeadModal e reusar)
-- Animação de entrada: cada item do resumo aparece em sequência (stagger 80ms)
-- Card de **economia consolidada**: "vs. equivalente em pedra natural: economia de R$ X.XXX e 40 dias"
-- CTA primário **destacado em hero** (full-width, 60px de altura, texto grande): "Solicitar proposta com este orçamento"
-- CTA secundário menor abaixo: download da prancha
-- "Falar com consultor" como link discreto (não compete)
-- Confete sutil de partículas douradas no momento de chegada (uma vez)
-
-## 10. Pequenas fricções a remover
-
-- **Persistência:** salvar `cartItems + answers + step` em `localStorage` com TTL 7 dias. Se o cliente sair e voltar, retomar exatamente onde estava com banner *"Continue seu projeto de Lago Marcante de 8m² · iniciado há 2 dias"*.
-- **Loading dos produtos:** trocar `Loader2` spinner por **skeleton cards** com mesma forma dos cards reais (já temos shadcn skeleton).
-- **GuideProgress no mobile:** hoje só mostra "Etapa X de Y". Adicionar **trilha horizontal scrollável** com snap nos pontos, igual ao desktop mas compacta.
-- **Sticky CTA mobile:** botão "Avançar" do footer fica fixo no rodapé do viewport quando o usuário rola dentro do step (≥600px de conteúdo).
-- **Atalhos de teclado:** ← → para voltar/avançar entre etapas, Enter para confirmar opção destacada.
-- **Acessibilidade:** `aria-current="step"` no item ativo do progress, `aria-live="polite"` no painel de orçamento parcial.
+Criar/conferir cada coleção com produtos atribuídos.
 
 ---
 
-## Detalhes técnicos
+## 3. Migração para Metafields (a parte estratégica)
 
-- **framer-motion** para fly-to-cart, stagger e stamp
-- **react-countup** ou hook custom para animação de total (~1KB)
-- **localStorage**: `useGuideStore` com `persist` middleware do Zustand (já temos zustand)
-- Painel lateral: novo componente `GuideAssemblySummary.tsx` consumindo `useCartStore`
-- Skeletons: `<Skeleton className="aspect-square" />` no lugar dos spinners
-- Comparativo upgrade: refatorar `StepUpgrade.tsx` para grid 2 colunas com fetch do produto base + upgrade
+Hoje muito conteúdo editorial vive **hardcoded** em `guideMap.ts` e nos componentes. Para a Western editar sem mexer em código, migrar para metafields Shopify.
+
+### 3.1. Metafields por **produto-conjunto**
+
+Criar definições no Shopify Admin (Settings → Custom data → Products):
+
+| Namespace.key | Tipo | Uso na UI |
+|---|---|---|
+| `guide.subtitulo` | single_line | Subtítulo do conjunto (Step 05) |
+| `guide.pecas_incluidas` | json (lista de `{nome, qtd, dimensao}`) | Lista numerada com tooltip |
+| `guide.indicado_para` | json (lista de strings) | Chip-strip "Lago · 8m² · Marcante" |
+| `guide.assinatura_faisal` | multi_line | Linha em itálico "Faisal recomenda..." |
+| `guide.hero_image` | file_reference | Imagem hero 21:9 do Step 05 |
+| `guide.economia_pedra_natural` | money | Valor real de economia (substitui multiplicador 1.7x) |
+| `guide.prazo_dias` | number_integer | Prazo de produção exibido no fechamento |
+| `guide.sketch_pdf` | file_reference | PDF do sketch (lead magnet) |
+| `guide.sketch_skp` | file_reference | Arquivo SketchUp |
+
+### 3.2. Metafields por **variante** (acabamento)
+
+| Namespace.key | Tipo | Uso |
+|---|---|---|
+| `acabamento.cor_hsl` | single_line (`"34 28% 62%"`) | Tinta no hero do Step 05 (substitui `tintFor()` hardcoded) |
+| `acabamento.descricao_curta` | single_line | "textura suave, tom areia" |
+| `acabamento.imagem_swatch` | file_reference | Swatch 96×96 |
+
+### 3.3. Metafields por **coleção** (Upsell)
+
+| Namespace.key | Tipo | Uso |
+|---|---|---|
+| `upsell.eyebrow` | single_line | Texto curto acima do título |
+| `upsell.imagem_capa` | file_reference | Hero da seção no Step 06 |
+
+### 3.4. Refactor no código (depois que os metafields estiverem populados)
+
+- Atualizar `PRODUCT_FIELDS` em `src/lib/shopify/queries.ts` para puxar os novos metafields.
+- Migrar `tintFor()` (hoje em `StepBase.tsx`) para ler de `variant.acabamento.cor_hsl`.
+- Migrar `sketchAssetsFor()` em `guideMap.ts` para ler `guide.sketch_pdf/skp` do produto.
+- Migrar economia da Etapa 09 para ler `guide.economia_pedra_natural` por conjunto.
+- Migrar `nivelMeta` (descrições, faixa de preço, peças) — opcional, pode ficar no código já que é padrão por nível.
 
 ---
 
-## Sugestão de execução
+## 4. Ordem recomendada de execução
 
-Em vez de fazer tudo de uma vez, dividir em **3 ondas**:
+1. **Você (Western no Shopify):** criar os 45 produtos-conjunto com handles exatos + imagens + variantes de acabamento.
+2. **Você:** criar/revisar coleções do upsell e produtos de complemento.
+3. **Você:** definir os metafields no Shopify Admin (sem precisar populá-los todos de imediato).
+4. **Eu (Lovable):** atualizar a query GraphQL para incluir os metafields novos.
+5. **Eu:** refatorar componentes (`StepBase`, `StepFechamento`, `sketchAssetsFor`) para consumir metafields com fallback nos valores atuais — assim nada quebra durante a migração gradual.
+6. **Você:** popular metafields produto a produto, no seu ritmo. A UI vai trocando automaticamente conforme cada produto recebe seus dados.
 
-**Onda A — Sensação de progresso (impacto alto, esforço médio):**
-- Painel lateral de orçamento vivo (1)
-- Fly-to-cart + feedback satisfatório (2)
-- Persistência localStorage (10)
-- Microcopy revisado (6)
+---
 
-**Onda B — Desejo visual (impacto alto, esforço alto):**
-- Hero editorial em StepBase (3)
-- Comparativo lado a lado no Upgrade (5)
-- Prévia de acabamento (4)
-- Fechamento como momento (9)
+## 5. Resposta direta às suas perguntas
 
-**Onda C — Polimento (impacto médio, esforço baixo):**
-- Transições/stamp no progress (7)
-- Hover-preview no protagonismo (8)
-- Skeletons, atalhos, sticky CTA mobile (10)
+- **Finalizamos 100% do guia?** O **frontend** sim, no nível de UX. Falta o **catálogo real** e a **camada de conteúdo editável** (metafields) para virar produção.
+- **O que fazer no Shopify?** Criar os 45 conjuntos com os handles do `guideMap.ts`, complementos, coleções de upsell e definir os metafields da seção 3.
+- **Migração para metafields?** Faço em duas etapas: primeiro atualizo a query e os componentes para *ler* metafields com fallback (não quebra nada), depois vocês populam no Shopify no ritmo de vocês.
 
-Posso começar pela Onda A — é onde o cliente *sente* a diferença mais rápido. Quer que eu rode?
+Posso já preparar a **lista CSV dos 45 handles + nomes + preços** para vocês importarem no Shopify de uma vez, e na sequência fazer o refactor da query para metafields. Quer que eu siga por aí?
