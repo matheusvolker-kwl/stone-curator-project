@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { BUSINESS } from "@/config/business";
 
 export default function Contact() {
@@ -30,11 +31,14 @@ export default function Contact() {
             </div>
           ))}
           <div className="border-t border-western-stone-warm/20 pt-8 sm:col-span-2">
-            <p className="text-eyebrow mb-3">Ateliê</p>
-            <p className="text-western-green-deep text-lg leading-relaxed">
+            <p className="text-eyebrow mb-3">Conheça o ateliê</p>
+            <p className="text-western-green-deep text-lg leading-relaxed mb-6">
               {BUSINESS.enderecoAtelieCompleto} · Brasil <br />
               {BUSINESS.horarioAtelie} · Retirada gratuita mediante agendamento.
             </p>
+            <Link to="/visitar" className="btn-outline-forest">
+              Agendar visita
+            </Link>
           </div>
         </div>
       </div>
