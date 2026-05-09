@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Loader2, Plus, Sparkles, Check } from "lucide-react";
+import { Plus, Sparkles, Check } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { fetchProductsByHandles } from "@/lib/shopify/queries";
 import { cdnImg, formatBRL } from "@/lib/shopify/client";
@@ -59,8 +60,18 @@ export default function StepCasa({ onBack, onNext }: Props) {
       </header>
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-5 w-5 animate-spin text-western-stone-warm" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="border border-western-stone-warm/15 bg-western-cream/40">
+              <Skeleton className="aspect-[4/5] rounded-none" />
+              <div className="p-5 space-y-3">
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-3 w-1/3" />
+                <Skeleton className="h-10 w-full mt-3" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : !produtos || produtos.length === 0 ? (
         <p className="text-sm text-western-stone-warm py-8">Sem itens disponíveis no momento.</p>
