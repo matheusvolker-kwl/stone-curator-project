@@ -7,7 +7,7 @@ import ColecoesGrid from "@/components/home/ColecoesGrid";
 import ProjetosSection from "@/components/home/ProjetosSection";
 import ArtistaSection from "@/components/home/ArtistaSection";
 import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
-import { ArrowRight, ShieldCheck, Truck, Box } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import heroCascata from "@/assets/hero-cascata.webp";
 import heroCascataSm from "@/assets/hero-cascata-sm.webp";
 import { BUSINESS } from "@/config/business";
