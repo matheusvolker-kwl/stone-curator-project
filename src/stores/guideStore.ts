@@ -100,6 +100,7 @@ export const useGuideStore = create<GuideState>()(
           nivel: undefined,
           composicao: undefined,
           jardim: undefined,
+          nome: undefined,
           savedAt: undefined,
         }),
     }),
