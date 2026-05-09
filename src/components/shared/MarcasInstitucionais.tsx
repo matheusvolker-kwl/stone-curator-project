@@ -51,8 +51,8 @@ export default function MarcasInstitucionais({
         </>
       )}
 
-      <div className="border-y border-western-stone-warm/20 bg-western-cream">
-        <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 divide-x divide-y md:divide-y-0 divide-western-stone-warm/15 sm:[&>li:nth-child(-n+3)]:md:border-t-0">
+      <div className="border-y border-western-stone-warm/20">
+        <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-px bg-western-stone-warm/15">
           {PARCEIROS.map((p) => (
             <li key={p.nome} className="bg-western-cream">
               <a
