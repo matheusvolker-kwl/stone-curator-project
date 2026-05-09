@@ -67,11 +67,9 @@ export default function Footer() {
             <h4 className="text-eyebrow mb-5">Para parceiros</h4>
             <ul className="space-y-2.5 text-sm">
               <li><Link to="/guia-de-compra" className="text-western-cream hover:text-western-gold-soft transition-colors">Como comprar</Link></li>
-              {/* TODO Sprint 4 — criar páginas de Política comercial, Política de entrega e Trocas e avarias antes de reativar
               <li><Link to="/politica-comercial" className="text-western-cream hover:text-western-gold-soft transition-colors">Política comercial</Link></li>
               <li><Link to="/politica-de-entrega" className="text-western-cream hover:text-western-gold-soft transition-colors">Política de entrega</Link></li>
               <li><Link to="/trocas-e-avarias" className="text-western-cream hover:text-western-gold-soft transition-colors">Trocas e avarias</Link></li>
-              */}
               <li><Link to="/parceiro/cadastro" className="text-western-cream hover:text-western-gold-soft transition-colors">Solicitar acesso B2B</Link></li>
             </ul>
           </div>
@@ -81,12 +79,11 @@ export default function Footer() {
             <h4 className="text-eyebrow mb-5">Western</h4>
             <ul className="space-y-2.5 text-sm">
               <li><Link to="/sobre" className="text-western-cream hover:text-western-gold-soft transition-colors">Sobre</Link></li>
+              <li><Link to="/por-que-western" className="text-western-cream hover:text-western-gold-soft transition-colors">Por que Western</Link></li>
+              <li><Link to="/aplicacoes-comerciais" className="text-western-cream hover:text-western-gold-soft transition-colors">Aplicações comerciais</Link></li>
               <li><Link to="/parceiros-arquitetos" className="text-western-cream hover:text-western-gold-soft transition-colors">Arquitetos parceiros</Link></li>
               <li><Link to="/contato" className="text-western-cream hover:text-western-gold-soft transition-colors">Contato</Link></li>
-              {/* TODO Sprint 4 — criar páginas FAQ e Guias técnicos antes de reativar
-              <li><Link to="/faq" className="text-western-cream hover:text-western-gold-soft transition-colors">FAQ</Link></li>
-              <li><Link to="/guias-tecnicos" className="text-western-cream hover:text-western-gold-soft transition-colors">Guias técnicos</Link></li>
-              */}
+              <li><Link to="/privacidade" className="text-western-cream hover:text-western-gold-soft transition-colors">Privacidade</Link></li>
             </ul>
           </div>
 
