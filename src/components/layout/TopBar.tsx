@@ -1,7 +1,8 @@
 import { ShieldCheck, Truck, CreditCard, Box } from "lucide-react";
+import { BUSINESS } from "@/config/business";
 
 const items = [
-  { Icon: ShieldCheck, text: "Pedido mínimo R$ 2.000 — exclusivo B2B" },
+  { Icon: ShieldCheck, text: `Pedido mínimo ${BUSINESS.pedidoMinimoLabel} — exclusivo B2B` },
   { Icon: Truck, text: "Produção em 15 dias úteis após confirmação" },
   { Icon: CreditCard, text: "Pagamento 100% antecipado · PIX, TED, boleto" },
   { Icon: Box, text: "Modelos 3D em SketchUp para todos os produtos" },
