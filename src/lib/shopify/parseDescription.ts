@@ -111,3 +111,19 @@ export function groupDimensions(ficha: Array<{ label: string; value: string }>) 
   }
   return null;
 }
+
+// Extrai dimensões individuais (Comprimento / Largura / Altura) já sem unidade.
+// Retorna null se nenhuma das três existir.
+export function extractDimensions(
+  ficha: Array<{ label: string; value: string }>
+): { c: string; l: string; a: string } | null {
+  const find = (re: RegExp) =>
+    ficha.find((f) => re.test(f.label.toLowerCase()))?.value;
+  const stripUnit = (v?: string) =>
+    (v ?? "").replace(/cm/i, "").trim();
+  const c = stripUnit(find(/comprim/));
+  const l = stripUnit(find(/largura/));
+  const a = stripUnit(find(/altura/));
+  if (!c && !l && !a) return null;
+  return { c, l, a };
+}
