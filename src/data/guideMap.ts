@@ -308,6 +308,120 @@ export type GuideAnswers = {
   nivel?: Nivel;
 };
 
+// === Mapeamento área (m²) → tamanho id ===
+// Ranges máximos para o slider, por tipo
+export const areaRangePorTipo: Record<Tipo, { min: number; max: number; default: number; snap: number[] }> = {
+  lago: { min: 1, max: 30, default: 6, snap: [1, 4, 10, 20] },
+  piscina: { min: 4, max: 80, default: 20, snap: [12, 32, 60] },
+  jardim: { min: 1, max: 30, default: 5, snap: [2, 10, 20] },
+};
+
+export function m2ToTamanhoId(tipo: Tipo, m2: number): string | "consultor" {
+  if (tipo === "lago") {
+    if (m2 <= 4) return "ate-4";
+    if (m2 <= 10) return "4-a-10";
+    if (m2 <= 20) return "10-a-20";
+    return "consultor";
+  }
+  if (tipo === "piscina") {
+    if (m2 <= 12) return "ate-12";
+    if (m2 <= 32) return "12-a-32";
+    if (m2 <= 60) return "32-a-60";
+    return "consultor";
+  }
+  // jardim
+  if (m2 <= 2) return "ate-2";
+  if (m2 <= 10) return "2-a-10";
+  if (m2 <= 20) return "10-a-20";
+  return "consultor";
+}
+
+// Faixa de preço estimada por (tipo, m²) — calculada do guideMap
+export function precoEstimadoPorArea(tipo: Tipo, m2: number): { min: number; max: number } | null {
+  const tamanhoId = m2ToTamanhoId(tipo, m2);
+  if (tamanhoId === "consultor") return null;
+  const sizeNode = (guideMap[tipo] as Record<string, unknown>)[tamanhoId];
+  if (!sizeNode || sizeNode === "consultor") return null;
+
+  const precos: number[] = [];
+  const collect = (node: unknown) => {
+    if (node && typeof node === "object") {
+      Object.values(node as Record<string, unknown>).forEach((v) => {
+        if (v && typeof v === "object" && "preco" in (v as object)) {
+          precos.push((v as ConjuntoLeaf).preco);
+        } else if (v && typeof v === "object") {
+          collect(v);
+        }
+      });
+    }
+  };
+  collect(sizeNode);
+  if (precos.length === 0) return null;
+  return { min: Math.min(...precos), max: Math.max(...precos) };
+}
+
+// === Prova social nominal por tipo (Etapa Protagonismo) ===
+export const provaSocialPorTipo: Record<Tipo, { autor: string; frase: string }> = {
+  lago: {
+    autor: "Eduardo Faisal",
+    frase: "especifica a composição marcante em 4 de 5 projetos de lago.",
+  },
+  piscina: {
+    autor: "Hayasaki Arquitetura",
+    frase: "escolhe a borda imersiva quando o projeto pede protagonismo.",
+  },
+  jardim: {
+    autor: "Luidi Paisagismo",
+    frase: "especifica a composição equilibrada para jardins residenciais.",
+  },
+};
+
+// === Upsell em 3 camadas — handles complementares por tipo+nível ===
+// Camada A: complementos (peças avulsas que somam ao conjunto)
+export const complementosPorTipo: Record<Tipo, string[]> = {
+  lago: ["pedra-led", "pedra-sonora", "pisada"],
+  piscina: ["pedra-led", "cascata-pequena", "pedra-sonora"],
+  jardim: ["pedra-sonora", "pedra-champanheira", "pedra-torneira"],
+};
+
+// Camada C: itens autorais da casa (sempre os mesmos, plantam segundo pedido)
+export const itensCasaHandles: string[] = [
+  "pedra-champanheira",
+  "pedra-torneira",
+  "pedra-sonora",
+];
+
+// === Camada B: upgrade — handle do conjunto imediatamente acima ===
+const upgradePath: Record<Nivel, Nivel | null> = {
+  essencial: "equilibrada",
+  equilibrada: "completa",
+  completa: null,
+};
+
+export function resolveUpgrade(a: GuideAnswers): ConjuntoLeaf | null {
+  if (!a.nivel) return null;
+  const nextNivel = upgradePath[a.nivel];
+  if (!nextNivel) return null;
+  const result = resolveConjunto({ ...a, nivel: nextNivel });
+  if (!result || result === "consultor") return null;
+  return result;
+}
+
+// === Lead-magnet: assets do sketch ===
+// Em produção viria de metafield Shopify. Por ora, fallback genérico.
+export interface SketchAssets {
+  pdfUrl: string;
+  skpUrl: string;
+}
+export function sketchAssetsFor(handle: string): SketchAssets {
+  // Quando a Western subir os arquivos no Shopify (metafield guide.sketch_pdf/skp),
+  // trocamos esta função para ler do produto. Por ora retornamos URLs canônicas.
+  return {
+    pdfUrl: `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/cdn/shop/files/sketches/${handle}.pdf`,
+    skpUrl: `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/cdn/shop/files/sketches/${handle}.skp`,
+  };
+}
+
 export function resolveConjunto(a: GuideAnswers): ConjuntoLeaf | Consultor | null {
   if (!a.tipo || !a.tamanho || !a.nivel) return null;
   const sizeNode = (guideMap[a.tipo] as Record<string, unknown>)[a.tamanho];
