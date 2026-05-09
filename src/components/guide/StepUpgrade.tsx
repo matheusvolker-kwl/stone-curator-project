@@ -237,26 +237,38 @@ export default function StepUpgrade({ answers, precoBase, onBack, onNext }: Prop
                   </span>
                 )}
               </div>
-              <div className="mt-4 flex flex-col sm:flex-row gap-2">
+              <div className="mt-4 flex flex-col gap-2">
                 <button
                   type="button"
-                  onClick={handleSwap}
+                  onClick={baseInCart ? swapBaseForUpgrade : addUpgradeOnly}
                   disabled={cartLoading || !upProduct}
                   className="flex-1 inline-flex items-center justify-center gap-2 h-11 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors disabled:opacity-60"
                 >
                   {cartLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : inCart ? (
-                    <><Check className="h-4 w-4" /> Adicionado</>
+                    <><Check className="h-4 w-4" /> Upgrade no orçamento</>
+                  ) : baseInCart ? (
+                    <><RefreshCw className="h-4 w-4" /> Trocar base pelo upgrade</>
                   ) : (
                     <><ShoppingBag className="h-4 w-4" /> Reservar upgrade</>
                   )}
                 </button>
+                {baseInCart && !inCart && (
+                  <button
+                    type="button"
+                    onClick={addUpgradeOnly}
+                    disabled={cartLoading || !upProduct}
+                    className="inline-flex items-center justify-center gap-2 h-10 border border-western-cream/30 text-western-cream/80 hover:border-western-gold hover:text-western-gold font-mono text-[10px] uppercase tracking-[0.2em] transition-colors disabled:opacity-60"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> Adicionar upgrade sem remover base
+                  </button>
+                )}
                 <Link
                   to={`/produtos/${upgrade.handle}`}
-                  className="inline-flex items-center justify-center gap-2 h-11 px-3 border border-western-cream/30 text-western-cream hover:border-western-gold hover:text-western-gold font-mono text-[10px] uppercase tracking-[0.22em] transition-colors"
+                  className="inline-flex items-center justify-center gap-2 h-9 text-western-cream/60 hover:text-western-gold font-mono text-[10px] uppercase tracking-[0.22em] transition-colors"
                 >
-                  Detalhes <ArrowRight className="h-3 w-3" />
+                  Ver detalhes <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
             </div>
