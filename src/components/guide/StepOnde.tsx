@@ -50,6 +50,9 @@ function MoodCard({ title, desc, magnitude, ctaLabel, illustration, onClick }: C
 export default function StepOnde() {
   const setTipo = useGuideStore((s) => s.setTipo);
   const reset = useGuideStore((s) => s.reset);
+  const { isApproved } = useAuth();
+
+  const mag = (full: string, fallback: string) => (isApproved ? full : fallback);
 
   return (
     <StepShell
@@ -62,21 +65,21 @@ export default function StepOnde() {
         <MoodCard
           title="Lago"
           desc="Espelhos d'água, lagos com peixes, jardins aquáticos."
-          magnitude="Geralmente 4–12 peças · R$ 2–27 mil"
+          magnitude={mag("Geralmente 4–12 peças · R$ 2–27 mil", "Geralmente 4–12 peças")}
           illustration={<MoodLago />}
           onClick={() => setTipo("lago")}
         />
         <MoodCard
           title="Piscina"
           desc="Borda, cascata e ambientação ao redor da piscina."
-          magnitude="Geralmente 5–14 peças · R$ 3–28 mil"
+          magnitude={mag("Geralmente 5–14 peças · R$ 3–28 mil", "Geralmente 5–14 peças")}
           illustration={<MoodPiscina />}
           onClick={() => setTipo("piscina")}
         />
         <MoodCard
           title="Jardim"
           desc="Canteiros, paisagismo, fontes e composições secas."
-          magnitude="Geralmente 3–10 peças · R$ 2–24 mil"
+          magnitude={mag("Geralmente 3–10 peças · R$ 2–24 mil", "Geralmente 3–10 peças")}
           illustration={<MoodJardim />}
           onClick={() => setTipo("jardim")}
         />
