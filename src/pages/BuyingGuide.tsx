@@ -130,6 +130,26 @@ export default function BuyingGuide() {
 
   const baseFallback: GuideStep = tipo === "piscina" ? "protagonismo" : "composicao";
 
+  // Atalhos de teclado: ←/→ para voltar/avançar nas etapas de montagem
+  useEffect(() => {
+    if (!ASSEMBLY_STEPS.includes(step as GuideStep)) return;
+    const handler = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        handleNext();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        handlePrevAssembly(baseFallback);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [step, skips, baseFallback]);
+
+
   const isAssembly = ASSEMBLY_STEPS.includes(step as GuideStep);
   const showResume =
     step === "intro" && !!savedAt && (!!tipo || !!areaM2 || !!nivel);
@@ -137,7 +157,7 @@ export default function BuyingGuide() {
 
   return (
     <div className="surface-ivory min-h-screen">
-      <div className={`container-western py-12 md:py-20 ${isAssembly ? "max-w-7xl pb-32 xl:pb-20" : "max-w-5xl"}`}>
+      <div className={`container-western py-12 md:py-20 ${isAssembly ? "max-w-7xl pb-44 xl:pb-20" : "max-w-5xl"}`}>
         {step === "intro" ? (
           <Intro
             onStart={() => { if (showResume) reset(); start(); }}
