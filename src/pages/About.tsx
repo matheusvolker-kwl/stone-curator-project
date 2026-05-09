@@ -325,56 +325,57 @@ export default function About() {
 
           {(() => {
             const obras = [
-              { src: obraCascataTropical, alt: "Cascata em pedra Western em piscina tropical", tipologia: "Cascata Tropical", local: "Residencial · Pedra moldada" },
-              { src: obraCascataMirante, alt: "Cascata Western escalonada com vista de serra", tipologia: "Cascata Mirante", local: "Vista de serra · SC" },
-              { src: obraPiscinaPraia, alt: "Piscina-praia com pedra sonora aplicada", tipologia: "Piscina-Praia", local: "Pedra sonora aplicada" },
-              { src: obraDetalheMatriz, alt: "Detalhe de matriz Western com acabamento natural", tipologia: "Detalhe de Matriz", local: "Acabamento autoral" },
-              { src: obraBordaPedra, alt: "Borda de pedra integrada à piscina", tipologia: "Borda Integrada", local: "Pool · Acabamento natural" },
-              { src: obraCascataEscalonada, alt: "Cascata escalonada em projeto residencial", tipologia: "Cascata Escalonada", local: "Composição autoral" },
+              { src: obraCascataTropical, alt: "Cascata em pedra Western em piscina tropical", tipologia: "Cascata Tropical", local: "Residencial · Pedra moldada", aspect: "aspect-[4/5]" },
+              { src: obraCascataMirante, alt: "Cascata Western escalonada com vista de serra", tipologia: "Cascata Mirante", local: "Vista de serra · SC", aspect: "aspect-[3/4]" },
+              { src: obraPiscinaPraia, alt: "Piscina-praia com pedra sonora aplicada", tipologia: "Piscina-Praia", local: "Pedra sonora aplicada", aspect: "aspect-[3/4]" },
+              { src: obraCascataEscalonada, alt: "Cascata escalonada em projeto residencial", tipologia: "Cascata Escalonada", local: "Composição autoral", aspect: "aspect-[3/4]" },
+              { src: obraBordaPedra, alt: "Borda de pedra integrada à piscina", tipologia: "Borda Integrada", local: "Pool · Acabamento natural", aspect: "aspect-[4/5]" },
+              { src: obraDetalheMatriz, alt: "Detalhe de matriz Western com acabamento natural", tipologia: "Detalhe de Matriz", local: "Acabamento autoral", aspect: "aspect-[3/4]" },
             ];
 
-            const Tile = ({ i, aspect, className = "" }: { i: number; aspect: string; className?: string }) => (
-              <Reveal variant="fade-up" delay={i * 70} duration={750} className={className}>
-                <figure className={`relative overflow-hidden group h-full ${aspect}`}>
-                  <img
-                    src={obras[i].src}
-                    alt={obras[i].alt}
-                    loading="lazy"
-                    decoding="async"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]"
-                  />
-                  <figcaption
-                    className="absolute inset-x-0 bottom-0 p-4 md:p-5 pt-12 md:pt-16 transition-opacity duration-500 md:opacity-0 md:group-hover:opacity-100"
-                    style={{
-                      background:
-                        "linear-gradient(to top, hsl(var(--western-green-deep) / 0.92) 0%, hsl(var(--western-green-deep) / 0.55) 55%, transparent 100%)",
-                    }}
-                  >
-                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold-soft mb-1">
-                      {obras[i].tipologia}
-                    </p>
-                    <p className="text-western-cream text-xs md:text-sm">{obras[i].local}</p>
-                  </figcaption>
-                </figure>
-              </Reveal>
-            );
+            const placements = [
+              "col-span-6 md:col-span-5",
+              "col-span-6 md:col-span-4 md:mt-20",
+              "col-span-6 md:col-span-3",
+              "col-span-6 md:col-span-4 md:col-start-2 md:-mt-8",
+              "col-span-6 md:col-span-5",
+              "col-span-12 md:col-span-3 md:mt-16",
+            ];
 
             return (
-              <div className="space-y-1.5 md:space-y-2">
-                {/* Linha 1: HERO vertical (8) + coluna direita (4) com 2 tiles empilhados */}
-                <div className="grid grid-cols-12 gap-1.5 md:gap-2">
-                  <Tile i={0} aspect="aspect-[4/5]" className="col-span-12 md:col-span-8 md:row-span-2" />
-                  <div className="col-span-12 md:col-span-4 grid grid-cols-2 md:grid-cols-1 gap-1.5 md:gap-2">
-                    <Tile i={1} aspect="aspect-[4/5] md:aspect-[5/4]" />
-                    <Tile i={2} aspect="aspect-square" />
-                  </div>
-                </div>
-                {/* Linha 2: vertical (4) + duas panorâmicas empilhadas (8) */}
-                <div className="grid grid-cols-12 gap-1.5 md:gap-2">
-                  <Tile i={3} aspect="aspect-[3/4]" className="col-span-6 md:col-span-4 md:row-span-2" />
-                  <Tile i={4} aspect="aspect-[16/9]" className="col-span-6 md:col-span-8" />
-                  <Tile i={5} aspect="aspect-[16/9]" className="col-span-12 md:col-span-8 md:col-start-5" />
-                </div>
+              <div className="grid grid-cols-12 gap-x-4 md:gap-x-6 gap-y-6 md:gap-y-10">
+                {obras.map((o, i) => (
+                  <Reveal
+                    key={i}
+                    variant="fade-up"
+                    delay={(i % 3) * 90}
+                    duration={750}
+                    className={placements[i]}
+                  >
+                    <figure className="relative overflow-hidden group">
+                      <div className={`relative ${o.aspect} overflow-hidden`}>
+                        <img
+                          src={o.src}
+                          alt={o.alt}
+                          loading="lazy"
+                          decoding="async"
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04]"
+                        />
+                      </div>
+                      <figcaption className="pt-3 flex items-baseline justify-between gap-3 border-t border-western-stone-warm/20">
+                        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep">
+                          <span className="text-western-gold/70 mr-2">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                          {o.tipologia}
+                        </p>
+                        <p className="text-[10px] text-western-stone-warm font-mono uppercase tracking-[0.16em] text-right hidden sm:block">
+                          {o.local}
+                        </p>
+                      </figcaption>
+                    </figure>
+                  </Reveal>
+                ))}
               </div>
             );
           })()}
