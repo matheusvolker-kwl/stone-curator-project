@@ -1,13 +1,16 @@
 import { Link } from "react-router-dom";
+import logoCobasi from "@/assets/parceiros/cobasi.png";
+import logoUnique from "@/assets/parceiros/unique-garden.png";
+import logoCristal from "@/assets/parceiros/cristal-pool.png";
+import logoBiopet from "@/assets/parceiros/biopet.png";
 
-// TODO substituir os wordmarks tipográficos por logos oficiais (SVG/PNG)
-// das marcas institucionais quando os arquivos chegarem.
+// TODO Genesis: arquivo recebido veio em branco — exibido como wordmark até receber logo válido.
 const PARCEIROS_INSTITUCIONAIS = [
-  { nome: "Cobasi", site: "https://www.cobasi.com.br" },
-  { nome: "Unique Garden", site: "https://www.uniquegarden.com.br" },
-  { nome: "Cristal Pool", site: "https://www.cristalpool.com.br" },
-  { nome: "Genesis Ecossistemas", site: "https://genesisecossistemas.com" },
-  { nome: "Biopet Lagos", site: "https://bplagos.com.br" },
+  { nome: "Cobasi", site: "https://www.cobasi.com.br", logo: logoCobasi },
+  { nome: "Unique Garden", site: "https://www.uniquegarden.com.br", logo: logoUnique },
+  { nome: "Cristal Pool", site: "https://www.cristalpool.com.br", logo: logoCristal },
+  { nome: "Genesis Ecossistemas", site: "https://genesisecossistemas.com", logo: null },
+  { nome: "Biopet Lagos", site: "https://bplagos.com.br", logo: logoBiopet },
 ];
 
 export default function About() {
@@ -62,12 +65,21 @@ export default function About() {
                 href={p.site}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-western-cream/60 aspect-[3/2] flex items-center justify-center px-4 py-6 group hover:bg-western-cream transition-colors"
+                className="bg-western-cream/60 aspect-[3/2] flex items-center justify-center px-6 py-6 group hover:bg-western-cream transition-colors"
                 aria-label={p.nome}
               >
-                <span className="font-display text-lg md:text-xl text-western-green-deep text-center leading-tight group-hover:text-western-gold transition-colors">
-                  {p.nome}
-                </span>
+                {p.logo ? (
+                  <img
+                    src={p.logo}
+                    alt={p.nome}
+                    className="max-h-14 md:max-h-16 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity"
+                    loading="lazy"
+                  />
+                ) : (
+                  <span className="font-display text-lg md:text-xl text-western-green-deep text-center leading-tight group-hover:text-western-gold transition-colors">
+                    {p.nome}
+                  </span>
+                )}
               </a>
             ))}
           </div>

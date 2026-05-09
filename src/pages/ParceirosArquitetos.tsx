@@ -1,39 +1,36 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-
-// TODO substituir os monogramas tipográficos por retratos profissionais
-// quando a Western enviar as fotos autorizadas dos arquitetos.
+import faisalFoto from "@/assets/arquitetos/marcelo-faisal.png";
+import hayasakiFoto from "@/assets/arquitetos/fabiano-hayasaki.jpeg";
+import luidiFoto from "@/assets/arquitetos/ronaldo-luidi.webp";
 
 interface Arquiteto {
   nome: string;
-  iniciais: string;
   cidade: string;
+  foto: string;
   paragrafo: string;
   citacao?: string; // TODO citação validada pelo arquiteto / Western
 }
 
-// Observação: o briefing original cita "Eduardo Faisal", mas a referência pública
-// e notória do paisagismo brasileiro é Marcelo Faisal. Mantemos o nome correto
-// e aguardamos confirmação da Western caso seja realmente outro profissional.
 const ARQUITETOS: Arquiteto[] = [
   {
     nome: "Marcelo Faisal",
-    iniciais: "MF",
     cidade: "São Paulo · SP",
+    foto: faisalFoto,
     paragrafo:
       "Arquiteto e paisagista de referência nacional. Especifica Western em projetos residenciais de alto padrão há mais de uma década, com presença frequente em revistas e premiações. A combinação de leveza logística e fidelidade estética da pedra é central no método dele de compor jardins contemporâneos.",
   },
   {
     nome: "Fabiano Hayasaki",
-    iniciais: "FH",
     cidade: "São José do Rio Preto · SP",
+    foto: hayasakiFoto,
     paragrafo:
       "Arquiteto premiado, conhecido pela integração de elementos minerais e vegetais em residências de luxo. Western é parte recorrente do repertório dele, especialmente em piscinas e cascatas onde o peso e a logística da pedra natural inviabilizariam o projeto.",
   },
   {
     nome: "Ronaldo Luidi",
-    iniciais: "RL",
     cidade: "São Paulo · SP",
+    foto: luidiFoto,
     paragrafo:
       "Sócio do instituto Paisagística e referência no ensino de SketchUp aplicado ao paisagismo. Trabalha com Western pela previsibilidade da composição em 3D e pela qualidade do acabamento manual — a peça que vai ao canteiro é a peça que foi especificada.",
   },
@@ -59,19 +56,18 @@ export default function ParceirosArquitetos() {
           {ARQUITETOS.map((a, i) => (
             <article
               key={a.nome}
-              className={`grid md:grid-cols-12 gap-8 md:gap-14 items-start ${
+              className={`grid md:grid-cols-12 gap-8 md:gap-14 items-center ${
                 i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""
               }`}
             >
-              {/* Monograma — placeholder até receber foto */}
               <div className="md:col-span-5">
-                <div className="aspect-[4/5] surface-forest border border-western-gold/20 flex flex-col items-center justify-center">
-                  <span className="font-display text-7xl md:text-8xl text-western-gold-soft tracking-wide">
-                    {a.iniciais}
-                  </span>
-                  <span className="mt-6 font-mono text-[10px] uppercase tracking-[0.25em] text-western-cream-muted">
-                    Retrato em breve
-                  </span>
+                <div className="aspect-[4/5] overflow-hidden border border-western-gold/20 bg-western-green-deep">
+                  <img
+                    src={a.foto}
+                    alt={`Retrato de ${a.nome}`}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
                 </div>
               </div>
 
