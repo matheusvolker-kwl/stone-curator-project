@@ -53,15 +53,9 @@ export default function Index() {
         <div className="absolute inset-0 flex items-center">
           <div className="container-western w-full">
             <div className="max-w-xl text-western-cream animate-fade-in-up">
-              <p className="text-eyebrow text-western-gold-soft mb-5">
-                Showroom B2B · Pedras decorativas
-              </p>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl leading-[1.05] mb-5">
-                Pedras decorativas para projetos profissionais.
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl leading-[1.05] mb-10">
+                Pedras artesanais para projetos profissionais.
               </h1>
-              <p className="text-base md:text-lg text-western-cream-muted leading-relaxed max-w-md mb-8">
-                Catálogo completo com 200 SKUs · 50 modelos · 4 acabamentos minerais. Produção sob demanda em 15 dias úteis.
-              </p>
               <div className="flex flex-wrap items-center gap-3">
                 <Link
                   to="/linhas"
@@ -76,25 +70,6 @@ export default function Index() {
                   Seja parceiro
                 </Link>
               </div>
-              <Link
-                to="/pedir-amostras"
-                className="inline-flex items-center gap-2 mt-5 link-underline font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold-soft"
-              >
-                Receba o kit gratuito dos 4 acabamentos →
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Cápsula de credenciais */}
-        <div className="absolute bottom-5 left-0 right-0 px-5 md:px-0">
-          <div className="container-western">
-            <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 bg-western-green-deep/70 backdrop-blur-sm border border-western-gold/20 text-western-cream-muted text-[11px] font-mono uppercase tracking-[0.18em]">
-              <span className="text-western-gold-soft">Atendemos</span>
-              <span>arquitetos</span><span>·</span>
-              <span>paisagistas</span><span>·</span>
-              <span>construtoras</span><span>·</span>
-              <span>garden centers</span>
             </div>
           </div>
         </div>

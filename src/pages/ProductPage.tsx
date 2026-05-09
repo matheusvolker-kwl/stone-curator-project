@@ -305,16 +305,22 @@ export default function ProductPage() {
                     )}`;
                 return (
                   <>
-                    <div className="flex items-baseline justify-between mb-7 gap-4 flex-wrap">
-                      <span className="text-eyebrow">Condição parceiro</span>
-                      <span
-                        className={`font-display text-western-green-deep ${
-                          variant ? "text-3xl" : "text-xl text-western-stone-warm"
-                        }`}
-                      >
-                        {priceDisplay}
-                      </span>
-                    </div>
+                    {isApproved ? (
+                      <div className="flex items-baseline justify-between mb-7 gap-4 flex-wrap">
+                        <span className="text-eyebrow">Condição parceiro</span>
+                        <span
+                          className={`font-display text-western-green-deep ${
+                            variant ? "text-3xl" : "text-xl text-western-stone-warm"
+                          }`}
+                        >
+                          {priceDisplay}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="mb-7">
+                        <PriceGate variant="block" />
+                      </div>
+                    )}
 
                     {pendingOption && (
                       <div className="mb-5 flex items-start gap-2.5 px-4 py-3 border border-western-gold/40 bg-western-gold/5">
