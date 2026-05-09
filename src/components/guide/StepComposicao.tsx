@@ -92,7 +92,7 @@ export default function StepComposicao() {
             desc="A composição é totalmente Western. Coerência estética máxima, especificação simplificada."
             selected={composicao === "somenteWestern"}
             illustration={<ComposicaoSoWestern />}
-            onClick={() => setComposicao("somenteWestner" as never)}
+            onClick={() => setComposicao("somenteWestern")}
           />
           <CompCard
             title="Western + naturais"
