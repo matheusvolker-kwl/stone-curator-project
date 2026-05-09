@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ArrowRight, Check, Loader2, MessageCircle, RotateCcw, ShoppingBag } from "lucide-react";
+import { ArrowRight, Check, FileDown, Loader2, MessageCircle, RotateCcw, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import {
   formatPreco,
@@ -19,6 +19,7 @@ import { parseProductDescription } from "@/lib/shopify/parseDescription";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import FinishSelector from "@/components/product/FinishSelector";
 import UpsellGrid from "./UpsellGrid";
+import SketchLeadModal from "./SketchLeadModal";
 
 interface Props {
   conjunto: ConjuntoLeaf;
@@ -63,6 +64,7 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
 
   const addItem = useCartStore((s) => s.addItem);
   const cartLoading = useCartStore((s) => s.isLoading);
+  const [sketchOpen, setSketchOpen] = useState(false);
 
   // Acabamento: lê opções reais do produto, fallback para padrão
   const finishOption = product?.options.find((o) => /acabamento/i.test(o.name));
@@ -231,11 +233,18 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
                 </>
               )}
             </button>
+            <button
+              type="button"
+              onClick={() => setSketchOpen(true)}
+              className="btn-outline-forest w-full justify-center"
+            >
+              <FileDown className="h-4 w-4" /> Baixar prancha técnica (PDF + .skp)
+            </button>
             <a
               href={whatsappConjunto(`${conjunto.nome} (acabamento ${acabamento})`)}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-outline-forest w-full justify-center"
+              className="inline-flex items-center justify-center gap-2 h-11 font-mono text-xs uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep transition-colors"
             >
               <MessageCircle className="h-4 w-4" /> Falar com consultor
             </a>
@@ -266,6 +275,15 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
       </div>
 
       <UpsellGrid tipo={tipo} />
+
+      <SketchLeadModal
+        open={sketchOpen}
+        onClose={() => setSketchOpen(false)}
+        conjuntoNome={conjunto.nome}
+        conjuntoHandle={conjunto.handle}
+        acabamento={acabamento}
+        contexto={{ tipo: answers.tipo, areaM2: undefined }}
+      />
     </div>
   );
 }

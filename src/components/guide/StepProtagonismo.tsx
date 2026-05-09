@@ -1,0 +1,106 @@
+import { Check } from "lucide-react";
+import StepShell from "./StepShell";
+import { useGuideStore } from "@/stores/guideStore";
+import { nivelMeta, provaSocialPorTipo, type Nivel, type Tipo } from "@/data/guideMap";
+import { ProtagonismoMood } from "./svg/MoodSvg";
+
+const NIVEIS: Nivel[] = ["essencial", "equilibrada", "completa"];
+
+interface ComparativoCardProps {
+  tipo: Tipo;
+  nivel: Nivel;
+  selected: boolean;
+  recommended: boolean;
+  onClick: () => void;
+}
+
+function ComparativoCard({ tipo, nivel, selected, recommended, onClick }: ComparativoCardProps) {
+  const meta = nivelMeta[tipo][nivel];
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={selected}
+      aria-label={`${meta.label} — ${meta.tagline}`}
+      className={`group relative text-left flex flex-col bg-white border-2 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2 overflow-hidden ${
+        selected
+          ? "border-western-gold shadow-[0_18px_40px_-18px_rgba(180,144,90,0.5)]"
+          : recommended
+            ? "border-western-gold/60 hover:border-western-gold hover:-translate-y-1"
+            : "border-western-stone-warm/15 hover:border-western-gold/60 hover:-translate-y-1"
+      }`}
+    >
+      {recommended && !selected && (
+        <span className="absolute top-3 left-3 z-10 px-2.5 py-1 bg-western-gold text-western-green-deep font-mono text-[9px] uppercase tracking-[0.2em]">
+          Mais escolhido
+        </span>
+      )}
+      {selected && (
+        <span className="absolute top-3 right-3 z-10 inline-flex items-center justify-center h-6 w-6 rounded-full bg-western-gold text-western-green-deep">
+          <Check className="h-3.5 w-3.5" strokeWidth={3} />
+        </span>
+      )}
+
+      <div className="aspect-[4/3] w-full overflow-hidden bg-western-green-deep">
+        <div className="w-full h-full transition-transform duration-700 group-hover:scale-105">
+          <ProtagonismoMood tipo={tipo} nivel={nivel} />
+        </div>
+      </div>
+
+      <div className="p-5 md:p-6 flex-1 flex flex-col gap-2">
+        <div className="flex items-baseline justify-between gap-3 flex-wrap">
+          <h3 className="font-display text-xl md:text-2xl text-western-green-deep leading-tight">
+            {meta.label}
+          </h3>
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
+            {meta.pecas}
+          </span>
+        </div>
+        <p className="text-sm text-western-stone-warm leading-relaxed">{meta.tagline}</p>
+        <p className="mt-auto pt-3 text-xs text-western-stone-warm/70 font-mono uppercase tracking-[0.18em]">
+          {meta.faixaPreco}
+        </p>
+      </div>
+    </button>
+  );
+}
+
+export default function StepProtagonismo() {
+  const tipo = useGuideStore((s) => s.tipo);
+  const nivel = useGuideStore((s) => s.nivel);
+  const setNivel = useGuideStore((s) => s.setNivel);
+  const back = useGuideStore((s) => s.back);
+  const reset = useGuideStore((s) => s.reset);
+
+  if (!tipo) return null;
+
+  const prova = provaSocialPorTipo[tipo];
+
+  return (
+    <StepShell
+      stepKey="protagonismo"
+      pergunta="Qual destas composições mais se aproxima do seu projeto?"
+      subtitulo="Compare o mesmo ambiente em três níveis de presença Western. Clique na imagem que faz mais sentido."
+      onBack={back}
+      onReset={reset}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+        {NIVEIS.map((n) => (
+          <ComparativoCard
+            key={n}
+            tipo={tipo}
+            nivel={n}
+            selected={nivel === n}
+            recommended={n === "equilibrada"}
+            onClick={() => setNivel(n)}
+          />
+        ))}
+      </div>
+
+      <p className="mt-8 text-sm text-western-stone-warm leading-relaxed text-center max-w-2xl mx-auto">
+        <span className="text-western-green-deep font-medium">{prova.autor}</span>{" "}
+        <span className="text-western-stone-warm">{prova.frase}</span>
+      </p>
+    </StepShell>
+  );
+}
