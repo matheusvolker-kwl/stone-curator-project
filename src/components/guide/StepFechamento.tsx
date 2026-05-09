@@ -173,9 +173,12 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
                       {i.variantTitle !== "Default Title" ? i.variantTitle : ""} · Qtd {i.quantity}
                     </p>
                   </div>
-                  <p className="text-sm text-western-green-deep font-mono whitespace-nowrap">
-                    {formatBRL(parseFloat(i.price.amount) * i.quantity, i.price.currencyCode)}
-                  </p>
+                  <GatedPrice
+                    amount={parseFloat(i.price.amount) * i.quantity}
+                    currency={i.price.currencyCode}
+                    variant="badge"
+                    className="text-sm text-western-green-deep font-mono whitespace-nowrap"
+                  />
                 </motion.li>
               ))}
             </ul>
@@ -185,17 +188,21 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-green-deep">
               Total parcial
             </p>
-            <motion.p
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: items.length * 0.08, type: "spring", stiffness: 280 }}
-              className="font-display text-3xl text-western-green-deep"
-            >
-              {formatBRL(total, "BRL")}
-            </motion.p>
+            {isApproved ? (
+              <motion.p
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: items.length * 0.08, type: "spring", stiffness: 280 }}
+                className="font-display text-3xl text-western-green-deep"
+              >
+                {formatBRL(total, "BRL")}
+              </motion.p>
+            ) : (
+              <GatedPrice amount={total} variant="block" className="font-display text-3xl text-western-green-deep" />
+            )}
           </div>
 
-          {economia > 0 && items.length > 0 && (
+          {isApproved && economia > 0 && items.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
