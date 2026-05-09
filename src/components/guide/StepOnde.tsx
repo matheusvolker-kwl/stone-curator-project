@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import StepShell from "./StepShell";
 import { useGuideStore } from "@/stores/guideStore";
+import { useAuth } from "@/hooks/useAuth";
 import { MoodLago, MoodPiscina, MoodJardim, MoodEspecial } from "./svg/MoodSvg";
 
 interface CardProps {
