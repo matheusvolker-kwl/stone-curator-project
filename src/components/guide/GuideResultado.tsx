@@ -64,6 +64,7 @@ export default function GuideResultado({ conjunto, answers, onReset }: Props) {
 
   const addItem = useCartStore((s) => s.addItem);
   const cartLoading = useCartStore((s) => s.isLoading);
+  const [sketchOpen, setSketchOpen] = useState(false);
 
   // Acabamento: lê opções reais do produto, fallback para padrão
   const finishOption = product?.options.find((o) => /acabamento/i.test(o.name));
