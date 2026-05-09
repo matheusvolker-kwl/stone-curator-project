@@ -71,14 +71,13 @@ export default function GuideStepFooter({
             {totalQty > 0 && (
               <div className="text-right hidden sm:block">
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
-                  Orçamento parcial
+                  Orçamento parcial · {totalQty} {totalQty === 1 ? "item" : "itens"}
                 </p>
-                <p className="font-display text-lg text-western-green-deep leading-tight">
-                  {formatBRL(total, "BRL")}{" "}
-                  <span className="text-xs text-western-stone-warm font-mono">
-                    · {totalQty} {totalQty === 1 ? "item" : "itens"}
-                  </span>
-                </p>
+                <GatedPrice
+                  amount={total}
+                  className="font-display text-lg text-western-green-deep leading-tight"
+                  variant="block"
+                />
               </div>
             )}
             <button type="button" onClick={onNext} className="btn-gold">
