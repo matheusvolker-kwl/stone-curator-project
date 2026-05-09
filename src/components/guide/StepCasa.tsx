@@ -119,10 +119,10 @@ export default function StepCasa({ onBack, onNext }: Props) {
         onNext={onNext}
         nextLabel={
           addedCount > 0
-            ? `Concluir com ${addedCount} ${addedCount === 1 ? "item autoral" : "itens autorais"}`
-            : "Concluir sem itens autorais"
+            ? `Finalizar com ${addedCount} ${addedCount === 1 ? "item autoral" : "itens autorais"}`
+            : "Finalizar meu projeto"
         }
-        skipLabel={addedCount === 0 ? "Pular esta etapa" : undefined}
+        skipLabel={addedCount === 0 ? "Não preciso disso agora" : undefined}
         onSkip={addedCount === 0 ? onNext : undefined}
         addedCount={addedCount}
       />
