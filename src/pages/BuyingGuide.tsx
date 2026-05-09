@@ -130,11 +130,16 @@ export default function BuyingGuide() {
 
   const baseFallback: GuideStep = tipo === "piscina" ? "protagonismo" : "composicao";
 
+  const isAssembly = ASSEMBLY_STEPS.includes(step as GuideStep);
+  const showResume =
+    step === "intro" && !!savedAt && (!!tipo || !!areaM2 || !!nivel);
+  const stepLabel = ASSEMBLY_LABELS[step] ?? "Seu projeto";
+
   return (
     <div className="surface-ivory min-h-screen">
-      <div className="container-western py-12 md:py-20 max-w-5xl">
+      <div className={`container-western py-12 md:py-20 ${isAssembly ? "max-w-7xl pb-32 xl:pb-20" : "max-w-5xl"}`}>
         {step === "intro" ? (
-          <Intro onStart={start} />
+          <Intro onStart={start} onResume={showResume ? () => goto((tipo ? "base" : "tipo") as GuideStep) : undefined} onReset={reset} hasProgress={showResume} />
         ) : step === "especial" ? (
           <div className="border border-western-stone-warm/20 bg-white p-6 md:p-12">
             <GuideEspecial />
@@ -142,63 +147,67 @@ export default function BuyingGuide() {
         ) : (
           <div className="space-y-8" ref={containerRef}>
             {progressSteps.length > 0 && <GuideProgress steps={progressSteps} />}
-            <div className="border border-western-stone-warm/20 bg-white p-6 md:p-12">
-              {step === "tipo" && <StepOnde />}
-              {step === "area" && <StepArea />}
-              {step === "protagonismo" && <StepProtagonismo />}
-              {step === "composicao" && <StepComposicao />}
+            <div className={isAssembly ? "grid xl:grid-cols-[1fr_320px] gap-8 items-start" : ""}>
+              <div className="border border-western-stone-warm/20 bg-white p-6 md:p-12 min-w-0">
+                {step === "tipo" && <StepOnde />}
+                {step === "area" && <StepArea />}
+                {step === "protagonismo" && <StepProtagonismo />}
+                {step === "composicao" && <StepComposicao />}
 
-              {step === "base" && (
-                <>
-                  {isAreaConsultor && tipo && areaM2 ? (
-                    <GuideConsultor tipo={tipo} tamanho={`${areaM2} m²`} onReset={reset} />
-                  ) : resolved && resolved !== "consultor" ? (
-                    <StepBase
-                      conjunto={resolved}
-                      answers={answers}
-                      onBack={() => goto(baseFallback)}
-                      onNext={handleNext}
-                      onAcabamentoChange={setAcabamentoAtual}
-                    />
-                  ) : (
-                    <NoResolution onReset={reset} />
-                  )}
-                </>
-              )}
+                {step === "base" && (
+                  <>
+                    {isAreaConsultor && tipo && areaM2 ? (
+                      <GuideConsultor tipo={tipo} tamanho={`${areaM2} m²`} onReset={reset} />
+                    ) : resolved && resolved !== "consultor" ? (
+                      <StepBase
+                        conjunto={resolved}
+                        answers={answers}
+                        onBack={() => goto(baseFallback)}
+                        onNext={handleNext}
+                        onAcabamentoChange={setAcabamentoAtual}
+                      />
+                    ) : (
+                      <NoResolution onReset={reset} />
+                    )}
+                  </>
+                )}
 
-              {step === "complementos" && tipo && (
-                <StepComplementos
-                  tipo={tipo}
-                  onBack={() => handlePrevAssembly(baseFallback)}
-                  onNext={handleNext}
-                />
-              )}
+                {step === "complementos" && tipo && (
+                  <StepComplementos
+                    tipo={tipo}
+                    onBack={() => handlePrevAssembly(baseFallback)}
+                    onNext={handleNext}
+                  />
+                )}
 
-              {step === "upgrade" && resolved && resolved !== "consultor" && (
-                <StepUpgrade
-                  answers={answers}
-                  precoBase={resolved.preco}
-                  onBack={() => handlePrevAssembly(baseFallback)}
-                  onNext={handleNext}
-                />
-              )}
+                {step === "upgrade" && resolved && resolved !== "consultor" && (
+                  <StepUpgrade
+                    answers={answers}
+                    precoBase={resolved.preco}
+                    onBack={() => handlePrevAssembly(baseFallback)}
+                    onNext={handleNext}
+                  />
+                )}
 
-              {step === "casa" && (
-                <StepCasa
-                  onBack={() => handlePrevAssembly(baseFallback)}
-                  onNext={handleNext}
-                />
-              )}
+                {step === "casa" && (
+                  <StepCasa
+                    onBack={() => handlePrevAssembly(baseFallback)}
+                    onNext={handleNext}
+                  />
+                )}
 
-              {step === "fechamento" && resolved && resolved !== "consultor" && (
-                <StepFechamento
-                  conjunto={resolved}
-                  answers={answers}
-                  acabamento={acabamentoAtual}
-                  onBack={() => handlePrevAssembly(baseFallback)}
-                  onReset={reset}
-                />
-              )}
+                {step === "fechamento" && resolved && resolved !== "consultor" && (
+                  <StepFechamento
+                    conjunto={resolved}
+                    answers={answers}
+                    acabamento={acabamentoAtual}
+                    onBack={() => handlePrevAssembly(baseFallback)}
+                    onReset={reset}
+                  />
+                )}
+              </div>
+
+              {isAssembly && <GuideAssemblySummary stepLabel={stepLabel} />}
             </div>
           </div>
         )}
