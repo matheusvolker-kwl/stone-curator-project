@@ -29,35 +29,58 @@ export default function ProjetosSection() {
               onClick={() => setActive(p)}
               className="group text-left bg-western-green-mid/30 border border-western-gold/15 hover:border-western-gold/50 transition-colors flex flex-col"
             >
-              <div className="relative aspect-[4/5] overflow-hidden">
+              <div className="relative aspect-[4/5] overflow-hidden bg-western-green-deep">
+                {/* Imagem com tratamento unificador (duotone sutil verde+dourado) */}
                 <img
                   src={p.cover}
                   alt={p.titulo}
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  style={{
+                    filter: "grayscale(0.55) contrast(1.05) brightness(0.92) sepia(0.18)",
+                  }}
                 />
+                {/* Overlay de cor da marca — uniformiza paleta entre as fotos */}
+                <div
+                  className="absolute inset-0 pointer-events-none mix-blend-color opacity-60 transition-opacity duration-500 group-hover:opacity-30"
+                  style={{
+                    background:
+                      "linear-gradient(160deg, hsl(var(--western-green-deep)) 0%, hsl(var(--western-gold) / 0.55) 100%)",
+                  }}
+                  aria-hidden
+                />
+                {/* Vinheta sutil para foco no rosto */}
                 <div
                   className="absolute inset-0 pointer-events-none"
                   style={{
                     background:
-                      "linear-gradient(to top, hsl(var(--western-green-deep) / 0.85) 0%, transparent 55%)",
+                      "radial-gradient(ellipse at 50% 35%, transparent 45%, hsl(var(--western-green-deep) / 0.35) 100%)",
                   }}
                   aria-hidden
                 />
-                <div className="absolute bottom-3 left-3 right-3">
+                {/* Gradiente forte no rodapé para legibilidade do nome */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background:
+                      "linear-gradient(to top, hsl(var(--western-green-deep) / 0.96) 0%, hsl(var(--western-green-deep) / 0.7) 28%, transparent 60%)",
+                  }}
+                  aria-hidden
+                />
+                <div className="absolute bottom-4 left-4 right-4">
                   {(() => {
                     const [nome, contexto] = p.eyebrow.split("·").map((s) => s.trim());
                     return (
                       <>
-                        <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-gold-soft mb-1.5">
+                        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-western-gold-soft mb-2">
                           {p.titulo}
                         </p>
-                        <h3 className="font-display text-xl md:text-2xl text-western-cream leading-[1.1] line-clamp-2">
+                        <h3 className="font-display text-2xl md:text-[1.7rem] text-western-cream leading-[1.05] line-clamp-2 drop-shadow-[0_2px_8px_hsl(var(--western-green-deep)/0.6)]">
                           {nome}
                         </h3>
                         {contexto && (
-                          <p className="text-[11px] text-western-cream-muted mt-1 line-clamp-1">
+                          <p className="text-[11px] text-western-cream-muted mt-1.5 line-clamp-1">
                             {contexto}
                           </p>
                         )}
