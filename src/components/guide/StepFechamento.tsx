@@ -7,6 +7,8 @@ import { cdnImg, formatBRL } from "@/lib/shopify/client";
 import { whatsappConjunto, type ConjuntoLeaf, type GuideAnswers } from "@/data/guideMap";
 import SketchLeadModal from "./SketchLeadModal";
 import { BUSINESS } from "@/config/business";
+import GatedPrice from "@/components/shared/GatedPrice";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Props {
   conjunto: ConjuntoLeaf;
@@ -54,6 +56,7 @@ function Confetti() {
 
 export default function StepFechamento({ conjunto, answers, acabamento, onBack, onReset }: Props) {
   const items = useCartStore((s) => s.items);
+  const { isApproved } = useAuth();
   const nome = useGuideStore((s) => s.nome);
   const setNome = useGuideStore((s) => s.setNome);
   const areaM2 = useGuideStore((s) => s.areaM2);
@@ -93,8 +96,9 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
           {firstName ? <>Pronto, {firstName}.<br />Seu projeto está montado.</> : <>Pronto. Seu projeto<br />está montado.</>}
         </h2>
         <p className="text-western-stone-warm leading-relaxed max-w-2xl mb-6 text-lg">
-          {totalQty} {totalQty === 1 ? "item curado" : "itens curados"}, {formatBRL(total, "BRL")} em
-          composição autoral. Envie para o cliente final, abra o orçamento ou fale direto com
+          {totalQty} {totalQty === 1 ? "item curado" : "itens curados"}
+          {isApproved ? <>, {formatBRL(total, "BRL")} em composição autoral.</> : <> em composição autoral.</>}{" "}
+          Envie para o cliente final, abra o orçamento ou fale direto com
           um consultor para fechar a condição comercial.
         </p>
 
@@ -169,9 +173,12 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
                       {i.variantTitle !== "Default Title" ? i.variantTitle : ""} · Qtd {i.quantity}
                     </p>
                   </div>
-                  <p className="text-sm text-western-green-deep font-mono whitespace-nowrap">
-                    {formatBRL(parseFloat(i.price.amount) * i.quantity, i.price.currencyCode)}
-                  </p>
+                  <GatedPrice
+                    amount={parseFloat(i.price.amount) * i.quantity}
+                    currency={i.price.currencyCode}
+                    variant="badge"
+                    className="text-sm text-western-green-deep font-mono whitespace-nowrap"
+                  />
                 </motion.li>
               ))}
             </ul>
@@ -181,17 +188,21 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-green-deep">
               Total parcial
             </p>
-            <motion.p
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: items.length * 0.08, type: "spring", stiffness: 280 }}
-              className="font-display text-3xl text-western-green-deep"
-            >
-              {formatBRL(total, "BRL")}
-            </motion.p>
+            {isApproved ? (
+              <motion.p
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: items.length * 0.08, type: "spring", stiffness: 280 }}
+                className="font-display text-3xl text-western-green-deep"
+              >
+                {formatBRL(total, "BRL")}
+              </motion.p>
+            ) : (
+              <GatedPrice amount={total} variant="block" className="font-display text-3xl text-western-green-deep" />
+            )}
           </div>
 
-          {economia > 0 && items.length > 0 && (
+          {isApproved && economia > 0 && items.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}

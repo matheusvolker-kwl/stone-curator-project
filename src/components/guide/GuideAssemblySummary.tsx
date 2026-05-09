@@ -3,6 +3,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronUp, ShoppingBag, Truck, Sparkles } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { cdnImg, formatBRL } from "@/lib/shopify/client";
+import GatedPrice from "@/components/shared/GatedPrice";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Sheet,
   SheetContent,
@@ -57,15 +59,19 @@ function ItemRow({ item }: { item: ReturnType<typeof useCartStore.getState>["ite
         <p className="font-display text-sm text-western-green-deep leading-tight truncate">
           {item.productTitle}
         </p>
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80">
-          {formatBRL(parseFloat(item.price.amount) * item.quantity, item.price.currencyCode)}
-        </p>
+        <GatedPrice
+          amount={parseFloat(item.price.amount) * item.quantity}
+          currency={item.price.currencyCode}
+          variant="badge"
+          className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80"
+        />
       </div>
     </motion.li>
   );
 }
 
 function TotalDisplay({ total, totalQty }: { total: number; totalQty: number }) {
+  const { isApproved } = useAuth();
   const prevTotal = useRef(total);
   const [pulse, setPulse] = useState(false);
 
@@ -81,15 +87,19 @@ function TotalDisplay({ total, totalQty }: { total: number; totalQty: number }) 
   return (
     <div>
       <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
-        Orçamento parcial · {totalQty} {totalQty === 1 ? "item" : "itens"}
+        {isApproved ? "Orçamento parcial" : "Itens no projeto"} · {totalQty} {totalQty === 1 ? "item" : "itens"}
       </p>
-      <motion.p
-        animate={pulse ? { scale: [1, 1.06, 1], color: ["#1f3a26", "#b8924f", "#1f3a26"] } : {}}
-        transition={{ duration: 0.6 }}
-        className="font-display text-2xl text-western-green-deep leading-tight"
-      >
-        {formatBRL(total, "BRL")}
-      </motion.p>
+      {isApproved ? (
+        <motion.p
+          animate={pulse ? { scale: [1, 1.06, 1], color: ["#1f3a26", "#b8924f", "#1f3a26"] } : {}}
+          transition={{ duration: 0.6 }}
+          className="font-display text-2xl text-western-green-deep leading-tight"
+        >
+          {formatBRL(total, "BRL")}
+        </motion.p>
+      ) : (
+        <GatedPrice amount={total} variant="block" className="font-display text-2xl text-western-green-deep leading-tight" />
+      )}
     </div>
   );
 }
@@ -221,9 +231,11 @@ export default function GuideAssemblySummary({ stepLabel }: Props) {
                 <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-western-stone-warm">
                   {totalQty} {totalQty === 1 ? "item" : "itens"} no projeto
                 </p>
-                <p className="font-display text-base text-western-green-deep leading-tight truncate">
-                  {formatBRL(total, "BRL")}
-                </p>
+                <GatedPrice
+                  amount={total}
+                  variant="block"
+                  className="font-display text-base text-western-green-deep leading-tight truncate"
+                />
               </div>
             </div>
             <ChevronUp className="h-4 w-4 text-western-stone-warm shrink-0" />
