@@ -1,28 +1,35 @@
-import logoCobasi from "@/assets/parceiros/cobasi.png";
-import logoUnique from "@/assets/parceiros/unique-garden.png";
-import logoCristal from "@/assets/parceiros/cristal-pool.png";
-import logoBiopet from "@/assets/parceiros/biopet.png";
-import logoGenesis from "@/assets/parceiros/genesis.png";
+import logoCobasi from "@/assets/parceiros/cobasi.svg";
+import logoCristal from "@/assets/parceiros/cristal-pool.svg";
+import logoBiopet from "@/assets/parceiros/biopet.svg";
+import logoGenesis from "@/assets/parceiros/genesis.svg";
+import logoCobasiCream from "@/assets/parceiros/cobasi-cream.png";
+import logoCristalCream from "@/assets/parceiros/cristal-pool-cream.png";
+import logoBiopetCream from "@/assets/parceiros/biopet-cream.png";
+import logoGenesisCream from "@/assets/parceiros/genesis-cream.png";
 
 interface Marca {
   nome: string;
   site: string;
-  logo: string;
-  /** Altura específica em px (max-h). Default 56. */
-  altura?: number;
+  /** Logo em verde — para fundos claros */
+  logoDark: string;
+  /** Logo em creme — para fundos escuros */
+  logoLight: string;
+  /** Largura máxima em px — calibra peso visual entre logos diferentes */
+  larguraMax: number;
 }
 
 const PARCEIROS: Marca[] = [
-  { nome: "Cobasi", site: "https://www.cobasi.com.br", logo: logoCobasi, altura: 44 },
-  { nome: "Unique Garden", site: "https://www.uniquegarden.com.br", logo: logoUnique, altura: 64 },
-  { nome: "Cristal Pool", site: "https://www.cristalpool.com.br", logo: logoCristal, altura: 56 },
-  { nome: "Genesis Ecossistemas", site: "https://genesisecossistemas.com", logo: logoGenesis, altura: 80 },
-  { nome: "Biopet Lagos", site: "https://bplagos.com.br", logo: logoBiopet, altura: 60 },
+  { nome: "Biopet Lagos",        site: "https://bplagos.com.br",            logoDark: logoBiopet,  logoLight: logoBiopetCream,  larguraMax: 130 },
+  { nome: "Cristal Pool",        site: "https://www.cristalpool.com.br",    logoDark: logoCristal, logoLight: logoCristalCream, larguraMax: 200 },
+  { nome: "Genesis Ecossistemas",site: "https://genesisecossistemas.com",   logoDark: logoGenesis, logoLight: logoGenesisCream, larguraMax: 110 },
+  { nome: "Cobasi",              site: "https://www.cobasi.com.br",         logoDark: logoCobasi,  logoLight: logoCobasiCream,  larguraMax: 180 },
 ];
 
 interface Props {
-  /** Compacta: sem título/eyebrow internos, ideal pra Home */
+  /** Compacta: sem cabeçalho, ideal pra Home */
   compacta?: boolean;
+  /** Variante de fundo: light (sobre ivory/paper) ou dark (sobre forest) */
+  variante?: "light" | "dark";
   eyebrow?: string;
   titulo?: React.ReactNode;
   descricao?: React.ReactNode;
@@ -30,57 +37,94 @@ interface Props {
 
 export default function MarcasInstitucionais({
   compacta = false,
+  variante = "light",
   eyebrow,
   titulo,
   descricao,
 }: Props) {
+  const isDark = variante === "dark";
+
   return (
-    <section className={compacta ? "" : "mt-20 md:mt-28 pt-14 border-t border-western-stone-warm/20"}>
+    <section className={compacta ? "" : "mt-20 md:mt-24"}>
       {!compacta && (
-        <>
-          {eyebrow && <p className="text-eyebrow mb-5">{eyebrow}</p>}
-          <div className="w-12 h-px bg-western-gold mb-8" />
+        <div className="text-center max-w-2xl mx-auto mb-12 md:mb-14">
+          {eyebrow && (
+            <p className={`text-eyebrow mb-4 ${isDark ? "text-western-gold-soft" : ""}`}>
+              {eyebrow}
+            </p>
+          )}
+          <div className="w-12 h-px bg-western-gold mx-auto mb-7" />
           {titulo && (
-            <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05] mb-8">
+            <h2
+              className={`font-display text-3xl md:text-4xl leading-[1.1] mb-5 ${
+                isDark ? "text-western-cream" : "text-western-green-deep"
+              }`}
+            >
               {titulo}
             </h2>
           )}
           {descricao && (
-            <p className="text-western-stone-warm leading-relaxed text-lg max-w-2xl mb-12">
+            <p
+              className={`leading-relaxed text-base md:text-[17px] ${
+                isDark ? "text-western-cream-muted" : "text-western-stone-warm"
+              }`}
+            >
               {descricao}
             </p>
           )}
-        </>
+        </div>
       )}
 
-      <div className="surface-forest border border-western-gold/15">
-        <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-px bg-western-gold/15">
-          {PARCEIROS.map((p) => (
-            <li key={p.nome} className="surface-forest">
-              <a
-                href={p.site}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={p.nome}
-                title={p.nome}
-                className="group flex items-center justify-center h-32 md:h-36 px-6 hover:bg-western-green-mid/40 transition-colors"
-              >
-                <img
-                  src={p.logo}
-                  alt={p.nome}
-                  loading="lazy"
-                  style={{ maxHeight: `${p.altura ?? 56}px` }}
-                  className="w-auto max-w-[170px] object-contain opacity-85 group-hover:opacity-100 transition-opacity"
-                />
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {/* Strip de logos — alturas iguais, largura calibrada por logo */}
+      <ul
+        className={`grid grid-cols-2 md:grid-cols-4 ${
+          isDark
+            ? "border-y border-western-gold/20"
+            : "border-y border-western-stone-warm/15"
+        }`}
+      >
+        {PARCEIROS.map((p, i) => (
+          <li
+            key={p.nome}
+            className={`${
+              isDark ? "border-western-gold/15" : "border-western-stone-warm/15"
+            } ${i > 0 && i % 2 !== 0 ? "border-l md:border-l" : ""} ${
+              i >= 2 ? "border-t md:border-t-0" : ""
+            } ${i > 0 ? "md:border-l" : ""}`}
+          >
+            <a
+              href={p.site}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={p.nome}
+              title={p.nome}
+              className="group flex items-center justify-center h-28 md:h-36 px-6 transition-all"
+            >
+              <img
+                src={isDark ? p.logoLight : p.logoDark}
+                alt={p.nome}
+                loading="lazy"
+                style={{ maxWidth: `${p.larguraMax}px` }}
+                className={`w-full max-h-14 md:max-h-16 object-contain transition-all duration-500 ${
+                  isDark
+                    ? "opacity-70 group-hover:opacity-100"
+                    : "opacity-80 group-hover:opacity-100"
+                } group-hover:scale-[1.04]`}
+              />
+            </a>
+          </li>
+        ))}
+      </ul>
 
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mt-4 text-center">
-        Cobasi · Unique Garden · Cristal Pool · Genesis Ecossistemas · Biopet Lagos
-      </p>
+      {!compacta && (
+        <p
+          className={`font-mono text-[10px] uppercase tracking-[0.28em] mt-6 text-center ${
+            isDark ? "text-western-cream-muted/70" : "text-western-stone-warm/60"
+          }`}
+        >
+          Parceiros institucionais · {new Date().getFullYear() - 1993}+ anos de coautoria
+        </p>
+      )}
     </section>
   );
 }
