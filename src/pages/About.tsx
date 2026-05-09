@@ -65,12 +65,21 @@ export default function About() {
                 href={p.site}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-western-cream/60 aspect-[3/2] flex items-center justify-center px-4 py-6 group hover:bg-western-cream transition-colors"
+                className="bg-western-cream/60 aspect-[3/2] flex items-center justify-center px-6 py-6 group hover:bg-western-cream transition-colors"
                 aria-label={p.nome}
               >
-                <span className="font-display text-lg md:text-xl text-western-green-deep text-center leading-tight group-hover:text-western-gold transition-colors">
-                  {p.nome}
-                </span>
+                {p.logo ? (
+                  <img
+                    src={p.logo}
+                    alt={p.nome}
+                    className="max-h-14 md:max-h-16 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity"
+                    loading="lazy"
+                  />
+                ) : (
+                  <span className="font-display text-lg md:text-xl text-western-green-deep text-center leading-tight group-hover:text-western-gold transition-colors">
+                    {p.nome}
+                  </span>
+                )}
               </a>
             ))}
           </div>
