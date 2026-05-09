@@ -16,33 +16,37 @@ interface Props {
 }
 
 // Confete leve: partículas douradas em CSS, sem dependências.
+// Respeita prefers-reduced-motion e memoiza partículas.
 function Confetti() {
-  const pieces = Array.from({ length: 24 });
+  const pieces = useMemo(
+    () =>
+      Array.from({ length: 24 }, () => ({
+        left: Math.random() * 100,
+        delay: Math.random() * 0.6,
+        duration: 1.6 + Math.random() * 1.2,
+        drift: (Math.random() - 0.5) * 80,
+        size: 4 + Math.random() * 5,
+        isGold: Math.random() > 0.3,
+      })),
+    []
+  );
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      {pieces.map((_, i) => {
-        const left = Math.random() * 100;
-        const delay = Math.random() * 0.6;
-        const duration = 1.6 + Math.random() * 1.2;
-        const drift = (Math.random() - 0.5) * 80;
-        const size = 4 + Math.random() * 5;
-        const isGold = Math.random() > 0.3;
-        return (
-          <motion.span
-            key={i}
-            initial={{ y: -20, x: 0, opacity: 0, rotate: 0 }}
-            animate={{ y: "120%", x: drift, opacity: [0, 1, 1, 0], rotate: 360 }}
-            transition={{ duration, delay, ease: "easeOut" }}
-            className="absolute top-0 block"
-            style={{
-              left: `${left}%`,
-              width: size,
-              height: size * 0.4,
-              backgroundColor: isGold ? "hsl(var(--western-gold))" : "hsl(var(--western-cream))",
-            }}
-          />
-        );
-      })}
+    <div className="pointer-events-none absolute inset-0 overflow-hidden motion-reduce:hidden" aria-hidden>
+      {pieces.map((p, i) => (
+        <motion.span
+          key={i}
+          initial={{ y: -20, x: 0, opacity: 0, rotate: 0 }}
+          animate={{ y: "120%", x: p.drift, opacity: [0, 1, 1, 0], rotate: 360 }}
+          transition={{ duration: p.duration, delay: p.delay, ease: "easeOut" }}
+          className="absolute top-0 block"
+          style={{
+            left: `${p.left}%`,
+            width: p.size,
+            height: p.size * 0.4,
+            backgroundColor: p.isGold ? "hsl(var(--western-gold))" : "hsl(var(--western-cream))",
+          }}
+        />
+      ))}
     </div>
   );
 }
