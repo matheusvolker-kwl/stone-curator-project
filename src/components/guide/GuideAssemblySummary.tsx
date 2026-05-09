@@ -98,6 +98,17 @@ function PanelInner({ stepLabel }: { stepLabel: string }) {
   const { items, total, totalQty } = useTotals();
   const openCart = () => window.dispatchEvent(new CustomEvent("western:open-cart"));
 
+  // C7: auto-scroll do painel para o último item adicionado
+  const listRef = useRef<HTMLUListElement>(null);
+  const prevCount = useRef(items.length);
+  useEffect(() => {
+    if (items.length > prevCount.current && listRef.current) {
+      const last = listRef.current.lastElementChild as HTMLElement | null;
+      last?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+    prevCount.current = items.length;
+  }, [items.length]);
+
   return (
     <div className="flex flex-col h-full">
       <div className="px-5 py-4 border-b border-western-stone-warm/15">
@@ -118,7 +129,7 @@ function PanelInner({ stepLabel }: { stepLabel: string }) {
             </p>
           </div>
         ) : (
-          <ul className="space-y-3">
+          <ul ref={listRef} className="space-y-3">
             <AnimatePresence initial={false}>
               {items.map((i) => (
                 <ItemRow key={i.variantId} item={i} />
