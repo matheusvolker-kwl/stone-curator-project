@@ -59,9 +59,12 @@ function ItemRow({ item }: { item: ReturnType<typeof useCartStore.getState>["ite
         <p className="font-display text-sm text-western-green-deep leading-tight truncate">
           {item.productTitle}
         </p>
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80">
-          {formatBRL(parseFloat(item.price.amount) * item.quantity, item.price.currencyCode)}
-        </p>
+        <GatedPrice
+          amount={parseFloat(item.price.amount) * item.quantity}
+          currency={item.price.currencyCode}
+          variant="badge"
+          className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80"
+        />
       </div>
     </motion.li>
   );
