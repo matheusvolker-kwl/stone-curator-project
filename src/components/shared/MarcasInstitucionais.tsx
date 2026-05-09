@@ -19,10 +19,10 @@ interface Marca {
 }
 
 const PARCEIROS: Marca[] = [
-  { nome: "Biopet Lagos",        site: "https://bplagos.com.br",            logoDark: logoBiopet,  logoLight: logoBiopetCream,  larguraMax: 130 },
-  { nome: "Cristal Pool",        site: "https://www.cristalpool.com.br",    logoDark: logoCristal, logoLight: logoCristalCream, larguraMax: 200 },
-  { nome: "Genesis Ecossistemas",site: "https://genesisecossistemas.com",   logoDark: logoGenesis, logoLight: logoGenesisCream, larguraMax: 110 },
-  { nome: "Cobasi",              site: "https://www.cobasi.com.br",         logoDark: logoCobasi,  logoLight: logoCobasiCream,  larguraMax: 180 },
+  { nome: "Biopet Lagos",        site: "https://bplagos.com.br",            logoDark: logoBiopet,  logoLight: logoBiopetCream,  larguraMax: 200 },
+  { nome: "Cristal Pool",        site: "https://www.cristalpool.com.br",    logoDark: logoCristal, logoLight: logoCristalCream, larguraMax: 260 },
+  { nome: "Genesis Ecossistemas",site: "https://genesisecossistemas.com",   logoDark: logoGenesis, logoLight: logoGenesisCream, larguraMax: 180 },
+  { nome: "Cobasi",              site: "https://www.cobasi.com.br",         logoDark: logoCobasi,  logoLight: logoCobasiCream,  larguraMax: 200 },
 ];
 
 interface Props {
@@ -105,7 +105,7 @@ export default function MarcasInstitucionais({
                 alt={p.nome}
                 loading="lazy"
                 style={{ maxWidth: `${p.larguraMax}px` }}
-                className={`w-full max-h-14 md:max-h-16 object-contain transition-all duration-500 ${
+                className={`w-full max-h-20 md:max-h-24 object-contain transition-all duration-500 ${
                   isDark
                     ? "opacity-70 group-hover:opacity-100"
                     : "opacity-80 group-hover:opacity-100"
