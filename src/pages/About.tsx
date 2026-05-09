@@ -100,13 +100,12 @@ export default function About() {
       {/* NÚMEROS — escala da operação */}
       <section className="surface-cream py-14 md:py-16 border-y border-western-stone-warm/10">
         <div className="container-western max-w-5xl">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-px bg-western-stone-warm/15">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-western-stone-warm/15">
             {[
               { n: "33", l: "anos de operação ininterrupta" },
-              { n: "50", l: "modelos catalogados" },
-              { n: "11", l: "coleções" },
-              { n: "200", l: "SKUs com 4 acabamentos" },
-              { n: "5", l: "anos de garantia formal" },
+              { n: "+400", l: "modelos fabricados em ateliê" },
+              { n: "50", l: "selecionados no catálogo atual" },
+              { n: "+300", l: "projetos entregues pelo Brasil" },
             ].map((s, i) => (
               <Reveal key={s.l} variant="fade-up" delay={i * 80} duration={650} distance={20}>
                 <div className="bg-western-cream p-5 md:p-7 text-center h-full">
