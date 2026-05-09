@@ -7,9 +7,10 @@ import ColecoesGrid from "@/components/home/ColecoesGrid";
 import ProjetosSection from "@/components/home/ProjetosSection";
 import ArtistaSection from "@/components/home/ArtistaSection";
 import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ShieldCheck, Truck, Box } from "lucide-react";
 import heroCascata from "@/assets/hero-cascata.webp";
 import heroCascataSm from "@/assets/hero-cascata-sm.webp";
+import iconePedraBranco from "@/assets/icone-pedra-branco.png";
 import { BUSINESS } from "@/config/business";
 
 export default function Index() {
