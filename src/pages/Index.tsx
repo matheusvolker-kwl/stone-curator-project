@@ -76,6 +76,12 @@ export default function Index() {
                   Seja parceiro
                 </Link>
               </div>
+              <Link
+                to="/pedir-amostras"
+                className="inline-flex items-center gap-2 mt-5 link-underline font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold-soft"
+              >
+                Receba o kit gratuito dos 4 acabamentos →
+              </Link>
             </div>
           </div>
         </div>
