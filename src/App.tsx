@@ -16,6 +16,12 @@ import ParceirosArquitetos from "./pages/ParceirosArquitetos.tsx";
 import PartnerLogin from "./pages/PartnerLogin.tsx";
 import PedirAmostras from "./pages/PedirAmostras.tsx";
 import AgendarVisita from "./pages/AgendarVisita.tsx";
+import PorQueWestern from "./pages/PorQueWestern.tsx";
+import AplicacoesComerciais from "./pages/AplicacoesComerciais.tsx";
+import PoliticaComercial from "./pages/legal/PoliticaComercial.tsx";
+import PoliticaEntrega from "./pages/legal/PoliticaEntrega.tsx";
+import TrocasAvarias from "./pages/legal/TrocasAvarias.tsx";
+import PoliticaPrivacidade from "./pages/legal/PoliticaPrivacidade.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient({
@@ -42,6 +48,12 @@ const App = () => (
             <Route path="/parceiro/login" element={<PartnerLogin />} />
             <Route path="/pedir-amostras" element={<PedirAmostras />} />
             <Route path="/visitar" element={<AgendarVisita />} />
+            <Route path="/por-que-western" element={<PorQueWestern />} />
+            <Route path="/aplicacoes-comerciais" element={<AplicacoesComerciais />} />
+            <Route path="/politica-comercial" element={<PoliticaComercial />} />
+            <Route path="/politica-de-entrega" element={<PoliticaEntrega />} />
+            <Route path="/trocas-e-avarias" element={<TrocasAvarias />} />
+            <Route path="/privacidade" element={<PoliticaPrivacidade />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
