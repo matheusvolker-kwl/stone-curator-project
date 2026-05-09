@@ -79,11 +79,14 @@
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 
   body {
     @apply bg-background text-foreground font-sans;
     font-feature-settings: "ss01", "ss02";
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   /* Subtle grain — globally fixed but very low opacity */
