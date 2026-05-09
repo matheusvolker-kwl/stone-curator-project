@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import retrato from "@/assets/ricardo-botelho.webp";
+import retrato from "@/assets/ricardo-luiz-carlos.webp";
 
 export default function ArtistaSection() {
   return (
