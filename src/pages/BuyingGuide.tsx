@@ -130,6 +130,26 @@ export default function BuyingGuide() {
 
   const baseFallback: GuideStep = tipo === "piscina" ? "protagonismo" : "composicao";
 
+  // Atalhos de teclado: ←/→ para voltar/avançar nas etapas de montagem
+  useEffect(() => {
+    if (!ASSEMBLY_STEPS.includes(step as GuideStep)) return;
+    const handler = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        handleNext();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        handlePrevAssembly(baseFallback);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [step, skips, baseFallback]);
+
+
   const isAssembly = ASSEMBLY_STEPS.includes(step as GuideStep);
   const showResume =
     step === "intro" && !!savedAt && (!!tipo || !!areaM2 || !!nivel);
