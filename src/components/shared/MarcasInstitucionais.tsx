@@ -105,7 +105,7 @@ export default function MarcasInstitucionais({
                 alt={p.nome}
                 loading="lazy"
                 style={{ maxWidth: `${p.larguraMax}px` }}
-                className={`w-full max-h-14 md:max-h-16 object-contain transition-all duration-500 ${
+                className={`w-full max-h-20 md:max-h-24 object-contain transition-all duration-500 ${
                   isDark
                     ? "opacity-70 group-hover:opacity-100"
                     : "opacity-80 group-hover:opacity-100"
