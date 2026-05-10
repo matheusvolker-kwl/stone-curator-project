@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
@@ -25,7 +25,7 @@ import AccountSketches from "./pages/account/AccountSketches";
 import AccountFavorites from "./pages/account/AccountFavorites";
 import AccountSamples from "./pages/account/AccountSamples";
 import AccountPreferences from "./pages/account/AccountPreferences";
-import { Navigate } from "react-router-dom";
+
 import Linhas from "./pages/Linhas.tsx";
 import LinhaPage from "./pages/LinhaPage.tsx";
 import Conjuntos from "./pages/Conjuntos.tsx";
