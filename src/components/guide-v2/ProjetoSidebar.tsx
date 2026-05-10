@@ -13,21 +13,33 @@ interface Props {
   pecas: ProjetoPeca[];
   extras: ProjetoExtra[];
   acabamento: Acabamento;
+  isCustomizado: boolean;
+  onResetBase?: () => void;
   onFinalizar: () => void;
 }
 
-function PanelBody({ conjunto, pecas, extras, acabamento, onFinalizar }: Props) {
+function PanelBody({ conjunto, pecas, extras, acabamento, isCustomizado, onResetBase, onFinalizar }: Props) {
   const { isApproved, session } = useAuth();
   const subBase = pecas.reduce((a, p) => a + p.preco * p.qty, 0);
   const subExtras = extras.reduce((a, e) => a + e.preco * e.qty, 0);
-  const desconto = Math.round(subBase * 0.03);
+  const desconto = isCustomizado ? 0 : Math.round(subBase * 0.03);
   const total = subBase + subExtras - desconto;
 
   return (
     <div className="surface-forest shadow-[0_36px_56px_-30px_hsl(var(--western-stone-dark)/0.45)] flex flex-col relative overflow-hidden">
-      {/* gold seal top */}
       <div className="h-[3px] bg-western-gold" />
       <div className="p-7 md:p-8 flex flex-col gap-6">
+        {/* Badge curado / sob consulta */}
+        <div
+          className={
+            isCustomizado
+              ? "inline-flex items-center gap-2 self-start px-2.5 py-1 border border-western-gold/60 text-western-gold font-mono text-[9px] uppercase tracking-[0.22em]"
+              : "inline-flex items-center gap-2 self-start px-2.5 py-1 bg-western-gold/15 border border-western-gold/50 text-western-gold-soft font-mono text-[9px] uppercase tracking-[0.22em]"
+          }
+        >
+          ◆ {isCustomizado ? "Projeto autoral · sob consulta" : "Conjunto curado · SketchUp incluso"}
+        </div>
+
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mb-3">
             Seu projeto
@@ -66,6 +78,16 @@ function PanelBody({ conjunto, pecas, extras, acabamento, onFinalizar }: Props) 
               </ul>
             </>
           )}
+
+          {isCustomizado && onResetBase && (
+            <button
+              type="button"
+              onClick={onResetBase}
+              className="mt-4 font-mono text-[10px] uppercase tracking-[0.22em] text-western-cream-muted hover:text-western-gold underline-offset-4 hover:underline"
+            >
+              ← Voltar à composição original
+            </button>
+          )}
         </div>
 
         {isApproved ? (
@@ -81,21 +103,23 @@ function PanelBody({ conjunto, pecas, extras, acabamento, onFinalizar }: Props) 
                   <span className="font-mono">{formatPreco(subExtras)}</span>
                 </div>
               )}
-              <div className="flex justify-between text-western-gold">
-                <span>Desconto conjunto (3%)</span>
-                <span className="font-mono">−{formatPreco(desconto)}</span>
-              </div>
+              {desconto > 0 && (
+                <div className="flex justify-between text-western-gold">
+                  <span>Desconto conjunto (3%)</span>
+                  <span className="font-mono">−{formatPreco(desconto)}</span>
+                </div>
+              )}
             </div>
 
             <div className="border-t border-western-cream/15 pt-5">
               <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mb-2">
-                Total
+                {isCustomizado ? "Total estimado" : "Total"}
               </p>
               <p className="font-display text-[36px] font-medium text-western-cream leading-none">
                 {formatPreco(total)}
               </p>
               <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-cream-muted/80 mt-2.5">
-                Pedido único · frete otimizado
+                {isCustomizado ? "Confirmado pela equipe em até 48h" : "Pedido único · frete otimizado"}
               </p>
             </div>
           </>
@@ -131,15 +155,18 @@ function PanelBody({ conjunto, pecas, extras, acabamento, onFinalizar }: Props) 
             disabled={!isApproved}
             className="inline-flex items-center justify-center gap-3 h-[54px] bg-western-gold text-western-green-deep font-mono text-xs uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            Revisar e finalizar <ArrowRight className="h-4 w-4" />
+            {isCustomizado ? "Solicitar orçamento sob consulta" : "Revisar e finalizar"}
+            <ArrowRight className="h-4 w-4" />
           </button>
-          <button
-            type="button"
-            onClick={() => toast("Prévia em SketchUp em breve.")}
-            className="inline-flex items-center justify-center gap-2 h-11 border border-western-cream/40 text-western-cream font-mono text-[11px] uppercase tracking-[0.22em] hover:border-western-gold hover:text-western-gold transition-colors"
-          >
-            <Download className="h-3.5 w-3.5" /> Baixar prévia em SketchUp
-          </button>
+          {!isCustomizado && (
+            <button
+              type="button"
+              onClick={() => toast("Prévia em SketchUp em breve.")}
+              className="inline-flex items-center justify-center gap-2 h-11 border border-western-cream/40 text-western-cream font-mono text-[11px] uppercase tracking-[0.22em] hover:border-western-gold hover:text-western-gold transition-colors"
+            >
+              <Download className="h-3.5 w-3.5" /> Baixar prévia em SketchUp
+            </button>
+          )}
           <button
             type="button"
             onClick={() => toast(session ? "Projeto salvo no seu painel." : "Faça login para salvar o projeto.")}
@@ -159,12 +186,13 @@ export default function ProjetoSidebar(props: Props) {
     props.pecas.reduce((a, p) => a + p.qty, 0) + props.extras.reduce((a, e) => a + e.qty, 0);
   const subBase = props.pecas.reduce((a, p) => a + p.preco * p.qty, 0);
   const subExtras = props.extras.reduce((a, e) => a + e.preco * e.qty, 0);
-  const total = subBase + subExtras - Math.round(subBase * 0.03);
+  const desconto = props.isCustomizado ? 0 : Math.round(subBase * 0.03);
+  const total = subBase + subExtras - desconto;
   const { isApproved } = useAuth();
 
   return (
     <>
-      <aside className="hidden lg:block sticky top-32 self-start">
+      <aside className="hidden lg:block sticky top-28 self-start max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-hide">
         <PanelBody {...props} />
       </aside>
 

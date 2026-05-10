@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
+import { ChevronDown, ChevronUp, ExternalLink, Info } from "lucide-react";
 import GuideHeader from "@/components/guide-v2/GuideHeader";
 import PecaRow from "@/components/guide-v2/PecaRow";
 import AutoralCard from "@/components/guide-v2/AutoralCard";
+import AutoralProductModal from "@/components/guide-v2/AutoralProductModal";
 import AcabamentoCard from "@/components/guide-v2/AcabamentoCard";
 import ProjetoSidebar from "@/components/guide-v2/ProjetoSidebar";
 import ContextoChips from "@/components/guide-v2/ContextoChips";
@@ -19,7 +20,7 @@ import {
   type ProjetoPeca,
   type TipoVisual,
 } from "@/components/guide-v2/types";
-import { autoralToExtra, getAutoraisFor } from "@/components/guide-v2/autoraisCatalog";
+import { autoralToExtra, getAutoraisFor, type AutoralItem } from "@/components/guide-v2/autoraisCatalog";
 import { getPecasPlaceholder } from "@/components/guide-v2/pecasPlaceholder";
 import { buildContextQuery } from "@/components/guide-v2/useGuideQuery";
 import {
@@ -44,6 +45,14 @@ function findConjunto(handle: string): { conjunto: ConjuntoLeaf; nivel: Nivel } 
   return found;
 }
 
+function pecasIguais(a: ProjetoPeca[], b: ProjetoPeca[]): boolean {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i].id !== b[i].id || a[i].qty !== b[i].qty) return false;
+  }
+  return true;
+}
+
 export default function GuiaRefinar() {
   const { handle } = useParams();
   const [params, setParams] = useSearchParams();
@@ -51,17 +60,23 @@ export default function GuiaRefinar() {
 
   const found = useMemo(() => (handle ? findConjunto(handle) : null), [handle]);
   const acabamento = (params.get("acabamento") as Acabamento | null) ?? "moledo";
-  const tipoVisual = (params.get("tipo") as TipoVisual | null) ?? "lago";
+  const tipoRaw = params.get("tipo");
+  const tipoVisual: TipoVisual = (tipoRaw === "lago-reduzido" ? "lago" : (tipoRaw as TipoVisual | null)) ?? "lago";
   const area = params.get("area");
   const nivelParam = (params.get("nivel") as Nivel | null) ?? found?.nivel ?? "equilibrada";
 
-  const [pecas, setPecas] = useState<ProjetoPeca[]>([]);
+  const baseInicial = useMemo(() => getPecasPlaceholder(nivelParam), [nivelParam]);
+  const [pecas, setPecas] = useState<ProjetoPeca[]>(baseInicial);
   const [extras, setExtras] = useState<ProjetoExtra[]>([]);
   const [showAcab, setShowAcab] = useState(false);
+  const [modalItem, setModalItem] = useState<AutoralItem | null>(null);
+  const [modalIndex, setModalIndex] = useState(0);
 
   useEffect(() => {
     setPecas(getPecasPlaceholder(nivelParam));
   }, [nivelParam]);
+
+  const isCustomizado = !pecasIguais(pecas, baseInicial);
 
   if (!found) {
     return <Navigate to="/guia-de-composicao" replace />;
@@ -97,7 +112,11 @@ export default function GuiaRefinar() {
   const ctx = { tipoVisual, area: area ? Number(area) : undefined, acabamento };
   const backToCaminhos = `/guia-de-composicao/composicoes?${buildContextQuery(ctx)}`;
 
-  const onFinalizar = () => navigate("/guia-de-composicao/finalizar");
+  const onFinalizar = () => {
+    const sp = new URLSearchParams();
+    if (isCustomizado) sp.set("modo", "consulta");
+    navigate(`/guia-de-composicao/finalizar${sp.toString() ? `?${sp.toString()}` : ""}`);
+  };
 
   return (
     <div className="min-h-screen surface-ivory relative">
@@ -106,7 +125,7 @@ export default function GuiaRefinar() {
         <ContextoChips tipo={tipoVisual} area={Number(area)} acabamento={acabamento} />
       )}
       <main className="container-western pt-12 md:pt-16 pb-32 lg:pb-20 relative">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10 lg:gap-14 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-10 lg:gap-16 items-start">
           <div className="min-w-0">
             {/* Cabeçalho */}
             <Reveal variant="fade-up" duration={750}>
@@ -146,6 +165,19 @@ export default function GuiaRefinar() {
 
             <div className="mt-14"><SectionDivider /></div>
 
+            {/* Aviso sob consulta */}
+            {isCustomizado && (
+              <div className="mt-10 border-l-2 border-western-gold pl-5 py-3 bg-western-gold/[0.06]">
+                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold inline-flex items-center gap-2 mb-2">
+                  <Info className="h-3 w-3" /> Projeto autoral · sob consulta
+                </p>
+                <p className="font-display italic text-[15px] text-western-stone-warm leading-relaxed max-w-[620px]">
+                  Você está ajustando a composição original. O SketchUp é entregue apenas para os conjuntos
+                  curados — projetos personalizados seguem para nossa equipe e voltam com prévia em até 48h.
+                </p>
+              </div>
+            )}
+
             {/* Peças */}
             <section className="mt-10">
               <p className="eyebrow-bar mb-3">Peças desta composição</p>
@@ -168,7 +200,7 @@ export default function GuiaRefinar() {
                 Peças que somam ao projeto.
               </h2>
               <p className="font-display italic text-[16px] text-western-stone-warm max-w-[620px] mt-3 leading-relaxed">
-                Vendidas avulsas, viajam no mesmo pedido com frete otimizado.
+                Vendidas avulsas, viajam no mesmo pedido com frete otimizado. Clique para ver detalhes.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
                 {autorais.map((a, i) => (
@@ -178,6 +210,7 @@ export default function GuiaRefinar() {
                     index={i}
                     selected={isExtraSelected(a.id)}
                     onToggle={() => toggleExtra(a.id)}
+                    onOpen={() => { setModalItem(a); setModalIndex(i); }}
                   />
                 ))}
               </div>
@@ -200,7 +233,7 @@ export default function GuiaRefinar() {
               </button>
               {showAcab && (
                 <div className="mt-6 max-w-2xl">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {(Object.keys(acabamentoMeta) as Acabamento[]).map((a, i) => (
                       <AcabamentoCard
                         key={a}
@@ -224,10 +257,20 @@ export default function GuiaRefinar() {
             pecas={pecas}
             extras={extras}
             acabamento={acabamento}
+            isCustomizado={isCustomizado}
+            onResetBase={() => setPecas(baseInicial)}
             onFinalizar={onFinalizar}
           />
         </div>
       </main>
+
+      <AutoralProductModal
+        item={modalItem}
+        index={modalIndex}
+        selected={modalItem ? isExtraSelected(modalItem.id) : false}
+        onClose={() => setModalItem(null)}
+        onToggle={() => modalItem && toggleExtra(modalItem.id)}
+      />
 
       <img
         src={brasao}
