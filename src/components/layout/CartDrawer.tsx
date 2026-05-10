@@ -23,6 +23,7 @@ export default function CartDrawer({
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } =
     useCartStore();
   const { isApproved } = useAuth();
+  const [quoteOpen, setQuoteOpen] = useState(false);
   const totalQty = items.reduce((s, i) => s + i.quantity, 0);
   const subtotal = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
   const currency = items[0]?.price.currencyCode ?? "BRL";
