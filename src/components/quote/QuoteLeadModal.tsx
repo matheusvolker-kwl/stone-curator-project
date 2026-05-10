@@ -173,20 +173,22 @@ export default function QuoteLeadModal({
   })();
 
   const headerTitle =
-    title ?? (origem === "guia_composicao" ? "Solicitar orçamento do projeto" : "Solicitar orçamento");
+    title ?? (origem === "guia_composicao" ? "Baixar composição do projeto" : "Baixar sua composição");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-western-cream border-western-stone-warm/20">
         <DialogHeader>
-          <p className="text-eyebrow">Pedido de orçamento</p>
+          <p className="text-eyebrow">Composição em PDF</p>
           <DialogTitle className="font-display text-2xl text-western-green-deep">
-            {success ? "Recebido!" : headerTitle}
+            {success ? "Pronto! Seu PDF está liberado." : headerTitle}
           </DialogTitle>
           <DialogDescription className="text-western-stone-warm">
             {success
-              ? "Em até 1 dia útil um vendedor entra em contato pelo WhatsApp ou e-mail informado."
-              : `${items.length} ${items.length === 1 ? "item" : "itens"} na composição · um vendedor cuida do restante.`}
+              ? "Baixe o PDF abaixo. Se quiser, fale com um vendedor pelo WhatsApp para tirar dúvidas."
+              : isLogged
+                ? "Confirme seus dados e libere o PDF — também salvamos na sua conta."
+                : "Preencha rapidinho para liberar o PDF da sua composição."}
           </DialogDescription>
         </DialogHeader>
 
