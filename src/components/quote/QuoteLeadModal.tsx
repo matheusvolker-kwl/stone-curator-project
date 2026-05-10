@@ -137,7 +137,7 @@ export default function QuoteLeadModal({
       setNumero(res.numero);
       setPdfBlob(res.pdfBlob ?? null);
       setSuccess(true);
-      toast.success("PDF liberado! Baixe abaixo.");
+      toast.success(res.pdfStored || !user ? "PDF liberado! Baixe abaixo." : "PDF gerado para download.");
     } catch (err) {
       console.error(err);
       toast.error("Não foi possível enviar agora. Tente novamente em instantes.");
@@ -207,14 +207,20 @@ export default function QuoteLeadModal({
                 </p>
                 {isLogged ? (
                   <p className="text-western-stone-warm leading-relaxed mt-2 text-xs">
-                    O PDF também ficou disponível em{" "}
-                    <Link
-                      to="/minha-conta/orcamentos"
-                      className="text-western-green-deep font-medium underline-offset-2 hover:underline"
-                    >
-                      Minha conta · Orçamentos
-                    </Link>
-                    .
+                    {pdfBlob ? (
+                      <>
+                        O PDF também ficou disponível em{" "}
+                        <Link
+                          to="/minha-conta/orcamentos"
+                          className="text-western-green-deep font-medium underline-offset-2 hover:underline"
+                        >
+                          Minha conta · Orçamentos
+                        </Link>
+                        .
+                      </>
+                    ) : (
+                      "Baixe o PDF abaixo para guardar sua composição."
+                    )}
                   </p>
                 ) : (
                   <p className="text-western-stone-warm leading-relaxed mt-2 text-xs">
