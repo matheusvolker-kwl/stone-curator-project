@@ -29,9 +29,10 @@ export default function AdminDashboard() {
     (async () => {
       const since7 = new Date(Date.now() - 7 * 86400000).toISOString();
       const since30 = new Date(Date.now() - 30 * 86400000).toISOString();
-      const [{ data: partners }, { data: leads }] = await Promise.all([
+      const [{ data: partners }, { data: leads }, { data: funnelData }] = await Promise.all([
         supabase.from("partner_profiles").select("status, cancelled_at"),
         supabase.from("leads").select("type, payload, created_at").limit(2000),
+        supabase.from("lead_conversion_funnel" as never).select("*").limit(8),
       ]);
       const sampleLeads = (leads ?? []).filter((l) => l.type === "amostras");
       const pendingSamples = sampleLeads.filter((l) => {
@@ -46,6 +47,7 @@ export default function AdminDashboard() {
         cancelled30d: (partners ?? []).filter((p) => p.cancelled_at && p.cancelled_at > since30).length,
         totalUsers: (partners ?? []).length,
       });
+      setFunnel((funnelData as unknown as FunnelRow[]) ?? []);
       setLoading(false);
     })();
   }, []);
