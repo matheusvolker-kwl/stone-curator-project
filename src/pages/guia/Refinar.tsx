@@ -100,60 +100,70 @@ export default function GuiaRefinar() {
   const onFinalizar = () => navigate("/guia-de-composicao/finalizar");
 
   return (
-    <div className="min-h-screen surface-ivory">
+    <div className="min-h-screen surface-ivory relative">
       <GuideHeader breadcrumb={{ label: "Voltar · Três caminhos", to: backToCaminhos }} />
-      <main className="container-western pt-12 md:pt-16 pb-32 lg:pb-20">
+      {area && (
+        <ContextoChips tipo={tipoVisual} area={Number(area)} acabamento={acabamento} />
+      )}
+      <main className="container-western pt-12 md:pt-16 pb-32 lg:pb-20 relative">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10 lg:gap-14 items-start">
           <div className="min-w-0">
             {/* Cabeçalho */}
-            <div className="flex items-start justify-between gap-6">
-              <div>
-                <p className="text-eyebrow mb-4">Etapa 03 · Composição base</p>
-                <h1 className="font-display text-3xl md:text-[44px] text-western-green-deep leading-[1.05]">
-                  {conjunto.nome}
-                </h1>
-                <div className="w-12 h-px bg-western-gold mt-5 mb-5" />
-                <div className="flex flex-wrap gap-2">
-                  <Tag>{tipoMeta.label}</Tag>
-                  {tamanhoId && tamanhoId !== "consultor" && (
-                    <Tag>{tamanhoLabels[tamanhoId]}</Tag>
-                  )}
-                  <Tag>{nivelLabelMap[nivelParam]}</Tag>
-                  <Tag>{acabamentoMeta[acabamento].label}</Tag>
+            <Reveal variant="fade-up" duration={750}>
+              <p className="font-display italic text-xl md:text-2xl text-western-green-deep mb-5">
+                O conjunto se ajusta a você.
+              </p>
+            </Reveal>
+            <Reveal variant="fade-up" duration={700} delay={120}>
+              <div className="flex items-start justify-between gap-6">
+                <div>
+                  <p className="eyebrow-bar mb-4">Etapa 03 · Composição base</p>
+                  <h1 className="font-display text-3xl md:text-[44px] text-western-green-deep leading-[1.05]">
+                    {conjunto.nome}
+                  </h1>
+                  <div className="w-12 h-px bg-western-gold mt-5 mb-5" />
+                  <div className="flex flex-wrap gap-2">
+                    <Tag>{tipoMeta.label}</Tag>
+                    {tamanhoId && tamanhoId !== "consultor" && (
+                      <Tag>{tamanhoLabels[tamanhoId]}</Tag>
+                    )}
+                    <Tag>{nivelLabelMap[nivelParam]}</Tag>
+                    <Tag>{acabamentoMeta[acabamento].label}</Tag>
+                  </div>
+                  <p className="font-display italic text-lg md:text-xl text-western-stone-warm leading-relaxed mt-6 max-w-[620px]">
+                    {conjunto.subtitulo}. Cascata central com pedras de apoio que constroem volume sem
+                    sobrecarregar o espaço.
+                  </p>
                 </div>
-                <p className="font-display italic text-lg md:text-xl text-western-stone-warm leading-relaxed mt-6 max-w-[620px]">
-                  {conjunto.subtitulo}. Cascata central com pedras de apoio que constroem volume sem
-                  sobrecarregar o espaço.
-                </p>
+                <Link
+                  to={backToCaminhos}
+                  className="hidden md:inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep flex-shrink-0"
+                >
+                  <ExternalLink className="h-3 w-3" /> Trocar de composição
+                </Link>
               </div>
-              <Link
-                to={backToCaminhos}
-                className="hidden md:inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep flex-shrink-0"
-              >
-                <ExternalLink className="h-3 w-3" /> Trocar de composição
-              </Link>
-            </div>
+            </Reveal>
 
-            <div className="divider-hairline mt-14" />
+            <div className="mt-14"><SectionDivider /></div>
 
             {/* Peças */}
-            <section className="mt-12">
-              <p className="text-eyebrow mb-3">Peças desta composição</p>
+            <section className="mt-10">
+              <p className="eyebrow-bar mb-3">Peças desta composição</p>
               <h2 className="font-display text-2xl md:text-[30px] text-western-green-deep leading-tight">
                 Ajuste o conjunto peça por peça.
               </h2>
               <div className="mt-6">
-                {pecas.map((p) => (
-                  <PecaRow key={p.id} peca={p} onQty={onQty} onRemove={onRemove} />
+                {pecas.map((p, i) => (
+                  <PecaRow key={p.id} peca={p} index={i} onQty={onQty} onRemove={onRemove} />
                 ))}
               </div>
             </section>
 
-            <div className="divider-hairline mt-14" />
+            <div className="mt-14"><SectionDivider /></div>
 
             {/* Autorais */}
-            <section className="mt-12">
-              <p className="text-eyebrow mb-3">Itens autorais</p>
+            <section className="mt-10">
+              <p className="eyebrow-bar mb-3">Itens autorais</p>
               <h2 className="font-display text-2xl md:text-[30px] text-western-green-deep leading-tight">
                 Peças que somam ao projeto.
               </h2>
@@ -161,10 +171,11 @@ export default function GuiaRefinar() {
                 Vendidas avulsas, viajam no mesmo pedido com frete otimizado.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
-                {autorais.map((a) => (
+                {autorais.map((a, i) => (
                   <AutoralCard
                     key={a.id}
                     item={a}
+                    index={i}
                     selected={isExtraSelected(a.id)}
                     onToggle={() => toggleExtra(a.id)}
                   />
@@ -172,11 +183,11 @@ export default function GuiaRefinar() {
               </div>
             </section>
 
-            <div className="divider-hairline mt-14" />
+            <div className="mt-14"><SectionDivider /></div>
 
             {/* Trocar acabamento */}
-            <section className="mt-12">
-              <p className="text-eyebrow mb-3">
+            <section className="mt-10">
+              <p className="eyebrow-bar mb-3">
                 Acabamento atual · {acabamentoMeta[acabamento].label}
               </p>
               <button
@@ -217,6 +228,13 @@ export default function GuiaRefinar() {
           />
         </div>
       </main>
+
+      <img
+        src={brasao}
+        alt=""
+        aria-hidden
+        className="hidden md:block fixed bottom-6 right-6 w-20 opacity-[0.04] pointer-events-none select-none z-0"
+      />
     </div>
   );
 }
