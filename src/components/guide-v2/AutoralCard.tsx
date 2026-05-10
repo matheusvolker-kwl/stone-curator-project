@@ -7,6 +7,7 @@ interface Props {
   item: AutoralItem;
   index?: number;
   selected: boolean;
+  qty?: number;
   onToggle: () => void;
   onOpen?: () => void;
 }
