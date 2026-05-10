@@ -165,25 +165,40 @@ export default function QuoteRequestModal({ open, onOpenChange }: Props) {
             <div className="flex items-start gap-3 p-4 border border-western-gold/30 bg-western-gold/5">
               <CheckCircle2 className="h-5 w-5 text-western-gold mt-0.5 flex-shrink-0" />
               <div className="text-sm text-western-green-deep">
-                <p className="font-medium mb-1">Sua composição foi salva.</p>
+                <p className="font-medium mb-1">
+                  Composição salva {numero && <span className="font-mono text-xs text-western-gold">· Nº {numero}</span>}
+                </p>
                 <p className="text-western-stone-warm leading-relaxed">
                   {isApproved
                     ? `Subtotal de referência: ${formatBRL(subtotal, currency)}.`
                     : "Os preços serão confirmados pelo vendedor após validação do cadastro."}
                 </p>
+                {user && (
+                  <p className="text-western-stone-warm leading-relaxed mt-2 text-xs">
+                    O PDF também ficou disponível em <span className="text-western-green-deep font-medium">Minha conta · Projetos</span>.
+                  </p>
+                )}
               </div>
             </div>
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full h-12 inline-flex items-center justify-center gap-2 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] transition-colors"
+            >
+              <MessageCircle className="h-4 w-4" /> Falar com vendedor agora
+            </a>
             <button
               type="button"
               onClick={handleDownloadPdf}
-              className="w-full h-12 inline-flex items-center justify-center gap-2 bg-western-green-deep text-western-cream hover:bg-western-green-deep/90 font-mono text-xs uppercase tracking-[0.22em] transition-colors"
+              className="w-full h-11 inline-flex items-center justify-center gap-2 border border-western-green-deep/30 text-western-green-deep hover:border-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
             >
               <FileDown className="h-4 w-4" /> Baixar PDF da composição
             </button>
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="w-full h-10 border border-western-stone-warm/30 text-western-green-deep hover:border-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+              className="w-full h-10 text-western-stone-warm hover:text-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
             >
               Fechar
             </button>
