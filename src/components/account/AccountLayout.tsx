@@ -2,9 +2,8 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   User,
-  FolderOpen,
+  FileStack,
   ShoppingBag,
-  ShoppingCart,
   FileDown,
   Heart,
   Package,
@@ -18,9 +17,8 @@ import { usePartnerTier } from "@/hooks/usePartnerPricing";
 const items = [
   { to: "/minha-conta", label: "Visão geral", icon: LayoutDashboard, end: true },
   { to: "/minha-conta/perfil", label: "Meu perfil", icon: User },
-  { to: "/minha-conta/projetos", label: "Projetos", icon: FolderOpen },
   { to: "/minha-conta/pedidos", label: "Pedidos", icon: ShoppingBag },
-  { to: "/minha-conta/carrinho", label: "Carrinho salvo", icon: ShoppingCart },
+  { to: "/minha-conta/orcamentos", label: "Orçamentos", icon: FileStack },
   { to: "/minha-conta/sketches", label: "Sketches", icon: FileDown },
   { to: "/minha-conta/favoritos", label: "Favoritos", icon: Heart },
   { to: "/minha-conta/amostras", label: "Amostras", icon: Package },

@@ -9,17 +9,17 @@ import { ArrowRight, Clock, ShieldCheck, XCircle } from "lucide-react";
 export default function AccountIndex() {
   const { user, partnerStatus, isAdmin, empresa } = useAuth();
   const { tier, discountPct, paymentMethods, loading } = usePartnerPricing();
-  const [counts, setCounts] = useState({ projetos: 0, sketches: 0, favoritos: 0 });
+  const [counts, setCounts] = useState({ orcamentos: 0, sketches: 0, favoritos: 0 });
 
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const [p, s, f] = await Promise.all([
-        supabase.from("projects").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+      const [q, s, f] = await Promise.all([
+        supabase.from("quote_pdfs").select("id", { count: "exact", head: true }).eq("user_id", user.id),
         supabase.from("guide_exports").select("id", { count: "exact", head: true }).eq("user_id", user.id),
         supabase.from("wishlists").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       ]);
-      setCounts({ projetos: p.count ?? 0, sketches: s.count ?? 0, favoritos: f.count ?? 0 });
+      setCounts({ orcamentos: q.count ?? 0, sketches: s.count ?? 0, favoritos: f.count ?? 0 });
     })();
   }, [user]);
 
@@ -54,7 +54,7 @@ export default function AccountIndex() {
       </section>
 
       <section className="grid md:grid-cols-3 gap-3">
-        <Card to="/minha-conta/projetos" eyebrow="Projetos" title={`${counts.projetos} ativos`} />
+        <Card to="/minha-conta/orcamentos" eyebrow="Orçamentos" title={`${counts.orcamentos} salvos`} />
         <Card to="/minha-conta/sketches" eyebrow="Sketches" title={`${counts.sketches} salvos`} />
         <Card to="/minha-conta/favoritos" eyebrow="Favoritos" title={`${counts.favoritos} pedras`} />
       </section>

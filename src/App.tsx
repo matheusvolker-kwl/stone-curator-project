@@ -18,9 +18,8 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AccountLayout from "@/components/account/AccountLayout";
 import AccountIndex from "./pages/account/AccountIndex";
 import AccountProfile from "./pages/account/AccountProfile";
-import AccountProjects from "./pages/account/AccountProjects";
+import AccountQuotes from "./pages/account/AccountQuotes";
 import AccountOrders from "./pages/account/AccountOrders";
-import AccountSavedCart from "./pages/account/AccountSavedCart";
 import AccountSketches from "./pages/account/AccountSketches";
 import AccountFavorites from "./pages/account/AccountFavorites";
 import AccountSamples from "./pages/account/AccountSamples";
@@ -86,9 +85,8 @@ const App = () => (
               >
                 <Route index element={<AccountIndex />} />
                 <Route path="perfil" element={<AccountProfile />} />
-                <Route path="projetos" element={<AccountProjects />} />
+                <Route path="orcamentos" element={<AccountQuotes />} />
                 <Route path="pedidos" element={<AccountOrders />} />
-                <Route path="carrinho" element={<AccountSavedCart />} />
                 <Route path="sketches" element={<AccountSketches />} />
                 <Route path="favoritos" element={<AccountFavorites />} />
                 <Route path="amostras" element={<AccountSamples />} />
