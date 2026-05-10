@@ -124,7 +124,13 @@ Deno.serve(async (req) => {
     });
 
   if (uploadError) {
-    console.error("save-quote-pdf upload", uploadError);
+    await notify({
+      source: "save-quote-pdf.upload",
+      message: uploadError.message ?? "Storage upload failed",
+      userId: user.id,
+      userEmail: user.email,
+      context: { leadId, storagePath, sizeBytes: pdfBytes.length },
+    }, admin);
     return jsonResponse({ error: "Could not save PDF" }, 500);
   }
 
@@ -140,7 +146,13 @@ Deno.serve(async (req) => {
   );
 
   if (rowError) {
-    console.error("save-quote-pdf row", rowError);
+    await notify({
+      source: "save-quote-pdf.row",
+      message: rowError.message ?? "DB insert failed",
+      userId: user.id,
+      userEmail: user.email,
+      context: { leadId, storagePath, code: rowError.code },
+    }, admin);
     return jsonResponse({ error: "Could not register PDF" }, 500);
   }
 
