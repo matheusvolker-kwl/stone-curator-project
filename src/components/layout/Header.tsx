@@ -148,6 +148,20 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               <User className="h-4 w-4" /> Parceiro
             </Link>
           )}
+          {session && (
+            <Link
+              to="/parceiro/favoritos"
+              aria-label="Favoritos"
+              className="relative inline-flex items-center justify-center p-2 text-western-green-deep hover:text-western-gold transition-colors"
+            >
+              <Heart className="h-5 w-5" />
+              {wishCount > 0 && (
+                <span className="absolute top-0 right-0 bg-western-gold text-western-green-deep font-mono text-[10px] tracking-wider px-1.5 py-0.5 leading-none">
+                  {wishCount}
+                </span>
+              )}
+            </Link>
+          )}
           <button
             onClick={onCartOpen}
             aria-label="Abrir orçamento"
