@@ -326,7 +326,7 @@ export default function ProductPage() {
             )}
 
             {/* CTAs primários — colados no seletor, sem grandes vãos */}
-            <div className="mt-8 pt-6 border-t border-western-stone-warm/20">
+            <div ref={ctaRef} className="mt-8 pt-6 border-t border-western-stone-warm/20">
               {(() => {
                 const pendingOption = visibleOptions.find(
                   (o) => !activeOptions[o.name]
