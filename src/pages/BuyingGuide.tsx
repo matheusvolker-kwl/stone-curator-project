@@ -198,7 +198,7 @@ export default function BuyingGuide() {
           <div className="space-y-8" ref={containerRef}>
             {progressSteps.length > 0 && <GuideProgress steps={progressSteps} />}
             <div>
-              <div className={`border border-western-stone-warm/20 bg-white min-w-0 ${isConfigurar ? "p-6 md:p-8" : "p-6 md:p-12"}`}>;
+              <div className={`border border-western-stone-warm/20 bg-white min-w-0 ${isConfigurar ? "p-6 md:p-8" : "p-6 md:p-12"}`}>
                 {step === "tipo" && <StepOnde />}
                 {step === "area" && <StepArea />}
                 {step === "protagonismo" && <StepProtagonismo />}
