@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { complementosPorTipo, type ConjuntoLeaf, type GuideAnswers, type Tipo } from "@/data/guideMap";
-import SectionConjunto from "./sections/SectionConjunto";
+import ConjuntoHero from "./sections/ConjuntoHero";
+import ConjuntoUpgrade from "./sections/ConjuntoUpgrade";
 import SectionComplementos from "./sections/SectionComplementos";
 import SectionAutorais from "./sections/SectionAutorais";
 import FinalizarDrawer from "./FinalizarDrawer";
@@ -14,8 +15,8 @@ interface Props {
   acabamento: string;
 }
 
-const SECTION_KEYS = ["conjunto", "complementos", "autorais"] as const;
-type SectionKey = (typeof SECTION_KEYS)[number];
+const ALL_KEYS = ["upgrade", "complementos", "autorais"] as const;
+type SectionKey = (typeof ALL_KEYS)[number];
 
 export default function GuideConfigurator({ conjunto, answers, acabamento, onAcabamentoChange }: Props) {
   const tipo = answers.tipo as Tipo | undefined;
@@ -23,13 +24,21 @@ export default function GuideConfigurator({ conjunto, answers, acabamento, onAca
   const items = useCartStore((s) => s.items);
   const totalQty = items.reduce((acc, i) => acc + i.quantity, 0);
   const [finalOpen, setFinalOpen] = useState(false);
-  const [active, setActive] = useState<SectionKey>("conjunto");
+  const [active, setActive] = useState<SectionKey>("upgrade");
 
-  // IntersectionObserver to highlight active section
+  const sectionList = useMemo(() => {
+    const list: Array<{ key: SectionKey; label: string }> = [
+      { key: "upgrade", label: "Patamar acima" },
+    ];
+    if (hasComplementos) list.push({ key: "complementos", label: "Complementos" });
+    list.push({ key: "autorais", label: "Itens autorais" });
+    return list;
+  }, [hasComplementos]);
+
   useEffect(() => {
-    const sections = SECTION_KEYS.map((k) => document.getElementById(k)).filter(
-      (el): el is HTMLElement => !!el
-    );
+    const sections = sectionList
+      .map((s) => document.getElementById(s.key))
+      .filter((el): el is HTMLElement => !!el);
     if (sections.length === 0) return;
     const obs = new IntersectionObserver(
       (entries) => {
@@ -38,20 +47,11 @@ export default function GuideConfigurator({ conjunto, answers, acabamento, onAca
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
         if (visible[0]) setActive(visible[0].target.id as SectionKey);
       },
-      { rootMargin: "-25% 0px -55% 0px", threshold: [0.1, 0.3, 0.6] }
+      { rootMargin: "-30% 0px -55% 0px", threshold: [0.1, 0.3, 0.6] }
     );
     sections.forEach((s) => obs.observe(s));
     return () => obs.disconnect();
-  }, [hasComplementos]);
-
-  const sectionList = useMemo(() => {
-    const list: Array<{ key: SectionKey; label: string }> = [
-      { key: "conjunto", label: "Conjunto" },
-    ];
-    if (hasComplementos) list.push({ key: "complementos", label: "Complementos" });
-    list.push({ key: "autorais", label: "Itens autorais" });
-    return list;
-  }, [hasComplementos]);
+  }, [sectionList]);
 
   const goToSection = (key: SectionKey) => {
     const el = document.getElementById(key);
@@ -59,11 +59,11 @@ export default function GuideConfigurator({ conjunto, answers, acabamento, onAca
   };
 
   return (
-    <div className="space-y-12">
-      {/* Mini-índice horizontal (mobile + desktop topo) */}
+    <div className="space-y-6">
+      {/* Mini-índice horizontal sticky */}
       <nav
         aria-label="Seções do configurador"
-        className="sticky top-16 z-20 -mx-6 md:-mx-12 px-6 md:px-12 py-3 bg-western-cream/85 backdrop-blur-md border-b border-western-stone-warm/15"
+        className="sticky top-16 z-20 -mx-6 md:-mx-8 px-6 md:px-8 py-3 bg-western-cream/85 backdrop-blur-md border-b border-western-stone-warm/15"
       >
         <ul className="flex items-center gap-1 overflow-x-auto">
           {sectionList.map((s, idx) => (
@@ -99,35 +99,42 @@ export default function GuideConfigurator({ conjunto, answers, acabamento, onAca
         </ul>
       </nav>
 
-      <SectionConjunto
-        conjunto={conjunto}
-        answers={answers}
-        onAcabamentoChange={onAcabamentoChange}
-      />
+      {/* Cockpit: hero sticky + add-ons rolando */}
+      <div className="grid lg:grid-cols-[minmax(0,340px)_1fr] gap-8 items-start">
+        <ConjuntoHero
+          conjunto={conjunto}
+          answers={answers}
+          onAcabamentoChange={onAcabamentoChange}
+        />
 
-      {hasComplementos && tipo && <SectionComplementos tipo={tipo} />}
+        <div className="space-y-12 min-w-0">
+          <ConjuntoUpgrade conjunto={conjunto} answers={answers} acabamento={acabamento} />
 
-      <SectionAutorais />
+          {hasComplementos && tipo && <SectionComplementos tipo={tipo} />}
 
-      {/* CTA Final no fim da página */}
-      <div className="border-t border-western-stone-warm/15 pt-10 text-center">
-        <p className="text-eyebrow mb-3">Pronto para fechar</p>
-        <h3 className="font-display text-2xl md:text-3xl text-western-green-deep leading-tight mb-4">
-          Revise o orçamento e envie a proposta
-        </h3>
-        <p className="text-sm text-western-stone-warm mb-6 max-w-xl mx-auto">
-          {totalQty > 0
-            ? `${totalQty} ${totalQty === 1 ? "item curado" : "itens curados"} no projeto. Finalize para baixar a prancha técnica ou solicitar a proposta comercial.`
-            : "Adicione ao menos o conjunto base para finalizar."}
-        </p>
-        <button
-          type="button"
-          onClick={() => setFinalOpen(true)}
-          disabled={items.length === 0}
-          className="btn-gold disabled:opacity-50"
-        >
-          Finalizar projeto <ArrowRight className="h-4 w-4" />
-        </button>
+          <SectionAutorais />
+
+          {/* CTA final */}
+          <div className="border-t border-western-stone-warm/15 pt-8 text-center">
+            <p className="text-eyebrow mb-3">Pronto para fechar</p>
+            <h3 className="font-display text-xl md:text-2xl text-western-green-deep leading-tight mb-3">
+              Revise o orçamento e envie a proposta
+            </h3>
+            <p className="text-sm text-western-stone-warm mb-5 max-w-xl mx-auto">
+              {totalQty > 0
+                ? `${totalQty} ${totalQty === 1 ? "item curado" : "itens curados"} no projeto. Finalize para baixar a prancha técnica ou solicitar a proposta comercial.`
+                : "Adicione ao menos o conjunto base para finalizar."}
+            </p>
+            <button
+              type="button"
+              onClick={() => setFinalOpen(true)}
+              disabled={items.length === 0}
+              className="btn-gold disabled:opacity-50"
+            >
+              Finalizar projeto <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
       </div>
 
       <FinalizarDrawer
