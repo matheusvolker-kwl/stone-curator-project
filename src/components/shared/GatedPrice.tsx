@@ -52,7 +52,7 @@ export default function GatedPrice({
   if (variant === "hidden") return null;
 
   const label = lockedLabel ?? (session ? "Aguardando aprovação" : "Login para preço");
-  const to = session ? "/parceiro/conta" : "/parceiro/login";
+  const to = session ? "/minha-conta" : "/parceiro/login";
 
   if (variant === "badge") {
     return (
