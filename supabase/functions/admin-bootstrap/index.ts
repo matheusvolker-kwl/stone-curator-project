@@ -60,7 +60,8 @@ Deno.serve(async (req) => {
     );
   }
 
-  // 3. Create auth user (auto-confirmed)
+  // 3. Create or update auth user (auto-confirmed)
+  let uid: string | null = null;
   const { data: created, error: createErr } = await admin.auth.admin.createUser({
     email,
     password,
@@ -70,13 +71,21 @@ Deno.serve(async (req) => {
       empresa: body.empresa ?? "Western Pools",
     },
   });
-  if (createErr || !created.user) {
-    return new Response(JSON.stringify({ error: createErr?.message ?? "Falha ao criar usuário" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+  if (createErr) {
+    // Already exists → find and update password
+    const { data: list } = await admin.auth.admin.listUsers();
+    const existingUser = list?.users?.find((u) => u.email?.toLowerCase() === email);
+    if (!existingUser) {
+      return new Response(JSON.stringify({ error: createErr.message }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    uid = existingUser.id;
+    await admin.auth.admin.updateUserById(uid, { password, email_confirm: true });
+  } else {
+    uid = created.user!.id;
   }
-  const uid = created.user.id;
 
   // 4. Insert admin role
   await admin.from("user_roles").insert({ user_id: uid, role: "admin" });
