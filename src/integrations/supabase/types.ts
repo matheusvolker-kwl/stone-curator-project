@@ -90,6 +90,7 @@ export type Database = {
           empresa: string | null
           endereco: string | null
           id: string
+          items_hash: string | null
           mensagem: string | null
           nome: string | null
           origem: string | null
@@ -109,6 +110,7 @@ export type Database = {
           empresa?: string | null
           endereco?: string | null
           id?: string
+          items_hash?: string | null
           mensagem?: string | null
           nome?: string | null
           origem?: string | null
@@ -128,6 +130,7 @@ export type Database = {
           empresa?: string | null
           endereco?: string | null
           id?: string
+          items_hash?: string | null
           mensagem?: string | null
           nome?: string | null
           origem?: string | null
@@ -647,6 +650,27 @@ export type Database = {
         }
         Returns: boolean
       }
+      promote_quote_lead_to_order: {
+        Args: { _lead_id: string; _order_id: string }
+        Returns: undefined
+      }
+      register_orcamento_lead: {
+        Args: {
+          _cidade: string
+          _email: string
+          _empresa: string
+          _items_hash: string
+          _mensagem: string
+          _nome: string
+          _origem: string
+          _payload: Json
+          _telefone: string
+        }
+        Returns: {
+          lead_id: string
+          was_updated: boolean
+        }[]
+      }
       register_pedido_pdf_download: {
         Args: { _filename: string; _order_id: string }
         Returns: string
@@ -663,6 +687,7 @@ export type Database = {
         | "contato"
         | "orcamento"
         | "pdf_pedido"
+        | "pedido_novo"
       partner_status: "pending" | "approved" | "rejected" | "cancelled"
       production_status:
         | "aguardando"
@@ -817,6 +842,7 @@ export const Constants = {
         "contato",
         "orcamento",
         "pdf_pedido",
+        "pedido_novo",
       ],
       partner_status: ["pending", "approved", "rejected", "cancelled"],
       production_status: [
