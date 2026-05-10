@@ -3,6 +3,16 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, ArrowRight } from "lucide-react";
 
+interface FunnelRow {
+  semana: string;
+  orcamentos: number;
+  pedidos: number;
+  promovidos: number;
+  pdf_redownloads: number;
+  taxa_conversao_pct: number | null;
+  horas_medias_ate_promocao: number | null;
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     pendingPartners: 0,
@@ -12,6 +22,7 @@ export default function AdminDashboard() {
     cancelled30d: 0,
     totalUsers: 0,
   });
+  const [funnel, setFunnel] = useState<FunnelRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
