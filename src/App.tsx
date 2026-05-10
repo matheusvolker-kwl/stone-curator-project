@@ -36,7 +36,7 @@ import BuyingGuide from "./pages/BuyingGuide.tsx";
 import PartnerSignup from "./pages/PartnerSignup.tsx";
 import ParceirosArquitetos from "./pages/ParceirosArquitetos.tsx";
 import PartnerLogin from "./pages/PartnerLogin.tsx";
-import Admin from "./pages/Admin.tsx";
+
 import ResetPassword from "./pages/ResetPassword.tsx";
 import PedirAmostras from "./pages/PedirAmostras.tsx";
 import AgendarVisita from "./pages/AgendarVisita.tsx";
