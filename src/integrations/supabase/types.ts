@@ -248,6 +248,108 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_proposals: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          discount_pct: number
+          discount_value: number
+          forma_pagamento: string | null
+          id: string
+          items: Json
+          lead_id: string
+          numero: string
+          observacoes: string | null
+          parcelas: number | null
+          pdf_path: string | null
+          sent_at: string | null
+          subtotal: number
+          total: number
+          validade_dias: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          discount_pct?: number
+          discount_value?: number
+          forma_pagamento?: string | null
+          id?: string
+          items?: Json
+          lead_id: string
+          numero: string
+          observacoes?: string | null
+          parcelas?: number | null
+          pdf_path?: string | null
+          sent_at?: string | null
+          subtotal?: number
+          total?: number
+          validade_dias?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          discount_pct?: number
+          discount_value?: number
+          forma_pagamento?: string | null
+          id?: string
+          items?: Json
+          lead_id?: string
+          numero?: string
+          observacoes?: string | null
+          parcelas?: number | null
+          pdf_path?: string | null
+          sent_at?: string | null
+          subtotal?: number
+          total?: number
+          validade_dias?: number | null
+        }
+        Relationships: []
+      }
+      quote_threads: {
+        Row: {
+          archived_at: string | null
+          created_at: string
+          forma_pagamento: string | null
+          id: string
+          lead_id: string
+          notas: string | null
+          observacoes_venda: string | null
+          pago_em: string | null
+          parcelas: number | null
+          status: Database["public"]["Enums"]["quote_status"]
+          updated_at: string
+          valor_final: number | null
+        }
+        Insert: {
+          archived_at?: string | null
+          created_at?: string
+          forma_pagamento?: string | null
+          id?: string
+          lead_id: string
+          notas?: string | null
+          observacoes_venda?: string | null
+          pago_em?: string | null
+          parcelas?: number | null
+          status?: Database["public"]["Enums"]["quote_status"]
+          updated_at?: string
+          valor_final?: number | null
+        }
+        Update: {
+          archived_at?: string | null
+          created_at?: string
+          forma_pagamento?: string | null
+          id?: string
+          lead_id?: string
+          notas?: string | null
+          observacoes_venda?: string | null
+          pago_em?: string | null
+          parcelas?: number | null
+          status?: Database["public"]["Enums"]["quote_status"]
+          updated_at?: string
+          valor_final?: number | null
+        }
+        Relationships: []
+      }
       saved_carts: {
         Row: {
           cart_id: string | null
@@ -389,6 +491,13 @@ export type Database = {
         | "contato"
         | "orcamento"
       partner_status: "pending" | "approved" | "rejected" | "cancelled"
+      quote_status:
+        | "novo"
+        | "em_atendimento"
+        | "proposta_enviada"
+        | "fechado"
+        | "perdido"
+        | "arquivado"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -526,6 +635,14 @@ export const Constants = {
         "orcamento",
       ],
       partner_status: ["pending", "approved", "rejected", "cancelled"],
+      quote_status: [
+        "novo",
+        "em_atendimento",
+        "proposta_enviada",
+        "fechado",
+        "perdido",
+        "arquivado",
+      ],
     },
   },
 } as const
