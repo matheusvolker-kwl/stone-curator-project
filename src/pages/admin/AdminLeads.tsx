@@ -43,7 +43,7 @@ export default function AdminLeads() {
         .order("last_activity_at", { ascending: false })
         .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
 
-      if (typeFilter !== "all") query = query.eq("type", typeFilter);
+      if (typeFilter !== "all") query = query.eq("type", typeFilter as never);
 
       if (q) {
         // Busca server-side (case-insensitive) em campos de texto
@@ -89,7 +89,7 @@ export default function AdminLeads() {
         .neq("type", "orcamento")
         .order("last_activity_at", { ascending: false })
         .limit(5000);
-      if (typeFilter !== "all") query = query.eq("type", typeFilter);
+      if (typeFilter !== "all") query = query.eq("type", typeFilter as never);
       if (q) {
         const pattern = `%${q.replace(/[%,]/g, " ")}%`;
         query = query.or(
