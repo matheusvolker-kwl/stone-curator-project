@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { ChevronDown, ChevronUp, ExternalLink, Info } from "lucide-react";
+import { ChevronDown, ChevronUp, ExternalLink, Info, RotateCcw, MessageCircle } from "lucide-react";
 import GuideHeader from "@/components/guide-v2/GuideHeader";
 import PecaRow from "@/components/guide-v2/PecaRow";
 import AutoralCard from "@/components/guide-v2/AutoralCard";
@@ -20,13 +20,14 @@ import {
   type ProjetoPeca,
   type TipoVisual,
 } from "@/components/guide-v2/types";
-import { autoralToExtra, getAutoraisFor, type AutoralItem } from "@/components/guide-v2/autoraisCatalog";
-import { getPecasPlaceholder } from "@/components/guide-v2/pecasPlaceholder";
+import { autoralToExtra, type AutoralItem } from "@/components/guide-v2/autoraisCatalog";
+import { useGuideProducts } from "@/components/guide-v2/useGuideProducts";
 import { buildContextQuery } from "@/components/guide-v2/useGuideQuery";
 import {
   guideMap,
   m2ToTamanhoId,
   tamanhoLabels,
+  whatsappConsultor,
   type ConjuntoLeaf,
   type Nivel,
 } from "@/data/guideMap";
@@ -65,18 +66,21 @@ export default function GuiaRefinar() {
   const area = params.get("area");
   const nivelParam = (params.get("nivel") as Nivel | null) ?? found?.nivel ?? "equilibrada";
 
-  const baseInicial = useMemo(() => getPecasPlaceholder(nivelParam), [nivelParam]);
-  const [pecas, setPecas] = useState<ProjetoPeca[]>(baseInicial);
+  // Busca produtos REAIS do Shopify (peças base + autorais)
+  const { pecas: baseInicial, autorais, isLoading } = useGuideProducts(nivelParam, tipoVisual);
+
+  const [pecas, setPecas] = useState<ProjetoPeca[]>([]);
   const [extras, setExtras] = useState<ProjetoExtra[]>([]);
   const [showAcab, setShowAcab] = useState(false);
   const [modalItem, setModalItem] = useState<AutoralItem | null>(null);
   const [modalIndex, setModalIndex] = useState(0);
 
+  // Sincroniza peças base sempre que o catálogo Shopify recarrega
   useEffect(() => {
-    setPecas(getPecasPlaceholder(nivelParam));
-  }, [nivelParam]);
+    setPecas(baseInicial);
+  }, [baseInicial]);
 
-  const isCustomizado = !pecasIguais(pecas, baseInicial);
+  const isCustomizado = pecas.length > 0 && !pecasIguais(pecas, baseInicial);
 
   if (!found) {
     return <Navigate to="/guia-de-composicao" replace />;
@@ -92,7 +96,6 @@ export default function GuiaRefinar() {
   };
   const onRemove = (id: string) => setPecas((prev) => prev.filter((p) => p.id !== id));
 
-  const autorais = getAutoraisFor(tipoVisual);
   const isExtraSelected = (id: string) => extras.some((e) => e.id === id);
   const toggleExtra = (id: string) => {
     setExtras((prev) =>
@@ -117,6 +120,8 @@ export default function GuiaRefinar() {
     if (isCustomizado) sp.set("modo", "consulta");
     navigate(`/guia-de-composicao/finalizar${sp.toString() ? `?${sp.toString()}` : ""}`);
   };
+
+  const whatsHref = whatsappConsultor(tipoMeta.tipo, conjunto.nome);
 
   return (
     <div className="min-h-screen surface-ivory relative">
@@ -167,7 +172,7 @@ export default function GuiaRefinar() {
 
             {/* Aviso sob consulta */}
             {isCustomizado && (
-              <div className="mt-10 border-l-2 border-western-gold pl-5 py-3 bg-western-gold/[0.06]">
+              <div className="mt-10 border-l-2 border-western-gold pl-5 py-4 bg-western-gold/[0.06]">
                 <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold inline-flex items-center gap-2 mb-2">
                   <Info className="h-3 w-3" /> Projeto autoral · sob consulta
                 </p>
@@ -175,6 +180,23 @@ export default function GuiaRefinar() {
                   Você está ajustando a composição original. O SketchUp é entregue apenas para os conjuntos
                   curados — projetos personalizados seguem para nossa equipe e voltam com prévia em até 48h.
                 </p>
+                <div className="flex flex-wrap items-center gap-3 mt-5">
+                  <button
+                    type="button"
+                    onClick={() => setPecas(baseInicial)}
+                    className="inline-flex items-center gap-2 h-10 px-4 border border-western-green-deep text-western-green-deep font-mono text-[10px] uppercase tracking-[0.22em] hover:bg-western-green-deep hover:text-western-cream transition-colors"
+                  >
+                    <RotateCcw className="h-3 w-3" /> Voltar à composição original
+                  </button>
+                  <a
+                    href={whatsHref}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 h-10 px-4 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep transition-colors"
+                  >
+                    <MessageCircle className="h-3 w-3" /> Falar com consultor →
+                  </a>
+                </div>
               </div>
             )}
 
@@ -185,9 +207,13 @@ export default function GuiaRefinar() {
                 Ajuste o conjunto peça por peça.
               </h2>
               <div className="mt-6">
-                {pecas.map((p, i) => (
-                  <PecaRow key={p.id} peca={p} index={i} onQty={onQty} onRemove={onRemove} />
-                ))}
+                {isLoading && pecas.length === 0 ? (
+                  <SkeletonRows count={4} />
+                ) : (
+                  pecas.map((p, i) => (
+                    <PecaRow key={p.id} peca={p} index={i} onQty={onQty} onRemove={onRemove} />
+                  ))
+                )}
               </div>
             </section>
 
@@ -203,16 +229,20 @@ export default function GuiaRefinar() {
                 Vendidas avulsas, viajam no mesmo pedido com frete otimizado. Clique para ver detalhes.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
-                {autorais.map((a, i) => (
-                  <AutoralCard
-                    key={a.id}
-                    item={a}
-                    index={i}
-                    selected={isExtraSelected(a.id)}
-                    onToggle={() => toggleExtra(a.id)}
-                    onOpen={() => { setModalItem(a); setModalIndex(i); }}
-                  />
-                ))}
+                {isLoading && autorais.length === 0 ? (
+                  <SkeletonCards count={4} />
+                ) : (
+                  autorais.map((a, i) => (
+                    <AutoralCard
+                      key={a.id}
+                      item={a}
+                      index={i}
+                      selected={isExtraSelected(a.id)}
+                      onToggle={() => toggleExtra(a.id)}
+                      onOpen={() => { setModalItem(a); setModalIndex(i); }}
+                    />
+                  ))
+                )}
               </div>
             </section>
 
@@ -287,5 +317,40 @@ function Tag({ children }: { children: React.ReactNode }) {
     <span className="font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 border border-western-stone-warm/25 text-western-green-deep">
       {children}
     </span>
+  );
+}
+
+function SkeletonRows({ count }: { count: number }) {
+  return (
+    <>
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="flex items-start gap-5 py-6 border-b border-western-stone-warm/15 first:border-t animate-pulse">
+          <div className="w-24 h-24 bg-western-paper" />
+          <div className="flex-1 space-y-2.5">
+            <div className="h-5 w-2/3 bg-western-paper" />
+            <div className="h-3 w-1/3 bg-western-paper" />
+            <div className="h-4 w-1/4 bg-western-paper" />
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
+function SkeletonCards({ count }: { count: number }) {
+  return (
+    <>
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="bg-white animate-pulse">
+          <div className="aspect-[4/3] bg-western-paper" />
+          <div className="p-6 space-y-3">
+            <div className="h-5 w-2/3 bg-western-paper" />
+            <div className="h-3 w-1/3 bg-western-paper" />
+            <div className="h-5 w-1/4 bg-western-paper" />
+            <div className="h-12 w-full bg-western-paper mt-4" />
+          </div>
+        </div>
+      ))}
+    </>
   );
 }

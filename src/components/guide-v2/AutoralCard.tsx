@@ -1,6 +1,5 @@
 import { Check, Plus, X } from "lucide-react";
 import { formatPreco } from "@/data/guideMap";
-import { stoneCrops } from "./imagery";
 import type { AutoralItem } from "./autoraisCatalog";
 import { cn } from "@/lib/utils";
 
@@ -12,8 +11,7 @@ interface Props {
   onOpen?: () => void;
 }
 
-export default function AutoralCard({ item, index = 0, selected, onToggle, onOpen }: Props) {
-  const image = stoneCrops[index % stoneCrops.length];
+export default function AutoralCard({ item, selected, onToggle, onOpen }: Props) {
   return (
     <article
       className={cn(
@@ -25,19 +23,22 @@ export default function AutoralCard({ item, index = 0, selected, onToggle, onOpe
       onClick={onOpen}
     >
       <div className="aspect-[4/3] w-full bg-western-paper overflow-hidden">
-        <img
-          src={image}
-          alt=""
-          aria-hidden
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.04]"
-        />
+        {item.imageUrl ? (
+          <img
+            src={item.imageUrl}
+            alt={item.nome}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.04]"
+          />
+        ) : (
+          <div className="w-full h-full bg-western-paper" />
+        )}
       </div>
       <div className="p-6 flex flex-col flex-1 border-t border-western-stone-warm/10">
         <h4 className="font-display text-[20px] text-western-green-deep leading-tight">{item.nome}</h4>
         <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mt-1.5">
-          {item.codigo} · {item.pesoKg} kg
+          {item.codigo}{item.pesoKg ? ` · ${item.pesoKg} kg` : ""}
         </p>
         <p className="font-display text-[20px] text-western-green-deep mt-3 mb-5">{formatPreco(item.preco)}</p>
 

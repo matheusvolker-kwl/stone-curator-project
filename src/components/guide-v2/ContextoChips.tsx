@@ -18,7 +18,7 @@ export default function ContextoChips({ tipo, area, acabamento }: Props) {
   ];
 
   return (
-    <div className="sticky top-16 z-20 bg-western-paper/95 backdrop-blur-sm border-b border-western-stone-warm/15 relative">
+    <div className="sticky top-20 z-20 bg-western-paper/95 backdrop-blur-sm border-b border-western-stone-warm/15 relative">
       <div className="container-western h-11 flex items-center justify-between gap-6">
         <ol className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
           {items.map((label, i) => (
