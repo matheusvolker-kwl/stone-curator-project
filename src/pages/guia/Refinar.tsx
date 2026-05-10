@@ -168,10 +168,12 @@ export default function GuiaRefinar() {
               </div>
             </section>
 
+            <div className="divider-hairline mt-14" />
+
             {/* Trocar acabamento */}
-            <section className="mt-16">
-              <p className="text-eyebrow mb-2">
-                Acabamento atual: {acabamentoMeta[acabamento].label}
+            <section className="mt-12">
+              <p className="text-eyebrow mb-3">
+                Acabamento atual · {acabamentoMeta[acabamento].label}
               </p>
               <button
                 type="button"
@@ -182,7 +184,7 @@ export default function GuiaRefinar() {
                 {showAcab ? "Fechar" : "Trocar acabamento desta composição"}
               </button>
               {showAcab && (
-                <div className="mt-5 max-w-2xl">
+                <div className="mt-6 max-w-2xl">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {(Object.keys(acabamentoMeta) as Acabamento[]).map((a, i) => (
                       <AcabamentoCard
@@ -217,7 +219,7 @@ export default function GuiaRefinar() {
 
 function Tag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="font-mono text-[10px] uppercase tracking-[0.18em] px-2.5 py-1 bg-western-cream-muted/30 text-western-green-deep">
+    <span className="font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 border border-western-stone-warm/25 text-western-green-deep">
       {children}
     </span>
   );
