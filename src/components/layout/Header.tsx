@@ -29,6 +29,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const { pathname } = useLocation();
   const navigate = useNavigate();
