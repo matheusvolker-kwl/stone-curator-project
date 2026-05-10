@@ -85,7 +85,7 @@ export async function submitQuoteLead({
         projeto: projetoContext ?? null,
         extra: payloadExtra ?? null,
         submitted_at: new Date().toISOString(),
-      },
+      } as never,
     })
     .select("id")
     .single();
