@@ -1,10 +1,16 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { z } from "zod";
 import logo from "@/assets/logo-horizontal-bege.png";
-import { Mail, Send, Loader2 } from "lucide-react";
+import { Mail, Send, Loader2, Check } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+const newsletterSchema = z.object({
+  email: z.string().trim().email("E-mail inválido").max(320),
+  hp: z.string().max(0, "spam"),
+});
 
 const COLECOES: { label: string; handle: string }[] = [
   { label: "Cascatas", handle: "cascatas" },
