@@ -12,12 +12,20 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ChevronLeft, Loader2, Info, MessageCircle, Download } from "lucide-react";
+import { ChevronRight, Loader2, Info, MessageCircle, Download } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { toast } from "sonner";
 import FinishSelector from "@/components/product/FinishSelector";
 import PriceGate from "@/components/shared/PriceGate";
 import { useAuth } from "@/hooks/useAuth";
+import HardFactsCard from "@/components/product/HardFactsCard";
+import CustomPaintNote from "@/components/product/CustomPaintNote";
+import ProductInProjects from "@/components/product/ProductInProjects";
+import ProductComparison from "@/components/product/ProductComparison";
+import RelatedProducts from "@/components/product/RelatedProducts";
+import WhyWesternStrip from "@/components/product/WhyWesternStrip";
+import SocialProofBand from "@/components/product/SocialProofBand";
+import ProductPagination from "@/components/product/ProductPagination";
 
 export default function ProductPage() {
   const { handle = "" } = useParams();
@@ -143,16 +151,33 @@ export default function ProductPage() {
   const acabamentosRow = fichaCleaned.find((f) => /acabament/i.test(f.label));
   const fichaRows = fichaCleaned.filter((f) => !/acabament/i.test(f.label));
 
+  // Peso (kg) extraído da ficha — usado nos blocos de comparativo
+  const pesoStr = parsed.ficha.find((f) => /peso/i.test(f.label))?.value ?? "";
+  const pesoKg = pesoStr.match(/(\d+[.,]?\d*)/)?.[1]?.replace(",", ".") ?? null;
+  const dimsStr = dims ? `${dims.c} × ${dims.l} × ${dims.a} cm` : null;
+
   return (
     <div className="surface-ivory">
       <div className="container-western py-12 md:py-20">
-        <Link
-          to={parentRoute}
-          className="inline-flex items-center gap-2 text-western-stone-warm hover:text-western-gold transition-colors font-mono text-xs uppercase tracking-[0.2em] mb-10"
+        {/* Breadcrumb */}
+        <nav
+          aria-label="breadcrumb"
+          className="flex items-center flex-wrap gap-x-2 gap-y-1 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/80 mb-10"
         >
-          <ChevronLeft className="h-4 w-4" />
-          {parentLabel}
-        </Link>
+          <Link to="/linhas" className="hover:text-western-gold transition-colors">
+            Catálogo
+          </Link>
+          <ChevronRight className="h-3 w-3 opacity-50" />
+          {collection ? (
+            <>
+              <Link to={parentRoute} className="hover:text-western-gold transition-colors">
+                {parentLabel}
+              </Link>
+              <ChevronRight className="h-3 w-3 opacity-50" />
+            </>
+          ) : null}
+          <span className="text-western-green-deep">{product.title}</span>
+        </nav>
 
         <div className="grid md:grid-cols-2 gap-10 lg:gap-20 items-start">
           {/* Gallery */}
@@ -201,6 +226,9 @@ export default function ProductPage() {
                 SKU · {sku}
               </p>
             )}
+
+            {/* Bloco de dados duros — peso & dimensões */}
+            <HardFactsCard pesoKg={pesoKg} dimensoes={dimsStr} />
 
             {/* Lead — editorial drop-cap */}
             {parsed.lead && (
@@ -256,6 +284,15 @@ export default function ProductPage() {
                     onSelect={(val) =>
                       setActiveOptions((prev) => ({ ...prev, [acabOption.name]: val }))
                     }
+                  />
+                  <CustomPaintNote
+                    onConsultor={() => {
+                      const msg = `Olá! Gostaria de uma pintura personalizada para ${product.title}.`;
+                      window.open(
+                        `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
+                        "_blank"
+                      );
+                    }}
                   />
                 </div>
               );
@@ -577,6 +614,23 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+
+      {/* Seções full-width abaixo do hero */}
+      <ProductInProjects productHandle={product.handle} productTitle={product.title} />
+      <ProductComparison productTitle={product.title} pesoKg={pesoKg} dimensoes={dimsStr} />
+      <RelatedProducts
+        collectionHandle={collection?.handle}
+        collectionTitle={collection?.title}
+        currentHandle={product.handle}
+        productTitle={product.title}
+      />
+      <WhyWesternStrip />
+      <SocialProofBand />
+      <ProductPagination
+        collectionHandle={collection?.handle}
+        collectionTitle={collection?.title}
+        currentHandle={product.handle}
+      />
     </div>
   );
 }

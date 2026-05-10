@@ -1,6 +1,11 @@
 import { MessageCircle } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 export default function WhatsAppFAB() {
+  const { pathname } = useLocation();
+  // Esconde o FAB em PDPs — a página tem CTA "Falar com consultor" próprio.
+  if (pathname.startsWith("/produtos/") || pathname.startsWith("/produto/")) return null;
+
   return (
     <a
       href="https://wa.me/5511993403485?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20Western%20e%20gostaria%20de%20falar%20com%20um%20consultor."
