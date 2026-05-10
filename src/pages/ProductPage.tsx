@@ -456,7 +456,6 @@ export default function ProductPage() {
               <li>· Garantia {BUSINESS.garantiaAnos} anos contra defeitos de fabricação</li>
             </ul>
 
-            </div>
 
             {/* Accordions */}
             <Accordion
