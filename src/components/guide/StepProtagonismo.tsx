@@ -156,6 +156,8 @@ export default function StepProtagonismo() {
                 key={n}
                 tipo={tipo}
                 nivel={n}
+                areaM2={areaM2 ?? undefined}
+                isApproved={isApproved}
                 selected={nivel === n}
                 recommended={n === "equilibrada"}
                 onClick={() => setNivel(n)}
