@@ -19,6 +19,7 @@ const AdminQuotes = lazy(() => import("./pages/admin/AdminQuotes"));
 const AdminQuoteDetail = lazy(() => import("./pages/admin/AdminQuoteDetail"));
 const AdminSamples = lazy(() => import("./pages/admin/AdminSamples"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminPedidos = lazy(() => import("./pages/admin/AdminPedidos"));
 const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
 
 const AccountLayout = lazy(() => import("@/components/account/AccountLayout"));
