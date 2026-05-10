@@ -1,6 +1,7 @@
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
-import { ShoppingBag, User, Menu, X, Search, ShieldCheck, LogOut } from "lucide-react";
+import { ShoppingBag, User, Menu, X, Search, ShieldCheck, LogOut, Heart } from "lucide-react";
+import { useWishlist } from "@/hooks/useWishlist";
 import logoVerde from "@/assets/logo-horizontal-verde.png";
 import logoBege from "@/assets/logo-horizontal-bege.png";
 import { useState, useEffect } from "react";
