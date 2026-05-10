@@ -192,7 +192,7 @@ export default function ProjetoSidebar(props: Props) {
 
   return (
     <>
-      <aside className="hidden lg:block sticky top-28 self-start">
+      <aside className="hidden lg:block lg:sticky lg:top-[calc(var(--guide-sticky-top,0px)+1.25rem)] self-start">
         <PanelBody {...props} />
       </aside>
 
