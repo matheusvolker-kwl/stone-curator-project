@@ -17,7 +17,6 @@ const items = [
   { to: "/admin/parceiros", label: "Parceiros", icon: Users },
   { to: "/admin/leads", label: "Leads", icon: Inbox },
   { to: "/admin/amostras", label: "Amostras", icon: PackageCheck },
-  { to: "/admin/usuarios", label: "Usuários & Tiers", icon: UserCog },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ];
 
