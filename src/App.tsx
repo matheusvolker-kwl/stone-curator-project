@@ -67,6 +67,10 @@ const App = () => (
         <AuthProvider>
           <WishlistProvider>
           <Routes>
+            <Route path="/guia-de-composicao" element={<GuiaContexto />} />
+            <Route path="/guia-de-composicao/composicoes" element={<GuiaComposicoes />} />
+            <Route path="/guia-de-composicao/refinar/:handle" element={<GuiaRefinar />} />
+            <Route path="/guia-de-composicao/finalizar" element={<GuiaFinalizar />} />
             <Route element={<SiteLayout />}>
               <Route path="/" element={<Index />} />
               <Route path="/linhas" element={<Linhas />} />
