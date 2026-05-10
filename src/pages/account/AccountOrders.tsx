@@ -13,9 +13,11 @@ import {
   ArrowLeft,
   Copy,
   ExternalLink,
+  FileDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import { formatBRL } from "@/lib/shopify/client";
+import { downloadPedidoPdf } from "@/lib/pdf/pedidoPdf";
 
 type Status =
   | "aguardando"
