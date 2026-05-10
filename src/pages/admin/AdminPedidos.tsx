@@ -828,44 +828,136 @@ export default function AdminPedidos() {
           )}
         </div>
       ) : (
-        <div className="border border-western-stone-warm/15 bg-white divide-y divide-western-stone-warm/10">
-          {visible.map((o) => {
-            const p = partnerById.get(o.user_id);
-            return (
-              <button
-                key={o.id}
-                onClick={() => setSelectedId(o.id)}
-                className="w-full text-left p-4 hover:bg-western-cream/40 transition-colors flex items-center gap-4"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
-                      Nº {o.numero}
-                    </span>
-                    <StatusBadge status={o.status} />
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
-                      {o.modo_entrega === "retirada" ? "Retirada" : "Frete"}
-                    </span>
-                  </div>
-                  <p className="font-display text-base text-western-green-deep truncate mt-1">
-                    {o.titulo}
-                  </p>
-                  <p className="text-xs text-western-stone-warm mt-0.5 truncate">
-                    {p?.empresa || p?.nome || o.user_id.slice(0, 8)}
-                    {p?.cidade ? ` · ${p.cidade}` : ""}
-                  </p>
+        <div className="border border-western-stone-warm/15 bg-white">
+          {/* Cabeçalho com seleção em lote */}
+          <div className="flex items-center gap-3 px-4 py-2.5 border-b border-western-stone-warm/15 bg-western-cream/30">
+            <input
+              type="checkbox"
+              checked={allVisibleChecked}
+              ref={(el) => {
+                if (el) el.indeterminate = checkedVisible.length > 0 && !allVisibleChecked;
+              }}
+              onChange={toggleAllVisible}
+              className="h-4 w-4 accent-western-gold cursor-pointer"
+              aria-label="Selecionar todos"
+            />
+            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
+              {checked.size > 0
+                ? `${checked.size} selecionado(s)`
+                : `${visible.length} pedido(s)`}
+            </span>
+          </div>
+
+          <div className="divide-y divide-western-stone-warm/10">
+            {visible.map((o) => {
+              const p = partnerById.get(o.user_id);
+              const isChecked = checked.has(o.id);
+              return (
+                <div
+                  key={o.id}
+                  className={`flex items-center gap-3 px-4 py-3 transition-colors ${
+                    isChecked ? "bg-western-gold/5" : "hover:bg-western-cream/40"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => toggleOne(o.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="h-4 w-4 accent-western-gold cursor-pointer flex-shrink-0"
+                    aria-label={`Selecionar pedido ${o.numero}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setSelectedId(o.id)}
+                    className="flex-1 min-w-0 text-left flex items-center gap-4"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
+                          Nº {o.numero}
+                        </span>
+                        <StatusBadge status={o.status} />
+                        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
+                          {o.modo_entrega === "retirada" ? "Retirada" : "Frete"}
+                        </span>
+                      </div>
+                      <p className="font-display text-base text-western-green-deep truncate mt-1">
+                        {o.titulo}
+                      </p>
+                      <p className="text-xs text-western-stone-warm mt-0.5 truncate">
+                        {p?.empresa || p?.nome || o.user_id.slice(0, 8)}
+                        {p?.cidade ? ` · ${p.cidade}` : ""}
+                      </p>
+                    </div>
+                    <div className="text-right hidden sm:block">
+                      <p className="text-xs text-western-stone-warm">
+                        {o.modo_entrega === "retirada" ? "Disponível" : "Previsão"}
+                      </p>
+                      <p className="font-mono text-xs text-western-green-deep">
+                        {fmtDate(o.previsao_entrega)}
+                      </p>
+                    </div>
+                  </button>
                 </div>
-                <div className="text-right hidden sm:block">
-                  <p className="text-xs text-western-stone-warm">
-                    {o.modo_entrega === "retirada" ? "Disponível" : "Previsão"}
-                  </p>
-                  <p className="font-mono text-xs text-western-green-deep">
-                    {fmtDate(o.previsao_entrega)}
-                  </p>
-                </div>
-              </button>
-            );
-          })}
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Barra flutuante de ações em lote */}
+      {checked.size > 0 && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[min(960px,calc(100vw-2rem))] bg-western-green-deep text-western-cream border border-western-gold/30 shadow-2xl">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-western-gold/20">
+            <Layers className="h-4 w-4 text-western-gold-soft" />
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold-soft">
+              Ações em lote · {checked.size} pedido(s)
+            </p>
+            <button
+              onClick={clearChecked}
+              className="ml-auto inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-western-cream/70 hover:text-western-cream"
+            >
+              <X className="h-3 w-3" /> Limpar
+            </button>
+          </div>
+          <div className="p-4 grid grid-cols-1 md:grid-cols-[170px_140px_1fr_auto] gap-2 items-start">
+            <select
+              value={bulkStatus}
+              onChange={(e) => setBulkStatus(e.target.value as Status | "")}
+              className="ui-input text-western-green-deep"
+              aria-label="Novo status"
+            >
+              <option value="">— Manter status —</option>
+              {STATUS_OPTIONS.map((s) => (
+                <option key={s} value={s}>{STATUS_META[s].label}</option>
+              ))}
+            </select>
+            <select
+              value={bulkModo}
+              onChange={(e) => setBulkModo(e.target.value as Modo | "")}
+              className="ui-input text-western-green-deep"
+              aria-label="Modo de entrega"
+            >
+              <option value="">— Manter modo —</option>
+              <option value="frete">Frete</option>
+              <option value="retirada">Retirada</option>
+            </select>
+            <textarea
+              value={bulkNote}
+              onChange={(e) => setBulkNote(e.target.value)}
+              placeholder="Observação anexada como evento (opcional, visível ao parceiro)…"
+              className="ui-input text-western-green-deep min-h-[42px] max-h-32"
+              rows={1}
+            />
+            <button
+              onClick={applyBulk}
+              disabled={bulkApplying}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.22em] bg-western-gold text-western-green-deep hover:bg-western-gold/90 disabled:opacity-50 whitespace-nowrap h-[42px]"
+            >
+              <Save className="h-3 w-3" /> {bulkApplying ? "Aplicando…" : "Aplicar"}
+            </button>
+          </div>
         </div>
       )}
 
