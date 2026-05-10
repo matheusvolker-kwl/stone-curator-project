@@ -254,6 +254,7 @@ export default function GuiaRefinar() {
                       selected={isExtraSelected(a.id)}
                       qty={getExtraQty(a.id)}
                       onToggle={() => toggleExtra(a.id)}
+                      onSetQty={(q) => setExtraQty(a.id, q)}
                       onOpen={() => { setModalItem(a); setModalIndex(i); }}
                     />
                   ))
