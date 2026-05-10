@@ -177,23 +177,6 @@ export default function CartDrawer({
 
         {items.length > 0 && (
           <div className="px-5 md:px-8 py-6 border-t border-western-gold/15 space-y-4">
-            {isApproved && (
-              <div>
-                <div className="flex justify-between text-spec mb-2">
-                  <span className="text-western-cream-muted">Pedido mínimo {formatBRL(MIN_ORDER)}</span>
-                  <span className={meetsMinimum ? "text-western-gold-soft" : "text-western-cream-muted"}>
-                    {Math.round(progress)}%
-                  </span>
-                </div>
-                <div className="h-px bg-western-gold/20 relative overflow-hidden">
-                  <div
-                    className="h-full bg-western-gold transition-all duration-700"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
-            )}
-
             <div className="flex justify-between items-baseline">
               <span className="text-eyebrow">Subtotal</span>
               <span className="font-display text-2xl">
