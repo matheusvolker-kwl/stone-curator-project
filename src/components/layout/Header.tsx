@@ -220,6 +220,14 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               >
                 <User className="h-4 w-4" /> Acessar conta
               </Link>
+              {session && (
+                <Link
+                  to="/parceiro/favoritos"
+                  className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
+                >
+                  <Heart className="h-4 w-4" /> Favoritos {wishCount > 0 && <span className="text-western-gold-soft">({wishCount})</span>}
+                </Link>
+              )}
               <Link
                 to="/parceiro/cadastro"
                 className="py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
