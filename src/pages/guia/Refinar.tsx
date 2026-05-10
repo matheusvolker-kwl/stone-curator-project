@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, ExternalLink, Info, RotateCcw, MessageCircle } from "lucide-react";
 import GuideHeader from "@/components/guide-v2/GuideHeader";
@@ -74,11 +74,29 @@ export default function GuiaRefinar() {
   const [showAcab, setShowAcab] = useState(false);
   const [modalItem, setModalItem] = useState<AutoralItem | null>(null);
   const [modalIndex, setModalIndex] = useState(0);
+  const stickySentinelRef = useRef<HTMLDivElement | null>(null);
 
   // Sincroniza peças base sempre que o catálogo Shopify recarrega
   useEffect(() => {
     setPecas(baseInicial);
   }, [baseInicial]);
+
+  useEffect(() => {
+    const updateStickyTop = () => {
+      const top = stickySentinelRef.current?.getBoundingClientRect().bottom ?? 0;
+      document.documentElement.style.setProperty("--guide-sticky-top", `${Math.max(0, top)}px`);
+    };
+
+    updateStickyTop();
+    window.addEventListener("scroll", updateStickyTop, { passive: true });
+    window.addEventListener("resize", updateStickyTop);
+
+    return () => {
+      window.removeEventListener("scroll", updateStickyTop);
+      window.removeEventListener("resize", updateStickyTop);
+      document.documentElement.style.removeProperty("--guide-sticky-top");
+    };
+  }, []);
 
   const isCustomizado = pecas.length > 0 && !pecasIguais(pecas, baseInicial);
 
@@ -143,6 +161,7 @@ export default function GuiaRefinar() {
       {area && (
         <ContextoChips tipo={tipoVisual} area={Number(area)} acabamento={acabamento} />
       )}
+      <div ref={stickySentinelRef} aria-hidden="true" className="h-0" />
       <main className="container-western pt-12 md:pt-16 pb-32 lg:pb-20 relative">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-10 lg:gap-16 items-start">
           <div className="min-w-0">
@@ -254,6 +273,7 @@ export default function GuiaRefinar() {
                       selected={isExtraSelected(a.id)}
                       qty={getExtraQty(a.id)}
                       onToggle={() => toggleExtra(a.id)}
+                      onSetQty={(q) => setExtraQty(a.id, q)}
                       onOpen={() => { setModalItem(a); setModalIndex(i); }}
                     />
                   ))
