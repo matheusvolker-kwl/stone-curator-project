@@ -137,7 +137,7 @@ export default function QuoteLeadModal({
       setNumero(res.numero);
       setPdfBlob(res.pdfBlob ?? null);
       setSuccess(true);
-      toast.success("Pedido enviado! Um vendedor entrará em contato.");
+      toast.success("PDF liberado! Baixe abaixo.");
     } catch (err) {
       console.error(err);
       toast.error("Não foi possível enviar agora. Tente novamente em instantes.");
@@ -173,20 +173,22 @@ export default function QuoteLeadModal({
   })();
 
   const headerTitle =
-    title ?? (origem === "guia_composicao" ? "Solicitar orçamento do projeto" : "Solicitar orçamento");
+    title ?? (origem === "guia_composicao" ? "Baixar composição do projeto" : "Baixar sua composição");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-western-cream border-western-stone-warm/20">
         <DialogHeader>
-          <p className="text-eyebrow">Pedido de orçamento</p>
+          <p className="text-eyebrow">Composição em PDF</p>
           <DialogTitle className="font-display text-2xl text-western-green-deep">
-            {success ? "Recebido!" : headerTitle}
+            {success ? "Pronto! Seu PDF está liberado." : headerTitle}
           </DialogTitle>
           <DialogDescription className="text-western-stone-warm">
             {success
-              ? "Em até 1 dia útil um vendedor entra em contato pelo WhatsApp ou e-mail informado."
-              : `${items.length} ${items.length === 1 ? "item" : "itens"} na composição · um vendedor cuida do restante.`}
+              ? "Baixe o PDF abaixo. Se quiser, fale com um vendedor pelo WhatsApp para tirar dúvidas."
+              : isLogged
+                ? "Confirme seus dados e libere o PDF — também salvamos na sua conta."
+                : "Preencha rapidinho para liberar o PDF da sua composição."}
           </DialogDescription>
         </DialogHeader>
 
@@ -386,13 +388,13 @@ export default function QuoteLeadModal({
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <>
-                  <Send className="h-4 w-4" /> {ctaLabel ?? "Enviar pedido de orçamento"}
+                  <FileDown className="h-4 w-4" /> {ctaLabel ?? "Liberar PDF"}
                 </>
               )}
             </button>
 
             <p className="text-[10.5px] text-western-stone-warm text-center leading-relaxed">
-              O PDF da composição fica disponível para download logo após o envio.
+              Ao liberar o PDF, sua composição é salva no nosso painel — assim podemos te ajudar caso precise.
             </p>
           </form>
         )}

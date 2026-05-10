@@ -379,8 +379,8 @@ export default function GuiaRefinar() {
         currency="BRL"
         origem="guia_composicao"
         projetoContext={projetoContext}
-        ctaLabel={isCustomizado ? "Solicitar orçamento sob consulta" : "Enviar pedido de orçamento"}
-        title={isCustomizado ? "Solicitar orçamento sob consulta" : "Solicitar orçamento do projeto"}
+        ctaLabel={isCustomizado ? "Solicitar orçamento sob consulta" : "Liberar PDF da composição"}
+        title={isCustomizado ? "Solicitar orçamento sob consulta" : "Baixar composição do projeto"}
         payloadExtra={{
           conjuntoHandle: handle,
           conjuntoNome: found?.conjunto.nome,
