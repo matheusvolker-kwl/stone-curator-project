@@ -1,1 +1,4 @@
 project_id = "zibtysewpbeycngtbjjk"
+
+[functions.log-client-error]
+verify_jwt = false
