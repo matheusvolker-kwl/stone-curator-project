@@ -31,11 +31,33 @@ export default function CartDrawer({
   const subtotal = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
   const currency = items[0]?.price.currencyCode ?? "BRL";
   const meetsMinimum = subtotal >= MIN_ORDER;
-  const progress = Math.min(100, (subtotal / MIN_ORDER) * 100);
+  const distinctFinishes = new Set(
+    items.flatMap((i) =>
+      i.selectedOptions
+        .filter((o) => /acabamento|finish/i.test(o.name))
+        .map((o) => o.value)
+    )
+  ).size;
+  const savedToastShownRef = useRef(false);
 
   useEffect(() => {
     if (open) syncCart();
   }, [open, syncCart]);
+
+  // "Sua composição foi salva" — uma vez por sessão, 5s após mudança com itens.
+  useEffect(() => {
+    if (items.length === 0 || savedToastShownRef.current) return;
+    const t = window.setTimeout(() => {
+      if (savedToastShownRef.current) return;
+      savedToastShownRef.current = true;
+      toast.success("Sua composição foi salva", {
+        description: "Você pode voltar mais tarde — ela continua aqui.",
+        position: "bottom-right",
+        duration: 4000,
+      });
+    }, 5000);
+    return () => window.clearTimeout(t);
+  }, [items.length]);
 
   const handleCheckout = () => {
     const url = getCheckoutUrl();
