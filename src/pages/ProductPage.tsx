@@ -4,7 +4,7 @@ import { fetchProduct } from "@/lib/shopify/queries";
 import { parseProductDescription, extractDimensions } from "@/lib/shopify/parseDescription";
 import { useEffect, useMemo, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
-import { formatBRL, cdnImg, cdnSrcSet } from "@/lib/shopify/client";
+import { formatBRL } from "@/lib/shopify/client";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -20,12 +20,30 @@ import PriceGate from "@/components/shared/PriceGate";
 import { useAuth } from "@/hooks/useAuth";
 import HardFactsCard from "@/components/product/HardFactsCard";
 import CustomPaintNote from "@/components/product/CustomPaintNote";
+import ProductGallery from "@/components/product/ProductGallery";
+import ScrollProgress from "@/components/shared/ScrollProgress";
+import BackToTop from "@/components/shared/BackToTop";
 
 import ProductComparison from "@/components/product/ProductComparison";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import WhyWesternStrip from "@/components/product/WhyWesternStrip";
 import SocialProofBand from "@/components/product/SocialProofBand";
 import ProductPagination from "@/components/product/ProductPagination";
+
+// Pluraliza nomes de coleção singulares ("Pedra Grande" → "Pedras Grandes").
+function pluralizeCollection(title?: string): string {
+  if (!title) return "";
+  const lower = title.toLowerCase();
+  if (lower.endsWith("s")) return title;
+  // "Pedra X" → "Pedras X+s" (assume X é adjetivo terminando em vogal/consoante)
+  const m = title.match(/^(Pedra)\s+(\S+)(.*)$/i);
+  if (m) {
+    const adj = m[2];
+    const adjPlural = /[aeiouáéíóú]$/i.test(adj) ? `${adj}s` : `${adj}es`;
+    return `Pedras ${adjPlural}${m[3]}`;
+  }
+  return title;
+}
 
 export default function ProductPage() {
   const { handle = "" } = useParams();
@@ -129,7 +147,8 @@ export default function ProductPage() {
   const parentRoute = collection
     ? `/linhas/${collection.handle}`
     : "/linhas";
-  const parentLabel = collection?.title ?? "Linhas";
+  const parentLabel = pluralizeCollection(collection?.title) || "Linhas";
+  const collectionDisplay = pluralizeCollection(collection?.title);
 
   const handleAdd = async () => {
     if (!variant) return;
@@ -143,13 +162,17 @@ export default function ProductPage() {
   };
 
 
-  // Ficha técnica: extrai dimensões individuais e separa acabamentos
+  // Ficha técnica: extrai dimensões individuais e separa acabamentos.
+  // Filtra garantia vinda do Shopify (legacy "1 ano") — sempre injetamos 5 anos.
   const dims = extractDimensions(parsed.ficha);
   const fichaCleaned = parsed.ficha.filter(
-    (f) => !/comprimento|largura|altura/i.test(f.label)
+    (f) => !/comprimento|largura|altura|garantia/i.test(f.label)
   );
   const acabamentosRow = fichaCleaned.find((f) => /acabament/i.test(f.label));
-  const fichaRows = fichaCleaned.filter((f) => !/acabament/i.test(f.label));
+  const fichaRows = [
+    ...fichaCleaned.filter((f) => !/acabament/i.test(f.label)),
+    { label: "Garantia", value: `${BUSINESS.garantiaAnos} anos` },
+  ];
 
   // Peso (kg) extraído da ficha — usado nos blocos de comparativo
   const pesoStr = parsed.ficha.find((f) => /peso/i.test(f.label))?.value ?? "";
@@ -158,6 +181,8 @@ export default function ProductPage() {
 
   return (
     <div className="surface-ivory">
+      <ScrollProgress />
+      <BackToTop />
       <div className="container-western py-12 md:py-20">
         {/* Breadcrumb */}
         <nav
@@ -180,43 +205,20 @@ export default function ProductPage() {
         </nav>
 
         <div className="grid md:grid-cols-2 gap-10 lg:gap-20 items-start">
-          {/* Gallery */}
+          {/* Gallery — sticky no desktop */}
           <div className="md:sticky md:top-24">
-            <div className="frame-product aspect-square overflow-hidden">
-              {images[activeImage] && (
-                <img
-                  key={activeImage}
-                  src={cdnImg(images[activeImage].url, 1200)}
-                  srcSet={cdnSrcSet(images[activeImage].url, [600, 1000, 1400])}
-                  sizes="(min-width: 768px) 50vw, 100vw"
-                  alt={images[activeImage].altText ?? product.title}
-                  decoding="async"
-                  className="w-full h-full object-contain p-4 md:p-8 animate-fade-in"
-                />
-              )}
-            </div>
-            {images.length > 1 && (
-              <div className="flex gap-3 mt-4 overflow-x-auto scrollbar-hide -mx-2 px-2">
-                {images.map((img, idx) => (
-                  <button
-                    key={img.url}
-                    onClick={() => setActiveImage(idx)}
-                    className={`frame-product w-16 h-16 md:w-20 md:h-20 flex-shrink-0 transition-opacity ${
-                      idx === activeImage ? "opacity-100" : "opacity-60 hover:opacity-90"
-                    }`}
-                    aria-label={`Imagem ${idx + 1}`}
-                  >
-                    <img src={cdnImg(img.url, 200)} alt="" loading="lazy" decoding="async" className="w-full h-full object-contain p-1" />
-                  </button>
-                ))}
-              </div>
-            )}
+            <ProductGallery
+              images={images}
+              activeIndex={activeImage}
+              onChange={setActiveImage}
+              productTitle={product.title}
+            />
           </div>
 
           {/* Details */}
           <div className="md:py-2 text-western-green-deep">
             {/* Header */}
-            {collection && <p className="text-eyebrow mb-5">{collection.title}</p>}
+            {collectionDisplay && <p className="text-eyebrow mb-5">{collectionDisplay}</p>}
             <div className="w-12 h-px bg-western-gold mb-6" />
             <h1 className="font-display text-3xl md:text-5xl leading-[1.05]">
               {product.title}
@@ -230,7 +232,7 @@ export default function ProductPage() {
             {/* Bloco de dados duros — peso & dimensões */}
             <HardFactsCard pesoKg={pesoKg} dimensoes={dimsStr} />
 
-            {/* Lead — editorial drop-cap */}
+            {/* Lead — editorial drop-cap (curto, máx 2 frases — detalhe técnico vai pro accordion) */}
             {parsed.lead && (
               <p
                 className="product-lead mt-10"
@@ -247,31 +249,29 @@ export default function ProductPage() {
               />
             )}
 
-            {/* Intro secundário */}
-            {parsed.intro && (
-              <p className="mt-6 text-[15px] leading-[1.8] text-western-stone-warm max-w-[58ch]">
-                {parsed.intro}
-              </p>
-            )}
-
-            {/* Aplicações */}
+            {/* Aplicações — chips horizontais compactos */}
             {parsed.aplicacoes.length > 0 && (
-              <div className="mt-12">
-                <p className="text-eyebrow mb-5">Aplicações</p>
-                <ul className="product-list">
+              <div className="mt-10">
+                <p className="text-eyebrow mb-4">Aplicações</p>
+                <div className="flex flex-wrap gap-2">
                   {parsed.aplicacoes.map((a) => (
-                    <li key={a}>{a}</li>
+                    <span
+                      key={a}
+                      className="inline-flex items-center px-3 py-1.5 border border-western-stone-warm/25 bg-western-cream/50 text-spec text-western-green-deep"
+                    >
+                      {a}
+                    </span>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
 
-            {/* Acabamento — seletor com swatches (inline na coluna de compra) */}
+            {/* Acabamento — seletor com swatches */}
             {(() => {
               const acabOption = visibleOptions.find((o) => /acabament/i.test(o.name));
               if (!acabOption) return null;
               return (
-                <div className="mt-12">
+                <div className="mt-10">
                   <div className="flex items-baseline justify-between mb-4 gap-3">
                     <p className="text-eyebrow">Acabamento</p>
                     <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/80">
@@ -285,22 +285,13 @@ export default function ProductPage() {
                       setActiveOptions((prev) => ({ ...prev, [acabOption.name]: val }))
                     }
                   />
-                  <CustomPaintNote
-                    onConsultor={() => {
-                      const msg = `Olá! Gostaria de uma pintura personalizada para ${product.title}.`;
-                      window.open(
-                        `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
-                        "_blank"
-                      );
-                    }}
-                  />
                 </div>
               );
             })()}
 
             {/* Outras opções (tamanho etc.) */}
             {visibleOptions.filter((o) => !/acabament/i.test(o.name)).length > 0 && (
-              <div className="mt-10 space-y-8">
+              <div className="mt-8 space-y-8">
                 {visibleOptions
                   .filter((o) => !/acabament/i.test(o.name))
                   .map((option) => (
@@ -331,8 +322,8 @@ export default function ProductPage() {
               </div>
             )}
 
-            {/* Price + Add */}
-            <div className="mt-12 pt-8 border-t border-western-stone-warm/20">
+            {/* CTAs primários — colados no seletor, sem grandes vãos */}
+            <div className="mt-8 pt-6 border-t border-western-stone-warm/20">
               {(() => {
                 const pendingOption = visibleOptions.find(
                   (o) => !activeOptions[o.name]
@@ -343,24 +334,25 @@ export default function ProductPage() {
                       product.priceRange.minVariantPrice.amount,
                       product.priceRange.minVariantPrice.currencyCode
                     )}`;
+
+                // Deslogado: mostra apenas o gate, sem stepper nem botão competindo
+                if (!isApproved) {
+                  return <PriceGate variant="block" />;
+                }
+
+                // Aprovado: preço + stepper + botão único full width
                 return (
                   <>
-                    {isApproved ? (
-                      <div className="flex items-baseline justify-between mb-7 gap-4 flex-wrap">
-                        <span className="text-eyebrow">Condição parceiro</span>
-                        <span
-                          className={`font-display text-western-green-deep ${
-                            variant ? "text-3xl" : "text-xl text-western-stone-warm"
-                          }`}
-                        >
-                          {priceDisplay}
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="mb-7">
-                        <PriceGate variant="block" />
-                      </div>
-                    )}
+                    <div className="flex items-baseline justify-between mb-6 gap-4 flex-wrap">
+                      <span className="text-eyebrow">Condição parceiro</span>
+                      <span
+                        className={`font-display text-western-green-deep ${
+                          variant ? "text-3xl" : "text-xl text-western-stone-warm"
+                        }`}
+                      >
+                        {priceDisplay}
+                      </span>
+                    </div>
 
                     {pendingOption && (
                       <div className="mb-5 flex items-start gap-2.5 px-4 py-3 border border-western-gold/40 bg-western-gold/5">
@@ -391,13 +383,11 @@ export default function ProductPage() {
                       </div>
                       <Button
                         onClick={handleAdd}
-                        disabled={!isApproved || !variant?.availableForSale || isLoadingCart || !!pendingOption}
+                        disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
                         className="flex-1 h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
                       >
                         {isLoadingCart ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : !isApproved ? (
-                          "Login para pedir"
                         ) : pendingOption ? (
                           `Selecione ${pendingOption.name.toLowerCase()}`
                         ) : variant?.availableForSale ? (
@@ -412,7 +402,7 @@ export default function ProductPage() {
                       onClick={() => {
                         const msg = `Olá! Gostaria de falar sobre ${product.title}${sku ? ` (SKU ${sku})` : ""}.`;
                         window.open(
-                          `https://wa.me/5511993403485?text=${encodeURIComponent(msg)}`,
+                          `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
                           "_blank"
                         );
                       }}
@@ -420,37 +410,54 @@ export default function ProductPage() {
                     >
                       <MessageCircle className="h-4 w-4" /> Falar com consultor
                     </button>
-
-                    {(() => {
-                      const url = product.modelo3d?.value?.trim() || BUSINESS.sketchupWarehouse;
-                      const isProductSpecific = !!product.modelo3d?.value?.trim();
-                      return (
-                        <div className="mt-4">
-                          <p className="text-spec text-western-stone-warm/80 text-xs mb-2 leading-relaxed">
-                            Modele a composição inteira no SketchUp do seu estúdio antes de comprar.
-                          </p>
-                          <a
-                            href={url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full h-11 inline-flex items-center justify-center gap-2 border border-western-gold/60 text-western-gold hover:bg-western-gold hover:text-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
-                          >
-                            <Download className="h-4 w-4" />
-                            {isProductSpecific ? "Baixar modelo 3D (.skp)" : "Modelos no 3D Warehouse"}
-                          </a>
-                        </div>
-                      );
-                    })()}
-
-                    <ul className="text-spec text-western-stone-warm/80 leading-relaxed mt-5 text-xs space-y-1">
-                      <li>· Produção sob demanda · {BUSINESS.prazoProducaoDias} dias úteis</li>
-                      <li>· Pedido mínimo {BUSINESS.pedidoMinimoLabel}</li>
-                      <li>· Frete CIF sob orçamento para todo o Brasil</li>
-                    </ul>
                   </>
                 );
               })()}
             </div>
+
+            {/* Pintura personalizada — secundária, depois dos CTAs */}
+            {visibleOptions.some((o) => /acabament/i.test(o.name)) && (
+              <CustomPaintNote
+                onConsultor={() => {
+                  const msg = `Olá! Gostaria de uma pintura personalizada para ${product.title}.`;
+                  window.open(
+                    `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
+                    "_blank"
+                  );
+                }}
+              />
+            )}
+
+            {/* SketchUp — botão grande, microcopy pequena abaixo */}
+            {(() => {
+              const url = product.modelo3d?.value?.trim() || BUSINESS.sketchupWarehouse;
+              const isProductSpecific = !!product.modelo3d?.value?.trim();
+              return (
+                <div className="mt-6">
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full h-12 inline-flex items-center justify-center gap-2 bg-western-gold/10 border border-western-gold text-western-gold hover:bg-western-gold hover:text-western-green-deep font-mono text-xs uppercase tracking-[0.22em] transition-colors"
+                  >
+                    <Download className="h-4 w-4" />
+                    {isProductSpecific ? "Baixar modelo 3D (.skp)" : "Modelos no 3D Warehouse"}
+                  </a>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mt-2 leading-relaxed">
+                    Modele a composição inteira no SketchUp antes de comprar
+                  </p>
+                </div>
+              );
+            })()}
+
+            {/* Faixa de regras comerciais */}
+            <ul className="text-spec text-western-stone-warm/80 leading-relaxed mt-6 text-xs space-y-1">
+              <li>· Produção sob demanda · {BUSINESS.prazoProducaoDias} dias úteis</li>
+              <li>· Pedido mínimo {BUSINESS.pedidoMinimoLabel}</li>
+              <li>· Frete cotado por região · retirada gratuita em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}</li>
+              <li>· Garantia {BUSINESS.garantiaAnos} anos contra defeitos de fabricação</li>
+            </ul>
+
 
             {/* Accordions */}
             <Accordion

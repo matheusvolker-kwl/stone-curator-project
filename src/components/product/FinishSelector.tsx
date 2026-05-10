@@ -139,7 +139,7 @@ export default function FinishSelector({ values, selected, onSelect }: Props) {
       {selectedMeta?.hint && (
         <p
           key={selected}
-          className="mt-3 text-xs leading-relaxed text-western-stone-warm animate-fade-in"
+          className="mt-3 text-xs leading-relaxed text-western-stone-warm italic animate-fade-in"
         >
           {selectedMeta.hint}
         </p>
