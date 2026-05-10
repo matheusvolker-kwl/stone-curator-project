@@ -1,6 +1,6 @@
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
-import { ShoppingBag, User, Menu, X, Search, Heart, ShieldCheck, LogOut } from "lucide-react";
+import { ShoppingBag, User, Menu, X, Search, ShieldCheck, LogOut } from "lucide-react";
 import logoVerde from "@/assets/logo-horizontal-verde.png";
 import logoBege from "@/assets/logo-horizontal-bege.png";
 import { useState, useEffect } from "react";
@@ -145,13 +145,6 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               <User className="h-4 w-4" /> Parceiro
             </Link>
           )}
-          <Link
-            to="/parceiro/login"
-            aria-label="Lista de projetos"
-            className="hidden md:inline-flex p-2 text-western-green-deep hover:text-western-gold transition-colors"
-          >
-            <Heart className="h-5 w-5" />
-          </Link>
           <button
             onClick={onCartOpen}
             aria-label="Abrir orçamento"

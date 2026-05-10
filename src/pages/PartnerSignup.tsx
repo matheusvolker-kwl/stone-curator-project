@@ -5,86 +5,158 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import PhoneInput from "@/components/forms/PhoneInput";
+import CnpjInput from "@/components/forms/CnpjInput";
+import CepInput from "@/components/forms/CepInput";
+import EmailInput from "@/components/forms/EmailInput";
+import PasswordField from "@/components/forms/PasswordField";
+import SegmentoSelect, { SEGMENTOS } from "@/components/forms/SegmentoSelect";
+import FieldLabel from "@/components/forms/FieldLabel";
+import {
+  cnpjSchema, phoneBRSchema, cepSchema, emailSchema, passwordSchema, UF_LIST,
+} from "@/lib/forms/br";
+import { z } from "zod";
 
-type FormState = {
-  nome: string;
-  empresa: string;
-  cnpj: string;
-  segmento: string;
-  site: string;
-  cidade: string;
-  telefone: string;
-  email: string;
-  senha: string;
+const CARGOS = ["Sócio / Diretor", "Arquiteto responsável", "Comprador", "Gerente comercial", "Outro"];
+
+interface Form {
+  // empresa
+  empresa: string; cnpj: string; segmento: string; segmentoOutro: string;
+  site: string; instagram: string;
+  cep: string; endereco: string; numero: string; complemento: string; bairro: string;
+  cidade: string; estado: string;
+  // responsável
+  nome: string; cargo: string; cargoOutro: string;
+  telefone: string; email: string; senha: string; senha2: string; aceite: boolean;
+}
+
+const INITIAL: Form = {
+  empresa: "", cnpj: "", segmento: "", segmentoOutro: "",
+  site: "", instagram: "",
+  cep: "", endereco: "", numero: "", complemento: "", bairro: "",
+  cidade: "", estado: "",
+  nome: "", cargo: "", cargoOutro: "",
+  telefone: "", email: "", senha: "", senha2: "", aceite: false,
 };
 
-const INITIAL: FormState = {
-  nome: "",
-  empresa: "",
-  cnpj: "",
-  segmento: "",
-  site: "",
-  cidade: "",
-  telefone: "",
-  email: "",
-  senha: "",
-};
+const empresaSchema = z.object({
+  empresa: z.string().trim().min(2, "Informe a razão social").max(160),
+  cnpj: cnpjSchema,
+  segmento: z.string().min(1, "Selecione o segmento"),
+  segmentoOutro: z.string().optional(),
+  site: z.string().max(200).optional(),
+  instagram: z.string().max(60).optional(),
+  cep: cepSchema,
+  endereco: z.string().trim().min(2, "Informe o endereço").max(200),
+  numero: z.string().trim().min(1, "Número").max(20),
+  complemento: z.string().max(80).optional(),
+  bairro: z.string().trim().min(2, "Bairro").max(80),
+  cidade: z.string().trim().min(2, "Cidade").max(80),
+  estado: z.enum(UF_LIST as unknown as [string, ...string[]], { message: "UF" }),
+}).refine((v) => v.segmento !== "Outro" || (v.segmentoOutro && v.segmentoOutro.trim().length >= 2), {
+  message: "Especifique o segmento",
+  path: ["segmentoOutro"],
+});
+
+const respSchema = z.object({
+  nome: z.string().trim().min(2, "Informe o nome").max(120),
+  cargo: z.string().min(1, "Selecione o cargo"),
+  cargoOutro: z.string().optional(),
+  telefone: phoneBRSchema,
+  email: emailSchema,
+  senha: passwordSchema,
+  senha2: z.string(),
+  aceite: z.literal(true, { message: "Aceite os termos" }),
+}).refine((v) => v.senha === v.senha2, { message: "As senhas não conferem", path: ["senha2"] })
+  .refine((v) => v.cargo !== "Outro" || (v.cargoOutro && v.cargoOutro.trim().length >= 2), {
+    message: "Especifique o cargo", path: ["cargoOutro"],
+  });
 
 export default function PartnerSignup() {
-  const [form, setForm] = useState<FormState>(INITIAL);
+  const [step, setStep] = useState<1 | 2>(1);
+  const [f, setF] = useState<Form>(INITIAL);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
 
-  const set = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setForm((f) => ({ ...f, [k]: e.target.value }));
+  const set = <K extends keyof Form>(k: K, v: Form[K]) =>
+    setF((p) => ({ ...p, [k]: v }));
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (form.senha.length < 8) {
-      toast.error("Senha deve ter ao menos 8 caracteres.");
+  const goNext = () => {
+    const r = empresaSchema.safeParse(f);
+    if (!r.success) {
+      const errs: Record<string, string> = {};
+      r.error.issues.forEach((i) => (errs[i.path.join(".")] = i.message));
+      setErrors(errs);
+      toast.error("Confira os campos da empresa.");
       return;
     }
+    setErrors({});
+    setStep(2);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const r = respSchema.safeParse(f);
+    if (!r.success) {
+      const errs: Record<string, string> = {};
+      r.error.issues.forEach((i) => (errs[i.path.join(".")] = i.message));
+      setErrors(errs);
+      toast.error("Confira os dados de acesso.");
+      return;
+    }
+    setErrors({});
     setLoading(true);
     try {
-      // 1. Create auth user with metadata (trigger creates partner_profile)
+      const segmentoFinal = f.segmento === "Outro" ? `Outro: ${f.segmentoOutro}` : f.segmento;
+      const cargoFinal = f.cargo === "Outro" ? `Outro: ${f.cargoOutro}` : f.cargo;
+
       const { error: authError } = await supabase.auth.signUp({
-        email: form.email,
-        password: form.senha,
+        email: f.email,
+        password: f.senha,
         options: {
           emailRedirectTo: `${window.location.origin}/parceiro/login`,
           data: {
-            nome: form.nome,
-            empresa: form.empresa,
-            cnpj: form.cnpj,
-            segmento: form.segmento,
-            telefone: form.telefone,
-            cidade: form.cidade,
-            site: form.site,
+            nome: f.nome,
+            empresa: f.empresa,
+            cnpj: f.cnpj,
+            segmento: segmentoFinal,
+            telefone: f.telefone,
+            cidade: f.cidade,
+            site: f.site,
+            cep: f.cep,
+            endereco: f.endereco,
+            numero: f.numero,
+            complemento: f.complemento,
+            bairro: f.bairro,
+            estado: f.estado,
+            cargo: cargoFinal,
+            instagram: f.instagram,
           },
         },
       });
       if (authError) throw authError;
 
-      // 2. Lead row in inbox (independent of auth — survives even if signup fails partially)
       await supabase.from("leads").insert({
         type: "partner_signup",
-        nome: form.nome,
-        email: form.email,
-        telefone: form.telefone,
-        empresa: form.empresa,
-        cnpj: form.cnpj,
-        segmento: form.segmento,
-        cidade: form.cidade,
-        payload: { site: form.site },
+        nome: f.nome,
+        email: f.email,
+        telefone: f.telefone,
+        empresa: f.empresa,
+        cnpj: f.cnpj,
+        segmento: segmentoFinal,
+        cidade: f.cidade,
+        uf: f.estado,
+        endereco: `${f.endereco}, ${f.numero}${f.complemento ? " - " + f.complemento : ""} - ${f.bairro}`,
+        cep: f.cep,
+        payload: { site: f.site, instagram: f.instagram, cargo: cargoFinal },
         origem: "site/parceiro/cadastro",
       });
 
       setSubmitted(true);
-      toast.success("Cadastro recebido", {
-        description: "Em até 2 dias úteis liberamos seu acesso.",
-      });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Erro desconhecido";
       if (msg.toLowerCase().includes("already") || msg.toLowerCase().includes("registered")) {
@@ -110,8 +182,8 @@ export default function PartnerSignup() {
             Obrigado. Sua solicitação está em análise.
           </h1>
           <p className="text-western-stone-warm leading-relaxed mb-10">
-            Em até 2 dias úteis liberamos seu acesso e enviamos sua condição comercial
-            diferenciada por e-mail.
+            Em até 2 dias úteis nosso time comercial libera seu acesso e envia
+            sua condição B2B por e-mail.
           </p>
           <Link to="/" className="link-underline text-western-gold font-mono text-xs uppercase tracking-[0.22em]">
             Voltar ao catálogo
@@ -129,45 +201,254 @@ export default function PartnerSignup() {
         <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05] mb-6">
           Solicite acesso de parceiro.
         </h1>
-        <p className="text-western-stone-warm text-lg leading-relaxed mb-12">
+        <p className="text-western-stone-warm text-lg leading-relaxed mb-10">
           Para arquitetos, paisagistas, construtoras, garden centers e revendas
           qualificadas. Aprovação em até 2 dias úteis.
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <Field label="Razão social" name="empresa" value={form.empresa} onChange={set("empresa")} required />
-          <Field label="CNPJ" name="cnpj" value={form.cnpj} onChange={set("cnpj")} required />
-          <Field
-            label="Segmento"
-            name="segmento"
-            value={form.segmento}
-            onChange={set("segmento")}
-            placeholder="Arquitetura, paisagismo, garden center..."
-            required
-          />
-          <Field label="Cidade" name="cidade" value={form.cidade} onChange={set("cidade")} required />
-          <Field label="Site ou Instagram" name="site" value={form.site} onChange={set("site")} />
-          <Field label="Responsável" name="nome" value={form.nome} onChange={set("nome")} required />
-          <Field label="Telefone com WhatsApp" name="telefone" value={form.telefone} onChange={set("telefone")} required />
-          <Field label="E-mail" name="email" value={form.email} onChange={set("email")} type="email" required />
-          <Field
-            label="Senha (mínimo 8 caracteres)"
-            name="senha"
-            value={form.senha}
-            onChange={set("senha")}
-            type="password"
-            required
-          />
+        {/* Stepper */}
+        <div className="flex items-center gap-3 mb-10">
+          {[1, 2].map((n) => (
+            <div key={n} className="flex items-center gap-3 flex-1">
+              <span
+                className={`w-8 h-8 flex items-center justify-center font-mono text-xs border ${
+                  step >= n
+                    ? "bg-western-gold text-western-green-deep border-western-gold"
+                    : "border-western-stone-warm/30 text-western-stone-warm"
+                }`}
+              >
+                {n}
+              </span>
+              <span className={`font-mono text-[11px] uppercase tracking-[0.2em] ${step >= n ? "text-western-green-deep" : "text-western-stone-warm/70"}`}>
+                {n === 1 ? "Empresa" : "Responsável & acesso"}
+              </span>
+              {n === 1 && <div className="flex-1 h-px bg-western-stone-warm/20" />}
+            </div>
+          ))}
+        </div>
 
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none mt-4 disabled:opacity-60"
-          >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar solicitação"}
-          </Button>
+        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+          {step === 1 && (
+            <>
+              <div>
+                <FieldLabel htmlFor="empresa">Razão social</FieldLabel>
+                <Input id="empresa" value={f.empresa} onChange={(e) => set("empresa", e.target.value)} required
+                  className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                {errors.empresa && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.empresa}</p>}
+              </div>
 
-          <p className="text-spec text-western-stone-warm text-center pt-2">
+              <div>
+                <FieldLabel htmlFor="cnpj">CNPJ</FieldLabel>
+                <CnpjInput id="cnpj" value={f.cnpj} onChange={(v) => set("cnpj", v)} required error={errors.cnpj} />
+              </div>
+
+              <div>
+                <FieldLabel htmlFor="segmento">Segmento de atuação</FieldLabel>
+                <SegmentoSelect id="segmento" value={f.segmento} onChange={(v) => set("segmento", v)} required error={errors.segmento} />
+                {f.segmento === "Outro" && (
+                  <Input
+                    placeholder="Especifique seu segmento"
+                    value={f.segmentoOutro}
+                    onChange={(e) => set("segmentoOutro", e.target.value)}
+                    className="mt-3 h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold"
+                  />
+                )}
+                {errors.segmentoOutro && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.segmentoOutro}</p>}
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-5">
+                <div>
+                  <FieldLabel htmlFor="site" optional>Site</FieldLabel>
+                  <Input id="site" placeholder="https://" value={f.site} onChange={(e) => set("site", e.target.value)}
+                    className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                </div>
+                <div>
+                  <FieldLabel htmlFor="instagram" optional>Instagram</FieldLabel>
+                  <div className="flex items-stretch h-12 border border-western-stone-warm/30 focus-within:border-western-gold transition-colors">
+                    <span className="px-3 flex items-center font-mono text-sm text-western-stone-warm border-r border-western-stone-warm/20">@</span>
+                    <input
+                      id="instagram"
+                      value={f.instagram.replace(/^@/, "")}
+                      onChange={(e) => set("instagram", e.target.value.replace(/^@/, ""))}
+                      placeholder="seuestudio"
+                      className="flex-1 bg-transparent px-3 outline-none text-western-green-deep placeholder:text-western-stone-warm/50"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-western-stone-warm/15">
+                <p className="text-eyebrow mb-4">Endereço comercial</p>
+
+                <div className="grid sm:grid-cols-3 gap-5">
+                  <div className="sm:col-span-1">
+                    <FieldLabel htmlFor="cep">CEP</FieldLabel>
+                    <CepInput
+                      id="cep"
+                      value={f.cep}
+                      onChange={(v) => set("cep", v)}
+                      onResolved={(d) => {
+                        setF((p) => ({
+                          ...p,
+                          endereco: d.logradouro || p.endereco,
+                          bairro: d.bairro || p.bairro,
+                          cidade: d.localidade || p.cidade,
+                          estado: d.uf || p.estado,
+                        }));
+                      }}
+                      required
+                      error={errors.cep}
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <FieldLabel htmlFor="endereco">Logradouro</FieldLabel>
+                    <Input id="endereco" value={f.endereco} onChange={(e) => set("endereco", e.target.value)} required
+                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                    {errors.endereco && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.endereco}</p>}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-5 mt-5">
+                  <div>
+                    <FieldLabel htmlFor="numero">Número</FieldLabel>
+                    <Input id="numero" value={f.numero} onChange={(e) => set("numero", e.target.value)} required
+                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                    {errors.numero && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.numero}</p>}
+                  </div>
+                  <div className="col-span-2">
+                    <FieldLabel htmlFor="complemento" optional>Complemento</FieldLabel>
+                    <Input id="complemento" value={f.complemento} onChange={(e) => set("complemento", e.target.value)}
+                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                  </div>
+                </div>
+
+                <div className="grid sm:grid-cols-3 gap-5 mt-5">
+                  <div>
+                    <FieldLabel htmlFor="bairro">Bairro</FieldLabel>
+                    <Input id="bairro" value={f.bairro} onChange={(e) => set("bairro", e.target.value)} required
+                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                    {errors.bairro && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.bairro}</p>}
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="cidade">Cidade</FieldLabel>
+                    <Input id="cidade" value={f.cidade} onChange={(e) => set("cidade", e.target.value)} required
+                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                    {errors.cidade && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.cidade}</p>}
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="estado">UF</FieldLabel>
+                    <select
+                      id="estado"
+                      value={f.estado}
+                      onChange={(e) => set("estado", e.target.value)}
+                      required
+                      className="h-12 w-full bg-transparent border border-western-stone-warm/30 px-3 rounded-none text-western-green-deep focus:outline-none focus:border-western-gold"
+                    >
+                      <option value="" disabled>—</option>
+                      {UF_LIST.map((uf) => <option key={uf} value={uf}>{uf}</option>)}
+                    </select>
+                    {errors.estado && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.estado}</p>}
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                type="button"
+                onClick={goNext}
+                className="w-full h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none mt-4"
+              >
+                Avançar <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </>
+          )}
+
+          {step === 2 && (
+            <>
+              <div>
+                <FieldLabel htmlFor="nome">Nome do responsável</FieldLabel>
+                <Input id="nome" value={f.nome} onChange={(e) => set("nome", e.target.value)} required
+                  className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                {errors.nome && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.nome}</p>}
+              </div>
+
+              <div>
+                <FieldLabel htmlFor="cargo">Cargo</FieldLabel>
+                <select
+                  id="cargo"
+                  value={f.cargo}
+                  onChange={(e) => set("cargo", e.target.value)}
+                  required
+                  className="h-12 w-full bg-transparent border border-western-stone-warm/30 px-3 rounded-none text-western-green-deep focus:outline-none focus:border-western-gold"
+                >
+                  <option value="" disabled>Selecione…</option>
+                  {CARGOS.map((c) => <option key={c} value={c}>{c}</option>)}
+                </select>
+                {f.cargo === "Outro" && (
+                  <Input placeholder="Especifique o cargo" value={f.cargoOutro} onChange={(e) => set("cargoOutro", e.target.value)}
+                    className="mt-3 h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                )}
+                {(errors.cargo || errors.cargoOutro) && (
+                  <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.cargo || errors.cargoOutro}</p>
+                )}
+              </div>
+
+              <div>
+                <FieldLabel htmlFor="telefone" hint="Usaremos para falar com você no WhatsApp.">Telefone celular</FieldLabel>
+                <PhoneInput id="telefone" value={f.telefone} onChange={(v) => set("telefone", v)} required error={errors.telefone} />
+              </div>
+
+              <div>
+                <FieldLabel htmlFor="email">E-mail corporativo</FieldLabel>
+                <EmailInput id="email" value={f.email} onChange={(v) => set("email", v)} required error={errors.email} />
+              </div>
+
+              <div>
+                <FieldLabel htmlFor="senha">Senha</FieldLabel>
+                <PasswordField id="senha" value={f.senha} onChange={(v) => set("senha", v)} required error={errors.senha} />
+              </div>
+
+              <div>
+                <FieldLabel htmlFor="senha2">Confirmar senha</FieldLabel>
+                <PasswordField id="senha2" value={f.senha2} onChange={(v) => set("senha2", v)} required error={errors.senha2} showStrength={false} />
+              </div>
+
+              <label className="flex items-start gap-3 pt-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={f.aceite}
+                  onChange={(e) => set("aceite", e.target.checked)}
+                  className="mt-1 h-4 w-4 accent-western-gold flex-shrink-0"
+                />
+                <span className="text-spec text-western-stone-warm leading-relaxed">
+                  Li e concordo com a{" "}
+                  <Link to="/politica-comercial" className="link-underline text-western-gold">política comercial</Link>{" "}
+                  e a{" "}
+                  <Link to="/privacidade" className="link-underline text-western-gold">política de privacidade</Link>.
+                </span>
+              </label>
+              {errors.aceite && <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.aceite}</p>}
+
+              <div className="flex gap-3 pt-2">
+                <Button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  variant="outline"
+                  className="h-12 px-5 border-western-stone-warm/30 text-western-green-deep hover:border-western-gold rounded-none font-mono text-xs uppercase tracking-[0.22em]"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Voltar
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 h-12 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
+                >
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar solicitação"}
+                </Button>
+              </div>
+            </>
+          )}
+
+          <p className="text-spec text-western-stone-warm text-center pt-4">
             Já é parceiro?{" "}
             <Link to="/parceiro/login" className="link-underline text-western-gold">
               Entrar
@@ -175,43 +456,6 @@ export default function PartnerSignup() {
           </p>
         </form>
       </div>
-    </div>
-  );
-}
-
-function Field({
-  label,
-  name,
-  value,
-  onChange,
-  type = "text",
-  required,
-  placeholder,
-}: {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  type?: string;
-  required?: boolean;
-  placeholder?: string;
-}) {
-  return (
-    <div>
-      <Label htmlFor={name} className="text-eyebrow mb-3 block">
-        {label}
-      </Label>
-      <Input
-        id={name}
-        name={name}
-        type={type}
-        value={value}
-        onChange={onChange}
-        required={required}
-        placeholder={placeholder}
-        autoComplete={type === "password" ? "new-password" : undefined}
-        className="h-12 bg-transparent border-western-stone-warm/30 rounded-none text-western-green-deep placeholder:text-western-stone-warm/50 focus-visible:border-western-gold"
-      />
     </div>
   );
 }

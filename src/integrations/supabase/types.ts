@@ -77,12 +77,20 @@ export type Database = {
       partner_profiles: {
         Row: {
           approved_at: string | null
+          bairro: string | null
+          cargo: string | null
+          cep: string | null
           cidade: string | null
           cnpj: string | null
+          complemento: string | null
           created_at: string
           empresa: string | null
+          endereco: string | null
+          estado: string | null
           id: string
+          instagram: string | null
           nome: string | null
+          numero: string | null
           segmento: string | null
           site: string | null
           status: Database["public"]["Enums"]["partner_status"]
@@ -91,12 +99,20 @@ export type Database = {
         }
         Insert: {
           approved_at?: string | null
+          bairro?: string | null
+          cargo?: string | null
+          cep?: string | null
           cidade?: string | null
           cnpj?: string | null
+          complemento?: string | null
           created_at?: string
           empresa?: string | null
+          endereco?: string | null
+          estado?: string | null
           id?: string
+          instagram?: string | null
           nome?: string | null
+          numero?: string | null
           segmento?: string | null
           site?: string | null
           status?: Database["public"]["Enums"]["partner_status"]
@@ -105,12 +121,20 @@ export type Database = {
         }
         Update: {
           approved_at?: string | null
+          bairro?: string | null
+          cargo?: string | null
+          cep?: string | null
           cidade?: string | null
           cnpj?: string | null
+          complemento?: string | null
           created_at?: string
           empresa?: string | null
+          endereco?: string | null
+          estado?: string | null
           id?: string
+          instagram?: string | null
           nome?: string | null
+          numero?: string | null
           segmento?: string | null
           site?: string | null
           status?: Database["public"]["Enums"]["partner_status"]

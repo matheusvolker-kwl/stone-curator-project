@@ -1,65 +1,161 @@
 
-## 1. Refinar o bloco de compra (PDP)
+## Visão geral
 
-Hoje o bloco usa `bg-western-cream/50` + borda dourada à esquerda + padding generoso, o que dá esse efeito "tijolo dourado colado". Vamos trocar a hierarquia: nada de fundo colorido, nada de borda lateral. A peça vira um bloco estrutural, separado por linhas finas, com o **acabamento subindo para o topo** porque é a decisão obrigatória.
+Padronizar a camada de formulários do site com validações de mercado (zod + máscaras + react-hook-form), reescrever os principais (cadastro parceiro, agendar visita, pedir amostras), atualizar a página de trocas/avarias com bloco de contato real, validar newsletter, decidir o destino do ícone de coração, e organizar o painel admin que já existe em `/admin`.
 
-**Nova ordem dentro do bloco (sem caixa):**
-1. **Acabamento** (primeiro) — com etiqueta "Etapa 1 · obrigatório" em mono e a tag de "+ vendido" no Moledo já existente. O `FinishSelector` continua igual.
-2. Linha divisória fina (`border-western-stone-warm/15`).
-3. **Preço** (ou `PriceGate`) à esquerda + **stepper** à direita, alinhados na mesma baseline. Sem o eyebrow "Condição parceiro" gritado — vira um pequeno selo discreto ao lado do preço.
-4. **DeliverySignals** em linha única (3 itens compactos).
-5. **CTA "Adicionar ao pedido"** full-width, dourado (mantém), mas:
-   - Quando `acabamento` ainda não escolhido → botão fica neutro (`bg-western-stone-warm/20 text-western-stone-warm`), label muda para **"Selecione o acabamento"** e um anel sutil no `FinishSelector` pulsa uma vez para guiar o olho.
-   - Quando outras opções faltam → mantém dourado mas label "Selecione [opção]".
-   - Quando tudo ok → "Adicionar ao pedido" dourado normal.
-6. Gatilho "Adicionado por N estúdios..." e link "Falar com consultor" em uma linha sutil abaixo do CTA, em mono pequeno.
+---
 
-**O que sai:** o `div` com `border-l-2 border-western-gold bg-western-cream/50` — vira um `<section>` simples com `space-y-6 mt-8` e divisores horizontais entre os subgrupos. Visualmente: papel sobre papel, sem o efeito de "card flutuante".
+## 1. Camada base de inputs (reaproveitável)
 
-**Como o "obrigatório" fica claro:**
-- Label do acabamento muda de "Acabamento" para `Acabamento · obrigatório` (mono, com `· obrigatório` em `text-western-gold`).
-- Acima do `FinishSelector`, um micro-hint: *"Cada peça é produzida sob demanda no acabamento escolhido."*
-- Sem seleção: o stepper fica desabilitado visualmente (opacity 60) e o CTA muda como descrito.
-- Já existe a pré-seleção do Moledo no `useEffect`, mas vamos **remover essa pré-seleção** — força o cliente a escolher conscientemente (era o feedback implícito do brief).
+Criar um conjunto de componentes em `src/components/forms/`:
 
-## 2. Nova seção "Aplicado em obra" por produto
+- **`PhoneInput.tsx`** — prefixo fixo `+55` visual, máscara `(11) 95896-7088`, valida 10 ou 11 dígitos, retorna `5511993403485` (E.164) no `onChange`.
+- **`CnpjInput.tsx`** — máscara `00.000.000/0000-00`, valida dígitos verificadores reais (algoritmo, não só comprimento), placeholder `00.000.000/0000-00`.
+- **`CepInput.tsx`** — máscara `00000-000`, no blur consulta ViaCEP e auto-preenche `endereço`, `bairro`, `cidade`, `uf` (campos vizinhos via callback).
+- **`EmailInput.tsx`** — type=email, validação regex sólida + sugestão de typo comum (ex.: "voce quis dizer @gmail.com?" para `gmal.com`).
+- **`PasswordField.tsx`** — toggle mostrar/ocultar, indicador de força (fraca/média/forte) + lista de regras (8+ caracteres, número, símbolo) que vão marcando.
+- **`SegmentoSelect.tsx`** — combobox shadcn com lista curada Western:
+  - Arquitetura · Paisagismo · Construtora · Garden Center · Piscinas e Spas · Hotelaria/Resort · Loja de jardinagem · Decoração · Cliente final · **Outro (especificar)** — quando "Outro", abre um campo de texto livre.
 
-Hoje existe `ProductInProjects.tsx`, que mostra os 4 projetos hero com cover. Isso é "projetos completos", não "esta peça aplicada". Vamos criar uma seção separada e específica:
+Todas usam `react-hook-form` + `zod` (já recomendado pelo guia de segurança do projeto). Erros aparecem inline em mono pequeno abaixo do campo, em `text-red-700/80`.
 
-**Componente novo:** `src/components/product/ProductInUse.tsx`
-- Recebe `images: { src; caption?; credit? }[]` e título do produto.
-- Layout: hero editorial — 1 imagem grande à esquerda (aspect 4/5 ou 3/4) + grid 2x2 de imagens menores à direita no desktop. Mobile: carrossel horizontal com snap.
-- Eyebrow: "Esta peça em obra" · H2: "{produto} aplicado em projetos reais".
-- Sem overlay pesado; legenda discreta abaixo de cada foto (ex: "Cascata integrada · Rio de Janeiro").
-- Fundo `bg-western-paper`, sem cards — fotos respiram direto no papel.
-- Posição na PDP: **logo após a galeria/bloco de compra**, antes de `ProductInProjects` (que vira "projetos do estúdio relacionados", complementar).
+Bibliotecas a instalar: `react-hook-form`, `@hookform/resolvers`, `zod` (pode já estar), `react-imask` (para máscaras estáveis).
 
-**Mapa de imagens por produto:** `src/data/productInUse.ts`
-```ts
-export const PRODUCT_IN_USE: Record<string, ProductInUseImage[]> = {
-  "pedra-grande-2": [
-    { src: pedraGrande2Cascata, caption: "Cascata integrada", credit: "Rio de Janeiro" },
-  ],
-  // outros produtos serão adicionados conforme você organizar as fotos
-};
+---
+
+## 2. Cadastro de Parceiro (`/parceiro/cadastro`)
+
+Refatorar `src/pages/PartnerSignup.tsx` em **2 etapas** (stepper visual no topo) para diluir o tamanho do form sem sacrificar dados:
+
+**Etapa 1 — Empresa**
+- Razão social *
+- CNPJ * (CnpjInput)
+- Segmento * (SegmentoSelect)
+- Site (opcional)
+- Instagram (opcional, com `@` fixo no prefix)
+- CEP * (CepInput → preenche os de baixo)
+- Endereço * · Número * · Complemento
+- Bairro · Cidade * · UF * (UF select com 27 estados)
+
+**Etapa 2 — Responsável & acesso**
+- Nome do responsável *
+- Cargo * (Diretor, Arquiteto responsável, Comprador, Sócio, Outro)
+- Telefone celular do responsável * (PhoneInput, com WhatsApp toggle)
+- E-mail corporativo * (EmailInput)
+- Senha * (PasswordField)
+- Confirmar senha * (precisa bater)
+- Checkbox aceite LGPD/política comercial *
+
+Botão "Voltar / Avançar / Enviar". Mostrar resumo antes do submit.
+
+**Mudanças de schema** (migration):
+- Adicionar em `partner_profiles`: `estado` (uf), `endereco`, `numero`, `complemento`, `bairro`, `cep`, `cargo`, `instagram`. Manter `cidade` que já existe.
+- Atualizar trigger `handle_new_user()` para gravar os novos campos do `raw_user_meta_data`.
+
+---
+
+## 3. Agendar Visita (`/visitar`)
+
+Refatorar `src/pages/AgendarVisita.tsx`:
+
+- Nome *, Telefone (PhoneInput) *, E-mail (EmailInput) *
+- **Perfil** (select): Arquiteto · Paisagista · Cliente final · Lojista · Outro
+- **Empresa / estúdio** (opcional)
+- **Cidade/UF** (de onde vem)
+- **Quantidade de pessoas** (number 1–10)
+- **3 datas/horários** com `shadcn Calendar` + `Select` de horário (9h–17h, slots de 1h) — em vez de textarea. Renderiza 3 slots, todos obrigatórios. Bloqueia fim de semana e datas passadas; só permite Seg–Sex (horário do ateliê).
+- **Tipo de projeto** (textarea, opcional)
+- Aceite LGPD
+
+Mantém o salvamento em `leads` com `type: "visita"` e `payload` rico.
+
+---
+
+## 4. Trocas e Avarias (`/trocas-e-avarias`)
+
+A página é atualmente puro texto. Adicionar **acima do conteúdo legal** um bloco de contato direto:
+
 ```
-Componente só renderiza se houver entrada para o handle. Quando vazio, some — sem fallback genérico (queremos curadoria real).
+┌─────────────────────────────────────────────────┐
+│ Falar com pós-venda                             │
+│                                                 │
+│ WhatsApp · +55 11 99340-3485                    │
+│ Telefone do ateliê · +55 11 99340-3485          │
+│ E-mail suporte · suporte@westernpools.com.br    │
+│ Endereço · Rua Colina, 38 — Jd. Paraíso         │
+│            Cajamar/SP · 07794-075               │
+│ Atendimento · Seg–Sex · 9h às 17h               │
+│                                                 │
+│ [Abrir chamado no WhatsApp]                     │
+└─────────────────────────────────────────────────┘
+```
 
-**Para `pedra-grande-2`:** copio a foto enviada (`user-uploads://image-74.png`) para `src/assets/produtos-aplicados/pedra-grande-2-cascata.webp` (mantendo o nome semântico) e crio a primeira entrada.
+Adicionar `emailSuporte: "suporte@westernpools.com.br"` em `BUSINESS`. Reutilizar dados de `enderecoAtelieRua/cep/cidadeAtelie/ufAtelie`.
 
-## 3. Detalhes técnicos
+---
 
-- **Arquivos novos:**
-  - `src/components/product/ProductInUse.tsx`
-  - `src/data/productInUse.ts`
-  - `src/assets/produtos-aplicados/pedra-grande-2-cascata.png` (copiada do upload)
-- **Arquivos editados:**
-  - `src/pages/ProductPage.tsx` — remove pré-seleção do Moledo, reordena o bloco de compra (acabamento topo, sem caixa dourada), adiciona `<ProductInUse />` após o grid principal.
-  - Sem mudanças em `StickyBuyBar`, `PriceGate`, `FinishSelector`, `DeliverySignals` — eles ficam como estão.
-- Sem alteração de dados/backend/rotas.
+## 5. Newsletter (footer)
 
-## 4. O que NÃO faço agora
+Validar com zod (`z.string().email().max(255)`), bloquear duplicatas (UPSERT por email no `leads` com `type=newsletter`), e adicionar honeypot `_hp` invisível para bot. Mensagem de sucesso muda para algo como *"Obrigado. Confirmaremos por e-mail."* — preparado para futuro double opt-in via Lovable Email (não implemento agora, só copy).
 
-- Não troco a paleta global (gold continua sendo o acento da marca).
-- Não removo `ProductInProjects` — ele é complementar e mostra "projetos famosos do portfolio", contexto diferente.
-- Não preencho `productInUse` para outros produtos — fica preparado para você ir adicionando conforme separa as fotos.
+Sem mudança de schema.
+
+---
+
+## 6. Pedir Amostras (`/pedir-amostras`)
+
+Refatorar `src/pages/PedirAmostras.tsx` com a base nova (PhoneInput, CepInput auto-preenche, EmailInput, SegmentoSelect):
+
+- Nome *, E-mail *, Telefone *
+- Perfil (já existe, vira SegmentoSelect)
+- Empresa/estúdio (opcional)
+- CEP * (auto-preenche endereço/cidade/uf), Endereço *, Número *, Complemento, Bairro, Cidade *, UF *
+- Sobre o projeto (opcional)
+- Aceite LGPD
+
+**Política de aprovação** (mudança de copy importante — alinhada ao seu pedido):
+- Antes do submit: aviso destacado *"Solicitações de kit de amostras são aprovadas pelo nosso time comercial em até 2 dias úteis. Após aprovação, o kit é enviado em 5–7 dias úteis para todo o Brasil."*
+- Página de sucesso muda para: *"Recebemos sua solicitação. Em até 2 dias úteis nosso time comercial confirma o envio."* — sem prometer remessa imediata.
+- Lead salvo com `type: "amostras"` e `payload.aprovacao_status: "pending"` para rastrear no admin.
+
+---
+
+## 7. Ícone de coração no header
+
+Hoje o `<Heart>` no header (linha 153 de `Header.tsx`) aponta para `/parceiro/login` — sem função real, é decorativo/confuso. Duas opções (preciso da sua decisão):
+
+1. **Remover** — limpa o header, menos um elemento sem propósito.
+2. **Transformar em "Lista de projetos"** — wishlist real onde o parceiro salva peças favoritas (precisa de tabela `wishlist_items` no Supabase + UI). Mais trabalho, mas faz sentido B2B (parceiro monta caixa de seleção antes de virar pedido).
+
+Recomendo **remover agora** e tratar wishlist como feature separada quando você quiser.
+
+---
+
+## 8. Painel Admin
+
+**Já existe** em `/admin` (rota protegida por `RequireAuth role=admin`, arquivo `src/pages/Admin.tsx`). Hoje tem 2 abas: **Parceiros** (aprovar/recusar) e **Leads** (listagem genérica). Vou expandir:
+
+- **Acesso:** continua em `/admin`. Adicionar link discreto no Header (ícone `ShieldCheck` que só aparece para admin — já tem a infra `useAuth().isAdmin`).
+- **Aba Parceiros:** mostrar todos os novos campos (cargo, endereço completo, instagram), botão "Aprovar e enviar e-mail" (gera senha temporária ou só notifica), filtro por segmento.
+- **Aba Leads:** subdividir por tipo com contadores (Amostras / Visita / Newsletter / Contato / Cadastro parceiro), busca por nome/email/empresa, exportar CSV, marcar como "tratado".
+- **Aba Amostras (nova):** visão dedicada do `type=amostras` com workflow Pendente → Aprovado → Enviado → Entregue, atualizando `payload.aprovacao_status` e `payload.tracking`.
+- **Aba Configurações (futuro):** placeholder, sem implementação agora.
+
+Sem mudanças destrutivas — só UI mais rica em cima das mesmas tabelas.
+
+---
+
+## 9. Migrations necessárias
+
+Uma migration adicionando colunas em `partner_profiles` (estado, endereco, numero, complemento, bairro, cep, cargo, instagram) e atualizando a função `handle_new_user()` para popular os novos campos. Sem alterar tipos existentes.
+
+---
+
+## 10. Perguntas antes de implementar
+
+1. **Coração no header:** remover ou transformar em wishlist real?
+2. **Aprovação de parceiro:** quando aprovo no admin, devo enviar e-mail automático para o parceiro avisando? (Precisaria habilitar Lovable Email nesse caso.)
+3. **Aprovação de amostras:** mesma pergunta — e-mail automático ou WhatsApp manual pelo time?
+4. **Suporte e-mail:** confirmo `suporte@westernpools.com.br` (foi o que você passou) e adiciono ao `BUSINESS.emailSuporte`?
+
+Posso começar mesmo sem as respostas — uso defaults conservadores (remover coração, sem e-mail automático, suporte como informado).
