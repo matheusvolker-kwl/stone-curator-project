@@ -58,12 +58,40 @@ export default function CartDrawer({
     return () => window.clearTimeout(t);
   }, [items.length]);
 
-  const handleCheckout = () => {
+  const { user, isApproved, empresa } = useAuth();
+  const handleCheckout = async () => {
     const url = getCheckoutUrl();
-    if (url) {
-      window.open(url, "_blank");
-      onOpenChange(false);
-    }
+    if (!url) return;
+
+    // Fire-and-forget: registra lead de venda direta antes de abrir checkout externo
+    void (async () => {
+      let profile: { nome?: string; telefone?: string; cidade?: string; empresa?: string } | null = null;
+      if (user) {
+        const { data } = await supabase
+          .from("partner_profiles")
+          .select("nome, telefone, cidade, empresa")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        profile = data ?? null;
+      }
+      await registerPedidoNovoLead({
+        items,
+        subtotal,
+        currency,
+        userId: user?.id ?? null,
+        origem: "cart_checkout",
+        contact: {
+          nome: profile?.nome ?? null,
+          email: user?.email ?? null,
+          telefone: profile?.telefone ?? null,
+          empresa: profile?.empresa ?? empresa ?? null,
+          cidade: profile?.cidade ?? null,
+        },
+      });
+    })();
+
+    window.open(url, "_blank");
+    onOpenChange(false);
   };
 
   return (
