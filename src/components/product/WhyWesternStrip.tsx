@@ -4,11 +4,11 @@ import { BUSINESS } from "@/config/business";
 
 const CARDS = [
   {
-    big: "10×",
-    title: "Mais leve que pedra natural",
-    text: "Viabiliza laje, mezanino, andar alto e reduz o custo total da obra em 30 a 50%.",
-    cta: "Tecnologia",
-    to: "/por-que-western",
+    big: "33",
+    title: "Anos no Brasil",
+    text: "Empresa familiar fundada em 1993. Tecnologia trazida do Arizona — mesmos artistas que assinaram trabalhos da Disney.",
+    cta: "Nossa história",
+    to: "/sobre",
     external: false,
   },
   {
@@ -27,14 +27,6 @@ const CARDS = [
     to: BUSINESS.sketchupWarehouse,
     external: true,
   },
-  {
-    big: "33",
-    title: "Anos no Brasil",
-    text: "Empresa familiar fundada em 1993. Tecnologia trazida do Arizona — mesmos artistas que assinaram trabalhos da Disney.",
-    cta: "Nossa história",
-    to: "/sobre",
-    external: false,
-  },
 ];
 
 export default function WhyWesternStrip() {
@@ -50,7 +42,7 @@ export default function WhyWesternStrip() {
           </h2>
         </header>
 
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <ul className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           {CARDS.map((c) => {
             const inner = (
               <>
