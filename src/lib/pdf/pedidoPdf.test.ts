@@ -93,9 +93,9 @@ describe("buildPedidoPdfFilename", () => {
     expect(f).not.toMatch(/[/# ]/);
   });
 
-  it("usa SN quando o número é vazio ou só inválido", () => {
+  it("usa SN quando o número é vazio; mantém underscores quando só caracteres inválidos", () => {
     expect(buildPedidoPdfFilename("", "cliente")).toMatch(/^western-pedido-SN-cliente-/);
-    expect(buildPedidoPdfFilename("///", "admin")).toMatch(/^western-pedido-SN-admin-/);
+    expect(buildPedidoPdfFilename("///", "admin")).toMatch(/^western-pedido-___-admin-/);
   });
 
   it("admin e cliente nunca colidem para o mesmo número", () => {
