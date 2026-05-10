@@ -15,7 +15,7 @@ import { whatsappConjunto, type ConjuntoLeaf, type GuideAnswers } from "@/data/g
 import { BUSINESS } from "@/config/business";
 import GatedPrice from "@/components/shared/GatedPrice";
 import { useAuth } from "@/hooks/useAuth";
-import SketchLeadModal from "../SketchLeadModal";
+import SketchLeadModal from "./SketchLeadModal";
 
 interface Props {
   open: boolean;
