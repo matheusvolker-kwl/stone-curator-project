@@ -3,6 +3,16 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, ArrowRight } from "lucide-react";
 
+interface FunnelRow {
+  semana: string;
+  orcamentos: number;
+  pedidos: number;
+  promovidos: number;
+  pdf_redownloads: number;
+  taxa_conversao_pct: number | null;
+  horas_medias_ate_promocao: number | null;
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     pendingPartners: 0,
@@ -12,15 +22,17 @@ export default function AdminDashboard() {
     cancelled30d: 0,
     totalUsers: 0,
   });
+  const [funnel, setFunnel] = useState<FunnelRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       const since7 = new Date(Date.now() - 7 * 86400000).toISOString();
       const since30 = new Date(Date.now() - 30 * 86400000).toISOString();
-      const [{ data: partners }, { data: leads }] = await Promise.all([
+      const [{ data: partners }, { data: leads }, { data: funnelData }] = await Promise.all([
         supabase.from("partner_profiles").select("status, cancelled_at"),
         supabase.from("leads").select("type, payload, created_at").limit(2000),
+        supabase.from("lead_conversion_funnel" as never).select("*").limit(8),
       ]);
       const sampleLeads = (leads ?? []).filter((l) => l.type === "amostras");
       const pendingSamples = sampleLeads.filter((l) => {
@@ -35,6 +47,7 @@ export default function AdminDashboard() {
         cancelled30d: (partners ?? []).filter((p) => p.cancelled_at && p.cancelled_at > since30).length,
         totalUsers: (partners ?? []).length,
       });
+      setFunnel((funnelData as unknown as FunnelRow[]) ?? []);
       setLoading(false);
     })();
   }, []);
@@ -76,6 +89,41 @@ export default function AdminDashboard() {
           </Link>
         ))}
       </div>
+
+      {funnel.length > 0 && (
+        <div className="mt-12">
+          <p className="text-eyebrow mb-3">Funil de conversão</p>
+          <div className="w-12 h-px bg-western-gold mb-6" />
+          <div className="border border-western-stone-warm/20 bg-white overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-western-cream/40">
+                <tr className="text-left">
+                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Semana</th>
+                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Orçamentos</th>
+                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Pedidos</th>
+                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Promovidos</th>
+                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Re-downloads</th>
+                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Conversão</th>
+                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Tempo médio</th>
+                </tr>
+              </thead>
+              <tbody>
+                {funnel.map((r) => (
+                  <tr key={r.semana} className="border-t border-western-stone-warm/15">
+                    <td className="px-4 py-2 text-western-green-deep font-mono text-xs">{new Date(r.semana).toLocaleDateString("pt-BR")}</td>
+                    <td className="px-4 py-2 text-western-green-deep">{r.orcamentos}</td>
+                    <td className="px-4 py-2 text-western-green-deep">{r.pedidos}</td>
+                    <td className="px-4 py-2 text-western-stone-warm">{r.promovidos}</td>
+                    <td className="px-4 py-2 text-western-stone-warm">{r.pdf_redownloads}</td>
+                    <td className="px-4 py-2 font-mono text-xs text-western-gold">{r.taxa_conversao_pct ?? 0}%</td>
+                    <td className="px-4 py-2 font-mono text-xs text-western-stone-warm">{r.horas_medias_ate_promocao ? `${r.horas_medias_ate_promocao}h` : "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
