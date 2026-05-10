@@ -91,6 +91,7 @@ export type Database = {
           endereco: string | null
           id: string
           items_hash: string | null
+          last_activity_at: string
           mensagem: string | null
           nome: string | null
           origem: string | null
@@ -111,6 +112,7 @@ export type Database = {
           endereco?: string | null
           id?: string
           items_hash?: string | null
+          last_activity_at?: string
           mensagem?: string | null
           nome?: string | null
           origem?: string | null
@@ -131,6 +133,7 @@ export type Database = {
           endereco?: string | null
           id?: string
           items_hash?: string | null
+          last_activity_at?: string
           mensagem?: string | null
           nome?: string | null
           origem?: string | null
@@ -639,7 +642,18 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      lead_conversion_funnel: {
+        Row: {
+          horas_medias_ate_promocao: number | null
+          orcamentos: number | null
+          pdf_redownloads: number | null
+          pedidos: number | null
+          promovidos: number | null
+          semana: string | null
+          taxa_conversao_pct: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       claim_first_admin: { Args: never; Returns: boolean }
@@ -651,10 +665,27 @@ export type Database = {
         Returns: boolean
       }
       promote_quote_lead_to_order: {
-        Args: { _lead_id: string; _order_id: string }
+        Args: { _lead_id: string; _order_id?: string }
         Returns: undefined
       }
       register_orcamento_lead: {
+        Args: {
+          _cidade: string
+          _email: string
+          _empresa: string
+          _items_hash: string
+          _mensagem: string
+          _nome: string
+          _origem: string
+          _payload: Json
+          _telefone: string
+        }
+        Returns: {
+          lead_id: string
+          was_updated: boolean
+        }[]
+      }
+      register_pedido_novo_lead: {
         Args: {
           _cidade: string
           _email: string
