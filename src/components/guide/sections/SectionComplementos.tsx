@@ -68,21 +68,17 @@ export default function SectionComplementos({ tipo }: Props) {
   if (handles.length === 0) return null;
 
   return (
-    <section id="complementos" className="scroll-mt-28 border-t border-western-stone-warm/15 pt-10">
-      <header className="mb-6 flex items-start justify-between gap-4 flex-wrap">
+    <section id="complementos" className="scroll-mt-32 border-t border-western-stone-warm/15 pt-10">
+      <header className="mb-5 flex items-end justify-between gap-4 flex-wrap">
         <div>
-          <p className="text-eyebrow mb-2">Complementos</p>
-          <h3 className="font-display text-2xl md:text-3xl text-western-green-deep leading-tight mb-2">
+          <p className="text-eyebrow mb-1.5">Complementos</p>
+          <h3 className="font-display text-xl md:text-2xl text-western-green-deep leading-tight">
             Peças que somam ao conjunto
           </h3>
-          <p className="text-sm text-western-stone-warm leading-relaxed max-w-2xl">
-            Otimizam o frete, ampliam a composição e fecham a leitura do projeto. Ajuste a quantidade
-            e adicione o que fizer sentido.
-          </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {addedCount > 0 && (
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-green-deep bg-western-cream/50 border border-western-gold/40 px-3 py-1.5">
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-green-deep bg-western-cream/50 border border-western-gold/40 px-2.5 py-1">
               {addedCount} no projeto
             </span>
           )}
@@ -100,7 +96,7 @@ export default function SectionComplementos({ tipo }: Props) {
       </header>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="border border-western-stone-warm/15 bg-white">
               <Skeleton className="aspect-square rounded-none" />
@@ -117,7 +113,7 @@ export default function SectionComplementos({ tipo }: Props) {
           Nenhum complemento disponível para este tipo agora.
         </p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {produtos.map((p) => {
             const img = p.images.edges[0]?.node.url;
             const price = p.priceRange.minVariantPrice;
