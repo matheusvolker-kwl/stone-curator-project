@@ -207,7 +207,7 @@ export default function CartDrawer({
               </div>
             </div>
 
-            {/* CTA primário: Pagar online (aprovado) ou Solicitar orçamento (não aprovado) */}
+            {/* CTA primário: Finalizar compra (aprovado) ou Baixar composição (não aprovado) */}
             {isApproved ? (
               <Button
                 onClick={handleCheckout}
@@ -218,7 +218,7 @@ export default function CartDrawer({
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <>
-                    Pagar online <ExternalLink className="h-4 w-4 ml-2" />
+                    Finalizar compra <ExternalLink className="h-4 w-4 ml-2" />
                   </>
                 )}
               </Button>
@@ -227,18 +227,18 @@ export default function CartDrawer({
                 onClick={() => setQuoteOpen(true)}
                 className="w-full h-14 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none shadow-[0_18px_40px_-20px_rgba(184,146,79,0.6)]"
               >
-                <MessageCircle className="h-4 w-4 mr-2" /> Solicitar orçamento
+                <Download className="h-4 w-4 mr-2" /> Baixar composição (PDF)
               </Button>
             )}
 
-            {/* CTA secundário: Solicitar orçamento (quando aprovado) */}
+            {/* CTA secundário: Baixar composição (quando aprovado) */}
             {isApproved && (
               <button
                 type="button"
                 onClick={() => setQuoteOpen(true)}
                 className="w-full h-11 border border-western-gold/40 text-western-cream hover:border-western-gold font-mono text-[11px] uppercase tracking-[0.22em] inline-flex items-center justify-center gap-2 transition-colors"
               >
-                <MessageCircle className="h-3.5 w-3.5" /> Solicitar orçamento
+                <Download className="h-3.5 w-3.5" /> Baixar composição (PDF)
               </button>
             )}
 
