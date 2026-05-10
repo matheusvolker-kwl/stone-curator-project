@@ -1,9 +1,18 @@
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Lock } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import StepShell from "./StepShell";
 import { useGuideStore } from "@/stores/guideStore";
-import { nivelMeta, provaSocialPorTipo, type Nivel, type Tipo } from "@/data/guideMap";
+import {
+  nivelMeta,
+  pecasPorTipoNivel,
+  precoEstimadoPorAreaENivel,
+  formatPrecoRangeMil,
+  provaSocialPorTipo,
+  type Nivel,
+  type Tipo,
+} from "@/data/guideMap";
+import { useAuth } from "@/hooks/useAuth";
 import { ProtagonismoMood } from "./svg/MoodSvg";
 
 const NIVEIS: Nivel[] = ["essencial", "equilibrada", "completa"];
