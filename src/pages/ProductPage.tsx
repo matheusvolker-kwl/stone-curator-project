@@ -4,7 +4,7 @@ import { fetchProduct } from "@/lib/shopify/queries";
 import { parseProductDescription, extractDimensions } from "@/lib/shopify/parseDescription";
 import { useEffect, useMemo, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
-import { formatBRL, cdnImg, cdnSrcSet } from "@/lib/shopify/client";
+import { formatBRL } from "@/lib/shopify/client";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
