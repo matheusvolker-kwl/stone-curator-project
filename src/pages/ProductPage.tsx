@@ -26,6 +26,7 @@ import BackToTop from "@/components/shared/BackToTop";
 import StickyBuyBar from "@/components/product/StickyBuyBar";
 import DeliverySignals from "@/components/product/DeliverySignals";
 import { inRange } from "@/lib/seededRandom";
+import { trackRecentlyViewed } from "@/hooks/useRecentlyViewed";
 
 import ProductComparison from "@/components/product/ProductComparison";
 import RelatedProducts from "@/components/product/RelatedProducts";
