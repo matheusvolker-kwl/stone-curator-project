@@ -1,69 +1,74 @@
-# Reformulação do Guia — De 9 etapas para 2 fases
+## O problema hoje
 
-## Diagnóstico
-Hoje o guia tem 9 etapas em fluxo linear. As 3 etapas finais de "adicionar peças" (Complementos / Upgrade / Assinatura) são percebidas como repetitivas e sem contexto: o usuário decide cada peça isolada, sem ver o conjunto montado nem o impacto no total.
+Quando o cliente chega em "configurar", a tela atual entrega:
 
-## Nova estrutura
+1. Um **hero gigante** do conjunto base ocupando quase toda a primeira dobra.
+2. Um **card minúsculo de upgrade** preso na coluna direita — sem peso visual, parece um adendo.
+3. **Complementos e itens autorais ficam escondidos** lá embaixo. Para ver "o que mais posso somar", precisa rolar muito.
+4. O **mini-índice (Conjunto · Complementos · Autorais)** é sticky, mas os elementos que importam para decisão (imagem do conjunto, acabamento, preço, CTA) **somem ao rolar**.
 
+Resultado: o cliente perde o fio. Não sente vontade de subir de patamar e tem que "caçar" os add-ons.
+
+## A nova lógica (visão)
+
+Tratar o configurador como **cockpit**, não como página longa:
+
+- **Lado esquerdo (sticky):** o "produto" — imagem do conjunto, acabamento, preço, CTA principal. **Sempre visível** enquanto o cliente passeia pelos add-ons.
+- **Lado direito (rolável):** o "menu de composição" — começa pelo **upgrade em destaque** (banner largo, lado a lado com o base, igual a "compare planos"), depois complementos, depois autorais.
+- **Mini-índice** continua sticky no topo, mas agora dispara scroll **dentro da coluna direita**, sem mexer no painel esquerdo.
+- **Resumo do projeto** (rail de 320px da direita) permanece sticky como já está.
+
+```text
+┌────────────────────────────────────────────────────────────────┐
+│  [ chips de descoberta ]              índice ·  ·  · finalizar │
+├──────────────────┬───────────────────────────┬─────────────────┤
+│                  │  ┌─ UPGRADE ─────────┐    │                 │
+│   HERO conjunto  │  │ base × completa   │    │   Resumo do     │
+│   (sticky)       │  │ comparativo lado  │    │   projeto       │
+│                  │  │ a lado, CTA forte │    │   (sticky)      │
+│   Acabamento     │  └───────────────────┘    │                 │
+│   ▢ ▢ ▢ ▢        │                           │   itens…        │
+│                  │  ─── Complementos ───     │                 │
+│   R$ XX.XXX      │  [grid 2 col cards]       │   total         │
+│   [+ adicionar]  │                           │   [orçamento]   │
+│   ver detalhes   │  ─── Autorais ───         │                 │
+│                  │  [grid 2 col cards]       │                 │
+└──────────────────┴───────────────────────────┴─────────────────┘
 ```
-FASE 1 — Descoberta (rápida, 4 cliques)         FASE 2 — Configurador (tela única)
-┌──────────────────────────────────┐            ┌────────────────────────────┬──────────────┐
-│ Onde → Tamanho → Protagonismo →  │   ──>      │  CONJUNTO BASE (hero)      │              │
-│ Composição                       │            │   - acabamento inline      │              │
-│                                  │            │   - botão "Trocar por      │  PROJETO     │
-│ (mantém o atual, sem mudanças)   │            │     versão maior" (upgrade)│  EM TEMPO    │
-└──────────────────────────────────┘            ├────────────────────────────┤  REAL        │
-                                                │ § COMPLEMENTOS (cards)     │              │
-                                                │   ajusta qtd/adiciona      │  + sticky    │
-                                                ├────────────────────────────┤  + clicável  │
-                                                │ § ITENS AUTORAIS (cards)   │    p/ rolar  │
-                                                ├────────────────────────────┤    p/ seção  │
-                                                │ [ FINALIZAR ORÇAMENTO ]    │              │
-                                                └────────────────────────────┴──────────────┘
-```
 
-## Mudanças concretas
+No mobile/tablet a coluna esquerda vira um **bloco compacto sticky no topo** (mini-hero + acabamento + preço + CTA em ~140px de altura), e o conteúdo rola embaixo normalmente.
 
-**Fase 1 — Descoberta**: mantém igual. 4 perguntas curtas com `goto` automático entre elas. Já funciona bem.
+## Mudanças por arquivo
 
-**Fase 2 — `BuyingGuide` rota `?step=configurar`** (substitui base/complementos/upgrade/casa/fechamento):
-- Página única com seções verticais e rail direito (atual `GuideAssemblySummary`).
-- Navegação interna por âncoras (índice no topo do rail: "Conjunto · Complementos · Itens autorais") + scroll suave + destaque da seção visível (IntersectionObserver).
-- Header da página mostra os chips de descoberta clicáveis (já implementado) para refazer escolhas sem perder o resto.
+**`src/components/guide/sections/SectionConjunto.tsx`** — refatoração principal.
+- Quebrar em duas peças internas: `<ConjuntoHero />` (visual + acabamento + preço + CTA + chips + ver detalhes) e `<ConjuntoUpgrade />` (banner do patamar acima).
+- Hero passa a renderizar num wrapper `lg:sticky lg:top-32 self-start`, com aspecto vertical (`aspect-[4/5]` no desktop em vez de `21/9` horizontal) — encaixa melhor numa coluna estreita.
+- Lista de "peças incluídas" some do hero e vai para um accordion compacto dentro do upgrade/abaixo.
+- Upgrade vira um **bloco largo** estilo "vale a pena subir?": imagem lado-a-lado base × completa, lista do que muda, delta de preço destacado, CTA primário "Aplicar upgrade" + secundário "Manter base".
 
-**Seção 1 — Conjunto base**:
-- Hero editorial atual (`StepBase`) + seletor de acabamento inline.
-- Card lateral de upgrade (se existir) integrado como **alternativa visual lado a lado** ao invés de etapa separada — o usuário vê "Sua escolha vs. Versão maior" e troca com um clique. Mata a etapa Upgrade.
+**`src/components/guide/GuideConfigurator.tsx`** — reestruturar layout.
+- Trocar `space-y-12` por `grid lg:grid-cols-[minmax(0,360px)_1fr] gap-10 items-start`.
+- Coluna esquerda: `<ConjuntoHero />` sticky.
+- Coluna direita: `<ConjuntoUpgrade />` → `<SectionComplementos />` → `<SectionAutorais />` → CTA final.
+- Mini-índice sticky continua acima do grid; ao clicar, scrolla os anchors `#upgrade`, `#complementos`, `#autorais` (não mais `#conjunto` — o conjunto está sempre visível). Se for piscina (sem complementos), índice fica `Upgrade · Autorais`.
+- Mobile (`<lg`): hero vira compacto sticky no topo (`sticky top-16`), fundo `bg-white/95 backdrop-blur`, com thumb 64x64 + nome + preço + CTA. Upgrade e seções rolam abaixo normalmente.
 
-**Seção 2 — Complementos** (`StepComplementos` simplificado):
-- Mesma grid de cards atual, mas dentro de `<section id="complementos">`.
-- Sem header de "Etapa 06" — vira `<h3>` "Complementos · peças que somam ao conjunto".
-- Sem `GuideStepFooter` (não navega mais).
+**`src/components/guide/sections/SectionComplementos.tsx`** e **`SectionAutorais.tsx`** — ajustes finos.
+- Como agora vivem em coluna estreita (~700px no desktop), grid passa de `lg:grid-cols-3` para `lg:grid-cols-2` para os cards respirarem.
+- Cabeçalhos das seções ficam mais compactos (sem o parágrafo descritivo longo — vira um eyebrow + título).
 
-**Seção 3 — Itens autorais** (`StepCasa` simplificado):
-- Mesma grid de cards atual, dentro de `<section id="autorais">`.
-- Mesmo tratamento: vira `<h3>`, sem footer.
-
-**Fechamento**:
-- CTA grande "Finalizar orçamento" no fim da página E no rail direito (já existe "Ver orçamento completo").
-- Conteúdo do `StepFechamento` (próximos passos, gerar PDF) vira modal/drawer disparado pelo CTA, não etapa separada.
-
-**Rail direito (`GuideAssemblySummary`)**:
-- Adiciona índice de seções no topo (3 links âncora com check quando a seção tem item adicionado).
-- Mantém lista de itens, total e CTA.
-
-## Mudanças técnicas
-
-- `guideStore.ts`: `GuideStep` reduzido para `intro | tipo | area | protagonismo | composicao | configurar | especial`. Adapta `back()`, `getProgressSteps()` para mostrar 5 bolinhas (4 descoberta + 1 configurar).
-- `BuyingGuide.tsx`: novo branch `step === "configurar"` que renderiza `<GuideConfigurator />` no lugar dos 5 branches atuais. Validação de URL atualizada.
-- Novo componente `src/components/guide/GuideConfigurator.tsx`: orquestra as 3 seções + IntersectionObserver para destacar a ativa no rail.
-- Novo `src/components/guide/sections/SectionConjunto.tsx`, `SectionComplementos.tsx`, `SectionAutorais.tsx`: refatoração de `StepBase`, `StepComplementos`, `StepCasa` removendo headers de etapa e footers de navegação. Lógica de upgrade absorvida no `SectionConjunto` (cartão lateral).
-- Novo `src/components/guide/FinalizarDrawer.tsx`: extrai conteúdo de `StepFechamento` para drawer.
-- `GuideAssemblySummary.tsx`: adiciona `<SectionIndex />` no topo (3 âncoras com badge de contagem).
-- `GuideProgress.tsx`: continua funcionando com a lista reduzida (5 itens).
-- Remove arquivos: `StepUpgrade.tsx` (lógica migra), `StepFechamento.tsx` (lógica migra para drawer). `StepBase`/`StepComplementos`/`StepCasa` ficam até a refatoração e depois são removidos quando substituídos pelas Sections.
+**`src/pages/BuyingGuide.tsx`** — sem mudanças estruturais; o grid externo `xl:grid-cols-[1fr_320px]` continua igual. Só garantir que o padding interno do card (`p-6 md:p-12`) seja reduzido em `configurar` para `p-6 md:p-8` — precisamos do espaço horizontal.
 
 ## Fora do escopo
-- Mudanças nas 4 etapas de descoberta (Onde/Tamanho/Protagonismo/Composição) — já funcionam.
-- Mudanças no carrinho, checkout, painel admin, PDF.
-- Mudanças no `guideMap.ts` (dados dos conjuntos).
+
+- Etapas de descoberta (tipo, área, protagonismo, composição) continuam exatamente como estão.
+- Resumo do projeto (`GuideAssemblySummary`) permanece sem mudanças.
+- Lógica de carrinho, upgrade swap, PDF, drawer de finalizar — tudo intocado, só reorganização visual.
+- Admin, orçamentos, página de quotes — fora.
+
+## Resultado esperado
+
+- Cliente chega em "configurar" e **vê de cara**: o conjunto à esquerda (sempre presente) e o upgrade à direita pedindo atenção.
+- Para olhar complementos/autorais, basta passar o olho à direita — sem perder a referência do que está comprando.
+- Decisão de subir de patamar acontece **lado a lado**, com peso visual proporcional à importância da decisão.
+- O cockpit não vira "página longa de checkout" — vira "configurador de carro".
