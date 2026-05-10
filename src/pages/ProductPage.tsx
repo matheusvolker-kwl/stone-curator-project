@@ -616,7 +616,7 @@ export default function ProductPage() {
       </div>
 
       {/* Seções full-width abaixo do hero */}
-      <ProductInProjects productHandle={product.handle} productTitle={product.title} />
+      
       <ProductComparison productTitle={product.title} pesoKg={pesoKg} dimensoes={dimsStr} />
       <RelatedProducts
         collectionHandle={collection?.handle}
