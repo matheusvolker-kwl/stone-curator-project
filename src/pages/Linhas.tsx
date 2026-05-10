@@ -73,7 +73,10 @@ export default function Linhas() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
-            {linhas.map((c) => (
+            {(q && linhas.length === 0
+              ? data.filter((c) => !isSeasonal(c))
+              : linhas
+            ).map((c) => (
               <Link key={c.handle} to={`/linhas/${c.handle}`} className="group block">
                 <div className="frame-product aspect-[4/3] overflow-hidden mb-5">
                   {c.image ? (
