@@ -40,6 +40,7 @@ const App = () => (
     <TooltipProvider>
       <Sonner position="top-right" />
       <BrowserRouter>
+        <ScrollToTop />
         <AuthProvider>
           <Routes>
             <Route element={<SiteLayout />}>
