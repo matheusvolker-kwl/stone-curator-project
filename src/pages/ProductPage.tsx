@@ -221,7 +221,7 @@ export default function ProductPage() {
 
           {/* Details */}
           <div className="md:py-2 text-western-green-deep">
-            {/* Header */}
+            {/* 1 — Header */}
             {collectionDisplay && <p className="text-eyebrow mb-5">{collectionDisplay}</p>}
             <div className="w-12 h-px bg-western-gold mb-6" />
             <h1 className="font-display text-3xl md:text-5xl leading-[1.05]">
@@ -233,10 +233,185 @@ export default function ProductPage() {
               </p>
             )}
 
-            {/* Bloco de dados duros — peso & dimensões */}
+            {/* 2 — BLOCO DE COMPRA (preço · entrega · gatilho · seletor · CTA) */}
+            <div
+              ref={ctaRef}
+              className="mt-8 border-l-2 border-western-gold bg-western-cream/50 pl-5 md:pl-6 pr-4 md:pr-5 py-6"
+            >
+              {(() => {
+                const pendingOption = visibleOptions.find((o) => !activeOptions[o.name]);
+                const priceDisplay = variant
+                  ? formatBRL(variant.price.amount, variant.price.currencyCode)
+                  : `a partir de ${formatBRL(
+                      product.priceRange.minVariantPrice.amount,
+                      product.priceRange.minVariantPrice.currencyCode
+                    )}`;
+                const studios = inRange(`studios:${product.handle}`, 14, 29);
+                const acabOption = visibleOptions.find((o) => /acabament/i.test(o.name));
+                const otherOptions = visibleOptions.filter(
+                  (o) => !/acabament/i.test(o.name)
+                );
+
+                return (
+                  <>
+                    {/* Preço / PriceGate */}
+                    {isApproved ? (
+                      <div className="flex items-baseline justify-between gap-4 flex-wrap">
+                        <span className="text-eyebrow">Condição parceiro</span>
+                        <span
+                          className={`font-display text-western-green-deep ${
+                            variant ? "text-3xl md:text-4xl" : "text-xl text-western-stone-warm"
+                          } tabular-nums`}
+                        >
+                          {priceDisplay}
+                        </span>
+                      </div>
+                    ) : (
+                      <PriceGate variant="block" />
+                    )}
+
+                    {/* Entrega */}
+                    <div className="mt-5">
+                      <DeliverySignals />
+                    </div>
+
+                    {/* Gatilho social */}
+                    <p className="mt-4 inline-flex items-center gap-2 text-spec text-western-stone-warm">
+                      <Folder className="h-3.5 w-3.5 text-western-gold flex-shrink-0" />
+                      <span>
+                        Adicionado por{" "}
+                        <span className="text-western-green-deep font-medium">
+                          {studios} estúdios
+                        </span>{" "}
+                        em projetos nos últimos 30 dias.
+                      </span>
+                    </p>
+
+                    {/* Acabamento */}
+                    {acabOption && (
+                      <div className="mt-6 pt-6 border-t border-western-stone-warm/15">
+                        <div className="flex items-baseline justify-between mb-4 gap-3">
+                          <p className="text-eyebrow">Acabamento</p>
+                          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/80">
+                            mesmo preço
+                          </span>
+                        </div>
+                        <FinishSelector
+                          values={acabOption.values}
+                          selected={activeOptions[acabOption.name] ?? null}
+                          onSelect={(val) =>
+                            setActiveOptions((prev) => ({ ...prev, [acabOption.name]: val }))
+                          }
+                        />
+                      </div>
+                    )}
+
+                    {/* Outras opções */}
+                    {otherOptions.length > 0 && (
+                      <div className="mt-6 space-y-6">
+                        {otherOptions.map((option) => (
+                          <div key={option.name}>
+                            <p className="text-eyebrow mb-3">{option.name}</p>
+                            <div className="flex flex-wrap gap-2.5">
+                              {option.values.map((val) => {
+                                const selected = activeOptions[option.name] === val;
+                                return (
+                                  <button
+                                    key={val}
+                                    onClick={() =>
+                                      setActiveOptions((prev) => ({
+                                        ...prev,
+                                        [option.name]: val,
+                                      }))
+                                    }
+                                    className={`px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] border transition-all duration-300 ${
+                                      selected
+                                        ? "border-western-gold text-western-gold bg-western-gold/5"
+                                        : "border-western-stone-warm/25 text-western-green-deep hover:border-western-gold/60"
+                                    }`}
+                                  >
+                                    {val}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Stepper + CTA — apenas aprovado */}
+                    {isApproved && (
+                      <div className="mt-6 pt-6 border-t border-western-stone-warm/15">
+                        {pendingOption && (
+                          <div className="mb-5 flex items-start gap-2.5 px-4 py-3 border border-western-gold/40 bg-western-gold/10">
+                            <Info className="h-4 w-4 text-western-gold mt-0.5 flex-shrink-0" />
+                            <p className="text-spec text-western-green-deep leading-relaxed">
+                              Escolha {pendingOption.name.toLowerCase() === "acabamento" ? "o acabamento" : `a opção de ${pendingOption.name.toLowerCase()}`} para ver o preço final e adicionar ao pedido.
+                            </p>
+                          </div>
+                        )}
+
+                        <div className="flex flex-col sm:flex-row items-stretch gap-3">
+                          <div className="flex items-center justify-between sm:justify-start border border-western-stone-warm/30 h-12 bg-western-paper">
+                            <button
+                              onClick={() => setQty(Math.max(1, qty - 1))}
+                              className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
+                              aria-label="Diminuir"
+                            >
+                              −
+                            </button>
+                            <span className="px-4 text-spec min-w-[2ch] text-center tabular-nums">
+                              {qty}
+                            </span>
+                            <button
+                              onClick={() => setQty(qty + 1)}
+                              className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
+                              aria-label="Aumentar"
+                            >
+                              +
+                            </button>
+                          </div>
+                          <Button
+                            onClick={handleAdd}
+                            disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
+                            className="flex-1 h-12 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60 motion-safe:hover:-translate-y-px transition-all"
+                          >
+                            {isLoadingCart ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : pendingOption ? (
+                              `Selecione ${pendingOption.name.toLowerCase()}`
+                            ) : variant?.availableForSale ? (
+                              "Adicionar ao pedido"
+                            ) : (
+                              "Indisponível"
+                            )}
+                          </Button>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            const msg = `Olá! Gostaria de falar sobre ${product.title}${sku ? ` (SKU ${sku})` : ""}.`;
+                            window.open(
+                              `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
+                              "_blank"
+                            );
+                          }}
+                          className="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
+                        >
+                          <MessageCircle className="h-3.5 w-3.5" /> Falar com consultor
+                        </button>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
+
+            {/* 3 — Dados duros: peso & dimensões */}
             <HardFactsCard pesoKg={pesoKg} dimensoes={dimsStr} />
 
-            {/* Lead — editorial drop-cap (curto, máx 2 frases — detalhe técnico vai pro accordion) */}
+            {/* 4 — Lead editorial */}
             {parsed.lead && (
               <p
                 className="product-lead mt-10"
@@ -253,7 +428,7 @@ export default function ProductPage() {
               />
             )}
 
-            {/* Aplicações — chips horizontais compactos */}
+            {/* 5 — Aplicações */}
             {parsed.aplicacoes.length > 0 && (
               <div className="mt-10">
                 <p className="text-eyebrow mb-4">Aplicações</p>
@@ -270,156 +445,7 @@ export default function ProductPage() {
               </div>
             )}
 
-            {/* Acabamento — seletor com swatches */}
-            {(() => {
-              const acabOption = visibleOptions.find((o) => /acabament/i.test(o.name));
-              if (!acabOption) return null;
-              return (
-                <div className="mt-10">
-                  <div className="flex items-baseline justify-between mb-4 gap-3">
-                    <p className="text-eyebrow">Acabamento</p>
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/80">
-                      mesmo preço
-                    </span>
-                  </div>
-                  <FinishSelector
-                    values={acabOption.values}
-                    selected={activeOptions[acabOption.name] ?? null}
-                    onSelect={(val) =>
-                      setActiveOptions((prev) => ({ ...prev, [acabOption.name]: val }))
-                    }
-                  />
-                </div>
-              );
-            })()}
-
-            {/* Outras opções (tamanho etc.) */}
-            {visibleOptions.filter((o) => !/acabament/i.test(o.name)).length > 0 && (
-              <div className="mt-8 space-y-8">
-                {visibleOptions
-                  .filter((o) => !/acabament/i.test(o.name))
-                  .map((option) => (
-                    <div key={option.name}>
-                      <p className="text-eyebrow mb-4">{option.name}</p>
-                      <div className="flex flex-wrap gap-2.5">
-                        {option.values.map((val) => {
-                          const selected = activeOptions[option.name] === val;
-                          return (
-                            <button
-                              key={val}
-                              onClick={() =>
-                                setActiveOptions((prev) => ({ ...prev, [option.name]: val }))
-                              }
-                              className={`px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] border transition-all duration-300 ${
-                                selected
-                                  ? "border-western-gold text-western-gold bg-western-gold/5"
-                                  : "border-western-stone-warm/25 text-western-green-deep hover:border-western-gold/60"
-                              }`}
-                            >
-                              {val}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            )}
-
-            {/* CTAs primários — colados no seletor, sem grandes vãos */}
-            <div ref={ctaRef} className="mt-8 pt-6 border-t border-western-stone-warm/20">
-              {(() => {
-                const pendingOption = visibleOptions.find(
-                  (o) => !activeOptions[o.name]
-                );
-                const priceDisplay = variant
-                  ? formatBRL(variant.price.amount, variant.price.currencyCode)
-                  : `a partir de ${formatBRL(
-                      product.priceRange.minVariantPrice.amount,
-                      product.priceRange.minVariantPrice.currencyCode
-                    )}`;
-
-                // Deslogado: mostra apenas o gate, sem stepper nem botão competindo
-                if (!isApproved) {
-                  return <PriceGate variant="block" />;
-                }
-
-                // Aprovado: preço + stepper + botão único full width
-                return (
-                  <>
-                    <div className="flex items-baseline justify-between mb-6 gap-4 flex-wrap">
-                      <span className="text-eyebrow">Condição parceiro</span>
-                      <span
-                        className={`font-display text-western-green-deep ${
-                          variant ? "text-3xl" : "text-xl text-western-stone-warm"
-                        }`}
-                      >
-                        {priceDisplay}
-                      </span>
-                    </div>
-
-                    {pendingOption && (
-                      <div className="mb-5 flex items-start gap-2.5 px-4 py-3 border border-western-gold/40 bg-western-gold/5">
-                        <Info className="h-4 w-4 text-western-gold mt-0.5 flex-shrink-0" />
-                        <p className="text-spec text-western-green-deep leading-relaxed">
-                          Escolha {pendingOption.name.toLowerCase() === "acabamento" ? "o acabamento" : `a opção de ${pendingOption.name.toLowerCase()}`} para ver o preço final e adicionar ao pedido.
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="flex flex-col sm:flex-row items-stretch gap-3">
-                      <div className="flex items-center justify-between sm:justify-start border border-western-stone-warm/30 h-12">
-                        <button
-                          onClick={() => setQty(Math.max(1, qty - 1))}
-                          className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
-                          aria-label="Diminuir"
-                        >
-                          −
-                        </button>
-                        <span className="px-4 text-spec min-w-[2ch] text-center">{qty}</span>
-                        <button
-                          onClick={() => setQty(qty + 1)}
-                          className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
-                          aria-label="Aumentar"
-                        >
-                          +
-                        </button>
-                      </div>
-                      <Button
-                        onClick={handleAdd}
-                        disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
-                        className="flex-1 h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
-                      >
-                        {isLoadingCart ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : pendingOption ? (
-                          `Selecione ${pendingOption.name.toLowerCase()}`
-                        ) : variant?.availableForSale ? (
-                          "Adicionar ao pedido"
-                        ) : (
-                          "Indisponível"
-                        )}
-                      </Button>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        const msg = `Olá! Gostaria de falar sobre ${product.title}${sku ? ` (SKU ${sku})` : ""}.`;
-                        window.open(
-                          `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
-                          "_blank"
-                        );
-                      }}
-                      className="mt-3 w-full h-11 inline-flex items-center justify-center gap-2 border border-western-green-deep/25 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
-                    >
-                      <MessageCircle className="h-4 w-4" /> Falar com consultor
-                    </button>
-                  </>
-                );
-              })()}
-            </div>
-
-            {/* Pintura personalizada — secundária, depois dos CTAs */}
+            {/* 6 — Pintura personalizada */}
             {visibleOptions.some((o) => /acabament/i.test(o.name)) && (
               <CustomPaintNote
                 onConsultor={() => {
@@ -432,7 +458,7 @@ export default function ProductPage() {
               />
             )}
 
-            {/* SketchUp — botão grande, microcopy pequena abaixo */}
+            {/* 7 — SketchUp */}
             {(() => {
               const url = product.modelo3d?.value?.trim() || BUSINESS.sketchupWarehouse;
               const isProductSpecific = !!product.modelo3d?.value?.trim();
@@ -454,25 +480,8 @@ export default function ProductPage() {
               );
             })()}
 
-            {/* Prova social discreta — número estável por produto */}
-            {(() => {
-              const studios = inRange(`studios:${product.handle}`, 14, 29);
-              return (
-                <p className="mt-6 inline-flex items-center gap-2 text-spec text-western-stone-warm">
-                  <Folder className="h-3.5 w-3.5 text-western-gold flex-shrink-0" />
-                  <span>
-                    Adicionado por{" "}
-                    <span className="text-western-green-deep font-medium">
-                      {studios} estúdios
-                    </span>{" "}
-                    em projetos nos últimos 30 dias.
-                  </span>
-                </p>
-              );
-            })()}
-
-            {/* Faixa de regras comerciais */}
-            <ul className="text-spec text-western-stone-warm/80 leading-relaxed mt-4 text-xs space-y-1">
+            {/* 8 — Regras comerciais */}
+            <ul className="text-spec text-western-stone-warm/80 leading-relaxed mt-8 text-xs space-y-1">
               <li>· Produção sob demanda · {BUSINESS.prazoProducaoDias} dias úteis</li>
               <li>· Pedido mínimo {BUSINESS.pedidoMinimoLabel}</li>
               <li>· Frete cotado por região · retirada gratuita em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}</li>
