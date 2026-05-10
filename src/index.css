@@ -190,6 +190,14 @@
     font-weight: 300;
   }
 
+  /* === FORM INPUTS (admin / utilitário) === */
+  .ui-input {
+    @apply w-full px-3 py-2 text-sm bg-white border border-western-stone-warm/30
+           text-western-green-deep placeholder:text-western-stone-warm/60
+           focus:outline-none focus:border-western-gold focus:ring-1 focus:ring-western-gold/30
+           transition-colors;
+  }
+
   /* === PRODUCT EDITORIAL === */
   .product-lead {
     @apply font-display text-[1.2rem] md:text-[1.45rem] leading-[1.55] text-western-green-deep;
