@@ -155,7 +155,7 @@ export default function AutoralProductModal({ item, selected, qty, onClose, onTo
                   ) : (
                     <button
                       type="button"
-                      onClick={() => { onToggle(); onClose(); }}
+                      onClick={() => onSetQty(1)}
                       className="w-full inline-flex items-center justify-center gap-2 h-12 bg-western-gold text-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors"
                     >
                       <Plus className="h-3.5 w-3.5" /> Adicionar ao projeto
