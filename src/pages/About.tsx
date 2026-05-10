@@ -250,7 +250,7 @@ export default function About() {
       </section>
 
       {/* 4 PILARES */}
-      <section className="surface-paper py-24 md:py-28 border-t border-western-stone-warm/10">
+      <section className="surface-paper py-20 md:py-24 border-t border-western-stone-warm/10">
         <div className="container-western max-w-6xl">
           <Reveal variant="fade-up" duration={750}>
             <div className="max-w-2xl mb-14">
@@ -281,7 +281,7 @@ export default function About() {
       </section>
 
       {/* GALERIA — Mural editorial de obras */}
-      <section className="surface-ivory py-24 md:py-28 border-t border-western-stone-warm/10">
+      <section className="surface-ivory py-20 md:py-24 border-t border-western-stone-warm/10">
         <div className="container-western max-w-6xl">
           <Reveal variant="fade-up" duration={750}>
             <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-end mb-12 md:mb-16">
@@ -366,7 +366,7 @@ export default function About() {
       </section>
 
       {/* MANIFESTO — vocabulário & filosofia */}
-      <section className="surface-forest py-24 md:py-28 relative overflow-hidden">
+      <section className="surface-forest py-20 md:py-24 relative overflow-hidden">
         <img
           src={iconePedraBranco}
           alt=""
