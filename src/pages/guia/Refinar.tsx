@@ -228,7 +228,7 @@ export default function GuiaRefinar() {
               <p className="font-display italic text-[16px] text-western-stone-warm max-w-[620px] mt-3 leading-relaxed">
                 Vendidas avulsas, viajam no mesmo pedido com frete otimizado. Clique para ver detalhes.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 mt-8">
                 {isLoading && autorais.length === 0 ? (
                   <SkeletonCards count={4} />
                 ) : (
