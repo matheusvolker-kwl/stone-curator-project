@@ -357,6 +357,7 @@ export type Database = {
         | "amostras"
         | "visita"
         | "contato"
+        | "orcamento"
       partner_status: "pending" | "approved" | "rejected" | "cancelled"
     }
     CompositeTypes: {
@@ -492,6 +493,7 @@ export const Constants = {
         "amostras",
         "visita",
         "contato",
+        "orcamento",
       ],
       partner_status: ["pending", "approved", "rejected", "cancelled"],
     },

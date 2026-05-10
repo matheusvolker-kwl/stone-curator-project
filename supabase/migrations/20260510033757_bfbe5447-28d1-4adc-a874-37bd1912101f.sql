@@ -1,0 +1,1 @@
+ALTER TYPE lead_type ADD VALUE IF NOT EXISTS 'orcamento';

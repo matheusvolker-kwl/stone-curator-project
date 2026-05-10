@@ -2,12 +2,14 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
-import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock } from "lucide-react";
-import { useEffect } from "react";
+import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock, FileDown } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BUSINESS } from "@/config/business";
 import { useAuth } from "@/hooks/useAuth";
 import CartCrossSell from "@/components/cart/CartCrossSell";
+import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
+import { downloadOrcamentoPdf } from "@/lib/pdf/orcamentoPdf";
 
 const MIN_ORDER = BUSINESS.pedidoMinimoBRL;
 
@@ -21,6 +23,7 @@ export default function CartDrawer({
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } =
     useCartStore();
   const { isApproved } = useAuth();
+  const [quoteOpen, setQuoteOpen] = useState(false);
   const totalQty = items.reduce((s, i) => s + i.quantity, 0);
   const subtotal = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
   const currency = items[0]?.price.currencyCode ?? "BRL";
@@ -131,95 +134,114 @@ export default function CartDrawer({
         </div>
 
         {items.length > 0 && (
-          <div className="px-5 md:px-8 py-6 border-t border-western-gold/15 space-y-5">
-            {!isApproved ? (
-              <>
-                <div className="flex items-start gap-3 p-4 border border-western-gold/40 bg-western-gold/5">
-                  <Lock className="h-4 w-4 text-western-gold-soft mt-0.5 flex-shrink-0" />
-                  <p className="text-spec text-western-cream-muted leading-relaxed">
-                    Os preços e o checkout são exclusivos para parceiros credenciados.
-                  </p>
+          <div className="px-5 md:px-8 py-6 border-t border-western-gold/15 space-y-4">
+            {isApproved && (
+              <div>
+                <div className="flex justify-between text-spec mb-2">
+                  <span className="text-western-cream-muted">Pedido mínimo {formatBRL(MIN_ORDER)}</span>
+                  <span className={meetsMinimum ? "text-western-gold-soft" : "text-western-cream-muted"}>
+                    {Math.round(progress)}%
+                  </span>
                 </div>
-                <Link
-                  to="/parceiro/login"
-                  onClick={() => onOpenChange(false)}
-                  className="w-full h-12 bg-western-gold text-western-green-deep hover:bg-western-gold-soft font-mono text-xs uppercase tracking-[0.25em] inline-flex items-center justify-center"
-                >
-                  Acessar minha conta
-                </Link>
-                <Link
-                  to="/parceiro/cadastro"
-                  onClick={() => onOpenChange(false)}
-                  className="w-full h-11 border border-western-gold/40 text-western-cream hover:border-western-gold font-mono text-[11px] uppercase tracking-[0.22em] inline-flex items-center justify-center"
-                >
-                  Solicitar cadastro B2B
-                </Link>
-              </>
-            ) : (
-              <>
-                <div>
-                  <div className="flex justify-between text-spec mb-2">
-                    <span className="text-western-cream-muted">Pedido mínimo {formatBRL(MIN_ORDER)}</span>
-                    <span className={meetsMinimum ? "text-western-gold-soft" : "text-western-cream-muted"}>
-                      {Math.round(progress)}%
-                    </span>
-                  </div>
-                  <div className="h-px bg-western-gold/20 relative overflow-hidden">
-                    <div
-                      className="h-full bg-western-gold transition-all duration-700"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
+                <div className="h-px bg-western-gold/20 relative overflow-hidden">
+                  <div
+                    className="h-full bg-western-gold transition-all duration-700"
+                    style={{ width: `${progress}%` }}
+                  />
                 </div>
+              </div>
+            )}
 
-                <div className="flex justify-between items-baseline">
-                  <span className="text-eyebrow">Subtotal</span>
-                  <span className="font-display text-2xl">{formatBRL(subtotal, currency)}</span>
-                </div>
+            <div className="flex justify-between items-baseline">
+              <span className="text-eyebrow">Subtotal</span>
+              <span className="font-display text-2xl">
+                {isApproved ? formatBRL(subtotal, currency) : "—"}
+              </span>
+            </div>
 
-                <p className="text-spec text-western-cream-muted leading-relaxed">
-                  Produção em 15 dias úteis após confirmação do pedido.
+            {!isApproved && (
+              <div className="flex items-start gap-3 p-3 border border-western-gold/30 bg-western-gold/5">
+                <Lock className="h-3.5 w-3.5 text-western-gold-soft mt-0.5 flex-shrink-0" />
+                <p className="text-spec text-western-cream-muted leading-relaxed text-xs">
+                  Preços B2B liberados após aprovação do cadastro. Você pode solicitar orçamento agora mesmo.
                 </p>
+              </div>
+            )}
 
-                <Button
-                  onClick={() => {
-                    const lines = items
-                      .map(
-                        (i) =>
-                          `• ${i.quantity}× ${i.productTitle} (${i.selectedOptions.map((o) => o.value).join(" / ")})`
-                      )
-                      .join("%0A");
-                    const msg = `Olá! Gostaria de solicitar orçamento:%0A%0A${lines}%0A%0ASubtotal: ${formatBRL(subtotal)}`;
-                    window.open(`https://wa.me/5511993403485?text=${msg}`, "_blank");
-                  }}
-                  disabled={!meetsMinimum}
-                  className="w-full h-12 bg-[#25D366] text-white hover:bg-[#1fb858] font-mono text-xs uppercase tracking-[0.25em] rounded-none"
-                >
-                  <MessageCircle className="h-4 w-4 mr-2" /> Solicitar orçamento
-                </Button>
+            <p className="text-spec text-western-cream-muted leading-relaxed">
+              Produção em 15 dias úteis após confirmação do pedido.
+            </p>
 
-                <button
-                  onClick={handleCheckout}
-                  disabled={isLoading || isSyncing || !meetsMinimum}
-                  className="w-full h-10 border border-western-gold/40 text-western-cream hover:border-western-gold font-mono text-[11px] uppercase tracking-[0.22em] inline-flex items-center justify-center gap-2 disabled:opacity-50"
-                >
-                  {isLoading || isSyncing ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <>Pagar online <ExternalLink className="h-3.5 w-3.5" /></>
-                  )}
-                </button>
-
-                {!meetsMinimum && (
-                  <p className="text-spec text-western-cream-muted text-center">
-                    Faltam {formatBRL(MIN_ORDER - subtotal)} para fechar pedido.
-                  </p>
+            {/* CTA primário: Pagar online (aprovado) ou Solicitar orçamento (não aprovado) */}
+            {isApproved ? (
+              <Button
+                onClick={handleCheckout}
+                disabled={isLoading || isSyncing || !meetsMinimum}
+                className="w-full h-14 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none shadow-[0_18px_40px_-20px_rgba(184,146,79,0.6)] disabled:opacity-50"
+              >
+                {isLoading || isSyncing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    Pagar online <ExternalLink className="h-4 w-4 ml-2" />
+                  </>
                 )}
-              </>
+              </Button>
+            ) : (
+              <Button
+                onClick={() => setQuoteOpen(true)}
+                className="w-full h-14 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none shadow-[0_18px_40px_-20px_rgba(184,146,79,0.6)]"
+              >
+                <MessageCircle className="h-4 w-4 mr-2" /> Solicitar orçamento
+              </Button>
+            )}
+
+            {/* CTA secundário: Solicitar orçamento (quando aprovado) */}
+            {isApproved && (
+              <button
+                type="button"
+                onClick={() => setQuoteOpen(true)}
+                className="w-full h-11 border border-western-gold/40 text-western-cream hover:border-western-gold font-mono text-[11px] uppercase tracking-[0.22em] inline-flex items-center justify-center gap-2 transition-colors"
+              >
+                <MessageCircle className="h-3.5 w-3.5" /> Solicitar orçamento
+              </button>
+            )}
+
+            {/* Tertiary: PDF download */}
+            <button
+              type="button"
+              onClick={() =>
+                downloadOrcamentoPdf({
+                  items,
+                  subtotal,
+                  currency,
+                  showPrices: isApproved,
+                })
+              }
+              className="w-full inline-flex items-center justify-center gap-2 text-western-cream-muted hover:text-western-gold-soft font-mono text-[10px] uppercase tracking-[0.22em] py-2 transition-colors"
+            >
+              <FileDown className="h-3.5 w-3.5" /> Baixar PDF da composição
+            </button>
+
+            {!isApproved && (
+              <Link
+                to="/parceiro/login"
+                onClick={() => onOpenChange(false)}
+                className="block text-center text-western-cream-muted hover:text-western-gold-soft font-mono text-[10px] uppercase tracking-[0.22em] pt-1 transition-colors"
+              >
+                Já é parceiro? Entre para ver preços
+              </Link>
+            )}
+
+            {isApproved && !meetsMinimum && (
+              <p className="text-spec text-western-cream-muted text-center">
+                Faltam {formatBRL(MIN_ORDER - subtotal)} para checkout. Você pode solicitar orçamento sem mínimo.
+              </p>
             )}
           </div>
         )}
       </SheetContent>
+      <QuoteRequestModal open={quoteOpen} onOpenChange={setQuoteOpen} />
     </Sheet>
   );
 }
