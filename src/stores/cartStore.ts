@@ -160,6 +160,7 @@ export const useCartStore = create<CartStore>()(
         const { items, cartId, clearCart } = get();
         const existing = items.find((i) => i.variantId === item.variantId);
         set({ isLoading: true });
+        let success = false;
         try {
           if (!cartId) {
             const result = await createCart({ ...item, lineId: null });
@@ -169,6 +170,7 @@ export const useCartStore = create<CartStore>()(
                 checkoutUrl: result.checkoutUrl,
                 items: [{ ...item, lineId: result.lineId ?? null }],
               });
+              success = true;
             }
           } else if (existing?.lineId) {
             const newQty = existing.quantity + item.quantity;
@@ -179,17 +181,20 @@ export const useCartStore = create<CartStore>()(
                   i.variantId === item.variantId ? { ...i, quantity: newQty } : i
                 ),
               });
+              success = true;
             } else if (result.cartNotFound) clearCart();
           } else {
             const result = await addLine(cartId, { ...item, lineId: null });
             if (result.success) {
               set({ items: [...get().items, { ...item, lineId: result.lineId ?? null }] });
+              success = true;
             } else if (result.cartNotFound) clearCart();
           }
         } catch (e) {
           console.error(e);
         } finally {
           set({ isLoading: false });
+          if (success) notifyCartChanged();
         }
       },
 
