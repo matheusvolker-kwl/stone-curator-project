@@ -2,12 +2,14 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
-import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock } from "lucide-react";
-import { useEffect } from "react";
+import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock, FileDown } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BUSINESS } from "@/config/business";
 import { useAuth } from "@/hooks/useAuth";
 import CartCrossSell from "@/components/cart/CartCrossSell";
+import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
+import { downloadOrcamentoPdf } from "@/lib/pdf/orcamentoPdf";
 
 const MIN_ORDER = BUSINESS.pedidoMinimoBRL;
 
