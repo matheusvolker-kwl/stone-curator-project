@@ -5,7 +5,7 @@ const items = [
   { Icon: ShieldCheck, text: `Pedido mínimo ${BUSINESS.pedidoMinimoLabel} — exclusivo B2B` },
   { Icon: Truck, text: "Produção em 15 dias úteis após confirmação" },
   { Icon: CreditCard, text: "Pagamento 100% antecipado · PIX, TED, boleto" },
-  { Icon: Box, text: "Modelos 3D em SketchUp para todos os produtos" },
+  { Icon: Box, text: "Modelos 3D · +300 mil downloads no SketchUp Warehouse" },
 ];
 
 export default function TopBar() {

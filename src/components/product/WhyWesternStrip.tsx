@@ -20,9 +20,9 @@ const CARDS = [
     external: false,
   },
   {
-    big: "3D",
-    title: "SketchUp Warehouse",
-    text: "Catálogo completo em 3D. Projete a composição inteira no seu estúdio antes de qualquer compra.",
+    big: "+300k",
+    title: "Downloads no SketchUp Warehouse",
+    text: "Catálogo completo em 3D, especificado por estúdios no Brasil e no exterior. Projete a composição inteira antes de qualquer compra.",
     cta: "3D Warehouse",
     to: BUSINESS.sketchupWarehouse,
     external: true,
