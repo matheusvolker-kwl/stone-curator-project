@@ -96,19 +96,20 @@ export default function GuiaRefinar() {
   const onFinalizar = () => navigate("/guia-de-composicao/finalizar");
 
   return (
-    <div className="min-h-screen bg-western-cream">
+    <div className="min-h-screen surface-ivory">
       <GuideHeader breadcrumb={{ label: "Voltar · Três caminhos", to: backToCaminhos }} />
-      <main className="mx-auto max-w-[1280px] px-6 md:px-16 pt-12 pb-32 lg:pb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 items-start">
+      <main className="container-western pt-12 md:pt-16 pb-32 lg:pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10 lg:gap-14 items-start">
           <div className="min-w-0">
             {/* Cabeçalho */}
             <div className="flex items-start justify-between gap-6">
               <div>
-                <p className="text-eyebrow mb-3">Composição base</p>
-                <h1 className="font-display text-3xl md:text-[40px] text-western-green-deep leading-[1.1]">
+                <p className="text-eyebrow mb-4">Etapa 03 · Composição base</p>
+                <h1 className="font-display text-3xl md:text-[44px] text-western-green-deep leading-[1.05]">
                   {conjunto.nome}
                 </h1>
-                <div className="flex flex-wrap gap-2 mt-4">
+                <div className="w-12 h-px bg-western-gold mt-5 mb-5" />
+                <div className="flex flex-wrap gap-2">
                   <Tag>{tipoMeta.label}</Tag>
                   {tamanhoId && tamanhoId !== "consultor" && (
                     <Tag>{tamanhoLabels[tamanhoId]}</Tag>
@@ -116,40 +117,46 @@ export default function GuiaRefinar() {
                   <Tag>{nivelLabelMap[nivelParam]}</Tag>
                   <Tag>{acabamentoMeta[acabamento].label}</Tag>
                 </div>
-                <p className="font-display italic text-base md:text-lg text-western-stone-warm leading-relaxed mt-5 max-w-[600px]">
+                <p className="font-display italic text-lg md:text-xl text-western-stone-warm leading-relaxed mt-6 max-w-[620px]">
                   {conjunto.subtitulo}. Cascata central com pedras de apoio que constroem volume sem
                   sobrecarregar o espaço.
                 </p>
               </div>
               <Link
                 to={backToCaminhos}
-                className="hidden md:inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep flex-shrink-0"
+                className="hidden md:inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep flex-shrink-0"
               >
                 <ExternalLink className="h-3 w-3" /> Trocar de composição
               </Link>
             </div>
 
+            <div className="divider-hairline mt-14" />
+
             {/* Peças */}
-            <section className="mt-16">
-              <p className="text-eyebrow mb-2">Peças desta composição</p>
-              <div className="mt-4">
+            <section className="mt-12">
+              <p className="text-eyebrow mb-3">Peças desta composição</p>
+              <h2 className="font-display text-2xl md:text-[30px] text-western-green-deep leading-tight">
+                Ajuste o conjunto peça por peça.
+              </h2>
+              <div className="mt-6">
                 {pecas.map((p) => (
                   <PecaRow key={p.id} peca={p} onQty={onQty} onRemove={onRemove} />
                 ))}
               </div>
             </section>
 
+            <div className="divider-hairline mt-14" />
+
             {/* Autorais */}
-            <section className="mt-16">
-              <p className="text-eyebrow mb-2">Adicionar itens autorais</p>
-              <h2 className="font-display text-2xl md:text-[28px] text-western-green-deep leading-tight">
+            <section className="mt-12">
+              <p className="text-eyebrow mb-3">Itens autorais</p>
+              <h2 className="font-display text-2xl md:text-[30px] text-western-green-deep leading-tight">
                 Peças que somam ao projeto.
               </h2>
-              <p className="font-sans italic text-[14px] text-western-stone-warm max-w-[600px] mt-3">
-                Estas peças são vendidas avulsas e não fazem parte do conjunto base. Adicione ao projeto e elas
-                viajam no mesmo pedido com frete otimizado.
+              <p className="font-display italic text-[16px] text-western-stone-warm max-w-[620px] mt-3 leading-relaxed">
+                Vendidas avulsas, viajam no mesmo pedido com frete otimizado.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
                 {autorais.map((a) => (
                   <AutoralCard
                     key={a.id}
@@ -161,10 +168,12 @@ export default function GuiaRefinar() {
               </div>
             </section>
 
+            <div className="divider-hairline mt-14" />
+
             {/* Trocar acabamento */}
-            <section className="mt-16">
-              <p className="text-eyebrow mb-2">
-                Acabamento atual: {acabamentoMeta[acabamento].label}
+            <section className="mt-12">
+              <p className="text-eyebrow mb-3">
+                Acabamento atual · {acabamentoMeta[acabamento].label}
               </p>
               <button
                 type="button"
@@ -175,7 +184,7 @@ export default function GuiaRefinar() {
                 {showAcab ? "Fechar" : "Trocar acabamento desta composição"}
               </button>
               {showAcab && (
-                <div className="mt-5 max-w-2xl">
+                <div className="mt-6 max-w-2xl">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {(Object.keys(acabamentoMeta) as Acabamento[]).map((a, i) => (
                       <AcabamentoCard
@@ -210,7 +219,7 @@ export default function GuiaRefinar() {
 
 function Tag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="font-mono text-[10px] uppercase tracking-[0.18em] px-2.5 py-1 bg-western-cream-muted/30 text-western-green-deep">
+    <span className="font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 border border-western-stone-warm/25 text-western-green-deep">
       {children}
     </span>
   );

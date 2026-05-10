@@ -6,7 +6,7 @@ interface Props {
 
 export default function AreaInput({ value, onChange, id }: Props) {
   return (
-    <div className="flex items-end gap-3 max-w-[260px]">
+    <div className="flex items-end gap-3 max-w-[300px] border-b border-western-gold/40 focus-within:border-western-green-deep transition-colors pb-1">
       <input
         id={id}
         type="text"
@@ -18,9 +18,9 @@ export default function AreaInput({ value, onChange, id }: Props) {
           onChange(v);
         }}
         placeholder="12"
-        className="font-display text-[32px] text-western-green-deep bg-transparent border-0 border-b border-western-stone-warm/30 focus:border-western-green-deep focus:border-b-2 focus:outline-none w-full pb-1 placeholder:text-western-stone-warm/40"
+        className="font-display text-[44px] md:text-[56px] text-western-green-deep bg-transparent border-0 focus:outline-none w-full leading-none placeholder:text-western-stone-warm/30"
       />
-      <span className="font-sans text-base text-western-stone-warm pb-2">m²</span>
+      <span className="font-display text-xl md:text-2xl text-western-stone-warm pb-2">m²</span>
     </div>
   );
 }

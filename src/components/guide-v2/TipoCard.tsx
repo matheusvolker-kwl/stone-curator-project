@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import iconePedra from "@/assets/icone-pedra-verde.png";
 import type { TipoVisual } from "./types";
 
 interface Props {
@@ -17,28 +18,31 @@ export default function TipoCard({ value, label, microcopy, selected, onSelect, 
       onClick={() => onSelect(value)}
       aria-pressed={selected}
       className={cn(
-        "group relative flex flex-col text-left bg-card border transition-all overflow-hidden",
+        "group relative flex flex-col text-left bg-white border transition-all overflow-hidden",
         selected
-          ? "border-western-green-deep border-2 scale-[1.01]"
-          : "border-western-stone-warm/20 hover:border-western-stone-warm/60",
-        variant === "wide" ? "col-span-2" : ""
+          ? "border-western-green-deep border-2 shadow-[0_22px_36px_-26px_hsl(var(--western-stone-dark)/0.45)]"
+          : "border-western-stone-warm/15 hover:border-western-gold/60 hover:shadow-[0_18px_32px_-26px_hsl(var(--western-stone-dark)/0.35)]",
+        variant === "wide" ? "col-span-2 md:col-span-2" : ""
       )}
     >
-      <div
-        className="aspect-[4/3] w-full"
-        style={{
-          background:
-            "linear-gradient(135deg, hsl(var(--western-cream-muted) / 0.4), hsl(var(--western-cream)))",
-        }}
-      >
-        <div className="w-full h-full flex items-center justify-center text-western-stone-warm/40 font-mono text-[10px] uppercase tracking-[0.2em]">
-          {label}
-        </div>
+      <div className="aspect-[4/3] w-full bg-western-paper relative overflow-hidden flex items-center justify-center">
+        <img
+          src={iconePedra}
+          alt=""
+          aria-hidden
+          className={cn(
+            "h-12 transition-opacity duration-500",
+            selected ? "opacity-50" : "opacity-25 group-hover:opacity-40"
+          )}
+        />
+        {selected && (
+          <span className="absolute top-3 left-3 w-1.5 h-1.5 rounded-full bg-western-gold" />
+        )}
       </div>
-      <div className="px-4 pt-3 pb-4">
-        <div className="font-display text-base text-western-green-deep">{label}</div>
+      <div className="px-5 pt-4 pb-5 border-t border-western-stone-warm/10">
+        <div className="font-display text-[17px] text-western-green-deep leading-tight">{label}</div>
         {microcopy && (
-          <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/70">
+          <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-western-gold">
             {microcopy}
           </div>
         )}
