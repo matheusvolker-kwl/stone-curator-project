@@ -30,10 +30,8 @@ function pngBlob(): Blob {
 beforeEach(() => {
   global.fetch = vi.fn(async () => ({ blob: async () => pngBlob() })) as unknown as typeof fetch;
   // jsdom não implementa createObjectURL; jsPDF.save usa para baixar
-  // @ts-expect-error - polyfill mínimo
-  global.URL.createObjectURL = vi.fn(() => "blob:fake");
-  // @ts-expect-error
-  global.URL.revokeObjectURL = vi.fn();
+  (global.URL as unknown as { createObjectURL: unknown }).createObjectURL = vi.fn(() => "blob:fake");
+  (global.URL as unknown as { revokeObjectURL: unknown }).revokeObjectURL = vi.fn();
   // Evita download real em jsdom
   HTMLAnchorElement.prototype.click = vi.fn();
 });
