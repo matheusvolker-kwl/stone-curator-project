@@ -38,7 +38,7 @@ export default function AdminUsers() {
     if (tab === "active" && p.status === "cancelled") return false;
     if (tab === "cancelled" && p.status !== "cancelled") return false;
     if (q) {
-      const hay = [p.empresa, p.nome, p.cnpj, p.email].filter(Boolean).join(" ").toLowerCase();
+      const hay = [p.empresa, p.nome, p.cnpj, null].filter(Boolean).join(" ").toLowerCase();
       if (!hay.includes(q.toLowerCase())) return false;
     }
     return true;
@@ -173,7 +173,7 @@ function EditUserDrawer({ user, isAdmin, onClose, onSaved }: { user: Partner | n
       <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
         <SheetHeader>
           <SheetTitle>{user.empresa}</SheetTitle>
-          <SheetDescription>{user.nome} · {user.email ?? user.user_id.slice(0, 8)}</SheetDescription>
+          <SheetDescription>{user.nome} · {user.user_id.slice(0, 8)}</SheetDescription>
         </SheetHeader>
         <div className="mt-6 space-y-6">
           <div>
