@@ -108,11 +108,13 @@ function ComparativoCard({ tipo, nivel, areaM2, isApproved, selected, recommende
 
 export default function StepProtagonismo() {
   const tipo = useGuideStore((s) => s.tipo);
+  const areaM2 = useGuideStore((s) => s.areaM2);
   const nivel = useGuideStore((s) => s.nivel);
   const setNivel = useGuideStore((s) => s.setNivel);
   const back = useGuideStore((s) => s.back);
   const reset = useGuideStore((s) => s.reset);
   const [hovered, setHovered] = useState<Nivel | null>(null);
+  const { isApproved } = useAuth();
 
   if (!tipo) return null;
 
