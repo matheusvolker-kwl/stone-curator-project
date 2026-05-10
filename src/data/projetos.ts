@@ -2,6 +2,7 @@ import coverCascata from "@/assets/projetos/cover-cascata.webp";
 import coverCasaPraia from "@/assets/projetos/cover-casa-praia.webp";
 import coverPiscina from "@/assets/projetos/cover-piscina.avif";
 import coverLago from "@/assets/projetos/cover-lago.webp";
+import coverNeymar from "@/assets/projetos/cover-neymar.jpg";
 
 export interface Projeto {
   slug: string;
@@ -11,6 +12,8 @@ export interface Projeto {
   texto: string[];
   ficha: string[];
   cover: string;
+  /** Imagem alternativa usada apenas no card da seção "Obras assinadas". Se ausente, usa `cover`. */
+  cardCover?: string;
   /** Vídeo opcional — se ausente, o modal exibe apenas a imagem cover. */
   video?: string;
   /** Quando true, sinaliza projeto sob acordo de confidencialidade. */
@@ -84,6 +87,7 @@ export const PROJETOS: Projeto[] = [
       "1.000+ m² de lago artificial",
     ],
     cover: coverLago,
+    cardCover: coverNeymar,
     video: "/videos/projetos/lago.mp4",
   },
 ];

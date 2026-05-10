@@ -32,7 +32,7 @@ export default function ProjetosSection() {
               <div className="relative aspect-[4/5] overflow-hidden bg-western-green-deep">
                 {/* Imagem com tratamento unificador (duotone sutil verde+dourado) */}
                 <img
-                  src={p.cover}
+                  src={p.cardCover ?? p.cover}
                   alt={p.titulo}
                   loading="lazy"
                   decoding="async"
