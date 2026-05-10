@@ -89,6 +89,41 @@ export default function AdminDashboard() {
           </Link>
         ))}
       </div>
+
+      {funnel.length > 0 && (
+        <div className="mt-12">
+          <p className="text-eyebrow mb-3">Funil de conversão</p>
+          <div className="w-12 h-px bg-western-gold mb-6" />
+          <div className="border border-western-stone-warm/20 bg-white overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-western-cream/40">
+                <tr className="text-left">
+                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Semana</th>
+                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Orçamentos</th>
+                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Pedidos</th>
+                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Promovidos</th>
+                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Re-downloads</th>
+                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Conversão</th>
+                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Tempo médio</th>
+                </tr>
+              </thead>
+              <tbody>
+                {funnel.map((r) => (
+                  <tr key={r.semana} className="border-t border-western-stone-warm/15">
+                    <td className="px-4 py-2 text-western-green-deep font-mono text-xs">{new Date(r.semana).toLocaleDateString("pt-BR")}</td>
+                    <td className="px-4 py-2 text-western-green-deep">{r.orcamentos}</td>
+                    <td className="px-4 py-2 text-western-green-deep">{r.pedidos}</td>
+                    <td className="px-4 py-2 text-western-stone-warm">{r.promovidos}</td>
+                    <td className="px-4 py-2 text-western-stone-warm">{r.pdf_redownloads}</td>
+                    <td className="px-4 py-2 font-mono text-xs text-western-gold">{r.taxa_conversao_pct ?? 0}%</td>
+                    <td className="px-4 py-2 font-mono text-xs text-western-stone-warm">{r.horas_medias_ate_promocao ? `${r.horas_medias_ate_promocao}h` : "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
