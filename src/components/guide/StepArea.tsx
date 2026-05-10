@@ -163,12 +163,18 @@ export default function StepArea() {
                 — composição autoral conforme briefing.
               </p>
             ) : preco ? (
-              <p className="text-sm text-western-stone-warm mt-3">
-                Investimento estimado:{" "}
-                <span className="text-western-green-deep font-medium">
-                  {formatPreco(preco.min)} – {formatPreco(preco.max)}
-                </span>
-              </p>
+              isApproved ? (
+                <p className="text-sm text-western-stone-warm mt-3">
+                  Investimento estimado:{" "}
+                  <span className="text-western-green-deep font-medium">
+                    {formatPreco(preco.min)} – {formatPreco(preco.max)}
+                  </span>
+                </p>
+              ) : (
+                <p className="text-sm text-western-stone-warm/80 mt-3 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.18em]">
+                  <Lock className="h-3 w-3" /> Login para ver investimento estimado
+                </p>
+              )
             ) : null}
           </div>
 
