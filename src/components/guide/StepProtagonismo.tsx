@@ -26,14 +26,19 @@ const PERFIL_POR_NIVEL: Record<Nivel, string> = {
 interface ComparativoCardProps {
   tipo: Tipo;
   nivel: Nivel;
+  areaM2?: number;
+  isApproved: boolean;
   selected: boolean;
   recommended: boolean;
   onClick: () => void;
   onHover: (n: Nivel | null) => void;
 }
 
-function ComparativoCard({ tipo, nivel, selected, recommended, onClick, onHover }: ComparativoCardProps) {
+function ComparativoCard({ tipo, nivel, areaM2, isApproved, selected, recommended, onClick, onHover }: ComparativoCardProps) {
   const meta = nivelMeta[tipo][nivel];
+  const pecas = pecasPorTipoNivel[tipo][nivel];
+  const precoRange = areaM2 ? precoEstimadoPorAreaENivel(tipo, areaM2, nivel) : null;
+  const precoLabel = precoRange ? formatPrecoRangeMil(precoRange) : meta.faixaPreco;
   return (
     <button
       type="button"
