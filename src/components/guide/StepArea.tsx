@@ -102,6 +102,7 @@ export default function StepArea() {
   const setArea = useGuideStore((s) => s.setArea);
   const back = useGuideStore((s) => s.back);
   const reset = useGuideStore((s) => s.reset);
+  const { isApproved } = useAuth();
 
   const range = tipo ? areaRangePorTipo[tipo] : { min: 1, max: 30, default: 5, snap: [] };
   const [m2, setM2] = useState<number>(areaSaved ?? range.default);
