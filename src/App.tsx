@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import RequireAuth from "@/components/auth/RequireAuth";
 import SiteLayout from "@/components/layout/SiteLayout";
+import ScrollToTop from "@/components/ScrollToTop";
 import Index from "./pages/Index.tsx";
 import Linhas from "./pages/Linhas.tsx";
 import LinhaPage from "./pages/LinhaPage.tsx";
@@ -39,6 +40,7 @@ const App = () => (
     <TooltipProvider>
       <Sonner position="top-right" />
       <BrowserRouter>
+        <ScrollToTop />
         <AuthProvider>
           <Routes>
             <Route element={<SiteLayout />}>
