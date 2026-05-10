@@ -97,12 +97,26 @@ export default function GuiaRefinar() {
   const onRemove = (id: string) => setPecas((prev) => prev.filter((p) => p.id !== id));
 
   const isExtraSelected = (id: string) => extras.some((e) => e.id === id);
+  const getExtraQty = (id: string) => extras.find((e) => e.id === id)?.qty ?? 0;
   const toggleExtra = (id: string) => {
     setExtras((prev) =>
       prev.some((e) => e.id === id)
         ? prev.filter((e) => e.id !== id)
         : [...prev, autoralToExtra(autorais.find((a) => a.id === id)!)]
     );
+  };
+  const setExtraQty = (id: string, qty: number) => {
+    if (qty <= 0) {
+      setExtras((prev) => prev.filter((e) => e.id !== id));
+      return;
+    }
+    setExtras((prev) => {
+      if (prev.some((e) => e.id === id)) {
+        return prev.map((e) => (e.id === id ? { ...e, qty } : e));
+      }
+      const item = autorais.find((a) => a.id === id);
+      return item ? [...prev, { ...autoralToExtra(item), qty }] : prev;
+    });
   };
 
   const setAcabamento = (a: Acabamento) => {
