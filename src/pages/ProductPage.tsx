@@ -20,7 +20,7 @@ import PriceGate from "@/components/shared/PriceGate";
 import { useAuth } from "@/hooks/useAuth";
 import HardFactsCard from "@/components/product/HardFactsCard";
 import CustomPaintNote from "@/components/product/CustomPaintNote";
-import ProductInProjects from "@/components/product/ProductInProjects";
+
 import ProductComparison from "@/components/product/ProductComparison";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import WhyWesternStrip from "@/components/product/WhyWesternStrip";
@@ -616,7 +616,7 @@ export default function ProductPage() {
       </div>
 
       {/* Seções full-width abaixo do hero */}
-      <ProductInProjects productHandle={product.handle} productTitle={product.title} />
+      
       <ProductComparison productTitle={product.title} pesoKg={pesoKg} dimensoes={dimsStr} />
       <RelatedProducts
         collectionHandle={collection?.handle}
