@@ -23,6 +23,8 @@ import CustomPaintNote from "@/components/product/CustomPaintNote";
 import ProductGallery from "@/components/product/ProductGallery";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import BackToTop from "@/components/shared/BackToTop";
+import StickyBuyBar from "@/components/product/StickyBuyBar";
+import { inRange } from "@/lib/seededRandom";
 
 import ProductComparison from "@/components/product/ProductComparison";
 import RelatedProducts from "@/components/product/RelatedProducts";
