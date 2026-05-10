@@ -1,4 +1,4 @@
-import { Check, Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { formatPreco } from "@/data/guideMap";
 import type { AutoralItem } from "./autoraisCatalog";
 import { cn } from "@/lib/utils";
@@ -9,10 +9,13 @@ interface Props {
   selected: boolean;
   qty?: number;
   onToggle: () => void;
+  onSetQty?: (qty: number) => void;
   onOpen?: () => void;
 }
 
-export default function AutoralCard({ item, selected, qty = 0, onToggle, onOpen }: Props) {
+export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQty, onOpen }: Props) {
+  const currentQty = Math.max(qty, selected ? 1 : 0);
+
   return (
     <article
       className={cn(
@@ -37,11 +40,15 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onOpen 
           <div className="w-full h-full bg-western-paper" />
         )}
 
-        {/* Botão flutuante + / check com qty */}
+        {/* Botão flutuante: adiciona a primeira unidade ou mais uma */}
         <button
           type="button"
-          onClick={(e) => { e.stopPropagation(); onToggle(); }}
-          aria-label={selected ? "Remover do projeto" : "Adicionar ao projeto"}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (selected && onSetQty) onSetQty(currentQty + 1);
+            else onToggle();
+          }}
+          aria-label={selected ? "Adicionar mais uma unidade" : "Adicionar ao projeto"}
           className={cn(
             "absolute top-2 right-2 inline-flex items-center justify-center h-8 rounded-full font-mono text-[10px] uppercase tracking-[0.18em] transition-all duration-300",
             selected
@@ -50,7 +57,7 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onOpen 
           )}
         >
           {selected ? (
-            qty > 1 ? <><Check className="h-3 w-3" strokeWidth={2.5} /> {qty}×</> : <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+            <><Plus className="h-3 w-3" strokeWidth={2.5} /> {currentQty}×</>
           ) : (
             <Plus className="h-3.5 w-3.5" />
           )}
@@ -70,6 +77,32 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onOpen 
             {formatPreco(item.preco)}
           </p>
         </div>
+        {selected && onSetQty && (
+          <div
+            className="mt-3 inline-flex w-full items-center justify-between border border-western-stone-warm/25 bg-western-ivory"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => onSetQty(currentQty - 1)}
+              aria-label={currentQty <= 1 ? "Remover do projeto" : "Diminuir quantidade"}
+              className="h-8 w-9 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+            >
+              <Minus className="h-3 w-3" />
+            </button>
+            <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-western-green-deep">
+              {currentQty} no projeto
+            </span>
+            <button
+              type="button"
+              onClick={() => onSetQty(currentQty + 1)}
+              aria-label="Aumentar quantidade"
+              className="h-8 w-9 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+            >
+              <Plus className="h-3 w-3" />
+            </button>
+          </div>
+        )}
       </div>
     </article>
   );
