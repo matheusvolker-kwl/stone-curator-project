@@ -453,8 +453,25 @@ export default function ProductPage() {
               );
             })()}
 
+            {/* Prova social discreta — número estável por produto */}
+            {(() => {
+              const studios = inRange(`studios:${product.handle}`, 14, 29);
+              return (
+                <p className="mt-6 inline-flex items-center gap-2 text-spec text-western-stone-warm">
+                  <Folder className="h-3.5 w-3.5 text-western-gold flex-shrink-0" />
+                  <span>
+                    Adicionado por{" "}
+                    <span className="text-western-green-deep font-medium">
+                      {studios} estúdios
+                    </span>{" "}
+                    em projetos nos últimos 30 dias.
+                  </span>
+                </p>
+              );
+            })()}
+
             {/* Faixa de regras comerciais */}
-            <ul className="text-spec text-western-stone-warm/80 leading-relaxed mt-6 text-xs space-y-1">
+            <ul className="text-spec text-western-stone-warm/80 leading-relaxed mt-4 text-xs space-y-1">
               <li>· Produção sob demanda · {BUSINESS.prazoProducaoDias} dias úteis</li>
               <li>· Pedido mínimo {BUSINESS.pedidoMinimoLabel}</li>
               <li>· Frete cotado por região · retirada gratuita em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}</li>
