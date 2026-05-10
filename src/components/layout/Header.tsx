@@ -36,11 +36,22 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   const { items: wishItems } = useWishlist();
   const wishCount = wishItems.length;
 
+  const [pulse, setPulse] = useState(false);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const onPulse = () => {
+      setPulse(true);
+      window.setTimeout(() => setPulse(false), 700);
+    };
+    window.addEventListener("western:cart-pulse", onPulse);
+    return () => window.removeEventListener("western:cart-pulse", onPulse);
   }, []);
 
   useEffect(() => setMenuOpen(false), [pathname]);
