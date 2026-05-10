@@ -74,6 +74,12 @@ const CART_LINES_REMOVE = `
   }
 `;
 
+function notifyCartChanged() {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent("western:open-cart"));
+  window.dispatchEvent(new CustomEvent("western:cart-pulse"));
+}
+
 function formatCheckoutUrl(url: string): string {
   try {
     const u = new URL(url);
