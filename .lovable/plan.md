@@ -1,150 +1,114 @@
-## Visão geral
+## O que vou ajustar
 
-Cinco frentes de trabalho, todas no `/guia-de-composicao`. Sem alterações de banco — só frontend, presets de dados e um novo componente de modal.
+### 1. Logo Western maior e em proporção certa
 
----
+**Onde:** `GuideHeader.tsx`
+- Aumentar o logo de `h-7 md:h-8` para `h-10 md:h-12`
+- Aumentar a altura do header de `h-16` para `h-20`
+- Aumentar o tamanho do "Guia de Composição" de 18px para 20px e dar mais respiro nos separadores
+- O logo é horizontal — vai ficar com presença real, não decorativa
 
-## 1 · Hero com Ricardo + header da marca
+### 2. Reforçar "voltar à composição original" no aviso de projeto autoral
 
-**Hero (Etapa 01):**
-- Substituir o `guideHeroStrip` atual por uma capa cinematográfica usando `user-uploads://7dfdc5f6...png` (Ricardo desenhando no ateliê).
-- Altura: 380px desktop / 280px mobile (era 220px).
-- Tratamento da imagem: foto à direita ocupando ~60% da largura; à esquerda, bloco editorial sobre `surface-ivory` sólida (sem gradiente sobre a foto). Divisão por linha vertical hairline gold em vez de degradê.
-- Eyebrow "GUIA DE COMPOSIÇÃO · ETAPA 01" + H1 "Conte sobre o projeto que você está atendendo." + caption pequeno "Ricardo Western, fundador, no ateliê de Cajamar."
-- **Remover o degradê ivory que cobre a foto** (o usuário não gosta de degradê). Usar ou foto limpa, ou máscara com edge sólida.
+**Onde:** `Refinar.tsx` — bloco "Projeto autoral · sob consulta"
+- Logo abaixo do texto explicativo, dois CTAs lado a lado:
+  - Botão primário (gold outline): **← Voltar à composição original** (chama `setPecas(baseInicial)`)
+  - Botão secundário (link com seta): **Falar com consultor →** (abre WhatsApp via `whatsappConsultor()`)
+- Mantém também o link discreto que já existe na sidebar — agora há reforço duplicado, próximo de onde a dor aparece
 
-**Header (`GuideHeader.tsx`):**
-- Trocar o texto "Western Pools" pelo logo SVG/PNG verde (`user-uploads://WESTERN_VERDE_HORIZONTAL-3.png`) — copiar para `src/assets/logos/western-verde.png`.
-- À direita do logo, separador hairline gold vertical + título "Guia de Composição" em `font-display` italic, tamanho médio, verde profundo. Visual: `[LOGO] | Guia de Composição`.
-- Manter "Sair do guia" e breadcrumbs no canto direito.
-- Remover o degradê inferior do header — substituir por linha sólida hairline `western-gold/30`.
+### 3. Onboarding mais claro + sticky sidebar funcionando
 
----
+**Onde:** `Contexto.tsx` e `Refinar.tsx`
 
-## 2 · Reduzir para 4 tipos de ambiente
+**Em `Contexto.tsx` (entrada do guia):**
+- Embaixo do hero, um bloco de orientação editorial:
+  - Eyebrow: "Como funciona"
+  - 3 mini-cards numerados horizontais: "01 Conte sobre o ambiente · 02 Veja três caminhos · 03 Refine e baixe o SketchUp"
+  - Abaixo, uma seta animada para baixo (chevron pulsante) com o texto "Comece pela primeira pergunta"
+- Em cada uma das 3 perguntas (`01 Tipo de ambiente`, `02 Área aproximada`, `03 Acabamento`), adicionar uma linha de instrução curta abaixo do título, ex.: "Selecione o tipo que mais se aproxima do projeto.", "Digite a metragem aproximada (entre 1 e 200 m²).", "Escolha o tom dominante das pedras."
+- Após o usuário escolher cada campo, mostrar um pequeno check verde com o valor selecionado, reforçando avanço
 
-**Novos tipos:** `piscina`, `lago`, `jardim-fonte`, `jardim-seco`. Eliminar `lago-reduzido` como card separado.
+**Por que a sidebar não está sticky em Refinar:**
+- O CSS está correto (`sticky top-28`), mas há um `overflow` num ancestral que quebra sticky. Vou auditar:
+  - `min-h-screen surface-ivory relative` em Refinar — sem overflow, ok
+  - Provavelmente o problema é o pai do grid ter `items-start` mas o filho da esquerda crescer mais que a viewport e o `top-28` ficar referenciado errado por causa da `ContextoChips` (que também é sticky, no topo)
+  - **Correção:** ajustar `top-28` para `top-[var(--sticky-top)]` calculando header (80px) + ContextoChips (~52px) ≈ `top-36`. Confirmar removendo qualquer `overflow-hidden` herdado e garantindo que o grid pai não tenha `overflow` em nenhum nível
+  - Alternativa: usar `position: sticky` com `align-self: start` explícito
 
-**Mudanças em `types.ts`:**
-- Remover `lago-reduzido` do `TipoVisual`.
-- "Lago" passa a englobar tanto somenteWestern quanto comNaturais — a escolha entre versão completa e econômica vira uma decisão posterior (na Etapa 02 "Composições", já temos os 3 níveis: Essencial / Equilibrado / Completo, que cobrem essa gradação naturalmente).
+### 4. Substituir produtos inventados por produtos REAIS do Shopify
 
-**Mudanças em `Contexto.tsx`:**
-- Grid passa de 5 cards (com 1 wide) para 4 cards iguais em md:grid-cols-4.
-- Remover prop `variant="wide"` e o microcopy "Versão econômica".
+Esse é o ponto principal. Mapeei sua loja: 95 produtos, todos com vendor "Western". Vou trocar tudo que é placeholder por dados reais.
 
-**Mudanças em `autoraisCatalog.ts`:**
-- Mesclar filtros `lago` + `lago-reduzido` em `lago` único.
+**Catálogo Shopify identificado (relevante para o guia):**
 
-**Em `Refinar.tsx` e `useGuideQuery.ts`:**
-- Tipo recebido na URL agora só aceita 4 valores; `lago-reduzido` redireciona para `lago` se vier no querystring (compatibilidade).
+*Conjuntos (já são os títulos certos, com 4 variantes de acabamento cada):*
+- Piscina: Caiapó, Carcará, Maragogi (Essencial) · Itacaré, Moema, Paineira (Equilibrado) · Cambará, Guarairas, Paranoá (Completo)
+- Lago: mesma lista + versões "Reduzido"
+- Jardim: mesma lista, com e sem Fonte
+- Total: 47 conjuntos
 
----
+*Peças individuais reais:*
+- **Pedra Grande 1–10** (10 SKUs)
+- **Pedra Média 1–8** (8 SKUs)
+- **Pedra Pequena 1–5** (5 SKUs)
+- **Pedra de Borda 1–3** (3 SKUs)
+- **Cascatas:** Sabino, Santa Bárbara, Santa Clara, Lajedo Boreal, Lajedo Yporanga
+- **Fontes:** Sabino com Lago, Santa Rita, Mini Lago, Mini Sabino
 
-## 3 · Refinos de acabamento
+*Itens autorais reais (NÃO são "Pisada Estrela/Diamante" inventados):*
+- **Pedra LED, Pedra Sonora, Pedra Torneira, Pedra Champanheira** (Acessório)
+- **Pisada Pedra Pequena, Pisada Pedra Média, Pisada Pedra Grande, Pisada Dormente, Pisada Eucalipto** (Pisada)
+- **Fóssil Coelphisys, Fóssil Seymouria** (Fóssil Decorativo)
+- **Painel Bruto Amalfi, Mykonos, Santorini · Placa Rústica Riviera** (Revestimento)
 
-**Cor do Granito:** mudar `acabamentoMeta.granito.chip` de `#2D332E` (preto-esverdeado) para `#5A5D5C` (cinza pedra).
+**Como vou trocar:**
 
-**Tag "+ VENDIDO" do Moledo (`AcabamentoCard.tsx`):**
-- Hoje é uma tag escura quadrada cortando o card. Substituir por:
-  - Pequena fita gold (`western-gold`) escapando do canto superior direito do card, com texto "+ VENDIDO" em `font-mono text-[9px]` cream, padding apertado, sombra sutil.
-  - Ou alternativa: badge circular gold com `◆` no canto, e o texto "+ vendido" em italic abaixo do label "Moledo" dentro do card.
-- Vou seguir com a fita gold escapando — mais editorial e menos comercial.
+a) **`autoraisCatalog.ts`** — apaga o catálogo inventado. Cria função `getAutoraisFor(tipo)` que retorna handles reais por tipo:
+   - Piscina: pedra-led, pedra-sonora, pedra-champanheira, pedra-torneira, pisada-pedra-grande, pisada-pedra-media, pisada-dormente
+   - Lago: pedra-led, pedra-sonora, pedra-torneira, fossil-coelphisys, fossil-seymouria, pedra-champanheira, pisada-pedra-grande, pisada-pedra-media
+   - Jardim com Fonte: pedra-torneira, pedra-led, pedra-sonora, pisada-pedra-pequena, pisada-pedra-media, pisada-eucalipto, pisada-dormente
+   - Jardim Seco: fossil-coelphisys, fossil-seymouria, pisada-eucalipto, pisada-dormente, pisada-pedra-pequena, painel-bruto-amalfi
+   - Os dados (nome, preço, foto, peso, dim, descrição) vêm de `fetchProductsByHandles()` do Shopify em runtime — fim do "produto inventado"
 
----
+b) **`pecasPlaceholder.ts`** — vira `pecasBase.ts`. Cada `Conjunto` do `guideMap.ts` tem um handle de Shopify. Em runtime, uso `fetchProduct(conjuntoHandle)` para puxar a descrição (que já lista a composição base no `body_html`) e construo a lista de peças com handles reais (Pedra Grande 5, Pedra Média 2, Pedra Pequena 1 etc.). 
+   - Passo 1 (essa entrega): faço o mapeamento `nivel → [handles reais]` à mão a partir dos POOLs da loja, usando produtos verdadeiros (Pedra Grande 5, Pedra Média 2 etc.) e busco fotos/preços via Shopify.
+   - Passo 2 (futuro): podemos parsear a tabela de composição direto do `body_html` do conjunto.
 
-## 4 · Sidebar de projeto sticky à direita
+c) **Imagens de produto:**
+   - `AutoralCard.tsx`: trocar `stoneCrops[index]` (foto random) pela `images[0].url` real do produto (com `cdnImg(..., 600)`)
+   - `AutoralProductModal.tsx`: idem — mostrar a galeria real
+   - `PecaRow.tsx`: adicionar miniatura da pedra real ao lado do nome
 
-A sidebar já está à direita no grid (`lg:grid-cols-[1fr_400px]`) e já é sticky (`sticky top-32`). O que falta:
-- Garantir que o `top-32` compense o header (64px) + ContextoChips (44px) + folga.
-- Aumentar a largura para 420px e dar respiro: `lg:grid-cols-[1fr_420px] gap-16`.
-- Confirmar que ela acompanha o scroll até o final do conteúdo principal sem ficar "presa" antes.
-- O usuário confirmou estar satisfeito com o visual da sidebar (verde escuro com gold) — manter o tratamento atual, só ajustar comportamento sticky.
+d) **Hook novo `useGuideProducts.ts`:** centraliza fetch dos handles necessários, com cache (`react-query`-like via `useEffect` + memo). Retorna `{ pecas, autorais, isLoading }`. `Refinar.tsx` consome.
 
----
+e) **Estado de loading editorial:** enquanto Shopify carrega, mostrar skeletons das peças/autorais (placeholder shimmer cream) — sem números falsos.
 
-## 5 · Catálogo de acessórios + modal de produto
+### 5. Limpeza
 
-**Catálogo expandido (`autoraisCatalog.ts`):**
-Para todos os 4 tipos, oferecer SEMPRE: Pedra LED, Pedra Sonora, todas as Pisadas (Pequena, Média, Grande, Diamante, Estrela), Pedra Torneira, e os Fósseis (Crustáceo, Sambaqui).
-
-```
-piscina:      [pl, ps, pt, ppp, ppm, ppg, pd, pe, fc, fs]
-lago:         [pl, ps, pt, ppp, ppm, ppg, pd, pe, fc, fs]
-jardim-fonte: [pl, ps, pt, ppp, ppm, ppg, pd, pe, fc, fs]
-jardim-seco:  [pl, ps, pt, ppp, ppm, ppg, pd, pe, fc, fs]
-```
-
-A Champanheira e o Painel Bruto saem do filtro padrão (continuam no catálogo, mas fora do guia). O usuário não os mencionou.
-
-**Modal de produto (novo `AutoralProductModal.tsx`):**
-- Acionado ao clicar em qualquer `AutoralCard`. Ainda há um botão menor "Adicionar" inline que pula o modal.
-- Conteúdo: foto grande (crop de pedra real do catálogo `stoneCrops`), nome em font-display, código mono, peso, dimensão estimada, descrição editorial curta (2-3 linhas), preço B2B (gateado por `useAuth.isApproved`).
-- CTA primário "Adicionar ao projeto" (gold) + secundário "Fechar".
-- Usa `<Dialog>` do shadcn com overlay escuro `western-stone-dark/60` e card centralizado, max-width 560px, fundo `western-cream`, borda hairline gold no topo.
-- Mesmo modal pode servir para PecaRow no futuro; por ora só autorais.
-
-**Comportamento dos cards:**
-- Clique no corpo do card → abre modal.
-- Clique no botão "Adicionar/Remover" inline → toggle direto sem modal (atalho experiente).
-
----
-
-## 6 · Personalização vs SketchUp — modo "Sob Consulta"
-
-**Decisão:** o cliente pode personalizar tudo, mas se mexer na composição base, o entregável muda.
-
-**Detecção de personalização:**
-- Em `Refinar.tsx`, comparar `pecas` atual com `getPecasPlaceholder(nivel)` (snapshot inicial).
-- Estado `isCustomizado = pecasAlteradas || extrasAdicionadosOuRemovidosAlemDoOferecido`. Apenas alterações na BASE (não em extras autorais) ativam o modo. Adicionar extras é sempre permitido sem virar "sob consulta".
-- Critério final: `isCustomizado = baseAlterada` (qty diferente do placeholder ou peça removida da base).
-
-**UI no estado "Curado" (padrão):**
-- Sidebar: botão primário "Revisar e finalizar" + secundário "Baixar prévia em SketchUp".
-- Badge gold pequeno no topo da sidebar: "◆ Conjunto curado · SketchUp incluso".
-
-**UI no estado "Sob consulta" (personalizado):**
-- Quando o cliente edita a primeira peça da base, aparece um aviso editorial discreto acima da lista de peças:
-  > *"Você está ajustando a composição original. O SketchUp é entregue apenas para os conjuntos curados — projetos personalizados seguem para nossa equipe e voltam com prévia em 48h."*
-- Botão "Baixar prévia em SketchUp" desaparece.
-- Botão primário muda de "Revisar e finalizar" para "Solicitar orçamento sob consulta" (mesmo CTA, redireciona para `/guia-de-composicao/finalizar?modo=consulta`).
-- Mini-link "Voltar à composição original" que reseta para o placeholder.
-- Badge no topo da sidebar troca para: `◆ Projeto autoral · sob consulta`.
-
-**Em `Finalizar.tsx`:**
-- Ler `?modo=consulta` e ajustar o copy: "Pronto para enviar para nossa equipe" vs "Pronto para enviar a proposta".
-
----
-
-## 7 · Polimento extra de identidade visual
-
-- Adicionar `icone-pedra-bege.png` e `icone-pedra-verde.png` (uploads `ICONE-Pedra_Western_*`) como assets oficiais em `src/assets/icons/`.
-- Substituir o `iconePedra` atualmente importado no `GuideHeader` pelo arquivo definitivo verde.
-- Usar o ícone bege como bullet decorativo nos eyebrows numerados (substituindo o atual `|` no `.eyebrow-bar` por um SVG mini do ícone, ou mantendo o filete + ícone após o número).
-- Watermark do brasão: já está OK, manter opacity 0.04.
+- Remover `imagery.ts → stoneCrops` (não usar mais fotos genéricas em cards de produto)
+- Manter `tipoImage` (essas são para o seletor de ambiente, ok)
+- Apagar `pecasPlaceholder.ts` ou renomear
 
 ---
 
 ## Arquivos afetados
 
 **Editados:**
-- `src/components/guide-v2/types.ts` — remover `lago-reduzido`, ajustar cor granito.
-- `src/components/guide-v2/autoraisCatalog.ts` — novo filtro unificado.
-- `src/components/guide-v2/imagery.ts` — atualizar mapa após remoção do lago-reduzido.
-- `src/components/guide-v2/GuideHeader.tsx` — logo Western + título "Guia de Composição".
-- `src/components/guide-v2/AcabamentoCard.tsx` — fita gold "+ VENDIDO".
-- `src/components/guide-v2/AutoralCard.tsx` — clique abre modal.
-- `src/components/guide-v2/ProjetoSidebar.tsx` — badge curado/consulta + botões dinâmicos + sticky offset.
-- `src/components/guide-v2/ContextoChips.tsx` — ajustar para 4 tipos.
-- `src/components/guide-v2/useGuideQuery.ts` — fallback `lago-reduzido` → `lago`.
-- `src/pages/guia/Contexto.tsx` — novo hero com Ricardo, grid 4 cards.
-- `src/pages/guia/Refinar.tsx` — detecção de personalização, modo sob consulta.
-- `src/pages/guia/Finalizar.tsx` — variantes de copy.
+- `src/components/guide-v2/GuideHeader.tsx` (logo maior)
+- `src/pages/guia/Contexto.tsx` (bloco "como funciona", microcopy, seta)
+- `src/pages/guia/Refinar.tsx` (CTAs no aviso autoral, sticky fix, integração com Shopify)
+- `src/components/guide-v2/AutoralCard.tsx` (foto real + dados Shopify)
+- `src/components/guide-v2/AutoralProductModal.tsx` (galeria real)
+- `src/components/guide-v2/PecaRow.tsx` (miniatura real)
+- `src/components/guide-v2/autoraisCatalog.ts` (handles reais)
+- `src/components/guide-v2/ProjetoSidebar.tsx` (verificar overflow)
 
 **Criados:**
-- `src/components/guide-v2/AutoralProductModal.tsx`
-- `src/assets/logos/western-verde.png` (cópia do upload)
-- `src/assets/hero/ricardo-ateliê.png` (cópia do upload)
-- `src/assets/icons/icone-pedra-verde.png` e `icone-pedra-bege.png`
+- `src/components/guide-v2/useGuideProducts.ts` (hook de fetch Shopify)
+- `src/components/guide-v2/pecasBase.ts` (mapeamento nível → handles reais)
 
-**Sem mudanças de banco, sem mudanças em rotas.**
+**Removido:**
+- `src/components/guide-v2/pecasPlaceholder.ts`
+- `stoneCrops` de `imagery.ts`
+
+Sem mudanças em DB, autenticação ou rotas.
