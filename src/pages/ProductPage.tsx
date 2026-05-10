@@ -12,7 +12,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ChevronRight, Loader2, Info, MessageCircle, Download } from "lucide-react";
+import { ChevronRight, Loader2, Info, MessageCircle, Download, Folder } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { toast } from "sonner";
 import FinishSelector from "@/components/product/FinishSelector";
