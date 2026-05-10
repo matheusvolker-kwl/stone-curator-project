@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import iconePedra from "@/assets/icone-pedra-verde.png";
 import { formatPreco, type ConjuntoLeaf, type Nivel } from "@/data/guideMap";
 import { nivelLabelMap, nivelMicrocopy } from "./types";
 import { getPecasPlaceholder, getPecaCount } from "./pecasPlaceholder";
@@ -9,11 +8,12 @@ import { getPecasPlaceholder, getPecaCount } from "./pecasPlaceholder";
 interface Props {
   conjunto: ConjuntoLeaf;
   nivel: Nivel;
+  image: string;
   highlight?: boolean;
   refinarHref: string;
 }
 
-export default function ComposicaoCard({ conjunto, nivel, highlight, refinarHref }: Props) {
+export default function ComposicaoCard({ conjunto, nivel, image, highlight, refinarHref }: Props) {
   const pecas = getPecasPlaceholder(nivel);
   const resumo = pecas.slice(0, 4).map((p) => ({ nome: p.nome, qty: p.qty }));
   const economia = Math.ceil(conjunto.preco / 0.97 - conjunto.preco);
@@ -21,26 +21,46 @@ export default function ComposicaoCard({ conjunto, nivel, highlight, refinarHref
   return (
     <article
       className={cn(
-        "relative bg-white border flex flex-col transition-all",
+        "relative bg-white flex flex-col transition-all duration-500 group",
         highlight
-          ? "border-western-green-deep border-2 shadow-[0_30px_48px_-30px_hsl(var(--western-stone-dark)/0.45)]"
-          : "border-western-stone-warm/15 hover:border-western-gold/60 hover:shadow-[0_24px_40px_-28px_hsl(var(--western-stone-dark)/0.35)]"
+          ? "shadow-[0_44px_64px_-32px_hsl(var(--western-stone-dark)/0.5)] -translate-y-2"
+          : "shadow-[0_24px_44px_-30px_hsl(var(--western-stone-dark)/0.35)] hover:shadow-[0_36px_56px_-32px_hsl(var(--western-stone-dark)/0.45)] hover:-translate-y-1"
       )}
     >
-      <div className="aspect-[4/3] w-full relative overflow-hidden bg-western-paper flex items-center justify-center">
-        <img src={iconePedra} alt="" aria-hidden className="h-20 opacity-25" />
-        {highlight && (
-          <span className="absolute top-4 right-4 font-mono text-[9px] uppercase tracking-[0.18em] px-2.5 py-1 bg-western-gold text-western-green-deep">
-            Mais especificado
-          </span>
-        )}
+      {/* Ribbon que escapa do frame quando highlight */}
+      {highlight && (
+        <div
+          aria-hidden
+          className="absolute -top-3 left-7 z-10 px-3 py-2 bg-western-gold text-western-green-deep font-mono text-[10px] uppercase tracking-[0.22em] shadow-[0_10px_18px_-10px_hsl(var(--western-stone-dark)/0.45)]"
+        >
+          Mais especificado
+        </div>
+      )}
+
+      <div className="aspect-[4/3] w-full relative overflow-hidden bg-western-paper">
+        <img
+          src={image}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(180deg, transparent 50%, hsl(var(--western-green-deep) / 0.45) 100%)",
+          }}
+        />
       </div>
 
-      <div className="p-7 md:p-8 flex flex-col flex-1 border-t border-western-stone-warm/10">
-        <div className="text-eyebrow mb-3">
+      <div className="p-7 md:p-8 flex flex-col flex-1 border-t border-western-stone-warm/10 relative">
+        <div className="eyebrow-bar mb-3">
           {nivelLabelMap[nivel]} · {getPecaCount(nivel)} peças
         </div>
-        <h3 className="font-display text-[24px] md:text-[26px] text-western-green-deep leading-[1.15] mb-3">
+        <h3 className="font-display text-[26px] md:text-[28px] text-western-green-deep leading-[1.1] mb-3">
           {conjunto.nome}
         </h3>
         <p className="font-display italic text-[15px] text-western-stone-warm leading-relaxed mb-6">
@@ -62,11 +82,11 @@ export default function ComposicaoCard({ conjunto, nivel, highlight, refinarHref
         </div>
 
         <div className="mt-auto">
-          <div className="font-display text-[32px] font-medium text-western-green-deep leading-none mb-2">
+          <div className="font-display text-[34px] font-medium text-western-green-deep leading-none mb-2">
             {formatPreco(conjunto.preco)}
           </div>
           {economia >= 50 && (
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-gold mb-6">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-6">
               Economia de {formatPreco(economia)} vs. avulso
             </p>
           )}
