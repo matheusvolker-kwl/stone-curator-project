@@ -235,7 +235,7 @@ function PartnersTab({ partners, reload }: { partners: Partner[]; reload: () => 
       if (segmentFilter !== "all" && p.segmento !== segmentFilter) return false;
       if (ufFilter !== "all" && p.estado !== ufFilter) return false;
       if (q) {
-        const hay = [p.nome, p.empresa, p.cnpj, p.email_dummy ?? "", p.cidade].filter(Boolean).join(" ").toLowerCase();
+        const hay = [p.nome, p.empresa, p.cnpj, p.cidade].filter(Boolean).join(" ").toLowerCase();
         if (!hay.includes(q.toLowerCase())) return false;
       }
       return true;
