@@ -5,7 +5,7 @@ import GuideHeader from "@/components/guide-v2/GuideHeader";
 export default function GuiaFinalizar() {
   return (
     <div className="min-h-screen bg-western-cream">
-      <GuideHeader breadcrumb={{ label: "Voltar · Refinar", to: -1 as unknown as string }} />
+      <GuideHeader />
       <main className="mx-auto max-w-[760px] px-6 md:px-8 pt-20 pb-32 text-center">
         <p className="text-eyebrow mb-4">Revisão final</p>
         <h1 className="font-display text-3xl md:text-[44px] text-western-green-deep leading-[1.1] mb-5">
