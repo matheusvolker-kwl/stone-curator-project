@@ -95,7 +95,7 @@ export default function RespiroSection() {
           alt="Corredor arquitetônico entre paredes de pedra escavada, teto de bambu, piso de madeira e brita."
           loading="lazy"
           decoding="async"
-          fetchPriority="low"
+          {...({ fetchpriority: "low" } as Record<string, string>)}
           className={`absolute inset-0 w-full h-full object-cover object-center will-change-transform ${
             reduced ? "" : "animate-breathe-zoom"
           }`}

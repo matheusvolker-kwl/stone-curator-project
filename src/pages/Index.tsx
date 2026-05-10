@@ -50,7 +50,7 @@ export default function Index() {
           sizes="100vw"
           alt="Cascata Western em paisagismo profissional."
           loading="eager"
-          fetchPriority="high"
+          {...({ fetchpriority: "high" } as Record<string, string>)}
           decoding="async"
           width={1820}
           height={1213}
