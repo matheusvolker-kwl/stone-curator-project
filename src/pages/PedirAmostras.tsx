@@ -1,17 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Package, Info } from "lucide-react";
+import { Loader2, Package, Info, Lock, UserCircle2 } from "lucide-react";
 import PhoneInput from "@/components/forms/PhoneInput";
 import EmailInput from "@/components/forms/EmailInput";
 import CepInput from "@/components/forms/CepInput";
 import FieldLabel from "@/components/forms/FieldLabel";
 import { emailSchema, phoneBRSchema, cepSchema, UF_LIST } from "@/lib/forms/br";
 import { z } from "zod";
+import { useAuth } from "@/hooks/useAuth";
 
 const PERFIS = ["Arquiteto", "Paisagista", "Lojista", "Construtora", "Cliente final"];
 
@@ -47,12 +48,43 @@ const schema = z.object({
 });
 
 export default function PedirAmostras() {
+  const { user } = useAuth();
   const [f, setF] = useState<Form>(INITIAL);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
+
+  // Pré-preencher com dados do perfil quando logado
+  useEffect(() => {
+    if (!user) { setProfileLoaded(false); return; }
+    (async () => {
+      const { data } = await supabase
+        .from("partner_profiles")
+        .select("nome, telefone, empresa, cep, endereco, numero, complemento, bairro, cidade, estado, segmento")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      setF((p) => ({
+        ...p,
+        nome: data?.nome || p.nome,
+        email: user.email || p.email,
+        telefone: data?.telefone || p.telefone,
+        empresa: data?.empresa || p.empresa,
+        cep: data?.cep || p.cep,
+        endereco: data?.endereco || p.endereco,
+        numero: data?.numero || p.numero,
+        complemento: data?.complemento || p.complemento,
+        bairro: data?.bairro || p.bairro,
+        cidade: data?.cidade || p.cidade,
+        estado: data?.estado || p.estado,
+      }));
+      setProfileLoaded(true);
+    })();
+  }, [user]);
+
+  const isLocked = !!user && profileLoaded;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,8 +109,9 @@ export default function PedirAmostras() {
       uf: f.estado,
       empresa: f.empresa || null,
       mensagem: f.projeto || null,
-      payload: { perfil: f.perfil, aprovacao_status: "pending" },
-      origem: "site/pedir-amostras",
+      user_id: user?.id ?? null,
+      payload: { perfil: f.perfil, aprovacao_status: "pending", logged_in: !!user },
+      origem: user ? "site/pedir-amostras (logado)" : "site/pedir-amostras",
     });
     setLoading(false);
     if (error) {
@@ -133,22 +166,45 @@ export default function PedirAmostras() {
           </div>
         </div>
 
+        {isLocked && (
+          <div className="my-6 flex items-start gap-3 px-4 py-4 border border-western-green-deep/20 bg-western-green-deep/5">
+            <UserCircle2 className="h-4 w-4 text-western-green-deep mt-0.5 flex-shrink-0" />
+            <div className="text-spec text-western-green-deep leading-relaxed">
+              Pedido vinculado ao seu cadastro <strong>{f.empresa || f.nome}</strong>. Dados pessoais travados —
+              ajuste em <Link to="/conta/perfil" className="link-underline text-western-gold">Meu perfil</Link>.
+              Endereço pode ser alterado caso queira receber em outro lugar.
+            </div>
+          </div>
+        )}
+        {!user && (
+          <div className="my-6 text-spec text-western-stone-warm">
+            Já tem cadastro? <Link to="/parceiro/login" className="link-underline text-western-gold">Entre</Link> para acompanhar o status do seu pedido.
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           <div>
-            <FieldLabel htmlFor="nome">Nome</FieldLabel>
+            <FieldLabel htmlFor="nome">
+              Nome {isLocked && <Lock className="h-3 w-3 inline ml-1 text-western-stone-warm/60" />}
+            </FieldLabel>
             <Input id="nome" value={f.nome} onChange={(e) => set("nome", e.target.value)} required
-              className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+              readOnly={isLocked}
+              className={`h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold ${isLocked ? "opacity-70 cursor-not-allowed" : ""}`} />
             {errors.nome && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.nome}</p>}
           </div>
 
           <div className="grid sm:grid-cols-2 gap-5">
             <div>
-              <FieldLabel htmlFor="email">E-mail</FieldLabel>
-              <EmailInput id="email" value={f.email} onChange={(v) => set("email", v)} required error={errors.email} />
+              <FieldLabel htmlFor="email">
+                E-mail {isLocked && <Lock className="h-3 w-3 inline ml-1 text-western-stone-warm/60" />}
+              </FieldLabel>
+              <EmailInput id="email" value={f.email} onChange={(v) => set("email", v)} required error={errors.email} readOnly={isLocked} />
             </div>
             <div>
-              <FieldLabel htmlFor="telefone">Telefone (WhatsApp)</FieldLabel>
-              <PhoneInput id="telefone" value={f.telefone} onChange={(v) => set("telefone", v)} required error={errors.telefone} />
+              <FieldLabel htmlFor="telefone">
+                Telefone (WhatsApp) {isLocked && <Lock className="h-3 w-3 inline ml-1 text-western-stone-warm/60" />}
+              </FieldLabel>
+              <PhoneInput id="telefone" value={f.telefone} onChange={(v) => set("telefone", v)} required error={errors.telefone} readOnly={isLocked} />
             </div>
           </div>
 
@@ -161,9 +217,12 @@ export default function PedirAmostras() {
               </select>
             </div>
             <div>
-              <FieldLabel htmlFor="empresa" optional>Empresa / estúdio</FieldLabel>
+              <FieldLabel htmlFor="empresa" optional>
+                Empresa / estúdio {isLocked && <Lock className="h-3 w-3 inline ml-1 text-western-stone-warm/60" />}
+              </FieldLabel>
               <Input id="empresa" value={f.empresa} onChange={(e) => set("empresa", e.target.value)}
-                className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                readOnly={isLocked}
+                className={`h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold ${isLocked ? "opacity-70 cursor-not-allowed" : ""}`} />
             </div>
           </div>
 

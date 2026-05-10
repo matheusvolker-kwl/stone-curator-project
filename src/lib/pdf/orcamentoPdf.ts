@@ -19,39 +19,51 @@ export interface PdfOptions {
   currency?: string;
   cliente?: PdfCliente;
   showPrices: boolean;
+  numero?: string;
 }
 
 const GREEN: [number, number, number] = [27, 50, 41];
+const GREEN_MID: [number, number, number] = [44, 75, 60];
 const GOLD: [number, number, number] = [184, 146, 79];
+const GOLD_SOFT: [number, number, number] = [232, 218, 178];
+const CREAM: [number, number, number] = [248, 243, 230];
+const CREAM_DEEP: [number, number, number] = [232, 224, 207];
 const STONE: [number, number, number] = [110, 102, 90];
+const STONE_LINE: [number, number, number] = [220, 214, 200];
+const INK: [number, number, number] = [27, 50, 41];
 
-export function gerarOrcamentoPdf({
-  items,
-  subtotal,
-  currency = "BRL",
-  cliente,
-  showPrices,
-}: PdfOptions): jsPDF {
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const margin = 48;
+function shortId(): string {
+  return Math.random().toString(36).slice(2, 7).toUpperCase();
+}
 
-  // Header band
+function drawHeader(doc: jsPDF, pageWidth: number, numero: string) {
+  // Solid green band
   doc.setFillColor(...GREEN);
-  doc.rect(0, 0, pageWidth, 110, "F");
+  doc.rect(0, 0, pageWidth, 130, "F");
 
-  doc.setTextColor(232, 224, 207);
+  // Subtle inner gold rule
+  doc.setDrawColor(...GOLD);
+  doc.setLineWidth(0.4);
+  doc.line(48, 92, pageWidth - 48, 92);
+
+  // Wordmark
+  doc.setTextColor(...CREAM);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(20);
-  doc.text("WESTERN", margin, 50);
+  doc.setFontSize(22);
+  doc.text("WESTERN", 48, 56, { charSpace: 4 });
 
+  // Tagline
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.setTextColor(184, 146, 79);
-  doc.text("COMPOSIÇÃO DE ORÇAMENTO", margin, 68);
+  doc.setFontSize(7.5);
+  doc.setTextColor(...GOLD_SOFT);
+  doc.text("PEDRAS DECORATIVAS AUTORAIS · DESDE 1993", 48, 72, { charSpace: 1.5 });
 
-  doc.setTextColor(232, 224, 207);
-  doc.setFontSize(9);
+  // Eyebrow
+  doc.setFontSize(8);
+  doc.setTextColor(...GOLD);
+  doc.text(`COMPOSIÇÃO DE ORÇAMENTO  ·  Nº ${numero}`, 48, 112, { charSpace: 1.2 });
+
+  // Date right
   const dataStr = new Date().toLocaleString("pt-BR", {
     day: "2-digit",
     month: "2-digit",
@@ -59,31 +71,94 @@ export function gerarOrcamentoPdf({
     hour: "2-digit",
     minute: "2-digit",
   });
-  doc.text(`Emitido em ${dataStr}`, pageWidth - margin, 50, { align: "right" });
+  doc.setTextColor(...CREAM);
+  doc.setFontSize(8);
+  doc.text(`EMITIDO EM ${dataStr}`, pageWidth - 48, 112, { align: "right", charSpace: 1 });
+}
 
-  let y = 140;
+function drawClientCard(
+  doc: jsPDF,
+  pageWidth: number,
+  y: number,
+  cliente: PdfCliente,
+): number {
+  const margin = 48;
+  const cardH = 92;
+  // Card background
+  doc.setFillColor(...CREAM);
+  doc.rect(margin, y, pageWidth - margin * 2, cardH, "F");
+  // Left gold bar
+  doc.setFillColor(...GOLD);
+  doc.rect(margin, y, 3, cardH, "F");
 
-  // Cliente
+  // Eyebrow
+  doc.setTextColor(...GOLD);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.text("CLIENTE", margin + 18, y + 20, { charSpace: 1.5 });
+
+  // Two columns
+  doc.setTextColor(...INK);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  const linha1 = cliente.nome || "—";
+  doc.text(linha1, margin + 18, y + 38);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9.5);
+  doc.setTextColor(...STONE);
+  if (cliente.empresa) doc.text(cliente.empresa, margin + 18, y + 54);
+  if (cliente.cidade) doc.text(cliente.cidade, margin + 18, y + 70);
+
+  // Right column
+  const colX = pageWidth / 2 + 10;
+  doc.setTextColor(...GOLD);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.text("CONTATO", colX, y + 20, { charSpace: 1.5 });
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9.5);
+  doc.setTextColor(...INK);
+  let cy = y + 38;
+  if (cliente.email) { doc.text(cliente.email, colX, cy); cy += 14; }
+  if (cliente.telefone) { doc.text(cliente.telefone, colX, cy); cy += 14; }
+
+  return y + cardH;
+}
+
+export function gerarOrcamentoPdf({
+  items,
+  subtotal,
+  currency = "BRL",
+  cliente,
+  showPrices,
+  numero,
+}: PdfOptions): jsPDF {
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 48;
+  const numeroFinal = numero ?? shortId();
+
+  drawHeader(doc, pageWidth, numeroFinal);
+
+  let y = 158;
+
+  // Cliente card
   if (cliente && (cliente.nome || cliente.email || cliente.telefone)) {
-    doc.setTextColor(...GOLD);
-    doc.setFontSize(8);
-    doc.setFont("helvetica", "bold");
-    doc.text("CLIENTE", margin, y);
-    y += 14;
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.setTextColor(...GREEN);
-    const linhas: string[] = [];
-    if (cliente.nome) linhas.push(cliente.nome + (cliente.empresa ? ` — ${cliente.empresa}` : ""));
-    if (cliente.email) linhas.push(cliente.email);
-    if (cliente.telefone) linhas.push(cliente.telefone);
-    if (cliente.cidade) linhas.push(cliente.cidade);
-    linhas.forEach((l) => {
-      doc.text(l, margin, y);
-      y += 14;
-    });
-    y += 8;
+    y = drawClientCard(doc, pageWidth, y, cliente) + 24;
   }
+
+  // Section eyebrow
+  doc.setTextColor(...GOLD);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.text("COMPOSIÇÃO", margin, y, { charSpace: 1.5 });
+  doc.setDrawColor(...GOLD);
+  doc.setLineWidth(0.4);
+  doc.line(margin + 80, y - 3, pageWidth - margin, y - 3);
+  y += 12;
 
   // Tabela
   const head = showPrices
@@ -110,95 +185,168 @@ export function gerarOrcamentoPdf({
     startY: y,
     head,
     body,
-    margin: { left: margin, right: margin },
-    theme: "grid",
+    margin: { left: margin, right: margin, bottom: 80 },
+    theme: "plain",
     styles: {
       font: "helvetica",
-      fontSize: 9,
-      cellPadding: 8,
-      textColor: GREEN,
-      lineColor: [220, 214, 200] as [number, number, number],
-      lineWidth: 0.5,
+      fontSize: 9.5,
+      cellPadding: { top: 10, bottom: 10, left: 12, right: 12 },
+      textColor: INK,
+      lineColor: STONE_LINE,
+      lineWidth: 0,
     },
     headStyles: {
       fillColor: GREEN,
-      textColor: [232, 224, 207] as [number, number, number],
+      textColor: CREAM,
       fontStyle: "bold",
-      fontSize: 8,
+      fontSize: 7.5,
+      cellPadding: { top: 9, bottom: 9, left: 12, right: 12 },
     },
+    alternateRowStyles: { fillColor: [250, 247, 239] as [number, number, number] },
     columnStyles: showPrices
       ? {
-          2: { halign: "center", cellWidth: 40 },
-          3: { halign: "right", cellWidth: 80 },
-          4: { halign: "right", cellWidth: 90 },
+          0: { fontStyle: "bold" },
+          2: { halign: "center", cellWidth: 44, textColor: GREEN },
+          3: { halign: "right", cellWidth: 88, font: "helvetica" },
+          4: { halign: "right", cellWidth: 92, fontStyle: "bold", textColor: GREEN },
         }
-      : { 2: { halign: "center", cellWidth: 60 } },
+      : { 0: { fontStyle: "bold" }, 2: { halign: "center", cellWidth: 64, textColor: GREEN } },
+    didDrawCell: (data) => {
+      // Bottom border on body rows
+      if (data.section === "body") {
+        const { x, y: cy, width, height } = data.cell;
+        doc.setDrawColor(...STONE_LINE);
+        doc.setLineWidth(0.3);
+        doc.line(x, cy + height, x + width, cy + height);
+      }
+    },
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let cursorY = (doc as any).lastAutoTable.finalY + 24;
+  let cursorY = (doc as any).lastAutoTable.finalY + 28;
 
   // Totais
-  doc.setDrawColor(...GOLD);
-  doc.setLineWidth(0.5);
-  doc.line(margin, cursorY, pageWidth - margin, cursorY);
-  cursorY += 18;
-
   if (showPrices) {
-    doc.setFontSize(9);
-    doc.setTextColor(...STONE);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Pedido mínimo ${formatBRL(BUSINESS.pedidoMinimoBRL, currency)}`, margin, cursorY);
+    // Gold rule
+    doc.setDrawColor(...GOLD);
+    doc.setLineWidth(0.6);
+    doc.line(pageWidth - margin - 240, cursorY, pageWidth - margin, cursorY);
+    cursorY += 18;
 
-    doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
+    doc.setFontSize(7.5);
+    doc.setTextColor(...GOLD);
+    doc.text("SUBTOTAL", pageWidth - margin - 240, cursorY, { charSpace: 1.5 });
+
+    doc.setFontSize(20);
     doc.setTextColor(...GREEN);
-    doc.text("SUBTOTAL", pageWidth - margin - 110, cursorY);
-    doc.setFontSize(14);
-    doc.text(formatBRL(subtotal, currency), pageWidth - margin, cursorY, { align: "right" });
-    cursorY += 24;
-  } else {
-    doc.setFontSize(9);
+    doc.text(formatBRL(subtotal, currency), pageWidth - margin, cursorY + 4, { align: "right" });
+    cursorY += 26;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
     doc.setTextColor(...STONE);
     doc.text(
-      "Preços apresentados após confirmação do cadastro B2B.",
-      margin,
+      `Pedido mínimo ${formatBRL(BUSINESS.pedidoMinimoBRL, currency)} · valores sujeitos a confirmação`,
+      pageWidth - margin,
       cursorY,
+      { align: "right" },
     );
-    cursorY += 18;
+    cursorY += 24;
+  } else {
+    doc.setFillColor(...CREAM);
+    doc.rect(margin, cursorY - 14, pageWidth - margin * 2, 38, "F");
+    doc.setFillColor(...GOLD);
+    doc.rect(margin, cursorY - 14, 3, 38, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(...GOLD);
+    doc.text("VALORES", margin + 18, cursorY, { charSpace: 1.5 });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9.5);
+    doc.setTextColor(...INK);
+    doc.text(
+      "Preços apresentados após confirmação do cadastro B2B com nosso time comercial.",
+      margin + 18,
+      cursorY + 14,
+    );
+    cursorY += 40;
   }
 
-  doc.setFontSize(9);
-  doc.setTextColor(...STONE);
-  doc.setFont("helvetica", "normal");
-  doc.text("Produção em 15 dias úteis após confirmação do pedido.", margin, cursorY);
-  cursorY += 14;
-  doc.text("Orçamento válido por 7 dias. Sujeito a confirmação de estoque.", margin, cursorY);
-
-  // Mensagem
+  // Mensagem do cliente
   if (cliente?.mensagem) {
-    cursorY += 28;
-    doc.setTextColor(...GOLD);
-    doc.setFontSize(8);
+    cursorY += 8;
+    doc.setFillColor(...CREAM);
+    const msgLines = doc.splitTextToSize(cliente.mensagem, pageWidth - margin * 2 - 28);
+    const boxH = 30 + msgLines.length * 13;
+    doc.rect(margin, cursorY, pageWidth - margin * 2, boxH, "F");
+    doc.setFillColor(...GOLD);
+    doc.rect(margin, cursorY, 3, boxH, "F");
+
     doc.setFont("helvetica", "bold");
-    doc.text("OBSERVAÇÕES DO CLIENTE", margin, cursorY);
+    doc.setFontSize(7.5);
+    doc.setTextColor(...GOLD);
+    doc.text("OBSERVAÇÕES DO CLIENTE", margin + 18, cursorY + 18, { charSpace: 1.5 });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9.5);
+    doc.setTextColor(...INK);
+    doc.text(msgLines, margin + 18, cursorY + 34);
+    cursorY += boxH + 10;
+  }
+
+  // Condições — caixa final
+  if (cursorY < pageHeight - 140) {
+    cursorY += 12;
+    doc.setDrawColor(...STONE_LINE);
+    doc.setLineWidth(0.3);
+    doc.line(margin, cursorY, pageWidth - margin, cursorY);
+    cursorY += 16;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7.5);
+    doc.setTextColor(...GOLD);
+    doc.text("CONDIÇÕES", margin, cursorY, { charSpace: 1.5 });
     cursorY += 14;
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.setTextColor(...GREEN);
-    const split = doc.splitTextToSize(cliente.mensagem, pageWidth - margin * 2);
-    doc.text(split, margin, cursorY);
+    doc.setFontSize(9);
+    doc.setTextColor(...STONE);
+    const cond = [
+      `Produção em ${BUSINESS.prazoProducaoLabel}.`,
+      "Orçamento válido por 7 dias. Sujeito a confirmação de estoque e logística.",
+      `Garantia de ${BUSINESS.garantiaAnos} anos contra defeitos de fabricação.`,
+    ];
+    cond.forEach((c) => { doc.text("·  " + c, margin, cursorY); cursorY += 13; });
   }
 
   // Footer
-  const pageHeight = doc.internal.pageSize.getHeight();
+  const footerY = pageHeight - 60;
   doc.setFillColor(...GREEN);
-  doc.rect(0, pageHeight - 50, pageWidth, 50, "F");
-  doc.setTextColor(232, 224, 207);
-  doc.setFontSize(8);
+  doc.rect(0, footerY, pageWidth, 60, "F");
+  doc.setDrawColor(...GOLD);
+  doc.setLineWidth(0.4);
+  doc.line(margin, footerY + 14, pageWidth - margin, footerY + 14);
+
+  doc.setTextColor(...CREAM);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.text("WESTERN  ·  ATELIÊ", margin, footerY + 30, { charSpace: 1.4 });
   doc.setFont("helvetica", "normal");
-  doc.text("Western · Pedras decorativas autorais", margin, pageHeight - 28);
-  doc.text("WhatsApp +55 11 99340-3485", pageWidth - margin, pageHeight - 28, { align: "right" });
+  doc.setFontSize(8);
+  doc.setTextColor(...GOLD_SOFT);
+  doc.text(BUSINESS.enderecoAtelieCompleto, margin, footerY + 44);
+
+  doc.setTextColor(...CREAM);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.text("CONTATO", pageWidth - margin, footerY + 30, { align: "right", charSpace: 1.4 });
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(...GOLD_SOFT);
+  doc.text(`WhatsApp ${BUSINESS.whatsappLabel}  ·  ${BUSINESS.emailComercial}`, pageWidth - margin, footerY + 44, { align: "right" });
+
+  // suppress unused var lint
+  void GREEN_MID;
+  void CREAM_DEEP;
 
   return doc;
 }
@@ -211,4 +359,9 @@ export function downloadOrcamentoPdf(opts: PdfOptions) {
     .replace("T", "-")
     .slice(0, 13);
   doc.save(`western-orcamento-${stamp}.pdf`);
+}
+
+export function orcamentoPdfBlob(opts: PdfOptions): Blob {
+  const doc = gerarOrcamentoPdf(opts);
+  return doc.output("blob");
 }

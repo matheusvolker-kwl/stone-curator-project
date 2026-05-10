@@ -11,11 +11,12 @@ interface Props {
   required?: boolean;
   error?: string;
   className?: string;
+  readOnly?: boolean;
 }
 
 /** Telefone BR com prefixo +55 fixo. Retorna apenas os dígitos do DDD+número. */
 const PhoneInput = forwardRef<HTMLInputElement, Props>(function PhoneInput(
-  { value, onChange, onBlur, id, name, placeholder, required, error, className },
+  { value, onChange, onBlur, id, name, placeholder, required, error, className, readOnly },
   _ref
 ) {
   return (
@@ -42,7 +43,8 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(function PhoneInput(
           inputMode="tel"
           placeholder={placeholder ?? "(11) 95896-7088"}
           required={required}
-          className="flex-1 bg-transparent px-3 outline-none text-western-green-deep placeholder:text-western-stone-warm/50"
+          readOnly={readOnly}
+          className={`flex-1 bg-transparent px-3 outline-none text-western-green-deep placeholder:text-western-stone-warm/50 ${readOnly ? "opacity-70 cursor-not-allowed" : ""}`}
         />
       </div>
       {error && (

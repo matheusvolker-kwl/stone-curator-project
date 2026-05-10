@@ -218,6 +218,36 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_pdfs: {
+        Row: {
+          created_at: string
+          id: string
+          items_count: number
+          lead_id: string | null
+          storage_path: string
+          subtotal: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          items_count?: number
+          lead_id?: string | null
+          storage_path: string
+          subtotal?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          items_count?: number
+          lead_id?: string | null
+          storage_path?: string
+          subtotal?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       saved_carts: {
         Row: {
           cart_id: string | null
