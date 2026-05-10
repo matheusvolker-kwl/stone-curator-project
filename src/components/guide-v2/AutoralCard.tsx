@@ -11,7 +11,7 @@ interface Props {
   onOpen?: () => void;
 }
 
-export default function AutoralCard({ item, selected, onToggle, onOpen }: Props) {
+export default function AutoralCard({ item, selected, qty = 0, onToggle, onOpen }: Props) {
   return (
     <article
       className={cn(
