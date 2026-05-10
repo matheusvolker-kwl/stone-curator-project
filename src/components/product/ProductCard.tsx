@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import type { ShopifyProductNode } from "@/lib/shopify/types";
 import { cdnImg, cdnSrcSet } from "@/lib/shopify/client";
 import { ArrowRight } from "lucide-react";
+import WishlistButton from "./WishlistButton";
 
 interface Props {
   product: ShopifyProductNode;
