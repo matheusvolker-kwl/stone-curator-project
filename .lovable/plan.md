@@ -1,77 +1,73 @@
-## Por que os conjuntos do guia parecem "bloqueados"
+## Plano de melhorias
 
-O Guia até **adiciona** as peças ao carrinho normalmente (Reservar upgrade / Adicionar). O bloqueio que você está vendo é no **CartDrawer**: quando o usuário **não é parceiro aprovado**, ele esconde preços, esconde "Solicitar orçamento" e "Pagar online", e só mostra "Acessar minha conta / Solicitar cadastro B2B".
+### 1. PDF do orçamento — identidade visual Western
 
-Hoje, mesmo um arquiteto curioso (sem cadastro) que monta um orçamento bonito pelo Guia bate numa parede. Vamos abrir esse fluxo — orçamento é lead, não venda.
+Refazer `src/lib/pdf/orcamentoPdf.ts` com tipografia, paleta e ritmo da marca:
 
----
+- **Capa/header alta (160pt)** verde profundo `#1B3229` com a wordmark "WESTERN" em letterspacing largo, fio dourado horizontal abaixo, eyebrow dourado `COMPOSIÇÃO DE ORÇAMENTO · Nº 0000` e data alinhada à direita em fonte mono.
+- **Bloco do cliente** em card creme `#E8E0CF` com borda fina dourada, eyebrow `CLIENTE` e dados em duas colunas (Nome/Empresa + Contato/Cidade).
+- **Tabela**: header verde com texto creme, linhas alternadas (branco / creme 30%), bordas finas em `#DDD6C8`, coluna "Qtd" centralizada com fundo dourado leve, valores monetários alinhados à direita em mono.
+- **Bloco totais** com fio dourado, "SUBTOTAL" em eyebrow + valor grande em display.
+- **Mensagem do cliente** em card lateral com barra dourada à esquerda.
+- **Rodapé fixo** verde com endereço do ateliê (`BUSINESS.enderecoAtelieCompleto`), WhatsApp e site, paginação `Página X de Y`.
+- Carregar uma fonte serif (via `jspdf` standard `times`) para títulos display + `helvetica` para corpo, garantindo contraste com a versão atual chapada.
+- Incluir miniatura da peça (quando `productImage` disponível) na primeira coluna usando `addImage` com fallback silencioso.
 
-## O que vamos construir
+### 2. Salvar o PDF no espaço do cliente (Projetos vira hub)
 
-### 1. Liberar "Solicitar orçamento" para todo mundo
-- Visitante anônimo, parceiro pendente e parceiro aprovado: **todos** podem solicitar orçamento.
-- Visitante anônimo continua **sem ver preço** (mantém o gating B2B), mas pode montar a composição e mandar para o vendedor.
-- Apenas "Pagar online" (checkout Shopify) continua restrito a parceiro aprovado.
-
-### 2. Inverter a hierarquia dos CTAs no carrinho
-Ordem nova, do mais para o menos destacado:
+- Renomear visualmente a aba **Projetos** para deixar claro que ali ficam **projetos + orçamentos salvos**:
+  - Subtítulo: "Seus projetos e composições salvas em PDF."
+  - Empty state novo: "Aqui ficam seus projetos e os PDFs das composições que você pediu orçamento. Toda vez que solicitar um atendimento, salvamos o PDF aqui."
+- Criar bucket `orcamentos` (privado) no storage e tabela `quote_pdfs`:
 
 ```text
-[ PAGAR ONLINE → ]            ← gold sólido, h-14, ícone, sombra (CTA principal)
-[ Solicitar orçamento ]       ← outline cream, h-12 (secundário)
-[ Baixar PDF da composição ]  ← link discreto com ícone
+quote_pdfs
+  id uuid pk
+  user_id uuid (RLS: dono vê, admin vê tudo)
+  lead_id uuid → leads.id
+  storage_path text
+  subtotal numeric
+  items_count int
+  created_at timestamptz
 ```
 
-Para parceiro **não aprovado**, "Pagar online" some e "Solicitar orçamento" assume o lugar do CTA principal (gold sólido).
+- No `submitQuoteLead` (somente quando `userId` presente):
+  1. Gerar o PDF via `gerarOrcamentoPdf` → `doc.output("blob")`.
+  2. Upload em `orcamentos/{user_id}/{lead_id}.pdf` via `supabase.storage`.
+  3. Inserir row em `quote_pdfs`.
+- Em `AccountProjects.tsx`, listar acima dos projetos uma seção **"Composições salvas"** com cards: data, nº de itens, subtotal, botão "Baixar PDF" (signed URL 1h) e "Reabrir composição" (carrega itens no carrinho via `cartStore`).
 
-### 3. Modal "Solicitar orçamento" (form + lead)
-Botão abre um Dialog com:
+### 3. Modal de sucesso do orçamento — CTA WhatsApp
 
-- **Se logado**: prefill com nome/empresa/telefone/email do `partner_profiles`, campos travados em readonly + textarea "Mensagem para o vendedor (opcional)".
-- **Se anônimo**: campos `nome*`, `email*`, `telefone*`, `empresa`, `cidade`, `mensagem` (validação com zod, mesmas regras do PartnerSignup).
-- Resumo da composição (itens, qty, subtotal — só mostra preço se aprovado).
-- Botão "Enviar pedido de orçamento".
+Em `QuoteRequestModal.tsx`, na tela de sucesso, adicionar botão dourado primário:
 
-Ao enviar:
-1. Insere em `leads` com `type='orcamento'`, `origem='cart_drawer'`, `payload = { items, subtotal, currency, mensagem, conjunto_origem? }`. Se logado, grava `user_id`.
-2. Se logado, faz upsert em `saved_carts` (já existe) preservando o snapshot atual.
-3. Toast de sucesso + fecha modal + opção de baixar o PDF na hora.
-4. Não limpa o carrinho (cliente pode continuar editando).
+- "Falar com vendedor agora" → abre `https://wa.me/{BUSINESS.whatsappFabrica}` com mensagem pré-pronta:
+  `"Olá! Acabei de enviar o orçamento #<id curto> com X itens (subtotal R$ ...). Gostaria de falar com um vendedor."`
+- Manter "Baixar PDF" como secundário e "Fechar" como terciário. Hierarquia: WhatsApp → PDF → Fechar.
 
-### 4. PDF da composição
-Botão "Baixar PDF" (no carrinho e dentro do modal de sucesso) gera client-side um PDF com:
+### 4. Formulário de amostras — atrelar ao perfil logado
 
-- Cabeçalho Western (logo, "Composição de orçamento", data).
-- Dados do cliente (se preenchidos).
-- Tabela de itens: imagem miniatura, nome, acabamento, qty, preço unit., subtotal (preço só se aprovado).
-- Subtotal, pedido mínimo, prazo de produção (15 dias úteis).
-- Rodapé: WhatsApp do consultor + observação "Orçamento sujeito a confirmação".
-- Nome do arquivo: `western-orcamento-YYYYMMDD-HHmm.pdf`.
+Em `src/pages/PedirAmostras.tsx`:
 
-Stack: **jsPDF + jspdf-autotable** (leve, sem servidor). Sem necessidade de edge function.
+- Detectar `useAuth()`. Se logado:
+  - Carregar `partner_profiles` e pré-preencher **todos os campos** (nome, email, telefone, empresa, cep, endereço, número, complemento, bairro, cidade, estado).
+  - Travar (readonly + tooltip "Editar em Meu Perfil") os campos pessoais (nome, email, telefone, empresa).
+  - Endereço continua editável (cliente pode pedir entrega em outro lugar) mas com aviso "usando endereço do cadastro — altere se necessário".
+  - No insert do lead, enviar `user_id: user.id` para vincular ao perfil e aparecer em **Amostras** automaticamente.
+- Se anônimo: comportamento atual + um banner discreto sugerindo entrar/cadastrar para acompanhar o status.
+- Confirmar que o lead já dispara no admin (`AdminLeads` filtra por `type=amostras`) — sem alteração necessária no painel.
 
-### 5. Backend — sem migration nova
-- Tabela `leads` já aceita `type` e `payload jsonb`, e a RLS `Public can submit leads` permite insert anônimo desde que email ou telefone estejam preenchidos. **Compatível.**
-- O `type` do enum precisa aceitar `'orcamento'`. Vou checar o enum atual antes de implementar — se faltar, abro migration de 1 linha (`ALTER TYPE`) na hora da execução.
-- `saved_carts` já existe para o snapshot do parceiro logado.
+### Detalhes técnicos
 
-### 6. Painel admin — leads de orçamento
-- Em `/admin/leads`, adicionar filtro por `type` incluindo "Orçamento" e expandir o `payload` para mostrar a composição (itens + subtotal) numa drawer, com botão "Abrir WhatsApp do cliente".
+**Arquivos a editar:**
+- `src/lib/pdf/orcamentoPdf.ts` — redesign completo
+- `src/components/cart/QuoteRequestModal.tsx` — CTA WhatsApp + retornar `lead_id`
+- `src/lib/leads.ts` — `submitQuoteLead` retorna `{ lead_id }` e dispara upload do PDF quando logado
+- `src/pages/account/AccountProjects.tsx` — seção "Composições salvas" + texto explicativo
+- `src/pages/PedirAmostras.tsx` — prefill + lock + `user_id` no lead
 
----
+**Migração Supabase:**
+- bucket `orcamentos` (privado) com policies (dono lê/escreve, admin lê tudo)
+- tabela `quote_pdfs` com RLS análoga
 
-## Detalhes técnicos
-
-**Arquivos novos:**
-- `src/components/cart/QuoteRequestModal.tsx` — Dialog com form + zod.
-- `src/lib/pdf/orcamentoPdf.ts` — função `gerarOrcamentoPdf(items, cliente, subtotal)`.
-- `src/lib/leads.ts` — helper `submitQuoteLead(payload)`.
-
-**Arquivos editados:**
-- `src/components/layout/CartDrawer.tsx` — nova hierarquia de CTAs, libera "Solicitar orçamento" para todos, abre modal em vez de WhatsApp direto, mostra botão de PDF.
-- `src/components/guide/StepFechamento.tsx` — alinha CTA primário com a nova lógica (mantém "Solicitar proposta" mas reaproveita o mesmo modal).
-- `src/pages/admin/AdminLeads.tsx` — filtro `tipo=orcamento` + drawer com itens.
-
-**Dependências novas:** `jspdf`, `jspdf-autotable`.
-
-**Sem mudanças** em: `cartStore`, fluxo Shopify, RLS de `leads` (já cobre o caso).
+**Sem alteração:** painel admin de leads, fluxo de carrinho, Shopify checkout.
