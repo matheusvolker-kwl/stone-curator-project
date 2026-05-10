@@ -222,7 +222,11 @@ export default function BuyingGuide() {
                 )}
               </div>
 
-              {isConfigurar && <GuideAssemblySummary stepLabel={stepLabel} />}
+              {isConfigurar && (
+                <div className="xl:hidden mt-8">
+                  <GuideAssemblySummary stepLabel={stepLabel} />
+                </div>
+              )}
             </div>
           </div>
         )}
