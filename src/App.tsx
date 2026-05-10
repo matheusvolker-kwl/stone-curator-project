@@ -70,7 +70,7 @@ const App = () => (
             <Route path="/guia-de-composicao" element={<GuiaContexto />} />
             <Route path="/guia-de-composicao/composicoes" element={<GuiaComposicoes />} />
             <Route path="/guia-de-composicao/refinar/:handle" element={<GuiaRefinar />} />
-            <Route path="/guia-de-composicao/finalizar" element={<GuiaFinalizar />} />
+            <Route path="/guia-de-composicao/finalizar" element={<Navigate to="/guia-de-composicao" replace />} />
             <Route element={<SiteLayout />}>
               <Route path="/" element={<Index />} />
               <Route path="/linhas" element={<Linhas />} />
