@@ -194,6 +194,14 @@ function OrderDetail({ order, onBack }: { order: ProductionOrder; onBack: () => 
         events,
         scenario: "cliente",
       });
+      // Registra no perfil do cliente + evento + lead admin (best-effort).
+      const { error: regError } = await supabase.rpc("register_pedido_pdf_download", {
+        _order_id: order.id,
+        _filename: filename,
+      });
+      if (regError) {
+        console.warn("[pedido-pdf] register_pedido_pdf_download falhou", regError);
+      }
       toast.success(`PDF baixado: ${filename}`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "erro desconhecido";
