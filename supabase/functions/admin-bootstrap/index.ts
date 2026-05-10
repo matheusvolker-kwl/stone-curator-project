@@ -87,8 +87,8 @@ Deno.serve(async (req) => {
     uid = created.user!.id;
   }
 
-  // 4. Insert admin role
-  await admin.from("user_roles").insert({ user_id: uid, role: "admin" });
+  // 4. Insert admin role (idempotent)
+  await admin.from("user_roles").upsert({ user_id: uid, role: "admin" }, { onConflict: "user_id,role" });
 
   // 5. Ensure profile exists, mark approved + partner tier
   const { data: existing } = await admin
