@@ -614,6 +614,23 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+
+      {/* Seções full-width abaixo do hero */}
+      <ProductInProjects productHandle={product.handle} productTitle={product.title} />
+      <ProductComparison productTitle={product.title} pesoKg={pesoKg} dimensoes={dimsStr} />
+      <RelatedProducts
+        collectionHandle={collection?.handle}
+        collectionTitle={collection?.title}
+        currentHandle={product.handle}
+        productTitle={product.title}
+      />
+      <WhyWesternStrip />
+      <SocialProofBand />
+      <ProductPagination
+        collectionHandle={collection?.handle}
+        collectionTitle={collection?.title}
+        currentHandle={product.handle}
+      />
     </div>
   );
 }
