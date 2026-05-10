@@ -59,10 +59,11 @@ export default function AdminPartners() {
   }), [partners, statusFilter, segmentFilter, ufFilter, q]);
 
   const setStatus = async (p: Partner, status: Partner["status"]) => {
-    const patch: Record<string, unknown> = { status };
-    if (status === "approved") patch.approved_at = new Date().toISOString();
-    if (status === "pending" || status === "rejected") patch.approved_at = null;
-    const { error } = await supabase.from("partner_profiles").update(patch).eq("id", p.id);
+    const approvedAt = status === "approved" ? new Date().toISOString() : null;
+    const { error } = await supabase
+      .from("partner_profiles")
+      .update({ status, approved_at: approvedAt } as never)
+      .eq("id", p.id);
     if (error) { toast.error("Não foi possível atualizar.", { description: error.message }); return; }
     toast.success(status === "approved" ? "Parceiro aprovado." : status === "rejected" ? "Acesso negado." : "Status atualizado.");
     load();
