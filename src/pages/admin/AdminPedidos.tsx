@@ -673,6 +673,73 @@ export default function AdminPedidos() {
     return list;
   }, [orders, filter, search, partnerById]);
 
+  const visibleIds = useMemo(() => visible.map((o) => o.id), [visible]);
+  const checkedVisible = useMemo(
+    () => visibleIds.filter((id) => checked.has(id)),
+    [visibleIds, checked],
+  );
+  const allVisibleChecked = visibleIds.length > 0 && checkedVisible.length === visibleIds.length;
+
+  const toggleOne = (id: string) =>
+    setChecked((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  const toggleAllVisible = () =>
+    setChecked((prev) => {
+      const next = new Set(prev);
+      if (allVisibleChecked) visibleIds.forEach((id) => next.delete(id));
+      else visibleIds.forEach((id) => next.add(id));
+      return next;
+    });
+  const clearChecked = () => setChecked(new Set());
+
+  const applyBulk = async () => {
+    const ids = Array.from(checked);
+    if (ids.length === 0) return;
+    const note = bulkNote.trim();
+    if (!bulkStatus && !bulkModo && !note) {
+      toast.error("Escolha ao menos uma alteração");
+      return;
+    }
+    setBulkApplying(true);
+    try {
+      // 1. Atualização de campos (status / modo)
+      if (bulkStatus || bulkModo) {
+        const patch: Record<string, unknown> = {};
+        if (bulkStatus) patch.status = bulkStatus;
+        if (bulkModo) patch.modo_entrega = bulkModo;
+        const { error } = await supabase
+          .from("production_orders")
+          .update(patch)
+          .in("id", ids);
+        if (error) throw error;
+      }
+      // 2. Observação anexada como evento (visível ao parceiro)
+      if (note) {
+        const events = ids.map((order_id) => ({
+          order_id,
+          status: bulkStatus || null,
+          note,
+        }));
+        const { error } = await supabase.from("production_order_events").insert(events);
+        if (error) throw error;
+      }
+      toast.success(`${ids.length} pedido(s) atualizado(s) e sincronizado(s)`);
+      setBulkStatus("");
+      setBulkModo("");
+      setBulkNote("");
+      clearChecked();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Erro desconhecido";
+      toast.error("Falha em lote: " + msg);
+    } finally {
+      setBulkApplying(false);
+    }
+  };
+
   const selected = orders.find((o) => o.id === selectedId) ?? null;
 
   if (selected) {
@@ -685,6 +752,11 @@ export default function AdminPedidos() {
         onDeleted={(id) => {
           setOrders((prev) => prev.filter((o) => o.id !== id));
           setSelectedId(null);
+          setChecked((prev) => {
+            const next = new Set(prev);
+            next.delete(id);
+            return next;
+          });
         }}
       />
     );
