@@ -90,7 +90,7 @@ export default function AdminQuoteDetail() {
     }
     setLead(l);
     setThread(t);
-    setProposals((propData as QuoteProposal[]) ?? []);
+    setProposals((propData as unknown as QuoteProposal[]) ?? []);
 
     if (t) {
       setStatusLocal(t.status);
@@ -102,7 +102,7 @@ export default function AdminQuoteDetail() {
     }
 
     // Inicializa editor com itens originais (ou última proposta se houver)
-    const seed = (propData as QuoteProposal[] | null)?.[0];
+    const seed = (propData as unknown as QuoteProposal[] | null)?.[0];
     const sourceItems: QuotePayloadItem[] = seed
       ? seed.items
       : ((l?.payload as unknown as QuotePayload)?.items ?? []);
