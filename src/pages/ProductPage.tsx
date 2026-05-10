@@ -12,12 +12,20 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ChevronLeft, Loader2, Info, MessageCircle, Download } from "lucide-react";
+import { ChevronRight, Loader2, Info, MessageCircle, Download } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { toast } from "sonner";
 import FinishSelector from "@/components/product/FinishSelector";
 import PriceGate from "@/components/shared/PriceGate";
 import { useAuth } from "@/hooks/useAuth";
+import HardFactsCard from "@/components/product/HardFactsCard";
+import CustomPaintNote from "@/components/product/CustomPaintNote";
+import ProductInProjects from "@/components/product/ProductInProjects";
+import ProductComparison from "@/components/product/ProductComparison";
+import RelatedProducts from "@/components/product/RelatedProducts";
+import WhyWesternStrip from "@/components/product/WhyWesternStrip";
+import SocialProofBand from "@/components/product/SocialProofBand";
+import ProductPagination from "@/components/product/ProductPagination";
 
 export default function ProductPage() {
   const { handle = "" } = useParams();
