@@ -295,6 +295,29 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           </div>
         </SheetContent>
       </Sheet>
+      {/* Sheet de busca mobile */}
+      <Sheet open={searchOpen} onOpenChange={setSearchOpen}>
+        <SheetContent side="top" className="bg-western-ivory border-b border-western-stone-warm/15 pt-8 pb-6">
+          <SheetTitle className="text-eyebrow mb-3">Buscar no catálogo</SheetTitle>
+          <form onSubmit={handleSearch} className="flex items-center gap-2 px-3 h-12 border border-western-stone-warm/30 bg-white focus-within:border-western-gold transition-colors">
+            <Search className="h-4 w-4 text-western-stone-warm flex-shrink-0" />
+            <input
+              autoFocus
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              type="search"
+              placeholder="Buscar linha, peça, código…"
+              className="flex-1 bg-transparent outline-none text-base text-western-green-deep placeholder:text-western-stone-warm/60"
+            />
+            {query && (
+              <button type="button" onClick={() => setQuery("")} aria-label="Limpar" className="text-western-stone-warm hover:text-western-green-deep">
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </form>
+          <p className="text-spec text-western-stone-warm mt-3">Pressione Enter para buscar.</p>
+        </SheetContent>
+      </Sheet>
     </header>
   );
 }
