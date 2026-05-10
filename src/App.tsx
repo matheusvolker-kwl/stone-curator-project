@@ -137,6 +137,7 @@ const App = () => (
                     <Route path="orcamentos/:leadId" element={<AdminQuoteDetail />} />
                     <Route path="amostras" element={<AdminSamples />} />
                     <Route path="usuarios" element={<AdminUsers />} />
+                    <Route path="pedidos" element={<AdminPedidos />} />
                     <Route path="configuracoes" element={<AdminSettings />} />
                   </Route>
                   <Route
