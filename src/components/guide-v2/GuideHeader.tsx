@@ -9,17 +9,17 @@ interface Props {
 export default function GuideHeader({ breadcrumb }: Props) {
   return (
     <header className="border-b border-western-gold/30 bg-western-ivory/95 backdrop-blur-sm sticky top-0 z-30 relative">
-      <div className="container-western h-16 flex items-center justify-between relative">
-        <div className="flex items-center gap-5 min-w-0">
+      <div className="container-western h-20 flex items-center justify-between relative">
+        <div className="flex items-center gap-6 min-w-0">
           <Link to="/" className="flex-shrink-0" aria-label="Western Pools">
             <img
               src={logoWestern}
               alt="Western Pools"
-              className="h-7 md:h-8 w-auto object-contain"
+              className="h-10 md:h-12 w-auto object-contain"
             />
           </Link>
-          <span aria-hidden className="hidden md:block w-px h-7 bg-western-gold/40" />
-          <span className="hidden md:inline-block font-display italic text-[18px] text-western-green-deep leading-none truncate">
+          <span aria-hidden className="hidden md:block w-px h-9 bg-western-gold/40" />
+          <span className="hidden md:inline-block font-display italic text-[20px] text-western-green-deep leading-none truncate">
             Guia de Composição
           </span>
         </div>
