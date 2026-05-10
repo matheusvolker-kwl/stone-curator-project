@@ -118,6 +118,16 @@ export default function CartDrawer({
               ))}
             </ul>
           )}
+
+          {items.length > 0 && (
+            <div className="mt-8 -mx-5 md:-mx-8">
+              <CartCrossSell
+                collectionHandle={undefined}
+                excludeHandles={items.map((i) => i.productHandle)}
+                onNavigate={() => onOpenChange(false)}
+              />
+            </div>
+          )}
         </div>
 
         {items.length > 0 && (
