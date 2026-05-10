@@ -14,6 +14,8 @@ import {
   Save,
   Trash2,
   Send,
+  X,
+  Layers,
 } from "lucide-react";
 
 type Status =
