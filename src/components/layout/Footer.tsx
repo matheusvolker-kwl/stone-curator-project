@@ -132,30 +132,51 @@ export default function Footer() {
             <p className="text-sm text-western-cream-muted mb-4 leading-relaxed">
               Receba lançamentos e tabelas técnicas atualizadas.
             </p>
-            <form
-              onSubmit={handleNewsletter}
-              className="flex border border-western-gold/30 focus-within:border-western-gold transition-colors"
-            >
-              <div className="flex items-center px-3 text-western-gold-soft">
-                <Mail className="h-4 w-4" />
+            {done ? (
+              <div className="flex items-center gap-2 border border-western-gold/30 bg-western-gold/5 px-3 py-2.5 text-sm text-western-cream">
+                <Check className="h-4 w-4 text-western-gold-soft" />
+                Inscrição confirmada.
               </div>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="seu@email.com"
-                className="flex-1 bg-transparent outline-none text-sm py-2.5 text-western-cream placeholder:text-western-cream-muted/60"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                aria-label="Enviar"
-                className="px-3 hover:bg-western-gold/10 text-western-gold-soft transition-colors disabled:opacity-50"
+            ) : (
+              <form
+                onSubmit={handleNewsletter}
+                className="flex border border-western-gold/30 focus-within:border-western-gold transition-colors"
               >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              </button>
-            </form>
+                <div className="flex items-center px-3 text-western-gold-soft">
+                  <Mail className="h-4 w-4" />
+                </div>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="seu@email.com"
+                  autoComplete="email"
+                  className="flex-1 bg-transparent outline-none text-sm py-2.5 text-western-cream placeholder:text-western-cream-muted/60"
+                />
+                {/* honeypot — escondido de usuários reais */}
+                <input
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={hp}
+                  onChange={(e) => setHp(e.target.value)}
+                  className="hidden"
+                  aria-hidden="true"
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  aria-label="Enviar"
+                  className="px-3 hover:bg-western-gold/10 text-western-gold-soft transition-colors disabled:opacity-50"
+                >
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                </button>
+              </form>
+            )}
+            <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-cream-muted/70 mt-2">
+              Sem spam. Cancele quando quiser.
+            </p>
           </div>
         </div>
 
