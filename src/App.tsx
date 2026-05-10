@@ -20,6 +20,7 @@ import ParceirosArquitetos from "./pages/ParceirosArquitetos.tsx";
 import PartnerLogin from "./pages/PartnerLogin.tsx";
 import PartnerAccount from "./pages/PartnerAccount.tsx";
 import Admin from "./pages/Admin.tsx";
+import Favoritos from "./pages/Favoritos.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import PedirAmostras from "./pages/PedirAmostras.tsx";
 import AgendarVisita from "./pages/AgendarVisita.tsx";
