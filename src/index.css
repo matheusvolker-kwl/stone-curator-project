@@ -303,6 +303,62 @@
     );
   }
 
+  /* Section divider with center diamond — assinatura Western */
+  .divider-diamond {
+    @apply relative flex items-center justify-center;
+    height: 28px;
+  }
+  .divider-diamond::before,
+  .divider-diamond::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--western-gold) / 0.35) 50%,
+      transparent
+    );
+  }
+  .divider-diamond::after { transform: scaleX(-1); }
+  .divider-diamond > span {
+    width: 7px;
+    height: 7px;
+    margin: 0 18px;
+    background: hsl(var(--western-gold));
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* Eyebrow numerado com filete dourado vertical */
+  .eyebrow-bar {
+    @apply font-mono text-xs uppercase tracking-[0.25em] inline-flex items-center;
+    color: hsl(var(--western-gold));
+    font-weight: 300;
+  }
+  .eyebrow-bar::before {
+    content: "";
+    width: 1px;
+    height: 14px;
+    background: hsl(var(--western-gold));
+    margin-right: 14px;
+    flex-shrink: 0;
+  }
+
+  /* Settle — confirmação tátil de seleção (ASMR) */
+  @keyframes settle {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.025); }
+    100% { transform: scale(1.01); }
+  }
+  .anim-settle { animation: settle 360ms cubic-bezier(0.22, 1, 0.36, 1); }
+
+  @keyframes mark-slide {
+    0% { transform: translate(-6px, -6px) scale(0.6); opacity: 0; }
+    100% { transform: translate(0, 0) scale(1); opacity: 1; }
+  }
+  .anim-mark { animation: mark-slide 320ms cubic-bezier(0.22, 1, 0.36, 1); }
+
   /* Buttons */
   .btn-gold {
     @apply inline-flex items-center justify-center gap-3 px-8 py-4 font-mono text-xs uppercase tracking-[0.25em] transition-colors;
