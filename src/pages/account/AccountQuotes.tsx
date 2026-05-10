@@ -37,7 +37,21 @@ export default function AccountQuotes() {
       .from("orcamentos")
       .createSignedUrl(path, 3600);
     if (error || !data) return toast.error("Não foi possível abrir o PDF.");
-    window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+    try {
+      const response = await fetch(data.signedUrl);
+      if (!response.ok) throw new Error("Download failed");
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `western-composicao-${new Date().toISOString().slice(0, 10)}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.setTimeout(() => URL.revokeObjectURL(url), 30000);
+    } catch {
+      window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+    }
   };
 
   return (

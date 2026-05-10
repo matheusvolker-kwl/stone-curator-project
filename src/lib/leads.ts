@@ -32,6 +32,19 @@ export interface QuoteResult {
   pdfBlob?: Blob;
 }
 
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = reader.result;
+      if (typeof result === "string") resolve(result.split(",")[1] ?? result);
+      else reject(new Error("Não foi possível preparar o PDF para salvar."));
+    };
+    reader.onerror = () => reject(reader.error ?? new Error("Não foi possível ler o PDF."));
+    reader.readAsDataURL(blob);
+  });
+}
+
 function summarizeItems(items: CartItem[]) {
   return items.map((i) => ({
     handle: i.productHandle,
@@ -118,28 +131,27 @@ export async function submitQuoteLead({
 
   let pdfStored = false;
 
-  // Upload PDF when user is authenticated
+  // Save PDF in the customer's account when authenticated.
+  // This goes through a backend function to avoid browser-side Storage RLS issues.
   if (userId && pdfBlob) {
     try {
-      const path = `${userId}/${lead.id}.pdf`;
-      const { error: upErr } = await supabase.storage
-        .from("orcamentos")
-        .upload(path, pdfBlob, { contentType: "application/pdf", upsert: true });
-
-      if (!upErr) {
-        await supabase.from("quote_pdfs").insert({
-          user_id: userId,
-          lead_id: lead.id,
-          storage_path: path,
+      const pdfBase64 = await blobToBase64(pdfBlob);
+      const { error: saveErr } = await supabase.functions.invoke("save-quote-pdf", {
+        body: {
+          leadId: lead.id,
+          pdfBase64,
           subtotal,
-          items_count: items.length,
-        });
+          itemsCount: items.length,
+        },
+      });
+
+      if (!saveErr) {
         pdfStored = true;
       } else {
-        console.warn("PDF upload failed", upErr);
+        console.warn("PDF save failed", saveErr);
       }
     } catch (e) {
-      console.warn("PDF upload failed", e);
+      console.warn("PDF save failed", e);
     }
   }
 
