@@ -113,10 +113,20 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             type="search"
-            placeholder="Buscar pedra, código, acabamento…"
+            placeholder="Buscar linha, peça, código…"
             className="flex-1 bg-transparent outline-none text-sm text-western-green-deep placeholder:text-western-stone-warm/60"
           />
         </form>
+
+        {/* Search mobile (ícone) */}
+        <button
+          type="button"
+          onClick={() => setSearchOpen(true)}
+          aria-label="Buscar"
+          className="md:hidden ml-auto p-2 text-western-green-deep hover:text-western-gold transition-colors"
+        >
+          <Search className="h-5 w-5" />
+        </button>
 
         <div className="flex items-center gap-1 lg:gap-3 ml-auto md:ml-0">
           {session ? (
