@@ -85,7 +85,7 @@ export async function submitQuoteLead({
   // Upload PDF when user is authenticated
   if (userId) {
     try {
-      const blob = orcamentoPdfBlob({
+      const blob = await orcamentoPdfBlob({
         items,
         subtotal,
         currency,
