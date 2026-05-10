@@ -166,7 +166,7 @@ export default function AdminQuoteDetail() {
   };
 
   const handleCloseSale = async () => {
-    if (!thread) return;
+    if (!thread || !lead) return;
     setClosingSale(true);
     await updateThread({
       status: "fechado",
@@ -176,6 +176,14 @@ export default function AdminQuoteDetail() {
       valor_final: saleValor ? Number(saleValor) : total,
       observacoes_venda: saleObs || null,
     });
+    // Promove o lead 'orcamento' → 'pedido_novo' (1 lead atualizado, conforme regra)
+    const { error: promoteErr } = await supabase.rpc("promote_quote_lead_to_order", {
+      _lead_id: lead.id,
+      _order_id: null,
+    });
+    if (promoteErr) {
+      console.warn("promote_quote_lead_to_order falhou", promoteErr);
+    }
     setStatusLocal("fechado");
     setClosingSale(false);
     toast.success("Venda registrada.");
