@@ -227,6 +227,33 @@ export type Database = {
         }
         Relationships: []
       }
+      pedido_pdf_downloads: {
+        Row: {
+          created_at: string
+          filename: string
+          id: string
+          order_id: string
+          scenario: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          filename: string
+          id?: string
+          order_id: string
+          scenario: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          filename?: string
+          id?: string
+          order_id?: string
+          scenario?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       production_order_events: {
         Row: {
           created_at: string
@@ -631,6 +658,7 @@ export type Database = {
         | "visita"
         | "contato"
         | "orcamento"
+        | "pdf_pedido"
       partner_status: "pending" | "approved" | "rejected" | "cancelled"
       production_status:
         | "aguardando"
@@ -784,6 +812,7 @@ export const Constants = {
         "visita",
         "contato",
         "orcamento",
+        "pdf_pedido",
       ],
       partner_status: ["pending", "approved", "rejected", "cancelled"],
       production_status: [
