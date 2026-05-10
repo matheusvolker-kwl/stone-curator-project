@@ -107,7 +107,7 @@ export default function Index() {
           {[
             { Icon: ShieldCheck, t: `Pedido mínimo ${BUSINESS.pedidoMinimoLabel}`, d: "Exclusivo para profissionais com CNPJ." },
             { Icon: Truck, t: "Produção em 15 dias úteis", d: "Após confirmação do pagamento antecipado." },
-            { Icon: Box, t: "Modelos 3D em SketchUp", d: "Para todos os produtos do catálogo." },
+            { Icon: Box, t: "Modelos 3D em SketchUp", d: "+300 mil downloads por profissionais no Warehouse." },
           ].map(({ Icon, t, d }, i) => (
             <Reveal key={t} variant="fade-up" delay={i * 80} duration={600} distance={16}>
               <div className="flex items-start gap-3">
