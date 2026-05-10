@@ -200,11 +200,26 @@ export default function GuiaRefinar() {
 
   const onFinalizarCompra = async () => {
     const purchasable = quoteItems.filter((item) => item.variantId.startsWith("gid://"));
-    if (purchasable.length === 0) return;
-
-    await addBundle(purchasable.map(({ lineId: _lineId, ...item }) => item));
-    const checkoutUrl = getCheckoutUrl();
-    if (checkoutUrl) window.open(checkoutUrl, "_blank");
+    if (purchasable.length === 0) {
+      toast.error("Nenhuma peça desta composição está disponível para compra direta. Use Baixar composição para receber o orçamento.");
+      return;
+    }
+    const dropped = quoteItems.length - purchasable.length;
+    try {
+      await addBundle(purchasable.map(({ lineId: _lineId, ...item }) => item));
+      const checkoutUrl = getCheckoutUrl();
+      if (!checkoutUrl) {
+        toast.error("Não foi possível abrir o checkout. Tente novamente em instantes.");
+        return;
+      }
+      if (dropped > 0) {
+        toast.message(`${dropped} peça(s) sob consulta foram retiradas do checkout. Solicite o orçamento separadamente para incluí-las.`);
+      }
+      window.open(checkoutUrl, "_blank", "noopener,noreferrer");
+    } catch (e) {
+      console.error(e);
+      toast.error("Erro ao adicionar ao carrinho. Tente novamente.");
+    }
   };
 
   return (
