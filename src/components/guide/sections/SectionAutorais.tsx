@@ -39,22 +39,18 @@ export default function SectionAutorais() {
   };
 
   return (
-    <section id="autorais" className="scroll-mt-28 border-t border-western-stone-warm/15 pt-10">
-      <header className="mb-6 flex items-start justify-between gap-4 flex-wrap">
+    <section id="autorais" className="scroll-mt-32 border-t border-western-stone-warm/15 pt-10">
+      <header className="mb-5 flex items-end justify-between gap-4 flex-wrap">
         <div>
-          <p className="text-eyebrow mb-2 flex items-center gap-2">
+          <p className="text-eyebrow mb-1.5 flex items-center gap-2">
             <Sparkles className="h-3 w-3 text-western-gold" /> Itens autorais
           </p>
-          <h3 className="font-display text-2xl md:text-3xl text-western-green-deep leading-tight mb-2">
+          <h3 className="font-display text-xl md:text-2xl text-western-green-deep leading-tight">
             Edições exclusivas da casa
           </h3>
-          <p className="text-sm text-western-stone-warm leading-relaxed max-w-2xl">
-            Peças que viram presente para o cliente final, ponto focal de living e geram margem
-            expressiva para revenda especificada.
-          </p>
         </div>
         {addedCount > 0 && (
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-green-deep bg-western-cream/50 border border-western-gold/40 px-3 py-1.5">
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-green-deep bg-western-cream/50 border border-western-gold/40 px-2.5 py-1">
             {addedCount} no projeto
           </span>
         )}
