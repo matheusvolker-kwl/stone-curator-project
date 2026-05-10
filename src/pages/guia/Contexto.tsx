@@ -17,7 +17,7 @@ import { tipoImage } from "@/components/guide-v2/imagery";
 import { buildContextQuery } from "@/components/guide-v2/useGuideQuery";
 import { whatsappConsultor } from "@/data/guideMap";
 import brasao from "@/assets/brasao.png";
-import ricardoAtelie from "@/assets/hero/ricardo-atelie.png";
+import ricardoAtelie from "@/assets/hero/ricardo-atelie.webp";
 
 const TIPOS: Array<{ value: TipoVisual }> = [
   { value: "piscina" },

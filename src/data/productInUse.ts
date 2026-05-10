@@ -1,4 +1,4 @@
-import pedraGrande2Cascata from "@/assets/produtos-aplicados/pedra-grande-2-cascata.png";
+import pedraGrande2Cascata from "@/assets/produtos-aplicados/pedra-grande-2-cascata.webp";
 
 export interface ProductInUseImage {
   src: string;
