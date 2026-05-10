@@ -658,6 +658,31 @@ export default function ProductPage() {
         collectionTitle={collection?.title}
         currentHandle={product.handle}
       />
+
+      {/* Sticky buy bar — aparece após sair do CTA inline */}
+      <StickyBuyBar
+        triggerRef={ctaRef}
+        productImage={product.images.edges[0]?.node?.url ?? null}
+        productTitle={product.title}
+        selectedFinish={
+          Object.entries(activeOptions).find(([k]) => /acabament/i.test(k))?.[1] ?? null
+        }
+        priceAmount={variant?.price.amount}
+        priceCurrency={variant?.price.currencyCode}
+        fallbackPriceLabel={`a partir de ${formatBRL(
+          product.priceRange.minVariantPrice.amount,
+          product.priceRange.minVariantPrice.currencyCode
+        )}`}
+        qty={qty}
+        onQtyChange={setQty}
+        onAdd={handleAdd}
+        isLoading={isLoadingCart}
+        canAdd={!!variant && allOptionsSelected}
+        pendingOptionLabel={
+          visibleOptions.find((o) => !activeOptions[o.name])?.name.toLowerCase() ?? null
+        }
+        available={!!variant?.availableForSale}
+      />
     </div>
   );
 }
