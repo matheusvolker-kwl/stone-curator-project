@@ -26,10 +26,10 @@ export default function RequireAuth({
     return <Navigate to={`/parceiro/login?next=${encodeURIComponent(location.pathname)}`} replace />;
   }
   if (adminOnly && !isAdmin) {
-    return <Navigate to="/parceiro/conta" replace />;
+    return <Navigate to="/minha-conta" replace />;
   }
   if (approvedOnly && !isApproved) {
-    return <Navigate to="/parceiro/conta?aviso=pendente" replace />;
+    return <Navigate to="/minha-conta?aviso=pendente" replace />;
   }
   return <>{children}</>;
 }

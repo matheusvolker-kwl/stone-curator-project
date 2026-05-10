@@ -120,7 +120,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem onClick={() => navigate("/parceiro/conta")}>
+                <DropdownMenuItem onClick={() => navigate("/minha-conta")}>
                   <User className="h-4 w-4 mr-2" /> Minha conta
                 </DropdownMenuItem>
                 {isAdmin && (
@@ -150,7 +150,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           )}
           {session && (
             <Link
-              to="/parceiro/favoritos"
+              to="/minha-conta/favoritos"
               aria-label="Favoritos"
               className="relative inline-flex items-center justify-center p-2 text-western-green-deep hover:text-western-gold transition-colors"
             >
@@ -222,7 +222,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               </Link>
               {session && (
                 <Link
-                  to="/parceiro/favoritos"
+                  to="/minha-conta/favoritos"
                   className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
                 >
                   <Heart className="h-4 w-4" /> Favoritos {wishCount > 0 && <span className="text-western-gold-soft">({wishCount})</span>}
