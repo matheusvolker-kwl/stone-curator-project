@@ -19,9 +19,16 @@ export default function SiteLayout() {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-western-ivory">
+      {/* Skip-to-content para usuários de teclado/leitor de tela */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-western-green-deep focus:text-western-cream focus:px-4 focus:py-2 focus:font-mono focus:text-xs focus:uppercase focus:tracking-[0.2em] focus:outline focus:outline-2 focus:outline-western-gold"
+      >
+        Pular para o conteúdo
+      </a>
       <TopBar />
       <Header onCartOpen={() => setCartOpen(true)} />
-      <main className="flex-1 relative z-10">
+      <main id="main-content" className="flex-1 relative z-10" tabIndex={-1}>
         <Outlet context={{ openCart: () => setCartOpen(true) }} />
       </main>
       <Footer />
