@@ -248,7 +248,7 @@ export default function AdminQuoteDetail() {
 
       await updateThread({ status: "proposta_enviada" });
       setStatusLocal("proposta_enviada");
-      setProposals((prev) => [created as QuoteProposal, ...prev]);
+      setProposals((prev) => [created as unknown as QuoteProposal, ...prev]);
       toast.success(`Proposta ${propNumero} salva.`);
     } catch (e) {
       console.error(e);
