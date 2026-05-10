@@ -12,6 +12,8 @@ export interface Projeto {
   texto: string[];
   ficha: string[];
   cover: string;
+  /** Imagem alternativa usada apenas no card da seção "Obras assinadas". Se ausente, usa `cover`. */
+  cardCover?: string;
   /** Vídeo opcional — se ausente, o modal exibe apenas a imagem cover. */
   video?: string;
   /** Quando true, sinaliza projeto sob acordo de confidencialidade. */
