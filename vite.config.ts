@@ -4,7 +4,23 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
+const SUPABASE_URL_FALLBACK = "https://zibtysewpbeycngtbjjk.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY_FALLBACK =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppYnR5c2V3cGJleWNuZ3RiamprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNDE3NjMsImV4cCI6MjA5MzkxNzc2M30.NGI4k2HuA2DlNlIXS5twA5ZxB3mEn4vbHgyHH1e6ytA";
+const SUPABASE_PROJECT_ID_FALLBACK = "zibtysewpbeycngtbjjk";
+
 export default defineConfig(({ mode }) => ({
+  define: {
+    "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(
+      process.env.VITE_SUPABASE_URL || SUPABASE_URL_FALLBACK,
+    ),
+    "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY": JSON.stringify(
+      process.env.VITE_SUPABASE_PUBLISHABLE_KEY || SUPABASE_PUBLISHABLE_KEY_FALLBACK,
+    ),
+    "import.meta.env.VITE_SUPABASE_PROJECT_ID": JSON.stringify(
+      process.env.VITE_SUPABASE_PROJECT_ID || SUPABASE_PROJECT_ID_FALLBACK,
+    ),
+  },
   server: {
     host: "::",
     port: 8080,
