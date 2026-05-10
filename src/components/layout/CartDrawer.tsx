@@ -73,24 +73,41 @@ export default function CartDrawer({
         side="right"
         className="w-full sm:max-w-lg flex flex-col p-0 bg-western-green-mid border-l border-western-gold/20 text-western-cream"
       >
-        <SheetHeader className="px-5 md:px-8 pt-8 md:pt-10 pb-5 md:pb-6 border-b border-western-gold/15">
-          <p className="text-eyebrow">Seu orçamento</p>
-          <SheetTitle className="font-display text-2xl md:text-3xl tracking-wide text-western-cream">
-            Composição atual
-          </SheetTitle>
-          <SheetDescription className="text-western-cream-muted">
-            {totalQty === 0
-              ? "Nenhuma peça selecionada."
-              : `${totalQty} ${totalQty === 1 ? "peça" : "peças"} no orçamento.`}
-          </SheetDescription>
-        </SheetHeader>
+        <div className="px-5 md:px-8 pt-6 md:pt-8 pb-5 md:pb-6 border-b border-western-gold/15 space-y-3">
+          <button
+            type="button"
+            onClick={() => onOpenChange(false)}
+            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-cream-muted hover:text-western-gold-soft transition-colors -ml-1"
+          >
+            <ArrowLeft className="h-3 w-3" /> Continuar comprando
+          </button>
+          <div>
+            <p className="text-eyebrow">Seu orçamento</p>
+            <SheetTitle className="font-display text-2xl md:text-3xl tracking-wide text-western-cream">
+              Composição atual
+            </SheetTitle>
+            <SheetDescription className="text-western-cream-muted">
+              {totalQty === 0
+                ? "Nenhuma peça selecionada."
+                : `${totalQty} ${totalQty === 1 ? "peça" : "peças"}${
+                    distinctFinishes > 1 ? ` · ${distinctFinishes} acabamentos` : ""
+                  }`}
+            </SheetDescription>
+          </div>
+          {items.length > 0 && isApproved && (
+            <FreeShippingProgress subtotal={subtotal} minimum={MIN_ORDER} />
+          )}
+        </div>
 
         <div className="flex-1 overflow-y-auto px-5 md:px-8 py-6">
           {items.length === 0 ? (
-            <div className="h-full flex items-center justify-center text-center">
-              <p className="text-western-cream-muted max-w-xs leading-relaxed">
-                Quando você adicionar uma peça, ela aparece aqui.
-              </p>
+            <div className="space-y-6">
+              <div className="text-center py-6">
+                <p className="text-western-cream-muted max-w-xs mx-auto leading-relaxed">
+                  Quando você adicionar uma peça, ela aparece aqui.
+                </p>
+              </div>
+              <EmptyCartHints onNavigate={() => onOpenChange(false)} />
             </div>
           ) : (
             <ul className="space-y-6">
