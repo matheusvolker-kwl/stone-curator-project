@@ -182,7 +182,7 @@ export default function Footer() {
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 pt-8 border-t border-western-gold/15">
           <div className="flex items-center gap-5">
-            <img src={logo} alt="Western" className="h-8 w-auto opacity-90" />
+            <img src={logo} alt="Western" className="h-8 w-auto opacity-100" />
             <p className="text-spec text-western-cream-muted text-xs leading-snug">
               {BUSINESS.cnpj && <>CNPJ {BUSINESS.cnpj} · </>}Ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · Brasil
             </p>
