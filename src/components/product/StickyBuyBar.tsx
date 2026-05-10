@@ -128,7 +128,7 @@ export default function StickyBuyBar({
               <Button
                 onClick={onAdd}
                 disabled={!canAdd || !available || isLoading}
-                className="h-11 px-7 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60 flex-shrink-0"
+                className="h-11 px-7 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60 flex-shrink-0"
               >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
