@@ -87,6 +87,7 @@ export const PROJETOS: Projeto[] = [
       "1.000+ m² de lago artificial",
     ],
     cover: coverLago,
+    cardCover: coverNeymar,
     video: "/videos/projetos/lago.mp4",
   },
 ];
