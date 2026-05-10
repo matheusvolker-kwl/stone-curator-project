@@ -8,15 +8,9 @@ import { cdnImg } from "@/lib/shopify/client";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { itensCasaHandles } from "@/data/guideMap";
 import GatedPrice from "@/components/shared/GatedPrice";
-import GuideProductQuickView from "./GuideProductQuickView";
-import GuideStepFooter from "./GuideStepFooter";
+import GuideProductQuickView from "../GuideProductQuickView";
 
-interface Props {
-  onBack: () => void;
-  onNext: () => void;
-}
-
-export default function StepCasa({ onBack, onNext }: Props) {
+export default function SectionAutorais() {
   const { data: produtos, isLoading } = useQuery({
     queryKey: ["upsell-casa"],
     queryFn: () => fetchProductsByHandles(itensCasaHandles),
@@ -45,20 +39,25 @@ export default function StepCasa({ onBack, onNext }: Props) {
   };
 
   return (
-    <div className="animate-in fade-in duration-300">
-      <header className="mb-8">
-        <p className="text-eyebrow mb-3">Etapa 08 · Assinatura Western</p>
-        <h2 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight mb-3">
-          Itens autorais da casa
-        </h2>
-        <p className="text-western-stone-warm leading-relaxed max-w-2xl">
-          Peças exclusivas que viram presente para o cliente final, ponto focal de
-          living e geram margem expressiva para revenda especificada.
-        </p>
-        <p className="text-sm text-western-stone-warm/80 italic max-w-2xl mt-3">
-          Faisal especifica esses itens em quase todos os projetos premiados —
-          são detalhes que fazem o cliente lembrar de quem assinou o ambiente.
-        </p>
+    <section id="autorais" className="scroll-mt-28 border-t border-western-stone-warm/15 pt-10">
+      <header className="mb-6 flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <p className="text-eyebrow mb-2 flex items-center gap-2">
+            <Sparkles className="h-3 w-3 text-western-gold" /> Itens autorais
+          </p>
+          <h3 className="font-display text-2xl md:text-3xl text-western-green-deep leading-tight mb-2">
+            Edições exclusivas da casa
+          </h3>
+          <p className="text-sm text-western-stone-warm leading-relaxed max-w-2xl">
+            Peças que viram presente para o cliente final, ponto focal de living e geram margem
+            expressiva para revenda especificada.
+          </p>
+        </div>
+        {addedCount > 0 && (
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-green-deep bg-western-cream/50 border border-western-gold/40 px-3 py-1.5">
+            {addedCount} no projeto
+          </span>
+        )}
       </header>
 
       {isLoading ? (
@@ -67,10 +66,9 @@ export default function StepCasa({ onBack, onNext }: Props) {
             <div key={i} className="border border-western-stone-warm/15 bg-western-cream/40">
               <Skeleton className="aspect-[4/5] rounded-none" />
               <div className="p-5 space-y-3">
-                <Skeleton className="h-3 w-24" />
                 <Skeleton className="h-5 w-3/4" />
                 <Skeleton className="h-3 w-1/3" />
-                <Skeleton className="h-10 w-full mt-3" />
+                <Skeleton className="h-10 w-full" />
               </div>
             </div>
           ))}
@@ -106,9 +104,6 @@ export default function StepCasa({ onBack, onNext }: Props) {
                   )}
                 </button>
                 <div className="flex-1 p-5 flex flex-col gap-3">
-                  <span className="inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.22em] text-western-gold w-fit">
-                    <Sparkles className="h-3 w-3" /> Edição autoral
-                  </span>
                   <button
                     type="button"
                     onClick={() => setQuickHandle(p.handle)}
@@ -142,24 +137,11 @@ export default function StepCasa({ onBack, onNext }: Props) {
         </div>
       )}
 
-      <GuideStepFooter
-        onBack={onBack}
-        onNext={onNext}
-        nextLabel={
-          addedCount > 0
-            ? `Finalizar com ${addedCount} ${addedCount === 1 ? "item autoral" : "itens autorais"}`
-            : "Finalizar meu projeto"
-        }
-        skipLabel={addedCount === 0 ? "Não preciso disso agora" : undefined}
-        onSkip={addedCount === 0 ? onNext : undefined}
-        addedCount={addedCount}
-      />
-
       <GuideProductQuickView
         handle={quickHandle}
         open={!!quickHandle}
         onOpenChange={(o) => !o && setQuickHandle(null)}
       />
-    </div>
+    </section>
   );
 }

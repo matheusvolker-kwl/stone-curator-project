@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Check, Loader2, ShoppingBag } from "lucide-react";
+import { ArrowRight, Check, Loader2, ShoppingBag, TrendingUp, Plus, Sparkles, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import {
   nivelMeta,
+  resolveUpgrade,
   tamanhoLabels,
   tipoLabels,
   type ConjuntoLeaf,
   type GuideAnswers,
+  type Tipo,
 } from "@/data/guideMap";
 import { fetchProduct } from "@/lib/shopify/queries";
 import { cdnImg } from "@/lib/shopify/client";
@@ -16,18 +18,14 @@ import { parseProductDescription } from "@/lib/shopify/parseDescription";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import FinishSelector from "@/components/product/FinishSelector";
 import GatedPrice from "@/components/shared/GatedPrice";
-import GuideProductQuickView from "./GuideProductQuickView";
-import GuideStepFooter from "./GuideStepFooter";
+import GuideProductQuickView from "../GuideProductQuickView";
 
 interface Props {
   conjunto: ConjuntoLeaf;
   answers: GuideAnswers;
-  onBack: () => void;
-  onNext: () => void;
   onAcabamentoChange?: (acabamento: string) => void;
 }
 
-// Mapeamento simples de overlay tonal por acabamento (HSL triplet do FinishSelector).
 const FINISH_TINT: Record<string, string> = {
   quartzo: "38 35% 86%",
   arenito: "32 36% 65%",
@@ -53,7 +51,7 @@ function buildChips(answers: GuideAnswers, conjunto: ConjuntoLeaf): string[] {
   return out;
 }
 
-export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamentoChange }: Props) {
+export default function SectionConjunto({ conjunto, answers, onAcabamentoChange }: Props) {
   const { data: product, isLoading } = useQuery({
     queryKey: ["guide-product", conjunto.handle],
     queryFn: () => fetchProduct(conjunto.handle),
@@ -61,6 +59,7 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
   });
 
   const addItem = useCartStore((s) => s.addItem);
+  const removeItem = useCartStore((s) => s.removeItem);
   const cartItems = useCartStore((s) => s.items);
   const cartLoading = useCartStore((s) => s.isLoading);
 
@@ -93,9 +92,7 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
     return product?.descriptionHtml ? parseProductDescription(product.descriptionHtml) : null;
   }, [product]);
 
-  const galeriaImgs = product?.images.edges.slice(0, 4).map((e) => e.node.url) ?? [];
-  const heroImg = galeriaImgs[0];
-
+  const heroImg = product?.images.edges[0]?.node.url;
   const chips = buildChips(answers, conjunto);
   const precoReal = selectedVariant ? parseFloat(selectedVariant.price.amount) : conjunto.preco;
   const moeda = selectedVariant?.price.currencyCode ?? "BRL";
@@ -112,19 +109,55 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
     const item = buildCartItem(product, selectedVariant.id, 1);
     if (!item) return;
     await addItem(item);
-    toast.success(`${conjunto.nome} adicionado`, {
-      description: `Acabamento ${acabamento}.`,
-    });
+    toast.success(`${conjunto.nome} adicionado`, { description: `Acabamento ${acabamento}.` });
+  };
+
+  // === UPGRADE inline ===
+  const upgrade = useMemo(() => resolveUpgrade(answers), [answers]);
+  const tipo = answers.tipo as Tipo | undefined;
+  const nivelAtual = answers.nivel ?? "essencial";
+  const proximoNivel = nivelAtual === "essencial" ? "equilibrada" : "completa";
+  const metaUp = upgrade && tipo ? nivelMeta[tipo][proximoNivel] : null;
+
+  const { data: upProduct } = useQuery({
+    queryKey: ["upsell-upgrade", upgrade?.handle],
+    queryFn: () => (upgrade ? fetchProduct(upgrade.handle) : Promise.resolve(null)),
+    enabled: !!upgrade,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const upInCart = upgrade ? cartItems.some((i) => i.productHandle === upgrade.handle) : false;
+  const swapBaseForUpgrade = async () => {
+    if (!upgrade || !upProduct) return;
+    const variantId = upProduct.variants.edges[0]?.node.id;
+    if (!variantId) return;
+    const item = buildCartItem(upProduct, variantId, 1);
+    if (!item) return;
+    const baseLines = cartItems.filter((i) => i.productHandle === conjunto.handle);
+    for (const line of baseLines) await removeItem(line.variantId);
+    await addItem(item);
+    toast.success(`Upgrade aplicado: ${upgrade.nome}`, { description: "Conjunto base substituído." });
+  };
+  const addUpgradeOnly = async () => {
+    if (!upgrade || !upProduct) return;
+    const variantId = upProduct.variants.edges[0]?.node.id;
+    if (!variantId) return;
+    const item = buildCartItem(upProduct, variantId, 1);
+    if (!item) return;
+    await addItem(item);
+    toast.success(`Upgrade adicionado: ${upgrade.nome}`);
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-      <p className="text-eyebrow mb-3">Etapa 05 · Seu conjunto</p>
-      <h2 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight mb-6">
-        A composição que combina com o seu projeto
-      </h2>
+    <section id="conjunto" className="scroll-mt-28">
+      <header className="mb-6">
+        <p className="text-eyebrow mb-2">Seu conjunto base</p>
+        <h3 className="font-display text-2xl md:text-3xl text-western-green-deep leading-tight">
+          A composição que combina com o seu projeto
+        </h3>
+      </header>
 
-      {/* HERO EDITORIAL */}
+      {/* HERO */}
       <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] bg-western-green-deep overflow-hidden mb-6">
         {isLoading ? (
           <div className="w-full h-full animate-pulse bg-western-green-mid" />
@@ -144,7 +177,6 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
           </AnimatePresence>
         ) : null}
 
-        {/* Tint do acabamento — crossfade */}
         <AnimatePresence>
           <motion.div
             key={acabamento}
@@ -158,17 +190,15 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
           />
         </AnimatePresence>
 
-        {/* Gradiente para legibilidade do overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-western-green-deep/85 via-western-green-deep/30 to-transparent" />
 
-        {/* Overlay editorial */}
         <div className="absolute inset-x-0 bottom-0 p-5 md:p-8 text-western-cream">
           <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold mb-2">
             Curadoria Western · {conjunto.subtitulo}
           </p>
-          <h3 className="font-display text-2xl md:text-4xl leading-[1.05] mb-3 max-w-3xl">
+          <h4 className="font-display text-2xl md:text-4xl leading-[1.05] mb-3 max-w-3xl">
             {conjunto.nome}
-          </h3>
+          </h4>
           {chips.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {chips.map((c) => (
@@ -182,52 +212,16 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
             </div>
           )}
         </div>
-
-        {/* Swatch do acabamento atual */}
-        <div className="absolute top-3 right-3 sm:top-5 sm:right-5 flex items-center gap-1.5 sm:gap-2 bg-western-green-deep/60 backdrop-blur-sm px-2 py-1.5 sm:px-3 sm:py-2 border border-western-cream/15 max-w-[55%]">
-          <motion.span
-            key={acabamento}
-            initial={{ scale: 0.7 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 320, damping: 22 }}
-            className="block w-4 h-4 sm:w-5 sm:h-5 rounded-full ring-1 ring-western-cream/30 shrink-0"
-            style={{ backgroundColor: `hsl(${tint})` }}
-            aria-hidden
-          />
-          <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.18em] sm:tracking-[0.2em] text-western-cream truncate">
-            <span className="hidden sm:inline">Acabamento </span>{acabamento}
-          </span>
-        </div>
       </div>
 
-      {/* Galeria thumb */}
-      {galeriaImgs.length > 1 && (
-        <div className="grid grid-cols-3 gap-3 mb-8">
-          {galeriaImgs.slice(1).map((url, i) => (
-            <div key={i} className="aspect-[4/3] bg-western-green-deep overflow-hidden">
-              <img
-                src={cdnImg(url, 500)}
-                alt={`${conjunto.nome} – vista ${i + 2}`}
-                className="w-full h-full object-cover hover:scale-[1.04] transition-transform duration-500"
-                loading="lazy"
-              />
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div className="grid lg:grid-cols-[1.15fr_1fr] gap-8 lg:gap-12">
-        {/* Detalhes esquerda */}
+      <div className="grid lg:grid-cols-[1.15fr_1fr] gap-8 lg:gap-10">
+        {/* esquerda */}
         <div>
           <div className="border-t border-western-stone-warm/15 pt-5 mb-6">
             <p className="font-mono uppercase tracking-[0.18em] text-xs text-western-green-deep mb-4">
               Acabamento
             </p>
-            <FinishSelector
-              values={finishValues}
-              selected={acabamento}
-              onSelect={setAcabamento}
-            />
+            <FinishSelector values={finishValues} selected={acabamento} onSelect={setAcabamento} />
           </div>
 
           {parsed?.aplicacoes && parsed.aplicacoes.length > 0 && (
@@ -249,22 +243,19 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
           )}
         </div>
 
-        {/* Compra direita */}
-        <div className="lg:sticky lg:top-24 self-start">
+        {/* direita: compra + upgrade */}
+        <div className="space-y-4">
           <div className="bg-western-cream/40 border border-western-stone-warm/20 p-6">
             <p className="text-spec text-western-stone-warm mb-1">A partir de</p>
-            <div className="mb-1">
-              <GatedPrice
-                amount={precoReal}
-                currency={moeda}
-                className="font-display text-4xl text-western-green-deep"
-                variant="block"
-              />
-            </div>
-            <p className="text-xs text-western-stone-warm/80 mb-6">
+            <GatedPrice
+              amount={precoReal}
+              currency={moeda}
+              className="font-display text-3xl text-western-green-deep"
+              variant="block"
+            />
+            <p className="text-xs text-western-stone-warm/80 mb-5">
               Conjunto base · acabamento {acabamento.toLowerCase()}
             </p>
-
             <button
               type="button"
               onClick={handleAdd}
@@ -274,48 +265,87 @@ export default function StepBase({ conjunto, answers, onBack, onNext, onAcabamen
               {cartLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : baseAdded ? (
-                <>
-                  <Check className="h-4 w-4" /> Adicionado · adicionar novamente
-                </>
+                <><Check className="h-4 w-4" /> No projeto · adicionar de novo</>
               ) : (
-                <>
-                  <ShoppingBag className="h-4 w-4" /> Reservar este conjunto
-                </>
+                <><ShoppingBag className="h-4 w-4" /> Adicionar conjunto</>
               )}
             </button>
-
             {product && (
               <button
                 type="button"
                 onClick={() => setQuickOpen(true)}
                 className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors"
               >
-                Ver detalhes do conjunto <ArrowRight className="h-3.5 w-3.5" />
+                Ver detalhes <ArrowRight className="h-3.5 w-3.5" />
               </button>
             )}
-
-            <p className="mt-6 pt-5 border-t border-western-stone-warm/15 text-xs text-western-stone-warm/80 italic leading-relaxed">
-              Faisal recomenda: confirme a presença com o acabamento antes de ver os complementos —
-              cada acabamento muda a temperatura do projeto.
-            </p>
           </div>
+
+          {/* UPGRADE card */}
+          {upgrade && metaUp && (
+            <div className="relative bg-western-green-deep text-western-cream border border-western-gold/50 p-5 shadow-[0_24px_60px_-30px_rgba(184,146,79,0.5)]">
+              <div className="absolute -top-3 left-4">
+                <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] bg-western-gold text-western-green-deep px-2.5 py-1">
+                  <TrendingUp className="h-3 w-3" /> Versão {metaUp.label}
+                </span>
+              </div>
+              <p className="font-display text-lg text-western-cream leading-tight mt-2 mb-1">
+                Quer levar a um patamar acima?
+              </p>
+              <p className="text-xs text-western-cream/70 mb-3">
+                {upgrade.nome} — {metaUp.pecas}
+              </p>
+              <div className="flex items-baseline gap-3 mb-4">
+                <GatedPrice
+                  amount={upgrade.preco}
+                  currency="BRL"
+                  className="font-display text-xl text-western-gold"
+                />
+                {upgrade.preco - precoReal > 0 && (
+                  <GatedPrice
+                    amount={upgrade.preco - precoReal}
+                    currency="BRL"
+                    className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-cream/60"
+                    variant="hidden"
+                  />
+                )}
+              </div>
+              <div className="flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={baseAdded ? swapBaseForUpgrade : addUpgradeOnly}
+                  disabled={cartLoading || !upProduct}
+                  className="inline-flex items-center justify-center gap-2 h-10 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors disabled:opacity-60"
+                >
+                  {upInCart ? (
+                    <><Check className="h-3.5 w-3.5" /> Upgrade no projeto</>
+                  ) : baseAdded ? (
+                    <><RefreshCw className="h-3.5 w-3.5" /> Trocar base pelo upgrade</>
+                  ) : (
+                    <><Sparkles className="h-3.5 w-3.5" /> Aplicar upgrade</>
+                  )}
+                </button>
+                {baseAdded && !upInCart && (
+                  <button
+                    type="button"
+                    onClick={addUpgradeOnly}
+                    disabled={cartLoading || !upProduct}
+                    className="inline-flex items-center justify-center gap-2 h-9 border border-western-cream/30 text-western-cream/80 hover:border-western-gold hover:text-western-gold font-mono text-[10px] uppercase tracking-[0.2em] transition-colors disabled:opacity-60"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> Adicionar sem remover base
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
-
-      <GuideStepFooter
-        onBack={onBack}
-        onNext={onNext}
-        nextLabel={baseAdded ? "Seguir para complementos" : "Seguir só com o conjunto base"}
-        skipLabel={!baseAdded ? "Ainda não quero adicionar" : undefined}
-        onSkip={!baseAdded ? onNext : undefined}
-        addedCount={baseAdded ? 1 : 0}
-      />
 
       <GuideProductQuickView
         handle={product?.handle ?? null}
         open={quickOpen}
         onOpenChange={setQuickOpen}
       />
-    </motion.div>
+    </section>
   );
 }

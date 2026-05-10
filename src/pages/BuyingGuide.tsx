@@ -6,45 +6,26 @@ import GuideAssemblySummary from "@/components/guide/GuideAssemblySummary";
 import StepArea from "@/components/guide/StepArea";
 import StepProtagonismo from "@/components/guide/StepProtagonismo";
 import StepComposicao from "@/components/guide/StepComposicao";
-import StepBase from "@/components/guide/StepBase";
-import StepComplementos from "@/components/guide/StepComplementos";
-import StepUpgrade from "@/components/guide/StepUpgrade";
-import StepCasa from "@/components/guide/StepCasa";
-import StepFechamento from "@/components/guide/StepFechamento";
+import GuideConfigurator from "@/components/guide/GuideConfigurator";
 import GuideProgress from "@/components/guide/GuideProgress";
 import GuideConsultor from "@/components/guide/GuideConsultor";
 import GuideEspecial from "@/components/guide/GuideEspecial";
 import {
   useGuideStore,
   getProgressSteps,
-  nextAssemblyStep,
-  prevAssemblyStep,
   type GuideStep,
-  type AssemblySkips,
 } from "@/stores/guideStore";
 import {
-  complementosPorTipo,
   m2ToTamanhoId,
   nivelMeta,
   resolveConjunto,
-  resolveUpgrade,
   tipoLabels,
   type GuideAnswers,
 } from "@/data/guideMap";
 
-const ASSEMBLY_STEPS: GuideStep[] = ["base", "complementos", "upgrade", "casa", "fechamento"];
-
-const ASSEMBLY_LABELS: Record<string, string> = {
-  base: "Etapa 05 · Conjunto",
-  complementos: "Etapa 06 · Complementos",
-  upgrade: "Etapa 07 · Upgrade",
-  casa: "Etapa 08 · Assinatura",
-  fechamento: "Etapa 09 · Fechamento",
-};
-
 const VALID_STEPS: GuideStep[] = [
   "intro", "tipo", "area", "protagonismo", "composicao",
-  "base", "complementos", "upgrade", "casa", "fechamento", "especial",
+  "configurar", "especial",
 ];
 
 const DISCOVERY_STEPS: GuideStep[] = ["tipo", "area", "protagonismo", "composicao"];
@@ -74,29 +55,12 @@ export default function BuyingGuide() {
 
   const isAreaConsultor = tipo && areaM2 ? m2ToTamanhoId(tipo, areaM2) === "consultor" : false;
   const resolved = useMemo(() => resolveConjunto(answers), [answers]);
-  const upgradeAvailable = useMemo(() => !!resolveUpgrade(answers), [answers]);
-
-  // Skips de etapas de montagem
-  const skips: AssemblySkips = useMemo(
-    () => ({
-      skipComplementos: !tipo || (complementosPorTipo[tipo]?.length ?? 0) === 0,
-      skipUpgrade: !upgradeAvailable,
-      skipCasa: false,
-    }),
-    [tipo, upgradeAvailable]
-  );
 
   // === URL <-> step sync ===
-  // 1) URL → step (no mount e em cada mudança de URL via back/forward do navegador)
   useEffect(() => {
     const urlStep = searchParams.get("step");
     if (!isValidStep(urlStep)) {
-      // URL sem step válido = intro
-      if (step !== "intro" && initialMount.current) {
-        // Não força reset se já temos progresso interno; só usa o que vier da URL no mount.
-      }
-      if (urlStep && !isValidStep(urlStep)) {
-        // URL inválida — limpa
+      if (urlStep) {
         const next = new URLSearchParams(searchParams);
         next.delete("step");
         setSearchParams(next, { replace: true });
@@ -105,10 +69,9 @@ export default function BuyingGuide() {
       return;
     }
     if (urlStep !== step) {
-      // Validação de pré-requisitos
-      const requiresTipo: GuideStep[] = ["area", "protagonismo", "composicao", "base", "complementos", "upgrade", "casa", "fechamento"];
-      const requiresArea: GuideStep[] = ["protagonismo", "composicao", "base", "complementos", "upgrade", "casa", "fechamento"];
-      const requiresNivel: GuideStep[] = ["base", "complementos", "upgrade", "casa", "fechamento"];
+      const requiresTipo: GuideStep[] = ["area", "protagonismo", "composicao", "configurar"];
+      const requiresArea: GuideStep[] = ["protagonismo", "composicao", "configurar"];
+      const requiresNivel: GuideStep[] = ["configurar"];
       if (requiresTipo.includes(urlStep) && !tipo) {
         goto("tipo");
         return;
@@ -127,7 +90,6 @@ export default function BuyingGuide() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  // 2) step → URL
   useEffect(() => {
     const desired = step === "intro" ? "" : step;
     const current = searchParams.get("step") ?? "";
@@ -135,15 +97,14 @@ export default function BuyingGuide() {
     const next = new URLSearchParams(searchParams);
     if (desired) next.set("step", desired);
     else next.delete("step");
-    // replace no primeiro mount (não polui histórico), push depois
     setSearchParams(next, { replace: initialMount.current });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
-  // Progress bar
+  // Progress bar (descoberta + configurar)
   const progressSteps = useMemo(() => {
     if (!tipo || step === "intro" || step === "especial") return [];
-    const items = getProgressSteps(tipo, skips);
+    const items = getProgressSteps(tipo);
 
     const valueByKey: Record<string, string | undefined> = {
       tipo: tipo ? tipoLabels[tipo] : undefined,
@@ -182,62 +143,46 @@ export default function BuyingGuide() {
         onClick: canNavigate ? () => goto(item.key as GuideStep) : undefined,
       };
     });
-  }, [step, tipo, areaM2, nivel, composicao, jardim, skips, goto]);
+  }, [step, tipo, areaM2, nivel, composicao, jardim, goto]);
 
   // Scroll to top of wizard on step change
   useEffect(() => {
-    if (containerRef.current && ASSEMBLY_STEPS.includes(step as GuideStep)) {
+    if (containerRef.current && step === "configurar") {
       containerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [step]);
 
-  const handleNext = () =>
-    goto(nextAssemblyStep(step as GuideStep, skips));
-  const handlePrevAssembly = (fallback: GuideStep) =>
-    goto(prevAssemblyStep(step as GuideStep, skips, fallback));
-
-  const baseFallback: GuideStep = tipo === "piscina" ? "protagonismo" : "composicao";
-
-  // Atalhos de teclado: ←/→ nas etapas de montagem E descoberta
+  // Atalhos de teclado: ← volta nas etapas de descoberta
   useEffect(() => {
-    const isAssembly = ASSEMBLY_STEPS.includes(step as GuideStep);
     const isDiscovery = DISCOVERY_STEPS.includes(step as GuideStep);
-    if (!isAssembly && !isDiscovery) return;
-
+    if (!isDiscovery) return;
     const handler = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
       if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.tagName === "SELECT" || target.isContentEditable)) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      // ← sempre volta uma etapa via store.back()
       if (e.key === "ArrowLeft") {
         e.preventDefault();
-        if (isAssembly) handlePrevAssembly(baseFallback);
-        else state.back();
-      } else if (e.key === "ArrowRight" && isAssembly) {
-        // → só avança nas etapas de montagem (nas de descoberta a próxima depende de seleção)
-        e.preventDefault();
-        handleNext();
+        state.back();
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, skips, baseFallback]);
+  }, [step]);
 
-
-  const isAssembly = ASSEMBLY_STEPS.includes(step as GuideStep);
+  const isConfigurar = step === "configurar";
   const showResume =
     step === "intro" && !!savedAt && (!!tipo || !!areaM2 || !!nivel);
-  const stepLabel = ASSEMBLY_LABELS[step] ?? "Seu projeto";
+  const stepLabel = isConfigurar ? "Configurador · seu projeto" : "Seu projeto";
 
   return (
     <div className="surface-ivory min-h-screen">
-      <div className={`container-western py-12 md:py-20 pb-44 xl:pb-20 ${isAssembly ? "max-w-7xl" : "max-w-5xl"}`}>
+      <div className={`container-western py-12 md:py-20 pb-44 xl:pb-20 ${isConfigurar ? "max-w-7xl" : "max-w-5xl"}`}>
         {step === "intro" ? (
           <Intro
             onStart={() => { if (showResume) reset(); start(); }}
             onResume={showResume ? () => {
-              const target: GuideStep = nivel ? "base" : tipo ? (areaM2 ? "protagonismo" : "area") : "tipo";
+              const target: GuideStep = nivel ? "configurar" : tipo ? (areaM2 ? "protagonismo" : "area") : "tipo";
               goto(target);
             } : undefined}
             onReset={reset}
@@ -252,23 +197,22 @@ export default function BuyingGuide() {
         ) : (
           <div className="space-y-8" ref={containerRef}>
             {progressSteps.length > 0 && <GuideProgress steps={progressSteps} />}
-            <div className={isAssembly ? "grid xl:grid-cols-[1fr_320px] gap-8 items-start" : ""}>
+            <div className={isConfigurar ? "grid xl:grid-cols-[1fr_320px] gap-8 items-start" : ""}>
               <div className="border border-western-stone-warm/20 bg-white p-6 md:p-12 min-w-0">
                 {step === "tipo" && <StepOnde />}
                 {step === "area" && <StepArea />}
                 {step === "protagonismo" && <StepProtagonismo />}
                 {step === "composicao" && <StepComposicao />}
 
-                {step === "base" && (
+                {step === "configurar" && (
                   <>
                     {isAreaConsultor && tipo && areaM2 ? (
                       <GuideConsultor tipo={tipo} tamanho={`${areaM2} m²`} onReset={reset} />
                     ) : resolved && resolved !== "consultor" ? (
-                      <StepBase
+                      <GuideConfigurator
                         conjunto={resolved}
                         answers={answers}
-                        onBack={() => goto(baseFallback)}
-                        onNext={handleNext}
+                        acabamento={acabamentoAtual}
                         onAcabamentoChange={setAcabamentoAtual}
                       />
                     ) : (
@@ -276,43 +220,9 @@ export default function BuyingGuide() {
                     )}
                   </>
                 )}
-
-                {step === "complementos" && tipo && (
-                  <StepComplementos
-                    tipo={tipo}
-                    onBack={() => handlePrevAssembly(baseFallback)}
-                    onNext={handleNext}
-                  />
-                )}
-
-                {step === "upgrade" && resolved && resolved !== "consultor" && (
-                  <StepUpgrade
-                    answers={answers}
-                    precoBase={resolved.preco}
-                    onBack={() => handlePrevAssembly(baseFallback)}
-                    onNext={handleNext}
-                  />
-                )}
-
-                {step === "casa" && (
-                  <StepCasa
-                    onBack={() => handlePrevAssembly(baseFallback)}
-                    onNext={handleNext}
-                  />
-                )}
-
-                {step === "fechamento" && resolved && resolved !== "consultor" && (
-                  <StepFechamento
-                    conjunto={resolved}
-                    answers={answers}
-                    acabamento={acabamentoAtual}
-                    onBack={() => handlePrevAssembly(baseFallback)}
-                    onReset={reset}
-                  />
-                )}
               </div>
 
-              {isAssembly && <GuideAssemblySummary stepLabel={stepLabel} />}
+              {isConfigurar && <GuideAssemblySummary stepLabel={stepLabel} />}
             </div>
           </div>
         )}
@@ -376,16 +286,15 @@ function Intro({
           O conjunto certo,<br />em poucos passos.
         </h1>
         <p className="text-western-stone-warm text-lg leading-relaxed mb-4 max-w-2xl">
-          Escolha o ambiente, dimensione a área e veja a composição autoral
-          ideal — com peças, acabamento, investimento e prancha técnica para
-          download.
+          Escolha o ambiente, dimensione a área e configure tudo numa tela só —
+          conjunto, complementos e itens autorais com prancha técnica para download.
         </p>
         <p className="text-sm text-western-stone-warm/80 leading-relaxed mb-10 max-w-2xl">
           Atendimento dedicado a parceiros B2B: arquitetos, paisagistas, construtoras
           e revendas.
         </p>
         <div className="flex flex-wrap gap-6 items-center mb-10 text-sm text-western-stone-warm">
-          <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-western-gold" /> ~90 segundos</span>
+          <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-western-gold" /> ~60 segundos</span>
           <span className="flex items-center gap-2"><Layers className="h-4 w-4 text-western-gold" /> 45 conjuntos curados</span>
         </div>
 
@@ -440,9 +349,6 @@ function Intro({
             <ellipse cx="310" cy="240" rx="50" ry="22" />
           </g>
           <line x1="20" y1="430" x2="380" y2="430" stroke="hsl(var(--western-gold) / 0.4)" strokeWidth="1" />
-          <text x="30" y="60" fontFamily="monospace" fontSize="10" letterSpacing="3" fill="hsl(var(--western-gold) / 0.6)">
-            COMPOSIÇÃO 03
-          </text>
         </svg>
       </div>
     </div>

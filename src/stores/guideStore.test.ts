@@ -2,9 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import {
   useGuideStore,
   getDiscoverySteps,
-  getAssemblySteps,
-  nextAssemblyStep,
-  prevAssemblyStep,
+  getProgressSteps,
 } from "./guideStore";
 
 beforeEach(() => {
@@ -19,7 +17,7 @@ describe("guideStore — state machine", () => {
     expect(useGuideStore.getState().step).toBe("tipo");
   });
 
-  it("setTipo lago → area, setArea → protagonismo, setNivel → composicao (lago)", () => {
+  it("lago: tipo → area → protagonismo → composicao → configurar", () => {
     const s = useGuideStore.getState();
     s.setTipo("lago");
     expect(useGuideStore.getState().step).toBe("area");
@@ -27,27 +25,28 @@ describe("guideStore — state machine", () => {
     expect(useGuideStore.getState().step).toBe("protagonismo");
     useGuideStore.getState().setNivel("essencial");
     expect(useGuideStore.getState().step).toBe("composicao");
+    useGuideStore.getState().setComposicao("somenteWestern");
+    expect(useGuideStore.getState().step).toBe("configurar");
   });
 
-  it("piscina pula composicao e vai direto para base", () => {
+  it("piscina pula composicao e vai direto para configurar", () => {
     const s = useGuideStore.getState();
     s.setTipo("piscina");
     useGuideStore.getState().setArea(40);
     useGuideStore.getState().setNivel("essencial");
-    expect(useGuideStore.getState().step).toBe("base");
+    expect(useGuideStore.getState().step).toBe("configurar");
   });
 
   it("setTipo especial vai para a etapa especial", () => {
-    useGuideStore.getState().setTipo("especial" as any);
+    useGuideStore.getState().setTipo("especial" as never);
     expect(useGuideStore.getState().step).toBe("especial");
   });
 
-  it("back() respeita o salto da piscina", () => {
+  it("back() do configurar respeita o salto da piscina", () => {
     const s = useGuideStore.getState();
     s.setTipo("piscina");
     useGuideStore.getState().setArea(40);
     useGuideStore.getState().setNivel("essencial");
-    // step = base
     useGuideStore.getState().back();
     expect(useGuideStore.getState().step).toBe("protagonismo");
   });
@@ -73,17 +72,10 @@ describe("guideStore — derivações de etapas", () => {
     expect(getDiscoverySteps("piscina").map((s) => s.key)).not.toContain("composicao");
   });
 
-  it("getAssemblySteps respeita os skips", () => {
-    const full = getAssemblySteps();
-    expect(full.map((s) => s.key)).toEqual(["base", "complementos", "upgrade", "casa", "fechamento"]);
-    const skipped = getAssemblySteps({ skipComplementos: true, skipCasa: true });
-    expect(skipped.map((s) => s.key)).toEqual(["base", "upgrade", "fechamento"]);
-  });
-
-  it("nextAssemblyStep e prevAssemblyStep navegam respeitando skips", () => {
-    const skips = { skipComplementos: true } as const;
-    expect(nextAssemblyStep("base", skips)).toBe("upgrade");
-    expect(prevAssemblyStep("upgrade", skips, "composicao")).toBe("base");
-    expect(prevAssemblyStep("base", skips, "composicao")).toBe("composicao");
+  it("getProgressSteps termina sempre com 'configurar'", () => {
+    const lago = getProgressSteps("lago").map((s) => s.key);
+    expect(lago[lago.length - 1]).toBe("configurar");
+    const piscina = getProgressSteps("piscina").map((s) => s.key);
+    expect(piscina).toEqual(["tipo", "area", "protagonismo", "configurar"]);
   });
 });
