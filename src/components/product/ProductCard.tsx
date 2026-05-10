@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import type { ShopifyProductNode } from "@/lib/shopify/types";
 import { cdnImg, cdnSrcSet } from "@/lib/shopify/client";
+import { fetchProduct } from "@/lib/shopify/queries";
 import { ArrowRight } from "lucide-react";
 import WishlistButton from "./WishlistButton";
 
@@ -28,6 +30,7 @@ export default function ProductCard({ product }: Props) {
   const img = product.images.edges[0]?.node;
   const sku = product.variants.edges[0]?.node?.sku ?? "";
   const code = sku.split("-")[1] ?? sku.slice(0, 4).toUpperCase();
+  const queryClient = useQueryClient();
 
   // Detecta acabamentos disponíveis a partir das opções
   const finishOption = product.options.find((o) => /acabament|cor|finish/i.test(o.name));
@@ -40,9 +43,21 @@ export default function ProductCard({ product }: Props) {
     dimensionFromTitle(product.title) ||
     null;
 
+  // Prefetch do PDP no hover/focus — clique fica instantâneo
+  const prefetch = () => {
+    queryClient.prefetchQuery({
+      queryKey: ["product", product.handle],
+      queryFn: () => fetchProduct(product.handle),
+      staleTime: 1000 * 60 * 5,
+    });
+  };
+
   return (
     <Link
       to={`/produtos/${product.handle}`}
+      onMouseEnter={prefetch}
+      onFocus={prefetch}
+      onTouchStart={prefetch}
       className="group relative flex flex-col bg-white border border-western-stone-warm/10 hover:border-western-gold/60 transition-all duration-300"
     >
       {code && (
