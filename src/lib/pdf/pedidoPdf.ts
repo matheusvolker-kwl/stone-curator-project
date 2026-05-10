@@ -455,7 +455,7 @@ export async function gerarPedidoPdf(opts: PedidoPdfOptions): Promise<jsPDF> {
     doc.setFontSize(7);
     doc.setTextColor(...STONE);
     doc.text(
-      `${BUSINESS.razaoSocial || "Western"}  ·  Pedido Nº ${order.numero}  ·  ${scenario === "admin" ? "Cópia admin" : "Cópia parceiro"}`,
+      `Western Pedras Naturais  ·  Pedido Nº ${order.numero}  ·  ${scenario === "admin" ? "Cópia admin" : "Cópia parceiro"}`,
       M,
       pageH - 9,
     );
