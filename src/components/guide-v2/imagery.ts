@@ -1,7 +1,7 @@
-import coverPiscina from "@/assets/projetos/cover-piscina.avif";
-import coverLago from "@/assets/projetos/cover-lago.webp";
-import coverCaitoMaia from "@/assets/projetos/cover-caito-maia.webp";
-import coverCasaPraia from "@/assets/projetos/cover-casa-praia.webp";
+import coverPiscina from "@/assets/projetos/cover-piscina.jpg";
+import coverLago from "@/assets/projetos/cover-lago.jpg";
+import coverCaitoMaia from "@/assets/projetos/cover-jardim-fonte.jpg";
+import coverCasaPraia from "@/assets/projetos/cover-jardim-seco.png";
 
 import cascataEscalonada from "@/assets/about-projetos/cascata-escalonada.jpg";
 import cascataMirante from "@/assets/about-projetos/cascata-mirante.jpg";
