@@ -8,6 +8,13 @@ import RequireAuth from "@/components/auth/RequireAuth";
 import SiteLayout from "@/components/layout/SiteLayout";
 import ScrollToTop from "@/components/ScrollToTop";
 import Index from "./pages/Index.tsx";
+import AdminLayout from "@/components/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminPartners from "./pages/admin/AdminPartners";
+import AdminLeads from "./pages/admin/AdminLeads";
+import AdminSamples from "./pages/admin/AdminSamples";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminSettings from "./pages/admin/AdminSettings";
 import Linhas from "./pages/Linhas.tsx";
 import LinhaPage from "./pages/LinhaPage.tsx";
 import Conjuntos from "./pages/Conjuntos.tsx";
@@ -71,10 +78,17 @@ const App = () => (
                 path="/admin"
                 element={
                   <RequireAuth adminOnly>
-                    <Admin />
+                    <AdminLayout />
                   </RequireAuth>
                 }
-              />
+              >
+                <Route index element={<AdminDashboard />} />
+                <Route path="parceiros" element={<AdminPartners />} />
+                <Route path="leads" element={<AdminLeads />} />
+                <Route path="amostras" element={<AdminSamples />} />
+                <Route path="usuarios" element={<AdminUsers />} />
+                <Route path="configuracoes" element={<AdminSettings />} />
+              </Route>
               <Route
                 path="/pedir-amostras"
                 element={
