@@ -16,7 +16,9 @@ import {
   Send,
   X,
   Layers,
+  FileDown,
 } from "lucide-react";
+import { downloadPedidoPdf } from "@/lib/pdf/pedidoPdf";
 
 type Status =
   | "aguardando"
@@ -367,13 +369,36 @@ function OrderEditor({
         >
           <Trash2 className="h-3 w-3" /> Excluir pedido
         </button>
-        <button
-          onClick={save}
-          disabled={saving}
-          className="inline-flex items-center gap-2 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.22em] bg-western-green-deep text-western-cream hover:bg-western-green-deep/90 disabled:opacity-50"
-        >
-          <Save className="h-3 w-3" /> {saving ? "Salvando…" : "Salvar e sincronizar"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={async () => {
+              try {
+                const filename = await downloadPedidoPdf({
+                  order: { ...draft, observacoes_admin: draft.observacoes_admin },
+                  events,
+                  partner: partner
+                    ? { nome: partner.nome, empresa: partner.empresa, cidade: partner.cidade }
+                    : undefined,
+                  scenario: "admin",
+                });
+                toast.success(`PDF gerado: ${filename}`);
+              } catch (err) {
+                const msg = err instanceof Error ? err.message : "erro desconhecido";
+                toast.error("Falha ao gerar PDF: " + msg);
+              }
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep border border-western-green-deep/40 hover:bg-western-cream"
+          >
+            <FileDown className="h-3 w-3" /> Baixar PDF (admin)
+          </button>
+          <button
+            onClick={save}
+            disabled={saving}
+            className="inline-flex items-center gap-2 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.22em] bg-western-green-deep text-western-cream hover:bg-western-green-deep/90 disabled:opacity-50"
+          >
+            <Save className="h-3 w-3" /> {saving ? "Salvando…" : "Salvar e sincronizar"}
+          </button>
+        </div>
       </div>
 
       {/* Histórico + nota manual */}

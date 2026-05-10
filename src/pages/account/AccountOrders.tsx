@@ -13,9 +13,11 @@ import {
   ArrowLeft,
   Copy,
   ExternalLink,
+  FileDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import { formatBRL } from "@/lib/shopify/client";
+import { downloadPedidoPdf } from "@/lib/pdf/pedidoPdf";
 
 type Status =
   | "aguardando"
@@ -185,6 +187,20 @@ function OrderDetail({ order, onBack }: { order: ProductionOrder; onBack: () => 
     toast.success("Código copiado");
   };
 
+  const handleDownloadPdf = async () => {
+    try {
+      const filename = await downloadPedidoPdf({
+        order,
+        events,
+        scenario: "cliente",
+      });
+      toast.success(`PDF baixado: ${filename}`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "erro desconhecido";
+      toast.error("Falha ao gerar PDF: " + msg);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <button
@@ -201,7 +217,17 @@ function OrderDetail({ order, onBack }: { order: ProductionOrder; onBack: () => 
         </p>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <h2 className="font-display text-3xl text-western-green-deep leading-tight">{order.titulo}</h2>
-          <StatusBadge status={order.status} />
+          <div className="flex items-center gap-2 flex-wrap">
+            <StatusBadge status={order.status} />
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              disabled={loading}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep border border-western-green-deep/30 hover:bg-western-cream disabled:opacity-50"
+            >
+              <FileDown className="h-3 w-3" /> Baixar PDF
+            </button>
+          </div>
         </div>
       </div>
 
