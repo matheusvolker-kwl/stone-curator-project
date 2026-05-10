@@ -32,6 +32,7 @@ import RelatedProducts from "@/components/product/RelatedProducts";
 import WhyWesternStrip from "@/components/product/WhyWesternStrip";
 import SocialProofBand from "@/components/product/SocialProofBand";
 import ProductPagination from "@/components/product/ProductPagination";
+import ProductInUse from "@/components/product/ProductInUse";
 
 // Pluraliza nomes de coleção singulares ("Pedra Grande" → "Pedras Grandes").
 function pluralizeCollection(title?: string): string {
@@ -59,18 +60,7 @@ export default function ProductPage() {
 
   const [activeOptions, setActiveOptions] = useState<Record<string, string>>({});
 
-  // Pré-seleciona Moledo (acabamento mais vendido) quando o produto carrega
-  useEffect(() => {
-    if (!product) return;
-    const acab = product.options.find((o) => /acabament/i.test(o.name));
-    if (!acab) return;
-    const moledo = acab.values.find((v) => /moledo/i.test(v));
-    if (moledo) {
-      setActiveOptions((prev) =>
-        prev[acab.name] ? prev : { ...prev, [acab.name]: moledo }
-      );
-    }
-  }, [product]);
+  // Sem pré-seleção de acabamento: a escolha é obrigatória e consciente.
   const [activeImage, setActiveImage] = useState(0);
   const [qty, setQty] = useState(1);
   const addItem = useCartStore((s) => s.addItem);
@@ -233,13 +223,15 @@ export default function ProductPage() {
               </p>
             )}
 
-            {/* 2 — BLOCO DE COMPRA (preço · entrega · gatilho · seletor · CTA) */}
-            <div
+            {/* 2 — BLOCO DE COMPRA — sem caixa, hierarquia vertical */}
+            <section
               ref={ctaRef}
-              className="mt-8 border-l-2 border-western-gold bg-western-cream/50 pl-5 md:pl-6 pr-4 md:pr-5 py-6"
+              className="mt-8 space-y-6"
+              aria-label="Compra"
             >
               {(() => {
                 const pendingOption = visibleOptions.find((o) => !activeOptions[o.name]);
+                const acabPending = !!pendingOption && /acabament/i.test(pendingOption.name);
                 const priceDisplay = variant
                   ? formatBRL(variant.price.amount, variant.price.currencyCode)
                   : `a partir de ${formatBRL(
@@ -254,61 +246,42 @@ export default function ProductPage() {
 
                 return (
                   <>
-                    {/* Preço / PriceGate */}
-                    {isApproved ? (
-                      <div className="flex items-baseline justify-between gap-4 flex-wrap">
-                        <span className="text-eyebrow">Condição parceiro</span>
-                        <span
-                          className={`font-display text-western-green-deep ${
-                            variant ? "text-3xl md:text-4xl" : "text-xl text-western-stone-warm"
-                          } tabular-nums`}
-                        >
-                          {priceDisplay}
-                        </span>
-                      </div>
-                    ) : (
-                      <PriceGate variant="block" />
-                    )}
-
-                    {/* Entrega */}
-                    <div className="mt-5">
-                      <DeliverySignals />
-                    </div>
-
-                    {/* Gatilho social */}
-                    <p className="mt-4 inline-flex items-center gap-2 text-spec text-western-stone-warm">
-                      <Folder className="h-3.5 w-3.5 text-western-gold flex-shrink-0" />
-                      <span>
-                        Adicionado por{" "}
-                        <span className="text-western-green-deep font-medium">
-                          {studios} estúdios
-                        </span>{" "}
-                        em projetos nos últimos 30 dias.
-                      </span>
-                    </p>
-
-                    {/* Acabamento */}
+                    {/* 2.1 — Acabamento (PRIMEIRO, obrigatório) */}
                     {acabOption && (
-                      <div className="mt-6 pt-6 border-t border-western-stone-warm/15">
-                        <div className="flex items-baseline justify-between mb-4 gap-3">
-                          <p className="text-eyebrow">Acabamento</p>
+                      <div>
+                        <div className="flex items-baseline justify-between mb-2 gap-3">
+                          <p className="text-eyebrow">
+                            Acabamento{" "}
+                            <span className="text-western-gold">· obrigatório</span>
+                          </p>
                           <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/80">
                             mesmo preço
                           </span>
                         </div>
-                        <FinishSelector
-                          values={acabOption.values}
-                          selected={activeOptions[acabOption.name] ?? null}
-                          onSelect={(val) =>
-                            setActiveOptions((prev) => ({ ...prev, [acabOption.name]: val }))
+                        <p className="text-spec text-western-stone-warm italic mb-4 leading-relaxed">
+                          Cada peça é produzida sob demanda no acabamento escolhido.
+                        </p>
+                        <div
+                          className={
+                            acabPending
+                              ? "ring-1 ring-western-gold/40 ring-offset-4 ring-offset-western-paper transition-all"
+                              : ""
                           }
-                        />
+                        >
+                          <FinishSelector
+                            values={acabOption.values}
+                            selected={activeOptions[acabOption.name] ?? null}
+                            onSelect={(val) =>
+                              setActiveOptions((prev) => ({ ...prev, [acabOption.name]: val }))
+                            }
+                          />
+                        </div>
                       </div>
                     )}
 
-                    {/* Outras opções */}
+                    {/* 2.2 — Outras opções */}
                     {otherOptions.length > 0 && (
-                      <div className="mt-6 space-y-6">
+                      <div className="pt-6 border-t border-western-stone-warm/15 space-y-6">
                         {otherOptions.map((option) => (
                           <div key={option.name}>
                             <p className="text-eyebrow mb-3">{option.name}</p>
@@ -340,23 +313,31 @@ export default function ProductPage() {
                       </div>
                     )}
 
-                    {/* Stepper + CTA — apenas aprovado */}
-                    {isApproved && (
-                      <div className="mt-6 pt-6 border-t border-western-stone-warm/15">
-                        {pendingOption && (
-                          <div className="mb-5 flex items-start gap-2.5 px-4 py-3 border border-western-gold/40 bg-western-gold/10">
-                            <Info className="h-4 w-4 text-western-gold mt-0.5 flex-shrink-0" />
-                            <p className="text-spec text-western-green-deep leading-relaxed">
-                              Escolha {pendingOption.name.toLowerCase() === "acabamento" ? "o acabamento" : `a opção de ${pendingOption.name.toLowerCase()}`} para ver o preço final e adicionar ao pedido.
+                    {/* 2.3 — Preço + stepper na mesma linha */}
+                    <div className="pt-6 border-t border-western-stone-warm/15">
+                      {isApproved ? (
+                        <div className="flex items-end justify-between gap-4 flex-wrap">
+                          <div className="min-w-0">
+                            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/80 mb-1">
+                              Condição parceiro
+                            </p>
+                            <p
+                              className={`font-display text-western-green-deep ${
+                                variant ? "text-3xl md:text-4xl" : "text-xl text-western-stone-warm"
+                              } tabular-nums leading-none`}
+                            >
+                              {priceDisplay}
                             </p>
                           </div>
-                        )}
-
-                        <div className="flex flex-col sm:flex-row items-stretch gap-3">
-                          <div className="flex items-center justify-between sm:justify-start border border-western-stone-warm/30 h-12 bg-western-paper">
+                          <div
+                            className={`flex items-center border border-western-stone-warm/30 h-12 bg-western-paper transition-opacity ${
+                              acabPending ? "opacity-50" : ""
+                            }`}
+                          >
                             <button
                               onClick={() => setQty(Math.max(1, qty - 1))}
-                              className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
+                              disabled={acabPending}
+                              className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg disabled:cursor-not-allowed"
                               aria-label="Diminuir"
                             >
                               −
@@ -366,47 +347,87 @@ export default function ProductPage() {
                             </span>
                             <button
                               onClick={() => setQty(qty + 1)}
-                              className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg"
+                              disabled={acabPending}
+                              className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg disabled:cursor-not-allowed"
                               aria-label="Aumentar"
                             >
                               +
                             </button>
                           </div>
-                          <Button
-                            onClick={handleAdd}
-                            disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
-                            className="flex-1 h-12 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60 motion-safe:hover:-translate-y-px transition-all"
-                          >
-                            {isLoadingCart ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : pendingOption ? (
-                              `Selecione ${pendingOption.name.toLowerCase()}`
-                            ) : variant?.availableForSale ? (
-                              "Adicionar ao pedido"
-                            ) : (
-                              "Indisponível"
-                            )}
-                          </Button>
                         </div>
+                      ) : (
+                        <PriceGate variant="block" />
+                      )}
+                    </div>
 
-                        <button
-                          onClick={() => {
-                            const msg = `Olá! Gostaria de falar sobre ${product.title}${sku ? ` (SKU ${sku})` : ""}.`;
-                            window.open(
-                              `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
-                              "_blank"
-                            );
-                          }}
-                          className="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
+                    {/* 2.4 — Entrega */}
+                    <div>
+                      <DeliverySignals />
+                    </div>
+
+                    {/* 2.5 — CTA principal */}
+                    {isApproved && (
+                      <div>
+                        <Button
+                          onClick={handleAdd}
+                          disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
+                          className={`w-full h-12 font-mono text-xs uppercase tracking-[0.25em] rounded-none transition-all motion-safe:hover:-translate-y-px ${
+                            acabPending
+                              ? "bg-western-stone-warm/20 text-western-stone-warm hover:bg-western-stone-warm/25 disabled:opacity-100"
+                              : "bg-western-gold text-western-green-deep hover:bg-western-gold/90 disabled:opacity-60"
+                          }`}
                         >
-                          <MessageCircle className="h-3.5 w-3.5" /> Falar com consultor
-                        </button>
+                          {isLoadingCart ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : acabPending ? (
+                            "Selecione o acabamento"
+                          ) : pendingOption ? (
+                            `Selecione ${pendingOption.name.toLowerCase()}`
+                          ) : variant?.availableForSale ? (
+                            "Adicionar ao pedido"
+                          ) : (
+                            "Indisponível"
+                          )}
+                        </Button>
+
+                        {/* Linha sutil: gatilho + consultor */}
+                        <div className="mt-4 flex items-center justify-between flex-wrap gap-3">
+                          <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
+                            <Folder className="h-3 w-3 text-western-gold flex-shrink-0" />
+                            <span>
+                              Adicionado por{" "}
+                              <span className="text-western-green-deep">{studios}</span> estúdios · 30 dias
+                            </span>
+                          </p>
+                          <button
+                            onClick={() => {
+                              const msg = `Olá! Gostaria de falar sobre ${product.title}${sku ? ` (SKU ${sku})` : ""}.`;
+                              window.open(
+                                `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
+                                "_blank"
+                              );
+                            }}
+                            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
+                          >
+                            <MessageCircle className="h-3.5 w-3.5" /> Falar com consultor
+                          </button>
+                        </div>
                       </div>
+                    )}
+
+                    {!isApproved && (
+                      <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
+                        <Folder className="h-3 w-3 text-western-gold flex-shrink-0" />
+                        <span>
+                          Adicionado por{" "}
+                          <span className="text-western-green-deep">{studios}</span> estúdios · 30 dias
+                        </span>
+                      </p>
                     )}
                   </>
                 );
               })()}
-            </div>
+            </section>
 
             {/* 3 — Dados duros: peso & dimensões */}
             <HardFactsCard pesoKg={pesoKg} dimensoes={dimsStr} />
@@ -654,6 +675,7 @@ export default function ProductPage() {
 
       {/* Seções full-width abaixo do hero */}
       
+      <ProductInUse productHandle={product.handle} productTitle={product.title} />
       <ProductComparison productTitle={product.title} pesoKg={pesoKg} dimensoes={dimsStr} />
       <RelatedProducts
         collectionHandle={collection?.handle}
