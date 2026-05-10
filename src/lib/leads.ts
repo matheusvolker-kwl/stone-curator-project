@@ -76,44 +76,41 @@ export async function submitQuoteLead({
     .join(" | ");
 
   const numero = Math.random().toString(36).slice(2, 7).toUpperCase();
-  const leadId = crypto.randomUUID();
+  const itemsHash = await computeItemsHash(items);
 
-  const { error } = await supabase
-    .from("leads")
-    .insert({
-      id: leadId,
-      type: "orcamento",
+  const { data: rpcData, error } = await supabase.rpc("register_orcamento_lead", {
+    _items_hash: itemsHash,
+    _nome: contact.nome,
+    _email: contact.email,
+    _telefone: contact.telefone,
+    _empresa: contact.empresa ?? null,
+    _cidade: contact.cidade ?? null,
+    _mensagem: contact.mensagem ?? null,
+    _origem: origem,
+    _payload: {
+      items: summarizeItems(items),
+      subtotal,
+      currency,
+      summary: lineSummary,
+      numero,
       origem,
-      nome: contact.nome,
-      email: contact.email,
-      telefone: contact.telefone,
-      empresa: contact.empresa ?? null,
-      cidade: contact.cidade ?? null,
-      mensagem: contact.mensagem ?? null,
-      user_id: userId ?? null,
-      payload: {
-        items: summarizeItems(items),
-        subtotal,
-        currency,
-        summary: lineSummary,
-        numero,
-        origem,
-        projeto: projetoContext ?? null,
-        extra: payloadExtra ?? null,
-        submitted_at: new Date().toISOString(),
-      } as never,
-    });
+      projeto: projetoContext ?? null,
+      extra: payloadExtra ?? null,
+      submitted_at: new Date().toISOString(),
+    } as never,
+  });
 
-  if (error) {
+  if (error || !rpcData || (Array.isArray(rpcData) && rpcData.length === 0)) {
     void reportError({
-      source: "submitQuoteLead.insert",
-      message: "Falha ao inserir lead",
-      error,
+      source: "submitQuoteLead.rpc",
+      message: "Falha ao registrar orçamento via RPC",
+      error: error ?? new Error("empty rpc result"),
       context: { origem, userId, itemsCount: items.length, subtotal, numero },
     });
-    throw error;
+    throw error ?? new Error("Falha ao registrar orçamento");
   }
-  const lead = { id: leadId };
+  const row = Array.isArray(rpcData) ? rpcData[0] : rpcData;
+  const lead = { id: (row as { lead_id: string }).lead_id };
 
   // Always generate the PDF blob — used for download in success screen
   let pdfBlob: Blob | undefined;
