@@ -193,9 +193,20 @@ export default function CartDrawer({
               </div>
             )}
 
-            <p className="text-spec text-western-cream-muted leading-relaxed">
-              Produção em 15 dias úteis após confirmação do pedido.
-            </p>
+            <div className="flex items-center justify-between gap-3 py-2 border-y border-western-gold/10">
+              <div className="flex items-center gap-2 text-western-cream-muted">
+                <Clock className="h-3.5 w-3.5 text-western-gold-soft" />
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                  Produção 15 dias
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-western-cream-muted">
+                <ShieldCheck className="h-3.5 w-3.5 text-western-gold-soft" />
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                  +30 anos no atelier
+                </span>
+              </div>
+            </div>
 
             {/* CTA primário: Pagar online (aprovado) ou Solicitar orçamento (não aprovado) */}
             {isApproved ? (
