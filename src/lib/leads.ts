@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { CartItem } from "@/stores/cartStore";
 import { orcamentoPdfBlob, type PdfProjetoContext } from "@/lib/pdf/orcamentoPdf";
+import { reportError } from "@/lib/telemetry";
 
 export interface QuoteContact {
   nome: string;
@@ -103,7 +104,15 @@ export async function submitQuoteLead({
       } as never,
     });
 
-  if (error) throw error;
+  if (error) {
+    void reportError({
+      source: "submitQuoteLead.insert",
+      message: "Falha ao inserir lead",
+      error,
+      context: { origem, userId, itemsCount: items.length, subtotal, numero },
+    });
+    throw error;
+  }
   const lead = { id: leadId };
 
   // Always generate the PDF blob — used for download in success screen
@@ -127,6 +136,12 @@ export async function submitQuoteLead({
     });
   } catch (e) {
     console.warn("PDF generation failed", e);
+    void reportError({
+      source: "submitQuoteLead.pdfBuild",
+      message: "Falha ao gerar PDF do orçamento",
+      error: e,
+      context: { leadId, itemsCount: items.length, origem },
+    });
   }
 
   let pdfStored = false;
@@ -149,9 +164,21 @@ export async function submitQuoteLead({
         pdfStored = true;
       } else {
         console.warn("PDF save failed", saveErr);
+        void reportError({
+          source: "save-quote-pdf.invoke",
+          message: "Edge function save-quote-pdf retornou erro",
+          error: saveErr,
+          context: { leadId, userId, itemsCount: items.length, subtotal, sizeKb: Math.round((pdfBlob.size ?? 0) / 1024) },
+        });
       }
     } catch (e) {
       console.warn("PDF save failed", e);
+      void reportError({
+        source: "save-quote-pdf.invoke",
+        message: "Exceção ao chamar save-quote-pdf",
+        error: e,
+        context: { leadId, userId, itemsCount: items.length, subtotal },
+      });
     }
   }
 

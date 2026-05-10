@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Navigate, useParams, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, ExternalLink, Info, RotateCcw, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
+import { reportError } from "@/lib/telemetry";
 import QuoteLeadModal from "@/components/quote/QuoteLeadModal";
 import { useCartStore, type CartItem } from "@/stores/cartStore";
 import GuideHeader from "@/components/guide-v2/GuideHeader";
