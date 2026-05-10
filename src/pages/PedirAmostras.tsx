@@ -1,17 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Package, Info } from "lucide-react";
+import { Loader2, Package, Info, Lock, UserCircle2 } from "lucide-react";
 import PhoneInput from "@/components/forms/PhoneInput";
 import EmailInput from "@/components/forms/EmailInput";
 import CepInput from "@/components/forms/CepInput";
 import FieldLabel from "@/components/forms/FieldLabel";
 import { emailSchema, phoneBRSchema, cepSchema, UF_LIST } from "@/lib/forms/br";
 import { z } from "zod";
+import { useAuth } from "@/hooks/useAuth";
 
 const PERFIS = ["Arquiteto", "Paisagista", "Lojista", "Construtora", "Cliente final"];
 
@@ -47,12 +48,43 @@ const schema = z.object({
 });
 
 export default function PedirAmostras() {
+  const { user } = useAuth();
   const [f, setF] = useState<Form>(INITIAL);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
+
+  // Pré-preencher com dados do perfil quando logado
+  useEffect(() => {
+    if (!user) { setProfileLoaded(false); return; }
+    (async () => {
+      const { data } = await supabase
+        .from("partner_profiles")
+        .select("nome, telefone, empresa, cep, endereco, numero, complemento, bairro, cidade, estado, segmento")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      setF((p) => ({
+        ...p,
+        nome: data?.nome || p.nome,
+        email: user.email || p.email,
+        telefone: data?.telefone || p.telefone,
+        empresa: data?.empresa || p.empresa,
+        cep: data?.cep || p.cep,
+        endereco: data?.endereco || p.endereco,
+        numero: data?.numero || p.numero,
+        complemento: data?.complemento || p.complemento,
+        bairro: data?.bairro || p.bairro,
+        cidade: data?.cidade || p.cidade,
+        estado: data?.estado || p.estado,
+      }));
+      setProfileLoaded(true);
+    })();
+  }, [user]);
+
+  const isLocked = !!user && profileLoaded;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
