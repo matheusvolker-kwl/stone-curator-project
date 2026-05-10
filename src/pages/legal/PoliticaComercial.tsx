@@ -18,8 +18,8 @@ export default function PoliticaComercial() {
 
       <h2>Pagamento</h2>
       <p>
-        {BUSINESS.formasPagamentoLabel}. A produção é programada apenas após confirmação do
-        pagamento.
+        Condições de pagamento são definidas caso a caso e informadas ao parceiro durante a
+        negociação comercial.
       </p>
 
       <h2>Prazo de produção</h2>

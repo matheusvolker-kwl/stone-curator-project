@@ -444,7 +444,7 @@ export default function ProductPage() {
 
                     <ul className="text-spec text-western-stone-warm/80 leading-relaxed mt-5 text-xs space-y-1">
                       <li>· Produção sob demanda · {BUSINESS.prazoProducaoDias} dias úteis</li>
-                      <li>· Pedido mínimo {BUSINESS.pedidoMinimoLabel} · pagamento antecipado</li>
+                      <li>· Pedido mínimo {BUSINESS.pedidoMinimoLabel}</li>
                       <li>· Frete CIF sob orçamento para todo o Brasil</li>
                     </ul>
                   </>
@@ -589,7 +589,7 @@ export default function ProductPage() {
               <ProductAccordion numeral="V" title="Produção & entrega" value="entrega">
                 <p className="text-spec text-western-stone-warm leading-[1.8]">
                   Cada peça é produzida sob encomenda em nosso ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
-                  Prazo de produção de {BUSINESS.prazoProducaoDias} dias úteis após confirmação do pagamento.
+                  Prazo de produção de {BUSINESS.prazoProducaoDias} dias úteis após confirmação do pedido.
                   Instalação simples com argamassa C3 (loja de bairro). Kit de pintura para
                   retoque incluso. Frete calculado conforme destino e dimensões.
                 </p>

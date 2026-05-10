@@ -189,7 +189,7 @@ export default function LinhaPage() {
 
             <div className="pt-2 border-t border-western-stone-warm/15 space-y-3">
               <p className="text-spec text-western-stone-warm/80 text-xs leading-relaxed">
-                Pedido mínimo {BUSINESS.pedidoMinimoLabel} · produção {BUSINESS.prazoProducaoDias} dias úteis · pagamento antecipado.
+                Pedido mínimo {BUSINESS.pedidoMinimoLabel} · produção {BUSINESS.prazoProducaoDias} dias úteis após confirmação.
               </p>
               {hasFilters && (
                 <button

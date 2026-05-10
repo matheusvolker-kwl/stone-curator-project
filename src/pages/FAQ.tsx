@@ -87,7 +87,7 @@ const GRUPOS: Grupo[] = [
       },
       {
         q: "Como funciona o pagamento?",
-        a: <>{BUSINESS.formasPagamentoLabel}. A produção é programada apenas após confirmação do pagamento.</>,
+        a: <>As condições de pagamento são definidas caso a caso e informadas ao parceiro durante a negociação comercial.</>,
       },
       {
         q: "Qual o prazo de produção?",

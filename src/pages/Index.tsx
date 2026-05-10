@@ -106,7 +106,7 @@ export default function Index() {
         <div className="container-western py-5 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
           {[
             { Icon: ShieldCheck, t: `Pedido mínimo ${BUSINESS.pedidoMinimoLabel}`, d: "Exclusivo para profissionais com CNPJ." },
-            { Icon: Truck, t: "Produção em 15 dias úteis", d: "Após confirmação do pagamento antecipado." },
+            { Icon: Truck, t: "Produção em 15 dias úteis", d: "Após confirmação do pedido." },
             { Icon: Box, t: "Modelos 3D em SketchUp", d: "+300 mil downloads por profissionais no Warehouse." },
           ].map(({ Icon, t, d }, i) => (
             <Reveal key={t} variant="fade-up" delay={i * 80} duration={600} distance={16}>
@@ -224,7 +224,7 @@ export default function Index() {
                 {[
                   { eyebrow: "Pedido mínimo", t: BUSINESS.pedidoMinimoLabel },
                   { eyebrow: "Prazo", t: "15 dias úteis" },
-                  { eyebrow: "Pagamento", t: "100% antecipado" },
+                  { eyebrow: "Garantia", t: `${BUSINESS.garantiaAnos} anos` },
                   { eyebrow: "Frete", t: "Transportadora ou retirada" },
                 ].map((s) => (
                   <div key={s.t} className="bg-western-green-deep p-6 md:p-8">
