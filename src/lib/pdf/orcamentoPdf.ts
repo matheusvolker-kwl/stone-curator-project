@@ -3,6 +3,8 @@ import autoTable from "jspdf-autotable";
 import { formatBRL } from "@/lib/shopify/client";
 import type { CartItem } from "@/stores/cartStore";
 import { BUSINESS } from "@/config/business";
+import logoHorizontalBranco from "@/assets/brand/logo-horizontal-branco.png";
+import iconePedraBege from "@/assets/brand/icone-pedra-bege-hd.png";
 
 export interface PdfCliente {
   nome?: string;
@@ -23,11 +25,9 @@ export interface PdfOptions {
 }
 
 const GREEN: [number, number, number] = [27, 50, 41];
-const GREEN_MID: [number, number, number] = [44, 75, 60];
 const GOLD: [number, number, number] = [184, 146, 79];
 const GOLD_SOFT: [number, number, number] = [232, 218, 178];
 const CREAM: [number, number, number] = [248, 243, 230];
-const CREAM_DEEP: [number, number, number] = [232, 224, 207];
 const STONE: [number, number, number] = [110, 102, 90];
 const STONE_LINE: [number, number, number] = [220, 214, 200];
 const INK: [number, number, number] = [27, 50, 41];
@@ -36,34 +36,95 @@ function shortId(): string {
   return Math.random().toString(36).slice(2, 7).toUpperCase();
 }
 
-function drawHeader(doc: jsPDF, pageWidth: number, numero: string) {
-  // Solid green band
+/** Carrega uma URL (Vite asset) como dataURL para embutir no PDF. */
+async function loadDataUrl(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
+interface BrandAssets {
+  logoHorizontal: string | null;
+  cristalBege: string | null;
+  /** Proporção (largura / altura) do cristal — usada para preservar dimensões. */
+  cristalRatio: number;
+  /** Proporção do logo horizontal. */
+  logoRatio: number;
+}
+
+async function loadBrandAssets(): Promise<BrandAssets> {
+  const [logo, cristal] = await Promise.all([
+    loadDataUrl(logoHorizontalBranco),
+    loadDataUrl(iconePedraBege),
+  ]);
+
+  // Mede proporções reais para evitar distorção
+  const measure = (src: string | null): Promise<number> =>
+    new Promise((resolve) => {
+      if (!src) return resolve(1);
+      const img = new Image();
+      img.onload = () => resolve(img.naturalWidth / Math.max(1, img.naturalHeight));
+      img.onerror = () => resolve(1);
+      img.src = src;
+    });
+
+  const [logoRatio, cristalRatio] = await Promise.all([measure(logo), measure(cristal)]);
+  return { logoHorizontal: logo, cristalBege: cristal, logoRatio, cristalRatio };
+}
+
+function drawHeader(
+  doc: jsPDF,
+  pageWidth: number,
+  numero: string,
+  brand: BrandAssets,
+) {
+  // Faixa verde
   doc.setFillColor(...GREEN);
   doc.rect(0, 0, pageWidth, 130, "F");
 
-  // Subtle inner gold rule
+  // Logo horizontal branco — altura fixa, largura proporcional
+  const logoH = 32;
+  const logoW = logoH * brand.logoRatio;
+  if (brand.logoHorizontal) {
+    doc.addImage(brand.logoHorizontal, "PNG", 48, 38, logoW, logoH);
+  } else {
+    // Fallback tipográfico
+    doc.setTextColor(...CREAM);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.text("WESTERN", 48, 60, { charSpace: 4 });
+  }
+
+  // Tagline (sob o logo)
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7);
+  doc.setTextColor(...GOLD_SOFT);
+  doc.text(
+    "PEDRAS DECORATIVAS AUTORAIS  ·  ATELIÊ DESDE 1993",
+    48,
+    38 + logoH + 14,
+    { charSpace: 1.5 },
+  );
+
+  // Filete dourado
   doc.setDrawColor(...GOLD);
   doc.setLineWidth(0.4);
-  doc.line(48, 92, pageWidth - 48, 92);
+  doc.line(48, 100, pageWidth - 48, 100);
 
-  // Wordmark
-  doc.setTextColor(...CREAM);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(22);
-  doc.text("WESTERN", 48, 56, { charSpace: 4 });
-
-  // Tagline
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(7.5);
-  doc.setTextColor(...GOLD_SOFT);
-  doc.text("PEDRAS DECORATIVAS AUTORAIS · DESDE 1993", 48, 72, { charSpace: 1.5 });
-
-  // Eyebrow
+  // Eyebrow + data
   doc.setFontSize(8);
   doc.setTextColor(...GOLD);
-  doc.text(`COMPOSIÇÃO DE ORÇAMENTO  ·  Nº ${numero}`, 48, 112, { charSpace: 1.2 });
+  doc.text(`COMPOSIÇÃO DE ORÇAMENTO  ·  Nº ${numero}`, 48, 118, { charSpace: 1.2 });
 
-  // Date right
   const dataStr = new Date().toLocaleString("pt-BR", {
     day: "2-digit",
     month: "2-digit",
@@ -73,7 +134,85 @@ function drawHeader(doc: jsPDF, pageWidth: number, numero: string) {
   });
   doc.setTextColor(...CREAM);
   doc.setFontSize(8);
-  doc.text(`EMITIDO EM ${dataStr}`, pageWidth - 48, 112, { align: "right", charSpace: 1 });
+  doc.text(`EMITIDO EM ${dataStr}`, pageWidth - 48, 118, {
+    align: "right",
+    charSpace: 1,
+  });
+}
+
+function drawWatermark(
+  doc: jsPDF,
+  pageWidth: number,
+  pageHeight: number,
+  brand: BrandAssets,
+) {
+  if (!brand.cristalBege) return;
+  const w = 320;
+  const h = w / brand.cristalRatio;
+  const x = (pageWidth - w) / 2;
+  const y = (pageHeight - h) / 2 + 20;
+
+  // Opacidade reduzida via GState
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const anyDoc = doc as any;
+  try {
+    anyDoc.saveGraphicsState();
+    anyDoc.setGState(new anyDoc.GState({ opacity: 0.05 }));
+    doc.addImage(brand.cristalBege, "PNG", x, y, w, h);
+    anyDoc.restoreGraphicsState();
+  } catch {
+    /* sem watermark se GState não suportado */
+  }
+}
+
+function drawFooter(
+  doc: jsPDF,
+  pageWidth: number,
+  pageHeight: number,
+  brand: BrandAssets,
+) {
+  const margin = 48;
+  const footerY = pageHeight - 60;
+  doc.setFillColor(...GREEN);
+  doc.rect(0, footerY, pageWidth, 60, "F");
+  doc.setDrawColor(...GOLD);
+  doc.setLineWidth(0.4);
+  doc.line(margin, footerY + 14, pageWidth - margin, footerY + 14);
+
+  // Cristal pequeno antes da inscrição
+  let textX = margin;
+  if (brand.cristalBege) {
+    const iconH = 16;
+    const iconW = iconH * brand.cristalRatio;
+    doc.addImage(brand.cristalBege, "PNG", margin, footerY + 22, iconW, iconH);
+    textX = margin + iconW + 8;
+  }
+
+  doc.setTextColor(...CREAM);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.text("WESTERN  ·  ATELIÊ", textX, footerY + 30, { charSpace: 1.4 });
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(...GOLD_SOFT);
+  doc.text(BUSINESS.enderecoAtelieCompleto, textX, footerY + 44);
+
+  doc.setTextColor(...CREAM);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.text("CONTATO", pageWidth - margin, footerY + 30, {
+    align: "right",
+    charSpace: 1.4,
+  });
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(...GOLD_SOFT);
+  doc.text(
+    `WhatsApp ${BUSINESS.whatsappLabel}  ·  ${BUSINESS.emailComercial}`,
+    pageWidth - margin,
+    footerY + 44,
+    { align: "right" },
+  );
 }
 
 function drawClientCard(
@@ -84,25 +223,20 @@ function drawClientCard(
 ): number {
   const margin = 48;
   const cardH = 92;
-  // Card background
   doc.setFillColor(...CREAM);
   doc.rect(margin, y, pageWidth - margin * 2, cardH, "F");
-  // Left gold bar
   doc.setFillColor(...GOLD);
   doc.rect(margin, y, 3, cardH, "F");
 
-  // Eyebrow
   doc.setTextColor(...GOLD);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7.5);
   doc.text("CLIENTE", margin + 18, y + 20, { charSpace: 1.5 });
 
-  // Two columns
   doc.setTextColor(...INK);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12);
-  const linha1 = cliente.nome || "—";
-  doc.text(linha1, margin + 18, y + 38);
+  doc.text(cliente.nome || "—", margin + 18, y + 38);
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9.5);
@@ -110,7 +244,6 @@ function drawClientCard(
   if (cliente.empresa) doc.text(cliente.empresa, margin + 18, y + 54);
   if (cliente.cidade) doc.text(cliente.cidade, margin + 18, y + 70);
 
-  // Right column
   const colX = pageWidth / 2 + 10;
   doc.setTextColor(...GOLD);
   doc.setFont("helvetica", "bold");
@@ -127,30 +260,32 @@ function drawClientCard(
   return y + cardH;
 }
 
-export function gerarOrcamentoPdf({
+export async function gerarOrcamentoPdf({
   items,
   subtotal,
   currency = "BRL",
   cliente,
   showPrices,
   numero,
-}: PdfOptions): jsPDF {
+}: PdfOptions): Promise<jsPDF> {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 48;
   const numeroFinal = numero ?? shortId();
+  const brand = await loadBrandAssets();
 
-  drawHeader(doc, pageWidth, numeroFinal);
+  // Página inicial: header + watermark
+  drawHeader(doc, pageWidth, numeroFinal, brand);
+  drawWatermark(doc, pageWidth, pageHeight, brand);
 
   let y = 158;
 
-  // Cliente card
   if (cliente && (cliente.nome || cliente.email || cliente.telefone)) {
     y = drawClientCard(doc, pageWidth, y, cliente) + 24;
   }
 
-  // Section eyebrow
+  // Eyebrow seção
   doc.setTextColor(...GOLD);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7.5);
@@ -160,7 +295,6 @@ export function gerarOrcamentoPdf({
   doc.line(margin + 80, y - 3, pageWidth - margin, y - 3);
   y += 12;
 
-  // Tabela
   const head = showPrices
     ? [["Item", "Acabamento", "Qtd", "Preço unit.", "Subtotal"]]
     : [["Item", "Acabamento", "Qtd"]];
@@ -185,7 +319,7 @@ export function gerarOrcamentoPdf({
     startY: y,
     head,
     body,
-    margin: { left: margin, right: margin, bottom: 80 },
+    margin: { left: margin, right: margin, top: 150, bottom: 80 },
     theme: "plain",
     styles: {
       font: "helvetica",
@@ -207,12 +341,11 @@ export function gerarOrcamentoPdf({
       ? {
           0: { fontStyle: "bold" },
           2: { halign: "center", cellWidth: 44, textColor: GREEN },
-          3: { halign: "right", cellWidth: 88, font: "helvetica" },
+          3: { halign: "right", cellWidth: 88 },
           4: { halign: "right", cellWidth: 92, fontStyle: "bold", textColor: GREEN },
         }
       : { 0: { fontStyle: "bold" }, 2: { halign: "center", cellWidth: 64, textColor: GREEN } },
     didDrawCell: (data) => {
-      // Bottom border on body rows
       if (data.section === "body") {
         const { x, y: cy, width, height } = data.cell;
         doc.setDrawColor(...STONE_LINE);
@@ -220,14 +353,19 @@ export function gerarOrcamentoPdf({
         doc.line(x, cy + height, x + width, cy + height);
       }
     },
+    didDrawPage: (data) => {
+      // Repete header/watermark/footer em cada nova página
+      if (data.pageNumber > 1) {
+        drawHeader(doc, pageWidth, numeroFinal, brand);
+        drawWatermark(doc, pageWidth, pageHeight, brand);
+      }
+    },
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let cursorY = (doc as any).lastAutoTable.finalY + 28;
 
-  // Totais
   if (showPrices) {
-    // Gold rule
     doc.setDrawColor(...GOLD);
     doc.setLineWidth(0.6);
     doc.line(pageWidth - margin - 240, cursorY, pageWidth - margin, cursorY);
@@ -240,7 +378,9 @@ export function gerarOrcamentoPdf({
 
     doc.setFontSize(20);
     doc.setTextColor(...GREEN);
-    doc.text(formatBRL(subtotal, currency), pageWidth - margin, cursorY + 4, { align: "right" });
+    doc.text(formatBRL(subtotal, currency), pageWidth - margin, cursorY + 4, {
+      align: "right",
+    });
     cursorY += 26;
 
     doc.setFont("helvetica", "normal");
@@ -273,7 +413,6 @@ export function gerarOrcamentoPdf({
     cursorY += 40;
   }
 
-  // Mensagem do cliente
   if (cliente?.mensagem) {
     cursorY += 8;
     doc.setFillColor(...CREAM);
@@ -294,7 +433,6 @@ export function gerarOrcamentoPdf({
     cursorY += boxH + 10;
   }
 
-  // Condições — caixa final
   if (cursorY < pageHeight - 140) {
     cursorY += 12;
     doc.setDrawColor(...STONE_LINE);
@@ -318,41 +456,18 @@ export function gerarOrcamentoPdf({
     cond.forEach((c) => { doc.text("·  " + c, margin, cursorY); cursorY += 13; });
   }
 
-  // Footer
-  const footerY = pageHeight - 60;
-  doc.setFillColor(...GREEN);
-  doc.rect(0, footerY, pageWidth, 60, "F");
-  doc.setDrawColor(...GOLD);
-  doc.setLineWidth(0.4);
-  doc.line(margin, footerY + 14, pageWidth - margin, footerY + 14);
-
-  doc.setTextColor(...CREAM);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(7.5);
-  doc.text("WESTERN  ·  ATELIÊ", margin, footerY + 30, { charSpace: 1.4 });
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.setTextColor(...GOLD_SOFT);
-  doc.text(BUSINESS.enderecoAtelieCompleto, margin, footerY + 44);
-
-  doc.setTextColor(...CREAM);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(7.5);
-  doc.text("CONTATO", pageWidth - margin, footerY + 30, { align: "right", charSpace: 1.4 });
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.setTextColor(...GOLD_SOFT);
-  doc.text(`WhatsApp ${BUSINESS.whatsappLabel}  ·  ${BUSINESS.emailComercial}`, pageWidth - margin, footerY + 44, { align: "right" });
-
-  // suppress unused var lint
-  void GREEN_MID;
-  void CREAM_DEEP;
+  // Rodapé em todas as páginas
+  const totalPages = doc.getNumberOfPages();
+  for (let p = 1; p <= totalPages; p++) {
+    doc.setPage(p);
+    drawFooter(doc, pageWidth, pageHeight, brand);
+  }
 
   return doc;
 }
 
-export function downloadOrcamentoPdf(opts: PdfOptions) {
-  const doc = gerarOrcamentoPdf(opts);
+export async function downloadOrcamentoPdf(opts: PdfOptions): Promise<void> {
+  const doc = await gerarOrcamentoPdf(opts);
   const stamp = new Date()
     .toISOString()
     .replace(/[-:]/g, "")
@@ -361,7 +476,7 @@ export function downloadOrcamentoPdf(opts: PdfOptions) {
   doc.save(`western-orcamento-${stamp}.pdf`);
 }
 
-export function orcamentoPdfBlob(opts: PdfOptions): Blob {
-  const doc = gerarOrcamentoPdf(opts);
+export async function orcamentoPdfBlob(opts: PdfOptions): Promise<Blob> {
+  const doc = await gerarOrcamentoPdf(opts);
   return doc.output("blob");
 }
