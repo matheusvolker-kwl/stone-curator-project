@@ -227,6 +227,9 @@ export default function ProductPage() {
               </p>
             )}
 
+            {/* Bloco de dados duros — peso & dimensões */}
+            <HardFactsCard pesoKg={pesoKg} dimensoes={dimsStr} />
+
             {/* Lead — editorial drop-cap */}
             {parsed.lead && (
               <p
