@@ -19,6 +19,7 @@ const FILTERS: Record<TipoVisual, string[]> = {
   piscina: [
     "pedra-led",
     "pedra-sonora",
+    "fossil-coelphisys",
     "pedra-champanheira",
     "pedra-torneira",
     "pisada-pedra-grande",
@@ -26,16 +27,17 @@ const FILTERS: Record<TipoVisual, string[]> = {
     "pisada-dormente",
   ],
   lago: [
+    "fossil-coelphisys",
+    "fossil-seymouria",
     "pedra-led",
     "pedra-sonora",
     "pedra-torneira",
-    "fossil-coelphisys",
-    "fossil-seymouria",
     "pedra-champanheira",
     "pisada-pedra-grande",
     "pisada-pedra-media",
   ],
   "jardim-fonte": [
+    "fossil-seymouria",
     "pedra-torneira",
     "pedra-led",
     "pedra-sonora",

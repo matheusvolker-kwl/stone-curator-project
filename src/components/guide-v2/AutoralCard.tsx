@@ -7,11 +7,12 @@ interface Props {
   item: AutoralItem;
   index?: number;
   selected: boolean;
+  qty?: number;
   onToggle: () => void;
   onOpen?: () => void;
 }
 
-export default function AutoralCard({ item, selected, onToggle, onOpen }: Props) {
+export default function AutoralCard({ item, selected, qty = 0, onToggle, onOpen }: Props) {
   return (
     <article
       className={cn(
@@ -36,19 +37,23 @@ export default function AutoralCard({ item, selected, onToggle, onOpen }: Props)
           <div className="w-full h-full bg-western-paper" />
         )}
 
-        {/* Botão flutuante + / check */}
+        {/* Botão flutuante + / check com qty */}
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); onToggle(); }}
           aria-label={selected ? "Remover do projeto" : "Adicionar ao projeto"}
           className={cn(
-            "absolute top-2 right-2 inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300",
+            "absolute top-2 right-2 inline-flex items-center justify-center h-8 rounded-full font-mono text-[10px] uppercase tracking-[0.18em] transition-all duration-300",
             selected
-              ? "bg-western-green-deep text-western-cream anim-settle"
-              : "bg-white/95 text-western-green-deep border border-western-stone-warm/20 hover:bg-western-gold hover:border-western-gold opacity-0 group-hover:opacity-100"
+              ? "bg-western-green-deep text-western-cream anim-settle px-2.5 gap-1.5 min-w-[32px]"
+              : "w-8 bg-white/95 text-western-green-deep border border-western-stone-warm/20 hover:bg-western-gold hover:border-western-gold opacity-0 group-hover:opacity-100"
           )}
         >
-          {selected ? <Check className="h-3.5 w-3.5" strokeWidth={2.5} /> : <Plus className="h-3.5 w-3.5" />}
+          {selected ? (
+            qty > 1 ? <><Check className="h-3 w-3" strokeWidth={2.5} /> {qty}×</> : <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+          ) : (
+            <Plus className="h-3.5 w-3.5" />
+          )}
         </button>
       </div>
 

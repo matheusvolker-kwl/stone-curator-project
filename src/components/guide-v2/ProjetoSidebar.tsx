@@ -28,7 +28,7 @@ function PanelBody({ conjunto, pecas, extras, acabamento, isCustomizado, onReset
   return (
     <div className="surface-forest shadow-[0_36px_56px_-30px_hsl(var(--western-stone-dark)/0.45)] flex flex-col relative overflow-hidden">
       <div className="h-[3px] bg-western-gold" />
-      <div className="p-7 md:p-8 flex flex-col gap-6">
+      <div className="p-6 flex flex-col gap-4">
         {/* Badge curado / sob consulta */}
         <div
           className={
@@ -41,22 +41,22 @@ function PanelBody({ conjunto, pecas, extras, acabamento, isCustomizado, onReset
         </div>
 
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mb-3">
+          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mb-2">
             Seu projeto
           </p>
-          <h3 className="font-display text-[24px] text-western-cream leading-tight">{conjunto.nome}</h3>
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mt-2">
+          <h3 className="font-display text-[20px] text-western-cream leading-tight">{conjunto.nome}</h3>
+          <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-western-gold mt-1.5">
             Acabamento {acabamentoMeta[acabamento].label}
           </p>
         </div>
 
-        <div className="border-t border-western-cream/15 pt-5">
-          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mb-3">
+        <div className="border-t border-western-cream/15 pt-4">
+          <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-western-gold-soft mb-2">
             Composição base
           </p>
-          <ul className="space-y-1.5">
+          <ul className="space-y-1">
             {pecas.map((p) => (
-              <li key={p.id} className="flex justify-between text-[13px] text-western-cream/90">
+              <li key={p.id} className="flex justify-between text-[12.5px] text-western-cream/90">
                 <span className="truncate pr-2">{p.nome}</span>
                 <span className="font-mono text-western-cream-muted">{p.qty}×</span>
               </li>
@@ -65,12 +65,12 @@ function PanelBody({ conjunto, pecas, extras, acabamento, isCustomizado, onReset
 
           {extras.length > 0 && (
             <>
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mt-5 mb-3">
+              <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-western-gold-soft mt-4 mb-2">
                 Peças adicionadas
               </p>
-              <ul className="space-y-1.5">
+              <ul className="space-y-1">
                 {extras.map((e) => (
-                  <li key={e.id} className="flex justify-between text-[13px] text-western-cream/90">
+                  <li key={e.id} className="flex justify-between text-[12.5px] text-western-cream/90">
                     <span className="truncate pr-2">{e.nome}</span>
                     <span className="font-mono text-western-cream-muted">{e.qty}×</span>
                   </li>
@@ -83,7 +83,7 @@ function PanelBody({ conjunto, pecas, extras, acabamento, isCustomizado, onReset
             <button
               type="button"
               onClick={onResetBase}
-              className="mt-4 font-mono text-[10px] uppercase tracking-[0.22em] text-western-cream-muted hover:text-western-gold underline-offset-4 hover:underline"
+              className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-western-cream-muted hover:text-western-gold underline-offset-4 hover:underline"
             >
               ← Voltar à composição original
             </button>
@@ -92,7 +92,7 @@ function PanelBody({ conjunto, pecas, extras, acabamento, isCustomizado, onReset
 
         {isApproved ? (
           <>
-            <div className="border-t border-western-cream/15 pt-5 space-y-2 text-[14px]">
+            <div className="border-t border-western-cream/15 pt-4 space-y-1.5 text-[13px]">
               <div className="flex justify-between text-western-cream-muted">
                 <span>Subtotal composição</span>
                 <span className="font-mono">{formatPreco(subBase)}</span>
@@ -111,36 +111,36 @@ function PanelBody({ conjunto, pecas, extras, acabamento, isCustomizado, onReset
               )}
             </div>
 
-            <div className="border-t border-western-cream/15 pt-5">
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mb-2">
+            <div className="border-t border-western-cream/15 pt-4">
+              <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-western-gold-soft mb-1.5">
                 {isCustomizado ? "Total estimado" : "Total"}
               </p>
-              <p className="font-display text-[36px] font-medium text-western-cream leading-none">
+              <p className="font-display text-[30px] font-medium text-western-cream leading-none">
                 {formatPreco(total)}
               </p>
-              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-cream-muted/80 mt-2.5">
+              <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-western-cream-muted/80 mt-2">
                 {isCustomizado ? "Confirmado pela equipe em até 48h" : "Pedido único · frete otimizado"}
               </p>
             </div>
           </>
         ) : (
-          <div className="border border-western-gold/40 bg-western-gold/10 p-5">
-            <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold flex items-center gap-2 mb-2">
+          <div className="border border-western-gold/40 bg-western-gold/10 p-4">
+            <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-western-gold flex items-center gap-2 mb-1.5">
               <Lock className="h-3 w-3" /> Preços para parceiros
             </p>
-            <p className="text-[13px] text-western-cream mb-4 leading-relaxed">
+            <p className="text-[12.5px] text-western-cream mb-3 leading-relaxed">
               Acesse para visualizar valores e finalizar o projeto.
             </p>
             <div className="flex flex-col gap-2">
               <Link
                 to={session ? "/minha-conta" : "/parceiro/login"}
-                className="inline-flex items-center justify-center gap-2 h-11 px-5 bg-western-gold text-western-green-deep font-mono text-[10px] uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors"
+                className="inline-flex items-center justify-center gap-2 h-10 px-4 bg-western-gold text-western-green-deep font-mono text-[10px] uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors"
               >
                 Acessar para ver preço
               </Link>
               <Link
                 to="/parceiro/cadastro"
-                className="inline-flex items-center justify-center gap-2 h-11 px-5 border border-western-cream/40 text-western-cream font-mono text-[10px] uppercase tracking-[0.22em] hover:border-western-gold transition-colors"
+                className="inline-flex items-center justify-center gap-2 h-10 px-4 border border-western-cream/40 text-western-cream font-mono text-[10px] uppercase tracking-[0.22em] hover:border-western-gold transition-colors"
               >
                 Solicitar cadastro B2B
               </Link>
@@ -148,12 +148,12 @@ function PanelBody({ conjunto, pecas, extras, acabamento, isCustomizado, onReset
           </div>
         )}
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2.5">
           <button
             type="button"
             onClick={onFinalizar}
             disabled={!isApproved}
-            className="inline-flex items-center justify-center gap-3 h-[54px] bg-western-gold text-western-green-deep font-mono text-xs uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-3 h-12 bg-western-gold text-western-green-deep font-mono text-xs uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {isCustomizado ? "Solicitar orçamento sob consulta" : "Revisar e finalizar"}
             <ArrowRight className="h-4 w-4" />
@@ -162,7 +162,7 @@ function PanelBody({ conjunto, pecas, extras, acabamento, isCustomizado, onReset
             <button
               type="button"
               onClick={() => toast("Prévia em SketchUp em breve.")}
-              className="inline-flex items-center justify-center gap-2 h-11 border border-western-cream/40 text-western-cream font-mono text-[11px] uppercase tracking-[0.22em] hover:border-western-gold hover:text-western-gold transition-colors"
+              className="inline-flex items-center justify-center gap-2 h-10 border border-western-cream/40 text-western-cream font-mono text-[10px] uppercase tracking-[0.22em] hover:border-western-gold hover:text-western-gold transition-colors"
             >
               <Download className="h-3.5 w-3.5" /> Baixar prévia em SketchUp
             </button>
@@ -170,7 +170,7 @@ function PanelBody({ conjunto, pecas, extras, acabamento, isCustomizado, onReset
           <button
             type="button"
             onClick={() => toast(session ? "Projeto salvo no seu painel." : "Faça login para salvar o projeto.")}
-            className="text-[12px] text-western-cream-muted hover:text-western-cream underline-offset-4 hover:underline self-center mt-1"
+            className="text-[11.5px] text-western-cream-muted hover:text-western-cream underline-offset-4 hover:underline self-center"
           >
             Salvar projeto e decidir depois
           </button>
@@ -192,7 +192,7 @@ export default function ProjetoSidebar(props: Props) {
 
   return (
     <>
-      <aside className="hidden lg:block sticky top-32 self-start max-h-[calc(100vh-9rem)] overflow-y-auto scrollbar-hide">
+      <aside className="hidden lg:block sticky top-28 self-start">
         <PanelBody {...props} />
       </aside>
 

@@ -1,70 +1,64 @@
-## O problema
+## Problemas
 
-**Cards "Peças que somam ao projeto" gigantes:** grid `md:grid-cols-2` na coluna principal (≈800px), cada card com `aspect-[4/3]` + padding `p-6` + altura de 700+ px. Imagens grandes do CDN cropam mal.
-
-**Modal confuso:** muito texto (descrição longa Shopify), peso/dimensões pouco úteis primeiro, hierarquia plana, CTA pequeno no final.
+1. **Sidebar com scroll interno** — `max-h-[calc(100vh-9rem)] overflow-y-auto` cria rolagem dentro do card quando o conteúdo não cabe. O CTA "Revisar e finalizar" fica escondido.
+2. **Sem fóssil em piscina** — só lago/jardim-seco têm `fossil-coelphisys`.
+3. **Modal de produto autoral**:
+   - Botão `×` recortado pela faixa dourada do topo
+   - Não permite quantidade > 1
+   - Layout ainda visualmente fraco
 
 ---
 
-## Plano de redesign
+## Plano
 
-### 1. Grid de autorais mais denso e elegante
-`Refinar.tsx` linha 231: trocar para `grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4` (4 colunas em desktop wide, 3 em md). Cards menores e escaneáveis.
+### 1. Sidebar verdadeiramente sticky, sem scroll interno
+`ProjetoSidebar.tsx` linha 195: remover `max-h-[calc(100vh-9rem)] overflow-y-auto scrollbar-hide`. Manter só `sticky top-32 self-start`. Se o conteúdo for maior que a viewport, ele rola com a página normalmente (comportamento que o usuário quer).
 
-### 2. `AutoralCard.tsx` — versão compacta
-- Imagem `aspect-square` (não 4/3) com `object-contain` em fundo `western-paper` (produtos têm fundo branco do Shopify, não devem ser cropados — mostrar peça inteira).
-- Padding `p-3.5` (era `p-6`).
-- Nome `text-[14px]` (era 20px), código `text-[9px]`, preço `text-[16px]`.
-- Botão compacto: ícone `+` circular no canto da imagem (overlay) ou mini-pill `h-8` no rodapé. Estado selecionado = check dourado no canto.
-- Hover: leve elevação + zoom sutil. Nada agressivo.
+Para garantir que o resumo + CTA caibam em viewports comuns (854px+), **compactar o panel**:
+- Reduzir padding `p-7 md:p-8` → `p-6`
+- Reduzir gap `gap-6` → `gap-5`
+- Total: `text-[36px]` → `text-[32px]`
+- Reduzir espaçamentos verticais entre seções (`pt-5` → `pt-4`)
+- Lista de peças com `text-[12.5px]`, `space-y-1`
+- CTA principal `h-[54px]` → `h-12`, secundário `h-11` → `h-10`
+- Lock state mais compacto
 
-### 3. `AutoralProductModal.tsx` — design "ficha de produto"
-Estrutura mais inteligente, escaneável em 3s:
+### 2. Adicionar fóssil em piscina + jardim-fonte
+`autoraisCatalog.ts` FILTERS:
+- `piscina`: adicionar `fossil-coelphisys` no array
+- `jardim-fonte`: adicionar `fossil-seymouria`
+Reordenar para fósseis aparecerem entre as primeiras peças (mais visibilidade).
 
-```
-┌──────────────────────────────────────────┐
-│ [imagem peça]   │  CÓDIGO · AUTORAL  ✕  │
-│  fundo paper    │  Pedra LED             │
-│  object-contain │  ─────                 │
-│  aspect-square  │  R$ 85                 │
-│                 │                        │
-│                 │  Subtítulo curto       │
-│                 │  (1ª frase da desc.)   │
-│                 │                        │
-│                 │  3 kg · 20 × 18 cm     │
-│                 │                        │
-│                 │  [+ Adicionar projeto] │
-│                 │                        │
-│                 │  ▾ Mais detalhes       │
-└──────────────────────────────────────────┘
-```
+### 3. Modal autoral — refinar e corrigir bug
+`AutoralProductModal.tsx`:
 
-Mudanças:
-- Imagem com `object-contain` + fundo `western-paper`.
-- Hierarquia: código → nome → preço imediato (no topo, não no final).
-- Subtítulo = 1ª frase da descrição (split por `. `). Resto colapsado em accordion "Mais detalhes" fechado por padrão.
-- Specs em linha única compacta (`peso · dim`), não dl gigante.
-- CTA primário grande logo após specs.
-- Modal `max-w-[560px]` (era 640), `aspect-square` na imagem.
-- Botão fechar `✕` visível no topo direito.
+**Bug do `×`:** atualmente `absolute top-3 right-3` no painel direito, mas a faixa `h-[3px] bg-western-gold` no topo do `DialogContent` está acima e o canto fica visualmente quebrado. Solução:
+- Mover o `×` para `position: absolute` no nível do `DialogContent` (não dentro do grid), `top-2.5 right-2.5`, com `z-10` e fundo `bg-western-cream/90 backdrop-blur` em círculo `w-8 h-8 rounded-full`. Fica acima da faixa e da imagem.
 
-### 4. ASMR e UX — micro-detalhes
-- Transição da abertura do modal: fade + scale sutil (já é shadcn default, ok).
-- Hover no card: cursor-zoom-in sobre imagem para sinalizar que abre detalhe.
-- Botão "+ Adicionar" no card: animação check verde quando seleciona, com leve "settle" (já temos `anim-settle` no CSS).
-- Skeleton enquanto Shopify carrega imagem (evita pop-in feio).
-- Imagens: `loading="lazy"` + `decoding="async"` (já existem) + dimensões fixas do CDN para evitar reflow.
+**Quantidade > 1:** quando já está selecionado, em vez de mostrar só "Remover do projeto", mostrar **stepper de quantidade** + ação remover ao lado. Stepper: `−  [ qty ]  +` no mesmo padrão do `PecaRow`. Vai exigir ler/atualizar `qty` do extra, então:
+- Adicionar prop `currentQty: number` ao modal
+- Adicionar prop `onQtyChange: (delta: number) => void` ou `onSetQty: (qty: number) => void`
+- No `Refinar.tsx`, passar handlers que façam `setExtras` aumentando/diminuindo qty. Já existe `addExtraQty`/`setExtras` lógica para extras — verificar e reaproveitar.
 
-### 5. Linha do conjunto base (`PecaRow.tsx`)
-Verificar se também sofre do mesmo problema de cards grandes. Se sim, aplicar mesma lógica de `object-contain` em fundo paper.
+**Refinamento visual:**
+- Remover a faixa dourada do topo (poluição visual) — substituir por um detalhe gold mais sutil só na lateral/canto da seção de info, ou simplesmente um `border-t-2 border-western-gold` na seção do conteúdo
+- Aumentar respiro: `p-6 md:p-7` continua, mas reorganizar hierarquia
+- Fundo da imagem `bg-western-paper` mantém, mas com sombra interna sutil para a peça "flutuar"
+- Tipografia: nome `text-[24px]` (era 22px), preço `text-[28px]` (era 26px), código `text-[10px]`
+- CTA principal: full-width, `h-12`, com hover state mais marcado
+- Reordenar: `código → nome → divisor → preço → resumo curto → specs → stepper/CTA → mais detalhes`
+
+### 4. Mini-quantidade no AutoralCard também
+No card do grid (`AutoralCard.tsx`), quando já selecionado e `qty > 1`, mostrar o número no badge do canto superior direito (`bg-western-green-deep` com `qty×`) em vez de só o check. Ajuda o usuário a ver quantos já adicionou sem abrir o modal.
 
 ---
 
 ## Arquivos afetados
 
-- `src/components/guide-v2/AutoralCard.tsx` — redesign compacto
-- `src/components/guide-v2/AutoralProductModal.tsx` — redesign hierárquico com accordion
-- `src/pages/guia/Refinar.tsx` — grid 3-4 colunas
-- `src/components/guide-v2/PecaRow.tsx` — possível ajuste de imagem (verificar)
+- `src/components/guide-v2/ProjetoSidebar.tsx` — remover scroll interno + compactar
+- `src/components/guide-v2/autoraisCatalog.ts` — adicionar fósseis em piscina e jardim-fonte
+- `src/components/guide-v2/AutoralProductModal.tsx` — fix botão `×`, stepper de quantidade, refinar visual
+- `src/components/guide-v2/AutoralCard.tsx` — badge de quantidade quando >1
+- `src/pages/guia/Refinar.tsx` — passar `currentQty` + handler de qty pro modal (verificar lógica de extras existente)
 
-Sem mudanças em DB, rotas ou lógica de negócio. Apenas frontend/UX.
+Sem mudanças em DB, rotas ou regras de negócio.

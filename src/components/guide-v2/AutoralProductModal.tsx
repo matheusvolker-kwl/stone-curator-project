@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Check, ChevronDown, Plus, X } from "lucide-react";
+import { Check, ChevronDown, Minus, Plus, Trash2, X } from "lucide-react";
 import { formatPreco } from "@/data/guideMap";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
@@ -11,20 +11,21 @@ interface Props {
   item: AutoralItem | null;
   index: number;
   selected: boolean;
+  qty: number;
   onClose: () => void;
   onToggle: () => void;
+  onSetQty: (qty: number) => void;
 }
 
 function splitDescricao(d?: string): { resumo: string; resto: string } {
   if (!d) return { resumo: "", resto: "" };
   const clean = d.replace(/\s+/g, " ").trim();
-  // Primeira frase (até primeiro ponto seguido de espaço/fim)
   const m = clean.match(/^(.+?[.!?])(\s+|$)/);
   if (!m) return { resumo: clean, resto: "" };
   return { resumo: m[1], resto: clean.slice(m[0].length).trim() };
 }
 
-export default function AutoralProductModal({ item, selected, onClose, onToggle }: Props) {
+export default function AutoralProductModal({ item, selected, qty, onClose, onToggle, onSetQty }: Props) {
   const { isApproved, session } = useAuth();
   const [showMais, setShowMais] = useState(false);
   const open = !!item;
@@ -45,18 +46,27 @@ export default function AutoralProductModal({ item, selected, onClose, onToggle 
         }
       }}
     >
-      <DialogContent className="max-w-[560px] p-0 bg-western-cream border-0 overflow-hidden gap-0">
+      <DialogContent className="max-w-[580px] p-0 bg-western-cream border-0 overflow-hidden gap-0">
         {item && (
           <>
-            <div className="h-[3px] bg-western-gold" />
+            {/* Botão fechar — flutuante acima de tudo */}
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Fechar"
+              className="absolute top-3 right-3 z-20 inline-flex items-center justify-center w-8 h-8 rounded-full bg-western-cream/95 backdrop-blur-sm text-western-stone-warm hover:text-western-green-deep hover:bg-white shadow-sm transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
             <div className="grid grid-cols-1 md:grid-cols-[5fr_6fr]">
               {/* Imagem */}
-              <div className="relative aspect-square md:aspect-auto bg-western-paper overflow-hidden">
+              <div className="relative aspect-square md:aspect-auto bg-western-paper overflow-hidden border-r border-western-stone-warm/10">
                 {item.imageUrl ? (
                   <img
                     src={item.imageUrl}
                     alt={item.nome}
-                    className="w-full h-full object-contain p-5"
+                    className="w-full h-full object-contain p-6"
                   />
                 ) : (
                   <div className="w-full h-full bg-western-paper" />
@@ -65,26 +75,17 @@ export default function AutoralProductModal({ item, selected, onClose, onToggle 
 
               {/* Conteúdo */}
               <div className="relative p-6 md:p-7 flex flex-col">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  aria-label="Fechar"
-                  className="absolute top-3 right-3 inline-flex items-center justify-center w-8 h-8 text-western-stone-warm hover:text-western-green-deep transition-colors"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-
-                <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-western-gold mb-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-2 pr-8">
                   {item.codigo} · Item autoral
                 </p>
-                <h3 className="font-display text-[22px] text-western-green-deep leading-tight pr-8">
+                <h3 className="font-display text-[24px] text-western-green-deep leading-tight pr-8">
                   {item.nome}
                 </h3>
-                <div className="w-8 h-px bg-western-gold mt-3 mb-3" />
+                <div className="w-8 h-px bg-western-gold mt-3 mb-4" />
 
-                {/* Preço — destaque imediato */}
+                {/* Preço */}
                 {isApproved ? (
-                  <p className="font-display text-[26px] text-western-green-deep leading-none">
+                  <p className="font-display text-[28px] text-western-green-deep leading-none">
                     {formatPreco(item.preco)}
                   </p>
                 ) : (
@@ -101,39 +102,68 @@ export default function AutoralProductModal({ item, selected, onClose, onToggle 
                   </div>
                 )}
 
-                {/* Resumo */}
                 {resumo && (
                   <p className="font-display italic text-[13.5px] text-western-stone-warm leading-relaxed mt-4">
                     {resumo}
                   </p>
                 )}
 
-                {/* Specs em linha */}
                 {specs && (
                   <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/90 mt-4">
                     {specs}
                   </p>
                 )}
 
-                {/* CTA */}
-                <button
-                  type="button"
-                  onClick={() => { onToggle(); onClose(); }}
-                  className={cn(
-                    "mt-5 inline-flex items-center justify-center gap-2 h-11 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors",
-                    selected
-                      ? "bg-western-green-deep text-western-cream"
-                      : "bg-western-gold text-western-green-deep hover:bg-western-gold-soft"
-                  )}
-                >
+                {/* CTA / Stepper */}
+                <div className="mt-5">
                   {selected ? (
-                    <><Check className="h-3.5 w-3.5" /> Remover do projeto</>
+                    <div className="flex items-stretch gap-2">
+                      {/* Stepper */}
+                      <div className="flex-1 inline-flex items-center justify-between border border-western-green-deep bg-white">
+                        <button
+                          type="button"
+                          onClick={() => onSetQty(Math.max(1, qty - 1))}
+                          disabled={qty <= 1}
+                          aria-label="Diminuir"
+                          className="w-11 h-11 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors disabled:opacity-30"
+                        >
+                          <Minus className="h-3.5 w-3.5" />
+                        </button>
+                        <div className="flex flex-col items-center">
+                          <span className="font-display text-[20px] text-western-green-deep leading-none">{qty}</span>
+                          <span className="font-mono text-[8px] uppercase tracking-[0.22em] text-western-stone-warm/70 mt-0.5">no projeto</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => onSetQty(qty + 1)}
+                          aria-label="Aumentar"
+                          className="w-11 h-11 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                      {/* Remover */}
+                      <button
+                        type="button"
+                        onClick={() => { onToggle(); onClose(); }}
+                        aria-label="Remover do projeto"
+                        className="w-11 h-11 inline-flex items-center justify-center border border-western-stone-warm/30 text-western-stone-warm hover:border-western-green-deep hover:text-western-green-deep transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   ) : (
-                    <><Plus className="h-3.5 w-3.5" /> Adicionar ao projeto</>
+                    <button
+                      type="button"
+                      onClick={() => { onToggle(); onClose(); }}
+                      className="w-full inline-flex items-center justify-center gap-2 h-12 bg-western-gold text-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors"
+                    >
+                      <Plus className="h-3.5 w-3.5" /> Adicionar ao projeto
+                    </button>
                   )}
-                </button>
+                </div>
 
-                {/* Mais detalhes — colapsado */}
+                {/* Mais detalhes */}
                 {resto && (
                   <div className="mt-4 pt-4 border-t border-western-stone-warm/15">
                     <button
