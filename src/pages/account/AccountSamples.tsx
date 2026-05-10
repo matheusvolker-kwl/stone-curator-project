@@ -20,7 +20,7 @@ export default function AccountSamples() {
   useEffect(() => {
     if (!user) return;
     supabase.from("leads").select("id, payload, created_at")
-      .eq("user_id", user.id).eq("type", "sample_request")
+      .eq("user_id", user.id).eq("type", "amostras")
       .order("created_at", { ascending: false })
       .then(({ data }) => { setItems((data as SampleLead[]) ?? []); setLoading(false); });
   }, [user]);
