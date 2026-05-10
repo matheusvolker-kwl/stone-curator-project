@@ -285,6 +285,15 @@ export default function ProductPage() {
                       setActiveOptions((prev) => ({ ...prev, [acabOption.name]: val }))
                     }
                   />
+                  <CustomPaintNote
+                    onConsultor={() => {
+                      const msg = `Olá! Gostaria de uma pintura personalizada para ${product.title}.`;
+                      window.open(
+                        `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
+                        "_blank"
+                      );
+                    }}
+                  />
                 </div>
               );
             })()}
