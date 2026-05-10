@@ -103,6 +103,16 @@ export default function ProductPage() {
     if (idx >= 0) setActiveImage(idx);
   }, [variant?.image?.url, product]);
 
+  // Track recently viewed for the cart drawer "you saw recently" section.
+  useEffect(() => {
+    if (!product) return;
+    trackRecentlyViewed({
+      handle: product.handle,
+      title: product.title,
+      image: product.images.edges[0]?.node?.url ?? null,
+    });
+  }, [product?.handle]);
+
   const parsed = useMemo(
     () => parseProductDescription(product?.descriptionHtml),
     [product?.descriptionHtml]
