@@ -1,4 +1,5 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useRef } from "react";
 import {
   LayoutDashboard,
   User,
@@ -29,6 +30,14 @@ export default function AccountLayout() {
   const { empresa, user, signOut } = useAuth();
   const navigate = useNavigate();
   const { tier } = usePartnerTier();
+  const { pathname } = useLocation();
+  const navRef = useRef<HTMLElement>(null);
+
+  // Em mobile (nav horizontal), traz o item ativo para o viewport
+  useEffect(() => {
+    const el = navRef.current?.querySelector<HTMLAnchorElement>("a[aria-current='page']");
+    el?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }, [pathname]);
 
   return (
     <div className="surface-ivory min-h-[80vh]">
