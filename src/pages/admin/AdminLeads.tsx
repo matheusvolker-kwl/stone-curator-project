@@ -16,7 +16,8 @@ export default function AdminLeads() {
   const [drawer, setDrawer] = useState<Lead | null>(null);
 
   useEffect(() => {
-    supabase.from("leads").select("*").order("created_at", { ascending: false }).limit(2000)
+    // Orçamentos têm página própria em /admin/orcamentos — aqui só os outros tipos.
+    supabase.from("leads").select("*").neq("type", "orcamento").order("created_at", { ascending: false }).limit(2000)
       .then(({ data }) => { setLeads((data as Lead[]) ?? []); setLoading(false); });
   }, []);
 
