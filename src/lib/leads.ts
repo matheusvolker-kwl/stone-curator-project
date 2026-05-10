@@ -62,10 +62,12 @@ export async function submitQuoteLead({
     .join(" | ");
 
   const numero = Math.random().toString(36).slice(2, 7).toUpperCase();
+  const leadId = crypto.randomUUID();
 
-  const { data: lead, error } = await supabase
+  const { error } = await supabase
     .from("leads")
     .insert({
+      id: leadId,
       type: "orcamento",
       origem,
       nome: contact.nome,
@@ -86,11 +88,10 @@ export async function submitQuoteLead({
         extra: payloadExtra ?? null,
         submitted_at: new Date().toISOString(),
       } as never,
-    })
-    .select("id")
-    .single();
+    });
 
-  if (error || !lead) throw error ?? new Error("Falha ao registrar orçamento");
+  if (error) throw error;
+  const lead = { id: leadId };
 
   // Always generate the PDF blob — used for download in success screen
   let pdfBlob: Blob | undefined;
