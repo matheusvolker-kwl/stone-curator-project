@@ -33,6 +33,7 @@ import WhyWesternStrip from "@/components/product/WhyWesternStrip";
 import SocialProofBand from "@/components/product/SocialProofBand";
 import ProductPagination from "@/components/product/ProductPagination";
 import ProductInUse from "@/components/product/ProductInUse";
+import WishlistButton from "@/components/product/WishlistButton";
 
 // Pluraliza nomes de coleção singulares ("Pedra Grande" → "Pedras Grandes").
 function pluralizeCollection(title?: string): string {
