@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.create_quote_thread() FROM PUBLIC, anon, authenticated;
