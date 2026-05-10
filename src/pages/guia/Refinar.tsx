@@ -59,7 +59,7 @@ function pecasIguais(a: ProjetoPeca[], b: ProjetoPeca[]): boolean {
 export default function GuiaRefinar() {
   const { handle } = useParams();
   const [params, setParams] = useSearchParams();
-  const navigate = useNavigate();
+  const [quoteOpen, setQuoteOpen] = useState(false);
 
   const found = useMemo(() => (handle ? findConjunto(handle) : null), [handle]);
   const acabamento = (params.get("acabamento") as Acabamento | null) ?? "moledo";
