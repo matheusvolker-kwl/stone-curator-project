@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check, ChevronDown } from "lucide-react";
 import GuideHeader from "@/components/guide-v2/GuideHeader";
 import TipoCard from "@/components/guide-v2/TipoCard";
 import AreaInput from "@/components/guide-v2/AreaInput";
@@ -101,12 +101,50 @@ export default function GuiaContexto() {
         </div>
       </section>
 
+      {/* Como funciona — orientação editorial */}
+      <section className="border-b border-western-stone-warm/15">
+        <div className="container-western py-10 md:py-12">
+          <p className="eyebrow-bar mb-6 text-center md:text-left">Como funciona o guia</p>
+          <ol className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
+            {[
+              { n: "01", t: "Conte sobre o ambiente", d: "Tipo, área aproximada e o tom de acabamento." },
+              { n: "02", t: "Veja três caminhos", d: "Composições essencial, equilibrada e completa." },
+              { n: "03", t: "Refine e baixe o SketchUp", d: "Ajuste peças, some autorais e leve a prévia." },
+            ].map((s) => (
+              <li key={s.n} className="flex gap-4">
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold pt-1.5">{s.n}</span>
+                <div>
+                  <h3 className="font-display text-[20px] text-western-green-deep leading-tight">{s.t}</h3>
+                  <p className="font-display italic text-[14px] text-western-stone-warm mt-1.5 leading-relaxed">{s.d}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <div className="flex flex-col items-center mt-10">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm mb-3">
+              Comece pela primeira pergunta
+            </p>
+            <ChevronDown className="h-5 w-5 text-western-gold animate-bounce" />
+          </div>
+        </div>
+      </section>
+
       <main className="container-western max-w-[920px] pt-16 pb-32 relative">
         {/* 01 */}
         <section ref={refTipo}>
           <Reveal variant="fade-up" duration={700} delay={140}>
-            <p className={`eyebrow-bar mb-7 transition-colors ${highlight === "tipo" ? "!text-western-green-deep" : ""}`}>
-              01 · Tipo de ambiente
+            <div className="flex items-center justify-between gap-4 mb-3">
+              <p className={`eyebrow-bar transition-colors ${highlight === "tipo" ? "!text-western-green-deep" : ""}`}>
+                01 · Tipo de ambiente
+              </p>
+              {tipo && (
+                <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep">
+                  <Check className="h-3 w-3 text-western-gold" /> {tipoVisualMap[tipo].label}
+                </span>
+              )}
+            </div>
+            <p className="font-display italic text-[15px] text-western-stone-warm mb-7 max-w-[560px]">
+              Selecione o tipo que mais se aproxima do projeto que você está atendendo.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
               {TIPOS.map((t) => (
@@ -128,13 +166,20 @@ export default function GuiaContexto() {
         {/* 02 */}
         <section ref={refArea} className="mt-12">
           <Reveal variant="fade-up" duration={700} delay={140}>
-            <p className={`eyebrow-bar mb-7 transition-colors ${highlight === "area" ? "!text-western-green-deep" : ""}`}>
-              02 · Área aproximada
+            <div className="flex items-center justify-between gap-4 mb-3">
+              <p className={`eyebrow-bar transition-colors ${highlight === "area" ? "!text-western-green-deep" : ""}`}>
+                02 · Área aproximada
+              </p>
+              {areaNum >= 1 && areaNum <= 200 && (
+                <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep">
+                  <Check className="h-3 w-3 text-western-gold" /> {areaNum} m²
+                </span>
+              )}
+            </div>
+            <p className="font-display italic text-[15px] text-western-stone-warm mb-7 max-w-[560px]">
+              Digite a metragem aproximada (entre 1 e 200 m²). Pode ser estimativa.
             </p>
             <AreaInput value={area} onChange={setArea} id="area-input" />
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mt-4">
-              Digite a metragem aproximada da área. Pode ser estimativa.
-            </p>
           </Reveal>
         </section>
 
@@ -143,11 +188,18 @@ export default function GuiaContexto() {
         {/* 03 */}
         <section ref={refAcab} className="mt-12">
           <Reveal variant="fade-up" duration={700} delay={140}>
-            <p className={`eyebrow-bar mb-3 transition-colors ${highlight === "acabamento" ? "!text-western-green-deep" : ""}`}>
-              03 · Acabamento dominante
-            </p>
+            <div className="flex items-center justify-between gap-4 mb-3">
+              <p className={`eyebrow-bar transition-colors ${highlight === "acabamento" ? "!text-western-green-deep" : ""}`}>
+                03 · Acabamento dominante
+              </p>
+              {acabamento && (
+                <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep">
+                  <Check className="h-3 w-3 text-western-gold" /> {acabamentoMeta[acabamento].label}
+                </span>
+              )}
+            </div>
             <p className="font-display italic text-[15px] text-western-stone-warm mb-7 max-w-[560px]">
-              O acabamento é único para todas as peças do conjunto. Você pode trocar no próximo passo.
+              Escolha o tom dominante das pedras. Único para todas as peças do conjunto — você troca no próximo passo se quiser.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
               {(Object.keys(acabamentoMeta) as Acabamento[]).map((a, i) => (
