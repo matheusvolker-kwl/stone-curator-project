@@ -147,7 +147,8 @@ export default function ProductPage() {
   const parentRoute = collection
     ? `/linhas/${collection.handle}`
     : "/linhas";
-  const parentLabel = collection?.title ?? "Linhas";
+  const parentLabel = pluralizeCollection(collection?.title) || "Linhas";
+  const collectionDisplay = pluralizeCollection(collection?.title);
 
   const handleAdd = async () => {
     if (!variant) return;
