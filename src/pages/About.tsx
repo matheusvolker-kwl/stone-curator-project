@@ -122,12 +122,12 @@ export default function About() {
         </div>
       </section>
 
-      {/* IRMÃOS BOTELHO — abertura atmosférica widescreen */}
-      <section className="surface-paper py-20 md:py-28">
+      {/* IRMÃOS BOTELHO — seção única editorial: título + foto widescreen + narrativa */}
+      <section className="surface-ivory py-20 md:py-24">
         <div className="container-western max-w-[1600px]">
           <Reveal variant="fade-up" duration={800}>
             <div className="max-w-3xl mb-10 md:mb-14">
-              <p className="text-eyebrow mb-3">Os irmãos Botelho</p>
+              <p className="text-eyebrow mb-3">Os irmãos Botelho · 2ª geração</p>
               <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
                 Ricardo no desenho, Luiz Carlos na engenharia.
                 <span className="italic text-western-gold-soft font-light"> Trinta anos do mesmo ateliê, da mesma família.</span>
@@ -155,56 +155,17 @@ export default function About() {
                 }}
               />
               <figcaption className="absolute bottom-5 left-5 md:bottom-8 md:left-8 bg-western-green-deep/85 backdrop-blur-sm px-4 py-3 md:px-5 md:py-4 max-w-[320px]">
-                <p className="text-eyebrow text-western-gold-soft mb-1">2ª geração · Cajamar/SP</p>
+                <p className="text-eyebrow text-western-gold-soft mb-1">Cajamar/SP · Desde 1996</p>
                 <p className="font-display text-base md:text-lg text-western-cream leading-tight">
                   Ricardo &amp; Luiz Carlos Botelho
                 </p>
               </figcaption>
             </figure>
           </Reveal>
-        </div>
-      </section>
 
-      {/* FAMÍLIA BOTELHO — editorial, sem moldura quadrada */}
-      <section className="surface-ivory py-24 md:py-32 relative overflow-hidden">
-        {/* Fio dourado decorativo */}
-        <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-western-gold/30 to-transparent hidden md:block" />
-
-        <div className="container-western max-w-6xl grid md:grid-cols-12 gap-12 md:gap-16 items-start">
-          <Reveal variant="fade-right" duration={900} className="md:col-span-4">
-            <figure className="relative">
-              {/* Selo "33 anos" sutil */}
-              <div className="absolute -top-4 -left-4 z-10 bg-western-green-deep text-western-cream px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] shadow-lg">
-                Desde 1996
-              </div>
-              <div className="aspect-[4/5] overflow-hidden shadow-2xl shadow-western-green-deep/20">
-                <img
-                  src={retrato}
-                  alt="Ricardo e Luiz Carlos Botelho — segunda geração à frente da Western"
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover transition-transform duration-[1500ms] ease-out hover:scale-[1.03]"
-                />
-              </div>
-              {/* Linha de assinatura */}
-              <div className="mt-5 pl-1 border-l-2 border-western-gold">
-                <p className="pl-4 text-spec text-western-stone-warm/80 leading-relaxed max-w-[360px]">
-                  <span className="text-western-green-deep font-semibold">Ricardo & Luiz Carlos Botelho</span><br />
-                  Segunda geração à frente do ateliê desde 1996. Ricardo na direção criativa e no desenho das peças; Luiz Carlos na engenharia do composto e na tecnologia de produção.
-                </p>
-              </div>
-            </figure>
-          </Reveal>
-
-          <div className="md:col-span-8 space-y-7 text-base md:text-lg text-western-stone-warm leading-relaxed">
-            <Reveal variant="fade-up" duration={750}>
-              <p className="text-eyebrow mb-3">A família Botelho</p>
-              <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05] mb-2">
-                A família que trouxe uma tecnologia do Arizona —
-                <span className="italic text-western-gold-soft font-light"> e construiu três décadas de ateliê em torno dela.</span>
-              </h2>
-            </Reveal>
-            <Reveal variant="fade-up" delay={100} duration={750}>
+          {/* Narrativa em coluna controlada abaixo da foto */}
+          <div className="max-w-3xl mx-auto mt-14 md:mt-20 space-y-6 text-base md:text-lg text-western-stone-warm leading-relaxed">
+            <Reveal variant="fade-up" delay={80} duration={750}>
               <p>
                 Em 1993, <strong className="text-western-green-deep font-semibold">Luiz Duarte
                 Botelho</strong> identificou nos Estados Unidos uma técnica de pedra artesanal
@@ -213,7 +174,7 @@ export default function About() {
                 Brasil e fundou a Western em São Paulo.
               </p>
             </Reveal>
-            <Reveal variant="fade-up" delay={180} duration={750}>
+            <Reveal variant="fade-up" delay={140} duration={750}>
               <p>
                 Em 1996, <strong className="text-western-green-deep font-semibold">Ricardo
                 Botelho</strong> e <strong className="text-western-green-deep font-semibold">Luiz
@@ -227,7 +188,7 @@ export default function About() {
                 simples de instalar.
               </p>
             </Reveal>
-            <Reveal variant="fade-up" delay={240} duration={750}>
+            <Reveal variant="fade-up" delay={200} duration={750}>
               <p>
                 Em 2026, são <strong className="text-western-green-deep font-semibold">33 anos
                 de ateliê ininterrupto</strong> em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie},
@@ -235,6 +196,19 @@ export default function About() {
                 padrão — uma operação familiar que atravessou três décadas sem trocar de mão,
                 de método ou de assinatura.
               </p>
+            </Reveal>
+
+            {/* Assinatura final */}
+            <Reveal variant="fade-up" delay={260} duration={700}>
+              <div className="pt-6 mt-2 border-t border-western-stone-warm/20 flex items-baseline gap-4">
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold">
+                  2ª geração
+                </span>
+                <span className="text-western-stone-warm/40">·</span>
+                <span className="text-spec text-western-green-deep font-semibold">
+                  Ricardo &amp; Luiz Carlos Botelho
+                </span>
+              </div>
             </Reveal>
           </div>
         </div>
@@ -276,7 +250,7 @@ export default function About() {
       </section>
 
       {/* 4 PILARES */}
-      <section className="surface-paper py-24 md:py-28 border-t border-western-stone-warm/10">
+      <section className="surface-paper py-20 md:py-24 border-t border-western-stone-warm/10">
         <div className="container-western max-w-6xl">
           <Reveal variant="fade-up" duration={750}>
             <div className="max-w-2xl mb-14">
@@ -307,7 +281,7 @@ export default function About() {
       </section>
 
       {/* GALERIA — Mural editorial de obras */}
-      <section className="surface-ivory py-24 md:py-28 border-t border-western-stone-warm/10">
+      <section className="surface-ivory py-20 md:py-24 border-t border-western-stone-warm/10">
         <div className="container-western max-w-6xl">
           <Reveal variant="fade-up" duration={750}>
             <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-end mb-12 md:mb-16">
@@ -392,7 +366,7 @@ export default function About() {
       </section>
 
       {/* MANIFESTO — vocabulário & filosofia */}
-      <section className="surface-forest py-24 md:py-28 relative overflow-hidden">
+      <section className="surface-forest py-20 md:py-24 relative overflow-hidden">
         <img
           src={iconePedraBranco}
           alt=""
