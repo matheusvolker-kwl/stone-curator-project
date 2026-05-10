@@ -24,7 +24,7 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
     <div className="flex items-start gap-5 py-6 border-b border-western-stone-warm/15 first:border-t">
       <div className="w-24 h-24 flex-shrink-0 bg-western-paper border border-western-stone-warm/10 overflow-hidden">
         {peca.imageUrl ? (
-          <img src={peca.imageUrl} alt={peca.nome} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+          <img src={peca.imageUrl} alt={peca.nome} loading="lazy" decoding="async" className="w-full h-full object-contain p-1.5" />
         ) : (
           <div className="w-full h-full bg-western-paper" />
         )}

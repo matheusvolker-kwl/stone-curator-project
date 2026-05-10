@@ -1,4 +1,4 @@
-import { Check, Plus, X } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import { formatPreco } from "@/data/guideMap";
 import type { AutoralItem } from "./autoraisCatalog";
 import { cn } from "@/lib/utils";
@@ -15,53 +15,56 @@ export default function AutoralCard({ item, selected, onToggle, onOpen }: Props)
   return (
     <article
       className={cn(
-        "bg-white flex flex-col transition-all duration-500 overflow-hidden cursor-pointer",
+        "group relative bg-white flex flex-col transition-all duration-300 overflow-hidden cursor-zoom-in",
         selected
-          ? "shadow-[0_28px_42px_-26px_hsl(var(--western-stone-dark)/0.45)] -translate-y-1 outline outline-1 outline-western-gold"
-          : "shadow-[0_18px_32px_-26px_hsl(var(--western-stone-dark)/0.35)] hover:-translate-y-1 hover:shadow-[0_28px_44px_-28px_hsl(var(--western-stone-dark)/0.4)]"
+          ? "shadow-[0_18px_28px_-22px_hsl(var(--western-stone-dark)/0.45)] outline outline-1 outline-western-gold"
+          : "shadow-[0_10px_20px_-18px_hsl(var(--western-stone-dark)/0.35)] hover:-translate-y-0.5 hover:shadow-[0_18px_28px_-22px_hsl(var(--western-stone-dark)/0.4)]"
       )}
       onClick={onOpen}
     >
-      <div className="aspect-[4/3] w-full bg-western-paper overflow-hidden">
+      {/* Imagem — fundo paper, peça inteira */}
+      <div className="relative aspect-square w-full bg-western-paper overflow-hidden">
         {item.imageUrl ? (
           <img
             src={item.imageUrl}
             alt={item.nome}
             loading="lazy"
             decoding="async"
-            className="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.04]"
+            className="w-full h-full object-contain p-3 transition-transform duration-500 group-hover:scale-[1.04]"
           />
         ) : (
           <div className="w-full h-full bg-western-paper" />
         )}
-      </div>
-      <div className="p-6 flex flex-col flex-1 border-t border-western-stone-warm/10">
-        <h4 className="font-display text-[20px] text-western-green-deep leading-tight">{item.nome}</h4>
-        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mt-1.5">
-          {item.codigo}{item.pesoKg ? ` · ${item.pesoKg} kg` : ""}
-        </p>
-        <p className="font-display text-[20px] text-western-green-deep mt-3 mb-5">{formatPreco(item.preco)}</p>
 
-        {selected ? (
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); onToggle(); }}
-            className="mt-auto inline-flex items-center justify-between gap-2 px-4 h-12 bg-western-green-deep text-western-cream font-mono text-[11px] uppercase tracking-[0.22em]"
-          >
-            <span className="inline-flex items-center gap-2">
-              <Check className="h-3.5 w-3.5" /> No projeto
-            </span>
-            <X className="h-3.5 w-3.5" />
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); onToggle(); }}
-            className="mt-auto inline-flex items-center justify-center gap-2 px-4 h-12 border border-western-green-deep text-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] hover:bg-western-green-deep hover:text-western-cream transition-colors"
-          >
-            <Plus className="h-3.5 w-3.5" /> Adicionar ao projeto
-          </button>
-        )}
+        {/* Botão flutuante + / check */}
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onToggle(); }}
+          aria-label={selected ? "Remover do projeto" : "Adicionar ao projeto"}
+          className={cn(
+            "absolute top-2 right-2 inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300",
+            selected
+              ? "bg-western-green-deep text-western-cream anim-settle"
+              : "bg-white/95 text-western-green-deep border border-western-stone-warm/20 hover:bg-western-gold hover:border-western-gold opacity-0 group-hover:opacity-100"
+          )}
+        >
+          {selected ? <Check className="h-3.5 w-3.5" strokeWidth={2.5} /> : <Plus className="h-3.5 w-3.5" />}
+        </button>
+      </div>
+
+      {/* Info compacta */}
+      <div className="px-3.5 py-3 border-t border-western-stone-warm/10">
+        <h4 className="font-display text-[14px] text-western-green-deep leading-tight line-clamp-1">
+          {item.nome}
+        </h4>
+        <div className="flex items-baseline justify-between mt-1.5 gap-2">
+          <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-western-stone-warm/80 truncate">
+            {item.codigo}
+          </p>
+          <p className="font-display text-[15px] text-western-green-deep flex-shrink-0">
+            {formatPreco(item.preco)}
+          </p>
+        </div>
       </div>
     </article>
   );
