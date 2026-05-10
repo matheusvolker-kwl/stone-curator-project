@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 interface Props {
   onConsultor: () => void;
@@ -13,9 +13,9 @@ export default function CustomPaintNote({ onConsultor }: Props) {
       </p>
       <button
         onClick={onConsultor}
-        className="mt-2 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors"
+        className="mt-2 inline-flex items-center gap-1 text-sm text-western-green-deep hover:text-western-gold underline-offset-4 hover:underline transition-colors"
       >
-        Falar com consultor <ArrowRight className="h-3 w-3" />
+        Falar com consultor <ChevronRight className="h-4 w-4" />
       </button>
     </div>
   );
