@@ -1,8 +1,9 @@
 import { useState, useMemo, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Lock } from "lucide-react";
 import StepShell from "./StepShell";
 import { useGuideStore } from "@/stores/guideStore";
+import { useAuth } from "@/hooks/useAuth";
 import {
   areaRangePorTipo,
   m2ToTamanhoId,
