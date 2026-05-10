@@ -28,7 +28,7 @@ export interface QuoteSubmission {
 }
 
 export interface QuoteResult {
-  lead.id: string;
+  leadId: string;
   numero: string;
   pdfStored: boolean;
   pdfBlob?: Blob;
@@ -138,7 +138,7 @@ export async function submitQuoteLead({
       source: "submitQuoteLead.pdfBuild",
       message: "Falha ao gerar PDF do orçamento",
       error: e,
-      context: { lead.id, itemsCount: items.length, origem },
+      context: { leadId: lead.id, itemsCount: items.length, origem },
     });
   }
 
@@ -151,7 +151,7 @@ export async function submitQuoteLead({
       const pdfBase64 = await blobToBase64(pdfBlob);
       const { error: saveErr } = await supabase.functions.invoke("save-quote-pdf", {
         body: {
-          lead.id: lead.id,
+          leadId: lead.id,
           pdfBase64,
           subtotal,
           itemsCount: items.length,
@@ -166,7 +166,7 @@ export async function submitQuoteLead({
           source: "save-quote-pdf.invoke",
           message: "Edge function save-quote-pdf retornou erro",
           error: saveErr,
-          context: { lead.id, userId, itemsCount: items.length, subtotal, sizeKb: Math.round((pdfBlob.size ?? 0) / 1024) },
+          context: { leadId: lead.id, userId, itemsCount: items.length, subtotal, sizeKb: Math.round((pdfBlob.size ?? 0) / 1024) },
         });
       }
     } catch (e) {
@@ -175,10 +175,10 @@ export async function submitQuoteLead({
         source: "save-quote-pdf.invoke",
         message: "Exceção ao chamar save-quote-pdf",
         error: e,
-        context: { lead.id, userId, itemsCount: items.length, subtotal },
+        context: { leadId: lead.id, userId, itemsCount: items.length, subtotal },
       });
     }
   }
 
-  return { lead.id: lead.id, numero, pdfStored, pdfBlob };
+  return { leadId: lead.id, numero, pdfStored, pdfBlob };
 }
