@@ -281,44 +281,54 @@ describe("gerarPedidoPdf — geração e ramificações", () => {
 // downloadPedidoPdf
 // ─────────────────────────────────────────────────────────────
 describe("downloadPedidoPdf", () => {
-  async function spySave() {
-    const mod = await import("jspdf");
-    const proto = mod.default.prototype as unknown as Record<string, unknown>;
-    const calls: string[] = [];
-    proto.save = function (filename: string) {
-      calls.push(filename);
-      return this as never;
-    };
-    return calls;
+  function captureDownloads(): string[] {
+    const downloads: string[] = [];
+    const orig = document.createElement.bind(document);
+    vi.spyOn(document, "createElement").mockImplementation((tag: string) => {
+      const el = orig(tag) as HTMLElement;
+      if (tag.toLowerCase() === "a") {
+        const anchor = el as HTMLAnchorElement;
+        Object.defineProperty(anchor, "download", {
+          configurable: true,
+          set(v: string) {
+            if (v) downloads.push(v);
+          },
+          get() {
+            return downloads[downloads.length - 1] ?? "";
+          },
+        });
+      }
+      return el;
+    });
+    return downloads;
   }
 
-  it("admin: chama save com filename de admin e o retorna", async () => {
-    const calls = await spySave();
+  it("admin: dispara download com filename de admin", async () => {
+    const downloads = captureDownloads();
     const fname = await downloadPedidoPdf({
       order: makeOrder(),
       events: makeEvents(),
       partner: { empresa: "Acme" },
       scenario: "admin",
     });
-    expect(fname).toMatch(/-admin-/);
-    expect(calls).toEqual([fname]);
+    expect(fname).toMatch(/^western-pedido-WP-2025-0001-admin-\d{8}-\d{4}-[A-Z0-9]{5}\.pdf$/);
+    expect(downloads).toContain(fname);
   });
 
-  it("cliente: chama save com filename de cliente e o retorna", async () => {
-    const calls = await spySave();
+  it("cliente: dispara download com filename de cliente", async () => {
+    const downloads = captureDownloads();
     const fname = await downloadPedidoPdf({
       order: makeOrder(),
       events: [],
       scenario: "cliente",
     });
-    expect(fname).toMatch(/-cliente-/);
-    expect(calls).toEqual([fname]);
+    expect(fname).toMatch(/^western-pedido-WP-2025-0001-cliente-[A-Z0-9]{5}\.pdf$/);
+    expect(downloads).toContain(fname);
   });
 
   it.each<[PedidoScenario]>([["admin"], ["cliente"]])(
     "scenario %s: filename é único entre chamadas",
     async (scenario) => {
-      await spySave();
       const a = await downloadPedidoPdf({ order: makeOrder(), events: [], scenario });
       const b = await downloadPedidoPdf({ order: makeOrder(), events: [], scenario });
       expect(a).not.toEqual(b);
