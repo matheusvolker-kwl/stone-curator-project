@@ -16,7 +16,9 @@ import {
   Send,
   X,
   Layers,
+  FileDown,
 } from "lucide-react";
+import { downloadPedidoPdf } from "@/lib/pdf/pedidoPdf";
 
 type Status =
   | "aguardando"
