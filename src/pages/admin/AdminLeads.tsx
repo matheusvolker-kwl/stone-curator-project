@@ -59,22 +59,31 @@ export default function AdminLeads() {
 
       <div className="space-y-2">
         {filtered.length === 0 && <p className="text-western-stone-warm py-10 text-center">Nenhum lead nesse filtro.</p>}
-        {filtered.map((l) => (
-          <button key={l.id} onClick={() => setDrawer(l)} className="w-full text-left border border-western-stone-warm/20 bg-white p-4 flex flex-wrap gap-x-6 gap-y-1 items-start hover:border-western-gold/60 transition-colors">
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-gold w-32 flex-shrink-0">{l.type}</span>
-            <div className="flex-1 min-w-[200px]">
-              <p className="text-western-green-deep font-medium">{l.nome || l.empresa || l.email || "(sem nome)"}</p>
-              <p className="text-xs text-western-stone-warm mt-0.5 flex flex-wrap gap-x-4">
-                {l.email && <span className="inline-flex items-center gap-1"><Mail className="h-3 w-3" /> {l.email}</span>}
-                {l.telefone && <span className="inline-flex items-center gap-1"><Phone className="h-3 w-3" /> {l.telefone}</span>}
-                {(l.cidade || l.uf) && <span>{[l.cidade, l.uf].filter(Boolean).join("/")}</span>}
-                {l.origem && <span className="text-western-stone-warm/60">{l.origem}</span>}
-              </p>
-              {l.mensagem && <p className="text-xs text-western-stone-warm mt-1 italic line-clamp-1">"{l.mensagem}"</p>}
-            </div>
-            <span className="text-[10px] font-mono text-western-stone-warm/70 whitespace-nowrap">{new Date(l.created_at).toLocaleString("pt-BR")}</span>
-          </button>
-        ))}
+        {filtered.map((l) => {
+          const badgeCls = LEAD_TYPE_BADGE_CLS[l.type] ?? "border-western-stone-warm/30 text-western-stone-warm bg-white";
+          const label = LEAD_TYPE_LABEL[l.type] ?? l.type;
+          const downloads = (l.payload as Record<string, unknown> | null)?.downloads as number | undefined;
+          const activity = l.last_activity_at ?? l.created_at;
+          return (
+            <button key={l.id} onClick={() => setDrawer(l)} className="w-full text-left border border-western-stone-warm/20 bg-white p-4 flex flex-wrap gap-x-6 gap-y-1 items-start hover:border-western-gold/60 transition-colors">
+              <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] flex-shrink-0 ${badgeCls}`}>{label}</span>
+              <div className="flex-1 min-w-[200px]">
+                <p className="text-western-green-deep font-medium">
+                  {l.nome || l.empresa || l.email || "(sem nome)"}
+                  {downloads && downloads > 1 && <span className="ml-2 text-[10px] font-mono text-western-gold">×{downloads} downloads</span>}
+                </p>
+                <p className="text-xs text-western-stone-warm mt-0.5 flex flex-wrap gap-x-4">
+                  {l.email && <span className="inline-flex items-center gap-1"><Mail className="h-3 w-3" /> {l.email}</span>}
+                  {l.telefone && <span className="inline-flex items-center gap-1"><Phone className="h-3 w-3" /> {l.telefone}</span>}
+                  {(l.cidade || l.uf) && <span>{[l.cidade, l.uf].filter(Boolean).join("/")}</span>}
+                  {l.origem && <span className="text-western-stone-warm/60">{l.origem}</span>}
+                </p>
+                {l.mensagem && <p className="text-xs text-western-stone-warm mt-1 italic line-clamp-1">"{l.mensagem}"</p>}
+              </div>
+              <span className="text-[10px] font-mono text-western-stone-warm/70 whitespace-nowrap">{new Date(activity).toLocaleString("pt-BR")}</span>
+            </button>
+          );
+        })}
       </div>
 
       <Sheet open={!!drawer} onOpenChange={(o) => !o && setDrawer(null)}>
