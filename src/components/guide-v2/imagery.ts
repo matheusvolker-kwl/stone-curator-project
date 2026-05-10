@@ -1,13 +1,13 @@
-import coverPiscina from "@/assets/projetos/cover-piscina.jpg";
-import coverLago from "@/assets/projetos/cover-lago.jpg";
-import coverCaitoMaia from "@/assets/projetos/cover-jardim-fonte.jpg";
-import coverCasaPraia from "@/assets/projetos/cover-jardim-seco.png";
+import coverPiscina from "@/assets/projetos/cover-piscina.webp";
+import coverLago from "@/assets/projetos/cover-lago.webp";
+import coverCaitoMaia from "@/assets/projetos/cover-jardim-fonte.webp";
+import coverCasaPraia from "@/assets/projetos/cover-jardim-seco.webp";
 
 import cascataEscalonada from "@/assets/about-projetos/cascata-escalonada.jpg";
-import cascataMirante from "@/assets/about-projetos/cascata-mirante.jpg";
-import cascataTropical from "@/assets/about-projetos/cascata-tropical.jpg";
+import cascataMirante from "@/assets/about-projetos/cascata-mirante.webp";
+import cascataTropical from "@/assets/about-projetos/cascata-tropical.webp";
 import detalheMatriz from "@/assets/about-projetos/detalhe-matriz.jpg";
-import bordaPedra from "@/assets/about-projetos/borda-pedra.jpg";
+import bordaPedra from "@/assets/about-projetos/borda-pedra.webp";
 import respiroPedra from "@/assets/respiro-pedra.webp";
 
 import type { TipoVisual } from "./types";

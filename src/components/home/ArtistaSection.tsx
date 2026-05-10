@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import ricardoDesenhando from "@/assets/ricardo-desenhando.png";
+import ricardoDesenhando from "@/assets/ricardo-desenhando.webp";
 
 export default function ArtistaSection() {
   return (

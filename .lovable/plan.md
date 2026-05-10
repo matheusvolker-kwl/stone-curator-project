@@ -1,45 +1,44 @@
-## Varredura UX/Navegação — 4 ondas
+## Varredura de performance — 4 ondas
 
-Vou rodar uma auditoria completa de navegação, usabilidade e fricção, dividida em ondas. Cada onda termina com correções aplicadas + relatório curto do que foi achado.
-
----
-
-### 🌊 Onda 1 — Navegação global & arquitetura
-Foco: header, footer, breadcrumbs, rotas, redirects, 404, links quebrados, mobile menu, busca.
-- Conferir todas as rotas em `App.tsx` x links reais usados (links órfãos, links para páginas inexistentes)
-- Header: hierarquia, mobile drawer, busca (hoje só redireciona p/ `/linhas?q=`, mas `/linhas` precisa ler `q`), conta logada vs deslogada
-- Footer: consistência de links, coleções vs `Linhas.tsx` reais
-- Breadcrumbs ausentes em páginas profundas (ProductPage, LinhaPage, guia, conta, admin)
-- 404 amigável com sugestões + atalhos
-- "Skip to content" / acessibilidade de teclado no header
-- ScrollToTop x rotas com hash
-
-### 🌊 Onda 2 — Fluxo do parceiro (auth + conta + carrinho/orçamento)
-Foco: cadastro/login/recuperação, RequireAuth, conta, orçamentos, pedidos, favoritos, amostras.
-- Fluxo signup → login → aprovação → primeira compra (estados intermediários, mensagens claras)
-- RequireAuth: redirect com `from` para voltar ao destino
-- Carrinho/Drawer: estados vazios, validações de mínimo, micro-feedbacks, persistência
-- "Minha conta" navegação (sidebar, abas, mobile), copy ambígua
-- Favoritos: feedback ao adicionar (toast), página com ações em massa
-
-### 🌊 Onda 3 — Guia de composição, catálogo & páginas comerciais
-Foco: jornada principal de compra (Contexto → Composições → Refinar → Carrinho).
-- Guia: pode voltar etapas? estado preservado? loading states? botão Finalizar tem disabled state correto?
-- LinhaPage / ProductPage: filtros, ordenação, "carregando", imagens ausentes, CTAs duplicados
-- Conjuntos: fricção até adicionar
-- Páginas institucionais (Sobre, PorQueWestern, FAQ, AgendarVisita, PedirAmostras): CTAs fim-de-página, links contextuais
-- Formulários: máscaras (CNPJ, telefone, CEP), erros inline, autocomplete, mobile keyboard hints
-
-### 🌊 Onda 4 — Microinterações, feedback, mobile & polish
-Foco: estados de carregamento, vazios, erros, toasts, motion, responsividade, performance percebida.
-- Estados vazios (carrinho, favoritos, orçamentos, pedidos, amostras) com CTA pra próxima ação
-- Skeletons consistentes em listas
-- Toasts duplicados / posição / linguagem
-- WhatsApp FAB: posição em mobile com cart drawer / menu
-- Touch targets ≥ 44px, espaçamento mobile, menu fechando ao navegar
-- Foco visível em todos botões/links, aria-labels faltando
-- TopBar: utilidade real, dismissível?
+Vou rodar uma auditoria completa de velocidade e otimização. Achados iniciais:
+- **21MB** de imagens locais; 12 arquivos acima de 500KB (vários PNG/JPG entre 1MB e 2.7MB)
+- **Zero code-splitting**: todas as páginas no bundle inicial → JS pesado mesmo na home
+- Sem `manualChunks` no Vite → vendor único e gigante
+- Falta de `width/height`, `loading`, `fetchpriority` em várias imagens (causa CLS e atrasa LCP)
 
 ---
 
-Vou começar pela **Onda 1** após sua aprovação e seguir sequencialmente. Em cada onda, primeiro mapeio os achados, depois aplico as correções, depois reporto.
+### 🌊 Onda 1 — Code-splitting de rotas + chunks de vendor
+- `React.lazy` para todas as rotas em `App.tsx` (admin, conta, guia, páginas institucionais)
+- `<Suspense>` com fallback elegante (não branco)
+- `manualChunks` em `vite.config.ts`: separa react, supabase, radix, framer, react-query
+- Resultado esperado: 1ª paint cai 40-60% no JS inicial
+
+### 🌊 Onda 2 — Compressão de imagens (sem perder qualidade)
+Converter os pesos altos para **WebP q=88** (visualmente lossless) mantendo resolução original. Substituir os imports por `.webp` e remover originais grandes só depois de validar.
+Alvos prioritários:
+- `cover-jardim-seco.png` 2.7MB
+- `irmaos-botelho-gruta.webp` 2.6MB (já é webp, recomprimir)
+- `ricardo-desenhando.png` 1.9MB
+- `hero/ricardo-atelie.png` 1.8MB
+- `pedra-grande-2-cascata.png` 1.4MB
+- 4 jpgs em `about-projetos/` (0.8–1.2MB)
+- `projetos/cover-piscina.jpg`, `cover-jardim-fonte.jpg`, `cover-lago.jpg`
+Meta: redução de **70-85%** sem mudança perceptível.
+
+### 🌊 Onda 3 — Hints de carregamento & LCP
+- Adicionar `width`/`height` em imagens críticas (evita CLS)
+- `loading="eager"` + `fetchpriority="high"` na hero da home
+- `loading="lazy"` + `decoding="async"` em todo o resto (já existe em alguns lugares; padronizar)
+- Preconnect/preload do CDN Shopify para a primeira imagem da home
+- Verificar fontes: usar `font-display: swap`
+
+### 🌊 Onda 4 — Higiene de bundle & cache
+- React Query: já tem `staleTime` 5min, manter; adicionar `gcTime` razoável
+- Remover imports pesados desnecessários (revisar barrels, lucide tree-shaking)
+- Prefetch em hover dos cards de produto (`queryClient.prefetchQuery`)
+- Confirmar que `index.html` não puxa scripts bloqueantes
+
+---
+
+Inicio pela Onda 1 (maior ganho com menor risco), depois Onda 2 (trabalho braçal de imagens), depois 3 e 4.
