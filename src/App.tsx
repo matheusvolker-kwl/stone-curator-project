@@ -78,10 +78,17 @@ const App = () => (
                 path="/admin"
                 element={
                   <RequireAuth adminOnly>
-                    <Admin />
+                    <AdminLayout />
                   </RequireAuth>
                 }
-              />
+              >
+                <Route index element={<AdminDashboard />} />
+                <Route path="parceiros" element={<AdminPartners />} />
+                <Route path="leads" element={<AdminLeads />} />
+                <Route path="amostras" element={<AdminSamples />} />
+                <Route path="usuarios" element={<AdminUsers />} />
+                <Route path="configuracoes" element={<AdminSettings />} />
+              </Route>
               <Route
                 path="/pedir-amostras"
                 element={
