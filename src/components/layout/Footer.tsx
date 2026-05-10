@@ -28,25 +28,34 @@ const COLECOES: { label: string; handle: string }[] = [
 
 export default function Footer() {
   const [email, setEmail] = useState("");
+  const [hp, setHp] = useState(""); // honeypot
   const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
 
   const handleNewsletter = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    const parsed = newsletterSchema.safeParse({ email, hp });
+    if (!parsed.success) {
+      const msg = parsed.error.issues[0]?.message ?? "Verifique o e-mail.";
+      if (msg !== "spam") toast.error(msg);
+      return;
+    }
     setLoading(true);
     const { error } = await supabase.from("leads").insert({
       type: "newsletter",
-      email,
+      email: parsed.data.email,
       origem: "site/footer/newsletter",
+      payload: { source: "footer", consent: true, ts: new Date().toISOString() },
     });
     setLoading(false);
     if (error) {
-      toast.error("Não foi possível inscrever agora.");
+      toast.error("Não foi possível inscrever agora.", { description: "Tente novamente em instantes." });
       return;
     }
     setEmail("");
+    setDone(true);
     toast.success("Inscrição confirmada", {
-      description: "Você receberá lançamentos e novidades.",
+      description: "Você receberá lançamentos e tabelas técnicas.",
     });
   };
 
