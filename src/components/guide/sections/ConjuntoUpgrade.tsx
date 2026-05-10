@@ -17,10 +17,21 @@ import GatedPrice from "@/components/shared/GatedPrice";
 interface Props {
   conjunto: ConjuntoLeaf;
   answers: GuideAnswers;
-  basePrice: number;
+  acabamento: string;
 }
 
-export default function ConjuntoUpgrade({ conjunto, answers, basePrice }: Props) {
+export default function ConjuntoUpgrade({ conjunto, answers, acabamento }: Props) {
+  const { data: baseProduct } = useQuery({
+    queryKey: ["guide-product", conjunto.handle],
+    queryFn: () => fetchProduct(conjunto.handle),
+    retry: false,
+  });
+  const baseVariant = baseProduct?.variants.edges.find((e) =>
+    e.node.selectedOptions.some(
+      (o) => /acabamento/i.test(o.name) && o.value.toLowerCase() === acabamento.toLowerCase()
+    )
+  )?.node ?? baseProduct?.variants.edges[0]?.node ?? null;
+  const basePrice = baseVariant ? parseFloat(baseVariant.price.amount) : conjunto.preco;
   const upgrade = useMemo(() => resolveUpgrade(answers), [answers]);
   const tipo = answers.tipo as Tipo | undefined;
   const nivelAtual = answers.nivel ?? "essencial";
