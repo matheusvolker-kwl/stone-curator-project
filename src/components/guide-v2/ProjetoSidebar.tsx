@@ -192,7 +192,7 @@ export default function ProjetoSidebar(props: Props) {
 
   return (
     <>
-      <aside className="hidden lg:block sticky top-28 self-start max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-hide">
+      <aside className="hidden lg:block sticky top-32 self-start max-h-[calc(100vh-9rem)] overflow-y-auto scrollbar-hide">
         <PanelBody {...props} />
       </aside>
 
