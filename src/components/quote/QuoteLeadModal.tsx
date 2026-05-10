@@ -163,7 +163,7 @@ export default function QuoteLeadModal({
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 30000);
   };
 
   const whatsappUrl = (() => {
