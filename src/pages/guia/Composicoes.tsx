@@ -48,7 +48,7 @@ export default function GuiaComposicoes() {
 
   return (
     <div className="min-h-screen surface-paper relative">
-      <GuideHeader breadcrumb={{ label: "Voltar · Contexto", to: `/guia-de-composicao?${backQs}` }} />
+      <GuideHeader step={2} breadcrumb={{ label: "Voltar · Contexto", to: `/guia-de-composicao?${backQs}` }} />
       <ContextoChips tipo={ctx.tipoVisual} area={ctx.area} acabamento={ctx.acabamento} />
 
       <main className="container-western pt-14 md:pt-20 pb-32 relative">
