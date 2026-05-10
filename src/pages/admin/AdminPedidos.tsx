@@ -708,7 +708,7 @@ export default function AdminPedidos() {
     try {
       // 1. Atualização de campos (status / modo)
       if (bulkStatus || bulkModo) {
-        const patch: Record<string, unknown> = {};
+        const patch: { status?: Status; modo_entrega?: Modo } = {};
         if (bulkStatus) patch.status = bulkStatus;
         if (bulkModo) patch.modo_entrega = bulkModo;
         const { error } = await supabase
