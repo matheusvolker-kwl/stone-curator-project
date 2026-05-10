@@ -1,7 +1,7 @@
 import type { Tipo, Nivel } from "@/data/guideMap";
 
-// 5 tipos visuais → mapeamento para (tipo, variante) do guideMap
-export type TipoVisual = "piscina" | "lago" | "lago-reduzido" | "jardim-fonte" | "jardim-seco";
+// 4 tipos visuais → mapeamento para (tipo, variante) do guideMap
+export type TipoVisual = "piscina" | "lago" | "jardim-fonte" | "jardim-seco";
 
 export const tipoVisualMap: Record<
   TipoVisual,
@@ -9,7 +9,6 @@ export const tipoVisualMap: Record<
 > = {
   piscina: { tipo: "piscina", label: "Piscina", copy: "uma piscina" },
   lago: { tipo: "lago", variante: "somenteWestern", label: "Lago", copy: "um lago" },
-  "lago-reduzido": { tipo: "lago", variante: "comNaturais", label: "Lago Reduzido", copy: "um lago reduzido" },
   "jardim-fonte": { tipo: "jardim", variante: "comFonte", label: "Jardim com Fonte", copy: "um jardim com fonte" },
   "jardim-seco": { tipo: "jardim", variante: "seco", label: "Jardim Seco", copy: "um jardim seco" },
 };
@@ -20,7 +19,7 @@ export const acabamentoMeta: Record<Acabamento, { label: string; chip: string; t
   quartzo: { label: "Quartzo", chip: "#E8DFC8" },
   arenito: { label: "Arenito", chip: "#C9A57B" },
   moledo: { label: "Moledo", chip: "#8B5E3C", tag: "+ VENDIDO" },
-  granito: { label: "Granito", chip: "#2D332E" },
+  granito: { label: "Granito", chip: "#5A5D5C" },
 };
 
 export type ProjetoExtra = { id: string; nome: string; codigo: string; preco: number; qty: number };

@@ -9,18 +9,20 @@ interface Props {
   index?: number;
   selected: boolean;
   onToggle: () => void;
+  onOpen?: () => void;
 }
 
-export default function AutoralCard({ item, index = 0, selected, onToggle }: Props) {
+export default function AutoralCard({ item, index = 0, selected, onToggle, onOpen }: Props) {
   const image = stoneCrops[index % stoneCrops.length];
   return (
     <article
       className={cn(
-        "bg-white flex flex-col transition-all duration-500 overflow-hidden",
+        "bg-white flex flex-col transition-all duration-500 overflow-hidden cursor-pointer",
         selected
           ? "shadow-[0_28px_42px_-26px_hsl(var(--western-stone-dark)/0.45)] -translate-y-1 outline outline-1 outline-western-gold"
           : "shadow-[0_18px_32px_-26px_hsl(var(--western-stone-dark)/0.35)] hover:-translate-y-1 hover:shadow-[0_28px_44px_-28px_hsl(var(--western-stone-dark)/0.4)]"
       )}
+      onClick={onOpen}
     >
       <div className="aspect-[4/3] w-full bg-western-paper overflow-hidden">
         <img
@@ -42,7 +44,7 @@ export default function AutoralCard({ item, index = 0, selected, onToggle }: Pro
         {selected ? (
           <button
             type="button"
-            onClick={onToggle}
+            onClick={(e) => { e.stopPropagation(); onToggle(); }}
             className="mt-auto inline-flex items-center justify-between gap-2 px-4 h-12 bg-western-green-deep text-western-cream font-mono text-[11px] uppercase tracking-[0.22em]"
           >
             <span className="inline-flex items-center gap-2">
@@ -53,7 +55,7 @@ export default function AutoralCard({ item, index = 0, selected, onToggle }: Pro
         ) : (
           <button
             type="button"
-            onClick={onToggle}
+            onClick={(e) => { e.stopPropagation(); onToggle(); }}
             className="mt-auto inline-flex items-center justify-center gap-2 px-4 h-12 border border-western-green-deep text-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] hover:bg-western-green-deep hover:text-western-cream transition-colors"
           >
             <Plus className="h-3.5 w-3.5" /> Adicionar ao projeto

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, X } from "lucide-react";
-import iconePedra from "@/assets/icone-pedra-bege.png";
+import logoWestern from "@/assets/logos/western-verde.png";
 
 interface Props {
   breadcrumb?: { label: string; to: string };
@@ -8,21 +8,21 @@ interface Props {
 
 export default function GuideHeader({ breadcrumb }: Props) {
   return (
-    <header className="border-b border-western-stone-warm/15 bg-western-ivory/95 backdrop-blur-sm sticky top-0 z-30 relative overflow-hidden">
-      {/* watermark icone-pedra à direita */}
-      <img
-        src={iconePedra}
-        alt=""
-        aria-hidden
-        className="absolute -right-6 top-1/2 -translate-y-1/2 h-24 opacity-[0.06] pointer-events-none select-none"
-      />
+    <header className="border-b border-western-gold/30 bg-western-ivory/95 backdrop-blur-sm sticky top-0 z-30 relative">
       <div className="container-western h-16 flex items-center justify-between relative">
-        <Link
-          to="/"
-          className="font-display text-lg tracking-wide text-western-green-deep hover:text-western-gold transition-colors"
-        >
-          Western Pools
-        </Link>
+        <div className="flex items-center gap-5 min-w-0">
+          <Link to="/" className="flex-shrink-0" aria-label="Western Pools">
+            <img
+              src={logoWestern}
+              alt="Western Pools"
+              className="h-7 md:h-8 w-auto object-contain"
+            />
+          </Link>
+          <span aria-hidden className="hidden md:block w-px h-7 bg-western-gold/40" />
+          <span className="hidden md:inline-block font-display italic text-[18px] text-western-green-deep leading-none truncate">
+            Guia de Composição
+          </span>
+        </div>
         <div className="flex items-center gap-8">
           {breadcrumb && (
             <Link
@@ -40,7 +40,6 @@ export default function GuideHeader({ breadcrumb }: Props) {
           </Link>
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-western-gold/40 to-transparent" />
       {breadcrumb && (
         <div className="md:hidden container-western pb-3 relative">
           <Link
