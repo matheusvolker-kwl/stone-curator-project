@@ -37,7 +37,7 @@ import Contact from "./pages/Contact.tsx";
 import GuiaContexto from "./pages/guia/Contexto.tsx";
 import GuiaComposicoes from "./pages/guia/Composicoes.tsx";
 import GuiaRefinar from "./pages/guia/Refinar.tsx";
-import GuiaFinalizar from "./pages/guia/Finalizar.tsx";
+
 import PartnerSignup from "./pages/PartnerSignup.tsx";
 import ParceirosArquitetos from "./pages/ParceirosArquitetos.tsx";
 import PartnerLogin from "./pages/PartnerLogin.tsx";
@@ -70,7 +70,7 @@ const App = () => (
             <Route path="/guia-de-composicao" element={<GuiaContexto />} />
             <Route path="/guia-de-composicao/composicoes" element={<GuiaComposicoes />} />
             <Route path="/guia-de-composicao/refinar/:handle" element={<GuiaRefinar />} />
-            <Route path="/guia-de-composicao/finalizar" element={<GuiaFinalizar />} />
+            <Route path="/guia-de-composicao/finalizar" element={<Navigate to="/guia-de-composicao" replace />} />
             <Route element={<SiteLayout />}>
               <Route path="/" element={<Index />} />
               <Route path="/linhas" element={<Linhas />} />

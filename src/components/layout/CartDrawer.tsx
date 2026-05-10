@@ -2,7 +2,7 @@ import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
-import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock, FileDown, ArrowLeft, ShieldCheck, Clock } from "lucide-react";
+import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock, ArrowLeft, ShieldCheck, Clock } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { BUSINESS } from "@/config/business";
@@ -11,7 +11,6 @@ import CartCrossSell from "@/components/cart/CartCrossSell";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import EmptyCartHints from "@/components/cart/EmptyCartHints";
 import FreeShippingProgress from "@/components/cart/FreeShippingProgress";
-import { downloadOrcamentoPdf } from "@/lib/pdf/orcamentoPdf";
 import { toast } from "sonner";
 
 const MIN_ORDER = BUSINESS.pedidoMinimoBRL;
@@ -243,21 +242,7 @@ export default function CartDrawer({
               </button>
             )}
 
-            {/* Tertiary: PDF download */}
-            <button
-              type="button"
-              onClick={() =>
-                downloadOrcamentoPdf({
-                  items,
-                  subtotal,
-                  currency,
-                  showPrices: isApproved,
-                })
-              }
-              className="w-full inline-flex items-center justify-center gap-2 text-western-cream-muted hover:text-western-gold-soft font-mono text-[10px] uppercase tracking-[0.22em] py-2 transition-colors"
-            >
-              <FileDown className="h-3.5 w-3.5" /> Baixar PDF da composição
-            </button>
+            {/* PDF apenas após formulário (Solicitar orçamento) */}
 
             {!isApproved && (
               <Link

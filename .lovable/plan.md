@@ -1,64 +1,109 @@
-## Problemas
 
-1. **Sidebar com scroll interno** — `max-h-[calc(100vh-9rem)] overflow-y-auto` cria rolagem dentro do card quando o conteúdo não cabe. O CTA "Revisar e finalizar" fica escondido.
-2. **Sem fóssil em piscina** — só lago/jardim-seco têm `fossil-coelphisys`.
-3. **Modal de produto autoral**:
-   - Botão `×` recortado pela faixa dourada do topo
-   - Não permite quantidade > 1
-   - Layout ainda visualmente fraco
+## Diagnóstico — por que parou de funcionar no Guia
+
+O fluxo de orçamento + PDF foi construído em torno do **carrinho** (`CartDrawer` → `QuoteRequestModal` → `submitQuoteLead` em `src/lib/leads.ts`), e ainda funciona lá:
+
+- Cria um `lead` (tipo `orcamento`) que aparece no painel admin.
+- Se o usuário estiver logado, gera o PDF, sobe pro Storage (`orcamentos`) e registra em `quote_pdfs` → aparece em **Minha conta › Orçamentos** (`/minha-conta/orcamentos`).
+
+No **Guia de Composição** isso nunca foi conectado:
+
+- O botão "Revisar e finalizar" em `ProjetoSidebar` chama `onFinalizar()` em `src/pages/guia/Refinar.tsx`, que apenas navega para `/guia-de-composicao/finalizar`.
+- Essa página (`src/pages/guia/Finalizar.tsx`) é hoje um **stub** com texto "Esta etapa de checkout completo será conectada ao fluxo comercial". Não dispara lead, não gera PDF, não salva nada.
+- Além disso, a composição do Guia (peças base + extras autorais) **não vive no `cartStore`** — então não dá pra reaproveitar `QuoteRequestModal` direto.
+
+Resultado: hoje o Guia "trava" no botão final. Toda a lógica de PDF/lead que já existe está sendo desperdiçada.
+
+Outro ponto: no `QuoteRequestModal` do carrinho, o botão "Baixar PDF agora" aparece **antes** do envio do formulário — ou seja, qualquer um baixa sem deixar contato. Você pediu que o PDF só saia mediante formulário.
 
 ---
 
-## Plano
+## O que vou construir
 
-### 1. Sidebar verdadeiramente sticky, sem scroll interno
-`ProjetoSidebar.tsx` linha 195: remover `max-h-[calc(100vh-9rem)] overflow-y-auto scrollbar-hide`. Manter só `sticky top-32 self-start`. Se o conteúdo for maior que a viewport, ele rola com a página normalmente (comportamento que o usuário quer).
+### 1. Modal único de "Solicitar orçamento" reaproveitável
 
-Para garantir que o resumo + CTA caibam em viewports comuns (854px+), **compactar o panel**:
-- Reduzir padding `p-7 md:p-8` → `p-6`
-- Reduzir gap `gap-6` → `gap-5`
-- Total: `text-[36px]` → `text-[32px]`
-- Reduzir espaçamentos verticais entre seções (`pt-5` → `pt-4`)
-- Lista de peças com `text-[12.5px]`, `space-y-1`
-- CTA principal `h-[54px]` → `h-12`, secundário `h-11` → `h-10`
-- Lock state mais compacto
+Criar `src/components/quote/QuoteLeadModal.tsx` (genérico), recebendo:
 
-### 2. Adicionar fóssil em piscina + jardim-fonte
-`autoraisCatalog.ts` FILTERS:
-- `piscina`: adicionar `fossil-coelphisys` no array
-- `jardim-fonte`: adicionar `fossil-seymouria`
-Reordenar para fósseis aparecerem entre as primeiras peças (mais visibilidade).
+- `items` (já no formato esperado por `submitQuoteLead`)
+- `origem` (`"cart_drawer"` | `"guia_composicao"`)
+- `payloadExtra` (no Guia: conjunto, acabamento, tipoVisual, área, modo curado/sob-consulta)
+- `subtotal`, `currency`, `showPrices`
 
-### 3. Modal autoral — refinar e corrigir bug
-`AutoralProductModal.tsx`:
+Refatorar `QuoteRequestModal` (carrinho) para ser apenas um wrapper que monta esses props a partir do `cartStore`. Assim cart e guia compartilham 1 componente só.
 
-**Bug do `×`:** atualmente `absolute top-3 right-3` no painel direito, mas a faixa `h-[3px] bg-western-gold` no topo do `DialogContent` está acima e o canto fica visualmente quebrado. Solução:
-- Mover o `×` para `position: absolute` no nível do `DialogContent` (não dentro do grid), `top-2.5 right-2.5`, com `z-10` e fundo `bg-western-cream/90 backdrop-blur` em círculo `w-8 h-8 rounded-full`. Fica acima da faixa e da imagem.
+### 2. Formulário diferente para logado vs. não logado
 
-**Quantidade > 1:** quando já está selecionado, em vez de mostrar só "Remover do projeto", mostrar **stepper de quantidade** + ação remover ao lado. Stepper: `−  [ qty ]  +` no mesmo padrão do `PecaRow`. Vai exigir ler/atualizar `qty` do extra, então:
-- Adicionar prop `currentQty: number` ao modal
-- Adicionar prop `onQtyChange: (delta: number) => void` ou `onSetQty: (qty: number) => void`
-- No `Refinar.tsx`, passar handlers que façam `setExtras` aumentando/diminuindo qty. Já existe `addExtraQty`/`setExtras` lógica para extras — verificar e reaproveitar.
+**Não logado** (formulário curto e direto):
+- Nome *
+- E-mail *
+- WhatsApp *
+- Cidade (opcional)
+- Mensagem (opcional)
+- Checkbox: "Quero receber novidades" (opt-in)
+- CTA secundário discreto: "Já tem conta? Entrar" (link para `/parceiro/login` mantendo o estado)
 
-**Refinamento visual:**
-- Remover a faixa dourada do topo (poluição visual) — substituir por um detalhe gold mais sutil só na lateral/canto da seção de info, ou simplesmente um `border-t-2 border-western-gold` na seção do conteúdo
-- Aumentar respiro: `p-6 md:p-7` continua, mas reorganizar hierarquia
-- Fundo da imagem `bg-western-paper` mantém, mas com sombra interna sutil para a peça "flutuar"
-- Tipografia: nome `text-[24px]` (era 22px), preço `text-[28px]` (era 26px), código `text-[10px]`
-- CTA principal: full-width, `h-12`, com hover state mais marcado
-- Reordenar: `código → nome → divisor → preço → resumo curto → specs → stepper/CTA → mais detalhes`
+**Logado** (rápido, prefilled, sem fricção):
+- Mostra cartão "Enviando como **{nome}** · {empresa}" com link "trocar"
+- Pré-carrega nome/email/telefone/cidade do `partner_profiles`
+- Só pede o que estiver faltando
+- Campo único editável: **Mensagem para o vendedor**
+- Indica: "Esta composição vai ficar salva em **Minha conta › Orçamentos**"
 
-### 4. Mini-quantidade no AutoralCard também
-No card do grid (`AutoralCard.tsx`), quando já selecionado e `qty > 1`, mostrar o número no badge do canto superior direito (`bg-western-green-deep` com `qty×`) em vez de só o check. Ajuda o usuário a ver quantos já adicionou sem abrir o modal.
+### 3. PDF só após formulário
+
+Remover o botão "Baixar PDF agora" da tela pré-envio. O download passa a ser **exclusivamente** na tela de sucesso (após `submitQuoteLead`), igual já acontece com "Falar com vendedor". Isso vale para carrinho e guia.
+
+### 4. Conectar o Guia ao fluxo
+
+Em `src/pages/guia/Refinar.tsx`:
+- Trocar `onFinalizar` (que navega) por abrir `<QuoteLeadModal>` com:
+  - `items` montados a partir de `pecas` + `extras` (mapeando para o shape do `CartItem`/`submitQuoteLead`)
+  - `origem: "guia_composicao"`
+  - `payloadExtra`: `{ conjuntoHandle, conjuntoNome, acabamento, tipoVisual, areaM2, isCustomizado, modo: isCustomizado ? "consulta" : "curado" }`
+- Texto do CTA muda conforme `isCustomizado` (já está hoje: "Solicitar orçamento sob consulta" vs "Revisar e finalizar").
+- Aposentar a página stub `/guia-de-composicao/finalizar` (deletar rota e arquivo, ou redirecionar para o Guia).
+
+### 5. Persistência para o cliente logado
+
+`submitQuoteLead` já faz tudo: cria `lead`, gera PDF, salva no bucket `orcamentos`, registra em `quote_pdfs`. Vou apenas:
+- Adicionar `origem` e `payloadExtra` ao `lead.payload` (campos do guia ficam visíveis pra você no admin).
+- Garantir que o PDF do Guia mostre conjunto/acabamento/contexto (estender `orcamentoPdfBlob` com seção opcional "Projeto do Guia").
+
+A página **Minha conta › Orçamentos** (`/minha-conta/orcamentos`, já existente) continua sendo o ponto único onde o cliente reencontra e baixa todos os PDFs — tanto os vindos do carrinho quanto os do Guia.
+
+### 6. Painel admin
+
+`leads` com `type = 'orcamento'` já caem no admin. Vou só:
+- Garantir que `origem` apareça na listagem (`cart_drawer` vs `guia_composicao`) para você diferenciar.
+- Mostrar `payload.summary` + (quando vier do guia) o nome do conjunto/acabamento.
+
+### 7. PDF para visitante não logado
+
+Hoje: se não tem `userId`, o PDF **não é salvo no storage** (não tem onde guardar com RLS). Vou manter assim, mas no momento do "sucesso" gerar o blob no client e oferecer download direto. O lead com todos os dados continua chegando pra você — então mesmo sem PDF salvo, você tem o contato + a composição (em `payload.items`) pra responder.
 
 ---
 
 ## Arquivos afetados
 
-- `src/components/guide-v2/ProjetoSidebar.tsx` — remover scroll interno + compactar
-- `src/components/guide-v2/autoraisCatalog.ts` — adicionar fósseis em piscina e jardim-fonte
-- `src/components/guide-v2/AutoralProductModal.tsx` — fix botão `×`, stepper de quantidade, refinar visual
-- `src/components/guide-v2/AutoralCard.tsx` — badge de quantidade quando >1
-- `src/pages/guia/Refinar.tsx` — passar `currentQty` + handler de qty pro modal (verificar lógica de extras existente)
+- **Novo**: `src/components/quote/QuoteLeadModal.tsx` (componente compartilhado)
+- **Editar**:
+  - `src/components/cart/QuoteRequestModal.tsx` (vira wrapper magrinho)
+  - `src/pages/guia/Refinar.tsx` (abre modal em vez de navegar)
+  - `src/components/guide-v2/ProjetoSidebar.tsx` (sem mudança de API; só passa `onFinalizar` que abre modal)
+  - `src/lib/leads.ts` (aceitar `origem` e `payloadExtra`)
+  - `src/lib/pdf/orcamentoPdf.ts` (seção opcional de contexto do Guia)
+  - `src/App.tsx` (remover rota `/guia-de-composicao/finalizar`)
+- **Deletar**: `src/pages/guia/Finalizar.tsx`
 
-Sem mudanças em DB, rotas ou regras de negócio.
+---
+
+## Resposta direta às suas perguntas
+
+> Por que não está dentro do motor do guia?
+Porque o botão "Finalizar" do Guia nunca foi ligado ao `submitQuoteLead`. Ele só navegava para uma página de placeholder. Ficou só no carrinho.
+
+> Isso está funcionando?
+**Carrinho:** sim — gera lead, PDF, salva em conta logada e aparece em "Minha conta › Orçamentos".
+**Guia:** não — o botão final é decorativo.
+
+Depois deste plano, o mesmo fluxo de lead + PDF + salvar-na-conta passa a rodar nos dois lugares, com formulários diferentes para visitante e cliente logado, e o PDF só é entregue após o formulário.

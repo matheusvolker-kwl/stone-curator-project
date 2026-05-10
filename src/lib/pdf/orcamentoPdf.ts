@@ -15,6 +15,14 @@ export interface PdfCliente {
   mensagem?: string;
 }
 
+export interface PdfProjetoContext {
+  conjuntoNome?: string;
+  acabamento?: string;
+  tipoVisual?: string;
+  areaM2?: number;
+  modo?: "curado" | "consulta";
+}
+
 export interface PdfOptions {
   items: CartItem[];
   subtotal: number;
@@ -22,6 +30,7 @@ export interface PdfOptions {
   cliente?: PdfCliente;
   showPrices: boolean;
   numero?: string;
+  projeto?: PdfProjetoContext;
 }
 
 const GREEN: [number, number, number] = [27, 50, 41];
@@ -267,6 +276,7 @@ export async function gerarOrcamentoPdf({
   cliente,
   showPrices,
   numero,
+  projeto,
 }: PdfOptions): Promise<jsPDF> {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -283,6 +293,36 @@ export async function gerarOrcamentoPdf({
 
   if (cliente && (cliente.nome || cliente.email || cliente.telefone)) {
     y = drawClientCard(doc, pageWidth, y, cliente) + 24;
+  }
+
+  if (projeto && (projeto.conjuntoNome || projeto.acabamento)) {
+    const cardH = 56;
+    doc.setFillColor(...CREAM);
+    doc.rect(margin, y, pageWidth - margin * 2, cardH, "F");
+    doc.setFillColor(...GOLD);
+    doc.rect(margin, y, 3, cardH, "F");
+    doc.setTextColor(...GOLD);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7.5);
+    doc.text(
+      projeto.modo === "consulta" ? "PROJETO DO GUIA · SOB CONSULTA" : "PROJETO DO GUIA · CURADO",
+      margin + 18,
+      y + 18,
+      { charSpace: 1.5 },
+    );
+    doc.setTextColor(...INK);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text(projeto.conjuntoNome || "—", margin + 18, y + 34);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(...STONE);
+    const ctxBits: string[] = [];
+    if (projeto.tipoVisual) ctxBits.push(projeto.tipoVisual);
+    if (projeto.areaM2) ctxBits.push(`${projeto.areaM2} m²`);
+    if (projeto.acabamento) ctxBits.push(`acabamento ${projeto.acabamento}`);
+    doc.text(ctxBits.join(" · "), margin + 18, y + 48);
+    y += cardH + 20;
   }
 
   // Eyebrow seção

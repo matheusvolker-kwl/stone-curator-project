@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Link, Navigate, useParams, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, ExternalLink, Info, RotateCcw, MessageCircle } from "lucide-react";
+import QuoteLeadModal from "@/components/quote/QuoteLeadModal";
+import type { CartItem } from "@/stores/cartStore";
 import GuideHeader from "@/components/guide-v2/GuideHeader";
 import PecaRow from "@/components/guide-v2/PecaRow";
 import AutoralCard from "@/components/guide-v2/AutoralCard";
@@ -57,7 +59,7 @@ function pecasIguais(a: ProjetoPeca[], b: ProjetoPeca[]): boolean {
 export default function GuiaRefinar() {
   const { handle } = useParams();
   const [params, setParams] = useSearchParams();
-  const navigate = useNavigate();
+  const [quoteOpen, setQuoteOpen] = useState(false);
 
   const found = useMemo(() => (handle ? findConjunto(handle) : null), [handle]);
   const acabamento = (params.get("acabamento") as Acabamento | null) ?? "moledo";
@@ -148,9 +150,39 @@ export default function GuiaRefinar() {
   const backToCaminhos = `/guia-de-composicao/composicoes?${buildContextQuery(ctx)}`;
 
   const onFinalizar = () => {
-    const sp = new URLSearchParams();
-    if (isCustomizado) sp.set("modo", "consulta");
-    navigate(`/guia-de-composicao/finalizar${sp.toString() ? `?${sp.toString()}` : ""}`);
+    setQuoteOpen(true);
+  };
+
+  // Mapeia peças + extras do guia para o shape de CartItem usado em submitQuoteLead/PDF
+  const quoteItems: CartItem[] = useMemo(() => {
+    const acabLabel = acabamentoMeta[acabamento].label;
+    const toItem = (
+      it: { id: string; nome: string; codigo: string; preco: number; qty: number; imageUrl?: string },
+    ): CartItem => ({
+      lineId: null,
+      productHandle: it.codigo || it.id,
+      productTitle: it.nome,
+      productImage: it.imageUrl ?? null,
+      variantId: it.id,
+      variantTitle: acabLabel,
+      price: { amount: String(it.preco || 0), currencyCode: "BRL" },
+      quantity: it.qty,
+      selectedOptions: [{ name: "Acabamento", value: acabLabel }],
+    });
+    return [...pecas.map(toItem), ...extras.map(toItem)];
+  }, [pecas, extras, acabamento]);
+
+  const quoteSubtotal = quoteItems.reduce(
+    (s, i) => s + parseFloat(i.price.amount) * i.quantity,
+    0,
+  );
+
+  const projetoContext = {
+    conjuntoNome: found?.conjunto.nome,
+    acabamento: acabamentoMeta[acabamento].label,
+    tipoVisual: tipoVisualMap[tipoVisual].label,
+    areaM2: area ? Number(area) : undefined,
+    modo: (isCustomizado ? "consulta" : "curado") as "consulta" | "curado",
   };
 
   const whatsHref = whatsappConsultor(tipoMeta.tipo, conjunto.nome);
@@ -337,6 +369,26 @@ export default function GuiaRefinar() {
         onClose={() => setModalItem(null)}
         onToggle={() => modalItem && toggleExtra(modalItem.id)}
         onSetQty={(q) => modalItem && setExtraQty(modalItem.id, q)}
+      />
+
+      <QuoteLeadModal
+        open={quoteOpen}
+        onOpenChange={setQuoteOpen}
+        items={quoteItems}
+        subtotal={quoteSubtotal}
+        currency="BRL"
+        origem="guia_composicao"
+        projetoContext={projetoContext}
+        ctaLabel={isCustomizado ? "Solicitar orçamento sob consulta" : "Enviar pedido de orçamento"}
+        title={isCustomizado ? "Solicitar orçamento sob consulta" : "Solicitar orçamento do projeto"}
+        payloadExtra={{
+          conjuntoHandle: handle,
+          conjuntoNome: found?.conjunto.nome,
+          acabamento,
+          tipoVisual,
+          areaM2: area ? Number(area) : undefined,
+          isCustomizado,
+        }}
       />
 
       <img
