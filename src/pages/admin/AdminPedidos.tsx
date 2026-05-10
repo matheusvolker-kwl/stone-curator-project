@@ -594,6 +594,11 @@ export default function AdminPedidos() {
   const [filter, setFilter] = useState<"todos" | "ativos" | "concluidos">("ativos");
   const [search, setSearch] = useState("");
   const [creating, setCreating] = useState(false);
+  const [checked, setChecked] = useState<Set<string>>(new Set());
+  const [bulkStatus, setBulkStatus] = useState<Status | "">("");
+  const [bulkModo, setBulkModo] = useState<Modo | "">("");
+  const [bulkNote, setBulkNote] = useState("");
+  const [bulkApplying, setBulkApplying] = useState(false);
 
   useEffect(() => {
     let mounted = true;
