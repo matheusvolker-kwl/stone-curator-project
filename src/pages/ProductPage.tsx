@@ -20,12 +20,30 @@ import PriceGate from "@/components/shared/PriceGate";
 import { useAuth } from "@/hooks/useAuth";
 import HardFactsCard from "@/components/product/HardFactsCard";
 import CustomPaintNote from "@/components/product/CustomPaintNote";
+import ProductGallery from "@/components/product/ProductGallery";
+import ScrollProgress from "@/components/shared/ScrollProgress";
+import BackToTop from "@/components/shared/BackToTop";
 
 import ProductComparison from "@/components/product/ProductComparison";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import WhyWesternStrip from "@/components/product/WhyWesternStrip";
 import SocialProofBand from "@/components/product/SocialProofBand";
 import ProductPagination from "@/components/product/ProductPagination";
+
+// Pluraliza nomes de coleção singulares ("Pedra Grande" → "Pedras Grandes").
+function pluralizeCollection(title?: string): string {
+  if (!title) return "";
+  const lower = title.toLowerCase();
+  if (lower.endsWith("s")) return title;
+  // "Pedra X" → "Pedras X+s" (assume X é adjetivo terminando em vogal/consoante)
+  const m = title.match(/^(Pedra)\s+(\S+)(.*)$/i);
+  if (m) {
+    const adj = m[2];
+    const adjPlural = /[aeiouáéíóú]$/i.test(adj) ? `${adj}s` : `${adj}es`;
+    return `Pedras ${adjPlural}${m[3]}`;
+  }
+  return title;
+}
 
 export default function ProductPage() {
   const { handle = "" } = useParams();
