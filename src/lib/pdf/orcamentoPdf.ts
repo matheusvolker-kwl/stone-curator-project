@@ -276,6 +276,7 @@ export async function gerarOrcamentoPdf({
   cliente,
   showPrices,
   numero,
+  projeto,
 }: PdfOptions): Promise<jsPDF> {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
