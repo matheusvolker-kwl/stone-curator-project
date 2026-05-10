@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      guide_exports: {
+        Row: {
+          created_at: string
+          id: string
+          payload: Json
+          pdf_url: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          payload?: Json
+          pdf_url?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          payload?: Json
+          pdf_url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           cep: string | null
@@ -78,68 +102,188 @@ export type Database = {
         Row: {
           approved_at: string | null
           bairro: string | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
           cargo: string | null
           cep: string | null
           cidade: string | null
           cnpj: string | null
           complemento: string | null
           created_at: string
+          discount_override: number | null
           empresa: string | null
           endereco: string | null
           estado: string | null
           id: string
           instagram: string | null
+          newsletter_opt_in: boolean
           nome: string | null
           numero: string | null
+          payment_methods: Json
           segmento: string | null
           site: string | null
           status: Database["public"]["Enums"]["partner_status"]
           telefone: string | null
+          tier: string
           user_id: string
         }
         Insert: {
           approved_at?: string | null
           bairro?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
           cargo?: string | null
           cep?: string | null
           cidade?: string | null
           cnpj?: string | null
           complemento?: string | null
           created_at?: string
+          discount_override?: number | null
           empresa?: string | null
           endereco?: string | null
           estado?: string | null
           id?: string
           instagram?: string | null
+          newsletter_opt_in?: boolean
           nome?: string | null
           numero?: string | null
+          payment_methods?: Json
           segmento?: string | null
           site?: string | null
           status?: Database["public"]["Enums"]["partner_status"]
           telefone?: string | null
+          tier?: string
           user_id: string
         }
         Update: {
           approved_at?: string | null
           bairro?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
           cargo?: string | null
           cep?: string | null
           cidade?: string | null
           cnpj?: string | null
           complemento?: string | null
           created_at?: string
+          discount_override?: number | null
           empresa?: string | null
           endereco?: string | null
           estado?: string | null
           id?: string
           instagram?: string | null
+          newsletter_opt_in?: boolean
           nome?: string | null
           numero?: string | null
+          payment_methods?: Json
           segmento?: string | null
           site?: string | null
           status?: Database["public"]["Enums"]["partner_status"]
           telefone?: string | null
+          tier?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          cidade: string | null
+          created_at: string
+          id: string
+          nome: string
+          notas: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cidade?: string | null
+          created_at?: string
+          id?: string
+          nome: string
+          notas?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cidade?: string | null
+          created_at?: string
+          id?: string
+          nome?: string
+          notas?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      saved_carts: {
+        Row: {
+          cart_id: string | null
+          checkout_url: string | null
+          items: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cart_id?: string | null
+          checkout_url?: string | null
+          items?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cart_id?: string | null
+          checkout_url?: string | null
+          items?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      system_flags: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      tier_defaults: {
+        Row: {
+          boleto: boolean
+          discount_pct: number
+          kit_gratis: boolean
+          parcelas_max: number
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          boleto?: boolean
+          discount_pct?: number
+          kit_gratis?: boolean
+          parcelas_max?: number
+          tier: string
+          updated_at?: string
+        }
+        Update: {
+          boleto?: boolean
+          discount_pct?: number
+          kit_gratis?: boolean
+          parcelas_max?: number
+          tier?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -213,7 +357,7 @@ export type Database = {
         | "amostras"
         | "visita"
         | "contato"
-      partner_status: "pending" | "approved" | "rejected"
+      partner_status: "pending" | "approved" | "rejected" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -349,7 +493,7 @@ export const Constants = {
         "visita",
         "contato",
       ],
-      partner_status: ["pending", "approved", "rejected"],
+      partner_status: ["pending", "approved", "rejected", "cancelled"],
     },
   },
 } as const
