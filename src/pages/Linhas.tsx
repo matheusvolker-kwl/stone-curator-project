@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
-import { fetchCollections, isSeasonal } from "@/lib/shopify/queries";
-import { cdnImg, cdnSrcSet } from "@/lib/shopify/client";
+import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/shopify/queries";
+import { cdnImg, cdnSrcSet, formatBRL } from "@/lib/shopify/client";
 import iconePedra from "@/assets/icone-pedra-verde.png";
 import { useMemo } from "react";
 import { X } from "lucide-react";
 
 export default function Linhas() {
-  const { data = [], isLoading } = useQuery({
+  const { data: collections = [], isLoading: loadingCollections } = useQuery({
     queryKey: ["collections"],
     queryFn: () => fetchCollections(50),
   });
@@ -15,8 +15,22 @@ export default function Linhas() {
   const [params, setParams] = useSearchParams();
   const q = (params.get("q") ?? "").trim();
 
+  // Busca de produtos (Shopify) — só dispara quando há query
+  const { data: products = [], isLoading: loadingProducts } = useQuery({
+    queryKey: ["productSearch", q],
+    queryFn: () => {
+      // Sintaxe Shopify: title, vendor, tag, product_type, sku
+      const term = q.replace(/[^\p{L}\p{N}\s-]/gu, " ").trim();
+      if (!term) return Promise.resolve([]);
+      const query = `title:*${term}* OR tag:*${term}* OR sku:*${term}* OR product_type:*${term}*`;
+      return fetchProducts(24, query);
+    },
+    enabled: q.length >= 2,
+    staleTime: 60_000,
+  });
+
   const linhas = useMemo(() => {
-    const base = data.filter((c) => !isSeasonal(c));
+    const base = collections.filter((c) => !isSeasonal(c));
     if (!q) return base;
     const needle = q.toLowerCase();
     return base.filter(
@@ -25,7 +39,10 @@ export default function Linhas() {
         (c.description ?? "").toLowerCase().includes(needle) ||
         c.handle.toLowerCase().includes(needle)
     );
-  }, [data, q]);
+  }, [collections, q]);
+
+  const totalResults = q ? linhas.length + products.length : 0;
+  const isSearching = q.length >= 2 && (loadingCollections || loadingProducts);
 
   return (
     <div className="surface-ivory">
@@ -39,9 +56,11 @@ export default function Linhas() {
                 Resultados para <span className="italic">"{q}"</span>
               </h1>
               <p className="mt-6 text-western-stone-warm leading-relaxed">
-                {linhas.length === 0
-                  ? "Nenhuma linha corresponde à sua busca. Explore o catálogo completo abaixo ou refine o termo."
-                  : `${linhas.length} ${linhas.length === 1 ? "linha encontrada" : "linhas encontradas"}.`}
+                {isSearching
+                  ? "Buscando…"
+                  : totalResults === 0
+                  ? "Nada encontrado. Refine o termo ou explore o catálogo completo abaixo."
+                  : `${linhas.length} ${linhas.length === 1 ? "linha" : "linhas"} · ${products.length} ${products.length === 1 ? "produto" : "produtos"}.`}
               </p>
               <button
                 onClick={() => setParams(new URLSearchParams(), { replace: true })}
@@ -65,7 +84,55 @@ export default function Linhas() {
           )}
         </div>
 
-        {isLoading ? (
+        {/* Resultados de produtos (só na busca) */}
+        {q && products.length > 0 && (
+          <div className="mb-16">
+            <p className="text-eyebrow mb-5">Produtos</p>
+            <div className="w-8 h-px bg-western-gold/50 mb-6" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
+              {products.map(({ node: p }) => {
+                const img = p.images?.edges?.[0]?.node;
+                const minPrice = p.priceRange?.minVariantPrice;
+                return (
+                  <Link key={p.handle} to={`/produto/${p.handle}`} className="group block">
+                    <div className="frame-product aspect-square overflow-hidden mb-3 bg-western-stone-warm/5">
+                      {img ? (
+                        <img
+                          src={cdnImg(img.url, 600)}
+                          srcSet={cdnSrcSet(img.url, [300, 600, 900])}
+                          sizes="(min-width: 1024px) 280px, (min-width: 640px) 30vw, 45vw"
+                          alt={img.altText ?? p.title}
+                          loading="lazy"
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <img src={iconePedra} alt="" className="h-10 opacity-30" />
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="font-display text-base text-western-green-deep group-hover:text-western-gold transition-colors line-clamp-2">
+                      {p.title}
+                    </h3>
+                    {minPrice && (
+                      <p className="text-spec text-western-stone-warm mt-1">
+                        a partir de {formatBRL(parseFloat(minPrice.amount), minPrice.currencyCode)}
+                      </p>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Linhas (sempre — quando busca está vazia OU como fallback) */}
+        {q && linhas.length > 0 && (
+          <p className="text-eyebrow mb-5">Linhas</p>
+        )}
+        {q && linhas.length > 0 && <div className="w-8 h-px bg-western-gold/50 mb-6" />}
+
+        {loadingCollections ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="aspect-[4/3] bg-western-stone-warm/10 animate-pulse" />
@@ -73,8 +140,8 @@ export default function Linhas() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
-            {(q && linhas.length === 0
-              ? data.filter((c) => !isSeasonal(c))
+            {(q && totalResults === 0
+              ? collections.filter((c) => !isSeasonal(c))
               : linhas
             ).map((c) => (
               <Link key={c.handle} to={`/linhas/${c.handle}`} className="group block">
