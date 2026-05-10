@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { formatPreco } from "@/data/guideMap";
-import { stoneCrops } from "./imagery";
 import type { ProjetoPeca } from "./types";
 
 interface Props {
@@ -11,10 +10,9 @@ interface Props {
   onRemove: (id: string) => void;
 }
 
-export default function PecaRow({ peca, index = 0, onQty, onRemove }: Props) {
+export default function PecaRow({ peca, onQty, onRemove }: Props) {
   const [confirm, setConfirm] = useState(false);
   const [pulse, setPulse] = useState<number | null>(null);
-  const image = stoneCrops[index % stoneCrops.length];
 
   const handleQty = (next: number) => {
     setPulse(next);
@@ -25,12 +23,16 @@ export default function PecaRow({ peca, index = 0, onQty, onRemove }: Props) {
   return (
     <div className="flex items-start gap-5 py-6 border-b border-western-stone-warm/15 first:border-t">
       <div className="w-24 h-24 flex-shrink-0 bg-western-paper border border-western-stone-warm/10 overflow-hidden">
-        <img src={image} alt="" aria-hidden loading="lazy" decoding="async" className="w-full h-full object-cover" />
+        {peca.imageUrl ? (
+          <img src={peca.imageUrl} alt={peca.nome} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full bg-western-paper" />
+        )}
       </div>
       <div className="flex-1 min-w-0">
         <h4 className="font-display text-[19px] text-western-green-deep leading-tight">{peca.nome}</h4>
         <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mt-1.5">
-          {peca.codigo} · {peca.pesoKg} kg · {peca.dim}
+          {peca.codigo}{peca.pesoKg ? ` · ${peca.pesoKg} kg` : ""}{peca.dim && peca.dim !== "—" ? ` · ${peca.dim}` : ""}
         </p>
         <p className="font-display text-[16px] text-western-green-deep mt-2">{formatPreco(peca.preco)}</p>
       </div>

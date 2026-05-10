@@ -4,7 +4,6 @@ import { formatPreco } from "@/data/guideMap";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
 import type { AutoralItem } from "./autoraisCatalog";
-import { stoneCrops } from "./imagery";
 
 interface Props {
   item: AutoralItem | null;
@@ -14,10 +13,9 @@ interface Props {
   onToggle: () => void;
 }
 
-export default function AutoralProductModal({ item, index, selected, onClose, onToggle }: Props) {
+export default function AutoralProductModal({ item, selected, onClose, onToggle }: Props) {
   const { isApproved, session } = useAuth();
   const open = !!item;
-  const image = item ? stoneCrops[index % stoneCrops.length] : "";
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -27,7 +25,11 @@ export default function AutoralProductModal({ item, index, selected, onClose, on
             <div className="h-[3px] bg-western-gold" />
             <div className="grid grid-cols-1 md:grid-cols-[1fr_1.1fr]">
               <div className="aspect-[4/3] md:aspect-auto bg-western-paper overflow-hidden">
-                <img src={image} alt="" aria-hidden className="w-full h-full object-cover" />
+                {item.imageUrl ? (
+                  <img src={item.imageUrl} alt={item.nome} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-western-paper" />
+                )}
               </div>
               <div className="p-7 md:p-8 flex flex-col">
                 <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-2">
