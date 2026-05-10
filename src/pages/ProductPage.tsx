@@ -26,6 +26,7 @@ import BackToTop from "@/components/shared/BackToTop";
 import StickyBuyBar from "@/components/product/StickyBuyBar";
 import DeliverySignals from "@/components/product/DeliverySignals";
 import { inRange } from "@/lib/seededRandom";
+import { trackRecentlyViewed } from "@/hooks/useRecentlyViewed";
 
 import ProductComparison from "@/components/product/ProductComparison";
 import RelatedProducts from "@/components/product/RelatedProducts";
@@ -101,6 +102,16 @@ export default function ProductPage() {
     );
     if (idx >= 0) setActiveImage(idx);
   }, [variant?.image?.url, product]);
+
+  // Track recently viewed for the cart drawer "you saw recently" section.
+  useEffect(() => {
+    if (!product) return;
+    trackRecentlyViewed({
+      handle: product.handle,
+      title: product.title,
+      image: product.images.edges[0]?.node?.url ?? null,
+    });
+  }, [product?.handle]);
 
   const parsed = useMemo(
     () => parseProductDescription(product?.descriptionHtml),

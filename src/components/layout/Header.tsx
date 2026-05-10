@@ -36,11 +36,22 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   const { items: wishItems } = useWishlist();
   const wishCount = wishItems.length;
 
+  const [pulse, setPulse] = useState(false);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const onPulse = () => {
+      setPulse(true);
+      window.setTimeout(() => setPulse(false), 700);
+    };
+    window.addEventListener("western:cart-pulse", onPulse);
+    return () => window.removeEventListener("western:cart-pulse", onPulse);
   }, []);
 
   useEffect(() => setMenuOpen(false), [pathname]);
@@ -165,11 +176,17 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           <button
             onClick={onCartOpen}
             aria-label="Abrir orçamento"
-            className="relative inline-flex items-center justify-center -mr-2 p-2 text-western-green-deep hover:text-western-gold transition-colors"
+            className={`relative inline-flex items-center justify-center -mr-2 p-2 text-western-green-deep hover:text-western-gold transition-all duration-300 ${
+              pulse ? "scale-110" : "scale-100"
+            }`}
           >
-            <ShoppingBag className="h-5 w-5" />
+            <ShoppingBag className={`h-5 w-5 transition-transform ${pulse ? "animate-pulse" : ""}`} />
             {totalItems > 0 && (
-              <span className="absolute top-0 right-0 bg-western-gold text-western-green-deep font-mono text-[10px] tracking-wider px-1.5 py-0.5 leading-none">
+              <span
+                className={`absolute top-0 right-0 bg-western-gold text-western-green-deep font-mono text-[10px] tracking-wider px-1.5 py-0.5 leading-none transition-shadow ${
+                  pulse ? "ring-2 ring-western-gold/60 ring-offset-1 ring-offset-western-ivory" : ""
+                }`}
+              >
                 {totalItems}
               </span>
             )}
