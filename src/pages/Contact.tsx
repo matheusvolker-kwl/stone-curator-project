@@ -196,7 +196,7 @@ function InfoBlock({
   label,
   children,
 }: {
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  icon: React.ElementType;
   label: string;
   children: React.ReactNode;
 }) {
