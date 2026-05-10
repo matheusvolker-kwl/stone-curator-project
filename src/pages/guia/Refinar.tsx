@@ -252,6 +252,7 @@ export default function GuiaRefinar() {
                       item={a}
                       index={i}
                       selected={isExtraSelected(a.id)}
+                      qty={getExtraQty(a.id)}
                       onToggle={() => toggleExtra(a.id)}
                       onOpen={() => { setModalItem(a); setModalIndex(i); }}
                     />
@@ -312,8 +313,10 @@ export default function GuiaRefinar() {
         item={modalItem}
         index={modalIndex}
         selected={modalItem ? isExtraSelected(modalItem.id) : false}
+        qty={modalItem ? getExtraQty(modalItem.id) : 0}
         onClose={() => setModalItem(null)}
         onToggle={() => modalItem && toggleExtra(modalItem.id)}
+        onSetQty={(q) => modalItem && setExtraQty(modalItem.id, q)}
       />
 
       <img
