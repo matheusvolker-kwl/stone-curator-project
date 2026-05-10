@@ -329,6 +329,18 @@
   .btn-outline-cream:hover {
     border-color: hsl(var(--western-gold));
   }
+  .btn-dark {
+    @apply inline-flex items-center justify-center gap-3 px-9 py-[18px] font-mono text-xs uppercase tracking-[0.22em] transition-colors;
+    background-color: hsl(var(--western-green-deep));
+    color: hsl(var(--western-cream));
+  }
+  .btn-dark:hover {
+    background-color: hsl(var(--western-stone-dark));
+  }
+  .btn-dark:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 }
 
 @layer utilities {
