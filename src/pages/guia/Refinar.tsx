@@ -6,6 +6,10 @@ import PecaRow from "@/components/guide-v2/PecaRow";
 import AutoralCard from "@/components/guide-v2/AutoralCard";
 import AcabamentoCard from "@/components/guide-v2/AcabamentoCard";
 import ProjetoSidebar from "@/components/guide-v2/ProjetoSidebar";
+import ContextoChips from "@/components/guide-v2/ContextoChips";
+import SectionDivider from "@/components/guide-v2/SectionDivider";
+import Reveal from "@/components/shared/Reveal";
+import brasao from "@/assets/brasao.png";
 import {
   acabamentoMeta,
   nivelLabelMap,
