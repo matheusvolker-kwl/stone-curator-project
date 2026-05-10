@@ -21,8 +21,8 @@ test.describe("Carrinho · cliente não logado · baixar PDF", () => {
 
     // Preencher form
     await page.getByPlaceholder("Seu nome completo").fill("Teste E2E");
-    await page.getByPlaceholder(/email|@/i).first().fill("teste@e2e.com");
-    await page.getByPlaceholder(/\(\)/).first().fill("11912345678");
+    await page.getByPlaceholder(/empresa\.com/i).fill("teste@e2e.com");
+    await page.getByPlaceholder(/^\(11\)/).fill("11912345678");
 
     await page.getByRole("button", { name: /Liberar PDF/i }).click();
 
