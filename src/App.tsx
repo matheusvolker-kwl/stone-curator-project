@@ -33,7 +33,7 @@ import Conjuntos from "./pages/Conjuntos.tsx";
 import ProductPage from "./pages/ProductPage.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
-import BuyingGuide from "./pages/BuyingGuide.tsx";
+
 import GuiaContexto from "./pages/guia/Contexto.tsx";
 import GuiaComposicoes from "./pages/guia/Composicoes.tsx";
 import GuiaRefinar from "./pages/guia/Refinar.tsx";
@@ -73,7 +73,7 @@ const App = () => (
               <Route path="/linhas/:handle" element={<LinhaPage />} />
               <Route path="/conjuntos" element={<Conjuntos />} />
               <Route path="/produtos/:handle" element={<ProductPage />} />
-              <Route path="/guia-de-compra" element={<BuyingGuide />} />
+              <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
               <Route path="/sobre" element={<About />} />
               <Route path="/contato" element={<Contact />} />
               <Route path="/parceiros-arquitetos" element={<ParceirosArquitetos />} />
