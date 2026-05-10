@@ -167,7 +167,7 @@ export default function CartDrawer({
                 </div>
 
                 <p className="text-spec text-western-cream-muted leading-relaxed">
-                  Pagamento antecipado · Produção em 15 dias úteis após confirmação.
+                  Produção em 15 dias úteis após confirmação do pedido.
                 </p>
 
                 <Button

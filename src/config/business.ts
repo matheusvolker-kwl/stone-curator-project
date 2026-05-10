@@ -8,7 +8,7 @@ export const BUSINESS = {
 
   // Prazo de produção
   prazoProducaoDias: 15,
-  prazoProducaoLabel: "15 dias úteis após confirmação de pagamento",
+  prazoProducaoLabel: "15 dias úteis após confirmação do pedido",
 
   // Garantia
   garantiaAnos: 5,
@@ -36,9 +36,7 @@ export const BUSINESS = {
   // TODO confirmar CNPJ real com Western — vazio = não exibir
   cnpj: "",
 
-  // Pagamento aceito
-  formasPagamento: ["PIX", "TED", "Boleto"] as const,
-  formasPagamentoLabel: "PIX, TED ou Boleto · pagamento 100% antecipado",
+  // Pagamento — política em definição. Não exibir condições no site por enquanto.
 
   // Acabamentos
   acabamentos: ["Quartzo", "Arenito", "Moledo", "Granito"] as const,

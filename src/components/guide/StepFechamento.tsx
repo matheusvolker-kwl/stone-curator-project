@@ -261,8 +261,8 @@ export default function StepFechamento({ conjunto, answers, acabamento, onBack, 
             <div className="flex items-start gap-2">
               <Sparkles className="h-4 w-4 text-western-gold mt-0.5 shrink-0" />
               <p className="text-xs text-western-stone-warm/85 leading-relaxed">
-                Pedido mínimo {BUSINESS.pedidoMinimoLabel} · Produção {BUSINESS.prazoProducaoDias} dias úteis após pagamento ·
-                PIX, TED ou boleto · Frete por transportadora ou retirada gratuita em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
+                Pedido mínimo {BUSINESS.pedidoMinimoLabel} · Produção {BUSINESS.prazoProducaoDias} dias úteis após confirmação ·
+                Frete por transportadora ou retirada gratuita em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
               </p>
             </div>
           </div>
