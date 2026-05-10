@@ -2,6 +2,12 @@ import { ArrowRight } from "lucide-react";
 import StepShell from "./StepShell";
 import { useGuideStore } from "@/stores/guideStore";
 import { useAuth } from "@/hooks/useAuth";
+import {
+  pecasRangePorTipo,
+  precoRangePorTipo,
+  formatPrecoRangeMil,
+  type Tipo,
+} from "@/data/guideMap";
 import { MoodLago, MoodPiscina, MoodJardim, MoodEspecial } from "./svg/MoodSvg";
 
 interface CardProps {
@@ -52,7 +58,12 @@ export default function StepOnde() {
   const reset = useGuideStore((s) => s.reset);
   const { isApproved } = useAuth();
 
-  const mag = (full: string, fallback: string) => (isApproved ? full : fallback);
+  const magFor = (tipo: Tipo): string => {
+    const pecas = pecasRangePorTipo[tipo];
+    if (!isApproved) return `Geralmente ${pecas}`;
+    const range = precoRangePorTipo(tipo);
+    return range ? `Geralmente ${pecas} · ${formatPrecoRangeMil(range)}` : `Geralmente ${pecas}`;
+  };
 
   return (
     <StepShell
@@ -65,21 +76,21 @@ export default function StepOnde() {
         <MoodCard
           title="Lago"
           desc="Espelhos d'água, lagos com peixes, jardins aquáticos."
-          magnitude={mag("Geralmente 4–12 peças · R$ 2–27 mil", "Geralmente 4–12 peças")}
+          magnitude={magFor("lago")}
           illustration={<MoodLago />}
           onClick={() => setTipo("lago")}
         />
         <MoodCard
           title="Piscina"
           desc="Borda, cascata e ambientação ao redor da piscina."
-          magnitude={mag("Geralmente 5–14 peças · R$ 3–28 mil", "Geralmente 5–14 peças")}
+          magnitude={magFor("piscina")}
           illustration={<MoodPiscina />}
           onClick={() => setTipo("piscina")}
         />
         <MoodCard
           title="Jardim"
           desc="Canteiros, paisagismo, fontes e composições secas."
-          magnitude={mag("Geralmente 3–10 peças · R$ 2–24 mil", "Geralmente 3–10 peças")}
+          magnitude={magFor("jardim")}
           illustration={<MoodJardim />}
           onClick={() => setTipo("jardim")}
         />

@@ -336,28 +336,78 @@ export function m2ToTamanhoId(tipo: Tipo, m2: number): string | "consultor" {
   return "consultor";
 }
 
+// Coleta todos os preços de um nó arbitrário do guideMap
+function collectPrecos(node: unknown, filterNivel?: Nivel): number[] {
+  const precos: number[] = [];
+  const walk = (n: unknown, currentKey?: string) => {
+    if (!n || typeof n !== "object") return;
+    if ("preco" in (n as object) && "handle" in (n as object)) {
+      // É um ConjuntoLeaf — currentKey é o nivel
+      if (!filterNivel || currentKey === filterNivel) {
+        precos.push((n as ConjuntoLeaf).preco);
+      }
+      return;
+    }
+    Object.entries(n as Record<string, unknown>).forEach(([k, v]) => walk(v, k));
+  };
+  walk(node);
+  return precos;
+}
+
 // Faixa de preço estimada por (tipo, m²) — calculada do guideMap
 export function precoEstimadoPorArea(tipo: Tipo, m2: number): { min: number; max: number } | null {
   const tamanhoId = m2ToTamanhoId(tipo, m2);
   if (tamanhoId === "consultor") return null;
   const sizeNode = (guideMap[tipo] as Record<string, unknown>)[tamanhoId];
   if (!sizeNode || sizeNode === "consultor") return null;
-
-  const precos: number[] = [];
-  const collect = (node: unknown) => {
-    if (node && typeof node === "object") {
-      Object.values(node as Record<string, unknown>).forEach((v) => {
-        if (v && typeof v === "object" && "preco" in (v as object)) {
-          precos.push((v as ConjuntoLeaf).preco);
-        } else if (v && typeof v === "object") {
-          collect(v);
-        }
-      });
-    }
-  };
-  collect(sizeNode);
+  const precos = collectPrecos(sizeNode);
   if (precos.length === 0) return null;
   return { min: Math.min(...precos), max: Math.max(...precos) };
+}
+
+// Faixa de preço para (tipo, m², nivel) — usada no Step Protagonismo para refletir a área já escolhida.
+export function precoEstimadoPorAreaENivel(
+  tipo: Tipo,
+  m2: number,
+  nivel: Nivel,
+): { min: number; max: number } | null {
+  const tamanhoId = m2ToTamanhoId(tipo, m2);
+  if (tamanhoId === "consultor") return null;
+  const sizeNode = (guideMap[tipo] as Record<string, unknown>)[tamanhoId];
+  if (!sizeNode || sizeNode === "consultor") return null;
+  const precos = collectPrecos(sizeNode, nivel);
+  if (precos.length === 0) return null;
+  return { min: Math.min(...precos), max: Math.max(...precos) };
+}
+
+// Faixa total de preço por tipo (todas as áreas e composições) — usada nos cards de StepOnde.
+export function precoRangePorTipo(tipo: Tipo): { min: number; max: number } | null {
+  const precos = collectPrecos(guideMap[tipo]);
+  if (precos.length === 0) return null;
+  return { min: Math.min(...precos), max: Math.max(...precos) };
+}
+
+// Faixa de peças por (tipo, nivel) — fonte única de verdade.
+export const pecasPorTipoNivel: Record<Tipo, Record<Nivel, string>> = {
+  lago: { essencial: "4–6 peças", equilibrada: "7–11 peças", completa: "12+ peças" },
+  piscina: { essencial: "4–6 peças", equilibrada: "7–11 peças", completa: "12+ peças" },
+  jardim: { essencial: "3–5 peças", equilibrada: "6–9 peças", completa: "10+ peças" },
+};
+
+// Faixa total de peças por tipo — usada nos cards de StepOnde.
+export const pecasRangePorTipo: Record<Tipo, string> = {
+  lago: "4 a 12+ peças",
+  piscina: "4 a 12+ peças",
+  jardim: "3 a 10+ peças",
+};
+
+// Formata uma faixa de preço de forma compacta (R$ X mil – Y mil ou R$ X,X mil – Y,Y mil).
+export function formatPrecoRangeMil({ min, max }: { min: number; max: number }): string {
+  const fmt = (v: number) => {
+    const mil = v / 1000;
+    return Number.isInteger(mil) ? `${mil}` : mil.toFixed(1).replace(".", ",");
+  };
+  return `R$ ${fmt(min)} – ${fmt(max)} mil`;
 }
 
 // === Prova social nominal por tipo (Etapa Protagonismo) ===

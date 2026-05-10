@@ -1,9 +1,18 @@
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Lock } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import StepShell from "./StepShell";
 import { useGuideStore } from "@/stores/guideStore";
-import { nivelMeta, provaSocialPorTipo, type Nivel, type Tipo } from "@/data/guideMap";
+import {
+  nivelMeta,
+  pecasPorTipoNivel,
+  precoEstimadoPorAreaENivel,
+  formatPrecoRangeMil,
+  provaSocialPorTipo,
+  type Nivel,
+  type Tipo,
+} from "@/data/guideMap";
+import { useAuth } from "@/hooks/useAuth";
 import { ProtagonismoMood } from "./svg/MoodSvg";
 
 const NIVEIS: Nivel[] = ["essencial", "equilibrada", "completa"];
@@ -17,14 +26,19 @@ const PERFIL_POR_NIVEL: Record<Nivel, string> = {
 interface ComparativoCardProps {
   tipo: Tipo;
   nivel: Nivel;
+  areaM2?: number;
+  isApproved: boolean;
   selected: boolean;
   recommended: boolean;
   onClick: () => void;
   onHover: (n: Nivel | null) => void;
 }
 
-function ComparativoCard({ tipo, nivel, selected, recommended, onClick, onHover }: ComparativoCardProps) {
+function ComparativoCard({ tipo, nivel, areaM2, isApproved, selected, recommended, onClick, onHover }: ComparativoCardProps) {
   const meta = nivelMeta[tipo][nivel];
+  const pecas = pecasPorTipoNivel[tipo][nivel];
+  const precoRange = areaM2 ? precoEstimadoPorAreaENivel(tipo, areaM2, nivel) : null;
+  const precoLabel = precoRange ? formatPrecoRangeMil(precoRange) : meta.faixaPreco;
   return (
     <button
       type="button"
@@ -66,7 +80,7 @@ function ComparativoCard({ tipo, nivel, selected, recommended, onClick, onHover 
             {meta.label}
           </h3>
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
-            {meta.pecas}
+            {pecas}
           </span>
         </div>
         <p className="text-sm text-western-stone-warm leading-relaxed">{meta.tagline}</p>
@@ -76,9 +90,17 @@ function ComparativoCard({ tipo, nivel, selected, recommended, onClick, onHover 
           </span>
           {PERFIL_POR_NIVEL[nivel]}
         </p>
-        <p className="mt-auto pt-3 text-xs text-western-stone-warm/70 font-mono uppercase tracking-[0.18em]">
-          {meta.faixaPreco}
-        </p>
+        <div className="mt-auto pt-3 text-xs font-mono uppercase tracking-[0.18em]">
+          {isApproved ? (
+            <span className="text-western-stone-warm/70">
+              Investimento estimado · <span className="text-western-green-deep">{precoLabel}</span>
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 text-western-stone-warm/70">
+              <Lock className="h-3 w-3" /> Login para ver investimento
+            </span>
+          )}
+        </div>
       </div>
     </button>
   );
@@ -86,11 +108,13 @@ function ComparativoCard({ tipo, nivel, selected, recommended, onClick, onHover 
 
 export default function StepProtagonismo() {
   const tipo = useGuideStore((s) => s.tipo);
+  const areaM2 = useGuideStore((s) => s.areaM2);
   const nivel = useGuideStore((s) => s.nivel);
   const setNivel = useGuideStore((s) => s.setNivel);
   const back = useGuideStore((s) => s.back);
   const reset = useGuideStore((s) => s.reset);
   const [hovered, setHovered] = useState<Nivel | null>(null);
+  const { isApproved } = useAuth();
 
   if (!tipo) return null;
 
@@ -132,6 +156,8 @@ export default function StepProtagonismo() {
                 key={n}
                 tipo={tipo}
                 nivel={n}
+                areaM2={areaM2 ?? undefined}
+                isApproved={isApproved}
                 selected={nivel === n}
                 recommended={n === "equilibrada"}
                 onClick={() => setNivel(n)}

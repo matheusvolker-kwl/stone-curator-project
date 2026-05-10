@@ -1,8 +1,9 @@
 import { useState, useMemo, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Lock } from "lucide-react";
 import StepShell from "./StepShell";
 import { useGuideStore } from "@/stores/guideStore";
+import { useAuth } from "@/hooks/useAuth";
 import {
   areaRangePorTipo,
   m2ToTamanhoId,
@@ -101,6 +102,7 @@ export default function StepArea() {
   const setArea = useGuideStore((s) => s.setArea);
   const back = useGuideStore((s) => s.back);
   const reset = useGuideStore((s) => s.reset);
+  const { isApproved } = useAuth();
 
   const range = tipo ? areaRangePorTipo[tipo] : { min: 1, max: 30, default: 5, snap: [] };
   const [m2, setM2] = useState<number>(areaSaved ?? range.default);
@@ -161,12 +163,18 @@ export default function StepArea() {
                 — composição autoral conforme briefing.
               </p>
             ) : preco ? (
-              <p className="text-sm text-western-stone-warm mt-3">
-                Investimento estimado:{" "}
-                <span className="text-western-green-deep font-medium">
-                  {formatPreco(preco.min)} – {formatPreco(preco.max)}
-                </span>
-              </p>
+              isApproved ? (
+                <p className="text-sm text-western-stone-warm mt-3">
+                  Investimento estimado:{" "}
+                  <span className="text-western-green-deep font-medium">
+                    {formatPreco(preco.min)} – {formatPreco(preco.max)}
+                  </span>
+                </p>
+              ) : (
+                <p className="text-sm text-western-stone-warm/80 mt-3 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.18em]">
+                  <Lock className="h-3 w-3" /> Login para ver investimento estimado
+                </p>
+              )
             ) : null}
           </div>
 
