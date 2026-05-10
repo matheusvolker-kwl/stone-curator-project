@@ -166,22 +166,45 @@ export default function PedirAmostras() {
           </div>
         </div>
 
+        {isLocked && (
+          <div className="my-6 flex items-start gap-3 px-4 py-4 border border-western-green-deep/20 bg-western-green-deep/5">
+            <UserCircle2 className="h-4 w-4 text-western-green-deep mt-0.5 flex-shrink-0" />
+            <div className="text-spec text-western-green-deep leading-relaxed">
+              Pedido vinculado ao seu cadastro <strong>{f.empresa || f.nome}</strong>. Dados pessoais travados —
+              ajuste em <Link to="/conta/perfil" className="link-underline text-western-gold">Meu perfil</Link>.
+              Endereço pode ser alterado caso queira receber em outro lugar.
+            </div>
+          </div>
+        )}
+        {!user && (
+          <div className="my-6 text-spec text-western-stone-warm">
+            Já tem cadastro? <Link to="/parceiro/login" className="link-underline text-western-gold">Entre</Link> para acompanhar o status do seu pedido.
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           <div>
-            <FieldLabel htmlFor="nome">Nome</FieldLabel>
+            <FieldLabel htmlFor="nome">
+              Nome {isLocked && <Lock className="h-3 w-3 inline ml-1 text-western-stone-warm/60" />}
+            </FieldLabel>
             <Input id="nome" value={f.nome} onChange={(e) => set("nome", e.target.value)} required
-              className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+              readOnly={isLocked}
+              className={`h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold ${isLocked ? "opacity-70 cursor-not-allowed" : ""}`} />
             {errors.nome && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.nome}</p>}
           </div>
 
           <div className="grid sm:grid-cols-2 gap-5">
             <div>
-              <FieldLabel htmlFor="email">E-mail</FieldLabel>
-              <EmailInput id="email" value={f.email} onChange={(v) => set("email", v)} required error={errors.email} />
+              <FieldLabel htmlFor="email">
+                E-mail {isLocked && <Lock className="h-3 w-3 inline ml-1 text-western-stone-warm/60" />}
+              </FieldLabel>
+              <EmailInput id="email" value={f.email} onChange={(v) => set("email", v)} required error={errors.email} readOnly={isLocked} />
             </div>
             <div>
-              <FieldLabel htmlFor="telefone">Telefone (WhatsApp)</FieldLabel>
-              <PhoneInput id="telefone" value={f.telefone} onChange={(v) => set("telefone", v)} required error={errors.telefone} />
+              <FieldLabel htmlFor="telefone">
+                Telefone (WhatsApp) {isLocked && <Lock className="h-3 w-3 inline ml-1 text-western-stone-warm/60" />}
+              </FieldLabel>
+              <PhoneInput id="telefone" value={f.telefone} onChange={(v) => set("telefone", v)} required error={errors.telefone} readOnly={isLocked} />
             </div>
           </div>
 
@@ -194,9 +217,12 @@ export default function PedirAmostras() {
               </select>
             </div>
             <div>
-              <FieldLabel htmlFor="empresa" optional>Empresa / estúdio</FieldLabel>
+              <FieldLabel htmlFor="empresa" optional>
+                Empresa / estúdio {isLocked && <Lock className="h-3 w-3 inline ml-1 text-western-stone-warm/60" />}
+              </FieldLabel>
               <Input id="empresa" value={f.empresa} onChange={(e) => set("empresa", e.target.value)}
-                className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                readOnly={isLocked}
+                className={`h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold ${isLocked ? "opacity-70 cursor-not-allowed" : ""}`} />
             </div>
           </div>
 
