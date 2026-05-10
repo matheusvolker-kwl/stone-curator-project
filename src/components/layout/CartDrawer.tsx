@@ -1,15 +1,18 @@
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
-import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock, FileDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock, FileDown, ArrowLeft, ShieldCheck, Clock } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { BUSINESS } from "@/config/business";
 import { useAuth } from "@/hooks/useAuth";
 import CartCrossSell from "@/components/cart/CartCrossSell";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
+import EmptyCartHints from "@/components/cart/EmptyCartHints";
+import FreeShippingProgress from "@/components/cart/FreeShippingProgress";
 import { downloadOrcamentoPdf } from "@/lib/pdf/orcamentoPdf";
+import { toast } from "sonner";
 
 const MIN_ORDER = BUSINESS.pedidoMinimoBRL;
 
