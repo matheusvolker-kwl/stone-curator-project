@@ -34,7 +34,7 @@ export default function ResetPassword() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Senha redefinida.");
-    navigate("/parceiro/conta", { replace: true });
+    navigate("/minha-conta", { replace: true });
   };
 
   return (
