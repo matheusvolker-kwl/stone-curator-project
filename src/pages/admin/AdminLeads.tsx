@@ -44,7 +44,7 @@ export default function AdminLeads() {
       <div className="flex flex-wrap gap-2 mb-4">
         <button onClick={() => setTypeFilter("all")} className={chipCls(typeFilter === "all")}>Todos</button>
         {types.map((t) => (
-          <button key={t} onClick={() => setTypeFilter(t)} className={chipCls(typeFilter === t)}>{t}</button>
+          <button key={t} onClick={() => setTypeFilter(t)} className={chipCls(typeFilter === t)}>{LEAD_TYPE_LABEL[t] ?? t}</button>
         ))}
       </div>
       <div className="flex flex-wrap gap-3 mb-6 items-center">
