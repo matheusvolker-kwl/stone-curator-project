@@ -1,136 +1,75 @@
-## Objetivo
+# Refino da página Sobre — fluxo dos irmãos + respiros
 
-Elevar a PDP atual (`src/pages/ProductPage.tsx`) ao padrão editorial descrito no briefing — Aesop / Norse Projects — sem quebrar integração Shopify, carrinho, gating de preço por parceiro, ou roteamento.
+## Diagnóstico
 
-A PDP de hoje já tem: breadcrumb-linha, galeria + thumbs, descrição editorial, aplicações, FinishSelector, PriceGate, stepper + CTA, accordions I–VI e CTA SketchUp. Vamos **reorganizar, refinar e adicionar as seções faltantes**.
-
----
-
-## Estrutura final da página
+Hoje a página tem **duas seções consecutivas** falando dos mesmos dois irmãos:
 
 ```
-01. Header (existente)
-02. Breadcrumb refinado (Catálogo › Coleção › Produto)
-03. Hero (galeria 60% / ficha 40% sticky)
-    └─ Eyebrow • H1 • SKU • Bloco de dados duros (peso + dimensões + comparativo) • Lead • Intro
-04. Aplicações (na coluna direita)
-05. Seletor de Acabamento (FinishSelector já existente, com header "ACABAMENTO · MESMO PREÇO")
-    └─ Bloco "pintura personalizada" tracejado
-06. Box Condição parceiro (PriceGate block) + CTAs (stepper, adicionar, SketchUp, Falar com consultor)
-07. Microcopy comercial (3 linhas mono)
-08. Accordions I–VI (mantém estrutura atual, ajustes de copy onde necessário)
-─── full-width abaixo do hero ───
-09. EM OBRA — grid 3×2 de imagens com hover overlay  [novo]
-10. COMPARATIVO Western × Pedra Natural — tabela 3 colunas  [novo]
-11. CROSS-SELL "Compõe bem com" — carrossel + Conjuntos prontos  [novo, usa coleção Shopify]
-12. POR QUE WESTERN — faixa escura accent-dark, 4 cards  [novo]
-13. PROVA SOCIAL — faixa contida com nomes  [novo]
-14. NAVEGAÇÃO ANTERIOR/PRÓXIMA peça da mesma coleção  [novo]
-15. Footer (existente)
+[NÚMEROS]  py-14
+   ↓ (surface-cream → surface-paper)
+[IRMÃOS BOTELHO]  py-20/28
+  · eyebrow "Os irmãos Botelho"
+  · H2 "Ricardo no desenho, Luiz Carlos na engenharia…"
+  · foto widescreen 21:9 (gruta) + caption flutuante
+   ↓ (surface-paper → surface-ivory)
+[FAMÍLIA BOTELHO]  py-24/32
+  · eyebrow "A família Botelho"
+  · H2 "A família que trouxe uma tecnologia do Arizona…"
+  · retrato 4:5 (segundo retrato) + caption lateral
+  · 3 parágrafos (1993 / 1996 / 2026)
 ```
 
----
+Resultado: dois eyebrows, dois H2, duas fotos dos mesmos irmãos, e um total de ~50vh de padding vertical entre números e o início da narrativa. É redundante e cria as faixas em branco.
 
-## Mudanças por seção
+## O que muda
 
-### Seção 02 — Breadcrumb
-- Substituir o atual `<Link>` único por trilha completa: `Catálogo › {Coleção} › {Produto}`.
-- Mono 11px, uppercase, `--text-tertiary`, separador `ChevronRight` 10px. Atual em `--text-primary`.
+### 1. Fundir as duas seções em uma única seção editorial
 
-### Seção 03 — Hero · bloco de dados duros
-- Novo card branco (`bg-western-cream`/tertiary equivalente) com borda `--border` abaixo do SKU, antes do lead:
-  - **Peso** (grande, serif H1 36px) + comparativo "Uma pedra natural com volume equivalente passaria de ~10× isso."
-  - **Dimensões** "108 × 76 × 52 cm · Base plana · argamassa C3"
-  - **"Variação artesanal de até ±3 cm"**
-- Fonte: `extractDimensions(parsed.ficha)` (já existe) + parsing de `Peso líquido` em `fichaRows`. Quando ausente, esconder a linha (sem placeholders falsos).
+Estrutura nova:
 
-### Seção 05 — Acabamento
-- Adicionar bloco tracejado abaixo do FinishSelector:
-  - "Não encontra a tonalidade ideal? Fazemos pintura personalizada sob demanda."
-  - Link `→ Falar com consultor` (abre WhatsApp com mensagem pré-preenchida — mesma lógica já usada).
+```
+[A FAMÍLIA BOTELHO]  surface-ivory  py-20/24
+  · eyebrow único: "Os irmãos Botelho · 2ª geração"
+  · H2 único combinando os dois títulos:
+       "Ricardo no desenho,
+        Luiz Carlos na engenharia.
+        Trinta anos do mesmo ateliê, da mesma família."
+  · FOTO HERO widescreen 21:9 (gruta — irmaosGruta) com caption flutuante
+       → essa é a única foto dos irmãos na seção
+  · narrativa em coluna controlada (max-w-3xl) abaixo da foto:
+       parágrafo 1993 (Luiz Duarte)
+       parágrafo 1996 (Ricardo + Luiz Carlos)
+       parágrafo 2026 (33 anos)
+  · pequeno bloco de assinatura no fim:
+       "Ricardo & Luiz Carlos Botelho · 2ª geração · Cajamar/SP"
+       (substitui o caption do retrato 4:5 que sai)
+```
 
-### Seção 06 — CTAs
-- Manter stepper, "Adicionar ao pedido", "Falar com consultor" e "SketchUp" como hoje.
-- Confirmar que **nenhum FAB verde** aparece na PDP (verificar `WhatsAppFAB` — esconder na rota `/produtos/*` se necessário).
+A foto retrato 4:5 (`ricardo-luiz-carlos.webp`) sai da página Sobre — ela já aparecia logo acima na widescreen, então cumpre função redundante. O conteúdo textual dos 3 parágrafos é preservado integralmente.
 
-### Seção 07 — Microcopy comercial
-- Reformatar em 3 linhas exatas (já existem dados em `BUSINESS`):
-  ```
-  PRODUÇÃO SOB DEMANDA · 15 DIAS ÚTEIS APÓS PAGAMENTO
-  PEDIDO MÍNIMO R$ 700 · PAGAMENTO ANTECIPADO (PIX, TED, BOLETO)
-  RETIRADA GRATUITA EM CAJAMAR/SP · FRETE COTADO POR REGIÃO
-  ```
+### 2. Calibrar paddings entre seções
 
-### Seção 08 — Accordions
-- Validar copy de **Garantia = 5 anos** (já está correto no fonte) e ajustar onde houver "1 ano".
-- Manter I–VI; ajustar header da seção II conforme briefing (já alinhado).
+- **Stats**: mantém `py-14 md:py-16`
+- **Seção fundida dos irmãos**: `py-20 md:py-24` (era 20+28 e 24+32 separados)
+- **Citação atmosférica** (Ricardo): mantém — funciona como respiro depois da narrativa
+- **4 Pilares**: reduzir de `py-24 md:py-28` para `py-20 md:py-24`
+- **Galeria**: idem `py-20 md:py-24`
+- **Manifesto**: idem `py-20 md:py-24`
+- **Arquitetos + Marcas**: idem `py-20 md:py-24`
 
-### Seção 09 — Em obra  [novo componente `<ProductInProjects />`]
-- Full-width, fundo `bg-western-cream` mais escuro (criar token `--bg-secondary` se preciso).
-- Header centralizado (eyebrow + H2 + subtítulo italic).
-- Grid 3×2 de imagens (4:3) com hover overlay gradiente + legenda.
-- **Fonte de dados:** filtrar `src/data/projetos.ts` por tag/produto-handle; quando vazio, esconder a seção inteira (não mostrar com placeholders).
-- Link inferior `→ Ver mais projetos com esta peça` → `/projetos?peca={handle}` (rota existe? se não, link para `/`).
+Isso elimina o efeito "andar de elevador entre seções" que está causando os espaços estranhos.
 
-### Seção 10 — Comparativo  [novo componente `<ProductComparison />`]
-- Container 880px, layout 3 colunas (Western · LABEL · Pedra natural).
-- Linhas estáticas conforme spec (peso/transporte/descarga/logística/tempo/base/previsibilidade/custo total). Coluna Western recebe valores "vivos" (peso e dimensões da peça atual) quando disponíveis.
-- CTA outline "Solicitar comparativo orçamentário do meu projeto" → WhatsApp pré-preenchido.
-- Em mobile vira lista vertical agrupada por linha.
+### 3. Pequenos ajustes de continuidade
 
-### Seção 11 — Cross-sell  [novo componente `<RelatedProducts />`]
-- Carrossel horizontal: usa `fetchCollection(collection.handle)` e remove o produto atual; pega 4 itens.
-- Card: imagem 4:3 fundo creme, eyebrow, nome serif 18px, microcopy de dimensão.
-- Bloco "Conjuntos prontos com esta peça": consulta `fetchCollection("conjuntos")` e filtra por `tags` que contenham o SKU/handle do produto. Se nada bater, esconder bloco.
-- Microcopy `3% de desconto` (constante `BUSINESS.descontoConjuntosPercent`).
+- Stats band: trocar borda inferior pra `border-western-stone-warm/15` ficar coerente com o `surface-ivory` que vem logo embaixo (a transição cream→paper→ivory criava 3 tons quase iguais em sequência → vamos pra cream→ivory direto, removendo a paper intermediária dos irmãos).
+- A seção fundida usa `surface-ivory` (não mais `surface-paper`), eliminando uma troca de superfície.
 
-### Seção 12 — Por que Western  [novo componente `<WhyWesternStrip />`]
-- Faixa full-width, fundo `western-green-deep`, texto creme.
-- Grid 4 cards (10× / 6 fases / 3D / 33 anos) com links internos: `/por-que-western`, `/por-que-western#processo`, `BUSINESS.sketchupWarehouse`, `/sobre`.
-- 100% estático (já temos as referências no codebase).
+## Não muda
 
-### Seção 13 — Prova social  [novo componente `<SocialProofBand />`]
-- Faixa contida, sem fotos. Lista de profissionais (Eduardo Faisal · Fabiano Hayasaki · Ronaldo Luidi), institucional (Cristal Pool · Genesis · Biopet · Cobasi · Unique Garden), microcopy italic com celebridades.
-- Reutilizar dados se já existirem em `MarcasInstitucionais` / `ArquitetosStrip`; senão estático.
-
-### Seção 14 — Navegação anterior/próxima  [novo componente `<ProductPagination />`]
-- Carrega lista da coleção atual (já temos `fetchCollection`); calcula índice do produto e monta cards Esquerda / Centro / Direita.
-- Em mobile: 2 cartões empilhados (anterior + próxima), sem o "X de N".
-
----
-
-## Sistema de design
-
-- Adicionar/garantir tokens HSL em `src/index.css` correspondentes ao briefing (creme primário/secundário, terra `--accent-warm`, verde-musgo `--accent-dark` — provavelmente já mapeados como `western-cream`, `western-gold`, `western-green-deep`). Se algum estiver faltando, criar como token semântico, não cor inline.
-- Tipografia: confirmar que `font-display` = Cormorant Garamond e `font-mono` = JetBrains Mono em `tailwind.config.ts`. Se não for o caso, ajustar `@import` no `index.css` e a config (a stack atual usa fontes próximas; ajustar somente se divergente). **Não trocar Inter** se já é o body.
-- Animações via `framer-motion` já instalado: `whileInView` + `fade-in` + stagger 80ms para os blocos novos.
-
----
+- Hero, citação atmosférica, 4 pilares, galeria de obras, manifesto de vocabulário, arquitetos, marcas, CTA final — todos preservados.
+- Conteúdo textual integral dos 3 parágrafos da história.
+- Foto da gruta widescreen continua sendo a imagem principal dos irmãos.
 
 ## Arquivos
 
-**Novos**
-- `src/components/product/HardFactsCard.tsx` — bloco de dados duros do hero
-- `src/components/product/CustomPaintNote.tsx` — bloco tracejado de pintura personalizada
-- `src/components/product/ProductInProjects.tsx` — seção 09
-- `src/components/product/ProductComparison.tsx` — seção 10
-- `src/components/product/RelatedProducts.tsx` — seção 11 (carrossel + conjuntos prontos)
-- `src/components/product/WhyWesternStrip.tsx` — seção 12
-- `src/components/product/SocialProofBand.tsx` — seção 13
-- `src/components/product/ProductPagination.tsx` — seção 14
-
-**Editados**
-- `src/pages/ProductPage.tsx` — orquestra novas seções, refina breadcrumb, microcopy comercial, ajusta hero
-- `src/components/layout/WhatsAppFAB.tsx` — esconder FAB em rotas `/produtos/*` (se aplicável)
-
-**Sem alterações** em `cartStore`, `useAuth`, `PriceGate`, `FinishSelector`, queries Shopify (apenas reuso).
-
----
-
-## Pontos a confirmar
-
-1. **Dados de "Em obra"**: ok exibir só quando houver projeto vinculado (sem placeholder), correto?
-2. **Conjuntos prontos**: posso usar `tags` Shopify para vincular conjuntos ↔ peça, ou a coleção `conjuntos` é genérica e devo apenas listar 2 conjuntos quaisquer?
-3. **Comparativo**: confirmo o uso do peso real do produto na coluna Western quando disponível, e ocultar a linha quando não houver dado?
-
-Se preferir, sigo com as suposições padrão (1 — sim; 2 — pegar 2 conjuntos da coleção `conjuntos` quando não houver vínculo; 3 — sim) ao implementar.
+- `src/pages/About.tsx` — único arquivo afetado.
