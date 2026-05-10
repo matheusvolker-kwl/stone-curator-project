@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { ArrowRight, Download } from "lucide-react";
+import { ArrowRight, Download, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatPreco, type ConjuntoLeaf } from "@/data/guideMap";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
-import { Lock } from "lucide-react";
 import type { Acabamento, ProjetoExtra, ProjetoPeca } from "./types";
 import { acabamentoMeta } from "./types";
 import { toast } from "sonner";
@@ -25,37 +24,43 @@ function PanelBody({ conjunto, pecas, extras, acabamento, onFinalizar }: Props) 
   const total = subBase + subExtras - desconto;
 
   return (
-    <div className="bg-white border border-western-stone-warm/15 shadow-[0_30px_50px_-32px_hsl(var(--western-stone-dark)/0.25)] flex flex-col">
-      {/* gold hairline top */}
+    <div className="surface-forest shadow-[0_36px_56px_-30px_hsl(var(--western-stone-dark)/0.45)] flex flex-col relative overflow-hidden">
+      {/* gold seal top */}
       <div className="h-[3px] bg-western-gold" />
       <div className="p-7 md:p-8 flex flex-col gap-6">
         <div>
-          <p className="text-eyebrow mb-3">Seu projeto</p>
-          <h3 className="font-display text-[22px] text-western-green-deep leading-tight">{conjunto.nome}</h3>
+          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mb-3">
+            Seu projeto
+          </p>
+          <h3 className="font-display text-[24px] text-western-cream leading-tight">{conjunto.nome}</h3>
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mt-2">
             Acabamento {acabamentoMeta[acabamento].label}
           </p>
         </div>
 
-        <div className="border-t border-western-stone-warm/15 pt-5">
-          <p className="text-eyebrow mb-3">Composição base</p>
+        <div className="border-t border-western-cream/15 pt-5">
+          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mb-3">
+            Composição base
+          </p>
           <ul className="space-y-1.5">
             {pecas.map((p) => (
-              <li key={p.id} className="flex justify-between text-[13px] text-western-green-deep/90">
+              <li key={p.id} className="flex justify-between text-[13px] text-western-cream/90">
                 <span className="truncate pr-2">{p.nome}</span>
-                <span className="font-mono text-western-stone-warm">{p.qty}×</span>
+                <span className="font-mono text-western-cream-muted">{p.qty}×</span>
               </li>
             ))}
           </ul>
 
           {extras.length > 0 && (
             <>
-              <p className="text-eyebrow mt-5 mb-3">Peças adicionadas</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mt-5 mb-3">
+                Peças adicionadas
+              </p>
               <ul className="space-y-1.5">
                 {extras.map((e) => (
-                  <li key={e.id} className="flex justify-between text-[13px] text-western-green-deep/90">
+                  <li key={e.id} className="flex justify-between text-[13px] text-western-cream/90">
                     <span className="truncate pr-2">{e.nome}</span>
-                    <span className="font-mono text-western-stone-warm">{e.qty}×</span>
+                    <span className="font-mono text-western-cream-muted">{e.qty}×</span>
                   </li>
                 ))}
               </ul>
@@ -65,13 +70,13 @@ function PanelBody({ conjunto, pecas, extras, acabamento, onFinalizar }: Props) 
 
         {isApproved ? (
           <>
-            <div className="border-t border-western-stone-warm/15 pt-5 space-y-2 text-[14px]">
-              <div className="flex justify-between text-western-stone-warm">
+            <div className="border-t border-western-cream/15 pt-5 space-y-2 text-[14px]">
+              <div className="flex justify-between text-western-cream-muted">
                 <span>Subtotal composição</span>
                 <span className="font-mono">{formatPreco(subBase)}</span>
               </div>
               {subExtras > 0 && (
-                <div className="flex justify-between text-western-stone-warm">
+                <div className="flex justify-between text-western-cream-muted">
                   <span>Peças adicionais</span>
                   <span className="font-mono">{formatPreco(subExtras)}</span>
                 </div>
@@ -82,29 +87,37 @@ function PanelBody({ conjunto, pecas, extras, acabamento, onFinalizar }: Props) 
               </div>
             </div>
 
-            <div className="border-t border-western-stone-warm/15 pt-5">
-              <p className="text-eyebrow mb-2">Total</p>
-              <p className="font-display text-[34px] font-medium text-western-green-deep leading-none">
+            <div className="border-t border-western-cream/15 pt-5">
+              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mb-2">
+                Total
+              </p>
+              <p className="font-display text-[36px] font-medium text-western-cream leading-none">
                 {formatPreco(total)}
               </p>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/70 mt-2.5">
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-cream-muted/80 mt-2.5">
                 Pedido único · frete otimizado
               </p>
             </div>
           </>
         ) : (
-          <div className="border border-western-gold/40 bg-western-gold/5 p-5">
-            <p className="text-eyebrow flex items-center gap-2 mb-2">
+          <div className="border border-western-gold/40 bg-western-gold/10 p-5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold flex items-center gap-2 mb-2">
               <Lock className="h-3 w-3" /> Preços para parceiros
             </p>
-            <p className="text-[13px] text-western-green-deep mb-4 leading-relaxed">
+            <p className="text-[13px] text-western-cream mb-4 leading-relaxed">
               Acesse para visualizar valores e finalizar o projeto.
             </p>
             <div className="flex flex-col gap-2">
-              <Link to={session ? "/minha-conta" : "/parceiro/login"} className="btn-dark w-full text-[10px]">
+              <Link
+                to={session ? "/minha-conta" : "/parceiro/login"}
+                className="inline-flex items-center justify-center gap-2 h-11 px-5 bg-western-gold text-western-green-deep font-mono text-[10px] uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors"
+              >
                 Acessar para ver preço
               </Link>
-              <Link to="/parceiro/cadastro" className="btn-outline-forest w-full text-[10px]">
+              <Link
+                to="/parceiro/cadastro"
+                className="inline-flex items-center justify-center gap-2 h-11 px-5 border border-western-cream/40 text-western-cream font-mono text-[10px] uppercase tracking-[0.22em] hover:border-western-gold transition-colors"
+              >
                 Solicitar cadastro B2B
               </Link>
             </div>
@@ -116,21 +129,21 @@ function PanelBody({ conjunto, pecas, extras, acabamento, onFinalizar }: Props) 
             type="button"
             onClick={onFinalizar}
             disabled={!isApproved}
-            className="btn-dark w-full h-[54px] disabled:opacity-40 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-3 h-[54px] bg-western-gold text-western-green-deep font-mono text-xs uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Revisar e finalizar <ArrowRight className="h-4 w-4" />
           </button>
           <button
             type="button"
             onClick={() => toast("Prévia em SketchUp em breve.")}
-            className="inline-flex items-center justify-center gap-2 h-11 border border-western-green-deep text-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] hover:bg-western-green-deep hover:text-western-cream transition-colors"
+            className="inline-flex items-center justify-center gap-2 h-11 border border-western-cream/40 text-western-cream font-mono text-[11px] uppercase tracking-[0.22em] hover:border-western-gold hover:text-western-gold transition-colors"
           >
             <Download className="h-3.5 w-3.5" /> Baixar prévia em SketchUp
           </button>
           <button
             type="button"
             onClick={() => toast(session ? "Projeto salvo no seu painel." : "Faça login para salvar o projeto.")}
-            className="text-[12px] text-western-stone-warm hover:text-western-green-deep underline-offset-4 hover:underline self-center mt-1"
+            className="text-[12px] text-western-cream-muted hover:text-western-cream underline-offset-4 hover:underline self-center mt-1"
           >
             Salvar projeto e decidir depois
           </button>
@@ -151,7 +164,7 @@ export default function ProjetoSidebar(props: Props) {
 
   return (
     <>
-      <aside className="hidden lg:block sticky top-24 self-start">
+      <aside className="hidden lg:block sticky top-32 self-start">
         <PanelBody {...props} />
       </aside>
 

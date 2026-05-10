@@ -5,10 +5,18 @@ import GuideHeader from "@/components/guide-v2/GuideHeader";
 import TipoCard from "@/components/guide-v2/TipoCard";
 import AreaInput from "@/components/guide-v2/AreaInput";
 import AcabamentoCard from "@/components/guide-v2/AcabamentoCard";
+import SectionDivider from "@/components/guide-v2/SectionDivider";
 import Reveal from "@/components/shared/Reveal";
-import { acabamentoMeta, tipoVisualMap, type Acabamento, type TipoVisual } from "@/components/guide-v2/types";
+import {
+  acabamentoMeta,
+  tipoVisualMap,
+  type Acabamento,
+  type TipoVisual,
+} from "@/components/guide-v2/types";
+import { tipoImage, guideHeroStrip } from "@/components/guide-v2/imagery";
 import { buildContextQuery } from "@/components/guide-v2/useGuideQuery";
 import { whatsappConsultor } from "@/data/guideMap";
+import brasao from "@/assets/brasao.png";
 
 const TIPOS: Array<{ value: TipoVisual; microcopy?: string }> = [
   { value: "piscina" },
@@ -59,11 +67,35 @@ export default function GuiaContexto() {
   };
 
   return (
-    <div className="min-h-screen surface-ivory">
+    <div className="min-h-screen surface-ivory relative">
       <GuideHeader />
-      <main className="container-western max-w-[920px] pt-16 md:pt-20 pb-32">
+
+      {/* Hero photographic strip — pedra real respirando atrás do contexto */}
+      <div className="relative w-full h-[180px] md:h-[220px] overflow-hidden">
+        <img
+          src={guideHeroStrip}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, hsl(var(--western-ivory) / 0.1) 0%, hsl(var(--western-ivory) / 0.85) 70%, hsl(var(--western-ivory)) 100%)",
+          }}
+        />
+        <div className="container-western h-full flex items-end pb-7 relative">
+          <p className="font-display italic text-xl md:text-2xl text-western-green-deep">
+            O ponto de partida do seu projeto.
+          </p>
+        </div>
+      </div>
+
+      <main className="container-western max-w-[920px] pt-10 pb-32 relative">
         <Reveal variant="fade-up" duration={700}>
-          <p className="text-eyebrow mb-5">Guia de composição · Etapa 01</p>
+          <p className="eyebrow-bar mb-5">Guia de composição · Etapa 01</p>
           <h1 className="font-display text-4xl md:text-[56px] text-western-green-deep leading-[1.05] mb-6">
             Conte sobre o projeto que você está atendendo.
           </h1>
@@ -75,8 +107,8 @@ export default function GuiaContexto() {
 
         {/* 01 */}
         <section ref={refTipo} className="mt-20">
-          <Reveal variant="fade-up" duration={650}>
-            <p className={`text-eyebrow mb-6 transition-colors ${highlight === "tipo" ? "text-western-green-deep" : ""}`}>
+          <Reveal variant="fade-up" duration={700} delay={140}>
+            <p className={`eyebrow-bar mb-7 transition-colors ${highlight === "tipo" ? "!text-western-green-deep" : ""}`}>
               01 · Tipo de ambiente
             </p>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
@@ -86,6 +118,7 @@ export default function GuiaContexto() {
                   value={t.value}
                   label={tipoVisualMap[t.value].label}
                   microcopy={t.microcopy}
+                  image={tipoImage[t.value]}
                   selected={tipo === t.value}
                   onSelect={setTipo}
                   variant={i === 4 ? "wide" : undefined}
@@ -95,12 +128,12 @@ export default function GuiaContexto() {
           </Reveal>
         </section>
 
-        <div className="divider-hairline mt-16" />
+        <SectionDivider />
 
         {/* 02 */}
-        <section ref={refArea} className="mt-16">
-          <Reveal variant="fade-up" duration={650}>
-            <p className={`text-eyebrow mb-6 transition-colors ${highlight === "area" ? "text-western-green-deep" : ""}`}>
+        <section ref={refArea} className="mt-12">
+          <Reveal variant="fade-up" duration={700} delay={140}>
+            <p className={`eyebrow-bar mb-7 transition-colors ${highlight === "area" ? "!text-western-green-deep" : ""}`}>
               02 · Área aproximada
             </p>
             <AreaInput value={area} onChange={setArea} id="area-input" />
@@ -110,15 +143,15 @@ export default function GuiaContexto() {
           </Reveal>
         </section>
 
-        <div className="divider-hairline mt-16" />
+        <SectionDivider />
 
         {/* 03 */}
-        <section ref={refAcab} className="mt-16">
-          <Reveal variant="fade-up" duration={650}>
-            <p className={`text-eyebrow mb-3 transition-colors ${highlight === "acabamento" ? "text-western-green-deep" : ""}`}>
+        <section ref={refAcab} className="mt-12">
+          <Reveal variant="fade-up" duration={700} delay={140}>
+            <p className={`eyebrow-bar mb-3 transition-colors ${highlight === "acabamento" ? "!text-western-green-deep" : ""}`}>
               03 · Acabamento dominante
             </p>
-            <p className="font-display italic text-[15px] text-western-stone-warm mb-6 max-w-[560px]">
+            <p className="font-display italic text-[15px] text-western-stone-warm mb-7 max-w-[560px]">
               O acabamento é único para todas as peças do conjunto. Você pode trocar no próximo passo.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
@@ -135,10 +168,10 @@ export default function GuiaContexto() {
           </Reveal>
         </section>
 
-        <div className="divider-hairline mt-16" />
+        <SectionDivider />
 
         {/* CTA */}
-        <div className="mt-12">
+        <div className="mt-10">
           <button type="button" onClick={handleSubmit} disabled={!valid} className="btn-dark">
             Ver composições <ArrowRight className="h-4 w-4" />
           </button>
@@ -155,6 +188,14 @@ export default function GuiaContexto() {
           </p>
         </div>
       </main>
+
+      {/* Brasão watermark */}
+      <img
+        src={brasao}
+        alt=""
+        aria-hidden
+        className="hidden md:block fixed bottom-6 right-6 w-20 opacity-[0.04] pointer-events-none select-none z-0"
+      />
     </div>
   );
 }

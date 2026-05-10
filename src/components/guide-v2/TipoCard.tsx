@@ -1,48 +1,66 @@
 import { cn } from "@/lib/utils";
-import iconePedra from "@/assets/icone-pedra-verde.png";
+import { Check } from "lucide-react";
 import type { TipoVisual } from "./types";
 
 interface Props {
   value: TipoVisual;
   label: string;
   microcopy?: string;
+  image: string;
   selected: boolean;
   onSelect: (v: TipoVisual) => void;
   variant?: "wide";
 }
 
-export default function TipoCard({ value, label, microcopy, selected, onSelect, variant }: Props) {
+export default function TipoCard({ value, label, microcopy, image, selected, onSelect, variant }: Props) {
   return (
     <button
       type="button"
       onClick={() => onSelect(value)}
       aria-pressed={selected}
       className={cn(
-        "group relative flex flex-col text-left bg-white border transition-all overflow-hidden",
+        "group relative flex flex-col text-left bg-white border transition-all duration-500 overflow-hidden",
         selected
-          ? "border-western-green-deep border-2 shadow-[0_22px_36px_-26px_hsl(var(--western-stone-dark)/0.45)]"
-          : "border-western-stone-warm/15 hover:border-western-gold/60 hover:shadow-[0_18px_32px_-26px_hsl(var(--western-stone-dark)/0.35)]",
-        variant === "wide" ? "col-span-2 md:col-span-2" : ""
+          ? "border-western-gold shadow-[0_36px_56px_-30px_hsl(var(--western-stone-dark)/0.45)] anim-settle"
+          : "border-western-stone-warm/15 hover:border-western-gold/60 hover:shadow-[0_28px_44px_-30px_hsl(var(--western-stone-dark)/0.35)] hover:-translate-y-1",
+        variant === "wide" ? "col-span-2" : ""
       )}
     >
-      <div className="aspect-[4/3] w-full bg-western-paper relative overflow-hidden flex items-center justify-center">
+      <div className="aspect-[4/5] w-full relative overflow-hidden bg-western-paper">
         <img
-          src={iconePedra}
+          src={image}
           alt=""
           aria-hidden
+          loading="lazy"
+          decoding="async"
           className={cn(
-            "h-12 transition-opacity duration-500",
-            selected ? "opacity-50" : "opacity-25 group-hover:opacity-40"
+            "w-full h-full object-cover transition-all duration-700",
+            selected ? "scale-[1.04]" : "group-hover:scale-[1.03]",
+            !selected && "grayscale-[20%] group-hover:grayscale-0"
           )}
         />
+        {/* gradient leitura */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(180deg, transparent 55%, hsl(var(--western-green-deep) / 0.55) 100%)",
+          }}
+        />
         {selected && (
-          <span className="absolute top-3 left-3 w-1.5 h-1.5 rounded-full bg-western-gold" />
+          <span
+            aria-hidden
+            className="anim-mark absolute top-3 left-3 inline-flex items-center justify-center w-7 h-7 bg-western-gold text-western-green-deep"
+          >
+            <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+          </span>
         )}
       </div>
       <div className="px-5 pt-4 pb-5 border-t border-western-stone-warm/10">
-        <div className="font-display text-[17px] text-western-green-deep leading-tight">{label}</div>
+        <div className="font-display text-[18px] text-western-green-deep leading-tight">{label}</div>
         {microcopy && (
-          <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-western-gold">
+          <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold">
             {microcopy}
           </div>
         )}
