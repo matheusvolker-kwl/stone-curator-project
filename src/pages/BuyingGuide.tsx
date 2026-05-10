@@ -197,7 +197,7 @@ export default function BuyingGuide() {
         ) : (
           <div className="space-y-8" ref={containerRef}>
             {progressSteps.length > 0 && <GuideProgress steps={progressSteps} />}
-            <div className={isConfigurar ? "grid xl:grid-cols-[1fr_320px] gap-8 items-start" : ""}>
+            <div>
               <div className={`border border-western-stone-warm/20 bg-white min-w-0 ${isConfigurar ? "p-6 md:p-8" : "p-6 md:p-12"}`}>
                 {step === "tipo" && <StepOnde />}
                 {step === "area" && <StepArea />}
@@ -222,7 +222,11 @@ export default function BuyingGuide() {
                 )}
               </div>
 
-              {isConfigurar && <GuideAssemblySummary stepLabel={stepLabel} />}
+              {isConfigurar && (
+                <div className="mt-8">
+                  <GuideAssemblySummary stepLabel={stepLabel} />
+                </div>
+              )}
             </div>
           </div>
         )}
