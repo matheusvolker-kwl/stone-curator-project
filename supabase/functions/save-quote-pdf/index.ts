@@ -28,6 +28,51 @@ function decodeBase64Pdf(value: string): Uint8Array {
   return bytes;
 }
 
+interface AlertCtx {
+  source: string;
+  message: string;
+  userId?: string | null;
+  userEmail?: string | null;
+  context?: Record<string, unknown>;
+}
+
+async function notify({ source, message, userId, userEmail, context }: AlertCtx, admin: ReturnType<typeof createClient>) {
+  // Log estruturado
+  console.error(JSON.stringify({ level: "error", source, message, userId, context }));
+
+  // Persiste em client_errors (best-effort)
+  admin
+    .from("client_errors")
+    .insert({
+      source,
+      severity: "error",
+      message,
+      user_id: userId ?? null,
+      user_email: userEmail ?? null,
+      context: context ?? {},
+    })
+    .then(({ error }) => {
+      if (error) console.error("notify insert failed", error);
+    });
+
+  // Webhook opcional (Slack/Discord)
+  const webhook = Deno.env.get("ALERT_WEBHOOK_URL");
+  if (!webhook) return;
+  try {
+    const text =
+      `:rotating_light: *${source}*\n${message}` +
+      (userEmail ? `\n_user_: ${userEmail}` : "") +
+      (context ? `\n\`\`\`${JSON.stringify(context).slice(0, 1500)}\`\`\`` : "");
+    await fetch(webhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+  } catch (err) {
+    console.error("alert webhook failed", err);
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return jsonResponse({ error: "Method not allowed" }, 405);
