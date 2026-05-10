@@ -137,7 +137,7 @@ export default function QuoteLeadModal({
       setNumero(res.numero);
       setPdfBlob(res.pdfBlob ?? null);
       setSuccess(true);
-      toast.success("Pedido enviado! Um vendedor entrará em contato.");
+      toast.success("PDF liberado! Baixe abaixo.");
     } catch (err) {
       console.error(err);
       toast.error("Não foi possível enviar agora. Tente novamente em instantes.");
