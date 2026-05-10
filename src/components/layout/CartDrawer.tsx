@@ -243,21 +243,7 @@ export default function CartDrawer({
               </button>
             )}
 
-            {/* Tertiary: PDF download */}
-            <button
-              type="button"
-              onClick={() =>
-                downloadOrcamentoPdf({
-                  items,
-                  subtotal,
-                  currency,
-                  showPrices: isApproved,
-                })
-              }
-              className="w-full inline-flex items-center justify-center gap-2 text-western-cream-muted hover:text-western-gold-soft font-mono text-[10px] uppercase tracking-[0.22em] py-2 transition-colors"
-            >
-              <FileDown className="h-3.5 w-3.5" /> Baixar PDF da composição
-            </button>
+            {/* PDF apenas após formulário (Solicitar orçamento) */}
 
             {!isApproved && (
               <Link
