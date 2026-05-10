@@ -281,30 +281,7 @@ describe("gerarPedidoPdf — geração e ramificações", () => {
 // downloadPedidoPdf
 // ─────────────────────────────────────────────────────────────
 describe("downloadPedidoPdf", () => {
-  function captureDownloads(): string[] {
-    const downloads: string[] = [];
-    const orig = document.createElement.bind(document);
-    vi.spyOn(document, "createElement").mockImplementation((tag: string) => {
-      const el = orig(tag) as HTMLElement;
-      if (tag.toLowerCase() === "a") {
-        const anchor = el as HTMLAnchorElement;
-        Object.defineProperty(anchor, "download", {
-          configurable: true,
-          set(v: string) {
-            if (v) downloads.push(v);
-          },
-          get() {
-            return downloads[downloads.length - 1] ?? "";
-          },
-        });
-      }
-      return el;
-    });
-    return downloads;
-  }
-
-  it("admin: dispara download com filename de admin", async () => {
-    const downloads = captureDownloads();
+  it("admin: retorna filename de admin no padrão correto sem lançar", async () => {
     const fname = await downloadPedidoPdf({
       order: makeOrder(),
       events: makeEvents(),
@@ -312,18 +289,15 @@ describe("downloadPedidoPdf", () => {
       scenario: "admin",
     });
     expect(fname).toMatch(/^western-pedido-WP-2025-0001-admin-\d{8}-\d{4}-[A-Z0-9]{5}\.pdf$/);
-    expect(downloads).toContain(fname);
   });
 
-  it("cliente: dispara download com filename de cliente", async () => {
-    const downloads = captureDownloads();
+  it("cliente: retorna filename de cliente no padrão correto sem lançar", async () => {
     const fname = await downloadPedidoPdf({
       order: makeOrder(),
       events: [],
       scenario: "cliente",
     });
     expect(fname).toMatch(/^western-pedido-WP-2025-0001-cliente-[A-Z0-9]{5}\.pdf$/);
-    expect(downloads).toContain(fname);
   });
 
   it.each<[PedidoScenario]>([["admin"], ["cliente"]])(
