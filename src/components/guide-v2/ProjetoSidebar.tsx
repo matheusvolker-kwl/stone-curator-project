@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, Download, Lock } from "lucide-react";
+import { Download, ExternalLink, Loader2, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatPreco, type ConjuntoLeaf } from "@/data/guideMap";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -16,9 +16,21 @@ interface Props {
   isCustomizado: boolean;
   onResetBase?: () => void;
   onFinalizar: () => void;
+  onFinalizarCompra?: () => void;
+  checkoutLoading?: boolean;
 }
 
-function PanelBody({ conjunto, pecas, extras, acabamento, isCustomizado, onResetBase, onFinalizar }: Props) {
+function PanelBody({
+  conjunto,
+  pecas,
+  extras,
+  acabamento,
+  isCustomizado,
+  onResetBase,
+  onFinalizar,
+  onFinalizarCompra,
+  checkoutLoading = false,
+}: Props) {
   const { isApproved, session } = useAuth();
   const subBase = pecas.reduce((a, p) => a + p.preco * p.qty, 0);
   const subExtras = extras.reduce((a, e) => a + e.preco * e.qty, 0);
@@ -149,15 +161,36 @@ function PanelBody({ conjunto, pecas, extras, acabamento, isCustomizado, onReset
         )}
 
         <div className="flex flex-col gap-2.5">
-          <button
-            type="button"
-            onClick={onFinalizar}
-            disabled={!isApproved}
-            className="inline-flex items-center justify-center gap-3 h-12 bg-western-gold text-western-green-deep font-mono text-xs uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {isCustomizado ? "Solicitar orçamento sob consulta" : "Revisar e finalizar"}
-            <ArrowRight className="h-4 w-4" />
-          </button>
+          {isApproved && !isCustomizado && onFinalizarCompra ? (
+            <button
+              type="button"
+              onClick={onFinalizarCompra}
+              disabled={checkoutLoading}
+              className="inline-flex items-center justify-center gap-3 h-12 bg-western-gold text-western-green-deep font-mono text-xs uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {checkoutLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Finalizar compra"}
+              {!checkoutLoading && <ExternalLink className="h-4 w-4" />}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onFinalizar}
+              disabled={!isApproved && !isCustomizado}
+              className="inline-flex items-center justify-center gap-3 h-12 bg-western-gold text-western-green-deep font-mono text-xs uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {isCustomizado ? "Solicitar orçamento sob consulta" : "Baixar composição (PDF)"}
+              <Download className="h-4 w-4" />
+            </button>
+          )}
+          {isApproved && !isCustomizado && (
+            <button
+              type="button"
+              onClick={onFinalizar}
+              className="inline-flex items-center justify-center gap-2 h-10 border border-western-cream/40 text-western-cream font-mono text-[10px] uppercase tracking-[0.22em] hover:border-western-gold hover:text-western-gold transition-colors"
+            >
+              <Download className="h-3.5 w-3.5" /> Baixar composição (PDF)
+            </button>
+          )}
           {!isCustomizado && (
             <button
               type="button"

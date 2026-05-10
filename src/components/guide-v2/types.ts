@@ -22,8 +22,30 @@ export const acabamentoMeta: Record<Acabamento, { label: string; chip: string; t
   granito: { label: "Granito", chip: "#5A5D5C" },
 };
 
-export type ProjetoExtra = { id: string; nome: string; codigo: string; preco: number; qty: number; imageUrl?: string };
-export type ProjetoPeca = { id: string; nome: string; codigo: string; pesoKg: number; dim: string; preco: number; qty: number; imageUrl?: string };
+export type ProjetoExtra = {
+  id: string;
+  nome: string;
+  codigo: string;
+  preco: number;
+  qty: number;
+  imageUrl?: string;
+  productHandle?: string;
+  variantId?: string;
+  variantTitle?: string;
+};
+export type ProjetoPeca = {
+  id: string;
+  nome: string;
+  codigo: string;
+  pesoKg: number;
+  dim: string;
+  preco: number;
+  qty: number;
+  imageUrl?: string;
+  productHandle?: string;
+  variantId?: string;
+  variantTitle?: string;
+};
 
 export const nivelLabelMap: Record<Nivel, string> = {
   essencial: "Essencial",

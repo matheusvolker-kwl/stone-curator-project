@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Navigate, useParams, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, ExternalLink, Info, RotateCcw, MessageCircle } from "lucide-react";
 import QuoteLeadModal from "@/components/quote/QuoteLeadModal";
-import type { CartItem } from "@/stores/cartStore";
+import { useCartStore, type CartItem } from "@/stores/cartStore";
 import GuideHeader from "@/components/guide-v2/GuideHeader";
 import PecaRow from "@/components/guide-v2/PecaRow";
 import AutoralCard from "@/components/guide-v2/AutoralCard";
@@ -60,6 +60,7 @@ export default function GuiaRefinar() {
   const { handle } = useParams();
   const [params, setParams] = useSearchParams();
   const [quoteOpen, setQuoteOpen] = useState(false);
+  const { addBundle, getCheckoutUrl, isLoading: cartLoading } = useCartStore();
 
   const found = useMemo(() => (handle ? findConjunto(handle) : null), [handle]);
   const acabamento = (params.get("acabamento") as Acabamento | null) ?? "moledo";
@@ -149,7 +150,7 @@ export default function GuiaRefinar() {
   const ctx = { tipoVisual, area: area ? Number(area) : undefined, acabamento };
   const backToCaminhos = `/guia-de-composicao/composicoes?${buildContextQuery(ctx)}`;
 
-  const onFinalizar = () => {
+  const onBaixarComposicao = () => {
     setQuoteOpen(true);
   };
 
@@ -157,14 +158,24 @@ export default function GuiaRefinar() {
   const quoteItems: CartItem[] = useMemo(() => {
     const acabLabel = acabamentoMeta[acabamento].label;
     const toItem = (
-      it: { id: string; nome: string; codigo: string; preco: number; qty: number; imageUrl?: string },
+      it: {
+        id: string;
+        nome: string;
+        codigo: string;
+        preco: number;
+        qty: number;
+        imageUrl?: string;
+        productHandle?: string;
+        variantId?: string;
+        variantTitle?: string;
+      },
     ): CartItem => ({
       lineId: null,
-      productHandle: it.codigo || it.id,
+      productHandle: it.productHandle || it.codigo || it.id,
       productTitle: it.nome,
       productImage: it.imageUrl ?? null,
-      variantId: it.id,
-      variantTitle: acabLabel,
+      variantId: it.variantId || it.id,
+      variantTitle: it.variantTitle || acabLabel,
       price: { amount: String(it.preco || 0), currencyCode: "BRL" },
       quantity: it.qty,
       selectedOptions: [{ name: "Acabamento", value: acabLabel }],
@@ -186,6 +197,15 @@ export default function GuiaRefinar() {
   };
 
   const whatsHref = whatsappConsultor(tipoMeta.tipo, conjunto.nome);
+
+  const onFinalizarCompra = async () => {
+    const purchasable = quoteItems.filter((item) => item.variantId.startsWith("gid://"));
+    if (purchasable.length === 0) return;
+
+    await addBundle(purchasable.map(({ lineId: _lineId, ...item }) => item));
+    const checkoutUrl = getCheckoutUrl();
+    if (checkoutUrl) window.open(checkoutUrl, "_blank");
+  };
 
   return (
     <div className="min-h-screen surface-ivory relative">
@@ -356,7 +376,9 @@ export default function GuiaRefinar() {
             acabamento={acabamento}
             isCustomizado={isCustomizado}
             onResetBase={() => setPecas(baseInicial)}
-            onFinalizar={onFinalizar}
+            onFinalizar={onBaixarComposicao}
+            onFinalizarCompra={onFinalizarCompra}
+            checkoutLoading={cartLoading}
           />
         </div>
       </main>

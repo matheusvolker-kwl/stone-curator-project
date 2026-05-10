@@ -6,6 +6,8 @@ export interface AutoralItem {
   handle: string;
   nome: string;
   codigo: string;      // SKU ou abreviação
+  variantId?: string;
+  variantTitle?: string;
   pesoKg: number;
   preco: number;
   descricao: string;
@@ -61,5 +63,15 @@ export function getAutoralHandlesFor(tipoVisual: TipoVisual): string[] {
 }
 
 export function autoralToExtra(item: AutoralItem): ProjetoExtra {
-  return { id: item.id, nome: item.nome, codigo: item.codigo, preco: item.preco, qty: 1 };
+  return {
+    id: item.id,
+    nome: item.nome,
+    codigo: item.codigo,
+    preco: item.preco,
+    qty: 1,
+    imageUrl: item.imageUrl,
+    productHandle: item.handle,
+    variantId: item.variantId,
+    variantTitle: item.variantTitle,
+  };
 }
