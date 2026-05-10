@@ -11,10 +11,11 @@ interface Props {
   required?: boolean;
   error?: string;
   autoComplete?: string;
+  readOnly?: boolean;
 }
 
 export default function EmailInput({
-  value, onChange, onBlur, id, name, placeholder, required, error, autoComplete,
+  value, onChange, onBlur, id, name, placeholder, required, error, autoComplete, readOnly,
 }: Props) {
   const [suggestion, setSuggestion] = useState<string | null>(null);
 
@@ -37,9 +38,12 @@ export default function EmailInput({
         name={name}
         placeholder={placeholder ?? "voce@empresa.com.br"}
         required={required}
+        readOnly={readOnly}
         autoComplete={autoComplete ?? "email"}
         spellCheck={false}
         className={`h-12 w-full bg-transparent border px-3 rounded-none text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none transition-colors ${
+          readOnly ? "opacity-70 cursor-not-allowed " : ""
+        }${
           error
             ? "border-red-700/60"
             : "border-western-stone-warm/30 focus:border-western-gold"
