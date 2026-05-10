@@ -32,6 +32,7 @@ export const BUSINESS = {
   whatsappFabrica: "5511993403485",
   whatsappLabel: "+55 11 99340-3485",
   emailComercial: "comercial@westernpools.com.br",
+  emailSuporte: "suporte@westernpools.com.br",
   emailNewsletter: "contato@westernpools.com.br",
   // TODO confirmar CNPJ real com Western — vazio = não exibir
   cnpj: "",
