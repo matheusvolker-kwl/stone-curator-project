@@ -32,6 +32,7 @@ import RelatedProducts from "@/components/product/RelatedProducts";
 import WhyWesternStrip from "@/components/product/WhyWesternStrip";
 import SocialProofBand from "@/components/product/SocialProofBand";
 import ProductPagination from "@/components/product/ProductPagination";
+import ProductInUse from "@/components/product/ProductInUse";
 
 // Pluraliza nomes de coleção singulares ("Pedra Grande" → "Pedras Grandes").
 function pluralizeCollection(title?: string): string {
@@ -59,18 +60,7 @@ export default function ProductPage() {
 
   const [activeOptions, setActiveOptions] = useState<Record<string, string>>({});
 
-  // Pré-seleciona Moledo (acabamento mais vendido) quando o produto carrega
-  useEffect(() => {
-    if (!product) return;
-    const acab = product.options.find((o) => /acabament/i.test(o.name));
-    if (!acab) return;
-    const moledo = acab.values.find((v) => /moledo/i.test(v));
-    if (moledo) {
-      setActiveOptions((prev) =>
-        prev[acab.name] ? prev : { ...prev, [acab.name]: moledo }
-      );
-    }
-  }, [product]);
+  // Sem pré-seleção de acabamento: a escolha é obrigatória e consciente.
   const [activeImage, setActiveImage] = useState(0);
   const [qty, setQty] = useState(1);
   const addItem = useCartStore((s) => s.addItem);
