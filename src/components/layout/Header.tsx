@@ -60,6 +60,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
+    setSearchOpen(false);
     navigate(`/linhas?q=${encodeURIComponent(query.trim())}`);
   };
 
