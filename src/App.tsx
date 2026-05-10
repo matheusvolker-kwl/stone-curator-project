@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
@@ -15,6 +15,17 @@ import AdminLeads from "./pages/admin/AdminLeads";
 import AdminSamples from "./pages/admin/AdminSamples";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AccountLayout from "@/components/account/AccountLayout";
+import AccountIndex from "./pages/account/AccountIndex";
+import AccountProfile from "./pages/account/AccountProfile";
+import AccountProjects from "./pages/account/AccountProjects";
+import AccountOrders from "./pages/account/AccountOrders";
+import AccountSavedCart from "./pages/account/AccountSavedCart";
+import AccountSketches from "./pages/account/AccountSketches";
+import AccountFavorites from "./pages/account/AccountFavorites";
+import AccountSamples from "./pages/account/AccountSamples";
+import AccountPreferences from "./pages/account/AccountPreferences";
+
 import Linhas from "./pages/Linhas.tsx";
 import LinhaPage from "./pages/LinhaPage.tsx";
 import Conjuntos from "./pages/Conjuntos.tsx";
@@ -25,9 +36,7 @@ import BuyingGuide from "./pages/BuyingGuide.tsx";
 import PartnerSignup from "./pages/PartnerSignup.tsx";
 import ParceirosArquitetos from "./pages/ParceirosArquitetos.tsx";
 import PartnerLogin from "./pages/PartnerLogin.tsx";
-import PartnerAccount from "./pages/PartnerAccount.tsx";
-import Admin from "./pages/Admin.tsx";
-import Favoritos from "./pages/Favoritos.tsx";
+
 import ResetPassword from "./pages/ResetPassword.tsx";
 import PedirAmostras from "./pages/PedirAmostras.tsx";
 import AgendarVisita from "./pages/AgendarVisita.tsx";
@@ -66,14 +75,25 @@ const App = () => (
               <Route path="/parceiro/cadastro" element={<PartnerSignup />} />
               <Route path="/parceiro/login" element={<PartnerLogin />} />
               <Route path="/parceiro/redefinir-senha" element={<ResetPassword />} />
+              <Route path="/parceiro/conta" element={<Navigate to="/minha-conta" replace />} />
               <Route
-                path="/parceiro/conta"
+                path="/minha-conta"
                 element={
                   <RequireAuth>
-                    <PartnerAccount />
+                    <AccountLayout />
                   </RequireAuth>
                 }
-              />
+              >
+                <Route index element={<AccountIndex />} />
+                <Route path="perfil" element={<AccountProfile />} />
+                <Route path="projetos" element={<AccountProjects />} />
+                <Route path="pedidos" element={<AccountOrders />} />
+                <Route path="carrinho" element={<AccountSavedCart />} />
+                <Route path="sketches" element={<AccountSketches />} />
+                <Route path="favoritos" element={<AccountFavorites />} />
+                <Route path="amostras" element={<AccountSamples />} />
+                <Route path="preferencias" element={<AccountPreferences />} />
+              </Route>
               <Route
                 path="/admin"
                 element={
@@ -105,14 +125,7 @@ const App = () => (
               <Route path="/politica-de-entrega" element={<PoliticaEntrega />} />
               <Route path="/trocas-e-avarias" element={<TrocasAvarias />} />
               <Route path="/privacidade" element={<PoliticaPrivacidade />} />
-              <Route
-                path="/parceiro/favoritos"
-                element={
-                  <RequireAuth>
-                    <Favoritos />
-                  </RequireAuth>
-                }
-              />
+              <Route path="/parceiro/favoritos" element={<Navigate to="/minha-conta/favoritos" replace />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

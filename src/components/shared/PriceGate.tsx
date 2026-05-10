@@ -18,7 +18,7 @@ export default function PriceGate({ children, variant = "inline", ctaLabel = "Ac
   if (variant === "inline") {
     return (
       <Link
-        to={session ? "/parceiro/conta" : "/parceiro/login"}
+        to={session ? "/minha-conta" : "/parceiro/login"}
         className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80 hover:text-western-gold transition-colors"
       >
         <Lock className="h-3 w-3" /> {session ? "Aguardando aprovação" : "Login para preço"}

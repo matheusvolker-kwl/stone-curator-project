@@ -14,7 +14,7 @@ export default function PartnerLogin() {
   const [showReset, setShowReset] = useState(false);
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const next = params.get("next") || "/parceiro/conta";
+  const next = params.get("next") || "/minha-conta";
 
   // If already logged in, send to next/account
   useEffect(() => {
