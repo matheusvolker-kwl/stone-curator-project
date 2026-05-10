@@ -2,9 +2,17 @@ import { Link } from "react-router-dom";
 import { Heart, Trash2, ArrowRight } from "lucide-react";
 import { useWishlist } from "@/hooks/useWishlist";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function AccountFavorites() {
   const { items, loading, remove } = useWishlist();
+
+  const handleRemove = async (handle: string, title?: string | null) => {
+    await remove(handle);
+    toast("Removido dos favoritos.", {
+      description: title ?? undefined,
+    });
+  };
 
   return (
     <div>
@@ -41,7 +49,7 @@ export default function AccountFavorites() {
                 <Link to={`/produtos/${it.product_handle}`} className="text-sm text-western-green-deep hover:text-western-gold line-clamp-2">
                   {it.product_title ?? it.product_handle}
                 </Link>
-                <button onClick={() => remove(it.product_handle)} className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm hover:text-red-700 self-start">
+                <button onClick={() => handleRemove(it.product_handle, it.product_title)} className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm hover:text-red-700 self-start">
                   <Trash2 className="h-3 w-3" /> Remover
                 </button>
               </div>
