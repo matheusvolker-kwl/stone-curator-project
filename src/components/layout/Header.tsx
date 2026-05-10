@@ -33,6 +33,8 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { session, isAdmin, empresa, signOut, user } = useAuth();
+  const { items: wishItems } = useWishlist();
+  const wishCount = wishItems.length;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
