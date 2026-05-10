@@ -647,6 +647,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      register_pedido_pdf_download: {
+        Args: { _filename: string; _order_id: string }
+        Returns: string
+      }
     }
     Enums: {
       app_role: "admin" | "partner"
