@@ -150,9 +150,39 @@ export default function GuiaRefinar() {
   const backToCaminhos = `/guia-de-composicao/composicoes?${buildContextQuery(ctx)}`;
 
   const onFinalizar = () => {
-    const sp = new URLSearchParams();
-    if (isCustomizado) sp.set("modo", "consulta");
-    navigate(`/guia-de-composicao/finalizar${sp.toString() ? `?${sp.toString()}` : ""}`);
+    setQuoteOpen(true);
+  };
+
+  // Mapeia peças + extras do guia para o shape de CartItem usado em submitQuoteLead/PDF
+  const quoteItems: CartItem[] = useMemo(() => {
+    const acabLabel = acabamentoMeta[acabamento].label;
+    const toItem = (
+      it: { id: string; nome: string; codigo: string; preco: number; qty: number; imageUrl?: string },
+    ): CartItem => ({
+      lineId: null,
+      productHandle: it.codigo || it.id,
+      productTitle: it.nome,
+      productImage: it.imageUrl ?? null,
+      variantId: it.id,
+      variantTitle: acabLabel,
+      price: { amount: String(it.preco || 0), currencyCode: "BRL" },
+      quantity: it.qty,
+      selectedOptions: [{ name: "Acabamento", value: acabLabel }],
+    });
+    return [...pecas.map(toItem), ...extras.map(toItem)];
+  }, [pecas, extras, acabamento]);
+
+  const quoteSubtotal = quoteItems.reduce(
+    (s, i) => s + parseFloat(i.price.amount) * i.quantity,
+    0,
+  );
+
+  const projetoContext = {
+    conjuntoNome: found?.conjunto.nome,
+    acabamento: acabamentoMeta[acabamento].label,
+    tipoVisual: tipoVisualMap[tipoVisual].label,
+    areaM2: area ? Number(area) : undefined,
+    modo: (isCustomizado ? "consulta" : "curado") as "consulta" | "curado",
   };
 
   const whatsHref = whatsappConsultor(tipoMeta.tipo, conjunto.nome);
