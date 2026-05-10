@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { CartItem } from "@/stores/cartStore";
-import { orcamentoPdfBlob } from "@/lib/pdf/orcamentoPdf";
+import { orcamentoPdfBlob, type PdfProjetoContext } from "@/lib/pdf/orcamentoPdf";
 
 export interface QuoteContact {
   nome: string;
@@ -11,6 +11,8 @@ export interface QuoteContact {
   mensagem?: string;
 }
 
+export type QuoteOrigem = "cart_drawer" | "guia_composicao";
+
 export interface QuoteSubmission {
   contact: QuoteContact;
   items: CartItem[];
@@ -18,12 +20,16 @@ export interface QuoteSubmission {
   currency: string;
   userId?: string | null;
   showPrices?: boolean;
+  origem?: QuoteOrigem;
+  payloadExtra?: Record<string, unknown>;
+  projetoContext?: PdfProjetoContext;
 }
 
 export interface QuoteResult {
   leadId: string;
   numero: string;
   pdfStored: boolean;
+  pdfBlob?: Blob;
 }
 
 function summarizeItems(items: CartItem[]) {
@@ -47,6 +53,9 @@ export async function submitQuoteLead({
   currency,
   userId,
   showPrices = false,
+  origem = "cart_drawer",
+  payloadExtra,
+  projetoContext,
 }: QuoteSubmission): Promise<QuoteResult> {
   const lineSummary = items
     .map((i) => `${i.quantity}× ${i.productTitle}`)
@@ -58,7 +67,7 @@ export async function submitQuoteLead({
     .from("leads")
     .insert({
       type: "orcamento",
-      origem: "cart_drawer",
+      origem,
       nome: contact.nome,
       email: contact.email,
       telefone: contact.telefone,
@@ -72,6 +81,9 @@ export async function submitQuoteLead({
         currency,
         summary: lineSummary,
         numero,
+        origem,
+        projeto: projetoContext ?? null,
+        extra: payloadExtra ?? null,
         submitted_at: new Date().toISOString(),
       },
     })
@@ -80,31 +92,38 @@ export async function submitQuoteLead({
 
   if (error || !lead) throw error ?? new Error("Falha ao registrar orçamento");
 
+  // Always generate the PDF blob — used for download in success screen
+  let pdfBlob: Blob | undefined;
+  try {
+    pdfBlob = await orcamentoPdfBlob({
+      items,
+      subtotal,
+      currency,
+      cliente: {
+        nome: contact.nome,
+        email: contact.email,
+        telefone: contact.telefone,
+        empresa: contact.empresa,
+        cidade: contact.cidade,
+        mensagem: contact.mensagem,
+      },
+      showPrices,
+      numero,
+      projeto: projetoContext,
+    });
+  } catch (e) {
+    console.warn("PDF generation failed", e);
+  }
+
   let pdfStored = false;
 
   // Upload PDF when user is authenticated
-  if (userId) {
+  if (userId && pdfBlob) {
     try {
-      const blob = await orcamentoPdfBlob({
-        items,
-        subtotal,
-        currency,
-        cliente: {
-          nome: contact.nome,
-          email: contact.email,
-          telefone: contact.telefone,
-          empresa: contact.empresa,
-          cidade: contact.cidade,
-          mensagem: contact.mensagem,
-        },
-        showPrices,
-        numero,
-      });
-
       const path = `${userId}/${lead.id}.pdf`;
       const { error: upErr } = await supabase.storage
         .from("orcamentos")
-        .upload(path, blob, { contentType: "application/pdf", upsert: true });
+        .upload(path, pdfBlob, { contentType: "application/pdf", upsert: true });
 
       if (!upErr) {
         await supabase.from("quote_pdfs").insert({
@@ -119,9 +138,9 @@ export async function submitQuoteLead({
         console.warn("PDF upload failed", upErr);
       }
     } catch (e) {
-      console.warn("PDF generation/upload failed", e);
+      console.warn("PDF upload failed", e);
     }
   }
 
-  return { leadId: lead.id, numero, pdfStored };
+  return { leadId: lead.id, numero, pdfStored, pdfBlob };
 }
