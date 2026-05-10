@@ -181,6 +181,8 @@ export default function ProductPage() {
 
   return (
     <div className="surface-ivory">
+      <ScrollProgress />
+      <BackToTop />
       <div className="container-western py-12 md:py-20">
         {/* Breadcrumb */}
         <nav
