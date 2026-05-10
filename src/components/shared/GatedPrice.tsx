@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Lock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { usePartnerPricing } from "@/hooks/usePartnerPricing";
 import { formatBRL } from "@/lib/shopify/client";
 
 interface Props {
@@ -17,8 +18,8 @@ interface Props {
 }
 
 /**
- * Renderiza o preço para parceiros aprovados ou um chip "Login para preço"
- * para visitantes/pendentes. Centraliza o gate de preços do guia/PDP.
+ * Renderiza o preço para parceiros aprovados (com desconto do tier aplicado)
+ * ou um chip "Login para preço" para visitantes/pendentes.
  */
 export default function GatedPrice({
   amount,
@@ -29,11 +30,20 @@ export default function GatedPrice({
   lockedLabel,
 }: Props) {
   const { isApproved, session } = useAuth();
+  const { discountPct } = usePartnerPricing();
 
   if (isApproved) {
+    const base = typeof amount === "number" ? amount : parseFloat(amount);
+    const hasDiscount = discountPct > 0 && Number.isFinite(base);
+    const final = hasDiscount ? base * (1 - discountPct / 100) : base;
     return (
       <span className={className}>
-        {formatBRL(amount, currency)}
+        {hasDiscount && (
+          <span className="opacity-50 line-through mr-2 text-[0.85em]">
+            {formatBRL(base, currency)}
+          </span>
+        )}
+        {formatBRL(final, currency)}
         {suffix && <span className="opacity-60 ml-1">{suffix}</span>}
       </span>
     );
