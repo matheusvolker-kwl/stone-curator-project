@@ -19,6 +19,7 @@ const AdminQuotes = lazy(() => import("./pages/admin/AdminQuotes"));
 const AdminQuoteDetail = lazy(() => import("./pages/admin/AdminQuoteDetail"));
 const AdminSamples = lazy(() => import("./pages/admin/AdminSamples"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminPedidos = lazy(() => import("./pages/admin/AdminPedidos"));
 const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
 
 const AccountLayout = lazy(() => import("@/components/account/AccountLayout"));
@@ -136,6 +137,7 @@ const App = () => (
                     <Route path="orcamentos/:leadId" element={<AdminQuoteDetail />} />
                     <Route path="amostras" element={<AdminSamples />} />
                     <Route path="usuarios" element={<AdminUsers />} />
+                    <Route path="pedidos" element={<AdminPedidos />} />
                     <Route path="configuracoes" element={<AdminSettings />} />
                   </Route>
                   <Route
