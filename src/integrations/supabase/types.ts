@@ -227,6 +227,104 @@ export type Database = {
         }
         Relationships: []
       }
+      production_order_events: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          note: string | null
+          order_id: string
+          status: Database["public"]["Enums"]["production_status"] | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          order_id: string
+          status?: Database["public"]["Enums"]["production_status"] | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          order_id?: string
+          status?: Database["public"]["Enums"]["production_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "production_order_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "production_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      production_orders: {
+        Row: {
+          created_at: string
+          endereco_entrega: string | null
+          id: string
+          lead_id: string | null
+          modo_entrega: Database["public"]["Enums"]["fulfillment_mode"]
+          numero: string
+          observacoes_admin: string | null
+          observacoes_cliente: string | null
+          prazo_dias_uteis: number
+          previsao_entrega: string | null
+          produzir_ate: string | null
+          status: Database["public"]["Enums"]["production_status"]
+          titulo: string
+          tracking_code: string | null
+          transportadora: string | null
+          updated_at: string
+          user_id: string
+          valor_total: number | null
+        }
+        Insert: {
+          created_at?: string
+          endereco_entrega?: string | null
+          id?: string
+          lead_id?: string | null
+          modo_entrega?: Database["public"]["Enums"]["fulfillment_mode"]
+          numero: string
+          observacoes_admin?: string | null
+          observacoes_cliente?: string | null
+          prazo_dias_uteis?: number
+          previsao_entrega?: string | null
+          produzir_ate?: string | null
+          status?: Database["public"]["Enums"]["production_status"]
+          titulo: string
+          tracking_code?: string | null
+          transportadora?: string | null
+          updated_at?: string
+          user_id: string
+          valor_total?: number | null
+        }
+        Update: {
+          created_at?: string
+          endereco_entrega?: string | null
+          id?: string
+          lead_id?: string | null
+          modo_entrega?: Database["public"]["Enums"]["fulfillment_mode"]
+          numero?: string
+          observacoes_admin?: string | null
+          observacoes_cliente?: string | null
+          prazo_dias_uteis?: number
+          previsao_entrega?: string | null
+          produzir_ate?: string | null
+          status?: Database["public"]["Enums"]["production_status"]
+          titulo?: string
+          tracking_code?: string | null
+          transportadora?: string | null
+          updated_at?: string
+          user_id?: string
+          valor_total?: number | null
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           cidade: string | null
@@ -525,6 +623,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "partner"
+      fulfillment_mode: "retirada" | "frete"
       lead_type:
         | "partner_signup"
         | "newsletter"
@@ -533,6 +632,15 @@ export type Database = {
         | "contato"
         | "orcamento"
       partner_status: "pending" | "approved" | "rejected" | "cancelled"
+      production_status:
+        | "aguardando"
+        | "em_producao"
+        | "controle_qualidade"
+        | "pronto"
+        | "em_transporte"
+        | "entregue"
+        | "retirado"
+        | "cancelado"
       quote_status:
         | "novo"
         | "em_atendimento"
@@ -668,6 +776,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "partner"],
+      fulfillment_mode: ["retirada", "frete"],
       lead_type: [
         "partner_signup",
         "newsletter",
@@ -677,6 +786,16 @@ export const Constants = {
         "orcamento",
       ],
       partner_status: ["pending", "approved", "rejected", "cancelled"],
+      production_status: [
+        "aguardando",
+        "em_producao",
+        "controle_qualidade",
+        "pronto",
+        "em_transporte",
+        "entregue",
+        "retirado",
+        "cancelado",
+      ],
       quote_status: [
         "novo",
         "em_atendimento",
