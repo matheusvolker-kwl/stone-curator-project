@@ -5,7 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, FileDown, Send, CheckCircle2 } from "lucide-react";
+import { Loader2, FileDown, Send, CheckCircle2, MessageCircle } from "lucide-react";
+import { BUSINESS } from "@/config/business";
 import PhoneInput from "@/components/forms/PhoneInput";
 import EmailInput from "@/components/forms/EmailInput";
 import { emailSchema, phoneBRSchema } from "@/lib/forms/br";
@@ -47,6 +48,7 @@ export default function QuoteRequestModal({ open, onOpenChange }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [numero, setNumero] = useState<string>("");
 
   // Prefill from partner profile
   useEffect(() => {
@@ -93,7 +95,7 @@ export default function QuoteRequestModal({ open, onOpenChange }: Props) {
     }
     setSubmitting(true);
     try {
-      await submitQuoteLead({
+      const res = await submitQuoteLead({
         contact: {
           nome: parsed.data.nome,
           email: parsed.data.email,
@@ -106,7 +108,9 @@ export default function QuoteRequestModal({ open, onOpenChange }: Props) {
         subtotal,
         currency,
         userId: user?.id ?? null,
+        showPrices: isApproved,
       });
+      setNumero(res.numero);
       setSuccess(true);
       toast.success("Orçamento enviado! Um vendedor entrará em contato.");
     } catch (err) {
@@ -131,8 +135,15 @@ export default function QuoteRequestModal({ open, onOpenChange }: Props) {
         mensagem: form.mensagem,
       },
       showPrices: isApproved,
+      numero: numero || undefined,
     });
   };
+
+  const whatsappUrl = (() => {
+    const valorTxt = isApproved ? ` (subtotal ${formatBRL(subtotal, currency)})` : "";
+    const msg = `Olá! Acabei de enviar o orçamento Nº ${numero || ""} com ${items.length} ${items.length === 1 ? "item" : "itens"}${valorTxt}. Gostaria de falar com um vendedor.`;
+    return `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`;
+  })();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
