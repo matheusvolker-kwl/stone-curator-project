@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
 } from "@/components/ui/sheet";
-import { toCSV, downloadCSV, chipCls, KV, type Lead } from "@/components/admin/adminUtils";
+import { toCSV, downloadCSV, chipCls, KV, type Lead, LEAD_TYPE_LABEL, LEAD_TYPE_BADGE_CLS } from "@/components/admin/adminUtils";
 
 export default function AdminLeads() {
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -16,8 +16,9 @@ export default function AdminLeads() {
   const [drawer, setDrawer] = useState<Lead | null>(null);
 
   useEffect(() => {
-    // Orçamentos têm página própria em /admin/orcamentos — aqui só os outros tipos.
-    supabase.from("leads").select("*").neq("type", "orcamento").order("created_at", { ascending: false }).limit(2000)
+    // Orçamentos têm página própria em /admin/orcamentos — aqui os outros tipos (incluindo pedido_novo).
+    supabase.from("leads").select("*").neq("type", "orcamento")
+      .order("last_activity_at", { ascending: false }).limit(2000)
       .then(({ data }) => { setLeads((data as Lead[]) ?? []); setLoading(false); });
   }, []);
 
