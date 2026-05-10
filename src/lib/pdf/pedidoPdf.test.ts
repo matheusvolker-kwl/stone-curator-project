@@ -16,13 +16,26 @@ vi.mock("@/assets/brand/logo-horizontal-branco.png", () => ({
   default: "data:image/png;base64,AAAA",
 }));
 
-// Stub fetch for the logo loader so loadDataUrl returns null gracefully if needed
+// 1x1 transparent PNG (valid signature) for jsPDF.addImage
+const PNG_1x1_BASE64 =
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+
+function pngBlob(): Blob {
+  const bin = atob(PNG_1x1_BASE64);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], { type: "image/png" });
+}
+
 beforeEach(() => {
-  // Provide a minimal fetch returning a tiny blob
-  // jsdom blob/FileReader work natively
-  global.fetch = vi.fn(async () => ({
-    blob: async () => new Blob([new Uint8Array([1, 2, 3, 4])], { type: "image/png" }),
-  })) as unknown as typeof fetch;
+  global.fetch = vi.fn(async () => ({ blob: async () => pngBlob() })) as unknown as typeof fetch;
+  // jsdom não implementa createObjectURL; jsPDF.save usa para baixar
+  // @ts-expect-error - polyfill mínimo
+  global.URL.createObjectURL = vi.fn(() => "blob:fake");
+  // @ts-expect-error
+  global.URL.revokeObjectURL = vi.fn();
+  // Evita download real em jsdom
+  HTMLAnchorElement.prototype.click = vi.fn();
 });
 
 afterEach(() => {
