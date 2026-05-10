@@ -15,6 +15,14 @@ export interface PdfCliente {
   mensagem?: string;
 }
 
+export interface PdfProjetoContext {
+  conjuntoNome?: string;
+  acabamento?: string;
+  tipoVisual?: string;
+  areaM2?: number;
+  modo?: "curado" | "consulta";
+}
+
 export interface PdfOptions {
   items: CartItem[];
   subtotal: number;
@@ -22,6 +30,7 @@ export interface PdfOptions {
   cliente?: PdfCliente;
   showPrices: boolean;
   numero?: string;
+  projeto?: PdfProjetoContext;
 }
 
 const GREEN: [number, number, number] = [27, 50, 41];
