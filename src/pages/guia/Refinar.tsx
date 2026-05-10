@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Link, Navigate, useParams, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, ExternalLink, Info, RotateCcw, MessageCircle } from "lucide-react";
+import QuoteLeadModal from "@/components/quote/QuoteLeadModal";
+import type { CartItem } from "@/stores/cartStore";
 import GuideHeader from "@/components/guide-v2/GuideHeader";
 import PecaRow from "@/components/guide-v2/PecaRow";
 import AutoralCard from "@/components/guide-v2/AutoralCard";
