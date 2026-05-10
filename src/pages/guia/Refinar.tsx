@@ -371,6 +371,26 @@ export default function GuiaRefinar() {
         onSetQty={(q) => modalItem && setExtraQty(modalItem.id, q)}
       />
 
+      <QuoteLeadModal
+        open={quoteOpen}
+        onOpenChange={setQuoteOpen}
+        items={quoteItems}
+        subtotal={quoteSubtotal}
+        currency="BRL"
+        origem="guia_composicao"
+        projetoContext={projetoContext}
+        ctaLabel={isCustomizado ? "Solicitar orçamento sob consulta" : "Enviar pedido de orçamento"}
+        title={isCustomizado ? "Solicitar orçamento sob consulta" : "Solicitar orçamento do projeto"}
+        payloadExtra={{
+          conjuntoHandle: handle,
+          conjuntoNome: found?.conjunto.nome,
+          acabamento,
+          tipoVisual,
+          areaM2: area ? Number(area) : undefined,
+          isCustomizado,
+        }}
+      />
+
       <img
         src={brasao}
         alt=""
