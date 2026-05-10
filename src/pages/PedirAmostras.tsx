@@ -109,8 +109,9 @@ export default function PedirAmostras() {
       uf: f.estado,
       empresa: f.empresa || null,
       mensagem: f.projeto || null,
-      payload: { perfil: f.perfil, aprovacao_status: "pending" },
-      origem: "site/pedir-amostras",
+      user_id: user?.id ?? null,
+      payload: { perfil: f.perfil, aprovacao_status: "pending", logged_in: !!user },
+      origem: user ? "site/pedir-amostras (logado)" : "site/pedir-amostras",
     });
     setLoading(false);
     if (error) {
