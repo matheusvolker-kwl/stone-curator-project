@@ -18,7 +18,7 @@ import {
 const nav = [
   { to: "/linhas", label: "Linhas" },
   { to: "/conjuntos", label: "Conjuntos" },
-  { to: "/guia-de-compra", label: "Guia" },
+  { to: "/guia-de-composicao", label: "Guia" },
   { to: "/pedir-amostras", label: "Amostras" },
   { to: "/sobre", label: "Sobre" },
   { to: "/contato", label: "Contato" },
