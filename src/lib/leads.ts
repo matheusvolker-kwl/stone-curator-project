@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { CartItem } from "@/stores/cartStore";
 import { orcamentoPdfBlob, type PdfProjetoContext } from "@/lib/pdf/orcamentoPdf";
+import { computeItemsHash } from "@/lib/leads/itemsHash";
 import { reportError } from "@/lib/telemetry";
 
 export interface QuoteContact {
@@ -27,7 +28,7 @@ export interface QuoteSubmission {
 }
 
 export interface QuoteResult {
-  leadId: string;
+  lead.id: string;
   numero: string;
   pdfStored: boolean;
   pdfBlob?: Blob;
@@ -137,7 +138,7 @@ export async function submitQuoteLead({
       source: "submitQuoteLead.pdfBuild",
       message: "Falha ao gerar PDF do orçamento",
       error: e,
-      context: { leadId, itemsCount: items.length, origem },
+      context: { lead.id, itemsCount: items.length, origem },
     });
   }
 
@@ -150,7 +151,7 @@ export async function submitQuoteLead({
       const pdfBase64 = await blobToBase64(pdfBlob);
       const { error: saveErr } = await supabase.functions.invoke("save-quote-pdf", {
         body: {
-          leadId: lead.id,
+          lead.id: lead.id,
           pdfBase64,
           subtotal,
           itemsCount: items.length,
@@ -165,7 +166,7 @@ export async function submitQuoteLead({
           source: "save-quote-pdf.invoke",
           message: "Edge function save-quote-pdf retornou erro",
           error: saveErr,
-          context: { leadId, userId, itemsCount: items.length, subtotal, sizeKb: Math.round((pdfBlob.size ?? 0) / 1024) },
+          context: { lead.id, userId, itemsCount: items.length, subtotal, sizeKb: Math.round((pdfBlob.size ?? 0) / 1024) },
         });
       }
     } catch (e) {
@@ -174,10 +175,10 @@ export async function submitQuoteLead({
         source: "save-quote-pdf.invoke",
         message: "Exceção ao chamar save-quote-pdf",
         error: e,
-        context: { leadId, userId, itemsCount: items.length, subtotal },
+        context: { lead.id, userId, itemsCount: items.length, subtotal },
       });
     }
   }
 
-  return { leadId: lead.id, numero, pdfStored, pdfBlob };
+  return { lead.id: lead.id, numero, pdfStored, pdfBlob };
 }
