@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { BUSINESS } from "@/config/business";
+// BUSINESS é importado apenas se necessário; manter o footer simples evita acoplamento
 import logoHorizontalBranco from "@/assets/brand/logo-horizontal-branco.png";
 
 // ─────────────────────────────────────────────────────────────
