@@ -68,7 +68,7 @@ export default function GuiaContexto() {
 
   return (
     <div className="min-h-screen surface-ivory relative">
-      <GuideHeader />
+      <GuideHeader step={1} />
 
       {/* Hero — Ricardo no ateliê */}
       <section className="relative bg-western-ivory border-b border-western-gold/20">

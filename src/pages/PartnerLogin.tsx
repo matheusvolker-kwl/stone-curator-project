@@ -42,13 +42,17 @@ export default function PartnerLogin() {
       toast.info("Cadastro em análise", {
         description: "Liberaremos seu acesso em até 2 dias úteis.",
       });
-    } else if (profile?.status === "rejected") {
+      navigate("/minha-conta", { replace: true });
+      return;
+    }
+    if (profile?.status === "rejected") {
       toast.error("Acesso indisponível.", {
         description: "Fale com o comercial pelo WhatsApp.",
       });
-    } else {
-      toast.success(`Bem-vindo${profile?.empresa ? `, ${profile.empresa}` : ""}.`);
+      navigate("/minha-conta", { replace: true });
+      return;
     }
+    toast.success(`Bem-vindo${profile?.empresa ? `, ${profile.empresa}` : ""}.`);
     navigate(next, { replace: true });
   };
 

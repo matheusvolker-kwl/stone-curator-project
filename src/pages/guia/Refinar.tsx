@@ -251,7 +251,7 @@ export default function GuiaRefinar() {
 
   return (
     <div className="min-h-screen surface-ivory relative">
-      <GuideHeader breadcrumb={{ label: "Voltar · Três caminhos", to: backToCaminhos }} />
+      <GuideHeader step={3} breadcrumb={{ label: "Voltar · Três caminhos", to: backToCaminhos }} />
       {area && (
         <ContextoChips tipo={tipoVisual} area={Number(area)} acabamento={acabamento} />
       )}

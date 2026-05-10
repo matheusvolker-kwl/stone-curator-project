@@ -1,5 +1,5 @@
 import { Heart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useAuth } from "@/hooks/useAuth";
@@ -17,14 +17,19 @@ export default function WishlistButton({ handle, title, image, variant = "icon",
   const { has, toggle } = useWishlist();
   const { session } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const active = has(handle);
 
   const onClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!session) {
+      const next = `${location.pathname}${location.search}`;
       toast.info("Faça login para salvar favoritos.", {
-        action: { label: "Entrar", onClick: () => navigate("/parceiro/login") },
+        action: {
+          label: "Entrar",
+          onClick: () => navigate(`/parceiro/login?next=${encodeURIComponent(next)}`),
+        },
       });
       return;
     }

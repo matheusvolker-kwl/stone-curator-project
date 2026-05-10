@@ -231,26 +231,54 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               ))}
               <div className="h-px bg-western-gold/15 my-6" />
               <p className="text-eyebrow mb-3 text-western-cream-muted">Parceiro</p>
-              <Link
-                to="/parceiro/login"
-                className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
-              >
-                <User className="h-4 w-4" /> Acessar conta
-              </Link>
-              {session && (
-                <Link
-                  to="/minha-conta/favoritos"
-                  className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
-                >
-                  <Heart className="h-4 w-4" /> Favoritos {wishCount > 0 && <span className="text-western-gold-soft">({wishCount})</span>}
-                </Link>
+              {session ? (
+                <>
+                  <Link
+                    to="/minha-conta"
+                    className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
+                  >
+                    <User className="h-4 w-4" /> Minha conta
+                  </Link>
+                  <Link
+                    to="/minha-conta/favoritos"
+                    className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
+                  >
+                    <Heart className="h-4 w-4" /> Favoritos {wishCount > 0 && <span className="text-western-gold-soft">({wishCount})</span>}
+                  </Link>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
+                    >
+                      <ShieldCheck className="h-4 w-4" /> Painel admin
+                    </Link>
+                  )}
+                  <button
+                    onClick={async () => {
+                      await signOut();
+                      navigate("/", { replace: true });
+                    }}
+                    className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors text-left"
+                  >
+                    <LogOut className="h-4 w-4" /> Sair
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/parceiro/login"
+                    className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
+                  >
+                    <User className="h-4 w-4" /> Acessar conta
+                  </Link>
+                  <Link
+                    to="/parceiro/cadastro"
+                    className="py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
+                  >
+                    · Solicitar acesso B2B
+                  </Link>
+                </>
               )}
-              <Link
-                to="/parceiro/cadastro"
-                className="py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
-              >
-                · Solicitar acesso B2B
-              </Link>
             </nav>
           </div>
         </SheetContent>
