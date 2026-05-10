@@ -388,13 +388,13 @@ export default function QuoteLeadModal({
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <>
-                  <Send className="h-4 w-4" /> {ctaLabel ?? "Enviar pedido de orçamento"}
+                  <FileDown className="h-4 w-4" /> {ctaLabel ?? "Liberar PDF"}
                 </>
               )}
             </button>
 
             <p className="text-[10.5px] text-western-stone-warm text-center leading-relaxed">
-              O PDF da composição fica disponível para download logo após o envio.
+              Ao liberar o PDF, sua composição é salva no nosso painel — assim podemos te ajudar caso precise.
             </p>
           </form>
         )}
