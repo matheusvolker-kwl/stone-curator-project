@@ -204,11 +204,9 @@ export default function QuoteRequestModal({ open, onOpenChange }: Props) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <Label className="text-spec text-western-stone-warm">E-mail *</Label>
-                <EmailInput
-                  value={form.email}
-                  onChange={handleChange("email")}
-                  className="rounded-none mt-1"
-                />
+                <div className="mt-1">
+                  <EmailInput value={form.email} onChange={handleChange("email")} />
+                </div>
                 {errors.email && <p className="text-xs text-red-600 mt-1">{errors.email}</p>}
               </div>
               <div>
