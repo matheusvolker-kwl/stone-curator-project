@@ -80,7 +80,7 @@ function ComparativoCard({ tipo, nivel, areaM2, isApproved, selected, recommende
             {meta.label}
           </h3>
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
-            {meta.pecas}
+            {pecas}
           </span>
         </div>
         <p className="text-sm text-western-stone-warm leading-relaxed">{meta.tagline}</p>
@@ -90,9 +90,17 @@ function ComparativoCard({ tipo, nivel, areaM2, isApproved, selected, recommende
           </span>
           {PERFIL_POR_NIVEL[nivel]}
         </p>
-        <p className="mt-auto pt-3 text-xs text-western-stone-warm/70 font-mono uppercase tracking-[0.18em]">
-          {meta.faixaPreco}
-        </p>
+        <div className="mt-auto pt-3 text-xs font-mono uppercase tracking-[0.18em]">
+          {isApproved ? (
+            <span className="text-western-stone-warm/70">
+              Investimento estimado · <span className="text-western-green-deep">{precoLabel}</span>
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 text-western-stone-warm/70">
+              <Lock className="h-3 w-3" /> Login para ver investimento
+            </span>
+          )}
+        </div>
       </div>
     </button>
   );
