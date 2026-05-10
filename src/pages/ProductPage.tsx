@@ -24,6 +24,7 @@ import ProductGallery from "@/components/product/ProductGallery";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import BackToTop from "@/components/shared/BackToTop";
 import StickyBuyBar from "@/components/product/StickyBuyBar";
+import DeliverySignals from "@/components/product/DeliverySignals";
 import { inRange } from "@/lib/seededRandom";
 
 import ProductComparison from "@/components/product/ProductComparison";
