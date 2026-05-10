@@ -99,4 +99,28 @@ export interface Lead {
   origem: string | null;
   payload: Record<string, unknown> | null;
   created_at: string;
+  last_activity_at?: string | null;
+  items_hash?: string | null;
 }
+
+export const LEAD_TYPE_LABEL: Record<string, string> = {
+  partner_signup: "Cadastro parceiro",
+  newsletter: "Newsletter",
+  amostras: "Amostras",
+  visita: "Visita",
+  contato: "Contato",
+  orcamento: "Orçamento",
+  pedido_novo: "Pedido novo",
+  pdf_pedido: "PDF re-baixado",
+};
+
+export const LEAD_TYPE_BADGE_CLS: Record<string, string> = {
+  partner_signup: "border-sky-500/50 text-sky-700 bg-sky-50",
+  newsletter: "border-slate-400/50 text-slate-600 bg-slate-50",
+  amostras: "border-purple-500/50 text-purple-700 bg-purple-50",
+  visita: "border-indigo-500/50 text-indigo-700 bg-indigo-50",
+  contato: "border-zinc-400/50 text-zinc-600 bg-zinc-50",
+  orcamento: "border-amber-500/60 text-amber-800 bg-amber-50",
+  pedido_novo: "border-emerald-600/60 text-emerald-800 bg-emerald-50 font-semibold",
+  pdf_pedido: "border-western-gold/60 text-western-green-deep bg-western-gold/10",
+};
