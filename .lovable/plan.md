@@ -1,133 +1,134 @@
-# Refatorar Guia de Composição em 3 telas roteadas
+## Diagnóstico
 
-Substitui completamente o wizard atual (`StepShell`, `GuideConfigurator`, `ConjuntoHero`, `ConjuntoUpgrade`, `SectionComplementos`, `SectionAutorais`, `GuideAssemblySummary`, `FinalizarDrawer`, `StepArea`, `StepOnde`, `StepProtagonismo`, `StepComposicao`) por uma experiência de 3 rotas próprias, mantendo o mapa de produtos (`src/data/guideMap.ts`) e o `cartStore`.
+O guia hoje funciona, mas é "limpo demais" — fundo ivory uniforme, cards brancos com o mesmo ícone-pedra repetido em todos os slots. Sem fotografia real, sem profundidade, sem ritmo de superfícies. Falta o que faz o site Western Pools ser desejável: **a pedra**.
 
-## Rotas
+Nas referências ASMR (app Florest, hero das folhas) o que prende é:
+- **Materialidade fotográfica** (pedras/folhas reais, não ícones)
+- **Camadas que se sobrepõem** (foto que escapa do card, sombras longas)
+- **Bloco de cor profundo** ancorando a composição (verde escuro)
+- **Ritmo lento** — uma decisão de cada vez, com confirmação tátil
+
+## O que vou mudar
+
+### 1. Fotografia real substitui o ícone-pedra repetido
+
+Já existem 6 fotos editoriais em `src/assets/about-projetos/` e 6 covers de projeto em `src/assets/projetos/`. Vou mapear:
 
 ```text
-/guia-de-composicao                                → Tela 1 (contexto)
-/guia-de-composicao/composicoes                    → Tela 2 (3 caminhos)
-   ?tipo=lago&area=8&acabamento=moledo&variante=somenteWestern
-/guia-de-composicao/refinar/[handle]               → Tela 3 (builder)
-   ?acabamento=moledo
-/guia-de-composicao/finalizar                      → revisão (já existe FinalizarDrawer; vira página simples)
+TipoCard (5 ambientes):
+  piscina        → cover-piscina.avif
+  lago           → cover-lago.webp
+  lago-reduzido  → cover-cascata.webp
+  jardim-fonte   → cover-caito-maia.webp
+  jardim-seco    → cover-casa-praia.webp
+
+ComposicaoCard (3 níveis, mesma família visual):
+  essencial   → cascata-escalonada.jpg
+  equilibrada → cascata-mirante.jpg     (destaque)
+  completa    → cascata-tropical.jpg
+
+PecaRow / AutoralCard placeholder:
+  detalhe-matriz.jpg / borda-pedra.jpg em crop quadrado
 ```
 
-Estado **somente em query params** — sem persistência local. Voltar pelo browser preserva contexto. A rota antiga `/guia-de-compra` redireciona para `/guia-de-composicao`.
+O ícone-pedra fica apenas como **marca-d'água sutil** atrás do header (referência ao homepage).
 
-## Mapeamento dos 5 tipos do prompt → dados existentes
+### 2. Profundidade em camadas (referência app Florest)
 
-O prompt pede 5 tipos visuais, mas o `guideMap` tem 3. Mapeamos assim **sem mexer nos dados**:
+Cards passam a ter:
+- Foto **ocupando 60% da altura**, não mais aspect-ratio fechado
+- **Sombra longa** (`0 40px 60px -30px`) que cresce no hover
+- Borda gold de 1px nos selecionados (substitui borda preta de 2px que pesa)
+- Pequeno **ribbon dourado vertical** ancorado fora do card no "Mais especificado" (escapa do frame, dá profundidade)
 
-| Card visual          | tipo (data) | variante              |
-|----------------------|-------------|-----------------------|
-| Piscina              | piscina     | —                     |
-| Lago                 | lago        | somenteWestern        |
-| Lago Reduzido        | lago        | comNaturais           |
-| Jardim com Fonte     | jardim      | comFonte              |
-| Jardim Seco          | jardim      | seco                  |
+### 3. Ritmo de superfícies através das 3 telas
 
-## Telas
+Hoje é tudo `surface-ivory` flat. Passa a alternar como na home:
 
-### Tela 1 — `pages/guia/Contexto.tsx`
-- Header minimalista próprio (logo Western + link "Sair do guia") — não usa `SiteLayout`.
-- Hero editorial + 3 perguntas verticais (sem stepper):
-  1. **Tipo de ambiente** — grid 5 cards (mobile 2col + último full).
-  2. **Área aproximada** — input numérico grande underline-only, sufixo `m²`, validação 1–200.
-  3. **Acabamento dominante** — grid 4 cards com chip de cor (Quartzo `#E8DFC8`, Arenito `#C9A57B`, Moledo `#8B5E3C` + tag "+ VENDIDO", Granito `#2D332E`).
-- CTA "Ver composições" alinhado à esquerda; disabled até as 3 estarem respondidas; ao tentar avançar incompleto, scroll + highlight da pergunta pendente.
-- Microcopy "Falar com consultor" → WhatsApp (`whatsappConsultor`).
+```text
+Etapa 01 — Contexto    : surface-ivory  (claro, convidativo)
+                         + faixa fotográfica de respiro-pedra.webp
+                           no topo (80px de altura, parallax leve)
 
-### Tela 2 — `pages/guia/Composicoes.tsx`
-- Lê query params; deriva `tamanhoId` via `m2ToTamanhoId`. Se `consultor`, mostra bloco "Acima de 200 m² / fora da faixa → Falar com consultor".
-- Título dinâmico: "Para um lago de 8 m² no Moledo, três caminhos." (mapa de copy por tipo).
-- Grid 3 colunas dos 3 níveis (Essencial / Equilibrado ⭐ / Completo). Cards com imagem placeholder, eyebrow `NÍVEL · N PEÇAS`, nome, microcopy, lista de peças (placeholder de composição genérica baseada no nível), preço (já com 3% off no `guideMap`), microcopy de economia calculada (`preco/0.97 - preco`, oculta se < R$ 50), CTA "Personalizar esta composição →".
-- Card central com borda 2px `--accent-dark` + tag "MAIS ESPECIFICADO".
-- Bloco rodapé: "começar do zero" (link para Tela 3 com handle `null`) + "falar com consultor".
-- Breadcrumb "← Voltar · Contexto do projeto".
+Etapa 02 — Composições : surface-paper  (mais quente)
+                         + 1 banda surface-forest atrás do card "Equilibrado"
+                           (verde escuro emoldura o destaque)
 
-### Tela 3 — `pages/guia/Refinar.tsx`
-Substitui `GuideConfigurator` inteiro. Layout grid `1fr 380px` desktop; coluna única + drawer-rodapé sticky em mobile.
+Etapa 03 — Refinar     : surface-ivory + sidebar surface-forest
+                         (sidebar deixa de ser branca, vira verde profundo
+                          com tipografia em creme — peso institucional Western)
+```
 
-**Coluna esquerda:**
-1. **Cabeçalho** — eyebrow + nome do conjunto + tags (tipo, faixa m², nível, acabamento) + subtítulo + link discreto "↗ Trocar de composição" (volta Tela 2).
-2. **Peças desta composição** — lista linha-por-linha com imagem 80×80, nome, microcopy técnica, preço, stepper `− qty +`, link "REMOVER ×" com confirmação inline. Inicializa com peças sintéticas derivadas do nível (Essencial: 4–6, Equilibrado: 7–11, Completo: 12+) — placeholder consistente até peças reais virem do Shopify.
-3. **Adicionar itens autorais** — grid 2 col de cards, filtrado por contexto:
-   - Lago / Lago Reduzido: LED, Sonora, Champanheira
-   - Piscina: LED, Sonora, Champanheira, Torneira
-   - Jardim com Fonte: LED, Champanheira, Torneira, Pisadas
-   - Jardim Seco: Pisadas, Fósseis, Painel, LED
-   - Botão alterna "+ ADICIONAR AO PROJETO" / "✓ NO PROJETO ×".
-4. **Trocar acabamento** (collapsible) — mesmo grid 2×2, aviso "TROCAR O ACABAMENTO RECALCULA O PROJETO INTEIRO."
+### 4. Fio de contexto pegajoso (sticky thread)
 
-**Coluna direita — painel sticky `top-32`:**
-- Eyebrow + nome + acabamento.
-- Lista compacta "COMPOSIÇÃO BASE" e "PEÇAS ADICIONADAS".
-- Subtotais (composição, adicionais, desconto 3%).
-- Total em serif 28px.
-- Microcopy "PEDIDO ÚNICO · FRETE OTIMIZADO".
-- CTA primário "REVISAR E FINALIZAR PROJETO →" (height 52).
-- Secundário "↓ BAIXAR PRÉVIA EM SKETCHUP" (placeholder; gera arquivo vazio ou abre toast).
-- Link "Salvar projeto e decidir depois" (logado → toast/save futuro; deslogado → modal login).
-- **Estado deslogado**: usa `<PriceGate>` para esconder preços; mantém estrutura visível e botão "ACESSAR PARA VER PREÇO" / "SOLICITAR CADASTRO B2B".
+Logo abaixo do header, uma **barra horizontal slim** (44px) que aparece a partir da Etapa 02 mostrando as escolhas acumuladas como respiração tátil:
 
-**Mobile:** painel vira barra fixa `bottom-0 h-20` com nome + total + "VER PROJETO (X)"; tap abre `Sheet` full-screen.
+```text
+PISCINA  ·  15 m²  ·  MOLEDO          [editar contexto →]
+```
 
-## Componentes novos
+Cada chip é clicável e leva de volta à etapa correspondente. Visualmente: fundo `western-cream-muted/20`, hairline ouro embaixo, fonte mono pequena. Dá o "follow" que falta — o usuário sente o projeto se construindo.
+
+### 5. Microinterações de confirmação (ASMR)
+
+- **Selecionar TipoCard**: scale `1.02` + sombra cresce + um pequeno marcador dourado desliza no canto superior (300ms ease-out)
+- **Selecionar AcabamentoCard**: o disco do acabamento gira sutilmente 8° + cresce 5%
+- **Adicionar peça no Refinar**: PecaRow incrementa com fade do número novo (não troca seco)
+- **Reveal cascata**: stagger de 140ms (hoje 100), com `cubic-bezier(0.22, 1, 0.36, 1)` — sensação de "settle"
+
+### 6. Momentos editoriais entre seções
+
+Entre Etapa 01 → 02 → 03, no topo de cada tela, uma única linha em `font-display italic` grande que ancora emocionalmente:
+
+```text
+Etapa 02:  "Três caminhos. Mesma alma."
+Etapa 03:  "O conjunto se ajusta a você."
+```
+
+Aparece com Reveal lento (800ms), em verde-deep, antes do H1. Substitui o "Etapa 02 · Resultado" frio.
+
+### 7. Detalhes Western reforçados
+
+- **Brasão Western** (já em `src/assets/brasao.png`) como marca-d'água ultra-sutil (opacity 0.04) no canto inferior direito de cada tela do guia
+- **Eyebrows numerados** com filete vertical dourado de 1px à esquerda em vez de só "·" (`01 │ TIPO DE AMBIENTE`)
+- Substituir as **divider-hairline** retas por divisores com pequeno losango dourado central (`◇`) — assinatura visual Western de seção
+
+## Arquivos afetados
 
 ```text
 src/components/guide-v2/
-  GuideHeader.tsx              # logo + "Sair do guia" + breadcrumb opcional
-  TipoCard.tsx                 # card de ambiente (Tela 1)
-  AreaInput.tsx                # input underline com sufixo m²
-  AcabamentoCard.tsx           # card de acabamento com chip de cor
-  ComposicaoCard.tsx           # card grande dos 3 caminhos (Tela 2)
-  PecaRow.tsx                  # linha de peça com stepper (Tela 3)
-  AutoralCard.tsx              # card de item autoral (Tela 3)
-  ProjetoSidebar.tsx           # painel sticky / drawer mobile
-  useGuideQuery.ts             # hook para ler/escrever query params tipados
-  pecasPlaceholder.ts          # gera lista sintética de peças por nível
-  autoraisCatalog.ts           # catálogo dos 15 itens autorais + filtro por tipo
-```
+  TipoCard.tsx          → recebe prop `image`, foto ocupa 60% altura
+  ComposicaoCard.tsx    → recebe prop `image`, ribbon escapa do frame
+  AutoralCard.tsx       → crop de pedra real
+  PecaRow.tsx           → thumbnail com foto crop
+  AcabamentoCard.tsx    → microinteração no chip
+  ProjetoSidebar.tsx    → muda para surface-forest (verde profundo)
+  GuideHeader.tsx       → adiciona brasão watermark + faixa fotográfica fina
+  ContextoChips.tsx     → NOVO — barra sticky com escolhas acumuladas
+  SectionDivider.tsx    → NOVO — hairline com losango central
 
-## Páginas
-
-```text
 src/pages/guia/
-  Contexto.tsx
-  Composicoes.tsx
-  Refinar.tsx
-  Finalizar.tsx     # revisão simples reutilizando o conteúdo do FinalizarDrawer atual
+  Contexto.tsx     → faixa de hero photo + frase editorial
+  Composicoes.tsx  → surface-paper + banda forest no destaque + ContextoChips
+  Refinar.tsx      → ContextoChips + frase editorial + sidebar verde
+
+src/index.css
+  + .surface-stone (textura sutil de papel pedra para o guia)
+  + .divider-diamond (substitui divider-hairline nas seções do guia)
+  + keyframes para o "settle" das seleções
 ```
 
-`App.tsx`:
-- Adicionar 4 rotas novas **fora** do `<SiteLayout>` (header próprio).
-- `/guia-de-compra` → `<Navigate to="/guia-de-composicao" replace />`.
-- Atualizar todos os links internos para `/guia-de-composicao`.
+## O que NÃO muda
 
-## Design system
+- Estrutura de rotas e estado (URL params)
+- Lógica de `guideMap`, cálculo de preço, descontos
+- Fluxo das 3 telas
+- Componentes fora do guia
 
-Tokens já existem em `index.css` / `tailwind.config.ts` (western-cream, western-green-deep, western-gold, western-stone-warm, etc.). Mapear o vocabulário do prompt:
-- `--bg-primary` → `western-cream`
-- `--accent-dark` → `western-green-deep`
-- `--accent-warm` → `western-gold`
-- `--text-primary` → `western-ink`/`foreground`
-- Eyebrows continuam usando `text-eyebrow` (JetBrains Mono).
-- Botões: `btn-gold` para CTAs primários, novo helper `btn-dark` (verde-musgo) para o "Ver composições" e "Personalizar".
+Mudança puramente visual e de microinteração — não toca a lógica de negócio.
 
-## Limpeza
+## Resultado esperado
 
-Após a nova `/guia-de-composicao` funcionar, **remover**:
-- `src/pages/BuyingGuide.tsx`
-- `src/components/guide/` inteiro (Step*, GuideConfigurator, ConjuntoHero, ConjuntoUpgrade, SectionComplementos, SectionAutorais, GuideAssemblySummary, FinalizarDrawer, StepShell, GuideProgress, OptionCard, GuideConsultor, GuideEspecial, SketchLeadModal, GuideProductQuickView, svg/MoodSvg).
-- `src/stores/guideStore.ts` + `guideStore.test.ts` (estado migra para query params).
-- `MoodSvg` e assets só usados pelo guia velho.
+O parceiro abre o guia e a primeira coisa que vê é **uma faixa de pedra real** respirando atrás do header. Cada escolha gruda numa barra que segue ele através das telas. Os cards são fotografias com sombra, não ícones genéricos. O destaque "Equilibrado" está emoldurado por verde-deep como uma vitrine de joalheria. A sidebar verde escuro pesa o projeto, dá institucionalidade. Cada seleção tem um pequeno "click" visual. A divisão entre seções é assinada com um losango dourado.
 
-Mantidos: `src/data/guideMap.ts` (fonte de verdade dos 45 conjuntos), `src/components/product/FinishSelector.tsx`, `cartStore`, `PriceGate`.
-
-## Fora de escopo
-
-- Integração real com peças do Shopify para a lista da composição (usamos placeholder estruturado).
-- Geração real do SketchUp (botão visual + toast "em breve").
-- Página `/finalizar` rica — entrega versão mínima reusando lógica do `FinalizarDrawer` atual.
-- Salvamento de projetos no backend (apenas hook do botão).
+A tela continua sóbria e editorial — mas agora **cheira a pedra**.
