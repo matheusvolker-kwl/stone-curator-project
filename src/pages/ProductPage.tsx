@@ -162,13 +162,17 @@ export default function ProductPage() {
   };
 
 
-  // Ficha técnica: extrai dimensões individuais e separa acabamentos
+  // Ficha técnica: extrai dimensões individuais e separa acabamentos.
+  // Filtra garantia vinda do Shopify (legacy "1 ano") — sempre injetamos 5 anos.
   const dims = extractDimensions(parsed.ficha);
   const fichaCleaned = parsed.ficha.filter(
-    (f) => !/comprimento|largura|altura/i.test(f.label)
+    (f) => !/comprimento|largura|altura|garantia/i.test(f.label)
   );
   const acabamentosRow = fichaCleaned.find((f) => /acabament/i.test(f.label));
-  const fichaRows = fichaCleaned.filter((f) => !/acabament/i.test(f.label));
+  const fichaRows = [
+    ...fichaCleaned.filter((f) => !/acabament/i.test(f.label)),
+    { label: "Garantia", value: `${BUSINESS.garantiaAnos} anos` },
+  ];
 
   // Peso (kg) extraído da ficha — usado nos blocos de comparativo
   const pesoStr = parsed.ficha.find((f) => /peso/i.test(f.label))?.value ?? "";
