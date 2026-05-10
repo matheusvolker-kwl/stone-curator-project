@@ -45,7 +45,7 @@ export default function PriceGate({ children, variant = "inline", ctaLabel = "Ac
         <div className="flex flex-wrap gap-2 mt-3">
           <Link
             to="/parceiro/login"
-            className="inline-flex items-center justify-center h-11 px-5 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-[11px] uppercase tracking-[0.22em]"
+            className="inline-flex items-center justify-center h-11 px-5 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
           >
             {ctaLabel}
           </Link>
