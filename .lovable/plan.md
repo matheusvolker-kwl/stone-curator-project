@@ -1,44 +1,45 @@
-# Varredura Completa do Sistema — Plano em 4 Ondas
+## Varredura UX/Navegação — 4 ondas
 
-Vou executar uma auditoria sistemática do projeto em ondas, reportando achados ao final de cada uma e corrigindo conforme prioridade. Não vou alterar código nesta etapa — primeiro mapeio tudo, depois corrijo com sua aprovação por bloco.
+Vou rodar uma auditoria completa de navegação, usabilidade e fricção, dividida em ondas. Cada onda termina com correções aplicadas + relatório curto do que foi achado.
 
-## Onda 1 — Backend, Segurança & Dados
-- **Supabase linter**: rodar e listar warnings (RLS, search_path, índices, etc.)
-- **Security scan**: verificar PII exposta, policies frouxas, bucket `orcamentos`
-- **RLS audit manual**: revisar cada tabela (`leads`, `quote_pdfs`, `partner_profiles`, `wishlists`, `saved_carts`, `projects`, `guide_exports`) — confirmar que admin/usuário enxergam apenas o que devem
-- **Edge functions**: revisar `save-quote-pdf` e `admin-bootstrap` (CORS, validação de input, tratamento de erro, JWT)
-- **Migrations recentes**: validar consistência das últimas migrations de storage/quote_pdfs
-- **Secrets**: confirmar que nenhum secret vaza pro client
+---
 
-## Onda 2 — Fluxos Críticos de Negócio
-- **Carrinho Shopify**: addItem/addBundle/syncCart, race conditions, perda de `lineId`, recuperação de `cart not found`
-- **Geração e download de PDF** (guia + carrinho, logado e não logado): validar fluxo end-to-end agora que mudamos para edge function
-- **Conta do cliente** (`/minha-conta/orcamentos`, sketches, favoritos, amostras): listagem, signed URLs, download
-- **Lead/orçamento**: validação de payload, `Public can submit leads` policy (regex de email/telefone), idempotência
-- **Auth**: signup parceiro, login, `RequireAuth`, `approvedOnly`, reset senha, redirects
-- **Guia de Composição** (`/guia/*`): contexto → composições → refinar → finalizar compra / baixar PDF / solicitar orçamento
+### 🌊 Onda 1 — Navegação global & arquitetura
+Foco: header, footer, breadcrumbs, rotas, redirects, 404, links quebrados, mobile menu, busca.
+- Conferir todas as rotas em `App.tsx` x links reais usados (links órfãos, links para páginas inexistentes)
+- Header: hierarquia, mobile drawer, busca (hoje só redireciona p/ `/linhas?q=`, mas `/linhas` precisa ler `q`), conta logada vs deslogada
+- Footer: consistência de links, coleções vs `Linhas.tsx` reais
+- Breadcrumbs ausentes em páginas profundas (ProductPage, LinhaPage, guia, conta, admin)
+- 404 amigável com sugestões + atalhos
+- "Skip to content" / acessibilidade de teclado no header
+- ScrollToTop x rotas com hash
 
-## Onda 3 — Frontend, UX & Performance
-- **Erros de runtime e console**: rodar app, capturar warnings React (keys, hooks condicionais, memory leaks)
-- **TypeScript**: tipos `any`, casts perigosos, props opcionais sem fallback
-- **Responsividade**: viewport mobile (402px) — header, drawers, modais, sidebar do guia, tabelas admin
-- **Acessibilidade**: alts faltando, labels de form, contraste, focus rings
-- **SEO**: title/meta/H1 por rota, canonical, JSON-LD
-- **Imagens Shopify**: uso correto do CDN com tamanhos, lazy loading, fallbacks
-- **Estados vazios e loading**: skeletons, empty states, mensagens de erro amigáveis
+### 🌊 Onda 2 — Fluxo do parceiro (auth + conta + carrinho/orçamento)
+Foco: cadastro/login/recuperação, RequireAuth, conta, orçamentos, pedidos, favoritos, amostras.
+- Fluxo signup → login → aprovação → primeira compra (estados intermediários, mensagens claras)
+- RequireAuth: redirect com `from` para voltar ao destino
+- Carrinho/Drawer: estados vazios, validações de mínimo, micro-feedbacks, persistência
+- "Minha conta" navegação (sidebar, abas, mobile), copy ambígua
+- Favoritos: feedback ao adicionar (toast), página com ações em massa
 
-## Onda 4 — Admin, Relatórios & Polimento
-- **Painel admin**: leads, quotes, partners, samples, settings, users — permissões e ações destrutivas
-- **PartnerPricing/GatedPrice**: regras de exibição de preço por tier
-- **Wishlist/Recently viewed**: sincronização logado vs anônimo
-- **Dependências**: scan de vulnerabilidades npm
-- **Build/typecheck**: erros pendentes
-- **Code smells**: arquivos duplicados (`QuoteRequestModal` vs `QuoteLeadModal`, `propostaPdf` vs `orcamentoPdf`), código morto
+### 🌊 Onda 3 — Guia de composição, catálogo & páginas comerciais
+Foco: jornada principal de compra (Contexto → Composições → Refinar → Carrinho).
+- Guia: pode voltar etapas? estado preservado? loading states? botão Finalizar tem disabled state correto?
+- LinhaPage / ProductPage: filtros, ordenação, "carregando", imagens ausentes, CTAs duplicados
+- Conjuntos: fricção até adicionar
+- Páginas institucionais (Sobre, PorQueWestern, FAQ, AgendarVisita, PedirAmostras): CTAs fim-de-página, links contextuais
+- Formulários: máscaras (CNPJ, telefone, CEP), erros inline, autocomplete, mobile keyboard hints
 
-## Entrega
-Após cada onda, te mando um relatório estruturado:
-- 🔴 **Crítico** (quebra funcionalidade ou risco de segurança) — corrijo na hora
-- 🟡 **Importante** (inconsistência ou UX ruim) — corrijo se aprovar
-- 🔵 **Sugestão** (melhoria ou refactor) — agrupo no fim
+### 🌊 Onda 4 — Microinterações, feedback, mobile & polish
+Foco: estados de carregamento, vazios, erros, toasts, motion, responsividade, performance percebida.
+- Estados vazios (carrinho, favoritos, orçamentos, pedidos, amostras) com CTA pra próxima ação
+- Skeletons consistentes em listas
+- Toasts duplicados / posição / linguagem
+- WhatsApp FAB: posição em mobile com cart drawer / menu
+- Touch targets ≥ 44px, espaçamento mobile, menu fechando ao navegar
+- Foco visível em todos botões/links, aria-labels faltando
+- TopBar: utilidade real, dismissível?
 
-Começo pela Onda 1 assim que aprovar.
+---
+
+Vou começar pela **Onda 1** após sua aprovação e seguir sequencialmente. Em cada onda, primeiro mapeio os achados, depois aplico as correções, depois reporto.
