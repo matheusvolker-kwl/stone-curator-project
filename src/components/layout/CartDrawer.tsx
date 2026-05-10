@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { BUSINESS } from "@/config/business";
 import { useAuth } from "@/hooks/useAuth";
+import CartCrossSell from "@/components/cart/CartCrossSell";
 
 const MIN_ORDER = BUSINESS.pedidoMinimoBRL;
 
