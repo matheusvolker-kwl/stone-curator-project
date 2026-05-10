@@ -81,7 +81,7 @@ export default function Footer() {
           <div>
             <h4 className="text-eyebrow mb-5">Para parceiros</h4>
             <ul className="space-y-2.5 text-sm">
-              <li><Link to="/guia-de-compra" className="text-western-cream hover:text-western-gold-soft transition-colors">Como comprar</Link></li>
+              <li><Link to="/guia-de-composicao" className="text-western-cream hover:text-western-gold-soft transition-colors">Como comprar</Link></li>
               <li><Link to="/politica-comercial" className="text-western-cream hover:text-western-gold-soft transition-colors">Política comercial</Link></li>
               <li><Link to="/politica-de-entrega" className="text-western-cream hover:text-western-gold-soft transition-colors">Política de entrega</Link></li>
               <li><Link to="/trocas-e-avarias" className="text-western-cream hover:text-western-gold-soft transition-colors">Trocas e avarias</Link></li>

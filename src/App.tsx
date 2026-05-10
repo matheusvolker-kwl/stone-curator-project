@@ -33,7 +33,11 @@ import Conjuntos from "./pages/Conjuntos.tsx";
 import ProductPage from "./pages/ProductPage.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
-import BuyingGuide from "./pages/BuyingGuide.tsx";
+
+import GuiaContexto from "./pages/guia/Contexto.tsx";
+import GuiaComposicoes from "./pages/guia/Composicoes.tsx";
+import GuiaRefinar from "./pages/guia/Refinar.tsx";
+import GuiaFinalizar from "./pages/guia/Finalizar.tsx";
 import PartnerSignup from "./pages/PartnerSignup.tsx";
 import ParceirosArquitetos from "./pages/ParceirosArquitetos.tsx";
 import PartnerLogin from "./pages/PartnerLogin.tsx";
@@ -63,13 +67,17 @@ const App = () => (
         <AuthProvider>
           <WishlistProvider>
           <Routes>
+            <Route path="/guia-de-composicao" element={<GuiaContexto />} />
+            <Route path="/guia-de-composicao/composicoes" element={<GuiaComposicoes />} />
+            <Route path="/guia-de-composicao/refinar/:handle" element={<GuiaRefinar />} />
+            <Route path="/guia-de-composicao/finalizar" element={<GuiaFinalizar />} />
             <Route element={<SiteLayout />}>
               <Route path="/" element={<Index />} />
               <Route path="/linhas" element={<Linhas />} />
               <Route path="/linhas/:handle" element={<LinhaPage />} />
               <Route path="/conjuntos" element={<Conjuntos />} />
               <Route path="/produtos/:handle" element={<ProductPage />} />
-              <Route path="/guia-de-compra" element={<BuyingGuide />} />
+              <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
               <Route path="/sobre" element={<About />} />
               <Route path="/contato" element={<Contact />} />
               <Route path="/parceiros-arquitetos" element={<ParceirosArquitetos />} />
