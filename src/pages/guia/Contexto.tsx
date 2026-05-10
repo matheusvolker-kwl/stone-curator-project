@@ -13,15 +13,15 @@ import {
   type Acabamento,
   type TipoVisual,
 } from "@/components/guide-v2/types";
-import { tipoImage, guideHeroStrip } from "@/components/guide-v2/imagery";
+import { tipoImage } from "@/components/guide-v2/imagery";
 import { buildContextQuery } from "@/components/guide-v2/useGuideQuery";
 import { whatsappConsultor } from "@/data/guideMap";
 import brasao from "@/assets/brasao.png";
+import ricardoAtelie from "@/assets/hero/ricardo-atelie.png";
 
-const TIPOS: Array<{ value: TipoVisual; microcopy?: string }> = [
+const TIPOS: Array<{ value: TipoVisual }> = [
   { value: "piscina" },
   { value: "lago" },
-  { value: "lago-reduzido", microcopy: "Versão econômica" },
   { value: "jardim-fonte" },
   { value: "jardim-seco" },
 ];
@@ -70,58 +70,53 @@ export default function GuiaContexto() {
     <div className="min-h-screen surface-ivory relative">
       <GuideHeader />
 
-      {/* Hero photographic strip — pedra real respirando atrás do contexto */}
-      <div className="relative w-full h-[180px] md:h-[220px] overflow-hidden">
-        <img
-          src={guideHeroStrip}
-          alt=""
-          aria-hidden
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg, hsl(var(--western-ivory) / 0.1) 0%, hsl(var(--western-ivory) / 0.85) 70%, hsl(var(--western-ivory)) 100%)",
-          }}
-        />
-        <div className="container-western h-full flex items-end pb-7 relative">
-          <p className="font-display italic text-xl md:text-2xl text-western-green-deep">
-            O ponto de partida do seu projeto.
-          </p>
+      {/* Hero — Ricardo no ateliê */}
+      <section className="relative bg-western-ivory border-b border-western-gold/20">
+        <div className="container-western grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-0 md:gap-10 items-stretch">
+          <div className="py-12 md:py-20 pr-0 md:pr-6 flex flex-col justify-center">
+            <p className="font-display italic text-lg md:text-xl text-western-stone-warm mb-3">
+              O ponto de partida do seu projeto.
+            </p>
+            <p className="eyebrow-bar mb-5">Guia de composição · Etapa 01</p>
+            <h1 className="font-display text-[34px] md:text-[52px] text-western-green-deep leading-[1.05] mb-6">
+              Conte sobre o projeto que você está atendendo.
+            </h1>
+            <div className="w-12 h-px bg-western-gold mb-5" />
+            <p className="font-display italic text-[15px] md:text-[17px] text-western-stone-warm max-w-md leading-relaxed">
+              Em três perguntas, mostramos três caminhos de composição com peças, preço e prévia em SketchUp.
+            </p>
+          </div>
+          <div className="relative h-[280px] md:h-[460px] overflow-hidden">
+            {/* divisor vertical hairline gold à esquerda */}
+            <div aria-hidden className="hidden md:block absolute left-0 top-8 bottom-8 w-px bg-western-gold/30 z-10" />
+            <img
+              src={ricardoAtelie}
+              alt="Ricardo Western, fundador, no ateliê de Cajamar"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <p className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-[0.22em] text-western-cream/80 z-10">
+              Ricardo Western · ateliê Cajamar
+            </p>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <main className="container-western max-w-[920px] pt-10 pb-32 relative">
-        <Reveal variant="fade-up" duration={700}>
-          <p className="eyebrow-bar mb-5">Guia de composição · Etapa 01</p>
-          <h1 className="font-display text-4xl md:text-[56px] text-western-green-deep leading-[1.05] mb-6">
-            Conte sobre o projeto que você está atendendo.
-          </h1>
-          <div className="w-12 h-px bg-western-gold mb-6" />
-          <p className="font-display italic text-lg md:text-xl text-western-stone-warm leading-relaxed max-w-[600px]">
-            Em três perguntas, mostramos três caminhos de composição com preço, peças e prévia em 3D.
-          </p>
-        </Reveal>
-
+      <main className="container-western max-w-[920px] pt-16 pb-32 relative">
         {/* 01 */}
-        <section ref={refTipo} className="mt-20">
+        <section ref={refTipo}>
           <Reveal variant="fade-up" duration={700} delay={140}>
             <p className={`eyebrow-bar mb-7 transition-colors ${highlight === "tipo" ? "!text-western-green-deep" : ""}`}>
               01 · Tipo de ambiente
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
-              {TIPOS.map((t, i) => (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+              {TIPOS.map((t) => (
                 <TipoCard
                   key={t.value}
                   value={t.value}
                   label={tipoVisualMap[t.value].label}
-                  microcopy={t.microcopy}
                   image={tipoImage[t.value]}
                   selected={tipo === t.value}
                   onSelect={setTipo}
-                  variant={i === 4 ? "wide" : undefined}
                 />
               ))}
             </div>
@@ -154,7 +149,7 @@ export default function GuiaContexto() {
             <p className="font-display italic text-[15px] text-western-stone-warm mb-7 max-w-[560px]">
               O acabamento é único para todas as peças do conjunto. Você pode trocar no próximo passo.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
               {(Object.keys(acabamentoMeta) as Acabamento[]).map((a, i) => (
                 <AcabamentoCard
                   key={a}
@@ -189,7 +184,6 @@ export default function GuiaContexto() {
         </div>
       </main>
 
-      {/* Brasão watermark */}
       <img
         src={brasao}
         alt=""
