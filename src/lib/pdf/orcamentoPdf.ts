@@ -295,6 +295,36 @@ export async function gerarOrcamentoPdf({
     y = drawClientCard(doc, pageWidth, y, cliente) + 24;
   }
 
+  if (projeto && (projeto.conjuntoNome || projeto.acabamento)) {
+    const cardH = 56;
+    doc.setFillColor(...CREAM);
+    doc.rect(margin, y, pageWidth - margin * 2, cardH, "F");
+    doc.setFillColor(...GOLD);
+    doc.rect(margin, y, 3, cardH, "F");
+    doc.setTextColor(...GOLD);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7.5);
+    doc.text(
+      projeto.modo === "consulta" ? "PROJETO DO GUIA · SOB CONSULTA" : "PROJETO DO GUIA · CURADO",
+      margin + 18,
+      y + 18,
+      { charSpace: 1.5 },
+    );
+    doc.setTextColor(...INK);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text(projeto.conjuntoNome || "—", margin + 18, y + 34);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(...STONE);
+    const ctxBits: string[] = [];
+    if (projeto.tipoVisual) ctxBits.push(projeto.tipoVisual);
+    if (projeto.areaM2) ctxBits.push(`${projeto.areaM2} m²`);
+    if (projeto.acabamento) ctxBits.push(`acabamento ${projeto.acabamento}`);
+    doc.text(ctxBits.join(" · "), margin + 18, y + 48);
+    y += cardH + 20;
+  }
+
   // Eyebrow seção
   doc.setTextColor(...GOLD);
   doc.setFont("helvetica", "bold");
