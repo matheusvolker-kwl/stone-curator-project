@@ -33,17 +33,29 @@ export default function Conjuntos() {
             ))}
           </div>
         ) : products.length === 0 ? (
-          <div className="border border-western-stone-warm/20 p-12 md:p-16 text-center max-w-2xl mx-auto">
+          <div className="border border-western-stone-warm/20 p-12 md:p-16 text-center max-w-2xl mx-auto bg-white">
             <p className="text-eyebrow mb-4">Em curadoria</p>
-            <p className="font-display text-3xl text-western-green-deep mb-3">
-              Nenhum conjunto cadastrado ainda
+            <p className="font-display text-3xl text-western-green-deep mb-4">
+              Conjuntos a caminho
             </p>
-            <p className="text-western-stone-warm">
-              Em breve, conjuntos prontos para diferentes ambientes — cadastre os
-              produtos-conjunto no Shopify dentro da coleção
-              <span className="font-mono text-sm"> "conjuntos"</span> para que
-              apareçam aqui.
+            <p className="text-western-stone-warm mb-8">
+              Estamos finalizando nossa primeira leva de conjuntos curados.
+              Enquanto isso, monte o seu pelo Guia de Composição ou explore as linhas.
             </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <a
+                href="/guia-de-composicao"
+                className="inline-flex items-center px-6 py-3 bg-western-green-deep text-western-cream hover:bg-western-green-deep/90 transition-colors font-mono text-xs uppercase tracking-[0.25em]"
+              >
+                Abrir o guia
+              </a>
+              <a
+                href="/linhas"
+                className="inline-flex items-center px-6 py-3 border border-western-stone-warm/30 text-western-green-deep hover:border-western-gold transition-colors font-mono text-xs uppercase tracking-[0.25em]"
+              >
+                Ver linhas
+              </a>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
