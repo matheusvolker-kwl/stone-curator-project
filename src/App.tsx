@@ -12,6 +12,8 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPartners from "./pages/admin/AdminPartners";
 import AdminLeads from "./pages/admin/AdminLeads";
+import AdminQuotes from "./pages/admin/AdminQuotes";
+import AdminQuoteDetail from "./pages/admin/AdminQuoteDetail";
 import AdminSamples from "./pages/admin/AdminSamples";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
@@ -103,6 +105,8 @@ const App = () => (
                 <Route index element={<AdminDashboard />} />
                 <Route path="parceiros" element={<AdminPartners />} />
                 <Route path="leads" element={<AdminLeads />} />
+                <Route path="orcamentos" element={<AdminQuotes />} />
+                <Route path="orcamentos/:leadId" element={<AdminQuoteDetail />} />
                 <Route path="amostras" element={<AdminSamples />} />
                 <Route path="usuarios" element={<AdminUsers />} />
                 <Route path="configuracoes" element={<AdminSettings />} />
