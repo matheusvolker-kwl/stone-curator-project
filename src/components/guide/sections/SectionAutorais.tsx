@@ -61,7 +61,7 @@ export default function SectionAutorais() {
       </header>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="border border-western-stone-warm/15 bg-western-cream/40">
               <Skeleton className="aspect-[4/5] rounded-none" />
@@ -76,7 +76,7 @@ export default function SectionAutorais() {
       ) : !produtos || produtos.length === 0 ? (
         <p className="text-sm text-western-stone-warm py-8">Sem itens disponíveis no momento.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {produtos.map((p) => {
             const img = p.images.edges[0]?.node.url;
             const price = p.priceRange.minVariantPrice;

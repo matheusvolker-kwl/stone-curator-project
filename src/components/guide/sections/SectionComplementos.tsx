@@ -96,7 +96,7 @@ export default function SectionComplementos({ tipo }: Props) {
       </header>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="border border-western-stone-warm/15 bg-white">
               <Skeleton className="aspect-square rounded-none" />
@@ -113,7 +113,7 @@ export default function SectionComplementos({ tipo }: Props) {
           Nenhum complemento disponível para este tipo agora.
         </p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {produtos.map((p) => {
             const img = p.images.edges[0]?.node.url;
             const price = p.priceRange.minVariantPrice;
