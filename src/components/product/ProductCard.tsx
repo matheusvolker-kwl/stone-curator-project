@@ -50,6 +50,13 @@ export default function ProductCard({ product }: Props) {
           {code}
         </span>
       )}
+      <div className="absolute top-3 left-3 z-10 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+        <WishlistButton
+          handle={product.handle}
+          title={product.title}
+          image={img ? cdnImg(img.url, 400) : null}
+        />
+      </div>
 
       <div className="aspect-square overflow-hidden bg-western-paper">
         {img ? (
