@@ -77,14 +77,25 @@ const App = () => (
               <Route path="/parceiro/cadastro" element={<PartnerSignup />} />
               <Route path="/parceiro/login" element={<PartnerLogin />} />
               <Route path="/parceiro/redefinir-senha" element={<ResetPassword />} />
+              <Route path="/parceiro/conta" element={<Navigate to="/minha-conta" replace />} />
               <Route
-                path="/parceiro/conta"
+                path="/minha-conta"
                 element={
                   <RequireAuth>
-                    <PartnerAccount />
+                    <AccountLayout />
                   </RequireAuth>
                 }
-              />
+              >
+                <Route index element={<AccountIndex />} />
+                <Route path="perfil" element={<AccountProfile />} />
+                <Route path="projetos" element={<AccountProjects />} />
+                <Route path="pedidos" element={<AccountOrders />} />
+                <Route path="carrinho" element={<AccountSavedCart />} />
+                <Route path="sketches" element={<AccountSketches />} />
+                <Route path="favoritos" element={<AccountFavorites />} />
+                <Route path="amostras" element={<AccountSamples />} />
+                <Route path="preferencias" element={<AccountPreferences />} />
+              </Route>
               <Route
                 path="/admin"
                 element={
@@ -116,14 +127,7 @@ const App = () => (
               <Route path="/politica-de-entrega" element={<PoliticaEntrega />} />
               <Route path="/trocas-e-avarias" element={<TrocasAvarias />} />
               <Route path="/privacidade" element={<PoliticaPrivacidade />} />
-              <Route
-                path="/parceiro/favoritos"
-                element={
-                  <RequireAuth>
-                    <Favoritos />
-                  </RequireAuth>
-                }
-              />
+              <Route path="/parceiro/favoritos" element={<Navigate to="/minha-conta/favoritos" replace />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
