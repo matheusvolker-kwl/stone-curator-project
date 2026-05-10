@@ -74,6 +74,7 @@ export default function ProductPage() {
   const [qty, setQty] = useState(1);
   const addItem = useCartStore((s) => s.addItem);
   const isLoadingCart = useCartStore((s) => s.isLoading);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   const visibleOptions = useMemo(
     () =>
