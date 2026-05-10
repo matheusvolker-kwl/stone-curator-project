@@ -70,12 +70,14 @@ export default function QuoteLeadModal({
   const [success, setSuccess] = useState(false);
   const [numero, setNumero] = useState<string>("");
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
+  const [pdfStored, setPdfStored] = useState(false);
 
   useEffect(() => {
     if (!open) return;
     setSuccess(false);
     setErrors({});
     setPdfBlob(null);
+    setPdfStored(false);
     if (!user) return;
     (async () => {
       const { data } = await supabase
@@ -136,6 +138,7 @@ export default function QuoteLeadModal({
       });
       setNumero(res.numero);
       setPdfBlob(res.pdfBlob ?? null);
+      setPdfStored(res.pdfStored);
       setSuccess(true);
       toast.success(res.pdfStored || !user ? "PDF liberado! Baixe abaixo." : "PDF gerado para download.");
     } catch (err) {
@@ -207,7 +210,7 @@ export default function QuoteLeadModal({
                 </p>
                 {isLogged ? (
                   <p className="text-western-stone-warm leading-relaxed mt-2 text-xs">
-                    {pdfBlob ? (
+                    {pdfStored ? (
                       <>
                         O PDF também ficou disponível em{" "}
                         <Link
