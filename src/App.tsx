@@ -91,9 +91,18 @@ const App = () => (
               <Route path="/politica-de-entrega" element={<PoliticaEntrega />} />
               <Route path="/trocas-e-avarias" element={<TrocasAvarias />} />
               <Route path="/privacidade" element={<PoliticaPrivacidade />} />
+              <Route
+                path="/parceiro/favoritos"
+                element={
+                  <RequireAuth>
+                    <Favoritos />
+                  </RequireAuth>
+                }
+              />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
+          </WishlistProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
