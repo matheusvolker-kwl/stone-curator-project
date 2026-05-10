@@ -22,6 +22,7 @@ const Ctx = createContext<AuthCtx | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [partnerStatus, setPartnerStatus] = useState<PartnerStatus>(null);
   const [empresa, setEmpresa] = useState<string | null>(null);
@@ -31,8 +32,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsAdmin(false);
       setPartnerStatus(null);
       setEmpresa(null);
+      setProfileLoading(false);
       return;
     }
+    setProfileLoading(true);
     const [{ data: roles }, { data: profile }] = await Promise.all([
       supabase.from("user_roles").select("role").eq("user_id", uid),
       supabase.from("partner_profiles").select("status, empresa").eq("user_id", uid).maybeSingle(),
@@ -40,12 +43,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAdmin(!!roles?.some((r) => r.role === "admin"));
     setPartnerStatus((profile?.status as PartnerStatus) ?? null);
     setEmpresa(profile?.empresa ?? null);
+    setProfileLoading(false);
   };
 
   useEffect(() => {
     // Listener FIRST (sync), then getSession
     const { data: sub } = supabase.auth.onAuthStateChange((_evt, s) => {
       setSession(s);
+      if (s?.user?.id) setProfileLoading(true);
       // defer profile fetch to avoid deadlock
       setTimeout(() => loadProfile(s?.user?.id ?? null), 0);
     });
@@ -68,12 +73,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAdmin(false);
     setPartnerStatus(null);
     setEmpresa(null);
+    setProfileLoading(false);
   };
 
   const value: AuthCtx = {
     session,
     user: session?.user ?? null,
-    loading,
+    loading: loading || (!!session && profileLoading),
     isPartner: !!session,
     isApproved: partnerStatus === "approved" || isAdmin,
     isAdmin,
