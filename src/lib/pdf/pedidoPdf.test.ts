@@ -281,12 +281,19 @@ describe("gerarPedidoPdf — geração e ramificações", () => {
 // downloadPedidoPdf
 // ─────────────────────────────────────────────────────────────
 describe("downloadPedidoPdf", () => {
+  async function spySave() {
+    const mod = await import("jspdf");
+    const proto = mod.default.prototype as unknown as Record<string, unknown>;
+    const calls: string[] = [];
+    proto.save = function (filename: string) {
+      calls.push(filename);
+      return this as never;
+    };
+    return calls;
+  }
+
   it("admin: chama save com filename de admin e o retorna", async () => {
-    const saveSpy = vi
-      .spyOn((await import("jspdf")).default.prototype, "save")
-      .mockImplementation(function (this: unknown) {
-        return this as never;
-      });
+    const calls = await spySave();
     const fname = await downloadPedidoPdf({
       order: makeOrder(),
       events: makeEvents(),
@@ -294,43 +301,26 @@ describe("downloadPedidoPdf", () => {
       scenario: "admin",
     });
     expect(fname).toMatch(/-admin-/);
-    expect(saveSpy).toHaveBeenCalledTimes(1);
-    expect(saveSpy).toHaveBeenCalledWith(fname);
+    expect(calls).toEqual([fname]);
   });
 
   it("cliente: chama save com filename de cliente e o retorna", async () => {
-    const saveSpy = vi
-      .spyOn((await import("jspdf")).default.prototype, "save")
-      .mockImplementation(function (this: unknown) {
-        return this as never;
-      });
+    const calls = await spySave();
     const fname = await downloadPedidoPdf({
       order: makeOrder(),
       events: [],
       scenario: "cliente",
     });
     expect(fname).toMatch(/-cliente-/);
-    expect(saveSpy).toHaveBeenCalledWith(fname);
+    expect(calls).toEqual([fname]);
   });
 
   it.each<[PedidoScenario]>([["admin"], ["cliente"]])(
     "scenario %s: filename é único entre chamadas",
     async (scenario) => {
-      vi.spyOn((await import("jspdf")).default.prototype, "save").mockImplementation(
-        function (this: unknown) {
-          return this as never;
-        },
-      );
-      const a = await downloadPedidoPdf({
-        order: makeOrder(),
-        events: [],
-        scenario,
-      });
-      const b = await downloadPedidoPdf({
-        order: makeOrder(),
-        events: [],
-        scenario,
-      });
+      await spySave();
+      const a = await downloadPedidoPdf({ order: makeOrder(), events: [], scenario });
+      const b = await downloadPedidoPdf({ order: makeOrder(), events: [], scenario });
       expect(a).not.toEqual(b);
     },
   );
