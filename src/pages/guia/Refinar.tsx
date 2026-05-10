@@ -201,7 +201,22 @@ export default function GuiaRefinar() {
 
   const onFinalizarCompra = async () => {
     const purchasable = quoteItems.filter((item) => item.variantId.startsWith("gid://"));
+    const baseContext = {
+      handle,
+      conjunto: found?.conjunto.nome,
+      itemsTotal: quoteItems.length,
+      purchasable: purchasable.length,
+      subtotal: quoteSubtotal,
+      acabamento,
+      tipoVisual,
+    };
     if (purchasable.length === 0) {
+      void reportError({
+        source: "refinar.finalizar-compra",
+        severity: "warn",
+        message: "Nenhuma peça comprável (variantId Shopify ausente)",
+        context: baseContext,
+      });
       toast.error("Nenhuma peça desta composição está disponível para compra direta. Use Baixar composição para receber o orçamento.");
       return;
     }
@@ -210,6 +225,11 @@ export default function GuiaRefinar() {
       await addBundle(purchasable.map(({ lineId: _lineId, ...item }) => item));
       const checkoutUrl = getCheckoutUrl();
       if (!checkoutUrl) {
+        void reportError({
+          source: "refinar.finalizar-compra",
+          message: "Checkout URL ausente após addBundle",
+          context: { ...baseContext, dropped },
+        });
         toast.error("Não foi possível abrir o checkout. Tente novamente em instantes.");
         return;
       }
@@ -218,7 +238,12 @@ export default function GuiaRefinar() {
       }
       window.open(checkoutUrl, "_blank", "noopener,noreferrer");
     } catch (e) {
-      console.error(e);
+      void reportError({
+        source: "refinar.finalizar-compra",
+        message: "addBundle falhou",
+        error: e,
+        context: { ...baseContext, dropped },
+      });
       toast.error("Erro ao adicionar ao carrinho. Tente novamente.");
     }
   };
