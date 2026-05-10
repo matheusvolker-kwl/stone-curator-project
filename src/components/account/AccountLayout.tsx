@@ -55,7 +55,7 @@ export default function AccountLayout() {
               {TIER_LABEL[tier as Tier]}
             </span>
 
-            <nav className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible -mx-2 md:mx-0 px-2 md:px-0 pb-2 md:pb-0">
+            <nav ref={navRef} className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible -mx-2 md:mx-0 px-2 md:px-0 pb-2 md:pb-0 scroll-smooth">
               {items.map((it) => (
                 <NavLink
                   key={it.to}
