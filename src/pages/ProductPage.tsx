@@ -33,6 +33,7 @@ import WhyWesternStrip from "@/components/product/WhyWesternStrip";
 import SocialProofBand from "@/components/product/SocialProofBand";
 import ProductPagination from "@/components/product/ProductPagination";
 import ProductInUse from "@/components/product/ProductInUse";
+import WishlistButton from "@/components/product/WishlistButton";
 
 // Pluraliza nomes de coleção singulares ("Pedra Grande" → "Pedras Grandes").
 function pluralizeCollection(title?: string): string {
@@ -368,27 +369,35 @@ export default function ProductPage() {
                     {/* 2.5 — CTA principal */}
                     {isApproved && (
                       <div>
-                        <Button
-                          onClick={handleAdd}
-                          disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
-                          className={`w-full h-12 font-mono text-xs uppercase tracking-[0.25em] rounded-none transition-all motion-safe:hover:-translate-y-px ${
-                            acabPending
-                              ? "bg-western-stone-warm/20 text-western-stone-warm hover:bg-western-stone-warm/25 disabled:opacity-100"
-                              : "bg-western-gold text-western-green-deep hover:bg-western-gold/90 disabled:opacity-60"
-                          }`}
-                        >
-                          {isLoadingCart ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : acabPending ? (
-                            "Selecione o acabamento"
-                          ) : pendingOption ? (
-                            `Selecione ${pendingOption.name.toLowerCase()}`
-                          ) : variant?.availableForSale ? (
-                            "Adicionar ao pedido"
-                          ) : (
-                            "Indisponível"
-                          )}
-                        </Button>
+                        <div className="flex items-stretch gap-2">
+                          <Button
+                            onClick={handleAdd}
+                            disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
+                            className={`flex-1 h-12 font-mono text-xs uppercase tracking-[0.25em] rounded-none transition-all motion-safe:hover:-translate-y-px ${
+                              acabPending
+                                ? "bg-western-stone-warm/20 text-western-stone-warm hover:bg-western-stone-warm/25 disabled:opacity-100"
+                                : "bg-western-gold text-western-green-deep hover:bg-western-gold/90 disabled:opacity-60"
+                            }`}
+                          >
+                            {isLoadingCart ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : acabPending ? (
+                              "Selecione o acabamento"
+                            ) : pendingOption ? (
+                              `Selecione ${pendingOption.name.toLowerCase()}`
+                            ) : variant?.availableForSale ? (
+                              "Adicionar ao pedido"
+                            ) : (
+                              "Indisponível"
+                            )}
+                          </Button>
+                          <WishlistButton
+                            handle={product.handle}
+                            title={product.title}
+                            image={product.images.edges[0]?.node?.url ?? null}
+                            className="!h-12 !w-12 !p-0 justify-center"
+                          />
+                        </div>
 
                         {/* Linha sutil: gatilho + consultor */}
                         <div className="mt-4 flex items-center justify-between flex-wrap gap-3">

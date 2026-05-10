@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
+import { WishlistProvider } from "@/hooks/useWishlist";
 import RequireAuth from "@/components/auth/RequireAuth";
 import SiteLayout from "@/components/layout/SiteLayout";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -19,6 +20,7 @@ import ParceirosArquitetos from "./pages/ParceirosArquitetos.tsx";
 import PartnerLogin from "./pages/PartnerLogin.tsx";
 import PartnerAccount from "./pages/PartnerAccount.tsx";
 import Admin from "./pages/Admin.tsx";
+import Favoritos from "./pages/Favoritos.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import PedirAmostras from "./pages/PedirAmostras.tsx";
 import AgendarVisita from "./pages/AgendarVisita.tsx";
@@ -42,6 +44,7 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <AuthProvider>
+          <WishlistProvider>
           <Routes>
             <Route element={<SiteLayout />}>
               <Route path="/" element={<Index />} />
@@ -88,9 +91,18 @@ const App = () => (
               <Route path="/politica-de-entrega" element={<PoliticaEntrega />} />
               <Route path="/trocas-e-avarias" element={<TrocasAvarias />} />
               <Route path="/privacidade" element={<PoliticaPrivacidade />} />
+              <Route
+                path="/parceiro/favoritos"
+                element={
+                  <RequireAuth>
+                    <Favoritos />
+                  </RequireAuth>
+                }
+              />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
+          </WishlistProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

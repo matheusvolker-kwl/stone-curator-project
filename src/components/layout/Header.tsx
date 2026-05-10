@@ -1,6 +1,7 @@
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
-import { ShoppingBag, User, Menu, X, Search, ShieldCheck, LogOut } from "lucide-react";
+import { ShoppingBag, User, Menu, X, Search, ShieldCheck, LogOut, Heart } from "lucide-react";
+import { useWishlist } from "@/hooks/useWishlist";
 import logoVerde from "@/assets/logo-horizontal-verde.png";
 import logoBege from "@/assets/logo-horizontal-bege.png";
 import { useState, useEffect } from "react";
@@ -32,6 +33,8 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { session, isAdmin, empresa, signOut, user } = useAuth();
+  const { items: wishItems } = useWishlist();
+  const wishCount = wishItems.length;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -145,6 +148,20 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               <User className="h-4 w-4" /> Parceiro
             </Link>
           )}
+          {session && (
+            <Link
+              to="/parceiro/favoritos"
+              aria-label="Favoritos"
+              className="relative inline-flex items-center justify-center p-2 text-western-green-deep hover:text-western-gold transition-colors"
+            >
+              <Heart className="h-5 w-5" />
+              {wishCount > 0 && (
+                <span className="absolute top-0 right-0 bg-western-gold text-western-green-deep font-mono text-[10px] tracking-wider px-1.5 py-0.5 leading-none">
+                  {wishCount}
+                </span>
+              )}
+            </Link>
+          )}
           <button
             onClick={onCartOpen}
             aria-label="Abrir orçamento"
@@ -203,6 +220,14 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               >
                 <User className="h-4 w-4" /> Acessar conta
               </Link>
+              {session && (
+                <Link
+                  to="/parceiro/favoritos"
+                  className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
+                >
+                  <Heart className="h-4 w-4" /> Favoritos {wishCount > 0 && <span className="text-western-gold-soft">({wishCount})</span>}
+                </Link>
+              )}
               <Link
                 to="/parceiro/cadastro"
                 className="py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"

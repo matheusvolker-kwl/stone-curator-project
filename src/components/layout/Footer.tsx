@@ -1,10 +1,16 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { z } from "zod";
 import logo from "@/assets/logo-horizontal-bege.png";
-import { Mail, Send, Loader2 } from "lucide-react";
+import { Mail, Send, Loader2, Check } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+const newsletterSchema = z.object({
+  email: z.string().trim().email("E-mail inválido").max(320),
+  hp: z.string().max(0, "spam"),
+});
 
 const COLECOES: { label: string; handle: string }[] = [
   { label: "Cascatas", handle: "cascatas" },
@@ -22,25 +28,34 @@ const COLECOES: { label: string; handle: string }[] = [
 
 export default function Footer() {
   const [email, setEmail] = useState("");
+  const [hp, setHp] = useState(""); // honeypot
   const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
 
   const handleNewsletter = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    const parsed = newsletterSchema.safeParse({ email, hp });
+    if (!parsed.success) {
+      const msg = parsed.error.issues[0]?.message ?? "Verifique o e-mail.";
+      if (msg !== "spam") toast.error(msg);
+      return;
+    }
     setLoading(true);
     const { error } = await supabase.from("leads").insert({
       type: "newsletter",
-      email,
+      email: parsed.data.email,
       origem: "site/footer/newsletter",
+      payload: { source: "footer", consent: true, ts: new Date().toISOString() },
     });
     setLoading(false);
     if (error) {
-      toast.error("Não foi possível inscrever agora.");
+      toast.error("Não foi possível inscrever agora.", { description: "Tente novamente em instantes." });
       return;
     }
     setEmail("");
+    setDone(true);
     toast.success("Inscrição confirmada", {
-      description: "Você receberá lançamentos e novidades.",
+      description: "Você receberá lançamentos e tabelas técnicas.",
     });
   };
 
@@ -117,30 +132,51 @@ export default function Footer() {
             <p className="text-sm text-western-cream-muted mb-4 leading-relaxed">
               Receba lançamentos e tabelas técnicas atualizadas.
             </p>
-            <form
-              onSubmit={handleNewsletter}
-              className="flex border border-western-gold/30 focus-within:border-western-gold transition-colors"
-            >
-              <div className="flex items-center px-3 text-western-gold-soft">
-                <Mail className="h-4 w-4" />
+            {done ? (
+              <div className="flex items-center gap-2 border border-western-gold/30 bg-western-gold/5 px-3 py-2.5 text-sm text-western-cream">
+                <Check className="h-4 w-4 text-western-gold-soft" />
+                Inscrição confirmada.
               </div>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="seu@email.com"
-                className="flex-1 bg-transparent outline-none text-sm py-2.5 text-western-cream placeholder:text-western-cream-muted/60"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                aria-label="Enviar"
-                className="px-3 hover:bg-western-gold/10 text-western-gold-soft transition-colors disabled:opacity-50"
+            ) : (
+              <form
+                onSubmit={handleNewsletter}
+                className="flex border border-western-gold/30 focus-within:border-western-gold transition-colors"
               >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              </button>
-            </form>
+                <div className="flex items-center px-3 text-western-gold-soft">
+                  <Mail className="h-4 w-4" />
+                </div>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="seu@email.com"
+                  autoComplete="email"
+                  className="flex-1 bg-transparent outline-none text-sm py-2.5 text-western-cream placeholder:text-western-cream-muted/60"
+                />
+                {/* honeypot — escondido de usuários reais */}
+                <input
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={hp}
+                  onChange={(e) => setHp(e.target.value)}
+                  className="hidden"
+                  aria-hidden="true"
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  aria-label="Enviar"
+                  className="px-3 hover:bg-western-gold/10 text-western-gold-soft transition-colors disabled:opacity-50"
+                >
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                </button>
+              </form>
+            )}
+            <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-cream-muted/70 mt-2">
+              Sem spam. Cancele quando quiser.
+            </p>
           </div>
         </div>
 
