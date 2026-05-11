@@ -19,6 +19,8 @@ const PRODUCT_FIELDS = `
         title
         sku
         availableForSale
+        weight
+        weightUnit
         price { amount currencyCode }
         selectedOptions { name value }
         image { url altText }
@@ -27,6 +29,10 @@ const PRODUCT_FIELDS = `
   }
   options { name values }
   modelo3d: metafield(namespace: "custom", key: "modelo_3d_url") { key value namespace }
+  pesoKg: metafield(namespace: "custom", key: "peso_kg") { value }
+  comprimentoCm: metafield(namespace: "custom", key: "comprimento_cm") { value }
+  larguraCm: metafield(namespace: "custom", key: "largura_cm") { value }
+  alturaCm: metafield(namespace: "custom", key: "altura_cm") { value }
 `;
 
 const COLLECTIONS_QUERY = `
