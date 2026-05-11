@@ -325,20 +325,23 @@ export default function ProductPage() {
                       </div>
                     )}
 
-                    {/* 2.3 — Preço + stepper na mesma linha */}
+                    {/* 2.3 — Preço grande (sans-serif, e-commerce) + stepper */}
                     <div className="pt-6 border-t border-western-stone-warm/15">
                       {isApproved ? (
                         <div className="flex items-end justify-between gap-4 flex-wrap">
                           <div className="min-w-0">
-                            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/80 mb-1">
-                              Condição parceiro
-                            </p>
-                            <p
-                              className={`font-display text-western-green-deep ${
-                                variant ? "text-3xl md:text-4xl" : "text-xl text-western-stone-warm"
-                              } tabular-nums leading-none`}
-                            >
-                              {priceDisplay}
+                            {variant ? (
+                              <PriceDisplay
+                                amount={variant.price.amount}
+                                currency={variant.price.currencyCode}
+                              />
+                            ) : (
+                              <p className="font-sans text-xl text-western-stone-warm tabular-nums leading-none">
+                                {priceDisplay}
+                              </p>
+                            )}
+                            <p className="text-meta mt-2">
+                              À vista · condição parceiro
                             </p>
                           </div>
                           <div
@@ -354,7 +357,7 @@ export default function ProductPage() {
                             >
                               −
                             </button>
-                            <span className="px-4 text-spec min-w-[2ch] text-center tabular-nums">
+                            <span className="px-4 font-sans font-medium text-base min-w-[2ch] text-center tabular-nums">
                               {qty}
                             </span>
                             <button
