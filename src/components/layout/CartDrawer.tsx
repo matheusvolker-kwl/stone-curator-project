@@ -63,8 +63,26 @@ export default function CartDrawer({
 
   const { user, isApproved, empresa } = useAuth();
   const handleCheckout = async () => {
-    const url = getCheckoutUrl();
-    if (!url) return;
+  const { user, isApproved, empresa } = useAuth();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const handleCheckout = async () => {
+    // Validação cliente do pedido mínimo
+    if (subtotal < MIN_ORDER) {
+      toast.error("Pedido mínimo R$ 2.000", {
+        description: `Faltam ${formatBRL(MIN_ORDER - subtotal)} para finalizar.`,
+      });
+      return;
+    }
+    // Garantir SKU em todos os itens (necessário para Yampi)
+    const semSku = items.filter((i) => !i.sku);
+    if (semSku.length > 0) {
+      toast.error("Erro ao iniciar checkout", {
+        description: "Itens sem SKU. Por favor, fale conosco no WhatsApp.",
+      });
+      return;
+    }
+
+    setCheckoutLoading(true);
 
     // Fire-and-forget: registra lead de venda direta antes de abrir checkout externo
     void (async () => {
@@ -82,7 +100,7 @@ export default function CartDrawer({
         subtotal,
         currency,
         userId: user?.id ?? null,
-        origem: "cart_checkout",
+        origem: "cart_checkout_yampi",
         contact: {
           nome: profile?.nome ?? null,
           email: user?.email ?? null,
@@ -93,8 +111,32 @@ export default function CartDrawer({
       });
     })();
 
-    window.open(url, "_blank");
-    onOpenChange(false);
+    try {
+      const { data, error } = await supabase.functions.invoke("criar-carrinho-yampi", {
+        body: {
+          items: items.map((i) => ({
+            sku: i.sku,
+            quantidade: i.quantity,
+            valor_unitario: parseFloat(i.price.amount),
+          })),
+          utm_source: "site_lovable",
+          utm_medium: "carrinho",
+        },
+      });
+      if (error) throw error;
+      const url = (data as { checkout_url?: string } | null)?.checkout_url;
+      if (!url) {
+        throw new Error("checkout_url ausente");
+      }
+      window.location.href = url;
+    } catch (e) {
+      console.error("yampi_checkout", e);
+      toast.error("Erro ao iniciar checkout", {
+        description: "Por favor, tente novamente ou fale conosco no WhatsApp.",
+      });
+    } finally {
+      setCheckoutLoading(false);
+    }
   };
 
   return (
