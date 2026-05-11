@@ -26,7 +26,7 @@ export default function CartDrawer({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } =
+  const { items, isLoading, isSyncing, updateQuantity, removeItem, syncCart } =
     useCartStore();
   // (auth context obtained below)
   const [quoteOpen, setQuoteOpen] = useState(false);
