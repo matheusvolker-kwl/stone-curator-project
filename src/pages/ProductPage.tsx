@@ -372,9 +372,9 @@ export default function ProductPage() {
                       )}
                     </div>
 
-                    {/* 2.4 — Entrega */}
+                    {/* 2.4 — Entrega + condições comerciais (consolidado) */}
                     <div>
-                      <DeliverySignals />
+                      <DeliverySignals variant="full" />
                     </div>
 
                     {/* 2.5 — CTA principal */}
