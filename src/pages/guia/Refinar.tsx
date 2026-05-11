@@ -178,7 +178,6 @@ export default function GuiaRefinar() {
       productImage: it.imageUrl ?? null,
       variantId: it.variantId || it.id,
       variantTitle: it.variantTitle || acabLabel,
-      sku: it.codigo || null,
       price: { amount: String(it.preco || 0), currencyCode: "BRL" },
       quantity: it.qty,
       selectedOptions: [{ name: "Acabamento", value: acabLabel }],
