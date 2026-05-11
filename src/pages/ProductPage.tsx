@@ -6,12 +6,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
 import { Button } from "@/components/ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { ChevronRight, Loader2, MessageCircle } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { toast } from "sonner";
