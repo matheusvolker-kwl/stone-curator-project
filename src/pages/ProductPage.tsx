@@ -20,6 +20,7 @@ import PriceGate from "@/components/shared/PriceGate";
 import { useAuth } from "@/hooks/useAuth";
 import HardFactsCard from "@/components/product/HardFactsCard";
 import CustomPaintNote from "@/components/product/CustomPaintNote";
+import WhatsInTheBox from "@/components/product/WhatsInTheBox";
 import ProductGallery from "@/components/product/ProductGallery";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import BackToTop from "@/components/shared/BackToTop";
@@ -325,20 +326,23 @@ export default function ProductPage() {
                       </div>
                     )}
 
-                    {/* 2.3 — Preço + stepper na mesma linha */}
+                    {/* 2.3 — Preço grande (sans-serif, e-commerce) + stepper */}
                     <div className="pt-6 border-t border-western-stone-warm/15">
                       {isApproved ? (
                         <div className="flex items-end justify-between gap-4 flex-wrap">
                           <div className="min-w-0">
-                            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/80 mb-1">
-                              Condição parceiro
-                            </p>
-                            <p
-                              className={`font-display text-western-green-deep ${
-                                variant ? "text-3xl md:text-4xl" : "text-xl text-western-stone-warm"
-                              } tabular-nums leading-none`}
-                            >
-                              {priceDisplay}
+                            {variant ? (
+                              <PriceDisplay
+                                amount={variant.price.amount}
+                                currency={variant.price.currencyCode}
+                              />
+                            ) : (
+                              <p className="font-sans text-xl text-western-stone-warm tabular-nums leading-none">
+                                {priceDisplay}
+                              </p>
+                            )}
+                            <p className="text-meta mt-2">
+                              À vista · condição parceiro
                             </p>
                           </div>
                           <div
@@ -354,7 +358,7 @@ export default function ProductPage() {
                             >
                               −
                             </button>
-                            <span className="px-4 text-spec min-w-[2ch] text-center tabular-nums">
+                            <span className="px-4 font-sans font-medium text-base min-w-[2ch] text-center tabular-nums">
                               {qty}
                             </span>
                             <button
@@ -440,10 +444,10 @@ export default function ProductPage() {
               })()}
             </section>
 
-            {/* 3 — Lead editorial */}
+            {/* 3 — Descrição curta (sans, funcional) */}
             {parsed.lead && (
               <p
-                className="product-lead mt-10"
+                className="mt-10 font-sans text-[15px] leading-relaxed text-western-stone-warm max-w-[60ch]"
                 dangerouslySetInnerHTML={{
                   __html: parsed.lead.replace(
                     new RegExp(`^A?\\s*${escapeRegExp(product.title)}\\s*`, "i"),
@@ -457,25 +461,26 @@ export default function ProductPage() {
               />
             )}
 
-            {/* 4 — Aplicações */}
+            {/* 4 — Aplicações (linha única, sem chips) */}
             {parsed.aplicacoes.length > 0 && (
-              <div className="mt-10">
-                <p className="text-eyebrow mb-4">Aplicações</p>
-                <div className="flex flex-wrap gap-2">
-                  {parsed.aplicacoes.map((a) => (
-                    <span
-                      key={a}
-                      className="inline-flex items-center px-3 py-1.5 border border-western-stone-warm/25 bg-western-cream/50 text-spec text-western-green-deep"
-                    >
-                      {a}
-                    </span>
-                  ))}
-                </div>
+              <div className="mt-7 flex items-baseline flex-wrap gap-x-2 gap-y-1">
+                <p className="text-meta mr-2">Aplicações</p>
+                {parsed.aplicacoes.map((a, i) => (
+                  <span key={a} className="font-sans text-[14px] text-western-green-deep">
+                    {a}
+                    {i < parsed.aplicacoes.length - 1 && (
+                      <span className="text-western-stone-warm/50 mx-1.5">·</span>
+                    )}
+                  </span>
+                ))}
               </div>
             )}
 
-            {/* 5 — Dados duros (faixa horizontal compacta) */}
+            {/* 5 — Dados duros (faixa horizontal compacta, sem coluna "Base") */}
             <HardFactsCard pesoKg={pesoKg} dimensoes={dimsStr} variant="strip" />
+
+            {/* 5.1 — O que vem na caixa (resolve argamassa C3 + kit retoque) */}
+            <WhatsInTheBox />
 
             {/* 6 — Pintura personalizada */}
             {visibleOptions.some((o) => /acabament/i.test(o.name)) && (
@@ -538,44 +543,35 @@ export default function ProductPage() {
               {/* placeholder removido: acabamentos já estão no FinishSelector acima */}
 
               <ProductAccordion numeral="II" title="Composição & material" value="composicao">
-                <p className="text-spec text-western-stone-warm leading-[1.8] mb-6">
-                  Toda peça Western é fabricada artesanalmente em composto mineral proprietário,
-                  desenvolvido há 33 anos no nosso ateliê. Reproduz fielmente a estética da pedra
-                  natural — sem nenhuma extração ambiental.
+                <p className="text-body mb-6">
+                  Composto mineral proprietário, desenvolvido há 33 anos.
+                  Estética de pedra natural, sem extração ambiental.
                 </p>
 
                 <ul className="space-y-5">
                   {[
                     {
                       label: "Estrutura",
-                      text: "Cimento estrutural reforçado com fibra de fios de PET reciclado, formando uma teia tridimensional interna que dá leveza, resistência a impacto e durabilidade muito superiores ao cimento puro.",
+                      text: "Cimento estrutural reforçado com fibra de PET reciclado. Suporta peso humano, perfuração e carga paisagística — não trinca, não estilhaça.",
                     },
                     {
                       label: "Interior oco",
-                      text: "Pesa até 10× menos que pedra natural equivalente. Permite passar tubulação hidráulica, fiação de iluminação e bombas por dentro da peça — sem embutir nada na obra civil.",
+                      text: "Até 10× mais leve que pedra natural. Permite passar tubulação hidráulica, fiação e bombas por dentro da peça.",
                     },
                     {
                       label: "Pintura mineral",
-                      text: "6 fases de pintura manual, com 5 cores sobrepostas a cada fase, simulando sedimentação geológica. Resiste a cloro, sol, chuva e variação térmica. Não desbota, não escama, manutenção zero.",
-                    },
-                    {
-                      label: "Resistência mecânica",
-                      text: "Suporta peso humano (pisar, sentar), perfuração com furadeira para passagem de fios e carga estrutural compatível com uso paisagístico. Não trinca, não estilhaça.",
+                      text: "6 fases manuais sobrepostas, simulando sedimentação geológica. Resiste a cloro, sol, chuva e variação térmica.",
                     },
                     {
                       label: "Sustentabilidade",
-                      text: "Zero extração ambiental — o molde é tirado da pedra real no local sem mover a pedra. Cada peça incorpora plástico PET que iria para aterro como armadura estrutural.",
-                    },
-                    {
-                      label: "Garantia",
-                      text: "5 anos formais contra defeitos de fabricação. Histórico real: peças instaladas desde 1995 envelhecem melhor — musgo, oxidação ambiental e pátina natural valorizam o produto com o tempo.",
+                      text: "Zero extração ambiental — o molde é tirado da pedra real no local. Cada peça incorpora plástico PET que iria para aterro.",
                     },
                   ].map((item) => (
                     <li key={item.label}>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-green-deep/80 mb-1.5">
+                      <p className="text-meta text-western-green-deep mb-1.5">
                         {item.label}
                       </p>
-                      <p className="text-spec text-western-stone-warm leading-[1.8]">
+                      <p className="text-body">
                         {item.text}
                       </p>
                     </li>
@@ -633,16 +629,22 @@ export default function ProductPage() {
               </ProductAccordion>
 
               <ProductAccordion numeral="V" title="Produção & entrega" value="entrega">
-                <p className="text-spec text-western-stone-warm leading-[1.8]">
-                  Cada peça é produzida sob encomenda em nosso ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
-                  Prazo de produção de {BUSINESS.prazoProducaoDias} dias úteis após confirmação do pedido.
-                  Instalação simples com argamassa C3 (loja de bairro). Kit de pintura para
-                  retoque incluso. Frete calculado conforme destino e dimensões.
-                </p>
+                <dl className="space-y-4">
+                  {[
+                    { k: "Produção", v: `Sob encomenda em ${BUSINESS.cidadeAtelie}/${BUSINESS.ufAtelie}. ${BUSINESS.prazoProducaoDias} dias úteis após confirmação do pedido.` },
+                    { k: "Entrega", v: "Frete calculado por destino e dimensões. Retira em fábrica disponível." },
+                    { k: "Instalação", v: 'Veja "O que vem na caixa" — kit completo incluso, fixação com argamassa C3.' },
+                  ].map((row) => (
+                    <div key={row.k}>
+                      <dt className="text-meta text-western-green-deep mb-1">{row.k}</dt>
+                      <dd className="text-body">{row.v}</dd>
+                    </div>
+                  ))}
+                </dl>
               </ProductAccordion>
 
               <ProductAccordion numeral="VI" title="Cuidados" value="cuidados">
-                <p className="text-spec text-western-stone-warm leading-[1.8]">
+                <p className="text-body">
                   Manutenção zero. Limpeza com pano macio levemente úmido ou jato de água.
                   Evite produtos abrasivos ou ácidos. A pintura mineral resiste a cloro de
                   piscina, intempéries e raios UV — não escama, não desbota.
@@ -745,5 +747,23 @@ function SpecRow({ dt, dd }: { dt: string; dd: string }) {
       <dt className="text-western-stone-warm flex-shrink-0 min-w-0">{dt}</dt>
       <dd className="text-western-green-deep text-right min-w-0 break-words">{dd}</dd>
     </div>
+  );
+}
+
+function PriceDisplay({ amount, currency }: { amount: string; currency: string }) {
+  // formatBRL → "R$ 1.240,00"
+  const formatted = formatBRL(amount, currency);
+  // Split currency, integer part, cents
+  const m = formatted.match(/^(R\$)\s*([\d.]+),(\d{2})$/);
+  if (!m) {
+    return <p className="text-price">{formatted}</p>;
+  }
+  const [, cur, intPart, cents] = m;
+  return (
+    <p className="text-price">
+      <span className="text-price-currency">{cur}</span>
+      {intPart}
+      <span className="text-price-cents">,{cents}</span>
+    </p>
   );
 }

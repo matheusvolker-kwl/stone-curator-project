@@ -1,8 +1,7 @@
 interface Props {
   pesoKg?: string | null;       // ex.: "74"
   dimensoes?: string | null;    // ex.: "108 × 76 × 52 cm"
-  baseHint?: string;            // ex.: "Base plana · argamassa C3"
-  variacao?: string;            // ex.: "Variação artesanal de até ±3 cm"
+  variacao?: string;            // ex.: "±3 cm"
   /** "card" (vertical hero) ou "strip" (faixa horizontal compacta) */
   variant?: "card" | "strip";
 }
@@ -10,8 +9,7 @@ interface Props {
 export default function HardFactsCard({
   pesoKg,
   dimensoes,
-  baseHint = "Base plana · argamassa C3",
-  variacao = "Variação artesanal de até ±3 cm",
+  variacao = "±3 cm",
   variant = "card",
 }: Props) {
   if (!pesoKg && !dimensoes) return null;
@@ -19,43 +17,40 @@ export default function HardFactsCard({
   if (variant === "strip") {
     const equivalente = pesoKg ? Math.round(Number(pesoKg) * 10) : null;
     return (
-      <div className="mt-8 border-y border-western-stone-warm/20 py-5 grid grid-cols-2 md:grid-cols-4 gap-y-4 gap-x-6">
+      <div className="mt-6 border-y border-western-stone-warm/20 py-5 grid grid-cols-3 gap-x-6">
         {pesoKg && (
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-1">
-              Peso
-            </p>
-            <p className="font-display text-2xl text-western-green-deep tabular-nums leading-none">
-              {pesoKg} <span className="text-base text-western-stone-warm/70">kg</span>
+            <p className="text-meta mb-1">Peso</p>
+            <p className="font-sans font-semibold text-2xl text-western-green-deep tabular-nums leading-none">
+              {pesoKg}
+              <span className="text-sm font-normal text-western-stone-warm/70 ml-1">kg</span>
             </p>
             {equivalente && (
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/60 mt-1.5">
-                pedra natural ≈ {equivalente} kg
+              <p className="text-meta mt-1.5 normal-case tracking-normal text-[11px]">
+                vs. ≈ {equivalente} kg em pedra natural
               </p>
             )}
           </div>
         )}
         {dimensoes && (
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-1">
-              Dimensões
-            </p>
-            <p className="font-display text-lg text-western-green-deep tabular-nums leading-tight">
+            <p className="text-meta mb-1">Dimensões</p>
+            <p className="font-sans font-semibold text-base text-western-green-deep tabular-nums leading-tight">
               {dimensoes}
+            </p>
+            <p className="text-meta mt-1.5 normal-case tracking-normal text-[11px]">
+              C × L × A
             </p>
           </div>
         )}
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-1">
-            Base
+          <p className="text-meta mb-1">Variação</p>
+          <p className="font-sans font-semibold text-base text-western-green-deep tabular-nums leading-tight">
+            {variacao}
           </p>
-          <p className="text-spec text-western-green-deep leading-tight">{baseHint.replace(/^Base\s*[·:]\s*/i, "")}</p>
-        </div>
-        <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-1">
-            Variação
+          <p className="text-meta mt-1.5 normal-case tracking-normal text-[11px]">
+            por peça (artesanal)
           </p>
-          <p className="text-spec text-western-green-deep leading-tight">{variacao.replace(/^Variação\s*artesanal\s*de\s*até\s*/i, "±").replace("±±", "±")}</p>
         </div>
       </div>
     );
@@ -65,8 +60,9 @@ export default function HardFactsCard({
     <div className="mt-8 border border-western-stone-warm/20 bg-western-paper px-6 py-7">
       {pesoKg && (
         <>
-          <p className="font-display text-4xl md:text-5xl text-western-green-deep leading-none">
-            {pesoKg} <span className="text-2xl text-western-stone-warm/80">kg</span>
+          <p className="font-sans font-semibold text-4xl md:text-5xl text-western-green-deep leading-none tabular-nums">
+            {pesoKg}
+            <span className="text-2xl font-normal text-western-stone-warm/80 ml-1">kg</span>
           </p>
           <div className="w-8 h-px bg-western-stone-warm/30 my-4" />
           <p className="text-spec text-western-stone-warm leading-relaxed max-w-[42ch]">
@@ -79,16 +75,12 @@ export default function HardFactsCard({
       {dimensoes && (
         <>
           {pesoKg && <div className="w-full h-px bg-western-stone-warm/15 my-5" />}
-          <p className="font-display text-xl text-western-green-deep tabular-nums">{dimensoes}</p>
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mt-2">
-            {baseHint}
-          </p>
+          <p className="font-sans font-semibold text-xl text-western-green-deep tabular-nums">{dimensoes}</p>
+          <p className="text-meta mt-2">C × L × A</p>
         </>
       )}
 
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/60 mt-4">
-        {variacao}
-      </p>
+      <p className="text-meta mt-4">Variação artesanal {variacao}</p>
     </div>
   );
 }
