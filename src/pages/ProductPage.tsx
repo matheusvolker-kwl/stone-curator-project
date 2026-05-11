@@ -12,21 +12,18 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ChevronRight, Loader2, Info, MessageCircle, Download, Folder } from "lucide-react";
+import { ChevronRight, Loader2, MessageCircle } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { toast } from "sonner";
 import FinishSelector from "@/components/product/FinishSelector";
 import PriceGate from "@/components/shared/PriceGate";
 import { useAuth } from "@/hooks/useAuth";
-import HardFactsCard from "@/components/product/HardFactsCard";
-import CustomPaintNote from "@/components/product/CustomPaintNote";
-import WhatsInTheBox from "@/components/product/WhatsInTheBox";
 import ProductGallery from "@/components/product/ProductGallery";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import BackToTop from "@/components/shared/BackToTop";
 import StickyBuyBar from "@/components/product/StickyBuyBar";
 import DeliverySignals from "@/components/product/DeliverySignals";
-import { inRange } from "@/lib/seededRandom";
+import ProductTabs from "@/components/product/ProductTabs";
 import { trackRecentlyViewed } from "@/hooks/useRecentlyViewed";
 
 import ProductComparison from "@/components/product/ProductComparison";
