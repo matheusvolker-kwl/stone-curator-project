@@ -18,21 +18,21 @@ export default function DeliverySignals({ variant = "minimal" }: Props) {
         {items.map(({ Icon, label }) => (
           <li
             key={label}
-            className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm"
+            className="flex items-center gap-2 font-sans text-[12px] text-western-stone-warm/85"
           >
-            <Icon className="h-3.5 w-3.5 text-western-gold flex-shrink-0" />
+            <Icon className="h-3.5 w-3.5 text-western-stone-warm/60 flex-shrink-0" />
             <span className="leading-tight">{label}</span>
           </li>
         ))}
       </ul>
       {variant === "full" && (
         <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-3 border-t border-western-stone-warm/15">
-          <li className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/85">
-            <Package className="h-3 w-3 text-western-stone-warm/60 flex-shrink-0" />
+          <li className="flex items-center gap-2 font-sans text-[12px] text-western-stone-warm/75">
+            <Package className="h-3 w-3 text-western-stone-warm/55 flex-shrink-0" />
             Pedido mínimo {BUSINESS.pedidoMinimoLabel}
           </li>
-          <li className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/85">
-            <ShieldCheck className="h-3 w-3 text-western-stone-warm/60 flex-shrink-0" />
+          <li className="flex items-center gap-2 font-sans text-[12px] text-western-stone-warm/75">
+            <ShieldCheck className="h-3 w-3 text-western-stone-warm/55 flex-shrink-0" />
             Garantia {BUSINESS.garantiaAnos} anos
           </li>
         </ul>

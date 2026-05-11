@@ -249,12 +249,8 @@ export default function ProductPage() {
               {(() => {
                 const pendingOption = visibleOptions.find((o) => !activeOptions[o.name]);
                 const acabPending = !!pendingOption && /acabament/i.test(pendingOption.name);
-                const priceDisplay = variant
-                  ? formatBRL(variant.price.amount, variant.price.currencyCode)
-                  : `a partir de ${formatBRL(
-                      product.priceRange.minVariantPrice.amount,
-                      product.priceRange.minVariantPrice.currencyCode
-                    )}`;
+                const priceAmount = variant?.price.amount ?? product.priceRange.minVariantPrice.amount;
+                const priceCurrency = variant?.price.currencyCode ?? product.priceRange.minVariantPrice.currencyCode;
                 const acabOption = visibleOptions.find((o) => /acabament/i.test(o.name));
                 const otherOptions = visibleOptions.filter(
                   (o) => !/acabament/i.test(o.name)
@@ -262,9 +258,21 @@ export default function ProductPage() {
 
                 return (
                   <>
-                    {/* 2.1 — Acabamento (PRIMEIRO, obrigatório) */}
+                    {/* 2.1 — PREÇO (sempre cheio, sem "a partir de") */}
+                    <div>
+                      {isApproved ? (
+                        <>
+                          <p className="text-price">{formatBRL(priceAmount, priceCurrency)}</p>
+                          <p className="text-meta mt-2">Preço parceiro · à vista</p>
+                        </>
+                      ) : (
+                        <PriceGate variant="block" />
+                      )}
+                    </div>
+
+                    {/* 2.2 — Acabamento (obrigatório) */}
                     {acabOption && (
-                      <div>
+                      <div className="pt-6 border-t border-western-stone-warm/15">
                         <p className="text-eyebrow mb-3">
                           Acabamento{" "}
                           <span className="text-western-gold">· obrigatório</span>
@@ -287,7 +295,7 @@ export default function ProductPage() {
                       </div>
                     )}
 
-                    {/* 2.2 — Outras opções */}
+                    {/* 2.3 — Outras opções */}
                     {otherOptions.length > 0 && (
                       <div className="pt-6 border-t border-western-stone-warm/15 space-y-6">
                         {otherOptions.map((option) => (
@@ -321,76 +329,46 @@ export default function ProductPage() {
                       </div>
                     )}
 
-                    {/* 2.3 — Preço grande (sans-serif, e-commerce) + stepper */}
-                    <div className="pt-6 border-t border-western-stone-warm/15">
-                      {isApproved ? (
-                        <div className="flex items-end justify-between gap-4 flex-wrap">
-                          <div className="min-w-0">
-                            {variant ? (
-                              <PriceDisplay
-                                amount={variant.price.amount}
-                                currency={variant.price.currencyCode}
-                              />
-                            ) : (
-                              <p className="font-sans text-xl text-western-stone-warm tabular-nums leading-none">
-                                {priceDisplay}
-                              </p>
-                            )}
-                            <p className="text-meta mt-2">
-                              À vista · condição parceiro
-                            </p>
-                          </div>
+                    {/* 2.4 — Stepper + CTA principal + Wishlist */}
+                    {isApproved && (
+                      <div className="pt-6 border-t border-western-stone-warm/15">
+                        <div className="flex items-stretch gap-2">
                           <div
-                            className={`flex items-center border border-western-stone-warm/30 h-12 bg-western-paper transition-opacity ${
+                            className={`flex items-center border border-western-stone-warm/30 h-14 bg-western-paper transition-opacity ${
                               acabPending ? "opacity-50" : ""
                             }`}
                           >
                             <button
                               onClick={() => setQty(Math.max(1, qty - 1))}
                               disabled={acabPending}
-                              className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg disabled:cursor-not-allowed"
+                              className="h-14 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg disabled:cursor-not-allowed"
                               aria-label="Diminuir"
                             >
                               −
                             </button>
-                            <span className="px-4 font-sans font-medium text-base min-w-[2ch] text-center tabular-nums">
+                            <span className="px-3 font-sans font-medium text-base min-w-[2ch] text-center tabular-nums">
                               {qty}
                             </span>
                             <button
                               onClick={() => setQty(qty + 1)}
                               disabled={acabPending}
-                              className="h-12 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg disabled:cursor-not-allowed"
+                              className="h-14 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg disabled:cursor-not-allowed"
                               aria-label="Aumentar"
                             >
                               +
                             </button>
                           </div>
-                        </div>
-                      ) : (
-                        <PriceGate variant="block" />
-                      )}
-                    </div>
-
-                    {/* 2.4 — Entrega + condições comerciais (consolidado) */}
-                    <div>
-                      <DeliverySignals variant="full" />
-                    </div>
-
-                    {/* 2.5 — CTA principal */}
-                    {isApproved && (
-                      <div>
-                        <div className="flex items-stretch gap-2">
                           <Button
                             onClick={handleAdd}
                             disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
-                            className={`flex-1 h-12 font-mono text-xs uppercase tracking-[0.25em] rounded-none transition-all motion-safe:hover:-translate-y-px ${
+                            className={`flex-1 h-14 font-sans font-medium text-[15px] tracking-[0.02em] rounded-none transition-all motion-safe:hover:-translate-y-px ${
                               acabPending
                                 ? "bg-western-stone-warm/20 text-western-stone-warm hover:bg-western-stone-warm/25 disabled:opacity-100"
-                                : "bg-western-gold text-western-green-deep hover:bg-western-gold/90 disabled:opacity-60"
+                                : "bg-western-gold text-western-green-deep hover:bg-western-gold/90 hover:shadow-md disabled:opacity-60"
                             }`}
                           >
                             {isLoadingCart ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <Loader2 className="h-5 w-5 animate-spin" />
                             ) : acabPending ? (
                               "Selecione o acabamento"
                             ) : pendingOption ? (
@@ -405,12 +383,16 @@ export default function ProductPage() {
                             handle={product.handle}
                             title={product.title}
                             image={product.images.edges[0]?.node?.url ?? null}
-                            className="!h-12 !w-12 !p-0 justify-center"
+                            className="!h-14 !w-14 !p-0 justify-center"
                           />
                         </div>
-
                       </div>
                     )}
+
+                    {/* 2.5 — Sinais de entrega (após CTA, reforço) */}
+                    <div>
+                      <DeliverySignals variant="full" />
+                    </div>
 
                     {/* 2.6 — Link discreto: pintura personalizada */}
                     {visibleOptions.some((o) => /acabament/i.test(o.name)) && (
@@ -505,20 +487,3 @@ function escapeRegExp(s: string) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function PriceDisplay({ amount, currency }: { amount: string; currency: string }) {
-  // formatBRL → "R$ 1.240,00"
-  const formatted = formatBRL(amount, currency);
-  // Split currency, integer part, cents
-  const m = formatted.match(/^(R\$)\s*([\d.]+),(\d{2})$/);
-  if (!m) {
-    return <p className="text-price">{formatted}</p>;
-  }
-  const [, cur, intPart, cents] = m;
-  return (
-    <p className="text-price">
-      <span className="text-price-currency">{cur}</span>
-      {intPart}
-      <span className="text-price-cents">,{cents}</span>
-    </p>
-  );
-}

@@ -1,111 +1,85 @@
-## PDP enxuta — referência SilkSkin
+## Objetivo
 
-A referência mostra **uma coluna direita curta e densa** (título, preço, opções, CTA) com **todo o conteúdo longo em abas abaixo do hero**. Hoje a coluna direita continua um "scroll infinito" — descrição, aplicações, ficha, kit, 6 accordions. Isso é o "muito texto sem utilidade" no lugar errado.
+Eliminar a ambiguidade do "a partir de", consolidar tipografia/posicionamento do bloco de compra (preço, CTA, sinais de entrega, link de pintura personalizada, seletor de acabamento) e aproximar a PDP de um padrão e-commerce funcional.
 
-A solução não é apagar conteúdo — é **mover** o que é "leitura" para abaixo do hero, deixando a coluna direita só com **decisão de compra**.
+## Diagnóstico (com base nas imagens)
 
-## 1. Diagnóstico do que ainda sobra na coluna direita
+1. **Preço** mostra "a partir de R$ 1.235,00" antes da escolha de acabamento — confunde, parece que o preço pode subir, e o estilo (cents/currency reduzidos) destoa do resto.
+2. **CTA "Adicionar ao pedido"** é o elemento mais importante da página, mas usa fonte mono pequena (text-xs) e o texto fica diluído pelo tracking enorme.
+3. **DeliverySignals** e **link de pintura personalizada** competem com o CTA: ambos em mono uppercase com pesos visuais parecidos.
+4. **Acabamento card "+ vendido"** funciona bem — manter.
 
-| Bloco atual (col. direita) | Problema |
-|---|---|
-| Lead `mt-10` (parágrafo descritivo) | É leitura, não decisão. Empurra CTA pra cima e some no scroll. |
-| "Aplicações · Spa · Borda…" | Idem: informativo, não decisivo. |
-| `HardFactsCard strip` (peso/dim/var) | Informativo. Cabe na aba "Especificações". |
-| `WhatsInTheBox` (3 ícones) | Útil, mas longo. Cabe melhor numa aba "O que vem na caixa" + 1 linha curta no hero. |
-| `CustomPaintNote` | Idem — vai pra aba ou vira link discreto. |
-| 6 accordions (Ficha, Composição, Observações, 3D, Entrega, Cuidados) | É exatamente o que vira **abas** abaixo do hero. |
-| "Acabamento · obrigatório" + frase "Cada peça é produzida sob demanda…" | Frase redundante (já está nas signals e na aba entrega). Remover. |
-| "mesmo preço" no header do acabamento | Microcópia desnecessária. Remover. |
-| Linha "Adicionado por X estúdios · 30 dias" | Prova social fraca, sem dados reais. Remover do hero. |
+## Mudanças
 
-## 2. Nova coluna direita (curta, igual ao reference)
+### 1. Preço cheio sempre (sem "a partir de")
 
-```text
-[eyebrow] PEDRAS GRANDES > LINHA RIO
-Cascata Sabino                    ← H1 display
-SKU · WEST-CS-1
+`src/pages/ProductPage.tsx` — bloco do preço:
+- Remover o fallback `a partir de ...` e a renderização condicional de `<PriceDisplay>` vs `<p>`.
+- Mostrar **sempre** o preço da variante atual; quando nenhuma variante estiver selecionada, usar `product.priceRange.minVariantPrice` (mesmo valor, mas sem o prefixo "a partir de").
+- Tipografia: usar a mesma fonte/peso do resto da PDP. Substituir `text-price` (que tem cents/currency reduzidos) por uma renderização única, plana:
+  - `font-sans font-semibold tabular-nums text-[2rem] md:text-[2.25rem] leading-none text-western-green-deep`
+  - "R$" no mesmo tamanho do número, sem opacity nem vertical-align.
+  - Centavos no mesmo tamanho (sem reduzir).
+- Remover a função `PriceDisplay` interna.
+- Linha de apoio: substituir "À vista · condição parceiro" por algo mais funcional/curto: **"Preço parceiro · à vista"** em `text-meta`.
 
-Pedra de aparência natural, 10× mais leve.   ← 1 linha curta, sans 14px
-Ideal para spas e bordas de piscina.
+### 2. CTA "Adicionar ao pedido" otimizado
 
-ACABAMENTO · obrigatório
-[Quartzo] [Arenito] [Moledo] [Granito]
+`src/pages/ProductPage.tsx` (botão principal) e `src/index.css` (utilitário novo se útil):
+- Aumentar peso visual: `h-14` (era h-12), `font-sans font-medium text-sm tracking-[0.05em]` (não-uppercase) — padrão e-commerce.
+- Texto: **"Adicionar ao pedido"** em case normal (não uppercase), mais legível.
+- Cor: manter dourado, mas com sombra sutil no hover (`hover:shadow-md`) para reforçar affordance.
+- Estado pendente: manter cinza, mesmo tipo, texto "Selecione o acabamento".
+- Stepper de quantidade: alinhar a `h-14` para ficar do mesmo tamanho do botão.
 
-R$ 1.240,00                       ← preço grande sans
-À vista · condição parceiro
+### 3. Hierarquia/posicionamento do bloco de compra
 
-[ - 1 + ]   [══ ADICIONAR AO PEDIDO ══]   [♡]
-
-⏱ 15 dias  ·  📍 Cajamar  ·  🚚 frete calculado
-
-— pintura personalizada? falar com consultor →   ← link discreto
-```
-
-Acaba aí. Sem `HardFactsCard`, sem `WhatsInTheBox`, sem accordions na coluna direita, sem lead longo, sem aplicações chip.
-
-## 3. Abas abaixo do hero (full-width, container centralizado)
-
-Inspirado no reference (Description / Additional Information / Review), mas adequado ao produto:
+Nova ordem (mais e-commerce, menos editorial):
 
 ```text
-┌──────────────────────────────────────────────────────────┐
-│  Descrição  |  Especificações  |  Entrega & instalação  │
-└──────────────────────────────────────────────────────────┘
+Eyebrow coleção
+H1 Título
+SKU
+Blurb curto
+
+────────────────────────
+PREÇO grande (sempre cheio)
+linha de apoio
+────────────────────────
+Acabamento (obrigatório)
+Outras opções
+────────────────────────
+[Stepper] [Adicionar ao pedido] [♡]
+DeliverySignals (compactos, abaixo do CTA)
+Link discreto: pintura personalizada
 ```
 
-**Aba 1 · Descrição** (default ativa)
-- Lead atual (parágrafo) + intro (parágrafo `parsed.intro` se existir)
-- Aplicações (linha única horizontal `Spa · Borda · Jardim · Painel`)
-- Bloco "Composição & material" (4 itens atuais, layout horizontal em 2 colunas no desktop)
+Justificativas:
+- **Preço acima das opções**: usuário decide se vale o ticket antes de escolher acabamento (padrão Shopify/Amazon/IKEA).
+- **CTA logo após as opções**: fluxo de decisão linear.
+- **Sinais de entrega abaixo do CTA**: reforço pós-decisão, não distração.
+- **Pintura personalizada**: rodapé do bloco, nunca compete com CTA.
 
-**Aba 2 · Especificações**
-- `HardFactsCard` em modo "card" (volta a ser destaque, não strip)
-- Tabela de Ficha técnica completa (todos `fichaRows`)
-- Grid de dimensões C/L/A (atual)
-- Observações (lista, se houver)
-- Modelo 3D (botão + descrição) — vira sub-bloco aqui
+### 4. Tipografia dos elementos auxiliares
 
-**Aba 3 · Entrega & instalação**
-- Bloco "O que vem na caixa" (3 ícones existentes — reaproveitar componente)
-- Produção / Entrega / Instalação (dl atual)
-- Cuidados (parágrafo atual)
+- **DeliverySignals** (`src/components/product/DeliverySignals.tsx`): reduzir peso visual — manter mono, mas trocar uppercase + tracking grande por **case normal**, `text-[11px] tracking-normal text-western-stone-warm/80`. Ícones em `text-western-stone-warm/60` (não dourado, para não competir com CTA).
+- **Link "Pintura personalizada"**: manter mono pequeno, mas alinhar à esquerda e adicionar separador `·` discreto antes do "falar com consultor". Já está bom — apenas verificar contraste.
+- **Eyebrow "Acabamento · obrigatório"**: manter como está (funciona).
 
-Resultado: **0 accordions**. Tudo navegável por aba. Cliente que quer comprar não rola — bate o olho no preço, escolhe acabamento, clica. Cliente que quer aprofundar tem 3 abas claras.
+### 5. Remoções
 
-## 4. Tipografia — eliminar resíduos "luxo"
+- Função `PriceDisplay` em `ProductPage.tsx` (não mais necessária).
+- Classes `.text-price-cents` e `.text-price-currency` em `index.css` (não usadas após a mudança).
 
-- Frase "Cada peça é produzida sob demanda no acabamento escolhido." → **remover** (redundante com signals + aba entrega).
-- Tag "mesmo preço" no header do acabamento → **remover** (preço único é óbvio quando não há diferença).
-- Linha "Adicionado por N estúdios · 30 dias" → **remover** do hero (prova social vai para `SocialProofBand` que já existe abaixo).
-- Roman numerals (I., II., III.) dos accordions → desaparecem junto com os accordions.
-- Manter no hero: **só** `text-eyebrow` (acabamento), `text-price`, `text-meta` (condição), e os ícones de signals.
+## Fora de escopo
 
-## 5. Estrutura técnica
+- StickyBuyBar (mantém preço atual; revisar em próxima iteração se necessário).
+- Cores do design system.
+- Outras páginas/componentes.
+- Lógica de variantes/queries.
 
-- `src/pages/ProductPage.tsx`:
-  - Coluna direita: deletar blocos 3 (lead), 4 (aplicações), 5 (HardFacts strip), 5.1 (WhatsInTheBox), 6 (CustomPaintNote), e o `<Accordion>` inteiro.
-  - Adicionar 1 parágrafo curto (≤2 linhas) entre SKU e o seletor de acabamento, derivado de `parsed.lead` truncado por `.slice(0, ~120)` ou primeira frase.
-  - Remover frase "Cada peça é produzida sob demanda…" e tag "mesmo preço" e linha "estúdios + consultor".
-  - Mover link "pintura personalizada" para abaixo dos signals como link sutil (não card).
-  - Logo abaixo do `</div>` que fecha o grid hero (linha ~664), inserir novo componente `<ProductTabs />` com as 3 abas, antes de `<ProductInUse />`.
+## Arquivos afetados
 
-- **Novo**: `src/components/product/ProductTabs.tsx` — usa `<Tabs>` do shadcn (`src/components/ui/tabs.tsx`), recebe props `parsed`, `pesoKg`, `dimsStr`, `dims`, `fichaRows`, `product` e renderiza as 3 abas. Reaproveita `HardFactsCard variant="card"`, `WhatsInTheBox`, e o conteúdo dos accordions atuais (Composição, Modelo 3D, Cuidados).
-
-- **Manter intacto**: galeria, breadcrumb, `FinishSelector`, preço/stepper/CTA, `DeliverySignals`, `StickyBuyBar`, todas as seções full-width abaixo (`ProductInUse`, `Comparison`, `Related`, `WhyWesternStrip`, `SocialProofBand`, `ProductPagination`).
-
-- **Não** mexer em: queries Shopify, lógica de variantes/cart, tokens de cor, `index.css`.
-
-## 6. Fora de escopo
-
-- Tabs animadas / underline animado (usar shadcn padrão, ajustando só visual).
-- Refazer `HardFactsCard` ou `WhatsInTheBox` (reaproveitar como estão).
-- Outras páginas.
-
-## 7. Pergunta antes de implementar
-
-A divisão das abas faz sentido pra você (Descrição / Especificações / Entrega & instalação)? Ou prefere:
-- **(a)** Manter como proposto: 3 abas claras, defaultando em "Descrição".
-- **(b)** 4 abas separando Composição da Descrição: `Sobre · Composição · Especificações · Entrega`.
-- **(c)** 2 abas só: `Descrição & material · Especificações & entrega` (mais enxuto, mais perto do reference).
-
-Recomendo **(a)** — equilíbrio entre o reference (3 abas) e a quantidade de info que a Western tem.
+- `src/pages/ProductPage.tsx` (preço, CTA, ordem do bloco, remover `PriceDisplay`)
+- `src/components/product/DeliverySignals.tsx` (tipografia mais discreta)
+- `src/index.css` (limpar tokens de preço não usados)
