@@ -3,6 +3,8 @@ interface Props {
   dimensoes?: string | null;    // ex.: "108 × 76 × 52 cm"
   baseHint?: string;            // ex.: "Base plana · argamassa C3"
   variacao?: string;            // ex.: "Variação artesanal de até ±3 cm"
+  /** "card" (vertical hero) ou "strip" (faixa horizontal compacta) */
+  variant?: "card" | "strip";
 }
 
 export default function HardFactsCard({
@@ -10,8 +12,54 @@ export default function HardFactsCard({
   dimensoes,
   baseHint = "Base plana · argamassa C3",
   variacao = "Variação artesanal de até ±3 cm",
+  variant = "card",
 }: Props) {
   if (!pesoKg && !dimensoes) return null;
+
+  if (variant === "strip") {
+    const equivalente = pesoKg ? Math.round(Number(pesoKg) * 10) : null;
+    return (
+      <div className="mt-8 border-y border-western-stone-warm/20 py-5 grid grid-cols-2 md:grid-cols-4 gap-y-4 gap-x-6">
+        {pesoKg && (
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-1">
+              Peso
+            </p>
+            <p className="font-display text-2xl text-western-green-deep tabular-nums leading-none">
+              {pesoKg} <span className="text-base text-western-stone-warm/70">kg</span>
+            </p>
+            {equivalente && (
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/60 mt-1.5">
+                pedra natural ≈ {equivalente} kg
+              </p>
+            )}
+          </div>
+        )}
+        {dimensoes && (
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-1">
+              Dimensões
+            </p>
+            <p className="font-display text-lg text-western-green-deep tabular-nums leading-tight">
+              {dimensoes}
+            </p>
+          </div>
+        )}
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-1">
+            Base
+          </p>
+          <p className="text-spec text-western-green-deep leading-tight">{baseHint.replace(/^Base\s*[·:]\s*/i, "")}</p>
+        </div>
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-1">
+            Variação
+          </p>
+          <p className="text-spec text-western-green-deep leading-tight">{variacao.replace(/^Variação\s*artesanal\s*de\s*até\s*/i, "±").replace("±±", "±")}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-8 border border-western-stone-warm/20 bg-western-paper px-6 py-7">

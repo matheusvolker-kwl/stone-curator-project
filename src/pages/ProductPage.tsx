@@ -372,9 +372,9 @@ export default function ProductPage() {
                       )}
                     </div>
 
-                    {/* 2.4 — Entrega */}
+                    {/* 2.4 — Entrega + condições comerciais (consolidado) */}
                     <div>
-                      <DeliverySignals />
+                      <DeliverySignals variant="full" />
                     </div>
 
                     {/* 2.5 — CTA principal */}
@@ -410,49 +410,37 @@ export default function ProductPage() {
                           />
                         </div>
 
-                        {/* Linha sutil: gatilho + consultor */}
-                        <div className="mt-4 flex items-center justify-between flex-wrap gap-3">
-                          <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
-                            <Folder className="h-3 w-3 text-western-gold flex-shrink-0" />
-                            <span>
-                              Adicionado por{" "}
-                              <span className="text-western-green-deep">{studios}</span> estúdios · 30 dias
-                            </span>
-                          </p>
-                          <button
-                            onClick={() => {
-                              const msg = `Olá! Gostaria de falar sobre ${product.title}${sku ? ` (SKU ${sku})` : ""}.`;
-                              window.open(
-                                `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
-                                "_blank"
-                              );
-                            }}
-                            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
-                          >
-                            <MessageCircle className="h-3.5 w-3.5" /> Falar com consultor
-                          </button>
-                        </div>
                       </div>
                     )}
 
-                    {!isApproved && (
+                    {/* 2.6 — Linha sutil única: prova social + consultor (vale para logado e visitante) */}
+                    <div className="flex items-center justify-between flex-wrap gap-3 pt-1">
                       <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
-                        <Folder className="h-3 w-3 text-western-gold flex-shrink-0" />
+                        <Folder className="h-3 w-3 text-western-stone-warm/60 flex-shrink-0" />
                         <span>
                           Adicionado por{" "}
                           <span className="text-western-green-deep">{studios}</span> estúdios · 30 dias
                         </span>
                       </p>
-                    )}
+                      <button
+                        onClick={() => {
+                          const msg = `Olá! Gostaria de falar sobre ${product.title}${sku ? ` (SKU ${sku})` : ""}.`;
+                          window.open(
+                            `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
+                            "_blank"
+                          );
+                        }}
+                        className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
+                      >
+                        <MessageCircle className="h-3.5 w-3.5" /> Falar com consultor
+                      </button>
+                    </div>
                   </>
                 );
               })()}
             </section>
 
-            {/* 3 — Dados duros: peso & dimensões */}
-            <HardFactsCard pesoKg={pesoKg} dimensoes={dimsStr} />
-
-            {/* 4 — Lead editorial */}
+            {/* 3 — Lead editorial */}
             {parsed.lead && (
               <p
                 className="product-lead mt-10"
@@ -469,7 +457,7 @@ export default function ProductPage() {
               />
             )}
 
-            {/* 5 — Aplicações */}
+            {/* 4 — Aplicações */}
             {parsed.aplicacoes.length > 0 && (
               <div className="mt-10">
                 <p className="text-eyebrow mb-4">Aplicações</p>
@@ -486,6 +474,9 @@ export default function ProductPage() {
               </div>
             )}
 
+            {/* 5 — Dados duros (faixa horizontal compacta) */}
+            <HardFactsCard pesoKg={pesoKg} dimensoes={dimsStr} variant="strip" />
+
             {/* 6 — Pintura personalizada */}
             {visibleOptions.some((o) => /acabament/i.test(o.name)) && (
               <CustomPaintNote
@@ -498,36 +489,6 @@ export default function ProductPage() {
                 }}
               />
             )}
-
-            {/* 7 — SketchUp */}
-            {(() => {
-              const url = product.modelo3d?.value?.trim() || BUSINESS.sketchupWarehouse;
-              const isProductSpecific = !!product.modelo3d?.value?.trim();
-              return (
-                <div className="mt-6">
-                  <a
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full h-12 inline-flex items-center justify-center gap-2 bg-western-gold/10 border border-western-gold text-western-gold hover:bg-western-gold hover:text-western-green-deep font-mono text-xs uppercase tracking-[0.22em] transition-colors"
-                  >
-                    <Download className="h-4 w-4" />
-                    {isProductSpecific ? "Baixar modelo 3D (.skp)" : "Modelos no 3D Warehouse"}
-                  </a>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mt-2 leading-relaxed">
-                    Modele a composição inteira no SketchUp antes de comprar
-                  </p>
-                </div>
-              );
-            })()}
-
-            {/* 8 — Regras comerciais */}
-            <ul className="text-spec text-western-stone-warm/80 leading-relaxed mt-8 text-xs space-y-1">
-              <li>· Produção sob demanda · {BUSINESS.prazoProducaoDias} dias úteis</li>
-              <li>· Pedido mínimo {BUSINESS.pedidoMinimoLabel}</li>
-              <li>· Frete cotado por região · retirada gratuita em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}</li>
-              <li>· Garantia {BUSINESS.garantiaAnos} anos contra defeitos de fabricação</li>
-            </ul>
 
 
             {/* Accordions */}
@@ -549,7 +510,7 @@ export default function ProductPage() {
                           { rotulo: "Altura",      sigla: "A", valor: dims.a },
                         ].map((d) => (
                           <div key={d.sigla} className="bg-western-cream p-4 text-center">
-                            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-2">
+                            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-2">
                               {d.sigla} · {d.rotulo}
                             </p>
                             <p className="font-display text-xl text-western-green-deep tabular-nums">
@@ -571,24 +532,10 @@ export default function ProductPage() {
                         <SpecRow key={f.label} dt={f.label} dd={f.value} />
                       ))}
                   </dl>
-                  {acabamentosRow && (
-                    <div className="mt-6">
-                      <p className="text-eyebrow mb-3">Acabamentos disponíveis</p>
-                      <div className="flex flex-wrap gap-2">
-                        {acabamentosRow.value
-                          .split(/[·•|,]/)
-                          .map((v) => v.trim())
-                          .filter(Boolean)
-                          .map((v) => (
-                            <span key={v} className="spec-chip">
-                              {v}
-                            </span>
-                          ))}
-                      </div>
-                    </div>
-                  )}
                 </ProductAccordion>
               )}
+
+              {/* placeholder removido: acabamentos já estão no FinishSelector acima */}
 
               <ProductAccordion numeral="II" title="Composição & material" value="composicao">
                 <p className="text-spec text-western-stone-warm leading-[1.8] mb-6">
@@ -625,7 +572,7 @@ export default function ProductPage() {
                     },
                   ].map((item) => (
                     <li key={item.label}>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold mb-1.5">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-green-deep/80 mb-1.5">
                         {item.label}
                       </p>
                       <p className="text-spec text-western-stone-warm leading-[1.8]">
@@ -642,7 +589,7 @@ export default function ProductPage() {
                     {parsed.observacoes.map((o, i) => (
                       <li key={i}>
                         {o.label && (
-                          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold mb-1.5">
+                          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-green-deep/80 mb-1.5">
                             {o.label}
                           </p>
                         )}
@@ -655,14 +602,35 @@ export default function ProductPage() {
                 </ProductAccordion>
               )}
 
-              {parsed.modelo3dHtml && (
-                <ProductAccordion numeral="IV" title="Modelo 3D · SketchUp" value="modelo">
-                  <div
-                    className="product-prose"
-                    dangerouslySetInnerHTML={{ __html: parsed.modelo3dHtml }}
-                  />
-                </ProductAccordion>
-              )}
+              <ProductAccordion numeral="IV" title="Modelo 3D · SketchUp" value="modelo">
+                {(() => {
+                  const url = product.modelo3d?.value?.trim() || BUSINESS.sketchupWarehouse;
+                  const isProductSpecific = !!product.modelo3d?.value?.trim();
+                  return (
+                    <>
+                      <p className="text-spec text-western-stone-warm leading-[1.8] mb-5">
+                        Modele a composição inteira no SketchUp antes de comprar — assim você visualiza
+                        proporções, escala e enquadramento exatos no projeto.
+                      </p>
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 h-11 px-5 bg-western-gold/10 border border-western-gold/60 text-western-green-deep hover:bg-western-gold hover:border-western-gold font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+                      >
+                        <Download className="h-4 w-4" />
+                        {isProductSpecific ? "Baixar modelo 3D (.skp)" : "Abrir no 3D Warehouse"}
+                      </a>
+                      {parsed.modelo3dHtml && (
+                        <div
+                          className="product-prose mt-5"
+                          dangerouslySetInnerHTML={{ __html: parsed.modelo3dHtml }}
+                        />
+                      )}
+                    </>
+                  );
+                })()}
+              </ProductAccordion>
 
               <ProductAccordion numeral="V" title="Produção & entrega" value="entrega">
                 <p className="text-spec text-western-stone-warm leading-[1.8]">
@@ -758,7 +726,7 @@ function ProductAccordion({
     <AccordionItem value={value} className="border-b border-western-stone-warm/20">
       <AccordionTrigger className="py-6 hover:no-underline group [&>svg]:text-western-stone-warm">
         <span className="flex items-baseline gap-5 text-left">
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-western-gold w-6">
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-western-stone-warm/60 w-6">
             {numeral}.
           </span>
           <span className="font-display text-xl text-western-green-deep group-hover:text-western-gold transition-colors">
