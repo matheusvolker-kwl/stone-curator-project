@@ -257,6 +257,8 @@ export default function CartDrawer({
               </div>
             )}
 
+            {isApproved && meetsMinimum && <CalcFrete />}
+
             <div className="flex items-center justify-between gap-3 py-2 border-y border-western-gold/10">
               <div className="flex items-center gap-2 text-western-cream-muted">
                 <Clock className="h-3.5 w-3.5 text-western-gold-soft" />
@@ -276,10 +278,10 @@ export default function CartDrawer({
             {isApproved ? (
               <Button
                 onClick={handleCheckout}
-                disabled={isLoading || isSyncing || !meetsMinimum}
+                disabled={isLoading || isSyncing || checkoutLoading || !meetsMinimum}
                 className="w-full h-14 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none shadow-[0_18px_40px_-20px_rgba(184,146,79,0.6)] disabled:opacity-50"
               >
-                {isLoading || isSyncing ? (
+                {isLoading || isSyncing || checkoutLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <>
