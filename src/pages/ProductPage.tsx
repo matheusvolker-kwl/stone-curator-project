@@ -440,10 +440,7 @@ export default function ProductPage() {
               })()}
             </section>
 
-            {/* 3 — Dados duros: peso & dimensões */}
-            <HardFactsCard pesoKg={pesoKg} dimensoes={dimsStr} />
-
-            {/* 4 — Lead editorial */}
+            {/* 3 — Lead editorial */}
             {parsed.lead && (
               <p
                 className="product-lead mt-10"
@@ -460,7 +457,7 @@ export default function ProductPage() {
               />
             )}
 
-            {/* 5 — Aplicações */}
+            {/* 4 — Aplicações */}
             {parsed.aplicacoes.length > 0 && (
               <div className="mt-10">
                 <p className="text-eyebrow mb-4">Aplicações</p>
@@ -477,6 +474,9 @@ export default function ProductPage() {
               </div>
             )}
 
+            {/* 5 — Dados duros (faixa horizontal compacta) */}
+            <HardFactsCard pesoKg={pesoKg} dimensoes={dimsStr} variant="strip" />
+
             {/* 6 — Pintura personalizada */}
             {visibleOptions.some((o) => /acabament/i.test(o.name)) && (
               <CustomPaintNote
@@ -489,36 +489,6 @@ export default function ProductPage() {
                 }}
               />
             )}
-
-            {/* 7 — SketchUp */}
-            {(() => {
-              const url = product.modelo3d?.value?.trim() || BUSINESS.sketchupWarehouse;
-              const isProductSpecific = !!product.modelo3d?.value?.trim();
-              return (
-                <div className="mt-6">
-                  <a
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full h-12 inline-flex items-center justify-center gap-2 bg-western-gold/10 border border-western-gold text-western-gold hover:bg-western-gold hover:text-western-green-deep font-mono text-xs uppercase tracking-[0.22em] transition-colors"
-                  >
-                    <Download className="h-4 w-4" />
-                    {isProductSpecific ? "Baixar modelo 3D (.skp)" : "Modelos no 3D Warehouse"}
-                  </a>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mt-2 leading-relaxed">
-                    Modele a composição inteira no SketchUp antes de comprar
-                  </p>
-                </div>
-              );
-            })()}
-
-            {/* 8 — Regras comerciais */}
-            <ul className="text-spec text-western-stone-warm/80 leading-relaxed mt-8 text-xs space-y-1">
-              <li>· Produção sob demanda · {BUSINESS.prazoProducaoDias} dias úteis</li>
-              <li>· Pedido mínimo {BUSINESS.pedidoMinimoLabel}</li>
-              <li>· Frete cotado por região · retirada gratuita em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}</li>
-              <li>· Garantia {BUSINESS.garantiaAnos} anos contra defeitos de fabricação</li>
-            </ul>
 
 
             {/* Accordions */}
