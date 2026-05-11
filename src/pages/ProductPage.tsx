@@ -629,16 +629,22 @@ export default function ProductPage() {
               </ProductAccordion>
 
               <ProductAccordion numeral="V" title="Produção & entrega" value="entrega">
-                <p className="text-spec text-western-stone-warm leading-[1.8]">
-                  Cada peça é produzida sob encomenda em nosso ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
-                  Prazo de produção de {BUSINESS.prazoProducaoDias} dias úteis após confirmação do pedido.
-                  Instalação simples com argamassa C3 (loja de bairro). Kit de pintura para
-                  retoque incluso. Frete calculado conforme destino e dimensões.
-                </p>
+                <dl className="space-y-4">
+                  {[
+                    { k: "Produção", v: `Sob encomenda em ${BUSINESS.cidadeAtelie}/${BUSINESS.ufAtelie}. ${BUSINESS.prazoProducaoDias} dias úteis após confirmação do pedido.` },
+                    { k: "Entrega", v: "Frete calculado por destino e dimensões. Retira em fábrica disponível." },
+                    { k: "Instalação", v: 'Veja "O que vem na caixa" — kit completo incluso, fixação com argamassa C3.' },
+                  ].map((row) => (
+                    <div key={row.k}>
+                      <dt className="text-meta text-western-green-deep mb-1">{row.k}</dt>
+                      <dd className="text-body">{row.v}</dd>
+                    </div>
+                  ))}
+                </dl>
               </ProductAccordion>
 
               <ProductAccordion numeral="VI" title="Cuidados" value="cuidados">
-                <p className="text-spec text-western-stone-warm leading-[1.8]">
+                <p className="text-body">
                   Manutenção zero. Limpeza com pano macio levemente úmido ou jato de água.
                   Evite produtos abrasivos ou ácidos. A pintura mineral resiste a cloro de
                   piscina, intempéries e raios UV — não escama, não desbota.
