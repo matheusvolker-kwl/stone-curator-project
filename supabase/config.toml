@@ -2,3 +2,12 @@ project_id = "zibtysewpbeycngtbjjk"
 
 [functions.log-client-error]
 verify_jwt = false
+
+[functions.yampi-sku-mapping]
+verify_jwt = false
+
+[functions.yampi-calc-frete]
+verify_jwt = false
+
+[functions.yampi-criar-checkout]
+verify_jwt = false
