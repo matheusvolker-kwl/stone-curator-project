@@ -236,6 +236,19 @@ export default function ProductPage() {
               </p>
             )}
 
+            {/* Blurb curto — 1 frase, sans, funcional */}
+            {parsed.lead && (
+              <p className="font-sans text-[14.5px] leading-relaxed text-western-stone-warm mt-5 max-w-[48ch]">
+                {(() => {
+                  const cleaned = parsed.lead
+                    .replace(new RegExp(`^A?\\s*${escapeRegExp(product.title)}\\s*`, "i"), "")
+                    .trim();
+                  const firstSentence = cleaned.split(/(?<=[.!?])\s/)[0] ?? cleaned;
+                  return firstSentence.charAt(0).toUpperCase() + firstSentence.slice(1);
+                })()}
+              </p>
+            )}
+
             {/* 2 — BLOCO DE COMPRA — sem caixa, hierarquia vertical */}
             <section
               ref={ctaRef}
