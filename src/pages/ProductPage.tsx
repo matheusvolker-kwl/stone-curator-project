@@ -532,24 +532,10 @@ export default function ProductPage() {
                         <SpecRow key={f.label} dt={f.label} dd={f.value} />
                       ))}
                   </dl>
-                  {acabamentosRow && (
-                    <div className="mt-6">
-                      <p className="text-eyebrow mb-3">Acabamentos disponíveis</p>
-                      <div className="flex flex-wrap gap-2">
-                        {acabamentosRow.value
-                          .split(/[·•|,]/)
-                          .map((v) => v.trim())
-                          .filter(Boolean)
-                          .map((v) => (
-                            <span key={v} className="spec-chip">
-                              {v}
-                            </span>
-                          ))}
-                      </div>
-                    </div>
-                  )}
                 </ProductAccordion>
               )}
+
+              {/* placeholder removido: acabamentos já estão no FinishSelector acima */}
 
               <ProductAccordion numeral="II" title="Composição & material" value="composicao">
                 <p className="text-spec text-western-stone-warm leading-[1.8] mb-6">
