@@ -1,150 +1,214 @@
-# PDP — Reorganização e clareza visual
 
-Objetivo: manter 100% da informação, mas tirar a sensação de "muito" e "monocromático". Foco em **hierarquia tipográfica**, **eliminação de duplicatas** e **um único caminho claro de leitura**.
+# PDP — virar e-commerce funcional, parar de "luxo desnecessário"
 
-## 1. Diagnóstico — o que está poluindo
+Objetivo: a PDP precisa **informar com clareza e vender**. Hoje está bonita mas trabalha contra a conversão — preço escondido, descrição em itálico cursivo difícil de bater o olho, blocos de texto enormes com redundâncias, e informações operacionais (argamassa C3, kit de retoque) jogadas como nota de rodapé.
 
-**Redundâncias reais identificadas no código atual:**
+## 1. Diagnóstico do que está quebrado
 
-| Informação | Aparece em |
-|---|---|
-| Prazo 15 dias úteis | `DeliverySignals` + lista "Regras comerciais" + accordion "Produção & entrega" |
-| Pedido mínimo R$ 700 | Lista "Regras comerciais" + `PriceGate` (visitante) |
-| Retira em Cajamar | `DeliverySignals` + lista "Regras comerciais" + accordion "Produção & entrega" |
-| Garantia 5 anos | Lista "Regras comerciais" + Ficha técnica + Composição |
-| Dimensões C×L×A | `HardFactsCard` (inline) + Ficha técnica (grid) |
-| Acabamentos | `FinishSelector` (topo) + Ficha "Acabamentos disponíveis" |
-| Modelo 3D | Botão dourado grande + accordion "Modelo 3D · SketchUp" |
-| "Adicionado por N estúdios · 30 dias" | Renderizado 2× (logado / visitante) |
-| Pintura personalizada | `CustomPaintNote` + "Falar com consultor" no CTA |
-| Variação ±3 cm | `HardFactsCard` + Ficha técnica |
+| Problema | Onde | Impacto |
+|---|---|---|
+| Preço pequeno (`text-3xl md:text-4xl` em `font-display` serifada) | bloco 2.3 | não compete com o resto da página, parece mais "label" do que "preço" |
+| Lead editorial em `font-display italic` 1.2–1.45rem com **drop cap dourado gigante** | bloco 3 | bonito em revista, péssimo para escanear; o cliente quer specs, não prosa |
+| Aplicações = chips com padding `px-3 py-1.5` em borda e fundo cream, ocupam 2-3 linhas | bloco 4 | rouba o espaço onde o cliente decidiria comprar |
+| "Composição & material" = 6 itens × 2-3 linhas cada = parágrafo gigante | accordion II | redundância com Ficha técnica (garantia, peso, resistência) e com a frase introdutória |
+| `"Instalação simples com argamassa C3 (loja de bairro). Kit de pintura para retoque incluso."` enfiada num parágrafo de "Produção & entrega" | accordion V | informação **crítica de pós-compra** disfarçada de nota; "loja de bairro" parece piada |
+| `"Base plana argamassa C3"` aparece solto no `HardFactsCard` strip | bloco 5 | sem contexto, ninguém entende o que é |
+| 9 variações de `font-mono uppercase tracking-[0.xxem]` em tamanhos 10/10.5/11/12px | toda PDP | ruído tipográfico, parece "etiqueta de etiqueta" |
+| Itálico serifado em texto corrido + `font-display` em qualquer coisa que precise de peso | toda PDP | identidade "luxo" mata a leitura funcional |
 
-**Cromático:** tudo é `western-green-deep` + `western-gold` + `western-stone-warm` sobre `paper/ivory`. Não falta cor — falta **respiro** (mais branco/cream puro) e **um único uso intencional do dourado** (CTA + 1 acento), em vez de dourado em ~12 lugares (eyebrow, divider, ícone, badge, hover, link, número romano, etc.).
+## 2. Princípios da nova PDP
 
-**Tipografia:** boa base (`font-display` + `font-mono`), mas o `font-mono uppercase tracking-[0.22em]` aparece em **9 tamanhos diferentes** (10, 10.5, 11, 12px com tracking variando 0.15–0.30em). Vira ruído.
+1. **Preço é o herói da decisão.** Grande, sans-serif, tabular, alinhado à esquerda, com hierarquia clara entre valor e condição.
+2. **Texto longo só nos accordions.** Acima da dobra, só specs e dados objetivos.
+3. **Cada informação operacional tem seu próprio bloco visual.** Instalação, kit, garantia, prazo — não enfiar em parágrafo.
+4. **Sans-serif para tudo que é funcional** (preço, specs, aplicações, ficha). **Serifa só em**: H1 do produto, títulos de accordion, e UM parágrafo curto de "lead" se realmente fizer sentido.
+5. **Itálico nunca em bloco de texto.** Só em ênfase pontual.
 
-## 2. Princípios da reorganização
+## 3. Mudanças concretas
 
-1. **Cada informação aparece 1 vez**, no lugar mais natural para a decisão do cliente.
-2. **3 zonas claras**, com separação visual forte (não só linhas finas):
-   - **Zona Decisão** (acima da dobra): nome + acabamento + preço + qtd + CTA + entrega.
-   - **Zona Confiança** (logo abaixo): lead editorial + aplicações + dados duros + 1 prova social.
-   - **Zona Profundidade** (accordions): toda a ficha completa para quem quer ler tudo.
-3. **Tipografia em escala fixa**: 3 tamanhos de eyebrow (não 9), 2 pesos de body, 1 escala display.
-4. **Dourado só em 2 lugares**: CTA principal e o acento que marca "obrigatório / ação". Resto migra para verde-deep ou stone-warm.
-5. **Próximo passo sempre visível**: o cliente nunca deve perguntar "e agora?".
+### 3.1 Preço — bloco 2.3
 
-## 3. Nova estrutura da coluna direita (Decisão)
+**Antes:**
+```text
+Condição parceiro
+R$ 1.240,00     [- 1 +]
+  ↑ font-display 3xl/4xl
+```
+
+**Depois:**
+```text
+R$ 1.240,00      [ - 1 + ]
+  ↑ sans 5xl bold tabular, "1.240" preto, ",00" stone-warm 60%
+À vista · condição parceiro       ← linha discreta abaixo
+```
+
+- Trocar `font-display` por `font-sans font-semibold` no preço.
+- Tamanho: `text-4xl md:text-5xl` com `tabular-nums tracking-tight`.
+- "R$" em tamanho 60% do número, alinhado ao topo.
+- Centavos em opacidade reduzida.
+- Label "Condição parceiro" vira **abaixo** do preço, não acima — preço é o que importa.
+- Stepper sobe para alinhar com o preço, mantém a altura `h-12`.
+
+### 3.2 Lead editorial — bloco 3
+
+- Remover `product-lead` (italic + drop cap dourado).
+- Virar parágrafo objetivo curto: `font-sans text-base leading-relaxed text-western-stone-warm`.
+- Limite visual de 3 linhas; resto vai pro accordion "Sobre a peça" (novo, opcional).
+- Remover capitular dourado: nada de letra capitular numa PDP de e-commerce.
+
+### 3.3 Aplicações — bloco 4
+
+**Antes:** chips grandes em flex-wrap ocupando 3 linhas.
+**Depois:** linha única horizontal com separador `·`:
 
 ```text
-┌─ Breadcrumb (mantém)
+APLICAÇÕES   Spa  ·  Borda de piscina  ·  Jardim seco  ·  Painel d'água
+```
+
+- `font-mono text-[11px] uppercase tracking-wide text-western-stone-warm`
+- Sem bordas, sem fundos, sem padding.
+- Se passar de 1 linha → quebra normal, mas sem "chips".
+
+### 3.4 Novo bloco: "O que vem com a peça" — substitui o `HardFactsCard` strip e a menção solta a "Base argamassa C3"
+
+Inserir entre Aplicações e CustomPaintNote, como **uma faixa visual com 3 ícones**:
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│  📦 O que vem na caixa                                      │
+│                                                             │
+│  🪨 1 peça pronta    🎨 Kit de retoque    📋 Manual de      │
+│  para instalar       de pintura mineral   fixação com       │
+│                      (mesma cor)          argamassa C3       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+- Background `surface-cream`, padding generoso.
+- Ícones de `lucide-react` (Package, Paintbrush, FileText).
+- Textos curtos, sans-serif 13px.
+- **Resolve duas dores de uma vez**: explica o kit de retoque e a fixação com argamassa C3 num lugar onde faz sentido (junto da peça), não enterrado em "Produção & entrega".
+
+### 3.5 HardFactsCard strip — simplificar
+
+- Remover a coluna "Base argamassa C3" (já está no bloco novo acima).
+- Manter só: **Peso · Dimensões · Variação ±3 cm**.
+- Trocar números de `font-display` para `font-sans font-semibold tabular-nums`.
+
+### 3.6 Composição & material — accordion II
+
+Reduzir de 6 itens × 3 linhas para **4 itens × 1-2 linhas**, removendo redundâncias com Ficha técnica:
+
+| Item atual | Decisão |
+|---|---|
+| Estrutura | **Mantém**, encurtar para 1 linha |
+| Interior oco | **Mantém** (é o diferencial) |
+| Pintura mineral | **Mantém**, encurtar |
+| Resistência mecânica | **Funde** com Estrutura |
+| Sustentabilidade | **Mantém** (diferencial de marca) |
+| Garantia | **Remove** (já está em Ficha técnica + bloco "vem na caixa") |
+
+Parágrafo introdutório: cortar pela metade. Hoje: "Toda peça Western é fabricada artesanalmente em composto mineral proprietário, desenvolvido há 33 anos no nosso ateliê. Reproduz fielmente a estética da pedra natural — sem nenhuma extração ambiental." → "Composto mineral proprietário, desenvolvido há 33 anos. Estética de pedra natural, sem extração ambiental."
+
+### 3.7 Produção & entrega — accordion V
+
+**Antes:** parágrafo único com instalação + kit + frete misturados.
+**Depois:** 3 linhas curtas, uma por tópico:
+
+```text
+PRODUÇÃO    Sob encomenda em Cajamar/SP. 15 dias úteis após confirmação.
+ENTREGA     Frete calculado por destino e dimensões. Retira em fábrica disponível.
+INSTALAÇÃO  Veja "O que vem na caixa" acima — kit completo incluso.
+```
+
+Remover a frase "argamassa C3 (loja de bairro)" — migra para o bloco novo com contexto adequado.
+
+### 3.8 Tipografia — tokens novos no `index.css`
+
+Adicionar 6 classes utilitárias e usar consistentemente:
+
+```css
+.text-price        → sans 4xl/5xl, font-semibold, tabular-nums, tracking-tight
+.text-price-cents  → 60% size, opacity-60, tabular-nums
+.text-meta         → mono 11px, tracking-[0.18em], stone-warm/80, uppercase
+.text-eyebrow      → mono 12px, tracking-[0.22em], green-deep/90, uppercase, font-medium
+.text-spec         → JÁ EXISTE — manter, mas trocar font-mono por font-sans nos usos de body
+.text-body         → sans 15px, leading-relaxed, stone-warm
+```
+
+Substituir os ~30 usos de `font-mono text-[10px] uppercase tracking-[0.22em]` por `.text-meta` e `.text-eyebrow`.
+
+### 3.9 Cores — respiro real entre seções
+
+Hoje toda a coluna direita é `surface-ivory` puro. Aplicar 3 fundos sutis:
+
+- **Bloco compra (header + acabamento + preço + CTA + entrega)**: `surface-paper` (atual ivory ok).
+- **Lead + aplicações + dados duros + bloco "vem na caixa"**: faixa `surface-cream` com padding interno generoso, criando claro recorte visual da zona de decisão.
+- **Accordions**: voltam para `surface-ivory`.
+
+Isso dá o respiro que falta sem inventar cor nova.
+
+## 4. Estrutura final da coluna direita
+
+```text
+┌─ Breadcrumb
 │
-│  PEDRAS GRANDES                           ← eyebrow único (10px)
-│  ─                                         ← removido (divider gold)
-│  Pedra Grande 1                           ← display 48px
-│  SKU · WEST-PG-1                          ← spec, sem destaque
+│  [eyebrow] PEDRAS GRANDES
+│  Pedra Grande 1                        ← H1 display, mantém serifa
+│  SKU · WEST-PG-1
 │
-├─ ACABAMENTO · obrigatório    mesmo preço  ← bloco mantido
-│  [ Quartzo ] [ Arenito ] [ Moledo ] [ Granito ]
+├─ ZONA COMPRA (surface-paper)
+│  Acabamento · obrigatório  [chips finish]
+│  R$ 1.240,00              [- 1 +]      ← PREÇO GRANDE SANS
+│  À vista · condição parceiro
+│  [══ ADICIONAR AO PEDIDO ══] [♡]
+│  ⏱ 15 dias  ·  📍 Cajamar  ·  🚚 frete
+│  ✦ Mín R$ 700  ·  Garantia 5 anos
 │
-├─ R$ 1.240,00            [ − 1 + ]         ← preço grande à esq, stepper à dir
-│  condição parceiro · à vista                 (ou PriceGate block para visitante)
+├─ ZONA INFO (surface-cream, faixa horizontal)
+│  Pedra de aparência natural, 10× mais leve. Ideal para spas e bordas.
 │
-├─ [══ ADICIONAR AO PEDIDO ══] [♡]         ← CTA dourado, único botão dourado da página
+│  APLICAÇÕES  Spa · Borda · Jardim · Painel
 │
-│  ⏱ 15 dias úteis  ·  📍 retira Cajamar  ·  🚚 frete por região
-│                                              ← DeliverySignals UNIFICADO
-│                                                (absorve a lista "Regras comerciais")
+│  [ Peso 74 kg | Dimensões 108×76×52 | ±3 cm ]
 │
-│  ✦ Pedido mínimo R$ 700  ·  Garantia 5 anos
-│                                              ← linha discreta abaixo
+│  ┌─ O QUE VEM NA CAIXA ─────────────────┐
+│  │  🪨 Peça pronta   🎨 Kit de retoque   │
+│  │  📋 Manual de fixação (argamassa C3)  │
+│  └────────────────────────────────────────┘
 │
-│  Adicionado por 28 estúdios nos últimos 30 dias
-│  Falar com consultor →                    ← agrupado em uma linha sutil
+│  Pintura personalizada? Falar com consultor →
+│
+├─ ZONA PROFUNDIDADE (surface-ivory, accordions)
+│  I. Ficha técnica
+│  II. Composição & material  (encurtado)
+│  III. Observações
+│  IV. Modelo 3D
+│  V. Produção & entrega  (3 linhas, não 1 parágrafo)
+│  VI. Cuidados
 └─
 ```
 
-**Removido desta zona:**
-- O bloco grande "74 kg + comparativo" (`HardFactsCard`) → desce para Zona Confiança.
-- Lista `Regras comerciais` (4 bullets) → fundida em `DeliverySignals` + linha discreta.
-- Renderização duplicada do "estúdios · 30 dias".
-- Botão dourado gigante do SketchUp → vira link discreto dentro do accordion "Modelo 3D" (que já existe).
+## 5. Arquivos afetados (técnico)
 
-## 4. Nova Zona Confiança (logo abaixo do CTA, full width da coluna direita ou em faixa)
+- `src/pages/ProductPage.tsx` — reorganização dos blocos 2.3, 3, 4, 5; novo bloco "O que vem na caixa"; encurtar conteúdo dos accordions II e V.
+- `src/components/product/HardFactsCard.tsx` — remover coluna "Base", trocar font-display por font-sans no número.
+- `src/components/product/CustomPaintNote.tsx` — manter, só ajustar tipografia.
+- **Novo**: `src/components/product/WhatsInTheBox.tsx` — bloco com 3 ícones.
+- `src/index.css` — adicionar `.text-price`, `.text-price-cents`, `.text-meta`, `.text-body`; ajustar `.text-spec` para usar `font-sans` por padrão.
+- Não mexer em queries Shopify, carrinho, lógica de variantes, nem nas seções full-width abaixo do hero (ProductInUse, Comparison, Related, etc.).
 
-Ordem reescrita para um único fluxo de leitura, sem repetir blocos:
+## 6. Fora de escopo desta rodada
 
-1. **Lead editorial** (parágrafo grande com capitular `É`) — mantém.
-2. **Aplicações** (chips) — mantém, mas usa borda cream em vez de stone-warm para suavizar.
-3. **Dados duros** — `HardFactsCard` realocado aqui, com novo layout horizontal:
-   `74 kg | 108 × 76 × 52 cm | base argamassa C3 | variação ±3 cm`
-   (uma faixa só, não dois blocos).
-4. **CustomPaintNote** — mantém, mas remove o "Falar com consultor" duplicado (já está na zona de decisão).
+- Galeria, StickyBuyBar, seções full-width abaixo do hero.
+- Outras páginas do site (Home, Linhas, Carrinho) — a refatoração tipográfica vai contagiar naturalmente conforme as novas classes substituírem os usos antigos, mas isso é outra rodada.
+- Reescrever os textos da Composição linha por linha — vou encurtar mantendo a essência; ajustes finos de copy em iteração separada.
 
-## 5. Accordions (Zona Profundidade)
+## 7. Antes de implementar — uma pergunta
 
-Mantém os 6 accordions, mas:
+O bloco **"O que vem na caixa"** com os 3 ícones (peça, kit de retoque, manual de fixação) é o que resolve a sua dor com a frase "argamassa C3 / loja de bairro". Quer ele:
 
-- **Ficha técnica**: remove o sub-bloco "Acabamentos disponíveis" (já está como FinishSelector visual no topo). Remove "Garantia" da tabela (vira linha única discreta na zona decisão). Mantém grid de dimensões — agora **único** lugar com a tabela 3-colunas detalhada.
-- **Modelo 3D · SketchUp**: absorve o botão de download que estava solto fora.
-- **Produção & entrega**: mantém texto, remove menção redundante a "frete por região / retira" (já em DeliverySignals).
-- Numerais romanos ficam, mas em **stone-warm** (não dourado) para reservar o ouro ao CTA.
+- **(a)** Logo abaixo do CTA, dentro da zona de decisão (cliente vê antes mesmo de rolar) — recomendado, é argumento de venda.
+- **(b)** Depois das aplicações, na zona info (mais discreto, mais "ficha").
+- **(c)** Como accordion próprio "O que está incluso" entre Ficha técnica e Composição (esconde por padrão).
 
-## 6. Padronização tipográfica
-
-Criar tokens semânticos no `index.css` e aplicar em toda a PDP:
-
-```text
-.text-eyebrow-sm   → mono 10px / tracking 0.22em / stone-warm   (chips, meta)
-.text-eyebrow      → mono 11px / tracking 0.25em / green-deep   (títulos de bloco)
-.text-eyebrow-lg   → mono 12px / tracking 0.28em / gold         (só "obrigatório", CTA)
-
-.text-body         → serif 16px / 1.7 / stone-warm              (parágrafos)
-.text-body-lead    → serif 18px / 1.7 / green-deep              (lead editorial)
-.text-spec         → sans 13px / 1.6 / green-deep               (specs, ficha)
-```
-
-Substituir os ~30 usos de `font-mono text-[10px] uppercase tracking-[0.22em]` espalhados por essas 3 classes. Resultado: ritmo visual previsível.
-
-## 7. Paleta — respiro sem perder identidade
-
-- **Fundo da Zona Decisão**: `surface-paper` (atual) — mantém.
-- **Fundo da Zona Confiança**: `surface-cream` (1 tom mais claro) — cria respiro entre seções.
-- **Fundo dos Accordions**: `surface-ivory` puro — terceira camada, ainda mais leve.
-- **Dourado** reduzido para: CTA, "obrigatório", divider do título, hover de link. Resto vira `green-deep` ou `stone-warm`.
-- **Verde-deep** ganha um secundário `green-deep/85` para subtítulos (não tudo no mesmo tom forte).
-
-Sem cores novas — só hierarquia mais clara das que já existem.
-
-## 8. Próximos passos visíveis
-
-Adicionar ao final da Zona Decisão (logo após o CTA) uma linha curta de "next steps" contextual:
-
-```text
-Ainda decidindo?  → Ver peças semelhantes  ·  Pedir amostra  ·  Falar com consultor
-```
-
-Os 3 links já existem em outras seções — só consolidar em uma linha sutil no momento de decisão.
-
-## 9. Detalhes técnicos da implementação
-
-- Refatorar `ProductPage.tsx` em sub-componentes: `<PdpDecisionColumn />`, `<PdpTrustBlock />`, `<PdpDeepDive />` (accordions). Reduz o arquivo de 781 para ~200 linhas no shell.
-- Criar `src/components/product/PdpDataStrip.tsx` (faixa horizontal peso/dim/base/variação) — substitui o uso atual de `HardFactsCard` em modo "card vertical".
-- Estender `DeliverySignals` para aceitar `variant: "full" | "minimal"` para incluir pedido mínimo + garantia em uma linha extra.
-- Adicionar tokens `.text-eyebrow-sm/.text-eyebrow/.text-eyebrow-lg` em `index.css`.
-- Adicionar `surface-cream` no `tailwind.config.ts` se ainda não existir.
-- Nada muda nas queries do Shopify, no carrinho, nem na lógica de variantes — só estrutura visual.
-
-## 10. Fora de escopo
-
-- Não mexer nas seções full-width abaixo (`ProductInUse`, `ProductComparison`, `RelatedProducts`, etc.) — outra rodada.
-- Não mexer no `StickyBuyBar` nem na galeria.
-- Não alterar o conteúdo dos textos da Composição/Observações/Cuidados.
-
-## Pergunta para você antes de eu implementar
-
-Quero confirmar 2 coisas:
-
-1. **Pode mover** o bloco grande "74 kg + comparativo com pedra natural" de cima do lead editorial **para depois** dele (junto com aplicações)? Visualmente fica menos pesado logo após o CTA, mas você perde o impacto do "10× mais leve" ser a primeira coisa após preço. Alternativa: manter no topo mas em formato de faixa horizontal compacta (não card vertical).
-
-2. **Pode reduzir o botão dourado do SketchUp** (hoje destacado fora de qualquer accordion) para um link discreto dentro do accordion "Modelo 3D"? Ou esse acesso precisa ficar em destaque acima da dobra dos accordions porque arquitetos usam muito?
+Minha recomendação é **(a)** — é o tipo de "zero atrito pós-compra" que vende.
