@@ -17,6 +17,8 @@ export interface ShopifyVariant {
   title: string;
   sku?: string | null;
   availableForSale: boolean;
+  weight?: number | null;
+  weightUnit?: string | null;
   price: ShopifyMoney;
   selectedOptions: Array<{ name: string; value: string }>;
   image?: ShopifyImage | null;
@@ -45,6 +47,10 @@ export interface ShopifyProductNode {
   options: Array<{ name: string; values: string[] }>;
   collections?: { edges: Array<{ node: { handle: string; title: string } }> };
   modelo3d?: ShopifyMetafield | null;
+  pesoKg?: ShopifyMetafield | null;
+  comprimentoCm?: ShopifyMetafield | null;
+  larguraCm?: ShopifyMetafield | null;
+  alturaCm?: ShopifyMetafield | null;
 }
 
 export interface ShopifyProduct {
