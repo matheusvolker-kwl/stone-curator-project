@@ -288,14 +288,14 @@ export default function CartDrawer({
             {isApproved ? (
               <Button
                 onClick={handleCheckout}
-                disabled={isLoading || isSyncing || !meetsMinimum}
+                disabled={isLoading || isSyncing || checkoutLoading || !meetsMinimum}
                 className="w-full h-14 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none shadow-[0_18px_40px_-20px_rgba(184,146,79,0.6)] disabled:opacity-50"
               >
-                {isLoading || isSyncing ? (
+                {checkoutLoading || isLoading || isSyncing ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <>
-                    Finalizar compra <ExternalLink className="h-4 w-4 ml-2" />
+                    Finalizar pedido <ExternalLink className="h-4 w-4 ml-2" />
                   </>
                 )}
               </Button>
