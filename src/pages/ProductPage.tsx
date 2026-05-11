@@ -510,7 +510,7 @@ export default function ProductPage() {
                           { rotulo: "Altura",      sigla: "A", valor: dims.a },
                         ].map((d) => (
                           <div key={d.sigla} className="bg-western-cream p-4 text-center">
-                            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-2">
+                            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-2">
                               {d.sigla} · {d.rotulo}
                             </p>
                             <p className="font-display text-xl text-western-green-deep tabular-nums">
@@ -572,7 +572,7 @@ export default function ProductPage() {
                     },
                   ].map((item) => (
                     <li key={item.label}>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold mb-1.5">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-green-deep/80 mb-1.5">
                         {item.label}
                       </p>
                       <p className="text-spec text-western-stone-warm leading-[1.8]">
@@ -589,7 +589,7 @@ export default function ProductPage() {
                     {parsed.observacoes.map((o, i) => (
                       <li key={i}>
                         {o.label && (
-                          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold mb-1.5">
+                          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-green-deep/80 mb-1.5">
                             {o.label}
                           </p>
                         )}
