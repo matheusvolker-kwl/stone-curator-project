@@ -79,7 +79,7 @@ Deno.serve(async (req) => {
     const data = await res.json();
     const link = data?.data ?? data;
     const url: string | undefined =
-      link?.url ?? link?.public_url ?? link?.checkout_url ?? link?.link;
+      link?.link_url ?? link?.url ?? link?.public_url ?? link?.checkout_url ?? link?.link;
     const id = link?.id ?? link?.payment_link_id;
 
     if (!url) {
