@@ -543,44 +543,35 @@ export default function ProductPage() {
               {/* placeholder removido: acabamentos já estão no FinishSelector acima */}
 
               <ProductAccordion numeral="II" title="Composição & material" value="composicao">
-                <p className="text-spec text-western-stone-warm leading-[1.8] mb-6">
-                  Toda peça Western é fabricada artesanalmente em composto mineral proprietário,
-                  desenvolvido há 33 anos no nosso ateliê. Reproduz fielmente a estética da pedra
-                  natural — sem nenhuma extração ambiental.
+                <p className="text-body mb-6">
+                  Composto mineral proprietário, desenvolvido há 33 anos.
+                  Estética de pedra natural, sem extração ambiental.
                 </p>
 
                 <ul className="space-y-5">
                   {[
                     {
                       label: "Estrutura",
-                      text: "Cimento estrutural reforçado com fibra de fios de PET reciclado, formando uma teia tridimensional interna que dá leveza, resistência a impacto e durabilidade muito superiores ao cimento puro.",
+                      text: "Cimento estrutural reforçado com fibra de PET reciclado. Suporta peso humano, perfuração e carga paisagística — não trinca, não estilhaça.",
                     },
                     {
                       label: "Interior oco",
-                      text: "Pesa até 10× menos que pedra natural equivalente. Permite passar tubulação hidráulica, fiação de iluminação e bombas por dentro da peça — sem embutir nada na obra civil.",
+                      text: "Até 10× mais leve que pedra natural. Permite passar tubulação hidráulica, fiação e bombas por dentro da peça.",
                     },
                     {
                       label: "Pintura mineral",
-                      text: "6 fases de pintura manual, com 5 cores sobrepostas a cada fase, simulando sedimentação geológica. Resiste a cloro, sol, chuva e variação térmica. Não desbota, não escama, manutenção zero.",
-                    },
-                    {
-                      label: "Resistência mecânica",
-                      text: "Suporta peso humano (pisar, sentar), perfuração com furadeira para passagem de fios e carga estrutural compatível com uso paisagístico. Não trinca, não estilhaça.",
+                      text: "6 fases manuais sobrepostas, simulando sedimentação geológica. Resiste a cloro, sol, chuva e variação térmica.",
                     },
                     {
                       label: "Sustentabilidade",
-                      text: "Zero extração ambiental — o molde é tirado da pedra real no local sem mover a pedra. Cada peça incorpora plástico PET que iria para aterro como armadura estrutural.",
-                    },
-                    {
-                      label: "Garantia",
-                      text: "5 anos formais contra defeitos de fabricação. Histórico real: peças instaladas desde 1995 envelhecem melhor — musgo, oxidação ambiental e pátina natural valorizam o produto com o tempo.",
+                      text: "Zero extração ambiental — o molde é tirado da pedra real no local. Cada peça incorpora plástico PET que iria para aterro.",
                     },
                   ].map((item) => (
                     <li key={item.label}>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-green-deep/80 mb-1.5">
+                      <p className="text-meta text-western-green-deep mb-1.5">
                         {item.label}
                       </p>
-                      <p className="text-spec text-western-stone-warm leading-[1.8]">
+                      <p className="text-body">
                         {item.text}
                       </p>
                     </li>
