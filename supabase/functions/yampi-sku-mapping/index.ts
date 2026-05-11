@@ -15,6 +15,16 @@ Deno.serve(async (req) => {
   try {
     const url = new URL(req.url);
     const force = url.searchParams.get("refresh") === "1";
+    if (url.searchParams.get("debug") === "1") {
+      const { yampiBaseUrl, yampiHeaders } = await import("../_shared/yampi.ts");
+      const res = await fetch(`${yampiBaseUrl()}/catalog/skus?limit=5&page=1`, {
+        headers: yampiHeaders(),
+      });
+      const text = await res.text();
+      return new Response(JSON.stringify({ status: res.status, body: text.slice(0, 4000) }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     const map = await getSkuMapping(force);
     return new Response(
       JSON.stringify({ count: Object.keys(map).length, map }),
