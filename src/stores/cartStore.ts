@@ -10,9 +10,14 @@ export interface CartItem {
   productImage: string | null;
   variantId: string;
   variantTitle: string;
+  sku: string | null;
   price: ShopifyMoney;
   quantity: number;
   selectedOptions: Array<{ name: string; value: string }>;
+  peso_kg?: number;
+  comprimento_cm?: number;
+  largura_cm?: number;
+  altura_cm?: number;
 }
 
 interface CartStore {
@@ -281,14 +286,33 @@ export function buildCartItem(
 ): Omit<CartItem, "lineId"> | null {
   const variant = product.variants.edges.find((e) => e.node.id === variantId)?.node;
   if (!variant) return null;
+  const num = (v?: string | null) => {
+    const n = Number(v);
+    return Number.isFinite(n) && n > 0 ? n : undefined;
+  };
+  // Peso: prioriza metafield custom.peso_kg; senão variant.weight (convertido se necessário)
+  let peso_kg = num(product.pesoKg?.value);
+  if (peso_kg === undefined && variant.weight && variant.weight > 0) {
+    const unit = (variant.weightUnit ?? "KILOGRAMS").toUpperCase();
+    peso_kg =
+      unit === "GRAMS" ? variant.weight / 1000 :
+      unit === "POUNDS" ? variant.weight * 0.453592 :
+      unit === "OUNCES" ? variant.weight * 0.0283495 :
+      variant.weight;
+  }
   return {
     productHandle: product.handle,
     productTitle: product.title,
     productImage: product.images.edges[0]?.node?.url ?? null,
     variantId: variant.id,
     variantTitle: variant.title,
+    sku: variant.sku ?? null,
     price: variant.price,
     quantity,
     selectedOptions: variant.selectedOptions,
+    peso_kg,
+    comprimento_cm: num(product.comprimentoCm?.value),
+    largura_cm: num(product.larguraCm?.value),
+    altura_cm: num(product.alturaCm?.value),
   };
 }
