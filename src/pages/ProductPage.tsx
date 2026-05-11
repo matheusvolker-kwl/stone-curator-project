@@ -505,43 +505,6 @@ function escapeRegExp(s: string) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function ProductAccordion({
-  numeral,
-  title,
-  value,
-  children,
-}: {
-  numeral: string;
-  title: string;
-  value: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <AccordionItem value={value} className="border-b border-western-stone-warm/20">
-      <AccordionTrigger className="py-6 hover:no-underline group [&>svg]:text-western-stone-warm">
-        <span className="flex items-baseline gap-5 text-left">
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-western-stone-warm/60 w-6">
-            {numeral}.
-          </span>
-          <span className="font-display text-xl text-western-green-deep group-hover:text-western-gold transition-colors">
-            {title}
-          </span>
-        </span>
-      </AccordionTrigger>
-      <AccordionContent className="pb-8 pl-7 md:pl-11">{children}</AccordionContent>
-    </AccordionItem>
-  );
-}
-
-function SpecRow({ dt, dd }: { dt: string; dd: string }) {
-  return (
-    <div className="flex justify-between gap-4 border-b border-western-stone-warm/15 py-3 text-spec">
-      <dt className="text-western-stone-warm flex-shrink-0 min-w-0">{dt}</dt>
-      <dd className="text-western-green-deep text-right min-w-0 break-words">{dd}</dd>
-    </div>
-  );
-}
-
 function PriceDisplay({ amount, currency }: { amount: string; currency: string }) {
   // formatBRL → "R$ 1.240,00"
   const formatted = formatBRL(amount, currency);
