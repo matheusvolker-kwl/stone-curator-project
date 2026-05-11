@@ -275,17 +275,9 @@ export default function ProductPage() {
                     {/* 2.1 — Acabamento (PRIMEIRO, obrigatório) */}
                     {acabOption && (
                       <div>
-                        <div className="flex items-baseline justify-between mb-2 gap-3">
-                          <p className="text-eyebrow">
-                            Acabamento{" "}
-                            <span className="text-western-gold">· obrigatório</span>
-                          </p>
-                          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/80">
-                            mesmo preço
-                          </span>
-                        </div>
-                        <p className="text-spec text-western-stone-warm italic mb-4 leading-relaxed">
-                          Cada peça é produzida sob demanda no acabamento escolhido.
+                        <p className="text-eyebrow mb-3">
+                          Acabamento{" "}
+                          <span className="text-western-gold">· obrigatório</span>
                         </p>
                         <div
                           className={
