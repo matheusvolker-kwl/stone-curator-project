@@ -10,6 +10,8 @@ export interface CartItem {
   productImage: string | null;
   variantId: string;
   variantTitle: string;
+  sku?: string | null;
+  pesoKg?: number;
   price: ShopifyMoney;
   quantity: number;
   selectedOptions: Array<{ name: string; value: string }>;
@@ -287,6 +289,7 @@ export function buildCartItem(
     productImage: product.images.edges[0]?.node?.url ?? null,
     variantId: variant.id,
     variantTitle: variant.title,
+    sku: variant.sku ?? null,
     price: variant.price,
     quantity,
     selectedOptions: variant.selectedOptions,

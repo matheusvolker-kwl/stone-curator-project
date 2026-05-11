@@ -11,9 +11,11 @@ import CartCrossSell from "@/components/cart/CartCrossSell";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import EmptyCartHints from "@/components/cart/EmptyCartHints";
 import FreeShippingProgress from "@/components/cart/FreeShippingProgress";
+import CalcFrete from "@/components/cart/CalcFrete";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { registerPedidoNovoLead } from "@/lib/leads/pedidoNovo";
+import { criarCheckout } from "@/lib/yampi/client";
 
 const MIN_ORDER = BUSINESS.pedidoMinimoBRL;
 
@@ -24,7 +26,7 @@ export default function CartDrawer({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } =
+  const { items, isLoading, isSyncing, updateQuantity, removeItem, syncCart } =
     useCartStore();
   // (auth context obtained below)
   const [quoteOpen, setQuoteOpen] = useState(false);
@@ -61,11 +63,19 @@ export default function CartDrawer({
   }, [items.length]);
 
   const { user, isApproved, empresa } = useAuth();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const handleCheckout = async () => {
-    const url = getCheckoutUrl();
-    if (!url) return;
+    if (checkoutLoading) return;
+    const itemsSemSku = items.filter((i) => !i.sku).map((i) => i.productTitle);
+    if (itemsSemSku.length > 0) {
+      toast.error("Não foi possível finalizar", {
+        description: `Itens sem SKU configurado: ${itemsSemSku.join(", ")}. Fale conosco no WhatsApp.`,
+      });
+      return;
+    }
+    setCheckoutLoading(true);
 
-    // Fire-and-forget: registra lead de venda direta antes de abrir checkout externo
+    // Fire-and-forget: registra lead antes do redirect
     void (async () => {
       let profile: { nome?: string; telefone?: string; cidade?: string; empresa?: string } | null = null;
       if (user) {
@@ -92,8 +102,33 @@ export default function CartDrawer({
       });
     })();
 
-    window.open(url, "_blank");
-    onOpenChange(false);
+    try {
+      const res = await criarCheckout({
+        items: items.map((i) => ({
+          sku: i.sku as string,
+          quantidade: i.quantity,
+          preco_unitario: parseFloat(i.price.amount),
+        })),
+      });
+      if (res.checkout_url) {
+        window.open(res.checkout_url, "_blank");
+        onOpenChange(false);
+      } else if (res.erro === "abaixo_minimo") {
+        toast.error("Pedido abaixo do mínimo", {
+          description: `Faltam ${formatBRL((res.minimo ?? MIN_ORDER) - (res.subtotal ?? subtotal))} para finalizar.`,
+        });
+      } else if (res.erro === "sku_nao_encontrado") {
+        toast.error("Produto sem cadastro no checkout", {
+          description: `SKU ${res.sku ?? "—"} não encontrado. Fale conosco no WhatsApp.`,
+        });
+      } else {
+        toast.error("Instabilidade no checkout", {
+          description: "Tente novamente em alguns minutos ou fale conosco no WhatsApp.",
+        });
+      }
+    } finally {
+      setCheckoutLoading(false);
+    }
   };
 
   return (
@@ -222,6 +257,8 @@ export default function CartDrawer({
               </div>
             )}
 
+            {isApproved && meetsMinimum && <CalcFrete />}
+
             <div className="flex items-center justify-between gap-3 py-2 border-y border-western-gold/10">
               <div className="flex items-center gap-2 text-western-cream-muted">
                 <Clock className="h-3.5 w-3.5 text-western-gold-soft" />
@@ -241,10 +278,10 @@ export default function CartDrawer({
             {isApproved ? (
               <Button
                 onClick={handleCheckout}
-                disabled={isLoading || isSyncing || !meetsMinimum}
+                disabled={isLoading || isSyncing || checkoutLoading || !meetsMinimum}
                 className="w-full h-14 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none shadow-[0_18px_40px_-20px_rgba(184,146,79,0.6)] disabled:opacity-50"
               >
-                {isLoading || isSyncing ? (
+                {isLoading || isSyncing || checkoutLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <>
