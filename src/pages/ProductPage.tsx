@@ -443,10 +443,10 @@ export default function ProductPage() {
               })()}
             </section>
 
-            {/* 3 — Lead editorial */}
+            {/* 3 — Descrição curta (sans, funcional) */}
             {parsed.lead && (
               <p
-                className="product-lead mt-10"
+                className="mt-10 font-sans text-[15px] leading-relaxed text-western-stone-warm max-w-[60ch]"
                 dangerouslySetInnerHTML={{
                   __html: parsed.lead.replace(
                     new RegExp(`^A?\\s*${escapeRegExp(product.title)}\\s*`, "i"),
@@ -460,25 +460,26 @@ export default function ProductPage() {
               />
             )}
 
-            {/* 4 — Aplicações */}
+            {/* 4 — Aplicações (linha única, sem chips) */}
             {parsed.aplicacoes.length > 0 && (
-              <div className="mt-10">
-                <p className="text-eyebrow mb-4">Aplicações</p>
-                <div className="flex flex-wrap gap-2">
-                  {parsed.aplicacoes.map((a) => (
-                    <span
-                      key={a}
-                      className="inline-flex items-center px-3 py-1.5 border border-western-stone-warm/25 bg-western-cream/50 text-spec text-western-green-deep"
-                    >
-                      {a}
-                    </span>
-                  ))}
-                </div>
+              <div className="mt-7 flex items-baseline flex-wrap gap-x-2 gap-y-1">
+                <p className="text-meta mr-2">Aplicações</p>
+                {parsed.aplicacoes.map((a, i) => (
+                  <span key={a} className="font-sans text-[14px] text-western-green-deep">
+                    {a}
+                    {i < parsed.aplicacoes.length - 1 && (
+                      <span className="text-western-stone-warm/50 mx-1.5">·</span>
+                    )}
+                  </span>
+                ))}
               </div>
             )}
 
-            {/* 5 — Dados duros (faixa horizontal compacta) */}
+            {/* 5 — Dados duros (faixa horizontal compacta, sem coluna "Base") */}
             <HardFactsCard pesoKg={pesoKg} dimensoes={dimsStr} variant="strip" />
+
+            {/* 5.1 — O que vem na caixa (resolve argamassa C3 + kit retoque) */}
+            <WhatsInTheBox />
 
             {/* 6 — Pintura personalizada */}
             {visibleOptions.some((o) => /acabament/i.test(o.name)) && (
