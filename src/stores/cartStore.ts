@@ -10,7 +10,7 @@ export interface CartItem {
   productImage: string | null;
   variantId: string;
   variantTitle: string;
-  sku: string | null;
+  sku?: string | null;
   pesoKg?: number;
   price: ShopifyMoney;
   quantity: number;
