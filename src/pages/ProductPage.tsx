@@ -20,6 +20,7 @@ import PriceGate from "@/components/shared/PriceGate";
 import { useAuth } from "@/hooks/useAuth";
 import HardFactsCard from "@/components/product/HardFactsCard";
 import CustomPaintNote from "@/components/product/CustomPaintNote";
+import WhatsInTheBox from "@/components/product/WhatsInTheBox";
 import ProductGallery from "@/components/product/ProductGallery";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import BackToTop from "@/components/shared/BackToTop";
