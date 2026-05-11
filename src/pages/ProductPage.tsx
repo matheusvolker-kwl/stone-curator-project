@@ -726,7 +726,7 @@ function ProductAccordion({
     <AccordionItem value={value} className="border-b border-western-stone-warm/20">
       <AccordionTrigger className="py-6 hover:no-underline group [&>svg]:text-western-stone-warm">
         <span className="flex items-baseline gap-5 text-left">
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-western-gold w-6">
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-western-stone-warm/60 w-6">
             {numeral}.
           </span>
           <span className="font-display text-xl text-western-green-deep group-hover:text-western-gold transition-colors">
