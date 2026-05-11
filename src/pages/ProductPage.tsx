@@ -422,28 +422,23 @@ export default function ProductPage() {
                       </div>
                     )}
 
-                    {/* 2.6 — Linha sutil única: prova social + consultor (vale para logado e visitante) */}
-                    <div className="flex items-center justify-between flex-wrap gap-3 pt-1">
-                      <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
-                        <Folder className="h-3 w-3 text-western-stone-warm/60 flex-shrink-0" />
-                        <span>
-                          Adicionado por{" "}
-                          <span className="text-western-green-deep">{studios}</span> estúdios · 30 dias
-                        </span>
-                      </p>
-                      <button
-                        onClick={() => {
-                          const msg = `Olá! Gostaria de falar sobre ${product.title}${sku ? ` (SKU ${sku})` : ""}.`;
-                          window.open(
-                            `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
-                            "_blank"
-                          );
-                        }}
-                        className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
-                      >
-                        <MessageCircle className="h-3.5 w-3.5" /> Falar com consultor
-                      </button>
-                    </div>
+                    {/* 2.6 — Link discreto: pintura personalizada */}
+                    {visibleOptions.some((o) => /acabament/i.test(o.name)) && (
+                      <div className="pt-1">
+                        <button
+                          onClick={() => {
+                            const msg = `Olá! Gostaria de uma pintura personalizada para ${product.title}.`;
+                            window.open(
+                              `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
+                              "_blank"
+                            );
+                          }}
+                          className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
+                        >
+                          <MessageCircle className="h-3.5 w-3.5" /> Pintura personalizada · falar com consultor
+                        </button>
+                      </div>
+                    )}
                   </>
                 );
               })()}
