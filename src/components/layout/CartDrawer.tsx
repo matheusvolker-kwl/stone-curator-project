@@ -62,8 +62,6 @@ export default function CartDrawer({
   }, [items.length]);
 
   const { user, isApproved, empresa } = useAuth();
-  const handleCheckout = async () => {
-  const { user, isApproved, empresa } = useAuth();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const handleCheckout = async () => {
     // Validação cliente do pedido mínimo
