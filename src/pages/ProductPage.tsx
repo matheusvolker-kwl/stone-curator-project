@@ -6,27 +6,18 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
 import { Button } from "@/components/ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { ChevronRight, Loader2, Info, MessageCircle, Download, Folder } from "lucide-react";
+import { ChevronRight, Loader2, MessageCircle } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { toast } from "sonner";
 import FinishSelector from "@/components/product/FinishSelector";
 import PriceGate from "@/components/shared/PriceGate";
 import { useAuth } from "@/hooks/useAuth";
-import HardFactsCard from "@/components/product/HardFactsCard";
-import CustomPaintNote from "@/components/product/CustomPaintNote";
-import WhatsInTheBox from "@/components/product/WhatsInTheBox";
 import ProductGallery from "@/components/product/ProductGallery";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import BackToTop from "@/components/shared/BackToTop";
 import StickyBuyBar from "@/components/product/StickyBuyBar";
 import DeliverySignals from "@/components/product/DeliverySignals";
-import { inRange } from "@/lib/seededRandom";
+import ProductTabs from "@/components/product/ProductTabs";
 import { trackRecentlyViewed } from "@/hooks/useRecentlyViewed";
 
 import ProductComparison from "@/components/product/ProductComparison";
@@ -236,6 +227,19 @@ export default function ProductPage() {
               </p>
             )}
 
+            {/* Blurb curto — 1 frase, sans, funcional */}
+            {parsed.lead && (
+              <p className="font-sans text-[14.5px] leading-relaxed text-western-stone-warm mt-5 max-w-[48ch]">
+                {(() => {
+                  const cleaned = parsed.lead
+                    .replace(new RegExp(`^A?\\s*${escapeRegExp(product.title)}\\s*`, "i"), "")
+                    .trim();
+                  const firstSentence = cleaned.split(/(?<=[.!?])\s/)[0] ?? cleaned;
+                  return firstSentence.charAt(0).toUpperCase() + firstSentence.slice(1);
+                })()}
+              </p>
+            )}
+
             {/* 2 — BLOCO DE COMPRA — sem caixa, hierarquia vertical */}
             <section
               ref={ctaRef}
@@ -251,7 +255,6 @@ export default function ProductPage() {
                       product.priceRange.minVariantPrice.amount,
                       product.priceRange.minVariantPrice.currencyCode
                     )}`;
-                const studios = inRange(`studios:${product.handle}`, 14, 29);
                 const acabOption = visibleOptions.find((o) => /acabament/i.test(o.name));
                 const otherOptions = visibleOptions.filter(
                   (o) => !/acabament/i.test(o.name)
@@ -262,17 +265,9 @@ export default function ProductPage() {
                     {/* 2.1 — Acabamento (PRIMEIRO, obrigatório) */}
                     {acabOption && (
                       <div>
-                        <div className="flex items-baseline justify-between mb-2 gap-3">
-                          <p className="text-eyebrow">
-                            Acabamento{" "}
-                            <span className="text-western-gold">· obrigatório</span>
-                          </p>
-                          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/80">
-                            mesmo preço
-                          </span>
-                        </div>
-                        <p className="text-spec text-western-stone-warm italic mb-4 leading-relaxed">
-                          Cada peça é produzida sob demanda no acabamento escolhido.
+                        <p className="text-eyebrow mb-3">
+                          Acabamento{" "}
+                          <span className="text-western-gold">· obrigatório</span>
                         </p>
                         <div
                           className={
@@ -417,240 +412,27 @@ export default function ProductPage() {
                       </div>
                     )}
 
-                    {/* 2.6 — Linha sutil única: prova social + consultor (vale para logado e visitante) */}
-                    <div className="flex items-center justify-between flex-wrap gap-3 pt-1">
-                      <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
-                        <Folder className="h-3 w-3 text-western-stone-warm/60 flex-shrink-0" />
-                        <span>
-                          Adicionado por{" "}
-                          <span className="text-western-green-deep">{studios}</span> estúdios · 30 dias
-                        </span>
-                      </p>
-                      <button
-                        onClick={() => {
-                          const msg = `Olá! Gostaria de falar sobre ${product.title}${sku ? ` (SKU ${sku})` : ""}.`;
-                          window.open(
-                            `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
-                            "_blank"
-                          );
-                        }}
-                        className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
-                      >
-                        <MessageCircle className="h-3.5 w-3.5" /> Falar com consultor
-                      </button>
-                    </div>
+                    {/* 2.6 — Link discreto: pintura personalizada */}
+                    {visibleOptions.some((o) => /acabament/i.test(o.name)) && (
+                      <div className="pt-1">
+                        <button
+                          onClick={() => {
+                            const msg = `Olá! Gostaria de uma pintura personalizada para ${product.title}.`;
+                            window.open(
+                              `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
+                              "_blank"
+                            );
+                          }}
+                          className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
+                        >
+                          <MessageCircle className="h-3.5 w-3.5" /> Pintura personalizada · falar com consultor
+                        </button>
+                      </div>
+                    )}
                   </>
                 );
               })()}
             </section>
-
-            {/* 3 — Descrição curta (sans, funcional) */}
-            {parsed.lead && (
-              <p
-                className="mt-10 font-sans text-[15px] leading-relaxed text-western-stone-warm max-w-[60ch]"
-                dangerouslySetInnerHTML={{
-                  __html: parsed.lead.replace(
-                    new RegExp(`^A?\\s*${escapeRegExp(product.title)}\\s*`, "i"),
-                    ""
-                  ).charAt(0).toUpperCase() +
-                    parsed.lead.replace(
-                      new RegExp(`^A?\\s*${escapeRegExp(product.title)}\\s*`, "i"),
-                      ""
-                    ).slice(1),
-                }}
-              />
-            )}
-
-            {/* 4 — Aplicações (linha única, sem chips) */}
-            {parsed.aplicacoes.length > 0 && (
-              <div className="mt-7 flex items-baseline flex-wrap gap-x-2 gap-y-1">
-                <p className="text-meta mr-2">Aplicações</p>
-                {parsed.aplicacoes.map((a, i) => (
-                  <span key={a} className="font-sans text-[14px] text-western-green-deep">
-                    {a}
-                    {i < parsed.aplicacoes.length - 1 && (
-                      <span className="text-western-stone-warm/50 mx-1.5">·</span>
-                    )}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* 5 — Dados duros (faixa horizontal compacta, sem coluna "Base") */}
-            <HardFactsCard pesoKg={pesoKg} dimensoes={dimsStr} variant="strip" />
-
-            {/* 5.1 — O que vem na caixa (resolve argamassa C3 + kit retoque) */}
-            <WhatsInTheBox />
-
-            {/* 6 — Pintura personalizada */}
-            {visibleOptions.some((o) => /acabament/i.test(o.name)) && (
-              <CustomPaintNote
-                onConsultor={() => {
-                  const msg = `Olá! Gostaria de uma pintura personalizada para ${product.title}.`;
-                  window.open(
-                    `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
-                    "_blank"
-                  );
-                }}
-              />
-            )}
-
-
-            {/* Accordions */}
-            <Accordion
-              type="single"
-              collapsible
-              className="mt-14 border-t border-western-stone-warm/20"
-              defaultValue="ficha"
-            >
-              {(fichaRows.length > 0 || dims || acabamentosRow) && (
-                <ProductAccordion numeral="I" title="Ficha técnica" value="ficha">
-                  {dims && (
-                    <div className="mb-7">
-                      <p className="text-eyebrow mb-4">Dimensões</p>
-                      <div className="grid grid-cols-3 gap-px bg-western-stone-warm/15 border border-western-stone-warm/15">
-                        {[
-                          { rotulo: "Comprimento", sigla: "C", valor: dims.c },
-                          { rotulo: "Largura",     sigla: "L", valor: dims.l },
-                          { rotulo: "Altura",      sigla: "A", valor: dims.a },
-                        ].map((d) => (
-                          <div key={d.sigla} className="bg-western-cream p-4 text-center">
-                            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-2">
-                              {d.sigla} · {d.rotulo}
-                            </p>
-                            <p className="font-display text-xl text-western-green-deep tabular-nums">
-                              {d.valor || "—"}
-                              <span className="font-mono text-[10px] text-western-stone-warm/70 ml-1">cm</span>
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/60 mt-3 text-center">
-                        Variação artesanal de até ±3 cm por peça
-                      </p>
-                    </div>
-                  )}
-                  <dl className="space-y-0">
-                    {fichaRows
-                      .filter((f) => !/acabament/i.test(f.label))
-                      .map((f) => (
-                        <SpecRow key={f.label} dt={f.label} dd={f.value} />
-                      ))}
-                  </dl>
-                </ProductAccordion>
-              )}
-
-              {/* placeholder removido: acabamentos já estão no FinishSelector acima */}
-
-              <ProductAccordion numeral="II" title="Composição & material" value="composicao">
-                <p className="text-body mb-6">
-                  Composto mineral proprietário, desenvolvido há 33 anos.
-                  Estética de pedra natural, sem extração ambiental.
-                </p>
-
-                <ul className="space-y-5">
-                  {[
-                    {
-                      label: "Estrutura",
-                      text: "Cimento estrutural reforçado com fibra de PET reciclado. Suporta peso humano, perfuração e carga paisagística — não trinca, não estilhaça.",
-                    },
-                    {
-                      label: "Interior oco",
-                      text: "Até 10× mais leve que pedra natural. Permite passar tubulação hidráulica, fiação e bombas por dentro da peça.",
-                    },
-                    {
-                      label: "Pintura mineral",
-                      text: "6 fases manuais sobrepostas, simulando sedimentação geológica. Resiste a cloro, sol, chuva e variação térmica.",
-                    },
-                    {
-                      label: "Sustentabilidade",
-                      text: "Zero extração ambiental — o molde é tirado da pedra real no local. Cada peça incorpora plástico PET que iria para aterro.",
-                    },
-                  ].map((item) => (
-                    <li key={item.label}>
-                      <p className="text-meta text-western-green-deep mb-1.5">
-                        {item.label}
-                      </p>
-                      <p className="text-body">
-                        {item.text}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </ProductAccordion>
-
-              {parsed.observacoes.length > 0 && (
-                <ProductAccordion numeral="III" title="Observações" value="obs">
-                  <ul className="space-y-5">
-                    {parsed.observacoes.map((o, i) => (
-                      <li key={i}>
-                        {o.label && (
-                          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-green-deep/80 mb-1.5">
-                            {o.label}
-                          </p>
-                        )}
-                        <p className="text-spec text-western-stone-warm leading-[1.8]">
-                          {o.text}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                </ProductAccordion>
-              )}
-
-              <ProductAccordion numeral="IV" title="Modelo 3D · SketchUp" value="modelo">
-                {(() => {
-                  const url = product.modelo3d?.value?.trim() || BUSINESS.sketchupWarehouse;
-                  const isProductSpecific = !!product.modelo3d?.value?.trim();
-                  return (
-                    <>
-                      <p className="text-spec text-western-stone-warm leading-[1.8] mb-5">
-                        Modele a composição inteira no SketchUp antes de comprar — assim você visualiza
-                        proporções, escala e enquadramento exatos no projeto.
-                      </p>
-                      <a
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 h-11 px-5 bg-western-gold/10 border border-western-gold/60 text-western-green-deep hover:bg-western-gold hover:border-western-gold font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
-                      >
-                        <Download className="h-4 w-4" />
-                        {isProductSpecific ? "Baixar modelo 3D (.skp)" : "Abrir no 3D Warehouse"}
-                      </a>
-                      {parsed.modelo3dHtml && (
-                        <div
-                          className="product-prose mt-5"
-                          dangerouslySetInnerHTML={{ __html: parsed.modelo3dHtml }}
-                        />
-                      )}
-                    </>
-                  );
-                })()}
-              </ProductAccordion>
-
-              <ProductAccordion numeral="V" title="Produção & entrega" value="entrega">
-                <dl className="space-y-4">
-                  {[
-                    { k: "Produção", v: `Sob encomenda em ${BUSINESS.cidadeAtelie}/${BUSINESS.ufAtelie}. ${BUSINESS.prazoProducaoDias} dias úteis após confirmação do pedido.` },
-                    { k: "Entrega", v: "Frete calculado por destino e dimensões. Retira em fábrica disponível." },
-                    { k: "Instalação", v: 'Veja "O que vem na caixa" — kit completo incluso, fixação com argamassa C3.' },
-                  ].map((row) => (
-                    <div key={row.k}>
-                      <dt className="text-meta text-western-green-deep mb-1">{row.k}</dt>
-                      <dd className="text-body">{row.v}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </ProductAccordion>
-
-              <ProductAccordion numeral="VI" title="Cuidados" value="cuidados">
-                <p className="text-body">
-                  Manutenção zero. Limpeza com pano macio levemente úmido ou jato de água.
-                  Evite produtos abrasivos ou ácidos. A pintura mineral resiste a cloro de
-                  piscina, intempéries e raios UV — não escama, não desbota.
-                </p>
-              </ProductAccordion>
-            </Accordion>
 
             {/* Fallback se padrão não bater */}
             {parsed.rawHtml && (
@@ -662,6 +444,16 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+
+      {/* Conteúdo aprofundado em abas */}
+      <ProductTabs
+        parsed={parsed}
+        pesoKg={pesoKg}
+        dimsStr={dimsStr}
+        dims={dims}
+        fichaRows={fichaRows}
+        modelo3dValue={product.modelo3d?.value}
+      />
 
       {/* Seções full-width abaixo do hero */}
       
@@ -711,43 +503,6 @@ export default function ProductPage() {
 
 function escapeRegExp(s: string) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function ProductAccordion({
-  numeral,
-  title,
-  value,
-  children,
-}: {
-  numeral: string;
-  title: string;
-  value: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <AccordionItem value={value} className="border-b border-western-stone-warm/20">
-      <AccordionTrigger className="py-6 hover:no-underline group [&>svg]:text-western-stone-warm">
-        <span className="flex items-baseline gap-5 text-left">
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-western-stone-warm/60 w-6">
-            {numeral}.
-          </span>
-          <span className="font-display text-xl text-western-green-deep group-hover:text-western-gold transition-colors">
-            {title}
-          </span>
-        </span>
-      </AccordionTrigger>
-      <AccordionContent className="pb-8 pl-7 md:pl-11">{children}</AccordionContent>
-    </AccordionItem>
-  );
-}
-
-function SpecRow({ dt, dd }: { dt: string; dd: string }) {
-  return (
-    <div className="flex justify-between gap-4 border-b border-western-stone-warm/15 py-3 text-spec">
-      <dt className="text-western-stone-warm flex-shrink-0 min-w-0">{dt}</dt>
-      <dd className="text-western-green-deep text-right min-w-0 break-words">{dd}</dd>
-    </div>
-  );
 }
 
 function PriceDisplay({ amount, currency }: { amount: string; currency: string }) {
