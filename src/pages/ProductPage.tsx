@@ -602,14 +602,35 @@ export default function ProductPage() {
                 </ProductAccordion>
               )}
 
-              {parsed.modelo3dHtml && (
-                <ProductAccordion numeral="IV" title="Modelo 3D · SketchUp" value="modelo">
-                  <div
-                    className="product-prose"
-                    dangerouslySetInnerHTML={{ __html: parsed.modelo3dHtml }}
-                  />
-                </ProductAccordion>
-              )}
+              <ProductAccordion numeral="IV" title="Modelo 3D · SketchUp" value="modelo">
+                {(() => {
+                  const url = product.modelo3d?.value?.trim() || BUSINESS.sketchupWarehouse;
+                  const isProductSpecific = !!product.modelo3d?.value?.trim();
+                  return (
+                    <>
+                      <p className="text-spec text-western-stone-warm leading-[1.8] mb-5">
+                        Modele a composição inteira no SketchUp antes de comprar — assim você visualiza
+                        proporções, escala e enquadramento exatos no projeto.
+                      </p>
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 h-11 px-5 bg-western-gold/10 border border-western-gold/60 text-western-green-deep hover:bg-western-gold hover:border-western-gold font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+                      >
+                        <Download className="h-4 w-4" />
+                        {isProductSpecific ? "Baixar modelo 3D (.skp)" : "Abrir no 3D Warehouse"}
+                      </a>
+                      {parsed.modelo3dHtml && (
+                        <div
+                          className="product-prose mt-5"
+                          dangerouslySetInnerHTML={{ __html: parsed.modelo3dHtml }}
+                        />
+                      )}
+                    </>
+                  );
+                })()}
+              </ProductAccordion>
 
               <ProductAccordion numeral="V" title="Produção & entrega" value="entrega">
                 <p className="text-spec text-western-stone-warm leading-[1.8]">
