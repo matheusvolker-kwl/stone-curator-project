@@ -63,11 +63,19 @@ export default function CartDrawer({
   }, [items.length]);
 
   const { user, isApproved, empresa } = useAuth();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const handleCheckout = async () => {
-    const url = getCheckoutUrl();
-    if (!url) return;
+    if (checkoutLoading) return;
+    const itemsSemSku = items.filter((i) => !i.sku).map((i) => i.productTitle);
+    if (itemsSemSku.length > 0) {
+      toast.error("Não foi possível finalizar", {
+        description: `Itens sem SKU configurado: ${itemsSemSku.join(", ")}. Fale conosco no WhatsApp.`,
+      });
+      return;
+    }
+    setCheckoutLoading(true);
 
-    // Fire-and-forget: registra lead de venda direta antes de abrir checkout externo
+    // Fire-and-forget: registra lead antes do redirect
     void (async () => {
       let profile: { nome?: string; telefone?: string; cidade?: string; empresa?: string } | null = null;
       if (user) {
@@ -94,8 +102,33 @@ export default function CartDrawer({
       });
     })();
 
-    window.open(url, "_blank");
-    onOpenChange(false);
+    try {
+      const res = await criarCheckout({
+        items: items.map((i) => ({
+          sku: i.sku as string,
+          quantidade: i.quantity,
+          preco_unitario: parseFloat(i.price.amount),
+        })),
+      });
+      if (res.checkout_url) {
+        window.open(res.checkout_url, "_blank");
+        onOpenChange(false);
+      } else if (res.erro === "abaixo_minimo") {
+        toast.error("Pedido abaixo do mínimo", {
+          description: `Faltam ${formatBRL((res.minimo ?? MIN_ORDER) - (res.subtotal ?? subtotal))} para finalizar.`,
+        });
+      } else if (res.erro === "sku_nao_encontrado") {
+        toast.error("Produto sem cadastro no checkout", {
+          description: `SKU ${res.sku ?? "—"} não encontrado. Fale conosco no WhatsApp.`,
+        });
+      } else {
+        toast.error("Instabilidade no checkout", {
+          description: "Tente novamente em alguns minutos ou fale conosco no WhatsApp.",
+        });
+      }
+    } finally {
+      setCheckoutLoading(false);
+    }
   };
 
   return (
