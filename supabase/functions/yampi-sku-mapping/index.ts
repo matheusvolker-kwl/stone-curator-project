@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
     }
     const map = await getSkuMapping(force);
     return new Response(
-      JSON.stringify({ count: Object.keys(map).length, map }),
+      JSON.stringify({ count: Object.keys(map).length, sample: Object.entries(map).slice(0, 5) }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
