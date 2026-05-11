@@ -10,9 +10,14 @@ export interface CartItem {
   productImage: string | null;
   variantId: string;
   variantTitle: string;
+  sku: string | null;
   price: ShopifyMoney;
   quantity: number;
   selectedOptions: Array<{ name: string; value: string }>;
+  peso_kg?: number;
+  comprimento_cm?: number;
+  largura_cm?: number;
+  altura_cm?: number;
 }
 
 interface CartStore {
