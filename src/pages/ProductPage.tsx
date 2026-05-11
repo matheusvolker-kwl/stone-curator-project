@@ -410,40 +410,31 @@ export default function ProductPage() {
                           />
                         </div>
 
-                        {/* Linha sutil: gatilho + consultor */}
-                        <div className="mt-4 flex items-center justify-between flex-wrap gap-3">
-                          <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
-                            <Folder className="h-3 w-3 text-western-gold flex-shrink-0" />
-                            <span>
-                              Adicionado por{" "}
-                              <span className="text-western-green-deep">{studios}</span> estúdios · 30 dias
-                            </span>
-                          </p>
-                          <button
-                            onClick={() => {
-                              const msg = `Olá! Gostaria de falar sobre ${product.title}${sku ? ` (SKU ${sku})` : ""}.`;
-                              window.open(
-                                `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
-                                "_blank"
-                              );
-                            }}
-                            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
-                          >
-                            <MessageCircle className="h-3.5 w-3.5" /> Falar com consultor
-                          </button>
-                        </div>
                       </div>
                     )}
 
-                    {!isApproved && (
+                    {/* 2.6 — Linha sutil única: prova social + consultor (vale para logado e visitante) */}
+                    <div className="flex items-center justify-between flex-wrap gap-3 pt-1">
                       <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
-                        <Folder className="h-3 w-3 text-western-gold flex-shrink-0" />
+                        <Folder className="h-3 w-3 text-western-stone-warm/60 flex-shrink-0" />
                         <span>
                           Adicionado por{" "}
                           <span className="text-western-green-deep">{studios}</span> estúdios · 30 dias
                         </span>
                       </p>
-                    )}
+                      <button
+                        onClick={() => {
+                          const msg = `Olá! Gostaria de falar sobre ${product.title}${sku ? ` (SKU ${sku})` : ""}.`;
+                          window.open(
+                            `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
+                            "_blank"
+                          );
+                        }}
+                        className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
+                      >
+                        <MessageCircle className="h-3.5 w-3.5" /> Falar com consultor
+                      </button>
+                    </div>
                   </>
                 );
               })()}
