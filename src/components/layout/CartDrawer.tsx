@@ -11,6 +11,7 @@ import CartCrossSell from "@/components/cart/CartCrossSell";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import EmptyCartHints from "@/components/cart/EmptyCartHints";
 import FreeShippingProgress from "@/components/cart/FreeShippingProgress";
+import CalcFrete from "@/components/cart/CalcFrete";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { registerPedidoNovoLead } from "@/lib/leads/pedidoNovo";
