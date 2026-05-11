@@ -261,7 +261,6 @@ export default function ProductPage() {
                       product.priceRange.minVariantPrice.amount,
                       product.priceRange.minVariantPrice.currencyCode
                     )}`;
-                const studios = inRange(`studios:${product.handle}`, 14, 29);
                 const acabOption = visibleOptions.find((o) => /acabament/i.test(o.name));
                 const otherOptions = visibleOptions.filter(
                   (o) => !/acabament/i.test(o.name)
