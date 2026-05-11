@@ -749,3 +749,21 @@ function SpecRow({ dt, dd }: { dt: string; dd: string }) {
     </div>
   );
 }
+
+function PriceDisplay({ amount, currency }: { amount: string; currency: string }) {
+  // formatBRL → "R$ 1.240,00"
+  const formatted = formatBRL(amount, currency);
+  // Split currency, integer part, cents
+  const m = formatted.match(/^(R\$)\s*([\d.]+),(\d{2})$/);
+  if (!m) {
+    return <p className="text-price">{formatted}</p>;
+  }
+  const [, cur, intPart, cents] = m;
+  return (
+    <p className="text-price">
+      <span className="text-price-currency">{cur}</span>
+      {intPart}
+      <span className="text-price-cents">,{cents}</span>
+    </p>
+  );
+}
