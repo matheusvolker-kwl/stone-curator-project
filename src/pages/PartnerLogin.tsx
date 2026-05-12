@@ -131,7 +131,7 @@ export default function PartnerLogin() {
                     Sou cliente final
                   </p>
                   <p className="font-display text-xl md:text-[22px] leading-tight text-western-green-deep">
-                    Quero comprar ou fazer um projeto.
+                    Quero fazer um projeto
                   </p>
                 </div>
               </div>
