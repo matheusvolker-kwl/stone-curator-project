@@ -34,7 +34,7 @@ export default function ArtistaSection() {
       </figure>
 
       {/* Bloco de texto abaixo — citação como herói + corpo + CTA */}
-      <div className="container-western max-w-6xl mt-10 md:mt-14 text-center">
+      <div className="container-western max-w-6xl mt-8 md:mt-10 text-center">
         <blockquote className="font-display text-2xl md:text-4xl lg:text-[2.75rem] text-western-green-deep leading-[1.15]">
           <span className="text-western-gold-soft">“</span>Cada peça da Western nasce duas vezes:<br />
           <span className="italic font-light text-western-gold">
@@ -43,7 +43,7 @@ export default function ArtistaSection() {
           <span className="text-western-gold-soft">”</span>
         </blockquote>
 
-        <div className="mt-6 mb-8">
+        <div className="mt-5 mb-2">
           <p className="font-display text-xl text-western-green-deep">
             Ricardo Botelho
           </p>
@@ -52,16 +52,9 @@ export default function ArtistaSection() {
           </p>
         </div>
 
-        <p className="text-base md:text-lg text-western-stone-warm leading-relaxed max-w-2xl mx-auto">
-          Ricardo desenha cada matriz, define a paleta das seis camadas de
-          pintura e assina o gesto de toda peça que sai do ateliê. É o traço
-          dele que transforma uma pedra encontrada na mata em elemento autoral
-          de projeto.
-        </p>
-
         <Link
           to="/sobre"
-          className="inline-flex items-center gap-2 mt-8 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep link-underline"
+          className="inline-flex items-center gap-2 mt-6 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep link-underline"
         >
           Conhecer o ateliê <ArrowRight className="h-3 w-3" />
         </Link>

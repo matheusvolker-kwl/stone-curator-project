@@ -267,7 +267,7 @@ export default function Index() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <Reveal variant="fade-right" duration={750}>
               <div>
-                <p className="text-eyebrow mb-4">Seja parceiro Western</p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold/90 mb-4 font-medium">Seja parceiro Western</p>
                 <h2 className="font-display text-3xl md:text-5xl text-western-cream leading-[1.1] mb-6">
                   Tabela de preços, condições comerciais e modelos 3D liberados após credenciamento.
                 </h2>
@@ -291,7 +291,7 @@ export default function Index() {
                   { eyebrow: "Frete", t: "Transportadora ou retirada" },
                 ].map((s) => (
                   <div key={s.t} className="bg-western-green-deep p-6 md:p-8">
-                    <p className="text-eyebrow mb-3">{s.eyebrow}</p>
+                    <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold/80 mb-3 font-medium">{s.eyebrow}</p>
                     <h3 className="font-display text-2xl md:text-3xl text-western-cream">{s.t}</h3>
                   </div>
                 ))}
