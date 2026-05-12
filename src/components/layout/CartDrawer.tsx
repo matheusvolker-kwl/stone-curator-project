@@ -111,8 +111,9 @@ export default function CartDrawer({
         })),
       });
       if (res.checkout_url) {
-        window.open(res.checkout_url, "_blank");
         onOpenChange(false);
+        window.location.href = res.checkout_url;
+        return;
       } else if (res.erro === "abaixo_minimo") {
         toast.error("Pedido abaixo do mínimo", {
           description: `Faltam ${formatBRL((res.minimo ?? MIN_ORDER) - (res.subtotal ?? subtotal))} para finalizar.`,
