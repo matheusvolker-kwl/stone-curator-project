@@ -400,7 +400,7 @@ export default function About() {
             ))}
           </div>
           <Reveal variant="fade-up" delay={200} duration={750}>
-            <p className="text-western-cream-muted leading-relaxed mt-12 max-w-2xl mx-auto">
+            <p className="text-western-cream-muted leading-relaxed mt-8 max-w-2xl mx-auto">
               A Western adota um vocabulário próprio porque o relacionamento é de coprojeto, e o
               que se entrega é uma obra integrada — não um item de varejo. Esse cuidado de
               linguagem eleva a categoria.
