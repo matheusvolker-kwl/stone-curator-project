@@ -55,7 +55,7 @@ export default function About() {
   return (
     <>
       {/* HERO — atmosférico com foto de fundo e símbolo flutuante */}
-      <section className="relative overflow-hidden bg-western-green-deep min-h-[78vh] flex items-center">
+      <section className="relative overflow-hidden bg-western-green-deep min-h-[62vh] flex items-center">
         <img
           src={heroCascata}
           alt=""
