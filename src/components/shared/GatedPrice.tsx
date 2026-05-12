@@ -37,14 +37,14 @@ export default function GatedPrice({
     const hasDiscount = discountPct > 0 && Number.isFinite(base);
     const final = hasDiscount ? base * (1 - discountPct / 100) : base;
     return (
-      <span className={className}>
+      <span className={`${className ?? ""} inline-flex flex-wrap items-baseline gap-x-2 gap-y-0.5`}>
         {hasDiscount && (
-          <span className="opacity-50 line-through mr-2 text-[0.85em]">
+          <span className="opacity-50 line-through text-[0.78em] font-normal">
             {formatBRL(base, currency)}
           </span>
         )}
-        {formatBRL(final, currency)}
-        {suffix && <span className="opacity-60 ml-1">{suffix}</span>}
+        <span>{formatBRL(final, currency)}</span>
+        {suffix && <span className="opacity-60">{suffix}</span>}
       </span>
     );
   }
