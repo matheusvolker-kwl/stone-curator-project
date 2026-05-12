@@ -33,25 +33,25 @@ export default function PriceGate({ children, variant = "inline", ctaLabel = "Ac
     ? "Seu cadastro está em análise. Liberaremos os preços e a tabela completa em até 2 dias úteis."
     : "Acesso indisponível. Fale com o nosso comercial.";
   return (
-    <div className="border border-western-gold/40 bg-western-gold/5 px-5 py-6">
-      <div className="flex items-start gap-3 mb-4">
+    <div className="border border-western-gold/40 bg-western-gold/5 px-5 py-6 min-w-0">
+      <div className="flex items-start gap-3 mb-4 min-w-0">
         <Lock className="h-4 w-4 text-western-gold mt-0.5 flex-shrink-0" />
-        <div>
+        <div className="min-w-0">
           <p className="text-eyebrow mb-2">Condição parceiro</p>
-          <p className="text-spec text-western-green-deep leading-relaxed">{msg}</p>
+          <p className="text-spec text-western-green-deep leading-relaxed break-words">{msg}</p>
         </div>
       </div>
       {!session && (
-        <div className="flex flex-wrap gap-2 mt-3">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 mt-3">
           <Link
             to="/parceiro/login"
-            className="inline-flex items-center justify-center h-11 px-5 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+            className="flex items-center justify-center text-center h-11 px-5 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors w-full sm:w-auto whitespace-normal"
           >
             {ctaLabel}
           </Link>
           <Link
             to="/parceiro/cadastro"
-            className="inline-flex items-center justify-center h-11 px-5 border border-western-green-deep/30 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-[11px] uppercase tracking-[0.22em]"
+            className="flex items-center justify-center text-center h-11 px-5 border border-western-green-deep/30 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-[11px] uppercase tracking-[0.22em] w-full sm:w-auto whitespace-normal"
           >
             Solicitar cadastro
           </Link>

@@ -205,7 +205,7 @@ export default function ProductPage() {
 
         <div className="grid md:grid-cols-2 gap-10 lg:gap-20 items-start">
           {/* Gallery — sticky no desktop */}
-          <div className="md:sticky md:top-24">
+          <div className="md:sticky md:top-24 min-w-0">
             <ProductGallery
               images={images}
               activeIndex={activeImage}
@@ -230,7 +230,7 @@ export default function ProductPage() {
 
             {/* Blurb curto — 1 frase, sans, funcional */}
             {parsed.lead && (
-              <p className="font-sans text-[14.5px] leading-relaxed text-western-stone-warm mt-5 max-w-[48ch]">
+              <p className="font-sans text-[14.5px] leading-relaxed text-western-stone-warm mt-5 max-w-[48ch] break-words">
                 {(() => {
                   const cleaned = parsed.lead
                     .replace(new RegExp(`^A?\\s*${escapeRegExp(product.title)}\\s*`, "i"), "")
