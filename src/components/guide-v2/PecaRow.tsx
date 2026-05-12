@@ -21,22 +21,24 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
   };
 
   return (
-    <div className="flex items-start gap-5 py-6 border-b border-western-stone-warm/15 first:border-t">
-      <div className="w-24 h-24 flex-shrink-0 bg-western-paper border border-western-stone-warm/10 overflow-hidden">
-        {peca.imageUrl ? (
-          <img src={peca.imageUrl} alt={peca.nome} loading="lazy" decoding="async" className="w-full h-full object-contain p-1.5" />
-        ) : (
-          <div className="w-full h-full bg-western-paper" />
-        )}
+    <div className="flex flex-col md:flex-row md:items-start gap-4 md:gap-5 py-6 border-b border-western-stone-warm/15 first:border-t">
+      <div className="flex gap-4 md:gap-5 flex-1 min-w-0">
+        <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 bg-western-paper border border-western-stone-warm/10 overflow-hidden">
+          {peca.imageUrl ? (
+            <img src={peca.imageUrl} alt={peca.nome} loading="lazy" decoding="async" className="w-full h-full object-contain p-1.5" />
+          ) : (
+            <div className="w-full h-full bg-western-paper" />
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h4 className="font-display text-[18px] md:text-[19px] text-western-green-deep leading-tight break-words">{peca.nome}</h4>
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-gold mt-1.5 break-words">
+            {peca.codigo}{peca.pesoKg ? ` · ${peca.pesoKg} kg` : ""}{peca.dim && peca.dim !== "—" ? ` · ${peca.dim}` : ""}
+          </p>
+          <p className="font-sans text-[16px] md:text-[17px] font-medium tabular-nums text-western-green-deep mt-2">{formatPreco(peca.preco)}</p>
+        </div>
       </div>
-      <div className="flex-1 min-w-0">
-        <h4 className="font-display text-[19px] text-western-green-deep leading-tight">{peca.nome}</h4>
-        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mt-1.5">
-          {peca.codigo}{peca.pesoKg ? ` · ${peca.pesoKg} kg` : ""}{peca.dim && peca.dim !== "—" ? ` · ${peca.dim}` : ""}
-        </p>
-        <p className="font-sans text-[17px] font-medium tabular-nums text-western-green-deep mt-2">{formatPreco(peca.preco)}</p>
-      </div>
-      <div className="flex flex-col items-end gap-2.5">
+      <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-3 md:gap-2.5">
         <div className="inline-flex items-center border border-western-stone-warm/30 bg-white">
           <button
             type="button"
