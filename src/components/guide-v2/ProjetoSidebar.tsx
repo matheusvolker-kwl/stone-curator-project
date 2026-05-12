@@ -241,7 +241,7 @@ export default function ProjetoSidebar(props: Props) {
                 {isApproved ? formatPreco(total) : "Preço para parceiros"}
               </div>
             </div>
-            <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] bg-western-gold text-western-green-deep px-4 py-2.5">
+            <span className="inline-flex items-center gap-2 font-sans font-medium text-[13px] bg-western-gold text-western-green-deep px-4 py-2.5">
               Ver projeto ({totalQty})
             </span>
           </button>
