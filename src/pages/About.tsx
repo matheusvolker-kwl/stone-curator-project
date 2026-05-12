@@ -164,7 +164,7 @@ export default function About() {
           </Reveal>
 
           {/* Narrativa em coluna controlada abaixo da foto */}
-          <div className="max-w-3xl mx-auto mt-14 md:mt-20 space-y-6 text-base md:text-lg text-western-stone-warm leading-relaxed">
+          <div className="max-w-3xl mx-auto mt-10 md:mt-14 space-y-6 text-base md:text-lg text-western-stone-warm leading-relaxed">
             <Reveal variant="fade-up" delay={80} duration={750}>
               <p>
                 Em 1993, <strong className="text-western-green-deep font-semibold">Luiz Duarte
