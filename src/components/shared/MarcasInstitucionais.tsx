@@ -78,7 +78,7 @@ export default function MarcasInstitucionais({
       )}
 
       {semBordas ? (
-        <ul className="flex flex-wrap items-center justify-center gap-x-12 md:gap-x-20 gap-y-8">
+        <ul className="flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-6">
           {PARCEIROS.map((p) => (
             <li key={p.nome}>
               <a
