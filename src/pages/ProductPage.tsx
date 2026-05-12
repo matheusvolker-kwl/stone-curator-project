@@ -230,7 +230,7 @@ export default function ProductPage() {
 
             {/* Blurb curto — 1 frase, sans, funcional */}
             {parsed.lead && (
-              <p className="font-sans text-[14.5px] leading-relaxed text-western-stone-warm mt-5 max-w-[48ch]">
+              <p className="font-sans text-[14.5px] leading-relaxed text-western-stone-warm mt-5 max-w-[48ch] break-words">
                 {(() => {
                   const cleaned = parsed.lead
                     .replace(new RegExp(`^A?\\s*${escapeRegExp(product.title)}\\s*`, "i"), "")
