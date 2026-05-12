@@ -62,7 +62,7 @@ export default function ArtistaSection() {
 
         <Link
           to="/sobre"
-          className="inline-flex items-center gap-2 mt-10 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep link-underline"
+          className="inline-flex items-center gap-2 mt-8 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep link-underline"
         >
           Conhecer o ateliê <ArrowRight className="h-3 w-3" />
         </Link>
