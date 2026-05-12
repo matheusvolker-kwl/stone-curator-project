@@ -34,6 +34,7 @@ const AccountPreferences = lazy(() => import("./pages/account/AccountPreferences
 
 const Linhas = lazy(() => import("./pages/Linhas.tsx"));
 const LinhaPage = lazy(() => import("./pages/LinhaPage.tsx"));
+const Produtos = lazy(() => import("./pages/Produtos.tsx"));
 const Conjuntos = lazy(() => import("./pages/Conjuntos.tsx"));
 const ProductPage = lazy(() => import("./pages/ProductPage.tsx"));
 const About = lazy(() => import("./pages/About.tsx"));
@@ -96,6 +97,7 @@ const App = () => (
                   <Route path="/linhas" element={<Linhas />} />
                   <Route path="/linhas/:handle" element={<LinhaPage />} />
                   <Route path="/conjuntos" element={<Conjuntos />} />
+                  <Route path="/produtos" element={<Produtos />} />
                   <Route path="/produtos/:handle" element={<ProductPage />} />
                   <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
                   <Route path="/sobre" element={<About />} />
