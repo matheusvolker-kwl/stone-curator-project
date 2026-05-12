@@ -20,11 +20,10 @@ export default function WhatsInTheBox() {
   ];
 
   return (
-    <div className="mt-8 bg-western-cream/60 border border-western-stone-warm/15 px-5 py-6 md:px-7 md:py-7">
-      <p className="text-eyebrow mb-5">O que vem na caixa</p>
-      <div className="grid gap-5 md:grid-cols-3">
+    <div className="bg-western-cream/60 border border-western-stone-warm/15 px-5 py-6 md:px-7 md:py-7">
+      <ul className="space-y-5">
         {items.map(({ Icon, title, desc }) => (
-          <div key={title} className="flex md:flex-col gap-3">
+          <li key={title} className="flex gap-3">
             <Icon
               className="h-5 w-5 flex-shrink-0 text-western-green-deep mt-0.5"
               strokeWidth={1.5}
@@ -38,9 +37,9 @@ export default function WhatsInTheBox() {
                 {desc}
               </p>
             </div>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

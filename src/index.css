@@ -181,6 +181,28 @@
     font-weight: 500;
   }
 
+  /* Section header — primary divider inside long content (tabs, panels) */
+  .text-section-label {
+    @apply font-mono text-[11px] uppercase tracking-[0.28em] inline-flex items-center;
+    color: hsl(var(--western-green-deep));
+    font-weight: 600;
+  }
+  .text-section-label::before {
+    content: "";
+    display: inline-block;
+    width: 18px;
+    height: 1px;
+    background-color: hsl(var(--western-gold));
+    margin-right: 0.65rem;
+  }
+
+  /* Sub-label — used for sibling items inside a section */
+  .text-sublabel {
+    @apply font-mono text-[10px] uppercase tracking-[0.22em];
+    color: hsl(var(--western-stone-warm) / 0.7);
+    font-weight: 500;
+  }
+
   .text-meta {
     @apply font-mono text-[10.5px] uppercase tracking-[0.18em];
     color: hsl(var(--western-stone-warm) / 0.85);

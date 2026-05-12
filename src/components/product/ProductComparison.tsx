@@ -1,5 +1,3 @@
-import { BUSINESS } from "@/config/business";
-
 interface Props {
   productTitle: string;
   pesoKg?: string | null;        // ex.: "74"
@@ -22,17 +20,13 @@ const ROWS = (pesoKg?: string | null) => [
 ];
 
 export default function ProductComparison({ productTitle, pesoKg, dimensoes }: Props) {
-  const onConsultor = () => {
-    const msg = `Olá! Gostaria de um comparativo orçamentário Western × pedra natural para um projeto com ${productTitle}.`;
-    window.open(`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`, "_blank");
-  };
+  const rows = ROWS(pesoKg);
 
   return (
     <section className="bg-western-ivory py-20 md:py-28">
-      <div className="max-w-4xl mx-auto px-6 md:px-8">
-        <header className="mb-10 max-w-2xl">
-          <p className="text-eyebrow mb-4">Comparativo</p>
-          <div className="w-12 h-px bg-western-gold mb-6" />
+      <div className="max-w-5xl mx-auto px-6 md:px-8">
+        <header className="mb-12 max-w-2xl">
+          <p className="text-section-label mb-5">Comparativo</p>
           <h2 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight">
             Por que pedra Western e não pedra natural
           </h2>
@@ -40,63 +34,62 @@ export default function ProductComparison({ productTitle, pesoKg, dimensoes }: P
             A peça em si é apenas parte do projeto. O que viabiliza Western é o que vem junto.
           </p>
           {dimensoes && (
-            <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/70">
+            <p className="text-sublabel mt-3">
               Referência: {productTitle} · {dimensoes}
             </p>
           )}
         </header>
 
-        {/* Header da tabela */}
-        <div className="hidden md:grid grid-cols-[1fr_auto_1fr] gap-0 border-b border-western-stone-warm/25 pb-3 mb-1">
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep text-right pr-6">
-            {productTitle} · Western
-          </p>
-          <span className="w-px bg-western-stone-warm/15" />
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm pl-6">
-            Pedra natural equivalente
-          </p>
+        {/* Header row (desktop) */}
+        <div className="hidden md:grid grid-cols-[200px_1fr_1fr] border-b border-western-stone-warm/25">
+          <div />
+          <div className="px-6 py-3 bg-western-paper/60 border-l-2 border-western-gold">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep font-semibold">
+              {productTitle} · Western
+            </p>
+          </div>
+          <div className="px-6 py-3">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/80">
+              Pedra natural equivalente
+            </p>
+          </div>
         </div>
 
-        <ul>
-          {ROWS(pesoKg).map((r, i) => (
+        <ul className="divide-y divide-western-stone-warm/15">
+          {rows.map((r) => (
             <li
               key={r.label}
-              className={`grid md:grid-cols-[1fr_auto_1fr] grid-cols-1 items-center gap-y-1 border-b border-western-stone-warm/15 py-4 ${
-                i % 2 === 0 ? "md:bg-western-paper/40" : ""
-              }`}
+              className="md:grid md:grid-cols-[200px_1fr_1fr] md:items-stretch py-4 md:py-0"
             >
-              <span className="md:text-right md:pr-6 text-western-green-deep text-sm leading-snug">
-                <span className="md:hidden font-mono text-[9px] uppercase tracking-[0.22em] text-western-gold mr-2">
-                  Western
-                </span>
-                {r.western}
-              </span>
-              <span className="hidden md:flex w-[180px] justify-center items-center">
-                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/80 text-center px-3">
+              {/* Label */}
+              <div className="md:flex md:items-center md:py-5 md:pr-4">
+                <span className="font-sans font-medium text-[14px] text-western-green-deep">
                   {r.label}
                 </span>
-              </span>
-              <span className="md:hidden font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 my-1">
-                {r.label}
-              </span>
-              <span className="md:pl-6 text-western-stone-warm text-sm leading-snug">
-                <span className="md:hidden font-mono text-[9px] uppercase tracking-[0.22em] text-western-stone-warm/60 mr-2">
-                  Pedra natural
+              </div>
+
+              {/* Western column */}
+              <div className="md:py-5 md:px-6 md:bg-western-paper/60 md:border-l-2 md:border-western-gold mt-2 md:mt-0">
+                <span className="md:hidden text-sublabel mr-2 text-western-gold">Western</span>
+                <span className="font-sans font-medium text-[14.5px] text-western-green-deep leading-snug">
+                  {r.western}
                 </span>
-                {r.natural}
-              </span>
+              </div>
+
+              {/* Natural column */}
+              <div className="md:py-5 md:px-6 mt-1 md:mt-0">
+                <span className="md:hidden text-sublabel mr-2">Pedra natural</span>
+                <span className="font-sans text-[14px] text-western-stone-warm/85 leading-snug">
+                  {r.natural}
+                </span>
+              </div>
             </li>
           ))}
         </ul>
 
-        <div className="text-center mt-12">
-          <button
-            onClick={onConsultor}
-            className="inline-flex items-center justify-center px-8 py-4 border border-western-green-deep text-western-green-deep hover:bg-western-green-deep hover:text-western-cream transition-colors font-mono text-[11px] uppercase tracking-[0.25em]"
-          >
-            Solicitar comparativo orçamentário
-          </button>
-        </div>
+        <p className="mt-10 italic text-sm text-western-stone-warm/85 max-w-xl">
+          Resultado: projeto previsível, sem surpresa de obra — você decide a peça, a logística e o custo antes de qualquer caminhão sair da fábrica.
+        </p>
       </div>
     </section>
   );

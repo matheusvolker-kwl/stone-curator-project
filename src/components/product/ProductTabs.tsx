@@ -1,7 +1,7 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import HardFactsCard from "@/components/product/HardFactsCard";
 import WhatsInTheBox from "@/components/product/WhatsInTheBox";
-import { Download } from "lucide-react";
+import { Download, Check } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import type { ParsedDescription } from "@/lib/shopify/parseDescription";
 
@@ -33,6 +33,13 @@ const COMPOSICAO = [
   },
 ];
 
+const SKETCHUP_INCLUI = [
+  "Geometria fiel à peça real, escala 1:1",
+  "Materiais base aplicados (acabamento neutro)",
+  "Pivot ajustado para encaixe direto na composição",
+  "Compatível com SketchUp Pro e Free, versões 2020+",
+];
+
 export default function ProductTabs({
   parsed,
   pesoKg,
@@ -52,6 +59,7 @@ export default function ProductTabs({
             {[
               { v: "descricao", l: "Descrição" },
               { v: "specs", l: "Especificações" },
+              { v: "modelo3d", l: "Modelo 3D" },
               { v: "entrega", l: "Entrega & instalação" },
             ].map((t) => (
               <TabsTrigger
@@ -68,6 +76,7 @@ export default function ProductTabs({
           <TabsContent value="descricao" className="mt-0">
             <div className="grid md:grid-cols-12 gap-10 lg:gap-16 max-w-5xl">
               <div className="md:col-span-7 space-y-6">
+                <p className="text-section-label mb-2">Sobre a peça</p>
                 {parsed.lead && (
                   <p className="font-sans text-[16px] leading-relaxed text-western-stone-warm">
                     {parsed.lead}
@@ -80,7 +89,7 @@ export default function ProductTabs({
                 )}
                 {parsed.aplicacoes.length > 0 && (
                   <div className="pt-4">
-                    <p className="text-eyebrow mb-3">Aplicações</p>
+                    <p className="text-sublabel mb-3">Aplicações</p>
                     <p className="font-sans text-[15px] text-western-green-deep">
                       {parsed.aplicacoes.map((a, i) => (
                         <span key={a}>
@@ -96,7 +105,7 @@ export default function ProductTabs({
               </div>
 
               <div className="md:col-span-5">
-                <p className="text-eyebrow mb-5">Composição & material</p>
+                <p className="text-section-label mb-5">Composição & material</p>
                 <ul className="space-y-5">
                   {COMPOSICAO.map((item) => (
                     <li key={item.label}>
@@ -123,7 +132,7 @@ export default function ProductTabs({
               <div className="md:col-span-7 space-y-10">
                 {dims && (
                   <div>
-                    <p className="text-eyebrow mb-4">Dimensões</p>
+                    <p className="text-section-label mb-4">Dimensões</p>
                     <div className="grid grid-cols-3 gap-px bg-western-stone-warm/15 border border-western-stone-warm/15">
                       {[
                         { rotulo: "Comprimento", sigla: "C", valor: dims.c },
@@ -131,7 +140,7 @@ export default function ProductTabs({
                         { rotulo: "Altura", sigla: "A", valor: dims.a },
                       ].map((d) => (
                         <div key={d.sigla} className="bg-western-cream p-4 text-center">
-                          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-2">
+                          <p className="text-sublabel mb-2">
                             {d.sigla} · {d.rotulo}
                           </p>
                           <p className="font-sans font-semibold text-xl text-western-green-deep tabular-nums">
@@ -147,7 +156,7 @@ export default function ProductTabs({
 
                 {fichaRows.length > 0 && (
                   <div>
-                    <p className="text-eyebrow mb-4">Ficha técnica</p>
+                    <p className="text-section-label mb-4">Ficha técnica</p>
                     <dl>
                       {fichaRows.map((f) => (
                         <div
@@ -164,7 +173,7 @@ export default function ProductTabs({
 
                 {parsed.observacoes.length > 0 && (
                   <div>
-                    <p className="text-eyebrow mb-4">Observações</p>
+                    <p className="text-section-label mb-4">Observações</p>
                     <ul className="space-y-4">
                       {parsed.observacoes.map((o, i) => (
                         <li key={i}>
@@ -181,23 +190,48 @@ export default function ProductTabs({
                     </ul>
                   </div>
                 )}
+              </div>
+            </div>
+          </TabsContent>
 
-                <div>
-                  <p className="text-eyebrow mb-3">Modelo 3D · SketchUp</p>
-                  <p className="font-sans text-[14px] leading-relaxed text-western-stone-warm mb-4 max-w-[60ch]">
-                    Modele a composição inteira no SketchUp antes de comprar — visualize proporções,
-                    escala e enquadramento exatos no projeto.
-                  </p>
+          {/* MODELO 3D · SKETCHUP */}
+          <TabsContent value="modelo3d" className="mt-0">
+            <div className="grid md:grid-cols-12 gap-10 lg:gap-16 max-w-5xl">
+              <div className="md:col-span-7 space-y-5">
+                <p className="text-section-label">Modelo 3D · SketchUp</p>
+                <h3 className="font-display text-2xl md:text-3xl text-western-green-deep leading-tight">
+                  Modele a composição inteira antes de comprar.
+                </h3>
+                <p className="font-sans text-[15px] leading-relaxed text-western-stone-warm max-w-[58ch]">
+                  Visualize proporções, escala e enquadramento exatos no projeto.
+                  Aprove a peça com o cliente antes da produção — sem surpresa de obra,
+                  sem especificação no escuro.
+                </p>
+                <div className="pt-3">
                   <a
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 h-11 px-5 bg-western-gold/10 border border-western-gold/60 text-western-green-deep hover:bg-western-gold hover:border-western-gold font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+                    className="inline-flex items-center gap-2 h-12 px-6 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.22em] font-semibold transition-colors"
                   >
                     <Download className="h-4 w-4" />
                     {isProductSpecific ? "Baixar modelo 3D (.skp)" : "Abrir no 3D Warehouse"}
                   </a>
                 </div>
+              </div>
+
+              <div className="md:col-span-5">
+                <p className="text-sublabel mb-4">O que está incluso</p>
+                <ul className="space-y-3">
+                  {SKETCHUP_INCLUI.map((it) => (
+                    <li key={it} className="flex gap-3 items-start">
+                      <Check className="h-4 w-4 text-western-gold mt-0.5 shrink-0" />
+                      <span className="font-sans text-[14px] leading-relaxed text-western-stone-warm">
+                        {it}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </TabsContent>
@@ -207,7 +241,7 @@ export default function ProductTabs({
             <div className="grid md:grid-cols-12 gap-10 lg:gap-16 max-w-5xl">
               <div className="md:col-span-7 space-y-10">
                 <div>
-                  <p className="text-eyebrow mb-4">Produção & entrega</p>
+                  <p className="text-section-label mb-4">Produção & entrega</p>
                   <dl className="space-y-4">
                     {[
                       {
@@ -236,7 +270,7 @@ export default function ProductTabs({
                 </div>
 
                 <div>
-                  <p className="text-eyebrow mb-4">Cuidados</p>
+                  <p className="text-section-label mb-4">Cuidados</p>
                   <p className="font-sans text-[14px] leading-relaxed text-western-stone-warm max-w-[60ch]">
                     Manutenção zero. Limpeza com pano macio levemente úmido ou jato de água.
                     Evite produtos abrasivos ou ácidos. A pintura mineral resiste a cloro de
@@ -246,6 +280,7 @@ export default function ProductTabs({
               </div>
 
               <div className="md:col-span-5">
+                <p className="text-section-label mb-4">O que vem na caixa</p>
                 <WhatsInTheBox />
               </div>
             </div>
