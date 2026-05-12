@@ -208,7 +208,7 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
@@ -233,7 +233,7 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6">
             {filtered.map((p) => (
               <ProductCard key={p.node.id} product={p.node} surface="cream" />
             ))}
