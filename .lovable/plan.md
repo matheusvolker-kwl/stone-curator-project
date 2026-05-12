@@ -1,50 +1,81 @@
-## Replicar avisos informativos na página de cadastro
+# Filtros inteligentes + página "Todos os produtos"
 
-Hoje a `/parceiro/cadastro` (`src/pages/PartnerSignup.tsx`) tem uma intro curta e vai direto para o formulário. Como muitos links levam direto pra cá, o usuário pode chegar sem entender que (a) o site é restrito a empresas aprovadas e (b) existe alternativa via WhatsApp para cliente final.
+## Por que mudar
 
-Vou trazer **as mesmas duas informações da página de login** (`PartnerLogin.tsx`), adaptadas ao layout estreito (max-w-2xl, coluna única) do cadastro — sem quebrar a hierarquia atual do form.
+O filtro de acabamento na página de linha tem pouco valor prático: todas as peças são oferecidas nos 4 acabamentos (Quartzo, Arenito, Moledo, Granito), então marcar "Moledo" não filtra quase nada. O cliente decidindo entre peças de uma linha precisa, na verdade, escolher por **escala** (cabe no projeto?) e **logística** (consigo movimentar / preciso de equipamento?). Tamanho e peso resolvem isso.
 
-### Mudanças em `src/pages/PartnerSignup.tsx`
+## O que muda
 
-**1. Reforçar o aviso de exclusividade no intro (linhas 204–207)**
+### 1. Filtro de Tamanho e Peso (substitui Acabamento)
 
-Substituir o parágrafo curto atual por uma versão mais clara, alinhada ao texto da página de login:
+**Fonte dos dados:** já existe `parseProductDescription` + `extractDimensions` em `src/lib/shopify/parseDescription.ts` lendo a "Ficha técnica" do Shopify (Comprimento, Largura, Altura, Peso). Vamos criar `extractSizeWeight(product)` em um novo `src/lib/shopify/sizeWeight.ts` que devolve:
+- `maiorDimensaoCm` (max entre C/L/A)
+- `pesoKg` (parse do campo "Peso")
+- `tamanhoBucket`: `pequeno` (≤30 cm), `medio` (31–60), `grande` (61–100), `enorme` (>100)
+- `pesoBucket`: `leve` (≤10 kg), `medio` (11–40), `pesado` (41–100), `muitoPesado` (>100)
 
-> "Este site da Western atende exclusivamente arquitetos, paisagistas, construtoras e garden centers com CNPJ ativo. O acesso à tabela comercial, modelos 3D e composições só é liberado após análise do cadastro — leva até 2 dias úteis."
+Os limites são uma primeira proposta — fáceis de calibrar depois quando vermos a distribuição real do catálogo.
 
-**2. Adicionar callout "É cliente final?" abaixo do header, antes do stepper (após linha 207)**
+**UI dos filtros (chips, não checkbox):**
 
-Bloco discreto, em uma linha (sem virar card pesado), reaproveitando o componente visual do card de cliente final do Login mas em formato horizontal compacto:
+```text
+TAMANHO (maior dimensão)
+[ Pequeno ]  [ Médio ]  [ Grande ]  [ Enorme ]
+  até 30      31–60      61–100      100+ cm
 
-- Borda sutil `border border-western-stone-warm/25`, fundo `bg-western-paper/60`, padding moderado.
-- Ícone `MessageCircle` em dourado + eyebrow "Sou cliente final" + frase "Quero fazer um projeto residencial" + CTA "Falar no WhatsApp →".
-- Link `<a>` para `https://wa.me/${BUSINESS.whatsappFabrica}?text=...` com mesma mensagem usada no Login (importar `BUSINESS` de `@/config/business`).
-- Espaçamento `mb-10` para separar do stepper.
-
-**3. (Opcional, mas recomendado) Repetir o callout no rodapé do form (linhas próximas a 188)**
-
-No estado de sucesso ("Cadastro enviado com sucesso") já existe um link "Voltar ao catálogo". Não mexe nele.
-
-### Layout
-
-Coluna única continua. O callout de cliente final fica **acima** do stepper, dando uma "saída" clara antes do usuário começar a preencher campos que não se aplicam a ele. Isso reduz cadastros de pessoa física que depois precisam ser rejeitados.
-
-```
-[Eyebrow: Cadastro B2B]
-[Título: Solicite acesso de parceiro.]
-[Parágrafo reforçado de exclusividade]
-[Callout horizontal: É cliente final? → WhatsApp]
-[Stepper 1 / 2]
-[Form...]
+PESO
+[ Leve ]  [ Médio ]  [ Pesado ]  [ Muito pesado ]
+ até 10    11–40      41–100      100+ kg
 ```
 
-### Imports a adicionar
+Cada chip é toggle (multi-select dentro da mesma categoria = OR; entre categorias = AND). Mantém o estado na URL (`tamanho=pequeno,medio&peso=leve`). Mantém o campo de busca por nome/SKU. Remove a seção "Acabamento". Mantém o rodapé "Pedido mínimo R$ 700 · produção 15 dias úteis".
 
-- `MessageCircle` de `lucide-react`
-- `BUSINESS` de `@/config/business`
+Por que chips e não slider duplo:
+- Decisão é categórica ("preciso de algo manuseável") — não milimétrica
+- Funciona bem em mobile sem `<input type=range>` complicado
+- Linguagem natural ("pequeno", "leve") em vez de números abstratos
+- Compatível com o resto do design system (chips já existem em `ContextoChips`)
 
-### Arquivos afetados
+Quando uma peça não tem peso/dimensão na ficha, ela é incluída em qualquer filtro (não escondemos por dado faltante) mas marcamos com um aviso discreto no card opcionalmente — fora do escopo desta tarefa.
 
-- `src/pages/PartnerSignup.tsx` (apenas seção intro, sem tocar no form/stepper/lógica de submit)
+### 2. Nova página `/produtos` — "Todos os produtos"
 
-Nenhuma mudança em rotas, schema, validação ou backend.
+Rota nova. Reaproveita 100% do componente de lista/filtros da `LinhaPage` extraindo um componente `ProductGrid` em `src/components/product/ProductGrid.tsx` que recebe `products[]` + props de filtro. A diferença é só a fonte dos dados:
+- `LinhaPage`: `fetchCollection(handle)`
+- `Todos`: `fetchProducts(250)` (sem query)
+
+Header da página usa o mesmo padrão visual de `Linhas.tsx` (eyebrow + filete dourado + h1).
+
+### 3. Acesso à nova página
+
+Na página `/linhas` (`src/pages/Linhas.tsx`), adicionar um card destacado no topo da grade (antes das linhas) ou um link inline abaixo do parágrafo de intro:
+
+> "Procurando algo específico? **Ver todos os produtos** → ordenar por preço, tamanho e peso."
+
+Card é mais visível; vou implementar como card primeiro item da grade com tratamento visual diferente (sem imagem, fundo `western-green-deep`, texto cream) — fácil de reverter para link se preferir.
+
+### 4. Renomear ordenação
+
+No `<SelectTrigger>` da `LinhaPage` (e na nova página), o placeholder/label visual passa a ser **"ORDENE"** em vez de "Mais…". A primeira opção (`featured`) continua sendo "Mais especificados" no menu aberto, mas o trigger fechado mostra "ORDENE" quando nenhuma ordenação foi escolhida explicitamente.
+
+Implementação: `SelectValue placeholder="Ordene"` e setar valor inicial como `undefined` em vez de `"featured"` — quando não há sort, usa ordem natural do Shopify e mostra placeholder.
+
+## Arquivos afetados
+
+**Novos:**
+- `src/lib/shopify/sizeWeight.ts` — parser + buckets
+- `src/components/product/ProductGrid.tsx` — grid + sidebar de filtros (extraído de LinhaPage)
+- `src/pages/Produtos.tsx` — página "todos os produtos"
+
+**Editados:**
+- `src/pages/LinhaPage.tsx` — usa `ProductGrid`, remove FINISHES local
+- `src/pages/Linhas.tsx` — adiciona card/link "Ver todos"
+- `src/App.tsx` — registra rota `/produtos`
+
+**Não muda:** Shopify schema, types, queries (toda info já vem em `descriptionHtml`), nem lógica de busca/ordenação atual.
+
+## Fora de escopo
+
+- Calibrar os limites dos buckets com dados reais (deixo TODO no código)
+- Filtros adicionais (linha, aplicação) na página /produtos — pode vir num segundo passo
+- Indicador visual de "sem ficha técnica" no card
