@@ -185,7 +185,7 @@ export default function ProductGallery({
           <button
             type="button"
             onClick={() => setZoomed((z) => !z)}
-            className={`relative mx-auto max-w-[92vw] max-h-[88vh] overflow-auto ${
+            className={`relative block mx-auto max-w-[92vw] max-h-[88vh] overflow-auto ${
               zoomed ? "cursor-zoom-out" : "cursor-zoom-in"
             }`}
             aria-label={zoomed ? "Reduzir zoom" : "Ampliar"}
