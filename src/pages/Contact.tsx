@@ -52,7 +52,7 @@ export default function Contact() {
             <p className="text-eyebrow mb-5">Contato</p>
             <div className="w-12 h-px bg-western-gold mb-8" />
             <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-western-green-deep leading-[1.02] tracking-tight">
-              Para falar<br />com a fábrica.
+              Fale com a Western.
             </h1>
           </div>
           <div className="md:col-span-4">

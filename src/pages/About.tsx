@@ -55,7 +55,7 @@ export default function About() {
   return (
     <>
       {/* HERO — atmosférico com foto de fundo e símbolo flutuante */}
-      <section className="relative overflow-hidden bg-western-green-deep min-h-[78vh] flex items-center">
+      <section className="relative overflow-hidden bg-western-green-deep min-h-[62vh] flex items-center">
         <img
           src={heroCascata}
           alt=""
@@ -79,13 +79,13 @@ export default function About() {
           style={{ transform: `translate3d(0, calc(-50% + ${scrollY * -0.06}px), 0)` }}
         />
 
-        <div className="container-western py-24 md:py-32 max-w-4xl relative">
+        <div className="container-western py-16 md:py-20 max-w-4xl relative">
           <Reveal variant="fade-up" duration={800}>
             <p className="text-eyebrow text-western-gold-soft mb-5">A Western · 1993 — 2026</p>
-            <div className="w-12 h-px bg-western-gold mb-8" />
+            <div className="w-12 h-px bg-western-gold mb-6" />
           </Reveal>
           <Reveal variant="fade-up" delay={120} duration={900}>
-            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-western-cream leading-[1.02] mb-8">
+            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-western-cream leading-[1.02] mb-6">
               33 anos moldando<br />
               <span className="italic text-western-gold-soft font-light">pedra sem extrair pedra.</span>
             </h1>
@@ -123,10 +123,10 @@ export default function About() {
       </section>
 
       {/* IRMÃOS BOTELHO — seção única editorial: título + foto widescreen + narrativa */}
-      <section className="surface-ivory py-20 md:py-24">
+      <section className="surface-ivory py-14 md:py-18">
         <div className="container-western max-w-[1600px]">
           <Reveal variant="fade-up" duration={800}>
-            <div className="max-w-3xl mb-10 md:mb-14">
+            <div className="max-w-3xl mb-8 md:mb-10">
               <p className="text-eyebrow mb-3">Os irmãos Botelho · 2ª geração</p>
               <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
                 Ricardo no desenho, Luiz Carlos na engenharia.
@@ -164,7 +164,7 @@ export default function About() {
           </Reveal>
 
           {/* Narrativa em coluna controlada abaixo da foto */}
-          <div className="max-w-3xl mx-auto mt-14 md:mt-20 space-y-6 text-base md:text-lg text-western-stone-warm leading-relaxed">
+          <div className="max-w-3xl mx-auto mt-10 md:mt-14 space-y-6 text-base md:text-lg text-western-stone-warm leading-relaxed">
             <Reveal variant="fade-up" delay={80} duration={750}>
               <p>
                 Em 1993, <strong className="text-western-green-deep font-semibold">Luiz Duarte
@@ -216,7 +216,7 @@ export default function About() {
 
       {/* CITAÇÃO — quebra editorial em surface-paper com imagem larga */}
       <section className="relative overflow-hidden">
-        <div className="relative h-[55vh] min-h-[420px] w-full">
+        <div className="relative h-[44vh] min-h-[340px] w-full">
           <img
             src={respiroPedra}
             alt=""
@@ -250,10 +250,10 @@ export default function About() {
       </section>
 
       {/* 4 PILARES */}
-      <section className="surface-paper py-20 md:py-24 border-t border-western-stone-warm/10">
+      <section className="surface-paper py-14 md:py-18 border-t border-western-stone-warm/10">
         <div className="container-western max-w-6xl">
           <Reveal variant="fade-up" duration={750}>
-            <div className="max-w-2xl mb-14">
+            <div className="max-w-2xl mb-10">
               <p className="text-eyebrow mb-3">O método Western</p>
               <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
                 Quatro pilares que diferenciam<br />o que sai do ateliê.
@@ -264,7 +264,7 @@ export default function About() {
           <div className="grid md:grid-cols-2 gap-px bg-western-stone-warm/15">
             {PILARES.map(({ Icon, eyebrow, titulo, texto }, i) => (
               <Reveal key={titulo} variant="fade-up" delay={i * 100} duration={700} distance={24}>
-                <div className="group bg-western-cream p-8 md:p-12 h-full transition-colors duration-500 hover:bg-western-paper">
+                <div className="group bg-western-cream p-7 md:p-10 h-full transition-colors duration-500 hover:bg-western-paper">
                   <Icon className="h-8 w-8 text-western-gold mb-6 transition-transform duration-500 group-hover:-translate-y-1 group-hover:rotate-[-4deg]" strokeWidth={1.3} />
                   <p className="text-eyebrow mb-3">{eyebrow}</p>
                   <h3 className="font-display text-2xl md:text-3xl text-western-green-deep leading-tight mb-4">
@@ -281,10 +281,10 @@ export default function About() {
       </section>
 
       {/* GALERIA — Mural editorial de obras */}
-      <section className="surface-ivory py-20 md:py-24 border-t border-western-stone-warm/10">
+      <section className="surface-ivory py-14 md:py-18 border-t border-western-stone-warm/10">
         <div className="container-western max-w-6xl">
           <Reveal variant="fade-up" duration={750}>
-            <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-end mb-12 md:mb-16">
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-end mb-8 md:mb-12">
               <div>
                 <p className="text-eyebrow mb-3">Repertório</p>
                 <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
@@ -366,7 +366,7 @@ export default function About() {
       </section>
 
       {/* MANIFESTO — vocabulário & filosofia */}
-      <section className="surface-forest py-20 md:py-24 relative overflow-hidden">
+      <section className="surface-forest py-14 md:py-18 relative overflow-hidden">
         <img
           src={iconePedraBranco}
           alt=""
@@ -377,7 +377,7 @@ export default function About() {
           <Reveal variant="fade-up" duration={750}>
             <p className="text-eyebrow text-western-gold-soft mb-5">Filosofia de marca</p>
             <div className="w-12 h-px bg-western-gold mx-auto mb-8" />
-            <p className="font-display text-2xl md:text-4xl text-western-cream leading-[1.2] mb-12">
+            <p className="font-display text-2xl md:text-4xl text-western-cream leading-[1.2] mb-8">
               Não vendemos pedra.<br />
               <span className="italic text-western-gold-soft font-light">
                 Oferecemos elemento autoral para o projeto.
@@ -400,7 +400,7 @@ export default function About() {
             ))}
           </div>
           <Reveal variant="fade-up" delay={200} duration={750}>
-            <p className="text-western-cream-muted leading-relaxed mt-12 max-w-2xl mx-auto">
+            <p className="text-western-cream-muted leading-relaxed mt-8 max-w-2xl mx-auto">
               A Western adota um vocabulário próprio porque o relacionamento é de coprojeto, e o
               que se entrega é uma obra integrada — não um item de varejo. Esse cuidado de
               linguagem eleva a categoria.
@@ -410,7 +410,7 @@ export default function About() {
       </section>
 
       {/* ARQUITETOS + MARCAS — prova social */}
-      <section className="surface-ivory py-20 md:py-24">
+      <section className="surface-ivory py-14 md:py-18">
         <div className="container-western max-w-5xl">
           <Reveal variant="fade-up" duration={800}>
             <ArquitetosStrip
@@ -444,7 +444,7 @@ export default function About() {
 
       {/* CTA FINAL — atmosférico */}
       <section className="relative overflow-hidden">
-        <div className="relative min-h-[58vh] flex items-center surface-forest py-20">
+        <div className="relative min-h-[46vh] flex items-center surface-forest py-16">
           <img
             src={projetoCascata}
             alt=""
@@ -470,7 +470,7 @@ export default function About() {
                   {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
                 </span>
               </h2>
-              <p className="text-western-cream-muted leading-relaxed mb-10 max-w-xl mx-auto text-base md:text-lg">
+              <p className="text-western-cream-muted leading-relaxed mb-8 max-w-xl mx-auto text-base md:text-lg">
                 Visita guiada com Ricardo ou Luiz Carlos, repertório completo de acabamentos na mão e
                 apresentação técnica para o seu próximo projeto.
               </p>

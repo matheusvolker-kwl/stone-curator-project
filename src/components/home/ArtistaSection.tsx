@@ -4,9 +4,9 @@ import ricardoDesenhando from "@/assets/ricardo-desenhando.webp";
 
 export default function ArtistaSection() {
   return (
-    <section className="surface-ivory pt-20 md:pt-28 pb-20 md:pb-28 border-t border-western-stone-warm/10">
+    <section className="surface-ivory pt-14 md:pt-18 pb-14 md:pb-18 border-t border-western-stone-warm/10">
       {/* Eyebrow centralizado, anunciando a seção */}
-      <div className="container-western max-w-4xl text-center mb-10 md:mb-14">
+      <div className="container-western max-w-4xl text-center mb-7 md:mb-10">
         <p className="text-eyebrow mb-4">O artista</p>
         <div className="w-12 h-px bg-western-gold mx-auto" />
       </div>
@@ -34,7 +34,7 @@ export default function ArtistaSection() {
       </figure>
 
       {/* Bloco de texto abaixo — citação como herói + corpo + CTA */}
-      <div className="container-western max-w-4xl mt-14 md:mt-20 text-center">
+      <div className="container-western max-w-4xl mt-10 md:mt-14 text-center">
         <blockquote className="font-display text-3xl md:text-5xl lg:text-[3.25rem] text-western-green-deep leading-[1.1]">
           <span className="text-western-gold-soft">“</span>
           Cada peça da Western nasce duas vezes:{" "}
@@ -44,7 +44,7 @@ export default function ArtistaSection() {
           <span className="text-western-gold-soft">”</span>
         </blockquote>
 
-        <div className="mt-8 mb-10">
+        <div className="mt-6 mb-8">
           <p className="font-display text-xl text-western-green-deep">
             Ricardo Botelho
           </p>
@@ -62,7 +62,7 @@ export default function ArtistaSection() {
 
         <Link
           to="/sobre"
-          className="inline-flex items-center gap-2 mt-10 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep link-underline"
+          className="inline-flex items-center gap-2 mt-8 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep link-underline"
         >
           Conhecer o ateliê <ArrowRight className="h-3 w-3" />
         </Link>

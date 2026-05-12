@@ -129,10 +129,10 @@ export default function Index() {
 
       {/* MAIS ESPECIFICADOS */}
       {featured.length > 0 && (
-        <section className="surface-paper py-16 md:py-24 border-t border-western-stone-warm/10">
+        <section className="surface-paper py-12 md:py-16 border-t border-western-stone-warm/10">
           <div className="container-western">
             <Reveal variant="fade-up" duration={700}>
-              <div className="flex items-end justify-between mb-10 md:mb-12 flex-wrap gap-4">
+              <div className="flex items-end justify-between mb-8 md:mb-10 flex-wrap gap-4">
                 <div>
                   <p className="text-eyebrow mb-3">Em destaque</p>
                   <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
@@ -164,10 +164,10 @@ export default function Index() {
       </Reveal>
 
       {/* Faixa institucional — interlúdio dark editorial */}
-      <section className="surface-forest py-20 md:py-28 border-y border-western-gold/15">
+      <section className="surface-forest py-14 md:py-18 border-y border-western-gold/15">
         <div className="container-western max-w-4xl">
           <Reveal variant="fade-up" duration={750}>
-            <div className="text-center mb-12 md:mb-16">
+            <div className="text-center mb-8 md:mb-10">
               <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft/85 mb-5">
                 Prova de procedência
               </p>
@@ -185,12 +185,12 @@ export default function Index() {
           </Reveal>
 
           <Reveal variant="fade-up" delay={120} duration={750}>
-            <div className="pt-10 md:pt-12 border-t border-western-gold/15">
+            <div className="pt-6 md:pt-8 border-t border-western-gold/15">
               <MarcasInstitucionais compacta variante="dark" semBordas />
             </div>
           </Reveal>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-8">
             <Link
               to="/sobre"
               className="font-mono text-xs uppercase tracking-[0.22em] text-western-gold-soft hover:text-western-gold transition-colors"
@@ -208,7 +208,7 @@ export default function Index() {
       </Reveal>
 
       {/* B2B — credenciamento */}
-      <section className="surface-forest py-16 md:py-24">
+      <section className="surface-forest py-12 md:py-16">
         <div className="container-western">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <Reveal variant="fade-right" duration={750}>

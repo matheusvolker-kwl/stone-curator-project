@@ -3,7 +3,6 @@ import logoCristal from "@/assets/parceiros/cristal-pool.svg";
 import logoBiopet from "@/assets/parceiros/biopet.svg";
 import logoGenesis from "@/assets/parceiros/genesis.svg";
 import logoCobasiCream from "@/assets/parceiros/cobasi-cream.png";
-import logoCristalCream from "@/assets/parceiros/cristal-pool-cream.png";
 import logoBiopetCream from "@/assets/parceiros/biopet-cream.png";
 import logoGenesisCream from "@/assets/parceiros/genesis-cream.png";
 
@@ -12,15 +11,15 @@ interface Marca {
   site: string;
   /** Logo em verde — para fundos claros */
   logoDark: string;
-  /** Logo em creme — para fundos escuros */
-  logoLight: string;
+  /** Logo em creme — para fundos escuros. Se ausente, usa logoDark com filtro CSS. */
+  logoLight?: string;
   /** Largura máxima em px — calibra peso visual entre logos diferentes */
   larguraMax: number;
 }
 
 const PARCEIROS: Marca[] = [
   { nome: "Biopet Lagos",        site: "https://bplagos.com.br",            logoDark: logoBiopet,  logoLight: logoBiopetCream,  larguraMax: 200 },
-  { nome: "Cristal Pool",        site: "https://www.cristalpool.com.br",    logoDark: logoCristal, logoLight: logoCristalCream, larguraMax: 260 },
+  { nome: "Cristal Pool",        site: "https://www.cristalpool.com.br",    logoDark: logoCristal,                              larguraMax: 260 },
   { nome: "Genesis Ecossistemas",site: "https://genesisecossistemas.com",   logoDark: logoGenesis, logoLight: logoGenesisCream, larguraMax: 180 },
   { nome: "Cobasi",              site: "https://www.cobasi.com.br",         logoDark: logoCobasi,  logoLight: logoCobasiCream,  larguraMax: 200 },
 ];
@@ -48,7 +47,7 @@ export default function MarcasInstitucionais({
   const isDark = variante === "dark";
 
   return (
-    <section className={compacta ? "" : "mt-20 md:mt-24"}>
+    <section className={compacta ? "" : "mt-14 md:mt-16"}>
       {!compacta && (
         <div className="text-center max-w-2xl mx-auto mb-12 md:mb-14">
           {eyebrow && (
@@ -90,17 +89,25 @@ export default function MarcasInstitucionais({
                 title={p.nome}
                 className="group flex items-center justify-center h-16 md:h-20 transition-all"
               >
-                <img
-                  src={isDark ? p.logoLight : p.logoDark}
-                  alt={p.nome}
-                  loading="lazy"
-                  style={{ maxWidth: `${p.larguraMax}px` }}
-                  className={`w-full max-h-14 md:max-h-16 object-contain transition-all duration-500 ${
-                    isDark
-                      ? "opacity-65 group-hover:opacity-100"
-                      : "opacity-75 group-hover:opacity-100"
-                  } group-hover:scale-[1.04]`}
-                />
+                {(() => {
+                  const useFilter = isDark && !p.logoLight;
+                  return (
+                    <img
+                      src={isDark && p.logoLight ? p.logoLight : p.logoDark}
+                      alt={p.nome}
+                      loading="lazy"
+                      style={{
+                        maxWidth: `${p.larguraMax}px`,
+                        ...(useFilter ? { filter: "brightness(0) invert(1)" } : {}),
+                      }}
+                      className={`w-full max-h-14 md:max-h-16 object-contain transition-all duration-500 ${
+                        isDark
+                          ? "opacity-65 group-hover:opacity-100"
+                          : "opacity-75 group-hover:opacity-100"
+                      } group-hover:scale-[1.04]`}
+                    />
+                  );
+                })()}
               </a>
             </li>
           ))}
@@ -130,17 +137,25 @@ export default function MarcasInstitucionais({
                 title={p.nome}
                 className="group flex items-center justify-center h-28 md:h-36 px-6 transition-all"
               >
-                <img
-                  src={isDark ? p.logoLight : p.logoDark}
-                  alt={p.nome}
-                  loading="lazy"
-                  style={{ maxWidth: `${p.larguraMax}px` }}
-                  className={`w-full max-h-20 md:max-h-24 object-contain transition-all duration-500 ${
-                    isDark
-                      ? "opacity-70 group-hover:opacity-100"
-                      : "opacity-80 group-hover:opacity-100"
-                  } group-hover:scale-[1.04]`}
-                />
+                {(() => {
+                  const useFilter = isDark && !p.logoLight;
+                  return (
+                    <img
+                      src={isDark && p.logoLight ? p.logoLight : p.logoDark}
+                      alt={p.nome}
+                      loading="lazy"
+                      style={{
+                        maxWidth: `${p.larguraMax}px`,
+                        ...(useFilter ? { filter: "brightness(0) invert(1)" } : {}),
+                      }}
+                      className={`w-full max-h-20 md:max-h-24 object-contain transition-all duration-500 ${
+                        isDark
+                          ? "opacity-70 group-hover:opacity-100"
+                          : "opacity-80 group-hover:opacity-100"
+                      } group-hover:scale-[1.04]`}
+                    />
+                  );
+                })()}
               </a>
             </li>
           ))}
