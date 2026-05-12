@@ -470,7 +470,7 @@ export default function About() {
                   {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
                 </span>
               </h2>
-              <p className="text-western-cream-muted leading-relaxed mb-10 max-w-xl mx-auto text-base md:text-lg">
+              <p className="text-western-cream-muted leading-relaxed mb-8 max-w-xl mx-auto text-base md:text-lg">
                 Visita guiada com Ricardo ou Luiz Carlos, repertório completo de acabamentos na mão e
                 apresentação técnica para o seu próximo projeto.
               </p>
