@@ -46,9 +46,9 @@ export default function TopBar() {
             </li>
           ))}
         </ul>
-        {/* Mobile — rotação simples via marquee leve */}
+        {/* Mobile — marquee horizontal */}
         <div className="md:hidden w-full overflow-hidden pr-7">
-          <div className="flex animate-[shimmer_18s_linear_infinite] gap-10 whitespace-nowrap">
+          <div className="flex w-max animate-marquee-x gap-10 whitespace-nowrap motion-reduce:animate-none">
             {[...items, ...items].map(({ Icon, text }, i) => (
               <span
                 key={i}

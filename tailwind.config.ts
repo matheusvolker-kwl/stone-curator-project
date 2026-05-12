@@ -117,6 +117,10 @@ export default {
           "0%": { transform: "translateY(-100%)" },
           "100%": { transform: "translateY(100%)" },
         },
+        "marquee-x": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -131,6 +135,7 @@ export default {
         "swatch-splash": "swatch-splash 350ms cubic-bezier(0.34, 1.56, 0.64, 1)",
         "breathe-zoom": "breathe-zoom 14s ease-in-out infinite",
         "scroll-tick": "scroll-tick 2.6s cubic-bezier(0.65, 0, 0.35, 1) infinite",
+        "marquee-x": "marquee-x 22s linear infinite",
       },
 
     },
