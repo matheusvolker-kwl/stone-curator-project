@@ -202,10 +202,35 @@ export default function PartnerSignup() {
         <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05] mb-6">
           Solicite acesso de parceiro.
         </h1>
-        <p className="text-western-stone-warm text-lg leading-relaxed mb-10">
-          Para arquitetos, paisagistas, construtoras, garden centers e revendas
-          qualificadas. Aprovação em até 2 dias úteis.
+        <p className="text-western-stone-warm text-lg leading-relaxed mb-8">
+          Este site da Western atende exclusivamente arquitetos, paisagistas, construtoras
+          e garden centers com CNPJ ativo. O acesso à tabela comercial, modelos 3D e
+          composições só é liberado após análise do cadastro — leva até 2 dias úteis.
         </p>
+
+        {/* Saída para cliente final — WhatsApp */}
+        <a
+          href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
+            "Olá Western! Sou cliente final e gostaria de comprar / fazer um projeto com pedras Western."
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex items-center gap-4 border border-western-stone-warm/25 bg-western-paper/60 p-5 md:p-6 mb-10 transition-colors duration-500 hover:border-western-gold/60 hover:bg-western-paper"
+        >
+          <MessageCircle className="h-5 w-5 text-western-gold flex-shrink-0" strokeWidth={1.4} />
+          <div className="flex-1 min-w-0">
+            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold mb-1">
+              Sou cliente final
+            </p>
+            <p className="text-[14px] md:text-[15px] text-western-green-deep leading-snug">
+              Quero fazer um projeto residencial — atendimento direto pelo WhatsApp.
+            </p>
+          </div>
+          <span className="hidden sm:inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep link-underline flex-shrink-0">
+            Falar no WhatsApp <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+          </span>
+          <ArrowRight className="sm:hidden h-4 w-4 text-western-green-deep flex-shrink-0 transition-transform group-hover:translate-x-1" />
+        </a>
 
         {/* Stepper */}
         <div className="flex items-center gap-3 mb-10">
