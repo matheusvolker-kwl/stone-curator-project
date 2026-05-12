@@ -23,7 +23,7 @@ export default function ProductComparison({ productTitle, pesoKg, dimensoes }: P
   const rows = ROWS(pesoKg);
 
   return (
-    <section className="bg-western-ivory py-20 md:py-28">
+    <section className="bg-western-ivory py-14 md:py-20">
       <div className="max-w-5xl mx-auto px-6 md:px-8">
         <header className="mb-12 max-w-2xl">
           <p className="text-section-label mb-5">Comparativo</p>
