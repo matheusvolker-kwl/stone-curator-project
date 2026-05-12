@@ -141,7 +141,7 @@ export default function CartDrawer({
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-cream-muted hover:text-western-gold-soft transition-colors -ml-1"
+            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-cream/80 hover:text-western-gold-soft transition-colors -ml-1"
           >
             <ArrowLeft className="h-3 w-3" /> Continuar comprando
           </button>
