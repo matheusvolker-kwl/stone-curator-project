@@ -14,14 +14,13 @@ const newsletterSchema = z.object({
 
 const COLECOES: { label: string; handle: string }[] = [
   { label: "Cascatas", handle: "cascatas" },
-  { label: "Fontes", handle: "fontes" },
-  { label: "Pedra LED", handle: "pedra-led" },
+  { label: "Fontes", handle: "fontes-para-jardim" },
   { label: "Pedras Grandes", handle: "pedras-grandes" },
   { label: "Pedras Médias", handle: "pedras-medias" },
   { label: "Pedras Pequenas", handle: "pedras-pequenas" },
   { label: "Pedras de Borda", handle: "pedras-de-borda" },
   { label: "Revestimentos", handle: "revestimentos" },
-  { label: "Pisadas", handle: "pisadas" },
+  { label: "Pisadas", handle: "pisantes" },
   { label: "Acessórios", handle: "acessorios" },
   { label: "Fósseis Decorativos", handle: "fosseis-decorativos" },
 ];
