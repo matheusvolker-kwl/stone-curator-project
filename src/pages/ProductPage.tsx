@@ -362,10 +362,10 @@ export default function ProductPage() {
                           <Button
                             onClick={handleAdd}
                             disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
-                            className={`group flex-1 h-14 font-sans font-semibold text-[15px] tracking-[0.02em] rounded-none transition-all motion-safe:active:translate-y-[1px] ${
+                            className={`group flex-1 h-14 font-mono font-bold text-xs uppercase tracking-[0.25em] rounded-none transition-all motion-safe:active:translate-y-[1px] ${
                               acabPending
                                 ? "bg-western-stone-warm/20 text-western-stone-warm hover:bg-western-stone-warm/25 disabled:opacity-100"
-                                : "bg-gradient-to-b from-western-gold to-western-gold/85 text-western-green-deep border-b-2 border-western-green-deep/25 shadow-[0_2px_0_0_hsl(var(--western-green-deep)/0.15)] hover:shadow-[0_3px_0_0_hsl(var(--western-green-deep)/0.2)] hover:from-western-gold hover:to-western-gold/90 disabled:opacity-60"
+                                : "bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 shadow-[0_18px_40px_-20px_rgba(27,38,33,0.6)] disabled:opacity-60"
                             }`}
                           >
                             {isLoadingCart ? (
@@ -377,7 +377,7 @@ export default function ProductPage() {
                             ) : variant?.availableForSale ? (
                               <>
                                 Adicionar ao pedido
-                                <ArrowRight className="h-4 w-4 transition-transform motion-safe:group-hover:translate-x-0.5" />
+                                <ArrowRight className="h-4 w-4 ml-2 transition-transform motion-safe:group-hover:translate-x-0.5" />
                               </>
                             ) : (
                               "Indisponível"

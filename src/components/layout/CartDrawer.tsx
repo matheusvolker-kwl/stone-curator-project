@@ -2,7 +2,7 @@ import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
-import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock, ArrowLeft, ShieldCheck, Clock, Download } from "lucide-react";
+import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock, ArrowLeft, ArrowRight, ShieldCheck, Clock, Download } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { BUSINESS } from "@/config/business";
@@ -111,8 +111,9 @@ export default function CartDrawer({
         })),
       });
       if (res.checkout_url) {
-        window.open(res.checkout_url, "_blank");
         onOpenChange(false);
+        window.location.href = res.checkout_url;
+        return;
       } else if (res.erro === "abaixo_minimo") {
         toast.error("Pedido abaixo do mínimo", {
           description: `Faltam ${formatBRL((res.minimo ?? MIN_ORDER) - (res.subtotal ?? subtotal))} para finalizar.`,
@@ -279,13 +280,13 @@ export default function CartDrawer({
               <Button
                 onClick={handleCheckout}
                 disabled={isLoading || isSyncing || checkoutLoading || !meetsMinimum}
-                className="w-full h-14 bg-gradient-to-b from-western-gold to-western-gold/90 text-western-green-deep hover:from-western-gold-soft hover:to-western-gold font-sans font-medium text-[15px] tracking-[0.02em] rounded-none shadow-[0_18px_40px_-20px_rgba(184,146,79,0.7)] disabled:opacity-50"
+                className="group w-full h-14 bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-xs uppercase tracking-[0.25em] rounded-none shadow-[0_18px_40px_-20px_rgba(27,38,33,0.6)] disabled:opacity-50 transition-all"
               >
                 {isLoading || isSyncing || checkoutLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <>
-                    Finalizar compra <ExternalLink className="h-4 w-4 ml-2" />
+                    Finalizar compra <ArrowRight className="h-4 w-4 ml-2 transition-transform motion-safe:group-hover:translate-x-0.5" />
                   </>
                 )}
               </Button>

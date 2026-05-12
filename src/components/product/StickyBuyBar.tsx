@@ -128,7 +128,7 @@ export default function StickyBuyBar({
               <Button
                 onClick={onAdd}
                 disabled={!canAdd || !available || isLoading}
-                className="h-11 px-7 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60 flex-shrink-0"
+                className="h-11 px-7 bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60 flex-shrink-0"
               >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -148,7 +148,7 @@ export default function StickyBuyBar({
               </span>
               <Link
                 to="/parceiro/login"
-                className="h-11 px-7 inline-flex items-center justify-center bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] flex-shrink-0"
+                className="h-11 px-7 inline-flex items-center justify-center bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-xs uppercase tracking-[0.25em] flex-shrink-0"
               >
                 Acessar minha conta
               </Link>
@@ -211,7 +211,7 @@ export default function StickyBuyBar({
             <Button
               onClick={onAdd}
               disabled={!canAdd || !available || isLoading}
-              className="w-full h-11 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
+              className="w-full h-11 bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-[11px] uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -226,7 +226,7 @@ export default function StickyBuyBar({
           ) : (
             <Link
               to="/parceiro/login"
-              className="w-full h-11 inline-flex items-center justify-center bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.25em]"
+              className="w-full h-11 inline-flex items-center justify-center bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-[11px] uppercase tracking-[0.25em]"
             >
               Acessar minha conta
             </Link>
