@@ -4,9 +4,9 @@ import ricardoDesenhando from "@/assets/ricardo-desenhando.webp";
 
 export default function ArtistaSection() {
   return (
-    <section className="surface-ivory pt-20 md:pt-28 pb-20 md:pb-28 border-t border-western-stone-warm/10">
+    <section className="surface-ivory pt-14 md:pt-18 pb-14 md:pb-18 border-t border-western-stone-warm/10">
       {/* Eyebrow centralizado, anunciando a seção */}
-      <div className="container-western max-w-4xl text-center mb-10 md:mb-14">
+      <div className="container-western max-w-4xl text-center mb-7 md:mb-10">
         <p className="text-eyebrow mb-4">O artista</p>
         <div className="w-12 h-px bg-western-gold mx-auto" />
       </div>
