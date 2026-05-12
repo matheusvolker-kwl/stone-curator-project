@@ -205,7 +205,7 @@ export default function ProductPage() {
 
         <div className="grid md:grid-cols-2 gap-10 lg:gap-20 items-start">
           {/* Gallery — sticky no desktop */}
-          <div className="md:sticky md:top-24">
+          <div className="md:sticky md:top-24 min-w-0">
             <ProductGallery
               images={images}
               activeIndex={activeImage}
