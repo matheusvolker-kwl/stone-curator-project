@@ -264,7 +264,7 @@ export default function About() {
           <div className="grid md:grid-cols-2 gap-px bg-western-stone-warm/15">
             {PILARES.map(({ Icon, eyebrow, titulo, texto }, i) => (
               <Reveal key={titulo} variant="fade-up" delay={i * 100} duration={700} distance={24}>
-                <div className="group bg-western-cream p-8 md:p-12 h-full transition-colors duration-500 hover:bg-western-paper">
+                <div className="group bg-western-cream p-7 md:p-10 h-full transition-colors duration-500 hover:bg-western-paper">
                   <Icon className="h-8 w-8 text-western-gold mb-6 transition-transform duration-500 group-hover:-translate-y-1 group-hover:rotate-[-4deg]" strokeWidth={1.3} />
                   <p className="text-eyebrow mb-3">{eyebrow}</p>
                   <h3 className="font-display text-2xl md:text-3xl text-western-green-deep leading-tight mb-4">
