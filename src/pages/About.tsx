@@ -377,7 +377,7 @@ export default function About() {
           <Reveal variant="fade-up" duration={750}>
             <p className="text-eyebrow text-western-gold-soft mb-5">Filosofia de marca</p>
             <div className="w-12 h-px bg-western-gold mx-auto mb-8" />
-            <p className="font-display text-2xl md:text-4xl text-western-cream leading-[1.2] mb-12">
+            <p className="font-display text-2xl md:text-4xl text-western-cream leading-[1.2] mb-8">
               Não vendemos pedra.<br />
               <span className="italic text-western-gold-soft font-light">
                 Oferecemos elemento autoral para o projeto.
