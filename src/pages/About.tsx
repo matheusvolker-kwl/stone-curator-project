@@ -79,13 +79,13 @@ export default function About() {
           style={{ transform: `translate3d(0, calc(-50% + ${scrollY * -0.06}px), 0)` }}
         />
 
-        <div className="container-western py-24 md:py-32 max-w-4xl relative">
+        <div className="container-western py-16 md:py-20 max-w-4xl relative">
           <Reveal variant="fade-up" duration={800}>
             <p className="text-eyebrow text-western-gold-soft mb-5">A Western · 1993 — 2026</p>
-            <div className="w-12 h-px bg-western-gold mb-8" />
+            <div className="w-12 h-px bg-western-gold mb-6" />
           </Reveal>
           <Reveal variant="fade-up" delay={120} duration={900}>
-            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-western-cream leading-[1.02] mb-8">
+            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-western-cream leading-[1.02] mb-6">
               33 anos moldando<br />
               <span className="italic text-western-gold-soft font-light">pedra sem extrair pedra.</span>
             </h1>
