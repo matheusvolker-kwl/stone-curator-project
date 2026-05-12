@@ -107,18 +107,18 @@ function PanelBody({
             <div className="border-t border-western-cream/15 pt-4 space-y-1.5 text-[13px]">
               <div className="flex justify-between text-western-cream-muted">
                 <span>Subtotal composição</span>
-                <span className="font-mono">{formatPreco(subBase)}</span>
+                <span className="font-sans tabular-nums">{formatPreco(subBase)}</span>
               </div>
               {subExtras > 0 && (
                 <div className="flex justify-between text-western-cream-muted">
                   <span>Peças adicionais</span>
-                  <span className="font-mono">{formatPreco(subExtras)}</span>
+                  <span className="font-sans tabular-nums">{formatPreco(subExtras)}</span>
                 </div>
               )}
               {desconto > 0 && (
                 <div className="flex justify-between text-western-gold">
                   <span>Desconto conjunto (3%)</span>
-                  <span className="font-mono">−{formatPreco(desconto)}</span>
+                  <span className="font-sans tabular-nums">−{formatPreco(desconto)}</span>
                 </div>
               )}
             </div>
