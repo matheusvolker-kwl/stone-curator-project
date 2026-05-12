@@ -44,7 +44,7 @@ export default function RelatedProducts({
   if (related.length === 0 && sets.length === 0) return null;
 
   return (
-    <section className="py-20 md:py-28">
+    <section className="py-14 md:py-20">
       <div className="container-western">
         {related.length > 0 && (
           <>
