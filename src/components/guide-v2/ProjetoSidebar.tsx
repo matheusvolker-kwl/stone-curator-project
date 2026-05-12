@@ -166,7 +166,7 @@ function PanelBody({
               type="button"
               onClick={onFinalizarCompra}
               disabled={checkoutLoading}
-              className="inline-flex items-center justify-center gap-3 h-12 bg-western-gold text-western-green-deep font-mono text-xs uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center gap-3 h-12 bg-gradient-to-b from-western-gold to-western-gold/90 text-western-green-deep font-sans font-medium text-[14px] tracking-[0.02em] hover:from-western-gold-soft hover:to-western-gold transition-colors shadow-[0_18px_40px_-20px_rgba(184,146,79,0.7)] disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {checkoutLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Finalizar compra"}
               {!checkoutLoading && <ExternalLink className="h-4 w-4" />}
@@ -176,7 +176,7 @@ function PanelBody({
               type="button"
               onClick={onFinalizar}
               disabled={!isApproved && !isCustomizado}
-              className="inline-flex items-center justify-center gap-3 h-12 bg-western-gold text-western-green-deep font-mono text-xs uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center gap-3 h-12 bg-gradient-to-b from-western-gold to-western-gold/90 text-western-green-deep font-sans font-medium text-[14px] tracking-[0.02em] hover:from-western-gold-soft hover:to-western-gold transition-colors shadow-[0_18px_40px_-20px_rgba(184,146,79,0.7)] disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {isCustomizado ? "Solicitar orçamento sob consulta" : "Baixar composição (PDF)"}
               <Download className="h-4 w-4" />
@@ -186,7 +186,7 @@ function PanelBody({
             <button
               type="button"
               onClick={onFinalizar}
-              className="inline-flex items-center justify-center gap-2 h-10 border border-western-cream/40 text-western-cream font-mono text-[10px] uppercase tracking-[0.22em] hover:border-western-gold hover:text-western-gold transition-colors"
+              className="inline-flex items-center justify-center gap-2 h-10 border border-western-cream/40 text-western-cream font-sans text-[12.5px] hover:border-western-gold hover:text-western-gold transition-colors"
             >
               <Download className="h-3.5 w-3.5" /> Baixar composição (PDF)
             </button>
@@ -195,7 +195,7 @@ function PanelBody({
             <button
               type="button"
               onClick={() => toast("Prévia em SketchUp em breve.")}
-              className="inline-flex items-center justify-center gap-2 h-10 border border-western-cream/40 text-western-cream font-mono text-[10px] uppercase tracking-[0.22em] hover:border-western-gold hover:text-western-gold transition-colors"
+              className="inline-flex items-center justify-center gap-2 h-10 border border-western-cream/40 text-western-cream font-sans text-[12.5px] hover:border-western-gold hover:text-western-gold transition-colors"
             >
               <Download className="h-3.5 w-3.5" /> Baixar prévia em SketchUp
             </button>
@@ -203,7 +203,7 @@ function PanelBody({
           <button
             type="button"
             onClick={() => toast(session ? "Projeto salvo no seu painel." : "Faça login para salvar o projeto.")}
-            className="text-[11.5px] text-western-cream-muted hover:text-western-cream underline-offset-4 hover:underline self-center"
+            className="text-[12px] text-western-cream-muted hover:text-western-cream underline-offset-4 hover:underline self-center"
           >
             Salvar projeto e decidir depois
           </button>
