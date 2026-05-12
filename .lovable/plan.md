@@ -1,58 +1,64 @@
-# Redesign do SocialProofBand
+# Redesign — Faixa "Prova de procedência" (Home)
 
-A faixa atual (`src/components/product/SocialProofBand.tsx`) destoa porque:
-- Fundo `bg-western-ivory` cria um bloco "ilha" claro entre seções escuras/cremes da PDP
-- Três blocos de texto centralizados empilhados parecem rodapé de imprensa, não prova social editorial
-- Tipografia mono+sans+itálico em três tamanhos diferentes sem hierarquia clara
-- Nomes em texto puro separados por bullets — sem peso visual nem credibilidade tátil
+## Por que quebra o design hoje
+
+Na home (`src/pages/Index.tsx` linhas 167–193) a seção tem três problemas combinados:
+
+1. **Bloco "ilha" creme** (`surface-paper`) entre `ProjetosSection` e `ArtistaSection` (que também é ivory) — não cria respiro, cria platô sem hierarquia.
+2. **Frase com nomes sublinhados** parece link de blog, não citação editorial premium. O `underline decoration-western-gold/40` no meio de uma sentença display fica "wikipedia-like".
+3. **Strip de logos em 4 quadros com bordas** (`MarcasInstitucionais compacta`) vira "logo wall" institucional — Cobasi gigante, Biopet minúsculo, divisores verticais marcando cada caixa. Destoa da elegância editorial do resto da PDP/Home.
 
 ## Direção proposta
 
-Transformar em **faixa editorial dark** alinhada às outras seções "premium" da PDP (mesma família visual de `WhyWesternStrip`/`ArtistaSection`), com **três colunas separadas por divisores verticais**:
+Transformar em **interlúdio dark editorial** entre ProjetosSection e ArtistaSection — mesma família visual da nova `SocialProofBand` da PDP e da seção B2B logo abaixo, criando ritmo: dark (projetos) → **dark editorial (prova)** → ivory (artista).
 
 ```
-─────────────────────────────────────────────────────────────
- ESPECIFICADA POR    │   EM PROJETOS         │   EM CASAS DE
- ARQUITETOS          │   INSTITUCIONAIS      │   CELEBRIDADES
-                     │                       │
- Marcelo Faisal      │   Cristal Pool        │   Neymar Jr.
- Fabiano Hayasaki    │   Genesis             │   Diogo Nogueira
- Ronaldo Luidi       │   Biopet · Cobasi     │   Thiago Nigro
-                     │   Unique Garden       │   Tato · Caito Maia
-─────────────────────────────────────────────────────────────
+═══════════════════════════════════════════════════════════════
+                    PROVA DE PROCEDÊNCIA
+                          ───────
+                                                       
+        Especificada pelos arquitetos que assinam
+         os jardins mais publicados do país.
+                                                       
+   Marcelo Faisal   ·   Fabiano Hayasaki   ·   Ronaldo Luidi
+                                                       
+   ─────────────────────────────────────────────────────────
+                                                       
+   [biopet]      [cristal pool]      [genesis]      [cobasi]
+                                                       
+                  CONHECER A WESTERN →
+═══════════════════════════════════════════════════════════════
 ```
 
 ### Especificações
 
-**Container:**
-- `surface-forest` (verde escuro) com borda gold sutil em cima/baixo (`border-y border-western-gold/15`)
-- Padding `py-14 md:py-20` (alinhado ao novo padrão da PDP)
-- Remove o `border-t border-western-stone-warm/15` atual
+**Container** (substitui `surface-paper border-t ... py-16 md:py-20`):
+- `surface-forest py-20 md:py-28 border-y border-western-gold/15`
+- Remove dependência de `MarcasInstitucionais` em variante light com bordas-caixa.
 
-**Grid 3 colunas (desktop) / stack (mobile):**
-- `grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-western-gold/15`
-- Cada coluna com `px-6 md:px-10 py-8 md:py-0` e alinhamento `text-center`
-- Mobile: empilhado com divisores horizontais
+**Bloco editorial (topo, centralizado, max-w-3xl):**
+- Eyebrow: `font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft/85` — "Prova de procedência"
+- Mini divisor: `w-10 h-px bg-western-gold/50 mx-auto`
+- Headline display em cream: `font-display text-2xl md:text-[2rem] text-western-cream leading-[1.2]` — frase reescrita sem o sublinhado embaraçoso:
+  > "Especificada pelos arquitetos que assinam os jardins mais publicados do país."
+- Linha de nomes (substitui o link sublinhado): `font-mono text-[11px] uppercase tracking-[0.28em] text-western-gold-soft/90` separados por `·` (clicável discretamente para `/parceiros-arquitetos`).
 
-**Por coluna:**
-- Eyebrow: `font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft/80 mb-5`
-- Mini divisor gold: `w-8 h-px bg-western-gold/40 mx-auto mb-5`
-- Lista de nomes: `font-sans text-[15px] text-western-cream leading-[2]` (espaçamento generoso, um por linha em vez de bullets corridos)
-- Nomes ganham peso `font-medium` e cor `text-western-cream`
+**Strip de logos (sem caixas):**
+- Usar `MarcasInstitucionais compacta variante="dark"` (já existe), MAS:
+  - Acrescentar prop `semBordas?: boolean` (ou variante `bare`) que omite os `border-y` / `border-l` da `<ul>` e `<li>`
+  - Logos ficam livres num row com `gap-12 md:gap-16`, `h-20 md:h-24`, todos em creme, opacidade 70 → 100 no hover
+- Calibração `larguraMax` mantida (já resolve Cobasi vs Biopet)
 
-**Conteúdo reorganizado em 3 grupos:**
-1. **Arquitetos de referência** — Marcelo Faisal · Fabiano Hayasaki · Ronaldo Luidi
-2. **Projetos institucionais** — Cristal Pool · Genesis Ecossistemas · Biopet Lagos · Cobasi · Unique Garden
-3. **Celebridades** — Neymar Jr. · Diogo Nogueira · Thiago Nigro · Tato (Falamansa) · Evandro Mesquita · Caito Maia
+**CTA final:**
+- "Conhecer a Western →" em `font-mono text-xs uppercase tracking-[0.22em] text-western-gold-soft hover:text-western-gold` com sublinhado animado — substitui o link verde-sobre-creme atual
 
-(Os "celebridades" hoje vivem num parágrafo italic solto no final — promovê-los a coluna própria dá mais força e equilibra a composição em 3.)
+### Transição visual (bônus, baixo custo)
 
-**Remoções:**
-- Texto italic "Em projetos de Neymar Jr. ..." (vira coluna 3)
-- `h-8` spacer entre blocos (substituído pelo grid)
+Como `ArtistaSection` começa em `surface-ivory` com `border-t border-western-stone-warm/10`, ela já oferece o contraste perfeito após o dark editorial — não precisa mudar nada lá.
 
-## Arquivo afetado
+## Arquivos afetados
 
-- `src/components/product/SocialProofBand.tsx` — reescrita completa do JSX (componente curto, ~30 linhas)
+- `src/pages/Index.tsx` — reescrever JSX da seção (linhas 167–193). Sem mudanças de lógica/imports além de remover `Reveal` interno se redundante.
+- `src/components/shared/MarcasInstitucionais.tsx` — adicionar prop `semBordas?: boolean` (default `false`, retrocompatível). Quando `true`: trocar `<ul className="grid grid-cols-2 md:grid-cols-4 border-y...">` por um `<ul className="flex flex-wrap items-center justify-center gap-12 md:gap-16">` e remover bordas dos `<li>`. Páginas existentes (`About`, `ParceirosArquitetos`) continuam idênticas.
 
-Nada de lógica, dados externos ou outros componentes mudam. Só presentação.
+Sem mudança de dados, rotas, lógica, ou outros componentes.

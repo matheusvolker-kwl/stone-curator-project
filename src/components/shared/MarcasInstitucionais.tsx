@@ -30,6 +30,8 @@ interface Props {
   compacta?: boolean;
   /** Variante de fundo: light (sobre ivory/paper) ou dark (sobre forest) */
   variante?: "light" | "dark";
+  /** Sem caixas/bordas: logos livres em row, ideal pra interlúdios editoriais */
+  semBordas?: boolean;
   eyebrow?: string;
   titulo?: React.ReactNode;
   descricao?: React.ReactNode;
@@ -38,6 +40,7 @@ interface Props {
 export default function MarcasInstitucionais({
   compacta = false,
   variante = "light",
+  semBordas = false,
   eyebrow,
   titulo,
   descricao,
