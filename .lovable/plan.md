@@ -1,70 +1,77 @@
-# Auditoria Mobile Completa — 4 Ondas
+## Diagnóstico
 
-Vou rodar uma varredura sistemática do site inteiro em viewport mobile (375×812), capturando screenshots, testando interações reais (toques, scroll, formulários, drawers) e corrigindo problemas à medida que aparecerem. Para manter qualidade, divido em 4 ondas independentes — cada onda termina com um relatório do que foi encontrado e corrigido.
-
-## Critérios de verificação (aplicados em todas as páginas)
-
-- **Imagens**: carregam, proporção correta, não estouram, lazy loading ok, alt text
-- **Textos**: sem overflow, sem truncamento indevido, hierarquia legível, line-height confortável
-- **Botões/CTAs**: alvo de toque ≥44px, sem sobreposição, estados visíveis, navegam corretamente
-- **Layout**: sem scroll horizontal, padding consistente, safe areas respeitadas
-- **Funcionalidades**: drawers, modais, menus, formulários abrem/fecham/submetem
-- **Performance visual**: sem CLS gritante, sem flashes, fontes carregam
+Cruzando os 10 screenshots com o código, identifiquei **9 problemas reais** em mobile (391px). A maior parte é overflow horizontal causado por linhas que não quebram dentro de containers estreitos.
 
 ---
 
-## Onda 1 — Navegação global + Home + Catálogo
+## Onda 1 — PDP (crítico)
 
-Páginas: `/`, `/linhas`, `/linhas/:handle`, `/produtos`, `/conjuntos`, `/produtos/:handle` (PDP)
+**1. `ProductPage.tsx` — bloco preço/blurb com clipping**
+- "É uma peça decorativa de uso versátil, indicada pa[ra]…" cortada (img-152): o `<p>` do blurb tem `max-w-[48ch]` mas o `<div>` pai (`md:py-2`) não tem `min-w-0` num grid; combinado com a sticky gallery do lado esquerdo, o filho herda largura intrínseca e estoura. Adicionar `min-w-0` ao container de detalhes.
 
-Componentes globais: `Header`, `TopBar`, `Footer`, `WhatsAppFAB`, `BackToTop`, `CartDrawer`
+**2. `PurchaseProof.tsx` — micro-prova social cortada (img-153)**
+- "Especificada por Faisal, Hayasaki e Luidi[…]" cortada à direita.
+- Verificar e adicionar `flex-wrap` + `min-w-0` + remover qualquer `whitespace-nowrap` na linha.
 
-Foco: menu mobile (drawer), busca, hero da home, grids de produto (`ProductCard` recém-ajustado), filtros de linha, galeria do PDP, `StickyBuyBar`, abas de produto, swatches.
+**3. `DeliverySignals.tsx` — linha de garantia cortada (img-153)**
+- "5 anos de garantia · troca sem custo em caso de avari[a]" cortada.
+- Mesmo padrão: trocar `whitespace-nowrap`/`inline-flex` por layout que respeite quebra; permitir `wrap` em mobile.
 
-## Onda 2 — Guia de Composição + Conta do Cliente
+**4. `ProductPage.tsx` — link "pintura personalizada" cortado (img-153)**
+- `inline-flex items-center gap-1.5` num span único sem wrap; o texto "PINTURA PERSONALIZADA · FALAR COM CONSULTOR" não cabe.
+- Trocar para `flex flex-wrap` ou quebrar o texto em duas linhas em < sm.
 
-Páginas: `/guia-de-composicao`, `/composicoes`, `/refinar/:handle`
+**5. `ProductGallery.tsx` — lightbox abre com imagem deslocada (img-151)**
+- A imagem lightbox usa `max-w-[92vw]` dentro de um `<button>` com `overflow-auto` — em mobile a imagem aparece com offset (cortada à esquerda visualmente porque o `<` está sobreposto).
+- Centralizar com `mx-auto` no botão e `block` na imagem; revisar z-index do prev/next para não cobrir conteúdo.
 
-Conta: `/minha-conta`, `/perfil`, `/orcamentos`, `/pedidos`, `/sketches`, `/favoritos`, `/amostras`, `/preferencias`
-
-Foco: fluxo do guia em mobile (chips de contexto, cards de composição, sidebar de projeto que vira bottom-sheet), tabela de orçamentos (scroll horizontal vs cards), formulário de perfil (grid 2 colunas vira 1).
-
-## Onda 3 — Formulários + Autenticação + Amostras/Visita
-
-Páginas: `/parceiro/cadastro`, `/parceiro/login`, `/parceiro/redefinir-senha`, `/pedir-amostras`, `/visitar`, `/contato`
-
-Foco: campos com máscara (CNPJ, CEP, telefone), teclado mobile correto (inputmode), validação inline, botão de submit fixo/visível, scroll para erros, autofocus que não quebra layout.
-
-## Onda 4 — Páginas institucionais + Legal + Carrinho/Checkout
-
-Páginas: `/sobre`, `/por-que-western`, `/parceiros-arquitetos`, `/aplicacoes-comerciais`, `/faq`, `/politica-comercial`, `/politica-de-entrega`, `/trocas-e-avarias`, `/privacidade`
-
-Carrinho: `CartDrawer` completo + `CalcFrete` + `QuoteRequestModal` + fluxo Yampi
-
-Foco: prosa longa (largura de leitura), accordions do FAQ, modal de cotação, calc de frete, botão de checkout.
+**6. PDP — barra de compra (stepper + CTA + wishlist) (img-153)**
+- Verificar se o conjunto está estourando o `min-w-0` do filho do grid; somar larguras: stepper (~96px) + CTA `flex-1` + wishlist (56px). Em teoria cabe; mas se o pai não tem `min-w-0`, o `flex-1` não shrinka. Aplicar `min-w-0` no container de detalhes resolve junto com #1.
 
 ---
 
-## Como vou trabalhar cada onda
+## Onda 2 — Catálogo
 
-```text
-1. Abrir cada rota em viewport 375×812 (browser tool)
-2. Screenshot + observe + scroll completo
-3. Testar interações-chave (abrir drawer, submeter form, etc.)
-4. Listar problemas encontrados
-5. Aplicar correções (Tailwind/responsive classes, sem mudar lógica)
-6. Re-screenshot para validar
-7. Reportar resumo da onda
-```
+**7. `ProductCard.tsx` — preço cortado quando há desconto (img-150)**
+- Linha do preço com `<span class="line-through mr-2">R$ 550,00</span> R$ 506,00` em `text-base font-semibold` não cabe num card de ~170px.
+- Soluções (combinar): empilhar verticalmente (`flex flex-col`) o "de/por" no mobile, ou reduzir tamanho do strikethrough, ou usar `flex flex-wrap`.
 
-## Detalhes técnicos
+---
 
-- Uso só classes Tailwind responsivas (`sm:`, `md:`) e tokens do design system existente (`western-*`)
-- Não altero lógica de negócio, queries Shopify, RLS, hooks de pricing — só presentation
-- Não mexo em arquivos auto-gerados (`supabase/client.ts`, `types.ts`)
-- Se encontrar bug funcional (não-visual), reporto separado e pergunto antes de corrigir
-- Cada onda é uma execução separada — você pode pausar/redirecionar entre ondas
+## Onda 3 — Sistema cliente / Guia
 
-## Pergunta única antes de começar
+**8. `PecaRow.tsx` — coluna do meio espremida no mobile (img-158)**
+- Layout `flex items-start gap-5` com [imagem 96px] + [detalhes flex-1] + [stepper 132px col + Remover] não cabe em 391px → coluna de detalhes vira ~60px e "WEST-PM4-QUARTZO-35 KG" quebra letra-por-letra.
+- Reorganizar mobile: empilhar (imagem + detalhes em cima; stepper + Remover embaixo, alinhados à direita). Em `md:` mantém o layout horizontal atual.
 
-Confirma que posso **começar pela Onda 1** já corrigindo o que encontrar (sem pedir aprovação a cada fix individual)? Ou prefere que eu faça só a varredura primeiro, liste tudo, e você aprova as correções em lote?
+---
+
+## Onda 4 — Investigação adicional (preview ao vivo)
+
+**9. Verificar overflow horizontal global**
+- Vários screenshots mostram a barra de scroll vertical do iframe + clipping à direita simultaneamente. Investigar no browser (391×844) com DevTools-like inspection (`document.documentElement.scrollWidth`) qual elemento força largura > 100vw. Suspeitos: `RelatedProducts` carousel `-mx-4`, `ProductInUse` carousel, `ScrollProgress`, ou alguma seção institucional com `min-w` fixo.
+- Correção: depois de identificar, aplicar `overflow-x: hidden` na seção culpada em vez de depender só do `body`.
+
+---
+
+## Itens verificados que NÃO precisam fix
+
+- Footer (img-149): wrap natural OK
+- Comparativo (img-154): layout dentro do container, OK
+- Related products (img-155): card "espiando" é o carrossel intencional
+- Stats institucional (img-156): grid 2x2 normal
+- Sobre/artistas (img-157): OK
+
+---
+
+## Ordem de execução
+
+Vou implementar em uma única passada (todos são edições pontuais de classes/CSS, sem mudança de lógica de negócio):
+
+1. Investigar overflow global no browser (Onda 4) — define se precisa fixes adicionais
+2. Aplicar fixes da Onda 1 (PDP) — `ProductPage.tsx`, `PurchaseProof.tsx`, `DeliverySignals.tsx`, `ProductGallery.tsx`
+3. Fix Onda 2 (`ProductCard.tsx` preço)
+4. Fix Onda 3 (`PecaRow.tsx` reflow mobile)
+5. Validar cada um no browser a 391×844
+
+Posso prosseguir?
