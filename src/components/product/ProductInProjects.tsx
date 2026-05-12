@@ -28,7 +28,7 @@ export default function ProductInProjects({ productHandle, productTitle }: Props
   if (projetos.length === 0) return null;
 
   return (
-    <section className="bg-western-cream-muted py-20 md:py-28">
+    <section className="bg-western-cream-muted py-14 md:py-20">
       <div className="container-western">
         <header className="text-center max-w-2xl mx-auto mb-12">
           <p className="text-eyebrow mb-4">Em obra</p>
