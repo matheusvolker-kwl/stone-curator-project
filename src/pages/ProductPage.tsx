@@ -27,6 +27,7 @@ import SocialProofBand from "@/components/product/SocialProofBand";
 import ProductPagination from "@/components/product/ProductPagination";
 import ProductInUse from "@/components/product/ProductInUse";
 import WishlistButton from "@/components/product/WishlistButton";
+import PurchaseProof from "@/components/product/PurchaseProof";
 
 // Pluraliza nomes de coleção singulares ("Pedra Grande" → "Pedras Grandes").
 function pluralizeCollection(title?: string): string {
