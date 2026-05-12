@@ -146,7 +146,7 @@ export default function CartDrawer({
             <ArrowLeft className="h-3 w-3" /> Continuar comprando
           </button>
           <div>
-            <p className="text-eyebrow">Seu orçamento</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] font-medium text-western-gold-soft/90">Seu orçamento</p>
             <SheetTitle className="font-display text-2xl md:text-3xl tracking-wide text-western-cream">
               Composição atual
             </SheetTitle>
