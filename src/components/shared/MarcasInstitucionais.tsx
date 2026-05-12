@@ -3,7 +3,6 @@ import logoCristal from "@/assets/parceiros/cristal-pool.svg";
 import logoBiopet from "@/assets/parceiros/biopet.svg";
 import logoGenesis from "@/assets/parceiros/genesis.svg";
 import logoCobasiCream from "@/assets/parceiros/cobasi-cream.png";
-import logoCristalCream from "@/assets/parceiros/cristal-pool-cream.png";
 import logoBiopetCream from "@/assets/parceiros/biopet-cream.png";
 import logoGenesisCream from "@/assets/parceiros/genesis-cream.png";
 
@@ -12,15 +11,15 @@ interface Marca {
   site: string;
   /** Logo em verde — para fundos claros */
   logoDark: string;
-  /** Logo em creme — para fundos escuros */
-  logoLight: string;
+  /** Logo em creme — para fundos escuros. Se ausente, usa logoDark com filtro CSS. */
+  logoLight?: string;
   /** Largura máxima em px — calibra peso visual entre logos diferentes */
   larguraMax: number;
 }
 
 const PARCEIROS: Marca[] = [
   { nome: "Biopet Lagos",        site: "https://bplagos.com.br",            logoDark: logoBiopet,  logoLight: logoBiopetCream,  larguraMax: 200 },
-  { nome: "Cristal Pool",        site: "https://www.cristalpool.com.br",    logoDark: logoCristal, logoLight: logoCristalCream, larguraMax: 260 },
+  { nome: "Cristal Pool",        site: "https://www.cristalpool.com.br",    logoDark: logoCristal,                              larguraMax: 260 },
   { nome: "Genesis Ecossistemas",site: "https://genesisecossistemas.com",   logoDark: logoGenesis, logoLight: logoGenesisCream, larguraMax: 180 },
   { nome: "Cobasi",              site: "https://www.cobasi.com.br",         logoDark: logoCobasi,  logoLight: logoCobasiCream,  larguraMax: 200 },
 ];
