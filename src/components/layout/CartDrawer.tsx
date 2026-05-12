@@ -141,7 +141,7 @@ export default function CartDrawer({
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-cream-muted hover:text-western-gold-soft transition-colors -ml-1"
+            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-cream/80 hover:text-western-gold-soft transition-colors -ml-1"
           >
             <ArrowLeft className="h-3 w-3" /> Continuar comprando
           </button>
@@ -190,14 +190,14 @@ export default function CartDrawer({
                     <h4 className="font-display text-base md:text-lg leading-tight">
                       {item.productTitle}
                     </h4>
-                    <p className="text-spec text-western-cream-muted text-xs">
+                    <p className="font-sans text-[12.5px] text-western-cream/70">
                       {item.selectedOptions.map((o) => o.value).join(" · ")}
                     </p>
                     <div className="flex items-center justify-between mt-2 gap-3 flex-wrap">
-                      <p className="text-spec">
+                      <p className="font-sans text-[15px] font-medium tabular-nums text-western-cream">
                         {isApproved ? formatBRL(item.price.amount, item.price.currencyCode) : "—"}
                       </p>
-                      <div className="flex items-center border border-western-gold/30">
+                      <div className="flex items-center border border-western-cream/25">
                         <button
                           onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
                           className="h-9 w-9 flex items-center justify-center hover:bg-western-gold/10 transition-colors"
@@ -205,7 +205,7 @@ export default function CartDrawer({
                         >
                           <Minus className="h-3 w-3" />
                         </button>
-                        <span className="px-3 text-spec min-w-[2ch] text-center">{item.quantity}</span>
+                        <span className="px-3 font-sans text-base tabular-nums min-w-[2ch] text-center">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
                           className="h-9 w-9 flex items-center justify-center hover:bg-western-gold/10 transition-colors"
@@ -259,16 +259,16 @@ export default function CartDrawer({
 
             {isApproved && meetsMinimum && <CalcFrete />}
 
-            <div className="flex items-center justify-between gap-3 py-2 border-y border-western-gold/10">
-              <div className="flex items-center gap-2 text-western-cream-muted">
+            <div className="flex items-center justify-between gap-3 py-2.5 border-y border-western-gold/10">
+              <div className="flex items-center gap-2 text-western-cream/85">
                 <Clock className="h-3.5 w-3.5 text-western-gold-soft" />
-                <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                <span className="font-sans text-[12px]">
                   Produção 15 dias
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-western-cream-muted">
+              <div className="flex items-center gap-2 text-western-cream/85">
                 <ShieldCheck className="h-3.5 w-3.5 text-western-gold-soft" />
-                <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                <span className="font-sans text-[12px]">
                   +30 anos no atelier
                 </span>
               </div>
@@ -279,7 +279,7 @@ export default function CartDrawer({
               <Button
                 onClick={handleCheckout}
                 disabled={isLoading || isSyncing || checkoutLoading || !meetsMinimum}
-                className="w-full h-14 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none shadow-[0_18px_40px_-20px_rgba(184,146,79,0.6)] disabled:opacity-50"
+                className="w-full h-14 bg-gradient-to-b from-western-gold to-western-gold/90 text-western-green-deep hover:from-western-gold-soft hover:to-western-gold font-sans font-medium text-[15px] tracking-[0.02em] rounded-none shadow-[0_18px_40px_-20px_rgba(184,146,79,0.7)] disabled:opacity-50"
               >
                 {isLoading || isSyncing || checkoutLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -292,7 +292,7 @@ export default function CartDrawer({
             ) : (
               <Button
                 onClick={() => setQuoteOpen(true)}
-                className="w-full h-14 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none shadow-[0_18px_40px_-20px_rgba(184,146,79,0.6)]"
+                className="w-full h-14 bg-gradient-to-b from-western-gold to-western-gold/90 text-western-green-deep hover:from-western-gold-soft hover:to-western-gold font-sans font-medium text-[15px] tracking-[0.02em] rounded-none shadow-[0_18px_40px_-20px_rgba(184,146,79,0.7)]"
               >
                 <Download className="h-4 w-4 mr-2" /> Baixar composição (PDF)
               </Button>
@@ -303,7 +303,7 @@ export default function CartDrawer({
               <button
                 type="button"
                 onClick={() => setQuoteOpen(true)}
-                className="w-full h-11 border border-western-gold/40 text-western-cream hover:border-western-gold font-mono text-[11px] uppercase tracking-[0.22em] inline-flex items-center justify-center gap-2 transition-colors"
+                className="w-full h-11 border border-western-gold/40 text-western-cream hover:border-western-gold font-sans text-[13px] inline-flex items-center justify-center gap-2 transition-colors"
               >
                 <Download className="h-3.5 w-3.5" /> Baixar composição (PDF)
               </button>
@@ -315,7 +315,7 @@ export default function CartDrawer({
               <Link
                 to="/parceiro/login"
                 onClick={() => onOpenChange(false)}
-                className="block text-center text-western-cream-muted hover:text-western-gold-soft font-mono text-[10px] uppercase tracking-[0.22em] pt-1 transition-colors"
+                className="block text-center text-western-cream/75 hover:text-western-gold-soft font-sans text-[12px] pt-1 transition-colors"
               >
                 Já é parceiro? Entre para ver preços
               </Link>

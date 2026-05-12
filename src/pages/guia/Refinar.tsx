@@ -311,17 +311,17 @@ export default function GuiaRefinar() {
                   <button
                     type="button"
                     onClick={() => setPecas(baseInicial)}
-                    className="inline-flex items-center gap-2 h-10 px-4 border border-western-green-deep text-western-green-deep font-mono text-[10px] uppercase tracking-[0.22em] hover:bg-western-green-deep hover:text-western-cream transition-colors"
+                    className="inline-flex items-center gap-2 h-11 px-4 border border-western-green-deep text-western-green-deep font-sans text-[13px] font-medium hover:bg-western-green-deep hover:text-western-cream transition-colors"
                   >
-                    <RotateCcw className="h-3 w-3" /> Voltar à composição original
+                    <RotateCcw className="h-3.5 w-3.5" /> Voltar à composição original
                   </button>
                   <a
                     href={whatsHref}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 h-10 px-4 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep transition-colors"
+                    className="inline-flex items-center gap-2 h-11 px-4 font-sans text-[13px] text-western-stone-warm hover:text-western-green-deep transition-colors"
                   >
-                    <MessageCircle className="h-3 w-3" /> Falar com consultor →
+                    <MessageCircle className="h-3.5 w-3.5" /> Falar com consultor →
                   </a>
                 </div>
               </div>
@@ -385,9 +385,9 @@ export default function GuiaRefinar() {
               <button
                 type="button"
                 onClick={() => setShowAcab((v) => !v)}
-                className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors"
+                className="inline-flex items-center gap-2 h-11 px-4 border border-western-green-deep/30 font-sans text-[13px] font-medium text-western-green-deep hover:border-western-gold hover:text-western-gold transition-colors"
               >
-                {showAcab ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                {showAcab ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                 {showAcab ? "Fechar" : "Trocar acabamento desta composição"}
               </button>
               {showAcab && (

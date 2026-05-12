@@ -50,30 +50,30 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
           }}
           aria-label={selected ? "Adicionar mais uma unidade" : "Adicionar ao projeto"}
           className={cn(
-            "absolute top-2 right-2 inline-flex items-center justify-center h-8 rounded-full font-mono text-[10px] uppercase tracking-[0.18em] transition-all duration-300",
+            "absolute top-2 right-2 inline-flex items-center justify-center h-9 rounded-full font-sans text-[12px] font-medium tabular-nums transition-all duration-300",
             selected
-              ? "bg-western-green-deep text-western-cream anim-settle px-2.5 gap-1.5 min-w-[32px]"
-              : "w-8 bg-white/95 text-western-green-deep border border-western-stone-warm/20 hover:bg-western-gold hover:border-western-gold opacity-0 group-hover:opacity-100"
+              ? "bg-western-green-deep text-western-cream anim-settle px-3 gap-1.5 min-w-[36px]"
+              : "w-9 bg-white/95 text-western-green-deep border border-western-stone-warm/20 hover:bg-western-gold hover:border-western-gold opacity-0 group-hover:opacity-100"
           )}
         >
           {selected ? (
             <><Plus className="h-3 w-3" strokeWidth={2.5} /> {currentQty}×</>
           ) : (
-            <Plus className="h-3.5 w-3.5" />
+            <Plus className="h-4 w-4" />
           )}
         </button>
       </div>
 
       {/* Info compacta */}
       <div className="px-3.5 py-3 border-t border-western-stone-warm/10">
-        <h4 className="font-display text-[14px] text-western-green-deep leading-tight line-clamp-1">
+        <h4 className="font-display text-[15px] text-western-green-deep leading-tight line-clamp-1">
           {item.nome}
         </h4>
         <div className="flex items-baseline justify-between mt-1.5 gap-2">
           <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-western-stone-warm/80 truncate">
             {item.codigo}
           </p>
-          <p className="font-display text-[15px] text-western-green-deep flex-shrink-0">
+          <p className="font-sans text-[15px] font-semibold tabular-nums text-western-green-deep flex-shrink-0">
             {formatPreco(item.preco)}
           </p>
         </div>
@@ -86,18 +86,18 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
               type="button"
               onClick={() => onSetQty(currentQty - 1)}
               aria-label={currentQty <= 1 ? "Remover do projeto" : "Diminuir quantidade"}
-              className="h-8 w-9 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+              className="h-9 w-10 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
             >
               <Minus className="h-3 w-3" />
             </button>
-            <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-western-green-deep">
+            <span className="font-sans text-[12px] tabular-nums text-western-green-deep">
               {currentQty} no projeto
             </span>
             <button
               type="button"
               onClick={() => onSetQty(currentQty + 1)}
               aria-label="Aumentar quantidade"
-              className="h-8 w-9 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+              className="h-9 w-10 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
             >
               <Plus className="h-3 w-3" />
             </button>

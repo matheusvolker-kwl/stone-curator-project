@@ -13,7 +13,7 @@ export default function ProductInUse({ productHandle, productTitle }: Props) {
   const rest = images.filter((i) => i !== featured).slice(0, 4);
 
   return (
-    <section className="bg-western-paper py-20 md:py-28">
+    <section className="bg-western-paper py-14 md:py-20">
       <div className="container-western">
         <header className="max-w-2xl mb-10 md:mb-14">
           <p className="text-eyebrow mb-4">Esta peça em obra</p>
