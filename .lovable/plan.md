@@ -1,33 +1,50 @@
-## Dois ajustes pontuais
+## Replicar avisos informativos na página de cadastro
 
-### 1. Card "Tabela de preços" — eyebrows invisíveis
+Hoje a `/parceiro/cadastro` (`src/pages/PartnerSignup.tsx`) tem uma intro curta e vai direto para o formulário. Como muitos links levam direto pra cá, o usuário pode chegar sem entender que (a) o site é restrito a empresas aprovadas e (b) existe alternativa via WhatsApp para cliente final.
 
-**Problema:** Os rótulos "Pedido mínimo", "Prazo", "Garantia" e "Frete" não aparecem na imagem porque a classe `.text-eyebrow` (definida em `src/index.css:178`) está hardcoded com `color: hsl(var(--western-green-deep) / 0.85)` — verde escuro sobre fundo verde escuro = invisível.
+Vou trazer **as mesmas duas informações da página de login** (`PartnerLogin.tsx`), adaptadas ao layout estreito (max-w-2xl, coluna única) do cadastro — sem quebrar a hierarquia atual do form.
 
-**Correção em `src/pages/Index.tsx` (linhas 286–298):**
-- Trocar a classe `text-eyebrow` dos 4 cards por classes inline com cor adequada para fundo escuro: `font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold/80 mb-3 font-medium`.
-- Também corrigir o eyebrow do bloco esquerdo (linha 270 — "Seja parceiro Western") pelo mesmo motivo: trocar para versão dourada/cream.
+### Mudanças em `src/pages/PartnerSignup.tsx`
 
-Não alterar a classe global `.text-eyebrow` para não impactar uso em fundos claros.
+**1. Reforçar o aviso de exclusividade no intro (linhas 204–207)**
 
-### 2. Bloco de texto do Ricardo — aliviar peso visual
+Substituir o parágrafo curto atual por uma versão mais clara, alinhada ao texto da página de login:
 
-**Problema:** Sob a foto temos: citação grande em 2 linhas + nome + cargo + parágrafo descritivo de 4 linhas + CTA. Cinco blocos de texto empilhados, sensação de "muralha".
+> "Este site da Western atende exclusivamente arquitetos, paisagistas, construtoras e garden centers com CNPJ ativo. O acesso à tabela comercial, modelos 3D e composições só é liberado após análise do cadastro — leva até 2 dias úteis."
 
-**Correção em `src/components/home/ArtistaSection.tsx` (linhas 36–68):**
-- **Manter** a citação (é o herói da seção) — sem mudanças.
-- **Manter** assinatura (Ricardo Botelho · Diretor criativo · 2ª geração).
-- **Remover** o parágrafo descritivo (linhas 55–60) — informação repetitiva da legenda da foto e da própria página Sobre. O CTA "Conhecer o ateliê" já leva quem quiser saber mais.
-- Reduzir espaçamentos: `mt-10 md:mt-14` da citação → `mt-8 md:mt-10`; `mt-6 mb-8` da assinatura → `mt-5 mb-6`; CTA `mt-8` → `mt-2` (já há margem da assinatura).
-- Resultado: citação → assinatura → CTA. Três blocos respirando, mantém impacto editorial e tira a sensação de bloco carregado.
+**2. Adicionar callout "É cliente final?" abaixo do header, antes do stepper (após linha 207)**
 
-### Validação
+Bloco discreto, em uma linha (sem virar card pesado), reaproveitando o componente visual do card de cliente final do Login mas em formato horizontal compacto:
 
-Screenshot da home no viewport atual confirmando:
-- Eyebrows do bloco B2B agora visíveis (dourados sobre verde).
-- Seção do Ricardo mais leve, sem a parede de texto.
+- Borda sutil `border border-western-stone-warm/25`, fundo `bg-western-paper/60`, padding moderado.
+- Ícone `MessageCircle` em dourado + eyebrow "Sou cliente final" + frase "Quero fazer um projeto residencial" + CTA "Falar no WhatsApp →".
+- Link `<a>` para `https://wa.me/${BUSINESS.whatsappFabrica}?text=...` com mesma mensagem usada no Login (importar `BUSINESS` de `@/config/business`).
+- Espaçamento `mb-10` para separar do stepper.
+
+**3. (Opcional, mas recomendado) Repetir o callout no rodapé do form (linhas próximas a 188)**
+
+No estado de sucesso ("Cadastro enviado com sucesso") já existe um link "Voltar ao catálogo". Não mexe nele.
+
+### Layout
+
+Coluna única continua. O callout de cliente final fica **acima** do stepper, dando uma "saída" clara antes do usuário começar a preencher campos que não se aplicam a ele. Isso reduz cadastros de pessoa física que depois precisam ser rejeitados.
+
+```
+[Eyebrow: Cadastro B2B]
+[Título: Solicite acesso de parceiro.]
+[Parágrafo reforçado de exclusividade]
+[Callout horizontal: É cliente final? → WhatsApp]
+[Stepper 1 / 2]
+[Form...]
+```
+
+### Imports a adicionar
+
+- `MessageCircle` de `lucide-react`
+- `BUSINESS` de `@/config/business`
 
 ### Arquivos afetados
 
-- `src/pages/Index.tsx` (eyebrows do bloco B2B)
-- `src/components/home/ArtistaSection.tsx` (remoção do parágrafo + ajuste de espaçamentos)
+- `src/pages/PartnerSignup.tsx` (apenas seção intro, sem tocar no form/stepper/lógica de submit)
+
+Nenhuma mudança em rotas, schema, validação ou backend.
