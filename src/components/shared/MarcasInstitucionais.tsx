@@ -18,10 +18,10 @@ interface Marca {
 }
 
 const PARCEIROS: Marca[] = [
-  { nome: "Biopet Lagos",        site: "https://bplagos.com.br",            logoDark: logoBiopet,  logoLight: logoBiopetCream,  larguraMax: 200 },
-  { nome: "Cristal Pool",        site: "https://www.cristalpool.com.br",    logoDark: logoCristal,                              larguraMax: 260 },
-  { nome: "Genesis Ecossistemas",site: "https://genesisecossistemas.com",   logoDark: logoGenesis, logoLight: logoGenesisCream, larguraMax: 180 },
-  { nome: "Cobasi",              site: "https://www.cobasi.com.br",         logoDark: logoCobasi,  logoLight: logoCobasiCream,  larguraMax: 200 },
+  { nome: "Biopet Lagos",        site: "https://bplagos.com.br",            logoDark: logoBiopet,  logoLight: logoBiopetCream,  larguraMax: 130 },
+  { nome: "Cristal Pool",        site: "https://www.cristalpool.com.br",    logoDark: logoCristal,                              larguraMax: 170 },
+  { nome: "Genesis Ecossistemas",site: "https://genesisecossistemas.com",   logoDark: logoGenesis, logoLight: logoGenesisCream, larguraMax: 110 },
+  { nome: "Cobasi",              site: "https://www.cobasi.com.br",         logoDark: logoCobasi,  logoLight: logoCobasiCream,  larguraMax: 170 },
 ];
 
 interface Props {
@@ -78,7 +78,7 @@ export default function MarcasInstitucionais({
       )}
 
       {semBordas ? (
-        <ul className="flex flex-wrap items-center justify-center gap-x-12 md:gap-x-20 gap-y-8">
+        <ul className="flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-6">
           {PARCEIROS.map((p) => (
             <li key={p.nome}>
               <a

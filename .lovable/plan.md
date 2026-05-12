@@ -1,41 +1,54 @@
-# Ajustes de polimento — Logo, espaçamentos e Contato
+# Citação em 2 linhas e logos parceiros equilibrados
 
-## 1. Bug do logo da Cristal Pool
+## 1. Citação "Cada peça da Western nasce duas vezes…" em 2 linhas
 
-**Causa raiz:** o arquivo `src/assets/parceiros/cristal-pool-cream.png` está **vazio (0 bytes)**. Quando a `MarcasInstitucionais` é renderizada em variante `dark`, ela carrega esse PNG quebrado — daí o ícone de "imagem quebrada" ao lado do nome.
+Em `src/components/home/ArtistaSection.tsx`, forçar quebra exata após "duas vezes:" e limpar o espaço duplo. Resultado:
 
-**Correção (em `src/components/shared/MarcasInstitucionais.tsx`):**
-- Adicionar campo opcional `logoLightFiltro?: string` por marca para casos em que o PNG cream não exista.
-- Para a Cristal Pool, remover a referência ao PNG vazio e usar o **SVG** original (`cristal-pool.svg`) aplicando um filtro CSS (`brightness(0) invert(1) opacity(.92)`) que o transforma em creme/branco quando renderizado sobre fundo escuro. Resultado: logo legível e coerente com os outros, sem precisar de novo asset.
-- Os outros três (Biopet, Cobasi, Genesis) já têm PNG cream válido — não mexer.
+- Linha 1: `"Cada peça da Western nasce duas vezes:`
+- Linha 2: `uma na natureza, outra no traço."` (em itálico/dourado)
 
-## 2. Home (`src/pages/Index.tsx`) — reduzir margens excessivas
+Implementação: substituir o trecho da `<blockquote>` por dois trechos separados por `<br />`, sem o espaço extra antes da quebra. Mantém tipografia, cor e tamanhos atuais (apenas reorganiza layout).
 
-Densidade verticalmente menor, mantendo o mesmo desenho. Trocas:
+## 2. Diagnóstico do problema dos logos
 
-- **"Mais especificados":** `py-16 md:py-24` → `py-12 md:py-16`; `mb-10 md:mb-12` → `mb-8 md:mb-10`.
-- **Faixa institucional (Prova de procedência):** `py-20 md:py-28` → `py-14 md:py-18`; bloco interno `mb-12 md:mb-16` → `mb-8 md:mb-10`; divisor `pt-10 md:pt-12` → `pt-6 md:pt-8`; CTA final `mt-12` → `mt-8`.
-- **B2B (Seja parceiro Western):** `py-16 md:py-24` → `py-12 md:py-16`.
-- **`ArtistaSection.tsx`:** `pt-20 md:pt-28 pb-20 md:pb-28` → `pt-14 md:pt-18 pb-14 md:pb-18`; `mb-10 md:mb-14` → `mb-7 md:mb-10`; `mt-14 md:mt-20` → `mt-10 md:mt-14`; `mt-8 mb-10` → `mt-6 mb-8`; `mt-10` → `mt-8`.
+Tirei screenshots e medi os PNGs reais (`PIL` no sandbox). Os arquivos têm a mesma "moldura" (1200×600), mas a área visível é muito diferente:
 
-## 3. Sobre (`src/pages/About.tsx`) — mesma faxina
+| Logo        | Canvas    | Área visível | % preenchimento |
+|-------------|-----------|--------------|-----------------|
+| Biopet      | 1200×600  | 552×450      | 46% horizontal  |
+| Cristal Pool| SVG (wide)| ~banner       | ~85% horizontal |
+| Genesis     | 1200×600  | 450×450      | 38% horizontal  |
+| Cobasi      | 1200×600  | 1020×243     | 85% horizontal  |
 
-- **HERO:** `min-h-[78vh]` → `min-h-[62vh]`; `py-24 md:py-32` → `py-16 md:py-20`; `mb-8` do divisor → `mb-6`; `mb-8` do h1 → `mb-6`.
-- **Irmãos Botelho:** `py-20 md:py-24` → `py-14 md:py-18`; `mb-10 md:mb-14` → `mb-8 md:mb-10`; `mt-14 md:mt-20` → `mt-10 md:mt-14`; espaçamento `space-y-6` mantém.
-- **Citação atmosférica:** `h-[55vh] min-h-[420px]` → `h-[44vh] min-h-[340px]`.
-- **4 Pilares:** `py-20 md:py-24` → `py-14 md:py-18`; `mb-14` → `mb-10`; padding interno dos cards `p-8 md:p-12` → `p-7 md:p-10`.
-- **Galeria/Repertório:** `py-20 md:py-24` → `py-14 md:py-18`; `mb-12 md:mb-16` → `mb-8 md:mb-12`.
-- **Manifesto:** `py-20 md:py-24` → `py-14 md:py-18`; `mb-12` do display → `mb-8`; `mt-12` da legenda → `mt-8`.
-- **Arquitetos + Marcas:** `py-20 md:py-24` → `py-14 md:py-18`. Dentro de `MarcasInstitucionais`, o `mt-20 md:mt-24` (não-compacta) reduz para `mt-14 md:mt-16`.
-- **CTA final:** `min-h-[58vh]` → `min-h-[46vh]`; `py-20` → `py-16`; `mb-10` do parágrafo → `mb-8`.
+**Por isso a Cobasi parece "grande":** o PNG dela é praticamente todo logo, enquanto Biopet/Genesis têm muito espaço vazio em volta. O `larguraMax` mede o canvas, não o logo visível.
 
-## 4. Contato (`src/pages/Contact.tsx`)
+**Por isso ela quebra de linha:** a faixa está dentro de `max-w-4xl` (~896 px). Soma das larguras (200+260+180+200) + gaps (3×80) = ~1080 px → estoura o container e a Cobasi vai pra linha de baixo.
 
-Substituir o `<h1>` `Para falar<br />com a fábrica.` por `Fale com a Western.` (linha única, sem `<br />`).
+## 3. Correções dos logos
+
+**a) Aparar (trim) o whitespace dos PNGs cream** — script Python (Pillow) recorta cada arquivo na bbox real e sobrescreve. Faz com que `larguraMax` passe a refletir o logo visível:
+   - `biopet-cream.png`: 1200×600 → 552×450
+   - `cobasi-cream.png`: 1200×600 → 1020×243
+   - `genesis-cream.png`: 1200×600 → 450×450
+
+**b) Em `src/components/shared/MarcasInstitucionais.tsx`, na variante `semBordas`:**
+   - Recalibrar `larguraMax` para que todos fiquem com presença visual semelhante:
+     - Biopet `larguraMax: 130`
+     - Cristal Pool `larguraMax: 170` (banner horizontal precisa de mais largura)
+     - Genesis `larguraMax: 110` (logo quadrado)
+     - Cobasi `larguraMax: 170` (banner horizontal)
+   - Aumentar `max-h` (`max-h-12 md:max-h-14`) para dar respiro vertical balanceado entre quadrados e banners.
+   - Reduzir gap (`gap-x-8 md:gap-x-12`) para garantir que tudo caiba em uma linha no container `max-w-4xl` da home.
+   - Manter `flex-wrap` como fallback de segurança (apenas em viewports muito estreitos).
+
+**c) Validação obrigatória com prints:**
+   - Após cada ajuste, screenshot da home na seção "Prova de procedência".
+   - Comparar visualmente os 4 logos lado a lado; se algum ainda parecer 30%+ maior/menor, ajustar `larguraMax` daquele item específico e tirar print de novo.
+   - Confirmar com print final: 4 logos em uma linha, tamanhos visualmente equivalentes, Cobasi sem quebra.
 
 ## Detalhes técnicos
 
-- Nenhuma mudança de tokens/CSS global — apenas classes Tailwind ajustadas e um filtro CSS pontual no logo da Cristal Pool.
-- Nenhuma alteração em layout responsivo (todas as relações `md:` se mantêm proporcionais).
-- O filtro CSS `brightness(0) invert(1)` é safe em todos os browsers modernos.
-- Sem alterações em rotas, dados, ou componentes de produto.
+- Trim feito por script Python no sandbox (`PIL.Image.crop(bbox)`); sobrescreve os PNGs cream. Originais ficam versionados pelo git.
+- Cristal Pool continua sendo o SVG verde com filtro `brightness(0) invert(1)` (não tem PNG cream válido — bug já tratado).
+- Sem mudanças em tokens, rotas ou outras seções do site.
+- Iteração visual: caso o trim altere o aspecto a ponto de algum logo precisar de ajuste fino, refazer só o `larguraMax` daquele item.

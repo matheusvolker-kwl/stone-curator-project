@@ -34,10 +34,9 @@ export default function ArtistaSection() {
       </figure>
 
       {/* Bloco de texto abaixo — citação como herói + corpo + CTA */}
-      <div className="container-western max-w-4xl mt-10 md:mt-14 text-center">
-        <blockquote className="font-display text-3xl md:text-5xl lg:text-[3.25rem] text-western-green-deep leading-[1.1]">
-          <span className="text-western-gold-soft">“</span>
-          Cada peça da Western nasce duas vezes:{" "}
+      <div className="container-western max-w-6xl mt-10 md:mt-14 text-center">
+        <blockquote className="font-display text-2xl md:text-4xl lg:text-[2.75rem] text-western-green-deep leading-[1.15]">
+          <span className="text-western-gold-soft">“</span>Cada peça da Western nasce duas vezes:<br />
           <span className="italic font-light text-western-gold">
             uma na natureza, outra no traço.
           </span>
