@@ -140,6 +140,27 @@ export default function Linhas() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
+            {!q && (
+              <Link
+                to="/produtos"
+                className="group block frame-product aspect-[4/3] overflow-hidden bg-western-green-deep text-western-paper p-8 flex flex-col justify-between transition-colors hover:bg-western-green-deep/90"
+              >
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold/90">
+                  Catálogo completo
+                </p>
+                <div>
+                  <h3 className="font-display text-3xl leading-tight text-western-paper group-hover:text-western-gold transition-colors">
+                    Ver todos os produtos
+                  </h3>
+                  <p className="text-spec text-western-paper/70 mt-3 leading-relaxed">
+                    Filtre por tamanho e peso, ordene por preço.
+                  </p>
+                  <span className="inline-flex items-center gap-1.5 mt-5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold">
+                    Abrir catálogo <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </div>
+              </Link>
+            )}
             {(q && totalResults === 0
               ? collections.filter((c) => !isSeasonal(c))
               : linhas
