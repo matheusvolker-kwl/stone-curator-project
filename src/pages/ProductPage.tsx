@@ -96,6 +96,28 @@ export default function ProductPage() {
     if (idx >= 0) setActiveImage(idx);
   }, [variant?.image?.url, product]);
 
+  // TEMP debug overflow
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const cw = document.documentElement.clientWidth;
+      const offenders: any[] = [];
+      document.querySelectorAll('*').forEach((el) => {
+        const r = (el as HTMLElement).getBoundingClientRect();
+        if (r.right > cw + 1) {
+          offenders.push({
+            tag: el.tagName,
+            cls: (el as HTMLElement).className?.toString?.().slice(0, 90),
+            right: Math.round(r.right),
+            w: Math.round(r.width),
+          });
+        }
+      });
+      console.log('[OVERFLOW] cw=', cw, 'scrollW=', document.documentElement.scrollWidth, 'count=', offenders.length);
+      offenders.slice(0, 15).forEach((o) => console.log('[OVERFLOW]', JSON.stringify(o)));
+    }, 1500);
+    return () => clearTimeout(t);
+  }, []);
+
   // Track recently viewed for the cart drawer "you saw recently" section.
   useEffect(() => {
     if (!product) return;
