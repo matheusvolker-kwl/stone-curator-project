@@ -103,7 +103,7 @@ export default function RelatedProducts({
         )}
 
         {sets.length > 0 && (
-          <div className="mt-16">
+          <div className="mt-10">
             <p className="text-eyebrow mb-6">Conjuntos prontos com esta peça</p>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               {sets.map((s) => {
