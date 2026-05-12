@@ -414,9 +414,10 @@ export default function ProductPage() {
                               "_blank"
                             );
                           }}
-                          className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
+                          className="inline-flex items-start gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors text-left max-w-full"
                         >
-                          <MessageCircle className="h-3.5 w-3.5" /> Pintura personalizada · falar com consultor
+                          <MessageCircle className="h-3.5 w-3.5 shrink-0 mt-px" />
+                          <span className="break-words">Pintura personalizada · falar com consultor</span>
                         </button>
                       </div>
                     )}
