@@ -122,53 +122,58 @@ export default function Index() {
         </div>
       </section>
 
-      {/* AVISO B2B + GUIA — faixa editorial sutil */}
-      <section className="surface-ivory border-b border-western-stone-warm/10">
-        <div className="container-western">
-          <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-western-stone-warm/15">
+      {/* AVISO B2B + GUIA — faixa editorial split (verde + cream) */}
+      <section className="border-y border-western-green-deep/10">
+        <Reveal variant="fade-up" duration={700}>
+          <div className="grid md:grid-cols-2 relative">
+            {/* Divisor central dourado em md+ */}
+            <div className="hidden md:block absolute left-1/2 top-6 bottom-6 w-px bg-western-gold/25 z-10 pointer-events-none" />
+
+            {/* Coluna 01 — B2B (verde profundo) */}
             <Link
               to="/parceiro/cadastro"
-              className="group flex items-start gap-5 py-7 md:py-8 md:pr-10"
+              className="group relative flex flex-col justify-between p-10 md:p-14 bg-western-green-deep transition-colors duration-500 hover:bg-western-green-deep/90 min-h-[260px]"
             >
-              <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold mt-1 flex-shrink-0">
-                01 / B2B
-              </span>
-              <div className="flex-1">
-                <p className="font-display text-[17px] md:text-[19px] text-western-green-deep leading-snug">
-                  Site exclusivo para empresas parceiras.{" "}
-                  <span className="text-western-stone-warm font-sans text-[14px] md:text-[15px]">
-                    Ainda não é parceiro?
-                  </span>
-                </p>
-                <span className="inline-flex items-center gap-1.5 mt-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep link-underline">
-                  Fazer cadastro
-                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+              <div className="space-y-5">
+                <span className="block font-mono text-[10px] uppercase tracking-[0.3em] text-western-gold">
+                  01 / B2B
                 </span>
+                <h3 className="font-display text-2xl md:text-3xl lg:text-[2rem] text-western-cream leading-tight">
+                  Site exclusivo para empresas parceiras.{" "}
+                  <span className="italic text-western-cream/70">Ainda não é parceiro?</span>
+                </h3>
+              </div>
+              <div className="mt-10 flex items-center gap-3">
+                <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold border-b border-western-gold/40 pb-1 group-hover:border-western-gold transition-colors">
+                  Fazer cadastro
+                </span>
+                <ArrowRight className="h-3.5 w-3.5 text-western-gold transition-transform duration-300 group-hover:translate-x-1" />
               </div>
             </Link>
 
+            {/* Coluna 02 — Guia (cream) */}
             <Link
               to="/guia-de-composicao"
-              className="group flex items-start gap-5 py-7 md:py-8 md:pl-10"
+              className="group relative flex flex-col justify-between p-10 md:p-14 bg-western-cream transition-colors duration-500 hover:bg-western-cream-muted min-h-[260px]"
             >
-              <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold mt-1 flex-shrink-0">
-                02 / Guia
-              </span>
-              <div className="flex-1">
-                <p className="font-display text-[17px] md:text-[19px] text-western-green-deep leading-snug">
-                  Dúvidas para montar sua composição?{" "}
-                  <span className="text-western-stone-warm font-sans text-[14px] md:text-[15px]">
-                    Use nosso guia interativo.
-                  </span>
-                </p>
-                <span className="inline-flex items-center gap-1.5 mt-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep link-underline">
-                  Acessar o guia
-                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+              <div className="space-y-5">
+                <span className="block font-mono text-[10px] uppercase tracking-[0.3em] text-western-green-deep/60">
+                  02 / Guia
                 </span>
+                <h3 className="font-display text-2xl md:text-3xl lg:text-[2rem] text-western-green-deep leading-tight">
+                  Dúvidas para montar sua composição?{" "}
+                  <span className="italic text-western-stone-warm">Use nosso guia interativo.</span>
+                </h3>
+              </div>
+              <div className="mt-10 flex items-center gap-3">
+                <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep border-b border-western-green-deep/30 pb-1 group-hover:border-western-green-deep transition-colors">
+                  Acessar o guia
+                </span>
+                <ArrowRight className="h-3.5 w-3.5 text-western-green-deep transition-transform duration-300 group-hover:translate-x-1" />
               </div>
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* COLEÇÕES — destaques */}
