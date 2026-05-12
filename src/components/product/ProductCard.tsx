@@ -5,6 +5,7 @@ import { cdnImg, cdnSrcSet } from "@/lib/shopify/client";
 import { fetchProduct } from "@/lib/shopify/queries";
 import { ArrowRight } from "lucide-react";
 import WishlistButton from "./WishlistButton";
+import GatedPrice from "@/components/shared/GatedPrice";
 
 interface Props {
   product: ShopifyProductNode;
