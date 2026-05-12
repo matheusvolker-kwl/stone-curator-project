@@ -444,7 +444,7 @@ export default function About() {
 
       {/* CTA FINAL — atmosférico */}
       <section className="relative overflow-hidden">
-        <div className="relative min-h-[58vh] flex items-center surface-forest py-20">
+        <div className="relative min-h-[46vh] flex items-center surface-forest py-16">
           <img
             src={projetoCascata}
             alt=""
