@@ -148,7 +148,7 @@ export default function Index() {
             </Link>
 
             <Link
-              to="/guia/contexto"
+              to="/guia-de-composicao"
               className="group flex items-start gap-5 py-7 md:py-8 md:pl-10"
             >
               <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold mt-1 flex-shrink-0">
