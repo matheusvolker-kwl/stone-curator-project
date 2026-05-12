@@ -182,7 +182,7 @@ export default function ProductPage() {
     <div className="surface-ivory">
       <ScrollProgress />
       <BackToTop />
-      <div className="container-western py-12 md:py-20">
+      <div className="container-western pt-12 md:pt-20 pb-8 md:pb-10">
         {/* Breadcrumb */}
         <nav
           aria-label="breadcrumb"

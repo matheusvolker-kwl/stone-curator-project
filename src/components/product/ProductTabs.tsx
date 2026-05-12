@@ -52,7 +52,7 @@ export default function ProductTabs({
   const isProductSpecific = !!modelo3dValue?.trim();
 
   return (
-    <section className="surface-paper border-t border-western-stone-warm/15 mt-16 md:mt-24 py-14 md:py-20">
+    <section className="surface-paper border-t border-western-stone-warm/15 py-12 md:py-16">
       <div className="container-western">
         <Tabs defaultValue="descricao" className="w-full">
           <TabsList className="h-auto bg-transparent rounded-none p-0 border-b border-western-stone-warm/20 w-full justify-start gap-0 mb-10 overflow-x-auto">
