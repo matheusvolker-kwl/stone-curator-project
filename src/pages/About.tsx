@@ -281,10 +281,10 @@ export default function About() {
       </section>
 
       {/* GALERIA — Mural editorial de obras */}
-      <section className="surface-ivory py-20 md:py-24 border-t border-western-stone-warm/10">
+      <section className="surface-ivory py-14 md:py-18 border-t border-western-stone-warm/10">
         <div className="container-western max-w-6xl">
           <Reveal variant="fade-up" duration={750}>
-            <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-end mb-12 md:mb-16">
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-end mb-8 md:mb-12">
               <div>
                 <p className="text-eyebrow mb-3">Repertório</p>
                 <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
