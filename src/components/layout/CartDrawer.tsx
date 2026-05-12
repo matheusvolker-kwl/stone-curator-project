@@ -146,7 +146,7 @@ export default function CartDrawer({
             <ArrowLeft className="h-3 w-3" /> Continuar comprando
           </button>
           <div>
-            <p className="text-eyebrow">Seu orçamento</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] font-medium text-western-gold-soft/90">Seu orçamento</p>
             <SheetTitle className="font-display text-2xl md:text-3xl tracking-wide text-western-cream">
               Composição atual
             </SheetTitle>
@@ -242,7 +242,7 @@ export default function CartDrawer({
         {items.length > 0 && (
           <div className="px-5 md:px-8 py-6 border-t border-western-gold/15 space-y-4">
             <div className="flex justify-between items-baseline">
-              <span className="text-eyebrow">Subtotal</span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.22em] font-medium text-western-gold-soft/90">Subtotal</span>
               <span className="font-display text-2xl">
                 {isApproved ? formatBRL(subtotal, currency) : "—"}
               </span>
