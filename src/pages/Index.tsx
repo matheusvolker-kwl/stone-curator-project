@@ -122,6 +122,55 @@ export default function Index() {
         </div>
       </section>
 
+      {/* AVISO B2B + GUIA — faixa editorial sutil */}
+      <section className="surface-ivory border-b border-western-stone-warm/10">
+        <div className="container-western">
+          <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-western-stone-warm/15">
+            <Link
+              to="/parceiro/cadastro"
+              className="group flex items-start gap-5 py-7 md:py-8 md:pr-10"
+            >
+              <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold mt-1 flex-shrink-0">
+                01 / B2B
+              </span>
+              <div className="flex-1">
+                <p className="font-display text-[17px] md:text-[19px] text-western-green-deep leading-snug">
+                  Site exclusivo para empresas parceiras.{" "}
+                  <span className="text-western-stone-warm font-sans text-[14px] md:text-[15px]">
+                    Ainda não é parceiro?
+                  </span>
+                </p>
+                <span className="inline-flex items-center gap-1.5 mt-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep link-underline">
+                  Fazer cadastro
+                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+                </span>
+              </div>
+            </Link>
+
+            <Link
+              to="/guia-de-composicao"
+              className="group flex items-start gap-5 py-7 md:py-8 md:pl-10"
+            >
+              <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold mt-1 flex-shrink-0">
+                02 / Guia
+              </span>
+              <div className="flex-1">
+                <p className="font-display text-[17px] md:text-[19px] text-western-green-deep leading-snug">
+                  Dúvidas para montar sua composição?{" "}
+                  <span className="text-western-stone-warm font-sans text-[14px] md:text-[15px]">
+                    Use nosso guia interativo.
+                  </span>
+                </p>
+                <span className="inline-flex items-center gap-1.5 mt-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep link-underline">
+                  Acessar o guia
+                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+                </span>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* COLEÇÕES — destaques */}
       <Reveal variant="fade-up" duration={800}>
         <ColecoesGrid collections={linhas} />
