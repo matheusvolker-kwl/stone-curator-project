@@ -4,7 +4,7 @@ import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/shopify/queri
 import { cdnImg, cdnSrcSet, formatBRL } from "@/lib/shopify/client";
 import iconePedra from "@/assets/icone-pedra-verde.png";
 import { useMemo } from "react";
-import { X } from "lucide-react";
+import { ArrowRight, X } from "lucide-react";
 
 export default function Linhas() {
   const { data: collections = [], isLoading: loadingCollections } = useQuery({
