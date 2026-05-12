@@ -190,14 +190,14 @@ export default function CartDrawer({
                     <h4 className="font-display text-base md:text-lg leading-tight">
                       {item.productTitle}
                     </h4>
-                    <p className="text-spec text-western-cream-muted text-xs">
+                    <p className="font-sans text-[12.5px] text-western-cream/70">
                       {item.selectedOptions.map((o) => o.value).join(" · ")}
                     </p>
                     <div className="flex items-center justify-between mt-2 gap-3 flex-wrap">
-                      <p className="text-spec">
+                      <p className="font-sans text-[15px] font-medium tabular-nums text-western-cream">
                         {isApproved ? formatBRL(item.price.amount, item.price.currencyCode) : "—"}
                       </p>
-                      <div className="flex items-center border border-western-gold/30">
+                      <div className="flex items-center border border-western-cream/25">
                         <button
                           onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
                           className="h-9 w-9 flex items-center justify-center hover:bg-western-gold/10 transition-colors"
@@ -205,7 +205,7 @@ export default function CartDrawer({
                         >
                           <Minus className="h-3 w-3" />
                         </button>
-                        <span className="px-3 text-spec min-w-[2ch] text-center">{item.quantity}</span>
+                        <span className="px-3 font-sans text-base tabular-nums min-w-[2ch] text-center">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
                           className="h-9 w-9 flex items-center justify-center hover:bg-western-gold/10 transition-colors"
