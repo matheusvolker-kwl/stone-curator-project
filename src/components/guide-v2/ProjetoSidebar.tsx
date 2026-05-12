@@ -68,9 +68,9 @@ function PanelBody({
           </p>
           <ul className="space-y-1">
             {pecas.map((p) => (
-              <li key={p.id} className="flex justify-between text-[12.5px] text-western-cream/90">
+              <li key={p.id} className="flex justify-between text-[13px] text-western-cream/90">
                 <span className="truncate pr-2">{p.nome}</span>
-                <span className="font-mono text-western-cream-muted">{p.qty}×</span>
+                <span className="font-sans tabular-nums text-western-cream-muted">{p.qty}×</span>
               </li>
             ))}
           </ul>
@@ -82,9 +82,9 @@ function PanelBody({
               </p>
               <ul className="space-y-1">
                 {extras.map((e) => (
-                  <li key={e.id} className="flex justify-between text-[12.5px] text-western-cream/90">
+                  <li key={e.id} className="flex justify-between text-[13px] text-western-cream/90">
                     <span className="truncate pr-2">{e.nome}</span>
-                    <span className="font-mono text-western-cream-muted">{e.qty}×</span>
+                    <span className="font-sans tabular-nums text-western-cream-muted">{e.qty}×</span>
                   </li>
                 ))}
               </ul>
