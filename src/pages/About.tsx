@@ -123,10 +123,10 @@ export default function About() {
       </section>
 
       {/* IRMÃOS BOTELHO — seção única editorial: título + foto widescreen + narrativa */}
-      <section className="surface-ivory py-20 md:py-24">
+      <section className="surface-ivory py-14 md:py-18">
         <div className="container-western max-w-[1600px]">
           <Reveal variant="fade-up" duration={800}>
-            <div className="max-w-3xl mb-10 md:mb-14">
+            <div className="max-w-3xl mb-8 md:mb-10">
               <p className="text-eyebrow mb-3">Os irmãos Botelho · 2ª geração</p>
               <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
                 Ricardo no desenho, Luiz Carlos na engenharia.
