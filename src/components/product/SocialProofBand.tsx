@@ -1,6 +1,6 @@
 export default function SocialProofBand() {
   return (
-    <section className="bg-western-ivory py-16 md:py-20 border-t border-western-stone-warm/15">
+    <section className="bg-western-ivory py-12 md:py-14 border-t border-western-stone-warm/15">
       <div className="container-western text-center">
         <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-western-stone-warm/80 mb-4">
           Especificada por profissionais de referência
