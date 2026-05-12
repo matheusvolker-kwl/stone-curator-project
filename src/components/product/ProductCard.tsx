@@ -119,9 +119,11 @@ export default function ProductCard({ product }: Props) {
         </div>
 
         <div className="mt-3 pt-3 border-t border-western-stone-warm/10 flex items-center justify-between">
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/70">
-            Login para preço
-          </span>
+          <GatedPrice
+            amount={product.priceRange.minVariantPrice.amount}
+            currency={product.priceRange.minVariantPrice.currencyCode}
+            className="font-sans text-sm font-semibold text-western-green-deep"
+          />
           <span className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-western-green-deep group-hover:text-western-gold transition-colors">
             Ver produto <ArrowRight className="h-3 w-3" />
           </span>
