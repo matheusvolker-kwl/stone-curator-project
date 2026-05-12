@@ -1,37 +1,33 @@
-## Reformular faixa de atalhos da Home (B2B + Guia)
+## Dois ajustes pontuais
 
-Aplicar a direção escolhida — **Split: verde profundo + cream** — na seção "AVISO B2B + GUIA" do `src/pages/Index.tsx` (linhas 125–172). Os atalhos ganham peso visual real (cor de fundo, padding generoso, tipografia maior) sem perder elegância editorial.
+### 1. Card "Tabela de preços" — eyebrows invisíveis
 
-### Mudanças no `src/pages/Index.tsx`
+**Problema:** Os rótulos "Pedido mínimo", "Prazo", "Garantia" e "Frete" não aparecem na imagem porque a classe `.text-eyebrow` (definida em `src/index.css:178`) está hardcoded com `color: hsl(var(--western-green-deep) / 0.85)` — verde escuro sobre fundo verde escuro = invisível.
 
-Substituir o bloco atual da `<section>` por uma faixa em 2 colunas com fundos contrastantes:
+**Correção em `src/pages/Index.tsx` (linhas 286–298):**
+- Trocar a classe `text-eyebrow` dos 4 cards por classes inline com cor adequada para fundo escuro: `font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold/80 mb-3 font-medium`.
+- Também corrigir o eyebrow do bloco esquerdo (linha 270 — "Seja parceiro Western") pelo mesmo motivo: trocar para versão dourada/cream.
 
-- **Coluna 01 / B2B** — fundo `bg-western-green-deep`, texto cream, número e CTA em `text-western-gold`. Hover suave clareia o verde.
-- **Coluna 02 / GUIA** — fundo `bg-western-cream` (ou ivory equivalente), texto `text-western-green-deep`, número em mono uppercase com opacidade. Hover escurece levemente o cream.
-- **Divisor central dourado** sutil (`bg-western-gold/20`) só em md+.
-- **Tipografia da frase principal** sobe para `text-2xl md:text-3xl lg:text-[2.25rem]` usando a font-display do projeto (já é serif), mantendo `leading-tight`.
-- **CTAs** com underline dourado/verde animado (`border-b` + transição) e seta `ArrowRight` com `translate-x-1` no hover (mantém o padrão atual).
-- **Padding** generoso: `p-10 md:p-14` em cada coluna.
-- **Texto** preservado exatamente como está hoje:
-  - "Site exclusivo para empresas parceiras." + "Ainda não é parceiro?" → reorganizar como título + apoio italic, mantendo o sentido.
-  - "Dúvidas para montar sua composição?" + "Use nosso guia interativo." → mesmo tratamento.
-- **Links** continuam para `/parceiro/cadastro` e `/guia-de-composicao`.
-- **Reveal/animação** de entrada mantida (envolver com `<Reveal variant="fade-up">` se ainda não estiver).
+Não alterar a classe global `.text-eyebrow` para não impactar uso em fundos claros.
 
-### Regras de design system (importante)
+### 2. Bloco de texto do Ricardo — aliviar peso visual
 
-- **Não usar cores hardcoded** dos protótipos (`#2c3a2e`, `#c5a059`, `#f5f5f0`). Usar tokens já existentes: `western-green-deep`, `western-gold`, `western-cream`, `western-stone-warm`, `western-ivory`.
-- **Não trocar fontes**: manter `font-display` (serif do projeto) e `font-mono` para labels/CTAs — não importar Cormorant/Space Mono do protótipo.
-- Mobile: colunas empilhadas, divisor vira borda horizontal.
+**Problema:** Sob a foto temos: citação grande em 2 linhas + nome + cargo + parágrafo descritivo de 4 linhas + CTA. Cinco blocos de texto empilhados, sensação de "muralha".
+
+**Correção em `src/components/home/ArtistaSection.tsx` (linhas 36–68):**
+- **Manter** a citação (é o herói da seção) — sem mudanças.
+- **Manter** assinatura (Ricardo Botelho · Diretor criativo · 2ª geração).
+- **Remover** o parágrafo descritivo (linhas 55–60) — informação repetitiva da legenda da foto e da própria página Sobre. O CTA "Conhecer o ateliê" já leva quem quiser saber mais.
+- Reduzir espaçamentos: `mt-10 md:mt-14` da citação → `mt-8 md:mt-10`; `mt-6 mb-8` da assinatura → `mt-5 mb-6`; CTA `mt-8` → `mt-2` (já há margem da assinatura).
+- Resultado: citação → assinatura → CTA. Três blocos respirando, mantém impacto editorial e tira a sensação de bloco carregado.
 
 ### Validação
 
-1. Tirar screenshot da home no viewport atual (1442px) para confirmar contraste, alinhamento e que o bloco não fica pesado demais sob a hero.
-2. Verificar mobile (~375px) — colunas empilhadas, padding adequado, CTAs legíveis.
-3. Conferir hover dos dois cards.
+Screenshot da home no viewport atual confirmando:
+- Eyebrows do bloco B2B agora visíveis (dourados sobre verde).
+- Seção do Ricardo mais leve, sem a parede de texto.
 
 ### Arquivos afetados
 
-- `src/pages/Index.tsx` (apenas a seção de atalhos, linhas ~125–172)
-
-Nenhuma alteração em rotas, dados ou lógica.
+- `src/pages/Index.tsx` (eyebrows do bloco B2B)
+- `src/components/home/ArtistaSection.tsx` (remoção do parágrafo + ajuste de espaçamentos)

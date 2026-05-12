@@ -267,7 +267,7 @@ export default function Index() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <Reveal variant="fade-right" duration={750}>
               <div>
-                <p className="text-eyebrow mb-4">Seja parceiro Western</p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold/90 mb-4 font-medium">Seja parceiro Western</p>
                 <h2 className="font-display text-3xl md:text-5xl text-western-cream leading-[1.1] mb-6">
                   Tabela de preços, condições comerciais e modelos 3D liberados após credenciamento.
                 </h2>
