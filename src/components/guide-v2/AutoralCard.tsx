@@ -66,14 +66,14 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
 
       {/* Info compacta */}
       <div className="px-3.5 py-3 border-t border-western-stone-warm/10">
-        <h4 className="font-display text-[14px] text-western-green-deep leading-tight line-clamp-1">
+        <h4 className="font-display text-[15px] text-western-green-deep leading-tight line-clamp-1">
           {item.nome}
         </h4>
         <div className="flex items-baseline justify-between mt-1.5 gap-2">
           <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-western-stone-warm/80 truncate">
             {item.codigo}
           </p>
-          <p className="font-display text-[15px] text-western-green-deep flex-shrink-0">
+          <p className="font-sans text-[15px] font-semibold tabular-nums text-western-green-deep flex-shrink-0">
             {formatPreco(item.preco)}
           </p>
         </div>
@@ -86,18 +86,18 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
               type="button"
               onClick={() => onSetQty(currentQty - 1)}
               aria-label={currentQty <= 1 ? "Remover do projeto" : "Diminuir quantidade"}
-              className="h-8 w-9 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+              className="h-9 w-10 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
             >
               <Minus className="h-3 w-3" />
             </button>
-            <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-western-green-deep">
+            <span className="font-sans text-[12px] tabular-nums text-western-green-deep">
               {currentQty} no projeto
             </span>
             <button
               type="button"
               onClick={() => onSetQty(currentQty + 1)}
               aria-label="Aumentar quantidade"
-              className="h-8 w-9 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+              className="h-9 w-10 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
             >
               <Plus className="h-3 w-3" />
             </button>
