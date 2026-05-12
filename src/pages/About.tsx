@@ -216,7 +216,7 @@ export default function About() {
 
       {/* CITAÇÃO — quebra editorial em surface-paper com imagem larga */}
       <section className="relative overflow-hidden">
-        <div className="relative h-[55vh] min-h-[420px] w-full">
+        <div className="relative h-[44vh] min-h-[340px] w-full">
           <img
             src={respiroPedra}
             alt=""
