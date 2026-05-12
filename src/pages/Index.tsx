@@ -129,10 +129,10 @@ export default function Index() {
 
       {/* MAIS ESPECIFICADOS */}
       {featured.length > 0 && (
-        <section className="surface-paper py-16 md:py-24 border-t border-western-stone-warm/10">
+        <section className="surface-paper py-12 md:py-16 border-t border-western-stone-warm/10">
           <div className="container-western">
             <Reveal variant="fade-up" duration={700}>
-              <div className="flex items-end justify-between mb-10 md:mb-12 flex-wrap gap-4">
+              <div className="flex items-end justify-between mb-8 md:mb-10 flex-wrap gap-4">
                 <div>
                   <p className="text-eyebrow mb-3">Em destaque</p>
                   <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
