@@ -90,7 +90,7 @@ export default function PartnerLogin() {
                 Plataforma exclusiva para parceiros aprovados.
               </h2>
               <p className="text-western-stone-warm leading-relaxed text-[15px] md:text-base">
-                A Western atende exclusivamente arquitetos, paisagistas, construtoras e
+                Este site da Western atende exclusivamente arquitetos, paisagistas, construtoras e
                 garden centers com CNPJ ativo. O acesso à tabela comercial, modelos 3D e
                 composições só é liberado após análise do cadastro — leva até 2 dias úteis.
               </p>
