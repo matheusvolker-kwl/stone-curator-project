@@ -34,37 +34,37 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
         <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mt-1.5">
           {peca.codigo}{peca.pesoKg ? ` · ${peca.pesoKg} kg` : ""}{peca.dim && peca.dim !== "—" ? ` · ${peca.dim}` : ""}
         </p>
-        <p className="font-display text-[16px] text-western-green-deep mt-2">{formatPreco(peca.preco)}</p>
+        <p className="font-sans text-[17px] font-medium tabular-nums text-western-green-deep mt-2">{formatPreco(peca.preco)}</p>
       </div>
       <div className="flex flex-col items-end gap-2.5">
         <div className="inline-flex items-center border border-western-stone-warm/30 bg-white">
           <button
             type="button"
             onClick={() => handleQty(peca.qty - 1)}
-            className="w-10 h-10 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+            className="w-11 h-11 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
             aria-label="Diminuir"
           >
             <Minus className="h-3.5 w-3.5" />
           </button>
           <span
             key={pulse ?? peca.qty}
-            className="w-10 text-center font-display text-[17px] text-western-green-deep animate-fade-in"
+            className="w-11 text-center font-sans font-medium text-[16px] tabular-nums text-western-green-deep animate-fade-in"
           >
             {peca.qty}
           </span>
           <button
             type="button"
             onClick={() => handleQty(peca.qty + 1)}
-            className="w-10 h-10 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+            className="w-11 h-11 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
             aria-label="Aumentar"
           >
             <Plus className="h-3.5 w-3.5" />
           </button>
         </div>
         {confirm ? (
-          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em]">
+          <div className="flex items-center gap-2 font-sans text-[12px]">
             <span className="text-western-stone-warm">Remover?</span>
-            <button onClick={() => onRemove(peca.id)} className="text-western-green-deep underline" type="button">
+            <button onClick={() => onRemove(peca.id)} className="text-destructive font-medium underline" type="button">
               Sim
             </button>
             <button onClick={() => setConfirm(false)} className="text-western-stone-warm/70" type="button">
@@ -75,9 +75,9 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
           <button
             type="button"
             onClick={() => setConfirm(true)}
-            className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/80 hover:text-western-green-deep"
+            className="font-sans text-[12px] text-western-stone-warm hover:text-destructive transition-colors"
           >
-            Remover ×
+            Remover
           </button>
         )}
       </div>
