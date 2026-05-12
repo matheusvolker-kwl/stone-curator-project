@@ -1,85 +1,71 @@
 ## Objetivo
 
-Eliminar a ambiguidade do "a partir de", consolidar tipografia/posicionamento do bloco de compra (preço, CTA, sinais de entrega, link de pintura personalizada, seletor de acabamento) e aproximar a PDP de um padrão e-commerce funcional.
+Quatro melhorias de UX/visual na página de produto:
+1. Tabela "Western × pedra natural" mais legível, sem o botão de orçamento
+2. Modelo 3D / SketchUp como aba própria
+3. Hierarquia tipográfica entre labels de seção e sub-labels
+4. CTA "Adicionar ao pedido" com mais presença + micro-prova social ao lado
 
-## Diagnóstico (com base nas imagens)
+---
 
-1. **Preço** mostra "a partir de R$ 1.235,00" antes da escolha de acabamento — confunde, parece que o preço pode subir, e o estilo (cents/currency reduzidos) destoa do resto.
-2. **CTA "Adicionar ao pedido"** é o elemento mais importante da página, mas usa fonte mono pequena (text-xs) e o texto fica diluído pelo tracking enorme.
-3. **DeliverySignals** e **link de pintura personalizada** competem com o CTA: ambos em mono uppercase com pesos visuais parecidos.
-4. **Acabamento card "+ vendido"** funciona bem — manter.
+### 1. ProductComparison — refinar tabela, remover CTA
 
-## Mudanças
+`src/components/product/ProductComparison.tsx`
 
-### 1. Preço cheio sempre (sem "a partir de")
+- **Remover** o botão "Solicitar comparativo orçamentário" e o handler `onConsultor` (e o import `BUSINESS` se ficar órfão).
+- **Reestruturar a linha** para ficar mais escaneável:
+  - Coluna central (label) vira **rótulo de linha à esquerda**, full-width, com peso visual maior (sans medium, não mais font-mono uppercase apertado).
+  - Duas colunas de comparação à direita, com **headers fixos** "Western" (verde-deep + dourado de marca) vs "Pedra natural" (stone-warm) — visualmente desbalanceadas a favor do Western (background `bg-western-paper/60` na coluna Western, transparente na coluna natural).
+  - Linhas com `divide-y` discreto, sem zebra striping pesado.
+- **Tipografia das células**: Western em `text-western-green-deep font-medium`, natural em `text-western-stone-warm/85 font-normal` — leitura imediata de "qual é o ganho".
+- **Mobile**: empilhar como cards por linha (label em cima, duas colunas pareadas embaixo) em vez do layout 3-grid atual quebrado.
+- **Adicionar uma linha-resumo** opcional no fim ("Resultado: projeto previsível, sem surpresa de obra") em italic pequeno.
 
-`src/pages/ProductPage.tsx` — bloco do preço:
-- Remover o fallback `a partir de ...` e a renderização condicional de `<PriceDisplay>` vs `<p>`.
-- Mostrar **sempre** o preço da variante atual; quando nenhuma variante estiver selecionada, usar `product.priceRange.minVariantPrice` (mesmo valor, mas sem o prefixo "a partir de").
-- Tipografia: usar a mesma fonte/peso do resto da PDP. Substituir `text-price` (que tem cents/currency reduzidos) por uma renderização única, plana:
-  - `font-sans font-semibold tabular-nums text-[2rem] md:text-[2.25rem] leading-none text-western-green-deep`
-  - "R$" no mesmo tamanho do número, sem opacity nem vertical-align.
-  - Centavos no mesmo tamanho (sem reduzir).
-- Remover a função `PriceDisplay` interna.
-- Linha de apoio: substituir "À vista · condição parceiro" por algo mais funcional/curto: **"Preço parceiro · à vista"** em `text-meta`.
+### 2. ProductTabs — nova aba "Modelo 3D"
 
-### 2. CTA "Adicionar ao pedido" otimizado
+`src/components/product/ProductTabs.tsx`
 
-`src/pages/ProductPage.tsx` (botão principal) e `src/index.css` (utilitário novo se útil):
-- Aumentar peso visual: `h-14` (era h-12), `font-sans font-medium text-sm tracking-[0.05em]` (não-uppercase) — padrão e-commerce.
-- Texto: **"Adicionar ao pedido"** em case normal (não uppercase), mais legível.
-- Cor: manter dourado, mas com sombra sutil no hover (`hover:shadow-md`) para reforçar affordance.
-- Estado pendente: manter cinza, mesmo tipo, texto "Selecione o acabamento".
-- Stepper de quantidade: alinhar a `h-14` para ficar do mesmo tamanho do botão.
+- Adicionar 4ª aba: `{ v: "modelo3d", l: "Modelo 3D" }`.
+- **Mover o bloco SketchUp** que hoje está dentro de `specs` (linhas com `Modelo 3D · SketchUp`, descrição e botão de download) para um novo `<TabsContent value="modelo3d">`.
+- Expandir o conteúdo dessa aba: lead curto à esquerda explicando o valor (modelar antes de comprar, evitar surpresa em obra), CTA de download mais proeminente (botão `bg-western-gold` em vez de outline `bg-western-gold/10`), e à direita um bullet list curto: "O que está incluso" (geometria, escala 1:1, materiais base) + "Compatível com SketchUp Pro/Free 2020+".
+- Ajustar `TabsList` para acomodar 4 itens (mantém `overflow-x-auto` em mobile).
+- Remover do bloco specs apenas a sub-seção SketchUp; dimensões + ficha + observações continuam ali.
 
-### 3. Hierarquia/posicionamento do bloco de compra
+### 3. Hierarquia de labels
 
-Nova ordem (mais e-commerce, menos editorial):
+Decisão: **labels de aba/seção principal** (`text-eyebrow` no topo de cada `TabsContent`) ganham peso visual; **sub-labels** dentro dela ficam mais discretas.
 
-```text
-Eyebrow coleção
-H1 Título
-SKU
-Blurb curto
+- `src/index.css`: 
+  - Manter `.text-eyebrow` atual como **sub-label** (mono, 10px, stone-warm).
+  - Criar `.text-section-label` novo: mono 11px, `tracking-[0.28em]`, **cor `text-western-green-deep`** (cor de marca, não neutro), com um `border-l-2 border-western-gold pl-3` ou um pequeno traço dourado embaixo para sinalizar "seção principal".
+- `src/components/product/ProductTabs.tsx`: trocar `text-eyebrow` para `text-section-label` apenas no **primeiro label de cada coluna principal** dentro de cada aba (ex.: "Composição & material", "Dimensões", "Produção & entrega", "O que vem na caixa", "Modelo 3D · SketchUp"). Sub-labels internos (rótulos C/L/A, "Estrutura/Interior oco/Pintura", "Produção/Entrega/Instalação") ficam com `text-eyebrow` mais leve (`opacity-70`).
+- Resultado: na imagem 3 (várias labels na mesma viewport), o olho diferencia "isso é a seção" de "isso é um item dentro dela".
 
-────────────────────────
-PREÇO grande (sempre cheio)
-linha de apoio
-────────────────────────
-Acabamento (obrigatório)
-Outras opções
-────────────────────────
-[Stepper] [Adicionar ao pedido] [♡]
-DeliverySignals (compactos, abaixo do CTA)
-Link discreto: pintura personalizada
-```
+### 4. CTA + prova social ao lado do botão
 
-Justificativas:
-- **Preço acima das opções**: usuário decide se vale o ticket antes de escolher acabamento (padrão Shopify/Amazon/IKEA).
-- **CTA logo após as opções**: fluxo de decisão linear.
-- **Sinais de entrega abaixo do CTA**: reforço pós-decisão, não distração.
-- **Pintura personalizada**: rodapé do bloco, nunca compete com CTA.
+`src/pages/ProductPage.tsx` (bloco 2.4 e 2.5)
 
-### 4. Tipografia dos elementos auxiliares
+- **Botão "Adicionar ao pedido"**:
+  - Adicionar contraste: trocar `bg-western-gold` (que está se fundindo) para gradiente sutil `bg-gradient-to-b from-western-gold to-western-gold/90`, com `shadow-[0_2px_0_0_hsl(var(--western-green-deep)/0.15)]` (sombra "imprensa" estilo botão tátil), e `border-b-2 border-western-green-deep/20`.
+  - Texto continua `font-sans font-medium text-[15px]`, mas adicionar um ícone discreto (ex.: `ArrowRight` ou `Plus`) à direita para reforçar ação.
+  - Hover: leve `translate-y-px` + remover o shadow inferior (efeito de pressionado).
+- **Micro-prova social** (novo componente leve, inline, **logo abaixo do CTA, antes de DeliverySignals**):
+  - Linha discreta: avatar/inicial pequeno + frase curta. Algo como:
+    > ★★★★★ "Chegou perfeito, instalação em 2h" — *Marcelo F., arquiteto*
+  - Ou versão multi-prova rotativa estática: 2 selos lado a lado — `"Especificado por Faisal, Hayasaki, Luidi"` + `"Em projetos de Neymar Jr., Diogo Nogueira"` — em mono 10px stone-warm, com pequeno ícone de check/estrela dourado.
+  - Implementar como novo componente `src/components/product/PurchaseProof.tsx` (~30 linhas) — reutiliza dados que já estão em `SocialProofBand` mas em formato compacto. Posicionar entre o bloco do CTA (2.4) e `DeliverySignals` (2.5).
 
-- **DeliverySignals** (`src/components/product/DeliverySignals.tsx`): reduzir peso visual — manter mono, mas trocar uppercase + tracking grande por **case normal**, `text-[11px] tracking-normal text-western-stone-warm/80`. Ícones em `text-western-stone-warm/60` (não dourado, para não competir com CTA).
-- **Link "Pintura personalizada"**: manter mono pequeno, mas alinhar à esquerda e adicionar separador `·` discreto antes do "falar com consultor". Já está bom — apenas verificar contraste.
-- **Eyebrow "Acabamento · obrigatório"**: manter como está (funciona).
+### Detalhes técnicos
 
-### 5. Remoções
+- Nenhuma mudança de dados/Shopify/Yampi.
+- Sem mudanças em rotas, store, auth.
+- Arquivos editados: `ProductComparison.tsx`, `ProductTabs.tsx`, `ProductPage.tsx`, `index.css`.
+- Arquivos criados: `src/components/product/PurchaseProof.tsx`.
+- Manter classes via design tokens (`western-gold`, `western-stone-warm`, etc.) — sem cores cruas.
 
-- Função `PriceDisplay` em `ProductPage.tsx` (não mais necessária).
-- Classes `.text-price-cents` e `.text-price-currency` em `index.css` (não usadas após a mudança).
+### Fora de escopo
 
-## Fora de escopo
-
-- StickyBuyBar (mantém preço atual; revisar em próxima iteração se necessário).
-- Cores do design system.
-- Outras páginas/componentes.
-- Lógica de variantes/queries.
-
-## Arquivos afetados
-
-- `src/pages/ProductPage.tsx` (preço, CTA, ordem do bloco, remover `PriceDisplay`)
-- `src/components/product/DeliverySignals.tsx` (tipografia mais discreta)
-- `src/index.css` (limpar tokens de preço não usados)
+- StickyBuyBar (mantém o estilo atual).
+- `SocialProofBand` full-width abaixo (continua existindo).
+- Texto/copy das especificações.
+- Lógica de variantes, preço, carrinho.
