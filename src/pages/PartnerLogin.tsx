@@ -5,7 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldCheck, MessageCircle, ArrowRight } from "lucide-react";
+import { BUSINESS } from "@/config/business";
+
+const waClienteFinalUrl = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
+  "Olá Western! Sou cliente final e gostaria de comprar / fazer um projeto com pedras Western."
+)}`;
 
 export default function PartnerLogin() {
   const [email, setEmail] = useState("");
