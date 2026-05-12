@@ -334,14 +334,14 @@ export default function PartnerSignup() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-5 mt-5">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-5">
                   <div>
                     <FieldLabel htmlFor="numero">Número</FieldLabel>
                     <Input id="numero" value={f.numero} onChange={(e) => set("numero", e.target.value)} required
                       className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
                     {errors.numero && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.numero}</p>}
                   </div>
-                  <div className="col-span-2">
+                  <div className="sm:col-span-2">
                     <FieldLabel htmlFor="complemento" optional>Complemento</FieldLabel>
                     <Input id="complemento" value={f.complemento} onChange={(e) => set("complemento", e.target.value)}
                       className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />

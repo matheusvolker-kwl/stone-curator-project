@@ -342,18 +342,18 @@ export default function ProductPage() {
                             <button
                               onClick={() => setQty(Math.max(1, qty - 1))}
                               disabled={acabPending}
-                              className="h-14 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg disabled:cursor-not-allowed"
+                              className="h-14 w-10 sm:w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg disabled:cursor-not-allowed"
                               aria-label="Diminuir"
                             >
                               −
                             </button>
-                            <span className="px-3 font-sans font-medium text-base min-w-[2ch] text-center tabular-nums">
+                            <span className="px-2 sm:px-3 font-sans font-medium text-base min-w-[2ch] text-center tabular-nums">
                               {qty}
                             </span>
                             <button
                               onClick={() => setQty(qty + 1)}
                               disabled={acabPending}
-                              className="h-14 w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg disabled:cursor-not-allowed"
+                              className="h-14 w-10 sm:w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg disabled:cursor-not-allowed"
                               aria-label="Aumentar"
                             >
                               +
@@ -362,7 +362,7 @@ export default function ProductPage() {
                           <Button
                             onClick={handleAdd}
                             disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
-                            className={`group flex-1 h-14 font-mono font-bold text-xs uppercase tracking-[0.25em] rounded-none transition-all motion-safe:active:translate-y-[1px] ${
+                            className={`group flex-1 min-w-0 h-14 px-2 sm:px-4 font-mono font-bold text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] rounded-none transition-all motion-safe:active:translate-y-[1px] ${
                               acabPending
                                 ? "bg-western-stone-warm/20 text-western-stone-warm hover:bg-western-stone-warm/25 disabled:opacity-100"
                                 : "bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 shadow-[0_18px_40px_-20px_rgba(27,38,33,0.6)] disabled:opacity-60"
@@ -371,13 +371,13 @@ export default function ProductPage() {
                             {isLoadingCart ? (
                               <Loader2 className="h-5 w-5 animate-spin" />
                             ) : acabPending ? (
-                              "Selecione o acabamento"
+                              <span className="truncate">Selecione o acabamento</span>
                             ) : pendingOption ? (
-                              `Selecione ${pendingOption.name.toLowerCase()}`
+                              <span className="truncate">Selecione {pendingOption.name.toLowerCase()}</span>
                             ) : variant?.availableForSale ? (
                               <>
-                                Adicionar ao pedido
-                                <ArrowRight className="h-4 w-4 ml-2 transition-transform motion-safe:group-hover:translate-x-0.5" />
+                                <span className="truncate">Adicionar ao pedido</span>
+                                <ArrowRight className="hidden sm:inline-block h-4 w-4 ml-2 transition-transform motion-safe:group-hover:translate-x-0.5" />
                               </>
                             ) : (
                               "Indisponível"
@@ -387,7 +387,7 @@ export default function ProductPage() {
                             handle={product.handle}
                             title={product.title}
                             image={product.images.edges[0]?.node?.url ?? null}
-                            className="!h-14 !w-14 !p-0 justify-center"
+                            className="!h-14 !w-12 sm:!w-14 !p-0 justify-center flex-shrink-0"
                           />
                         </div>
 
