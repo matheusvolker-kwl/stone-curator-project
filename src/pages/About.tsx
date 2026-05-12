@@ -250,10 +250,10 @@ export default function About() {
       </section>
 
       {/* 4 PILARES */}
-      <section className="surface-paper py-20 md:py-24 border-t border-western-stone-warm/10">
+      <section className="surface-paper py-14 md:py-18 border-t border-western-stone-warm/10">
         <div className="container-western max-w-6xl">
           <Reveal variant="fade-up" duration={750}>
-            <div className="max-w-2xl mb-14">
+            <div className="max-w-2xl mb-10">
               <p className="text-eyebrow mb-3">O método Western</p>
               <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
                 Quatro pilares que diferenciam<br />o que sai do ateliê.
