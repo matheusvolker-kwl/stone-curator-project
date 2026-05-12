@@ -118,13 +118,13 @@ export default function ProductCard({ product }: Props) {
           </span>
         </div>
 
-        <div className="mt-3 pt-3 border-t border-western-stone-warm/10 flex items-center justify-between">
+        <div className="mt-3 pt-3 border-t border-western-stone-warm/10 flex flex-col gap-2">
           <GatedPrice
             amount={product.priceRange.minVariantPrice.amount}
             currency={product.priceRange.minVariantPrice.currencyCode}
-            className="font-sans text-sm font-semibold text-western-green-deep"
+            className="font-sans text-base font-semibold text-western-green-deep"
           />
-          <span className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-western-green-deep group-hover:text-western-gold transition-colors">
+          <span className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/70 group-hover:text-western-gold transition-colors">
             Ver produto <ArrowRight className="h-3 w-3" />
           </span>
         </div>
