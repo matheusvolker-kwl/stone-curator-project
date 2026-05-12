@@ -208,7 +208,7 @@ export default function Index() {
       </Reveal>
 
       {/* B2B — credenciamento */}
-      <section className="surface-forest py-16 md:py-24">
+      <section className="surface-forest py-12 md:py-16">
         <div className="container-western">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <Reveal variant="fade-right" duration={750}>
