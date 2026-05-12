@@ -185,7 +185,7 @@ export default function ProductGallery({
           <button
             type="button"
             onClick={() => setZoomed((z) => !z)}
-            className={`relative max-w-[92vw] max-h-[88vh] overflow-auto ${
+            className={`relative mx-auto max-w-[92vw] max-h-[88vh] overflow-auto ${
               zoomed ? "cursor-zoom-out" : "cursor-zoom-in"
             }`}
             aria-label={zoomed ? "Reduzir zoom" : "Ampliar"}
@@ -194,7 +194,7 @@ export default function ProductGallery({
               key={activeIndex}
               src={cdnImg(current.url, 2000)}
               alt={current.altText ?? productTitle}
-              className={`block transition-transform duration-300 ${
+              className={`block mx-auto transition-transform duration-300 ${
                 zoomed ? "scale-[1.6]" : "scale-100"
               } max-w-[92vw] max-h-[88vh] object-contain`}
             />

@@ -215,7 +215,7 @@ export default function ProductPage() {
           </div>
 
           {/* Details */}
-          <div className="md:py-2 text-western-green-deep">
+          <div className="md:py-2 text-western-green-deep min-w-0">
             {/* 1 — Header */}
             {collectionDisplay && <p className="text-eyebrow mb-5">{collectionDisplay}</p>}
             <div className="w-12 h-px bg-western-gold mb-6" />
@@ -414,9 +414,10 @@ export default function ProductPage() {
                               "_blank"
                             );
                           }}
-                          className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
+                          className="inline-flex items-start gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors text-left max-w-full"
                         >
-                          <MessageCircle className="h-3.5 w-3.5" /> Pintura personalizada · falar com consultor
+                          <MessageCircle className="h-3.5 w-3.5 shrink-0 mt-px" />
+                          <span className="break-words">Pintura personalizada · falar com consultor</span>
                         </button>
                       </div>
                     )}

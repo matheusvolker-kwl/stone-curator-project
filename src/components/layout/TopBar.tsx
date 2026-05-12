@@ -47,7 +47,7 @@ export default function TopBar() {
           ))}
         </ul>
         {/* Mobile — marquee horizontal */}
-        <div className="md:hidden w-full overflow-hidden pr-7">
+        <div className="md:hidden w-full overflow-hidden pr-10 relative">
           <div className="flex w-max animate-marquee-x gap-10 whitespace-nowrap motion-reduce:animate-none">
             {[...items, ...items].map(({ Icon, text }, i) => (
               <span
@@ -59,6 +59,8 @@ export default function TopBar() {
               </span>
             ))}
           </div>
+          {/* Fade right edge to hide marquee behind close button */}
+          <div className="pointer-events-none absolute top-0 right-0 h-full w-12 bg-gradient-to-l from-western-green-deep to-transparent" />
         </div>
         <button
           onClick={dismiss}
