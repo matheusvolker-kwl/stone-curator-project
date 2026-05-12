@@ -47,7 +47,7 @@ export default function MarcasInstitucionais({
   const isDark = variante === "dark";
 
   return (
-    <section className={compacta ? "" : "mt-20 md:mt-24"}>
+    <section className={compacta ? "" : "mt-14 md:mt-16"}>
       {!compacta && (
         <div className="text-center max-w-2xl mx-auto mb-12 md:mb-14">
           {eyebrow && (
