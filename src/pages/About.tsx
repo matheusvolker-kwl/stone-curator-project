@@ -366,7 +366,7 @@ export default function About() {
       </section>
 
       {/* MANIFESTO — vocabulário & filosofia */}
-      <section className="surface-forest py-20 md:py-24 relative overflow-hidden">
+      <section className="surface-forest py-14 md:py-18 relative overflow-hidden">
         <img
           src={iconePedraBranco}
           alt=""
