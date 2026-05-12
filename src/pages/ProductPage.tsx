@@ -215,7 +215,7 @@ export default function ProductPage() {
           </div>
 
           {/* Details */}
-          <div className="md:py-2 text-western-green-deep">
+          <div className="md:py-2 text-western-green-deep min-w-0">
             {/* 1 — Header */}
             {collectionDisplay && <p className="text-eyebrow mb-5">{collectionDisplay}</p>}
             <div className="w-12 h-px bg-western-gold mb-6" />
