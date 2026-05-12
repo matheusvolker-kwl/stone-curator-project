@@ -31,7 +31,7 @@ const CARDS = [
 
 export default function WhyWesternStrip() {
   return (
-    <section className="bg-western-green-deep text-western-cream py-20 md:py-28">
+    <section className="bg-western-green-deep text-western-cream py-14 md:py-20">
       <div className="container-western">
         <header className="text-center max-w-2xl mx-auto mb-14">
           <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-western-gold mb-4">
