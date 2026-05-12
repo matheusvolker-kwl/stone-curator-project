@@ -89,17 +89,25 @@ export default function MarcasInstitucionais({
                 title={p.nome}
                 className="group flex items-center justify-center h-16 md:h-20 transition-all"
               >
-                <img
-                  src={isDark ? p.logoLight : p.logoDark}
-                  alt={p.nome}
-                  loading="lazy"
-                  style={{ maxWidth: `${p.larguraMax}px` }}
-                  className={`w-full max-h-14 md:max-h-16 object-contain transition-all duration-500 ${
-                    isDark
-                      ? "opacity-65 group-hover:opacity-100"
-                      : "opacity-75 group-hover:opacity-100"
-                  } group-hover:scale-[1.04]`}
-                />
+                {(() => {
+                  const useFilter = isDark && !p.logoLight;
+                  return (
+                    <img
+                      src={isDark && p.logoLight ? p.logoLight : p.logoDark}
+                      alt={p.nome}
+                      loading="lazy"
+                      style={{
+                        maxWidth: `${p.larguraMax}px`,
+                        ...(useFilter ? { filter: "brightness(0) invert(1)" } : {}),
+                      }}
+                      className={`w-full max-h-14 md:max-h-16 object-contain transition-all duration-500 ${
+                        isDark
+                          ? "opacity-65 group-hover:opacity-100"
+                          : "opacity-75 group-hover:opacity-100"
+                      } group-hover:scale-[1.04]`}
+                    />
+                  );
+                })()}
               </a>
             </li>
           ))}
