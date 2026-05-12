@@ -30,6 +30,8 @@ interface Props {
   compacta?: boolean;
   /** Variante de fundo: light (sobre ivory/paper) ou dark (sobre forest) */
   variante?: "light" | "dark";
+  /** Sem caixas/bordas: logos livres em row, ideal pra interlúdios editoriais */
+  semBordas?: boolean;
   eyebrow?: string;
   titulo?: React.ReactNode;
   descricao?: React.ReactNode;
@@ -38,6 +40,7 @@ interface Props {
 export default function MarcasInstitucionais({
   compacta = false,
   variante = "light",
+  semBordas = false,
   eyebrow,
   titulo,
   descricao,
@@ -75,46 +78,74 @@ export default function MarcasInstitucionais({
         </div>
       )}
 
-      {/* Strip de logos — alturas iguais, largura calibrada por logo */}
-      <ul
-        className={`grid grid-cols-2 md:grid-cols-4 ${
-          isDark
-            ? "border-y border-western-gold/20"
-            : "border-y border-western-stone-warm/15"
-        }`}
-      >
-        {PARCEIROS.map((p, i) => (
-          <li
-            key={p.nome}
-            className={`${
-              isDark ? "border-western-gold/15" : "border-western-stone-warm/15"
-            } ${i > 0 && i % 2 !== 0 ? "border-l md:border-l" : ""} ${
-              i >= 2 ? "border-t md:border-t-0" : ""
-            } ${i > 0 ? "md:border-l" : ""}`}
-          >
-            <a
-              href={p.site}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={p.nome}
-              title={p.nome}
-              className="group flex items-center justify-center h-28 md:h-36 px-6 transition-all"
+      {semBordas ? (
+        <ul className="flex flex-wrap items-center justify-center gap-x-12 md:gap-x-20 gap-y-8">
+          {PARCEIROS.map((p) => (
+            <li key={p.nome}>
+              <a
+                href={p.site}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={p.nome}
+                title={p.nome}
+                className="group flex items-center justify-center h-16 md:h-20 transition-all"
+              >
+                <img
+                  src={isDark ? p.logoLight : p.logoDark}
+                  alt={p.nome}
+                  loading="lazy"
+                  style={{ maxWidth: `${p.larguraMax}px` }}
+                  className={`w-full max-h-14 md:max-h-16 object-contain transition-all duration-500 ${
+                    isDark
+                      ? "opacity-65 group-hover:opacity-100"
+                      : "opacity-75 group-hover:opacity-100"
+                  } group-hover:scale-[1.04]`}
+                />
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ul
+          className={`grid grid-cols-2 md:grid-cols-4 ${
+            isDark
+              ? "border-y border-western-gold/20"
+              : "border-y border-western-stone-warm/15"
+          }`}
+        >
+          {PARCEIROS.map((p, i) => (
+            <li
+              key={p.nome}
+              className={`${
+                isDark ? "border-western-gold/15" : "border-western-stone-warm/15"
+              } ${i > 0 && i % 2 !== 0 ? "border-l md:border-l" : ""} ${
+                i >= 2 ? "border-t md:border-t-0" : ""
+              } ${i > 0 ? "md:border-l" : ""}`}
             >
-              <img
-                src={isDark ? p.logoLight : p.logoDark}
-                alt={p.nome}
-                loading="lazy"
-                style={{ maxWidth: `${p.larguraMax}px` }}
-                className={`w-full max-h-20 md:max-h-24 object-contain transition-all duration-500 ${
-                  isDark
-                    ? "opacity-70 group-hover:opacity-100"
-                    : "opacity-80 group-hover:opacity-100"
-                } group-hover:scale-[1.04]`}
-              />
-            </a>
-          </li>
-        ))}
-      </ul>
+              <a
+                href={p.site}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={p.nome}
+                title={p.nome}
+                className="group flex items-center justify-center h-28 md:h-36 px-6 transition-all"
+              >
+                <img
+                  src={isDark ? p.logoLight : p.logoDark}
+                  alt={p.nome}
+                  loading="lazy"
+                  style={{ maxWidth: `${p.larguraMax}px` }}
+                  className={`w-full max-h-20 md:max-h-24 object-contain transition-all duration-500 ${
+                    isDark
+                      ? "opacity-70 group-hover:opacity-100"
+                      : "opacity-80 group-hover:opacity-100"
+                  } group-hover:scale-[1.04]`}
+                />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
 
       {!compacta && (
         <p

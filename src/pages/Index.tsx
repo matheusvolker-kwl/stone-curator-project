@@ -163,30 +163,39 @@ export default function Index() {
         <ProjetosSection />
       </Reveal>
 
-      {/* Faixa institucional — Camadas 2 e 3 */}
-      <section className="surface-paper border-t border-western-stone-warm/15 py-16 md:py-20">
-        <div className="container-western max-w-5xl">
+      {/* Faixa institucional — interlúdio dark editorial */}
+      <section className="surface-forest py-20 md:py-28 border-y border-western-gold/15">
+        <div className="container-western max-w-4xl">
           <Reveal variant="fade-up" duration={750}>
-            <div className="text-center mb-10">
-              <p className="text-eyebrow mb-4">Prova de procedência</p>
-              <div className="w-12 h-px bg-western-gold mx-auto mb-6" />
-              <p className="font-display text-2xl md:text-3xl text-western-green-deep leading-[1.15] max-w-2xl mx-auto">
-                Especificada por{" "}
-                <Link to="/parceiros-arquitetos" className="underline decoration-western-gold/40 underline-offset-4 hover:decoration-western-gold transition-colors">
-                  Marcelo Faisal, Fabiano Hayasaki e Ronaldo Luidi
-                </Link>
-                . Atende marcas institucionais há mais de uma década.
+            <div className="text-center mb-12 md:mb-16">
+              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft/85 mb-5">
+                Prova de procedência
               </p>
+              <div className="w-10 h-px bg-western-gold/50 mx-auto mb-7" />
+              <h2 className="font-display text-2xl md:text-[2rem] text-western-cream leading-[1.2] max-w-2xl mx-auto">
+                Especificada pelos arquitetos que assinam os jardins mais publicados do país.
+              </h2>
+              <Link
+                to="/parceiros-arquitetos"
+                className="inline-block mt-7 font-mono text-[11px] uppercase tracking-[0.28em] text-western-gold-soft/90 hover:text-western-gold transition-colors"
+              >
+                Marcelo Faisal · Fabiano Hayasaki · Ronaldo Luidi
+              </Link>
             </div>
           </Reveal>
 
           <Reveal variant="fade-up" delay={120} duration={750}>
-            <MarcasInstitucionais compacta />
+            <div className="pt-10 md:pt-12 border-t border-western-gold/15">
+              <MarcasInstitucionais compacta variante="dark" semBordas />
+            </div>
           </Reveal>
 
-          <div className="text-center mt-8">
-            <Link to="/sobre" className="link-underline font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep">
-              Sobre a Western →
+          <div className="text-center mt-12">
+            <Link
+              to="/sobre"
+              className="font-mono text-xs uppercase tracking-[0.22em] text-western-gold-soft hover:text-western-gold transition-colors"
+            >
+              Conhecer a Western →
             </Link>
           </div>
         </div>
