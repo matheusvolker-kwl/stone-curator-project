@@ -291,7 +291,7 @@ export default function Index() {
                   { eyebrow: "Frete", t: "Transportadora ou retirada" },
                 ].map((s) => (
                   <div key={s.t} className="bg-western-green-deep p-6 md:p-8">
-                    <p className="text-eyebrow mb-3">{s.eyebrow}</p>
+                    <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold/80 mb-3 font-medium">{s.eyebrow}</p>
                     <h3 className="font-display text-2xl md:text-3xl text-western-cream">{s.t}</h3>
                   </div>
                 ))}
