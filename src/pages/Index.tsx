@@ -164,10 +164,10 @@ export default function Index() {
       </Reveal>
 
       {/* Faixa institucional — interlúdio dark editorial */}
-      <section className="surface-forest py-20 md:py-28 border-y border-western-gold/15">
+      <section className="surface-forest py-14 md:py-18 border-y border-western-gold/15">
         <div className="container-western max-w-4xl">
           <Reveal variant="fade-up" duration={750}>
-            <div className="text-center mb-12 md:mb-16">
+            <div className="text-center mb-8 md:mb-10">
               <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft/85 mb-5">
                 Prova de procedência
               </p>
@@ -185,12 +185,12 @@ export default function Index() {
           </Reveal>
 
           <Reveal variant="fade-up" delay={120} duration={750}>
-            <div className="pt-10 md:pt-12 border-t border-western-gold/15">
+            <div className="pt-6 md:pt-8 border-t border-western-gold/15">
               <MarcasInstitucionais compacta variante="dark" semBordas />
             </div>
           </Reveal>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-8">
             <Link
               to="/sobre"
               className="font-mono text-xs uppercase tracking-[0.22em] text-western-gold-soft hover:text-western-gold transition-colors"
