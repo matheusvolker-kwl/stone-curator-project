@@ -410,7 +410,7 @@ export default function About() {
       </section>
 
       {/* ARQUITETOS + MARCAS — prova social */}
-      <section className="surface-ivory py-20 md:py-24">
+      <section className="surface-ivory py-14 md:py-18">
         <div className="container-western max-w-5xl">
           <Reveal variant="fade-up" duration={800}>
             <ArquitetosStrip
