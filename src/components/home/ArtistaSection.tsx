@@ -44,7 +44,7 @@ export default function ArtistaSection() {
           <span className="text-western-gold-soft">”</span>
         </blockquote>
 
-        <div className="mt-8 mb-10">
+        <div className="mt-6 mb-8">
           <p className="font-display text-xl text-western-green-deep">
             Ricardo Botelho
           </p>
