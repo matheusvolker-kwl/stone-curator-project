@@ -1,0 +1,29 @@
+# Western
+
+> Fabricante artesanal de pedras decorativas para paisagismo profissional, em São Paulo. Catálogo B2B para arquitetos, paisagistas, construtoras e revendas qualificadas.
+
+A Western produz pedras artesanais (cascatas, pedras grandes/médias/pequenas, pisadas, fontes, revestimentos e fósseis decorativos) em composto mineral reforçado com fibra de PET reciclado. Cada peça é moldada a partir de uma pedra natural real e pintada à mão em 4 acabamentos (Quartzo, Arenito, Moledo, Granito). Modelos 3D disponíveis no SketchUp Warehouse.
+
+## Pages
+
+- [Home](/): visão geral da marca e do catálogo.
+- [Linhas](/linhas): coleções de pedras (cascatas, pedras grandes, médias, pequenas, pisadas, etc.).
+- [Produtos](/produtos): catálogo completo de peças.
+- [Conjuntos](/conjuntos): composições pré-montadas com desconto.
+- [Guia de composição](/guia-de-composicao): assistente para montar uma composição a partir do contexto do projeto.
+- [Sobre](/sobre): história da Western e do ateliê.
+- [Por que Western](/por-que-western): argumentário técnico e comparativos.
+- [Aplicações comerciais](/aplicacoes-comerciais): usos em hotelaria, varejo e empreendimentos.
+- [Parceiros arquitetos](/parceiros-arquitetos): especificadores de referência.
+- [FAQ](/faq): perguntas frequentes sobre material, instalação, comercial e garantia.
+- [Contato](/contato): canais de atendimento.
+- [Agendar visita](/visitar): visita ao ateliê em São Paulo.
+
+## Comercial
+
+- [Cadastro de parceiro](/parceiro/cadastro): credenciamento B2B (CNPJ obrigatório).
+- [Login](/parceiro/login): acesso à área do parceiro.
+- [Política comercial](/politica-comercial)
+- [Política de entrega](/politica-de-entrega)
+- [Trocas e avarias](/trocas-e-avarias)
+- [Política de privacidade](/privacidade)
