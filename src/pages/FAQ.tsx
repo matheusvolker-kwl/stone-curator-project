@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Plus, Minus, ArrowRight } from "lucide-react";
 import { BUSINESS } from "@/config/business";
+import Seo from "@/components/seo/Seo";
 
 type Item = { q: string; a: React.ReactNode };
 type Grupo = { eyebrow: string; titulo: string; itens: Item[] };
