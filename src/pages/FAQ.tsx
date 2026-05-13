@@ -122,8 +122,28 @@ const GRUPOS: Grupo[] = [
 
 export default function FAQ() {
   const [open, setOpen] = useState<string | null>("0-0");
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: GRUPOS.flatMap((g) =>
+      g.itens.map((it) => ({
+        "@type": "Question",
+        name: it.q,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: typeof it.a === "string" ? it.a : it.q,
+        },
+      }))
+    ),
+  };
   return (
     <>
+      <Seo
+        title="FAQ — Western: dúvidas técnicas sobre pedras artesanais"
+        description="Material, fabricação, instalação, comercial e garantia: as perguntas mais frequentes de arquitetos e paisagistas sobre pedras Western."
+        path="/faq"
+        jsonLd={faqJsonLd}
+      />
       <section className="surface-forest">
         <div className="container-western py-20 md:py-28 max-w-4xl">
           <p className="text-eyebrow text-western-gold-soft mb-5">Perguntas frequentes</p>
