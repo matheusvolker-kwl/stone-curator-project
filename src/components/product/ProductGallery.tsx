@@ -147,7 +147,7 @@ export default function ProductGallery({
       {/* Lightbox */}
       {lightboxOpen && (
         <div
-          className="fixed inset-0 z-[100] bg-western-green-deep/95 flex items-center justify-center"
+          className="fixed inset-0 z-[100] bg-western-green-deep flex items-center justify-center"
           role="dialog"
           aria-modal="true"
           aria-label="Visualização ampliada"
