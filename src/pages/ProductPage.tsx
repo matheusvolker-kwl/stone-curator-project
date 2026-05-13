@@ -179,8 +179,28 @@ export default function ProductPage() {
   const pesoKg = pesoStr.match(/(\d+[.,]?\d*)/)?.[1]?.replace(",", ".") ?? null;
   const dimsStr = dims ? `${dims.c} × ${dims.l} × ${dims.a} cm` : null;
 
+  const plainDesc = (product.description || product.title).replace(/\s+/g, " ").trim();
+  const productJsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    image: images.map((i) => i.url),
+    description: plainDesc.slice(0, 300),
+    sku: sku || undefined,
+    brand: { "@type": "Brand", name: "Western" },
+    url: `https://westernstore.lovable.app/produtos/${product.handle}`,
+  };
+
   return (
     <div className="surface-ivory">
+      <Seo
+        title={`${product.title} — Western`}
+        description={plainDesc.slice(0, 160) || `${product.title}: pedra artesanal Western para projetos de paisagismo profissional.`}
+        path={`/produtos/${product.handle}`}
+        ogType="product"
+        image={images[0]?.url}
+        jsonLd={productJsonLd}
+      />
       <ScrollProgress />
       <BackToTop />
       <div className="container-western pt-12 md:pt-20 pb-8 md:pb-10">
