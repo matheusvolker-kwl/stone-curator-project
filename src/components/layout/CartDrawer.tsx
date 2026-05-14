@@ -281,6 +281,20 @@ export default function CartDrawer({
               </Button>
             )}
 
+            {/* Selo de pagamento */}
+            {isApproved && (
+              <div className="flex items-center justify-center gap-5 pt-1">
+                {["Pix", "Boleto", "Cartão até 6x"].map((label, i) => (
+                  <div key={label} className="flex items-center gap-2">
+                    {i > 0 && <span className="text-western-gold-soft/40 text-[8px]">◆</span>}
+                    <span className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-western-cream/70">
+                      {label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* CTA secundário: Baixar composição (quando aprovado) */}
             {isApproved && (
               <button
@@ -290,6 +304,18 @@ export default function CartDrawer({
               >
                 <Download className="h-3.5 w-3.5" /> Baixar composição (PDF)
               </button>
+            )}
+
+            {/* Link WhatsApp para peças pesadas — discreto, condicional */}
+            {isApproved && items.some((i) => (i.pesoKg ?? 0) > 100) && (
+              <a
+                href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent("Olá, Western. Estou montando um pedido com peças de grande porte e gostaria de condição logística personalizada.")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center text-[11px] text-western-cream/55 hover:text-western-gold-soft transition-colors"
+              >
+                Peça pesada? Falar no WhatsApp →
+              </a>
             )}
 
             {/* PDF apenas após formulário (Solicitar orçamento) */}
