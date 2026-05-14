@@ -23,6 +23,26 @@ function json(status: number, body: unknown) {
   });
 }
 
+async function callYampi(payload: Record<string, unknown>) {
+  const url = `${yampiBaseUrl()}/logistics/shipping-costs`;
+  console.log("yampi url", url);
+  console.log("yampi payload", JSON.stringify(payload));
+  const res = await fetch(url, {
+    method: "POST",
+    headers: yampiHeaders(),
+    body: JSON.stringify(payload),
+  });
+  const text = await res.text();
+  console.log("yampi response", res.status, text.slice(0, 2000));
+  let parsed: any = null;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    /* ignore */
+  }
+  return { status: res.status, ok: res.ok, body: parsed, raw: text };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") return json(405, { error: "method_not_allowed" });
@@ -42,37 +62,62 @@ Deno.serve(async (req) => {
   const total = Number(body.total);
   if (!isFinite(total) || total <= 0) return json(400, { erro: "total_invalido" });
 
+  console.log("calc-frete payload in", { cep, total, items: body.items.length });
+  console.log("env check", {
+    alias: !!Deno.env.get("YAMPI_ALIAS"),
+    userToken: !!Deno.env.get("YAMPI_USER_TOKEN"),
+    secretKey: !!Deno.env.get("YAMPI_SECRET_KEY"),
+    cepOrigem: !!Deno.env.get("CEP_ORIGEM"),
+  });
+
   try {
     const map = await getSkuMapping();
     const { ids, quantities, missing } = resolveSkus(body.items, map);
-    if (missing) return json(500, { erro: "sku_nao_encontrado", sku: missing });
+    if (missing) {
+      console.error("sku não mapeado", missing);
+      return json(200, { opcoes: [], erro: "sku_nao_encontrado", sku: missing });
+    }
+    console.log("resolved skus", { ids, quantities });
 
-    const payload = {
-      order_id: 0,
+    const cepOrigem = (Deno.env.get("CEP_ORIGEM") ?? "").replace(/\D/g, "");
+
+    const basePayload: Record<string, unknown> = {
       zipcode: cep,
       total,
-      origin: "cart_page",
       skus_ids: ids,
       quantities,
     };
+    if (cepOrigem.length === 8) basePayload.zipcode_origin = cepOrigem;
 
-    const res = await fetch(`${yampiBaseUrl()}/logistics/shipping-costs`, {
-      method: "POST",
-      headers: yampiHeaders(),
-      body: JSON.stringify(payload),
-    });
+    // 1ª tentativa: payload limpo, sem order_id (cotação de carrinho)
+    let result = await callYampi(basePayload);
 
-    if (!res.ok) {
-      console.error("yampi shipping-costs error", res.status, await res.text());
-      return json(200, { opcoes: [], erro: "api_indisponivel" });
+    // Se a Yampi exigir order_id, tentamos com origin string (legado)
+    if (!result.ok && result.status === 422) {
+      const fallbackPayload = {
+        ...basePayload,
+        origin: "cart_page",
+      };
+      console.log("yampi retry com origin=cart_page");
+      result = await callYampi(fallbackPayload);
     }
 
-    const data = await res.json();
+    if (!result.ok) {
+      console.error("yampi shipping-costs error", result.status, result.raw);
+      return json(200, {
+        opcoes: [],
+        erro: "api_indisponivel",
+        debug: { yampi_status: result.status, yampi_body: result.body ?? result.raw?.slice(0, 1000) },
+      });
+    }
+
+    const data = result.body ?? {};
     const list: any[] =
       data?.data ?? data?.shipping_costs ?? data?.quotes ?? data?.options ?? [];
 
     if (!Array.isArray(list) || list.length === 0) {
-      return json(200, { opcoes: [], erro: "sem_cobertura" });
+      console.warn("yampi sem opções", JSON.stringify(data).slice(0, 1000));
+      return json(200, { opcoes: [], erro: "sem_cobertura", debug: { yampi_body: data } });
     }
 
     const opcoes = list.map((row: any, idx: number) => {
@@ -93,7 +138,11 @@ Deno.serve(async (req) => {
 
     return json(200, { opcoes, erro: null });
   } catch (e) {
-    console.error("yampi-calc-frete", e);
-    return json(200, { opcoes: [], erro: "api_indisponivel" });
+    console.error("yampi-calc-frete exception", e);
+    return json(200, {
+      opcoes: [],
+      erro: "api_indisponivel",
+      debug: { exception: String(e) },
+    });
   }
 });
