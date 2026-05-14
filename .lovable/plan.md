@@ -1,61 +1,36 @@
-# Remover cotação de frete do carrinho
+## Objetivo
+Pequenos ajustes visuais no `CartDrawer` e `DeliveryInfo` — sem mexer em lógica, paleta ou tipografia base.
 
-Decisão: a Yampi não expõe endpoint público de cotação pré-pedido. Frete passa a ser calculado no checkout Yampi (que já funciona). No carrinho, mostramos só as informações de entrega essenciais.
+## Mudanças
 
-## Escopo (somente UI do carrinho)
+### 1. Mais espaço para os produtos
+`src/components/layout/CartDrawer.tsx`
+- Reduzir padding vertical do header (`pt-6 md:pt-8 pb-5 md:pb-6` → `pt-5 md:pt-6 pb-4`).
+- Reduzir padding do bloco de totais (`py-6` → `py-5`) e `space-y-4` → `space-y-3`.
+- Lista de itens: `space-y-6` → `space-y-5` e `py-6` → `py-5` no scroll container.
+- Resultado: ~40–60px a mais visíveis para os cards de produto sem reflow.
 
-**Arquivos tocados:**
-- `src/components/layout/CartDrawer.tsx` — trocar `<CalcFrete />` por `<DeliveryInfo />`
-- `src/components/cart/DeliveryInfo.tsx` — **novo** componente, leve, sem estado, sem chamadas de rede
+### 2. Subtotal com mais presença
+- Trocar a linha do subtotal por um bloco com hierarquia melhor:
+  - Label "Subtotal" continua em mono uppercase pequeno.
+  - Valor passa de `font-display text-2xl` → `font-display text-3xl md:text-[2rem] tracking-wide tabular-nums text-western-gold-soft`.
+  - Adicionar abaixo, em `text-[11px] text-western-cream-muted`: "Frete e impostos calculados no checkout".
 
-**Não tocar:**
-- `supabase/functions/yampi-calc-frete/` — fica inativa (reativável no futuro)
-- `src/components/cart/CalcFrete.tsx` — fica no repo, não é mais importado (podemos remover depois se quiser)
-- `src/lib/yampi/client.ts`, checkout, paleta, tipografia, ícones, espaçamentos
+### 3. Métodos de pagamento (Pix, Boleto, Cartão)
+- Logo abaixo do subtotal, antes do bloco Entrega, adicionar uma linha discreta:
+  - Texto em mono `[10px]` uppercase: "Pagamento" + 3 pílulas finas (`border border-western-gold/25 px-2 py-1 text-[11px]`): **Pix**, **Boleto**, **Cartão até 12x**.
+  - Sem ícones de bandeiras (mantém o tom artesanal). Cor `text-western-cream/85`.
 
-## Bloco "Entrega" — proposta visual
-
-Mantém a mesma moldura do `CalcFrete` atual (`border border-western-gold/25 bg-western-green-deep/40 p-4 md:p-5`), mas com hierarquia mais calma e sem CTA pesado. Três blocos discretos separados por divisória fina dourada.
-
-```text
-┌─────────────────────────────────────────────────────┐
-│ 🚚  ENTREGA                                         │
-│                                                     │
-│ ✓  Retirada gratuita no ateliê                      │
-│    Rua Colina, 38 · Jardim Paraíso · Cajamar/SP     │
-│    Seg–Sex 9h–17h · mediante agendamento            │
-│ ─────────────────────────────────────────────────── │
-│ ✓  Envio para todo o Brasil                         │
-│    Frete e prazo calculados no checkout.            │
-│ ─────────────────────────────────────────────────── │
-│    Peças acima de 100 kg? Cotação dedicada,         │
-│    com transportadora especializada.                │
-│    [ Falar com especialista no WhatsApp → ]         │
-└─────────────────────────────────────────────────────┘
-```
-
-Notas de execução:
-- Cabeçalho idêntico ao atual (`Truck` 3.5, label mono `[10px] uppercase tracking-[0.25em]`).
-- Itens com check (`Check` do lucide, mesmo tamanho/cor do ícone `Truck`) para criar ritmo visual e reforçar "incluso/garantido".
-- Endereço e horário em `text-spec text-western-cream-muted text-xs leading-relaxed` (mesmo estilo que já usávamos no bloco de retirada).
-- Linha de envio: uma frase só. Sem CEP, sem botão. A promessa é "calculado no checkout".
-- Bloco pesado (>100 kg) **só aparece se houver item com `pesoKg > 100` no carrinho** — mesma regra que `CalcFrete` já usava, então mantém a UX para B2B com peças grandes sem aparecer ruído pra quem não precisa.
-- CTA WhatsApp com o estilo secundário existente (`h-10 border border-western-gold/40 ... font-mono text-[10px] uppercase tracking-[0.22em]`), nunca com peso de CTA primário — `Finalizar compra` continua sendo o herói.
-- Divisórias `border-t border-western-gold/15` (já é o padrão do componente).
-
-## Por que essa forma
-
-- Três linhas curtas > parágrafo. Cada linha responde uma dúvida típica (retirada, envio nacional, peça pesada).
-- Os checks comunicam "está resolvido" sem precisar de copy defensiva tipo "não se preocupe".
-- O bloco condicional de >100 kg preserva a captura de lead B2B que o `CalcFrete` fazia, sem precisar de input.
-- Zero estado, zero loading, zero erro — sem chance de "instabilidade na cotação" derrubar conversão.
-
-## Detalhes técnicos
-
-- `DeliveryInfo` lê `useCartStore` só para `items.some(i => (i.pesoKg ?? 0) > 100)` e para montar a mensagem do WhatsApp (mesma função `whatsappPesadoUrl` que já existe — mover pra `src/lib/whatsapp.ts` ou duplicar inline; proposta: inline, é trivial e evita refator).
-- `BUSINESS.enderecoAtelieRua`, `BUSINESS.cidadeAtelie`, `BUSINESS.ufAtelie`, `BUSINESS.horarioAtelie`, `BUSINESS.whatsappFabrica` — todos já existem em `src/config/business.ts`.
-- `CartDrawer.tsx`: trocar `import CalcFrete` por `import DeliveryInfo` e a tag `<CalcFrete />` por `<DeliveryInfo />`. Continua dentro do mesmo `isApproved && meetsMinimum` (ou removemos o `meetsMinimum` daqui, já que info de entrega é útil mesmo abaixo do mínimo — **decisão sugerida: mostrar para todo carrinho com itens, removendo a condição `meetsMinimum`**, mantendo só `isApproved` se quiser preservar o gate B2B; me confirma se prefere assim).
+### 4. Bloco Entrega mais compacto
+`src/components/cart/DeliveryInfo.tsx`
+- Reduzir padding (`p-4 md:p-5` → `p-3.5 md:p-4`) e `space-y-4` → `space-y-2.5`.
+- `space-y-3` interno → `space-y-2.5`, `pt-3` dos divisores → `pt-2.5`.
+- Encurtar copy:
+  - "Retirada gratuita no ateliê" — manter; subtítulo em **uma linha só**: `endereço · cidade/UF · horário (agendamento)`.
+  - "Envio para todo o Brasil" — subtítulo: "Frete calculado no checkout."
+- Bloco de peças >100 kg: mantém condicional, mas com `pt-2.5` e copy enxuta.
 
 ## Fora de escopo
-
-Layout, fontes, paleta, header, checkout, edge functions, outros componentes.
+- Edge function `yampi-calc-frete` (segue inativa).
+- Lógica de checkout, auth, mínimos.
+- Cores, fontes globais, ícones novos.

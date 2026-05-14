@@ -138,7 +138,7 @@ export default function CartDrawer({
         side="right"
         className="w-full sm:max-w-lg flex flex-col p-0 bg-western-green-mid border-l border-western-gold/20 text-western-cream"
       >
-        <div className="px-5 md:px-8 pt-6 md:pt-8 pb-5 md:pb-6 border-b border-western-gold/15 space-y-3">
+        <div className="px-5 md:px-8 pt-5 md:pt-6 pb-4 border-b border-western-gold/15 space-y-3">
           <button
             type="button"
             onClick={() => onOpenChange(false)}
@@ -164,7 +164,7 @@ export default function CartDrawer({
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 md:px-8 py-6">
+        <div className="flex-1 overflow-y-auto px-5 md:px-8 py-5">
           {items.length === 0 ? (
             <div className="space-y-6">
               <div className="text-center py-6">
@@ -175,7 +175,7 @@ export default function CartDrawer({
               <EmptyCartHints onNavigate={() => onOpenChange(false)} />
             </div>
           ) : (
-            <ul className="space-y-6">
+            <ul className="space-y-5">
               {items.map((item) => (
                 <li key={item.variantId} className="relative flex gap-3 md:gap-4 pr-7">
                   <div className="frame-gallery w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
@@ -241,13 +241,33 @@ export default function CartDrawer({
         </div>
 
         {items.length > 0 && (
-          <div className="px-5 md:px-8 py-6 border-t border-western-gold/15 space-y-4">
-            <div className="flex justify-between items-baseline">
-              <span className="font-mono text-[11px] uppercase tracking-[0.22em] font-medium text-western-gold-soft/90">Subtotal</span>
-              <span className="font-display text-2xl">
-                {isApproved ? formatBRL(subtotal, currency) : "—"}
-              </span>
+          <div className="px-5 md:px-8 py-5 border-t border-western-gold/15 space-y-3">
+            <div>
+              <div className="flex justify-between items-baseline">
+                <span className="font-mono text-[11px] uppercase tracking-[0.22em] font-medium text-western-gold-soft/90">Subtotal</span>
+                <span className="font-display text-3xl md:text-[2rem] tracking-wide tabular-nums text-western-gold-soft leading-none">
+                  {isApproved ? formatBRL(subtotal, currency) : "—"}
+                </span>
+              </div>
+              {isApproved && (
+                <p className="mt-1.5 text-right text-[11px] text-western-cream-muted">
+                  Frete e impostos calculados no checkout
+                </p>
+              )}
             </div>
+
+            {isApproved && (
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold-soft/90">
+                  Pagamento
+                </span>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="border border-western-gold/25 px-2 py-1 text-[11px] text-western-cream/85 font-sans">Pix</span>
+                  <span className="border border-western-gold/25 px-2 py-1 text-[11px] text-western-cream/85 font-sans">Boleto</span>
+                  <span className="border border-western-gold/25 px-2 py-1 text-[11px] text-western-cream/85 font-sans">Cartão até 12x</span>
+                </div>
+              </div>
+            )}
 
             {!isApproved && (
               <div className="flex items-start gap-3 p-3 border border-western-gold/30 bg-western-gold/5">

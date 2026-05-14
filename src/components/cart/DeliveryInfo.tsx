@@ -17,7 +17,7 @@ export default function DeliveryInfo() {
   const skusList = items.map((i) => i.sku ?? i.productHandle);
 
   return (
-    <div className="border border-western-gold/25 bg-western-green-deep/40 p-4 md:p-5 space-y-4">
+    <div className="border border-western-gold/25 bg-western-green-deep/40 p-3.5 md:p-4 space-y-2.5">
       <div className="flex items-center gap-2">
         <Truck className="h-3.5 w-3.5 text-western-gold-soft" />
         <h3 className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-cream">
@@ -25,31 +25,29 @@ export default function DeliveryInfo() {
         </h3>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         <div className="flex items-start gap-2.5">
           <Check className="h-3.5 w-3.5 text-western-gold-soft mt-0.5 flex-shrink-0" />
           <div>
             <p className="text-western-cream text-sm">Retirada gratuita no ateliê</p>
             <p className="text-spec text-western-cream-muted text-xs leading-relaxed mt-0.5">
-              {BUSINESS.enderecoAtelieRua} · {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}
-              <br />
-              {BUSINESS.horarioAtelie} · mediante agendamento
+              {BUSINESS.enderecoAtelieRua} · {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · {BUSINESS.horarioAtelie} (agendamento)
             </p>
           </div>
         </div>
 
-        <div className="flex items-start gap-2.5 border-t border-western-gold/15 pt-3">
+        <div className="flex items-start gap-2.5 border-t border-western-gold/15 pt-2.5">
           <Check className="h-3.5 w-3.5 text-western-gold-soft mt-0.5 flex-shrink-0" />
           <div>
             <p className="text-western-cream text-sm">Envio para todo o Brasil</p>
             <p className="text-spec text-western-cream-muted text-xs leading-relaxed mt-0.5">
-              Frete e prazo calculados no checkout.
+              Frete calculado no checkout.
             </p>
           </div>
         </div>
 
         {temPesado && (
-          <div className="border-t border-western-gold/15 pt-3 space-y-2">
+          <div className="border-t border-western-gold/15 pt-2.5 space-y-2">
             <p className="text-spec text-western-cream-muted text-xs leading-relaxed">
               Peças acima de 100 kg no seu pedido. Oferecemos cotação dedicada com transportadora especializada.
             </p>
