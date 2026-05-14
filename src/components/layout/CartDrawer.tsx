@@ -330,17 +330,6 @@ export default function CartDrawer({
               </button>
             )}
 
-            {/* Link WhatsApp para peças pesadas — discreto, condicional */}
-            {isApproved && items.some((i) => (i.pesoKg ?? 0) > 100) && (
-              <a
-                href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent("Olá, Western. Estou montando um pedido com peças de grande porte e gostaria de condição logística personalizada.")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-center text-[11px] text-western-cream/55 hover:text-western-gold-soft transition-colors"
-              >
-                Peça pesada? Falar no WhatsApp →
-              </a>
-            )}
 
             {/* PDF apenas após formulário (Solicitar orçamento) */}
 
