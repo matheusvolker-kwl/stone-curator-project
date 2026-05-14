@@ -34,13 +34,6 @@ export default function CartDrawer({
   const subtotal = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
   const currency = items[0]?.price.currencyCode ?? "BRL";
   const meetsMinimum = subtotal >= MIN_ORDER;
-  const distinctFinishes = new Set(
-    items.flatMap((i) =>
-      i.selectedOptions
-        .filter((o) => /acabamento|finish/i.test(o.name))
-        .map((o) => o.value)
-    )
-  ).size;
   const savedToastShownRef = useRef(false);
 
   useEffect(() => {
@@ -154,9 +147,7 @@ export default function CartDrawer({
             <SheetDescription className="text-western-cream-muted">
               {totalQty === 0
                 ? "Nenhuma peça selecionada."
-                : `${totalQty} ${totalQty === 1 ? "peça" : "peças"}${
-                    distinctFinishes > 1 ? ` · ${distinctFinishes} acabamentos` : ""
-                  }`}
+                : `${totalQty} ${totalQty === 1 ? "peça" : "peças"}`}
             </SheetDescription>
           </div>
           {items.length > 0 && isApproved && (
@@ -241,36 +232,21 @@ export default function CartDrawer({
         </div>
 
         {items.length > 0 && (
-          <div className="px-5 md:px-8 py-4 border-t border-western-gold/15 space-y-2.5">
-            <div>
+          <div className="px-5 md:px-8 py-5 border-t border-western-gold/15 space-y-4">
+            {/* Bloco 1: Subtotal — protagonista */}
+            <div className="space-y-1.5">
               <div className="flex justify-between items-baseline">
                 <span className="font-mono text-[11px] uppercase tracking-[0.22em] font-medium text-western-gold-soft/90">Subtotal</span>
                 <span className="font-display text-3xl md:text-[2rem] tracking-wide tabular-nums text-western-gold-soft leading-none">
                   {isApproved ? formatBRL(subtotal, currency) : "—"}
                 </span>
               </div>
+              {isApproved && (
+                <p className="text-right text-[11.5px] italic text-western-cream/60">
+                  Frete calculado no checkout
+                </p>
+              )}
             </div>
-
-            {isApproved && (
-              <div className="space-y-1 text-[11px] text-western-cream-muted leading-relaxed">
-                <p>
-                  Retirada grátis no ateliê (Cajamar/SP) · Envio para todo o Brasil · Frete no checkout
-                </p>
-                <p>
-                  Pagamento: Pix · Boleto · Cartão até 12x
-                </p>
-                {items.some((i) => (i.pesoKg ?? 0) > 100) && (
-                  <a
-                    href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent("Olá, Western. Estou montando um pedido com peças de grande porte e gostaria de condição logística personalizada.")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block text-western-gold-soft hover:text-western-gold underline-offset-2 hover:underline"
-                  >
-                    Peça pesada? Falar no WhatsApp →
-                  </a>
-                )}
-              </div>
-            )}
 
             {!isApproved && (
               <div className="flex items-start gap-3 p-3 border border-western-gold/30 bg-western-gold/5">
@@ -305,6 +281,20 @@ export default function CartDrawer({
               </Button>
             )}
 
+            {/* Selo de pagamento */}
+            {isApproved && (
+              <div className="flex items-center justify-center gap-5 pt-1">
+                {["Pix", "Boleto", "Cartão até 6x"].map((label, i) => (
+                  <div key={label} className="flex items-center gap-2">
+                    {i > 0 && <span className="text-western-gold-soft/40 text-[8px]">◆</span>}
+                    <span className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-western-cream/70">
+                      {label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* CTA secundário: Baixar composição (quando aprovado) */}
             {isApproved && (
               <button
@@ -314,6 +304,18 @@ export default function CartDrawer({
               >
                 <Download className="h-3.5 w-3.5" /> Baixar composição (PDF)
               </button>
+            )}
+
+            {/* Link WhatsApp para peças pesadas — discreto, condicional */}
+            {isApproved && items.some((i) => (i.pesoKg ?? 0) > 100) && (
+              <a
+                href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent("Olá, Western. Estou montando um pedido com peças de grande porte e gostaria de condição logística personalizada.")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center text-[11px] text-western-cream/55 hover:text-western-gold-soft transition-colors"
+              >
+                Peça pesada? Falar no WhatsApp →
+              </a>
             )}
 
             {/* PDF apenas após formulário (Solicitar orçamento) */}
