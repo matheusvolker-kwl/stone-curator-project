@@ -242,9 +242,33 @@ export default function CartDrawer({
                 </span>
               </div>
               {isApproved && (
-                <p className="text-right text-[11.5px] italic text-western-cream/60">
-                  Frete calculado no checkout
-                </p>
+                <div className="border border-western-gold/15 bg-western-green-deep/30 px-3 py-2.5 space-y-1">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <Truck className="h-4 w-4 text-western-gold-soft flex-shrink-0" />
+                      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold-soft/90">
+                        Frete
+                      </span>
+                    </div>
+                    <span className="font-sans text-[12px] text-western-cream">
+                      Calculado no checkout
+                    </span>
+                  </div>
+                  {items.some((i) => (i.pesoKg ?? 0) > 100) ? (
+                    <a
+                      href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent("Olá, Western. Estou montando um pedido com peças de grande porte e gostaria de condição logística personalizada.")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-[11px] text-western-cream/70 hover:text-western-gold-soft transition-colors pl-6"
+                    >
+                      Peça grande? Cotação dedicada via WhatsApp →
+                    </a>
+                  ) : (
+                    <p className="text-[11px] text-western-cream/65 pl-6">
+                      Todo o Brasil · Retirada grátis em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}
+                    </p>
+                  )}
+                </div>
               )}
             </div>
 
