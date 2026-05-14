@@ -241,7 +241,7 @@ export default function CartDrawer({
         </div>
 
         {items.length > 0 && (
-          <div className="px-5 md:px-8 py-5 border-t border-western-gold/15 space-y-3">
+          <div className="px-5 md:px-8 py-4 border-t border-western-gold/15 space-y-2.5">
             <div>
               <div className="flex justify-between items-baseline">
                 <span className="font-mono text-[11px] uppercase tracking-[0.22em] font-medium text-western-gold-soft/90">Subtotal</span>
@@ -249,23 +249,26 @@ export default function CartDrawer({
                   {isApproved ? formatBRL(subtotal, currency) : "—"}
                 </span>
               </div>
-              {isApproved && (
-                <p className="mt-1.5 text-right text-[11px] text-western-cream-muted">
-                  Frete e impostos calculados no checkout
-                </p>
-              )}
             </div>
 
             {isApproved && (
-              <div className="flex items-center justify-between gap-3 flex-wrap">
-                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold-soft/90">
-                  Pagamento
-                </span>
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="border border-western-gold/25 px-2 py-1 text-[11px] text-western-cream/85 font-sans">Pix</span>
-                  <span className="border border-western-gold/25 px-2 py-1 text-[11px] text-western-cream/85 font-sans">Boleto</span>
-                  <span className="border border-western-gold/25 px-2 py-1 text-[11px] text-western-cream/85 font-sans">Cartão até 12x</span>
-                </div>
+              <div className="space-y-1 text-[11px] text-western-cream-muted leading-relaxed">
+                <p>
+                  Retirada grátis no ateliê (Cajamar/SP) · Envio para todo o Brasil · Frete no checkout
+                </p>
+                <p>
+                  Pagamento: Pix · Boleto · Cartão até 12x
+                </p>
+                {items.some((i) => (i.pesoKg ?? 0) > 100) && (
+                  <a
+                    href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent("Olá, Western. Estou montando um pedido com peças de grande porte e gostaria de condição logística personalizada.")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block text-western-gold-soft hover:text-western-gold underline-offset-2 hover:underline"
+                  >
+                    Peça pesada? Falar no WhatsApp →
+                  </a>
+                )}
               </div>
             )}
 
@@ -277,23 +280,6 @@ export default function CartDrawer({
                 </p>
               </div>
             )}
-
-            {isApproved && <DeliveryInfo />}
-
-            <div className="flex items-center justify-between gap-3 py-2.5 border-y border-western-gold/10">
-              <div className="flex items-center gap-2 text-western-cream/85">
-                <Clock className="h-3.5 w-3.5 text-western-gold-soft" />
-                <span className="font-sans text-[12px]">
-                  Produção 15 dias
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-western-cream/85">
-                <ShieldCheck className="h-3.5 w-3.5 text-western-gold-soft" />
-                <span className="font-sans text-[12px]">
-                  +30 anos no atelier
-                </span>
-              </div>
-            </div>
 
             {/* CTA primário: Finalizar compra (aprovado) ou Baixar composição (não aprovado) */}
             {isApproved ? (
@@ -324,7 +310,7 @@ export default function CartDrawer({
               <button
                 type="button"
                 onClick={() => setQuoteOpen(true)}
-                className="w-full h-11 border border-western-gold/40 text-western-cream hover:border-western-gold font-sans text-[13px] inline-flex items-center justify-center gap-2 transition-colors"
+                className="w-full h-10 border border-western-gold/40 text-western-cream hover:border-western-gold font-sans text-[12px] inline-flex items-center justify-center gap-2 transition-colors"
               >
                 <Download className="h-3.5 w-3.5" /> Baixar composição (PDF)
               </button>
