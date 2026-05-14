@@ -258,7 +258,7 @@ export default function CartDrawer({
               </div>
             )}
 
-            {isApproved && meetsMinimum && <CalcFrete />}
+            {isApproved && <DeliveryInfo />}
 
             <div className="flex items-center justify-between gap-3 py-2.5 border-y border-western-gold/10">
               <div className="flex items-center gap-2 text-western-cream/85">
