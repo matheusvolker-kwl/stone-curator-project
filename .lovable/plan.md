@@ -1,63 +1,61 @@
-## Diagnóstico
+# Remover cotação de frete do carrinho
 
-Os logs da edge function mostram a causa raiz real (não é "api_indisponivel" genérico — é o nosso código retornando isso por cima do erro verdadeiro):
+Decisão: a Yampi não expõe endpoint público de cotação pré-pedido. Frete passa a ser calculado no checkout Yampi (que já funciona). No carrinho, mostramos só as informações de entrega essenciais.
 
-```
-yampi shipping-costs error 422 {
-  "message":"422 Unprocessable Entity",
-  "errors":{"order_id":["Esse order id não está cadastrado.",
-                        "Pedido inválido para realizar nova cotação de frete"]},
-  "status_code":422
-}
-```
+## Escopo (somente UI do carrinho)
 
-O endpoint `POST /v2/western3/logistics/shipping-costs` da Yampi **não aceita `order_id: 0`** — ele exige um pedido já criado (fluxo de re-cotação) ou que o campo seja omitido para cotação de carrinho. Hoje `supabase/functions/yampi-calc-frete/index.ts` envia `order_id: 0` fixo, e por isso 100% das cotações falham com 422 → o catch devolve `{opcoes:[], erro:"api_indisponivel"}` e o carrinho cai no fallback.
+**Arquivos tocados:**
+- `src/components/layout/CartDrawer.tsx` — trocar `<CalcFrete />` por `<DeliveryInfo />`
+- `src/components/cart/DeliveryInfo.tsx` — **novo** componente, leve, sem estado, sem chamadas de rede
 
-Secrets já estão todas configuradas (`YAMPI_ALIAS`, `YAMPI_USER_TOKEN`, `YAMPI_SECRET_KEY`, `CEP_ORIGEM`), então não é problema de env.
+**Não tocar:**
+- `supabase/functions/yampi-calc-frete/` — fica inativa (reativável no futuro)
+- `src/components/cart/CalcFrete.tsx` — fica no repo, não é mais importado (podemos remover depois se quiser)
+- `src/lib/yampi/client.ts`, checkout, paleta, tipografia, ícones, espaçamentos
 
-## O que vou alterar
+## Bloco "Entrega" — proposta visual
 
-**Arquivo único:** `supabase/functions/yampi-calc-frete/index.ts`
+Mantém a mesma moldura do `CalcFrete` atual (`border border-western-gold/25 bg-western-green-deep/40 p-4 md:p-5`), mas com hierarquia mais calma e sem CTA pesado. Três blocos discretos separados por divisória fina dourada.
 
-### 1. Corrigir o payload enviado à Yampi
-- Remover `order_id: 0` do payload (e tentar primeiro sem o campo).
-- Se a Yampi continuar exigindo, fazer fallback usando o endpoint de cotação de carrinho (`/v2/{alias}/carts/shipping-quotation` ou equivalente documentado) — descoberto na hora a partir do erro real.
-- Manter `zipcode`, `total`, `skus_ids`, `quantities`, e usar `origin` corretamente. Hoje `origin: "cart_page"` é uma string descritiva, mas a doc Yampi/GoFretes espera o **CEP da fábrica** nesse campo. Vou passar `Deno.env.get("CEP_ORIGEM")` (já existe nos secrets) como `origin` (8 dígitos, sem hífen). Se a API quiser outro nome (`zipcode_origin`), ajusto após ver o retorno.
-- `total`: a doc Yampi aceita BRL como número decimal (não centavos). Manter como está hoje (`Number(body.total)`), mas logar o valor bruto pra confirmar.
-
-### 2. Adicionar logs detalhados (sem expor valores de secrets)
-```
-console.log("calc-frete payload in", { cep, total, items: body.items.length });
-console.log("env check", {
-  alias: !!Deno.env.get("YAMPI_ALIAS"),
-  userToken: !!Deno.env.get("YAMPI_USER_TOKEN"),
-  secretKey: !!Deno.env.get("YAMPI_SECRET_KEY"),
-  cepOrigem: !!Deno.env.get("CEP_ORIGEM"),
-});
-console.log("yampi url", url);
-console.log("yampi payload", JSON.stringify(payload));
-console.log("yampi response", res.status, bodyText.slice(0, 2000));
+```text
+┌─────────────────────────────────────────────────────┐
+│ 🚚  ENTREGA                                         │
+│                                                     │
+│ ✓  Retirada gratuita no ateliê                      │
+│    Rua Colina, 38 · Jardim Paraíso · Cajamar/SP     │
+│    Seg–Sex 9h–17h · mediante agendamento            │
+│ ─────────────────────────────────────────────────── │
+│ ✓  Envio para todo o Brasil                         │
+│    Frete e prazo calculados no checkout.            │
+│ ─────────────────────────────────────────────────── │
+│    Peças acima de 100 kg? Cotação dedicada,         │
+│    com transportadora especializada.                │
+│    [ Falar com especialista no WhatsApp → ]         │
+└─────────────────────────────────────────────────────┘
 ```
 
-### 3. Propagar erro real ao front
-Em vez de sempre devolver `{erro:"api_indisponivel"}`, retornar:
-```json
-{ "opcoes": [], "erro": "api_indisponivel",
-  "debug": { "yampi_status": 422, "yampi_body": {...} } }
-```
-O campo `debug` é opcional e só preenchido quando a Yampi falhar. O front (CalcFrete.tsx) **não muda** — continua tratando `erro` igual hoje. Assim você vê via DevTools/Network o motivo real sem mexer em UX.
+Notas de execução:
+- Cabeçalho idêntico ao atual (`Truck` 3.5, label mono `[10px] uppercase tracking-[0.25em]`).
+- Itens com check (`Check` do lucide, mesmo tamanho/cor do ícone `Truck`) para criar ritmo visual e reforçar "incluso/garantido".
+- Endereço e horário em `text-spec text-western-cream-muted text-xs leading-relaxed` (mesmo estilo que já usávamos no bloco de retirada).
+- Linha de envio: uma frase só. Sem CEP, sem botão. A promessa é "calculado no checkout".
+- Bloco pesado (>100 kg) **só aparece se houver item com `pesoKg > 100` no carrinho** — mesma regra que `CalcFrete` já usava, então mantém a UX para B2B com peças grandes sem aparecer ruído pra quem não precisa.
+- CTA WhatsApp com o estilo secundário existente (`h-10 border border-western-gold/40 ... font-mono text-[10px] uppercase tracking-[0.22em]`), nunca com peso de CTA primário — `Finalizar compra` continua sendo o herói.
+- Divisórias `border-t border-western-gold/15` (já é o padrão do componente).
 
-### 4. Mapeamento de SKU → ID Yampi
-Já está correto via `getSkuMapping()` no `_shared/yampi.ts` (cache 6h, paginado). Vou só logar `ids` resolvidos pra confirmar que estão chegando como números.
+## Por que essa forma
 
-## O que NÃO vou mexer
+- Três linhas curtas > parágrafo. Cada linha responde uma dúvida típica (retirada, envio nacional, peça pesada).
+- Os checks comunicam "está resolvido" sem precisar de copy defensiva tipo "não se preocupe".
+- O bloco condicional de >100 kg preserva a captura de lead B2B que o `CalcFrete` fazia, sem precisar de input.
+- Zero estado, zero loading, zero erro — sem chance de "instabilidade na cotação" derrubar conversão.
 
-- `CalcFrete.tsx`, layout, UX, outros componentes.
-- `yampi-criar-checkout` (checkout segue funcionando).
-- `_shared/yampi.ts` (a menos que precise expor `CEP_ORIGEM` via helper — provavelmente não).
+## Detalhes técnicos
 
-## Validação
+- `DeliveryInfo` lê `useCartStore` só para `items.some(i => (i.pesoKg ?? 0) > 100)` e para montar a mensagem do WhatsApp (mesma função `whatsappPesadoUrl` que já existe — mover pra `src/lib/whatsapp.ts` ou duplicar inline; proposta: inline, é trivial e evita refator).
+- `BUSINESS.enderecoAtelieRua`, `BUSINESS.cidadeAtelie`, `BUSINESS.ufAtelie`, `BUSINESS.horarioAtelie`, `BUSINESS.whatsappFabrica` — todos já existem em `src/config/business.ts`.
+- `CartDrawer.tsx`: trocar `import CalcFrete` por `import DeliveryInfo` e a tag `<CalcFrete />` por `<DeliveryInfo />`. Continua dentro do mesmo `isApproved && meetsMinimum` (ou removemos o `meetsMinimum` daqui, já que info de entrega é útil mesmo abaixo do mínimo — **decisão sugerida: mostrar para todo carrinho com itens, removendo a condição `meetsMinimum`**, mantendo só `isApproved` se quiser preservar o gate B2B; me confirma se prefere assim).
 
-1. Deploy da function.
-2. `curl_edge_functions` com payload real (CEP 01310100, 1 item conhecido) e leitura dos logs novos.
-3. Confirmar status 200 com `opcoes` populadas. Se vier 422 de novo, o log da resposta Yampi vai dizer exatamente qual campo falta — ajusto e redeploy.
+## Fora de escopo
+
+Layout, fontes, paleta, header, checkout, edge functions, outros componentes.
