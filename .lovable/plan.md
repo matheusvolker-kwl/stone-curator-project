@@ -1,36 +1,37 @@
-## Objetivo
-Pequenos ajustes visuais no `CartDrawer` e `DeliveryInfo` — sem mexer em lógica, paleta ou tipografia base.
+## Diagnóstico
+Hoje no rodapé do drawer competem por espaço: Subtotal, Pagamento (3 pílulas), bloco Entrega (caixa com borda + 2 linhas + endereço completo), linha Produção/+30 anos, e os 2 CTAs. Isso empurra a lista de produtos pra cima e some no scroll.
+
+## Princípio
+Comprimir tudo que **não é** lista de produtos / botão / preço para o mínimo legível. Frete e pagamento viram **microcopy de uma linha**, não bloco visual.
 
 ## Mudanças
 
-### 1. Mais espaço para os produtos
-`src/components/layout/CartDrawer.tsx`
-- Reduzir padding vertical do header (`pt-6 md:pt-8 pb-5 md:pb-6` → `pt-5 md:pt-6 pb-4`).
-- Reduzir padding do bloco de totais (`py-6` → `py-5`) e `space-y-4` → `space-y-3`.
-- Lista de itens: `space-y-6` → `space-y-5` e `py-6` → `py-5` no scroll container.
-- Resultado: ~40–60px a mais visíveis para os cards de produto sem reflow.
+### 1. `DeliveryInfo` → some como bloco
+- Remover a caixa com borda inteira.
+- Substituir por **uma linha única** logo abaixo do subtotal (sem ícone Truck grande, sem título "ENTREGA"):
+  - `text-[11px] text-western-cream-muted`: 
+    `Retirada grátis no ateliê (Cajamar/SP) · Envio para todo o Brasil · Frete no checkout`
+- Bloco de peças >100kg: vira **link inline discreto** ("Peça pesada? Falar no WhatsApp") em vez de caixa.
 
-### 2. Subtotal com mais presença
-- Trocar a linha do subtotal por um bloco com hierarquia melhor:
-  - Label "Subtotal" continua em mono uppercase pequeno.
-  - Valor passa de `font-display text-2xl` → `font-display text-3xl md:text-[2rem] tracking-wide tabular-nums text-western-gold-soft`.
-  - Adicionar abaixo, em `text-[11px] text-western-cream-muted`: "Frete e impostos calculados no checkout".
+### 2. Pagamento → uma linha, sem pílulas
+- Remover as 3 pílulas com borda.
+- Substituir por linha única em `text-[11px] text-western-cream-muted`:
+  `Pagamento: Pix · Boleto · Cartão até 12x`
+- Pode ficar na **mesma linha** da entrega, separadas por `·`, se couber. Plano: duas linhas empilhadas, sem espaçamento extra.
 
-### 3. Métodos de pagamento (Pix, Boleto, Cartão)
-- Logo abaixo do subtotal, antes do bloco Entrega, adicionar uma linha discreta:
-  - Texto em mono `[10px]` uppercase: "Pagamento" + 3 pílulas finas (`border border-western-gold/25 px-2 py-1 text-[11px]`): **Pix**, **Boleto**, **Cartão até 12x**.
-  - Sem ícones de bandeiras (mantém o tom artesanal). Cor `text-western-cream/85`.
+### 3. Linha "Produção 15 dias / +30 anos no atelier"
+- Remover do rodapé. Esses sinais de confiança já aparecem em outros pontos do site e estão competindo com o CTA. Se quiser manter um, fica só "Produção 15 dias" como microcopy abaixo do botão.
 
-### 4. Bloco Entrega mais compacto
-`src/components/cart/DeliveryInfo.tsx`
-- Reduzir padding (`p-4 md:p-5` → `p-3.5 md:p-4`) e `space-y-4` → `space-y-2.5`.
-- `space-y-3` interno → `space-y-2.5`, `pt-3` dos divisores → `pt-2.5`.
-- Encurtar copy:
-  - "Retirada gratuita no ateliê" — manter; subtítulo em **uma linha só**: `endereço · cidade/UF · horário (agendamento)`.
-  - "Envio para todo o Brasil" — subtítulo: "Frete calculado no checkout."
-- Bloco de peças >100 kg: mantém condicional, mas com `pt-2.5` e copy enxuta.
+### 4. CTA secundário "Baixar composição (PDF)"
+- Manter, mas reduzir altura `h-11` → `h-10` e `text-[13px]` → `text-[12px]`.
+
+### 5. Espaçamentos do rodapé
+- `space-y-3` → `space-y-2.5`.
+- `py-5` → `py-4`.
+
+## Resultado esperado
+Rodapé do drawer cai de ~6 blocos para 4: **Subtotal grande → microcopy frete+pagamento (2 linhas) → Finalizar compra → Baixar PDF**. Lista de produtos ganha ~80–100px.
 
 ## Fora de escopo
-- Edge function `yampi-calc-frete` (segue inativa).
-- Lógica de checkout, auth, mínimos.
-- Cores, fontes globais, ícones novos.
+- Header, lista de itens, cross-sell, lógica de checkout, paleta, fontes.
+- `DeliveryInfo.tsx` continua existindo (caso queira reaproveitar fora do drawer), mas não será mais importado no `CartDrawer`.
