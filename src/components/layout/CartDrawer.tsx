@@ -2,7 +2,7 @@ import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/shopify/client";
-import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock, ArrowLeft, ArrowRight, ShieldCheck, Clock, Download } from "lucide-react";
+import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock, ArrowLeft, ArrowRight, Download } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { BUSINESS } from "@/config/business";
@@ -11,7 +11,7 @@ import CartCrossSell from "@/components/cart/CartCrossSell";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import EmptyCartHints from "@/components/cart/EmptyCartHints";
 import FreeShippingProgress from "@/components/cart/FreeShippingProgress";
-import DeliveryInfo from "@/components/cart/DeliveryInfo";
+
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { registerPedidoNovoLead } from "@/lib/leads/pedidoNovo";
