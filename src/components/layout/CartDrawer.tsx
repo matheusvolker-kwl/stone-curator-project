@@ -59,13 +59,6 @@ export default function CartDrawer({
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const handleCheckout = async () => {
     if (checkoutLoading) return;
-    const itemsSemSku = items.filter((i) => !i.sku).map((i) => i.productTitle);
-    if (itemsSemSku.length > 0) {
-      toast.error("Não foi possível finalizar", {
-        description: `Itens sem SKU configurado: ${itemsSemSku.join(", ")}. Fale conosco no WhatsApp.`,
-      });
-      return;
-    }
     setCheckoutLoading(true);
 
     // Fire-and-forget: registra lead antes do redirect
@@ -96,30 +89,24 @@ export default function CartDrawer({
     })();
 
     try {
-      const res = await criarCheckout({
-        items: items.map((i) => ({
-          sku: i.sku as string,
-          quantidade: i.quantity,
-          preco_unitario: parseFloat(i.price.amount),
-        })),
-      });
-      if (res.checkout_url) {
-        onOpenChange(false);
-        window.location.href = res.checkout_url;
+      // Sincroniza com Shopify e pega checkoutUrl persistido no store
+      await syncCart();
+      const checkoutUrl = useCartStore.getState().checkoutUrl;
+
+      if (!checkoutUrl) {
+        toast.error("Não foi possível abrir o checkout", {
+          description: "Atualize a página e tente novamente, ou fale conosco no WhatsApp.",
+        });
         return;
-      } else if (res.erro === "abaixo_minimo") {
-        toast.error("Pedido abaixo do mínimo", {
-          description: `Faltam ${formatBRL((res.minimo ?? MIN_ORDER) - (res.subtotal ?? subtotal))} para finalizar.`,
-        });
-      } else if (res.erro === "sku_nao_encontrado") {
-        toast.error("Produto sem cadastro no checkout", {
-          description: `SKU ${res.sku ?? "—"} não encontrado. Fale conosco no WhatsApp.`,
-        });
-      } else {
-        toast.error("Instabilidade no checkout", {
-          description: "Tente novamente em alguns minutos ou fale conosco no WhatsApp.",
-        });
       }
+
+      onOpenChange(false);
+      window.location.href = checkoutUrl; // mesma aba
+    } catch (e) {
+      console.error(e);
+      toast.error("Instabilidade no checkout", {
+        description: "Tente novamente em alguns minutos ou fale conosco no WhatsApp.",
+      });
     } finally {
       setCheckoutLoading(false);
     }
