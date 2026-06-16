@@ -15,7 +15,7 @@ import FreeShippingProgress from "@/components/cart/FreeShippingProgress";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { registerPedidoNovoLead } from "@/lib/leads/pedidoNovo";
-import { criarCheckout } from "@/lib/yampi/client";
+
 
 const MIN_ORDER = BUSINESS.pedidoMinimoBRL;
 
