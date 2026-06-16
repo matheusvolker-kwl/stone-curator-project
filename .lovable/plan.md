@@ -1,36 +1,92 @@
-## Bloco de Frete no rodapé do carrinho
+## Objetivo
 
-Hoje só temos `Frete calculado no checkout` em itálico minúsculo abaixo do subtotal — comunica pouco e some visualmente. Vamos transformar em um micro-bloco com ícone, hierarquia clara e duas linhas de informação, mantendo o subtotal como protagonista.
+Remover a Yampi do fluxo de "Finalizar compra" e redirecionar direto para o checkout nativo do Shopify (que já tem Appmax como gateway). O carrinho já usa `cartCreate` da Storefront API e armazena `checkoutUrl` — basta consumir esse URL.
 
-### Onde
-`src/components/layout/CartDrawer.tsx` — substituir apenas o `<p className="text-right text-[11.5px] italic ...">Frete calculado no checkout</p>` que fica logo abaixo do subtotal (bloco do `isApproved`).
+## Confirmações técnicas
 
-### Estrutura proposta
+- **Token da Storefront API**: o token público já em uso (`VITE_SHOPIFY_STOREFRONT_TOKEN`) é o que executa `cartCreate` hoje no `cartStore` — ou seja, já tem o escopo `unauthenticated_write_checkouts`. Nenhum token novo precisa ser criado.
+- **Variant IDs**: os itens do carrinho guardam `variantId` no formato `gid://shopify/ProductVariant/...` (vêm direto da Storefront API via `buildCartItem`). Compatíveis com `merchandiseId` — nada a converter.
+- **`checkoutUrl`**: já é persistido no `useCartStore` (`state.checkoutUrl`) e já passa por `formatCheckoutUrl` (adiciona `channel=online_store`).
 
-```text
-┌───────────────────────────────────────────────────┐
-│  🚚  FRETE                       Calculado no checkout │
-│      Todo o Brasil · Retirada grátis em Cajamar/SP │
-└───────────────────────────────────────────────────┘
+## Mudanças
+
+### 1. `src/components/layout/CartDrawer.tsx` — `handleCheckout`
+
+Substituir toda a lógica Yampi por:
+
+```ts
+const handleCheckout = async () => {
+  if (checkoutLoading) return;
+  setCheckoutLoading(true);
+
+  // Fire-and-forget: registra lead antes do redirect (mantém)
+  void (async () => { /* registerPedidoNovoLead, igual hoje */ })();
+
+  try {
+    // Garante cart sincronizado com Shopify e pega URL
+    await syncCart();
+    let checkoutUrl = useCartStore.getState().checkoutUrl;
+
+    // Fallback: se por algum motivo não houver checkoutUrl, recria o cart
+    if (!checkoutUrl) {
+      // força recriação tentando re-adicionar primeiro item — ou exibe erro
+      toast.error("Não foi possível abrir o checkout", {
+        description: "Atualize a página e tente novamente, ou fale conosco no WhatsApp.",
+      });
+      return;
+    }
+
+    onOpenChange(false);
+    window.location.href = checkoutUrl; // MESMA ABA — não usar window.open
+  } catch (e) {
+    console.error(e);
+    toast.error("Instabilidade no checkout", {
+      description: "Tente novamente ou fale conosco no WhatsApp.",
+    });
+  } finally {
+    setCheckoutLoading(false);
+  }
+};
 ```
 
-- **Container:** linha sutil — `border border-western-gold/15 bg-western-green-deep/30 px-3 py-2.5`, sem ocupar muito espaço vertical (~52px).
-- **Coluna esquerda:** ícone `Truck` (lucide, `h-4 w-4 text-western-gold-soft`) + label `FRETE` em `font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold-soft/90`.
-- **Coluna direita (alinhada ao topo):** `Calculado no checkout` em `font-sans text-[12px] text-western-cream`.
-- **Linha inferior (full width, abaixo das duas colunas):** `Todo o Brasil · Retirada grátis em Cajamar/SP` em `text-[11px] text-western-cream/65`.
-- Quando houver peça >100kg, troca a 2ª linha por `Peça grande? Cotação dedicada via WhatsApp →` (link discreto, mantém o link WhatsApp existente lá embaixo ou consolida aqui — proposta: **consolidar aqui** e remover o link solto no fim do footer).
+- Remove import `criarCheckout` de `@/lib/yampi/client`.
+- Remove validação "itens sem SKU" (Yampi-only — Shopify usa variantId).
+- Mantém validação de pedido mínimo via `meetsMinimum` (já desabilita o botão).
+- Mantém `registerPedidoNovoLead`.
 
-### Por que essa forma
+### 2. Desativar edge functions Yampi (mantém código como backup)
 
-- Ícone `Truck` dá reconhecimento instantâneo (UX padrão de checkout).
-- Label `FRETE` em mono caps amarra com o `SUBTOTAL` logo acima (mesma família tipográfica) → vira um par visual coeso.
-- Duas linhas de informação respondem as duas perguntas do cliente: *"quanto custa?"* (calculado no checkout) e *"vocês entregam onde?"* (Brasil todo + retirada).
-- Card sutil (`bg-western-green-deep/30`) cria contraste com o subtotal sem competir com ele.
+Adicionar no topo dos handlers `Deno.serve`, antes de qualquer lógica:
 
-### Fora de escopo
+- `supabase/functions/yampi-criar-checkout/index.ts`
+- `supabase/functions/yampi-calc-frete/index.ts`
 
-- Não mexer no subtotal, CTAs, selo de pagamento, cross-sell, header.
-- Não adicionar calculadora de CEP no rodapé (já existe `CalcFrete.tsx` para outro contexto; aqui o frete fica para o checkout mesmo).
-- Não tocar em `business.ts` nem em edge functions.
+```ts
+// DESATIVADA em 2026-06-16 — checkout migrado para Shopify nativo.
+// Mantida por 1 semana como backup. Após 2026-06-23, remover.
+return json(410, { erro: "desativada", motivo: "checkout_migrado_shopify" });
+```
 
-Após aprovação, implemento direto neste único arquivo.
+Não deletar arquivos.
+
+### 3. Limpeza leve em `src/lib/yampi/client.ts`
+
+Manter o arquivo (backup), mas adicionar comentário no topo:
+```ts
+// DEPRECATED 2026-06-16: checkout migrado para Shopify nativo. Não usar.
+```
+
+## Fora de escopo (NÃO MEXER)
+
+- Layout do `CartDrawer` (header, lista, subtotal, bloco de Frete com ícone de caminhão, selo de pagamento, CTAs)
+- Componente WhatsApp para peças >100kg
+- Visual do botão "Finalizar compra"
+- Páginas de produto, catálogo, demais componentes
+- `cartStore.ts` (já está correto)
+- `config/business.ts`, `shopify/client.ts`
+
+## Validação pós-implementação
+
+1. Adicionar item → abrir drawer → clicar "Finalizar compra" → deve redirecionar para `*.myshopify.com/checkouts/...` na mesma aba.
+2. Console sem erros de `userErrors` da Storefront API.
+3. Edge function `yampi-criar-checkout` retorna 410 se chamada (não é mais chamada pelo front).

@@ -24,6 +24,9 @@ function json(status: number, body: unknown) {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  // DESATIVADA em 2026-06-16 — checkout migrado para Shopify nativo.
+  // Mantida por 1 semana como backup. Após 2026-06-23, remover.
+  return json(410, { erro: "desativada", motivo: "checkout_migrado_shopify" });
   if (req.method !== "POST") return json(405, { error: "method_not_allowed" });
 
   let body: Body;
