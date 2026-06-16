@@ -1,3 +1,4 @@
+// DEPRECATED 2026-06-16: checkout migrado para Shopify nativo. Não usar.
 import { supabase } from "@/integrations/supabase/client";
 
 export interface FreteOpcao {
