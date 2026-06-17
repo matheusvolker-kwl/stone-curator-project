@@ -1,12 +1,19 @@
 import { useSearchParams } from "react-router-dom";
 import type { TipoVisual, Acabamento } from "./types";
 
-const VALID_TIPOS: TipoVisual[] = ["piscina", "lago", "jardim-fonte", "jardim-seco"];
+const VALID_TIPOS: TipoVisual[] = [
+  "piscina",
+  "lago",
+  "lago-hibrido",
+  "jardim-seco",
+  "jardim-fonte",
+];
 
 function normalizeTipo(raw: string | null): TipoVisual | undefined {
   if (!raw) return undefined;
-  // legado: "lago-reduzido" → "lago"
+  // legados
   if (raw === "lago-reduzido") return "lago";
+  if (raw === "lago_hibrido") return "lago-hibrido";
   return (VALID_TIPOS as string[]).includes(raw) ? (raw as TipoVisual) : undefined;
 }
 
