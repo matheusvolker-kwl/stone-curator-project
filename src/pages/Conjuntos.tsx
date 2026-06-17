@@ -440,11 +440,12 @@ function FilterPanel({
 }
 
 // =============== CARD ===============
+import type { ShopifyProductNode } from "@/lib/shopify/types";
 interface CardProps {
   leaf: LeafMeta;
-  shopify: ReturnType<typeof useQuery<any>>["data"] extends Array<infer T> ? T : any;
+  shopify?: ShopifyProductNode;
   preco: number;
-  img?: { url: string; altText?: string | null } | undefined;
+  img?: { url: string; altText?: string | null };
 }
 
 function ConjuntoCard({ leaf, shopify, preco, img }: CardProps) {
