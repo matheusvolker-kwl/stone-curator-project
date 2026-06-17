@@ -65,6 +65,22 @@ export default function GuiaComposicoes() {
           </p>
         </Reveal>
 
+        {isHibrido && (
+          <Reveal variant="fade-up" duration={700} delay={180}>
+            <div className="mt-10 border-l-2 border-western-gold pl-5 py-4 bg-western-gold/[0.06] max-w-3xl">
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-2">
+                ◆ Sobre o Lago Híbrido
+              </p>
+              <p className="font-display italic text-[15px] text-western-stone-warm leading-relaxed">
+                Este conjunto fornece a estrutura principal em pedras Western. Você complementa
+                a margem do lago com pedras naturais que já possua ou adquira localmente.
+              </p>
+            </div>
+          </Reveal>
+        )}
+
+
+
         {isConsultor ? (
           <div className="mt-20 max-w-xl">
             <h2 className="font-display text-2xl md:text-3xl text-western-green-deep mb-6 leading-tight">
