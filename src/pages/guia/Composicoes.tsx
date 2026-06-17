@@ -25,21 +25,18 @@ export default function GuiaComposicoes() {
     return <Navigate to="/guia-de-composicao" replace />;
   }
 
-  const { tipo, variante, copy, label } = tipoVisualMap[ctx.tipoVisual];
+  const { tipo, copy, label } = tipoVisualMap[ctx.tipoVisual];
   const tamanhoId = m2ToTamanhoId(tipo, ctx.area);
   const acabLabel = acabamentoMeta[ctx.acabamento].label;
 
   const isConsultor = tamanhoId === "consultor";
   const conjuntos: Partial<Record<Nivel, ConjuntoLeaf>> = {};
+  const isHibrido = tipo === "lago-hibrido";
 
   if (!isConsultor) {
-    const sizeNode = (guideMap[tipo] as Record<string, unknown>)[tamanhoId] as Record<string, unknown>;
-    const node =
-      tipo === "piscina"
-        ? sizeNode
-        : ((sizeNode as Record<string, unknown>)[variante!] as Record<string, unknown>);
+    const node = guideMap[tipo][tamanhoId];
     NIVEIS.forEach((n) => {
-      const c = (node as Record<string, ConjuntoLeaf>)[n];
+      const c = node[n];
       if (c) conjuntos[n] = c;
     });
   }
