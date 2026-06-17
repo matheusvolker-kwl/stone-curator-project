@@ -22,6 +22,7 @@ import ricardoAtelie from "@/assets/hero/ricardo-atelie.webp";
 const TIPOS: Array<{ value: TipoVisual }> = [
   { value: "piscina" },
   { value: "lago" },
+  { value: "lago-hibrido" },
   { value: "jardim-fonte" },
   { value: "jardim-seco" },
 ];
@@ -146,7 +147,7 @@ export default function GuiaContexto() {
             <p className="font-display italic text-[15px] text-western-stone-warm mb-7 max-w-[560px]">
               Selecione o tipo que mais se aproxima do projeto que você está atendendo.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
               {TIPOS.map((t) => (
                 <TipoCard
                   key={t.value}
@@ -225,7 +226,7 @@ export default function GuiaContexto() {
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm/80 mt-6">
             Está sem tempo?{" "}
             <a
-              href={whatsappConsultor("lago", "Variada")}
+              href={whatsappConsultor("piscina", "Variada")}
               target="_blank"
               rel="noreferrer"
               className="link-underline text-western-green-deep"
