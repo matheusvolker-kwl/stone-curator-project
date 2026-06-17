@@ -230,7 +230,7 @@ export default function Index() {
           <Reveal variant="fade-up" duration={750}>
             <div className="text-center mb-8 md:mb-10">
               <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft/85 mb-5">
-                Prova de procedência
+                Parceiros de longa data
               </p>
               <div className="w-10 h-px bg-western-gold/50 mx-auto mb-7" />
               <h2 className="font-display text-2xl md:text-[2rem] text-western-cream leading-[1.2] max-w-2xl mx-auto">
@@ -247,9 +247,18 @@ export default function Index() {
 
           <Reveal variant="fade-up" delay={120} duration={750}>
             <div className="pt-6 md:pt-8 border-t border-western-gold/15">
-              <MarcasInstitucionais compacta variante="dark" semBordas />
+              <div className="text-center max-w-2xl mx-auto mb-8 md:mb-10">
+                <h3 className="font-display text-2xl md:text-[2rem] text-western-cream leading-[1.15] mb-4">
+                  Empresas que confiam na Western.
+                </h3>
+                <p className="text-base md:text-[17px] leading-relaxed text-western-cream-muted">
+                  Biopet, Cristal Pool, Genesis e outros parceiros corporativos que mantêm a Western em seus projetos e operações ao longo dos anos.
+                </p>
+              </div>
+              <MarcasInstitucionais compacta variante="dark" semBordas semLinks />
             </div>
           </Reveal>
+
 
           <div className="text-center mt-8">
             <Link

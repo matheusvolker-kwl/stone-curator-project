@@ -34,6 +34,7 @@ interface Props {
   eyebrow?: string;
   titulo?: React.ReactNode;
   descricao?: React.ReactNode;
+  semLinks?: boolean;
 }
 
 export default function MarcasInstitucionais({
@@ -43,8 +44,48 @@ export default function MarcasInstitucionais({
   eyebrow,
   titulo,
   descricao,
+  semLinks = false,
 }: Props) {
   const isDark = variante === "dark";
+
+  const renderLogo = (p: Marca, className: string, maxHeightClass: string) => {
+    const useFilter = isDark && !p.logoLight;
+    const content = (
+      <img
+        src={isDark && p.logoLight ? p.logoLight : p.logoDark}
+        alt={p.nome}
+        loading="lazy"
+        style={{
+          maxWidth: `${p.larguraMax}px`,
+          ...(useFilter ? { filter: "brightness(0) invert(1)" } : {}),
+        }}
+        className={`w-full ${maxHeightClass} object-contain transition-all duration-500 ${
+          isDark ? "opacity-65 group-hover:opacity-100" : "opacity-75 group-hover:opacity-100"
+        } group-hover:scale-[1.04]`}
+      />
+    );
+
+    if (semLinks) {
+      return (
+        <div aria-label={p.nome} title={p.nome} className={className}>
+          {content}
+        </div>
+      );
+    }
+
+    return (
+      <a
+        href={p.site}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={p.nome}
+        title={p.nome}
+        className={className}
+      >
+        {content}
+      </a>
+    );
+  };
 
   return (
     <section className={compacta ? "" : "mt-14 md:mt-16"}>
@@ -81,34 +122,11 @@ export default function MarcasInstitucionais({
         <ul className="flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-6">
           {PARCEIROS.map((p) => (
             <li key={p.nome}>
-              <a
-                href={p.site}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={p.nome}
-                title={p.nome}
-                className="group flex items-center justify-center h-16 md:h-20 transition-all"
-              >
-                {(() => {
-                  const useFilter = isDark && !p.logoLight;
-                  return (
-                    <img
-                      src={isDark && p.logoLight ? p.logoLight : p.logoDark}
-                      alt={p.nome}
-                      loading="lazy"
-                      style={{
-                        maxWidth: `${p.larguraMax}px`,
-                        ...(useFilter ? { filter: "brightness(0) invert(1)" } : {}),
-                      }}
-                      className={`w-full max-h-14 md:max-h-16 object-contain transition-all duration-500 ${
-                        isDark
-                          ? "opacity-65 group-hover:opacity-100"
-                          : "opacity-75 group-hover:opacity-100"
-                      } group-hover:scale-[1.04]`}
-                    />
-                  );
-                })()}
-              </a>
+              {renderLogo(
+                p,
+                "group flex items-center justify-center h-16 md:h-20 transition-all",
+                "max-h-14 md:max-h-16"
+              )}
             </li>
           ))}
         </ul>
@@ -129,34 +147,11 @@ export default function MarcasInstitucionais({
                 i >= 2 ? "border-t md:border-t-0" : ""
               } ${i > 0 ? "md:border-l" : ""}`}
             >
-              <a
-                href={p.site}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={p.nome}
-                title={p.nome}
-                className="group flex items-center justify-center h-28 md:h-36 px-6 transition-all"
-              >
-                {(() => {
-                  const useFilter = isDark && !p.logoLight;
-                  return (
-                    <img
-                      src={isDark && p.logoLight ? p.logoLight : p.logoDark}
-                      alt={p.nome}
-                      loading="lazy"
-                      style={{
-                        maxWidth: `${p.larguraMax}px`,
-                        ...(useFilter ? { filter: "brightness(0) invert(1)" } : {}),
-                      }}
-                      className={`w-full max-h-20 md:max-h-24 object-contain transition-all duration-500 ${
-                        isDark
-                          ? "opacity-70 group-hover:opacity-100"
-                          : "opacity-80 group-hover:opacity-100"
-                      } group-hover:scale-[1.04]`}
-                    />
-                  );
-                })()}
-              </a>
+              {renderLogo(
+                p,
+                "group flex items-center justify-center h-28 md:h-36 px-6 transition-all",
+                "max-h-20 md:max-h-24"
+              )}
             </li>
           ))}
         </ul>
@@ -174,3 +169,4 @@ export default function MarcasInstitucionais({
     </section>
   );
 }
+

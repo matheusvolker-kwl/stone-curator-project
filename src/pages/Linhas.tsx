@@ -5,6 +5,7 @@ import { cdnImg, cdnSrcSet, formatBRL } from "@/lib/shopify/client";
 import iconePedra from "@/assets/icone-pedra-verde.png";
 import { useMemo } from "react";
 import { ArrowRight, X } from "lucide-react";
+import { LINHA_COVER_OVERRIDES } from "@/lib/lineCovers";
 
 export default function Linhas() {
   const { data: collections = [], isLoading: loadingCollections } = useQuery({
@@ -15,11 +16,9 @@ export default function Linhas() {
   const [params, setParams] = useSearchParams();
   const q = (params.get("q") ?? "").trim();
 
-  // Busca de produtos (Shopify) — só dispara quando há query
   const { data: products = [], isLoading: loadingProducts } = useQuery({
     queryKey: ["productSearch", q],
     queryFn: () => {
-      // Sintaxe Shopify: title, vendor, tag, product_type, sku
       const term = q.replace(/[^\p{L}\p{N}\s-]/gu, " ").trim();
       if (!term) return Promise.resolve([]);
       const query = `title:*${term}* OR tag:*${term}* OR sku:*${term}* OR product_type:*${term}*`;
@@ -59,8 +58,8 @@ export default function Linhas() {
                 {isSearching
                   ? "Buscando…"
                   : totalResults === 0
-                  ? "Nada encontrado. Refine o termo ou explore o catálogo completo abaixo."
-                  : `${linhas.length} ${linhas.length === 1 ? "linha" : "linhas"} · ${products.length} ${products.length === 1 ? "produto" : "produtos"}.`}
+                    ? "Nada encontrado. Refine o termo ou explore o catálogo completo abaixo."
+                    : `${linhas.length} ${linhas.length === 1 ? "linha" : "linhas"} · ${products.length} ${products.length === 1 ? "produto" : "produtos"}.`}
               </p>
               <button
                 onClick={() => setParams(new URLSearchParams(), { replace: true })}
@@ -84,7 +83,6 @@ export default function Linhas() {
           )}
         </div>
 
-        {/* Resultados de produtos (só na busca) */}
         {q && products.length > 0 && (
           <div className="mb-16">
             <p className="text-eyebrow mb-5">Produtos</p>
@@ -126,7 +124,6 @@ export default function Linhas() {
           </div>
         )}
 
-        {/* Linhas (sempre — quando busca está vazia OU como fallback) */}
         {q && linhas.length > 0 && (
           <p className="text-eyebrow mb-5">Linhas</p>
         )}
@@ -164,38 +161,52 @@ export default function Linhas() {
             {(q && totalResults === 0
               ? collections.filter((c) => !isSeasonal(c))
               : linhas
-            ).map((c) => (
-              <Link key={c.handle} to={`/linhas/${c.handle}`} className="group block">
-                <div className="frame-product aspect-[4/3] overflow-hidden mb-5">
-                  {c.image ? (
-                    <img
-                      src={cdnImg(c.image.url, 800)}
-                      srcSet={cdnSrcSet(c.image.url, [400, 800, 1200])}
-                      sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 90vw"
-                      alt={c.image.altText ?? c.title}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <img src={iconePedra} alt="" className="h-16 opacity-30" />
-                    </div>
+            ).map((c) => {
+              const cover = LINHA_COVER_OVERRIDES[c.handle];
+
+              return (
+                <Link key={c.handle} to={`/linhas/${c.handle}`} className="group block">
+                  <div className="frame-product aspect-[4/3] overflow-hidden mb-5">
+                    {cover ? (
+                      <img
+                        src={cover.url}
+                        sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 90vw"
+                        alt={cover.alt}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    ) : c.image ? (
+                      <img
+                        src={cdnImg(c.image.url, 800)}
+                        srcSet={cdnSrcSet(c.image.url, [400, 800, 1200])}
+                        sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 90vw"
+                        alt={c.image.altText ?? c.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <img src={iconePedra} alt="" className="h-16 opacity-30" />
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="font-display text-2xl text-western-green-deep group-hover:text-western-gold transition-colors">
+                    {c.title}
+                  </h3>
+                  {c.description && (
+                    <p className="text-spec text-western-stone-warm mt-2 line-clamp-2">
+                      {c.description}
+                    </p>
                   )}
-                </div>
-                <h3 className="font-display text-2xl text-western-green-deep group-hover:text-western-gold transition-colors">
-                  {c.title}
-                </h3>
-                {c.description && (
-                  <p className="text-spec text-western-stone-warm mt-2 line-clamp-2">
-                    {c.description}
-                  </p>
-                )}
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
     </div>
   );
 }
+
