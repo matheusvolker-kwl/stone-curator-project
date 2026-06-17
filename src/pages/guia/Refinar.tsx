@@ -30,7 +30,7 @@ import { buildContextQuery } from "@/components/guide-v2/useGuideQuery";
 import {
   guideMap,
   m2ToTamanhoId,
-  tamanhoLabels,
+  faixaArea,
   whatsappConsultor,
   type ConjuntoLeaf,
   type Nivel,
@@ -276,7 +276,7 @@ export default function GuiaRefinar() {
                   <div className="flex flex-wrap gap-2">
                     <Tag>{tipoMeta.label}</Tag>
                     {tamanhoId && tamanhoId !== "consultor" && (
-                      <Tag>{tamanhoLabels[tamanhoId]}</Tag>
+                      <Tag>{faixaArea[tipoVisual][tamanhoId]}</Tag>
                     )}
                     <Tag>{nivelLabelMap[nivelParam]}</Tag>
                     <Tag>{acabamentoMeta[acabamento].label}</Tag>
