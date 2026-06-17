@@ -429,6 +429,7 @@ export default function About() {
             <MarcasInstitucionais
               eyebrow="Atendemos há mais de uma década"
               titulo={<>Marcas que escolheram<br />repetir a Western.</>}
+              semLinks
               descricao={
                 <>
                   Cobasi não fica anos com fornecedor que falha. Unique Garden não revende ao seu
