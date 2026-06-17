@@ -1,16 +1,17 @@
 import type { Tipo, Nivel } from "@/data/guideMap";
 
-// 4 tipos visuais → mapeamento para (tipo, variante) do guideMap
-export type TipoVisual = "piscina" | "lago" | "jardim-fonte" | "jardim-seco";
+// Alias: a categoria visual no guia É o tipo do guideMap (achatado em 5 categorias).
+export type TipoVisual = Tipo;
 
 export const tipoVisualMap: Record<
   TipoVisual,
-  { tipo: Tipo; variante?: "somenteWestern" | "comNaturais" | "seco" | "comFonte"; label: string; copy: string }
+  { tipo: Tipo; label: string; copy: string; descricao: string }
 > = {
-  piscina: { tipo: "piscina", label: "Piscina", copy: "uma piscina" },
-  lago: { tipo: "lago", variante: "somenteWestern", label: "Lago", copy: "um lago" },
-  "jardim-fonte": { tipo: "jardim", variante: "comFonte", label: "Jardim com Fonte", copy: "um jardim com fonte" },
-  "jardim-seco": { tipo: "jardim", variante: "seco", label: "Jardim Seco", copy: "um jardim seco" },
+  piscina:        { tipo: "piscina",        label: "Piscina",          copy: "uma piscina",                  descricao: "Praias e baías brasileiras" },
+  lago:           { tipo: "lago",           label: "Lago",             copy: "um lago",                      descricao: "Lagoas brasileiras · 100% Western" },
+  "lago-hibrido": { tipo: "lago-hibrido",   label: "Lago Híbrido",     copy: "um lago híbrido",              descricao: "Estrutura Western + pedra natural do parceiro" },
+  "jardim-seco":  { tipo: "jardim-seco",    label: "Jardim Seco",      copy: "um jardim seco",               descricao: "Serras, chapadas e cerrado" },
+  "jardim-fonte": { tipo: "jardim-fonte",   label: "Jardim com Fonte", copy: "um jardim com fonte",          descricao: "Cachoeiras e nascentes brasileiras" },
 };
 
 export type Acabamento = "quartzo" | "arenito" | "moledo" | "granito";

@@ -38,6 +38,15 @@ const FILTERS: Record<TipoVisual, string[]> = {
     "pisada-pedra-grande",
     "pisada-pedra-media",
   ],
+  "lago-hibrido": [
+    "fossil-coelphisys",
+    "fossil-seymouria",
+    "pedra-led",
+    "pedra-sonora",
+    "pedra-torneira",
+    "pisada-pedra-grande",
+    "pisada-pedra-media",
+  ],
   "jardim-fonte": [
     "fossil-seymouria",
     "pedra-torneira",

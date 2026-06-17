@@ -1,124 +1,130 @@
-// Decision tree única do Guia de Composição Western.
-// 45 nós-folha + 3 caminhos consultivos.
+// Decision tree do Guia de Composição Western.
+// 5 categorias × 3 tamanhos × 3 níveis = 45 nós-folha.
+// Shopify é a FONTE DE VERDADE de preço e composição — o `preco` aqui é
+// apenas fallback caso a Storefront API falhe. Os handles devem casar
+// exatamente com os produtos da loja Western.
 
 import { SHOPIFY_STORE_PERMANENT_DOMAIN } from "@/lib/shopify/client";
 
-export type Tipo = "lago" | "piscina" | "jardim";
+// 5 categorias (achatadas — sem sub-variantes internas)
+export type Tipo =
+  | "piscina"
+  | "lago"
+  | "lago-hibrido"
+  | "jardim-seco"
+  | "jardim-fonte";
+
 export type Nivel = "essencial" | "equilibrada" | "completa";
-export type Composicao = "somenteWestern" | "comNaturais";
-export type Jardim = "seco" | "comFonte";
+export type Tamanho = "pequeno" | "medio" | "grande";
 
 export interface ConjuntoLeaf {
   handle: string;
   nome: string;
   subtitulo: string;
+  /** Preço de atacado do brief — usado como FALLBACK; o valor exibido vem do Shopify. */
   preco: number;
 }
 
 type Consultor = "consultor";
 
-export const guideMap = {
-  lago: {
-    "ate-4": {
-      somenteWestern: {
-        essencial: { handle: "conjunto-lago-caiapo-essencial", nome: "Conjunto Lago Caiapó", subtitulo: "Composição essencial", preco: 2500 },
-        equilibrada: { handle: "conjunto-lago-itacare-equilibrado", nome: "Conjunto Lago Itacaré", subtitulo: "Composição equilibrada", preco: 4500 },
-        completa: { handle: "conjunto-lago-guarairas-completo", nome: "Conjunto Lago Guarairas", subtitulo: "Composição completa", preco: 7500 },
-      },
-      comNaturais: {
-        essencial: { handle: "conjunto-lago-caiapo-reduzido-essencial", nome: "Conjunto Lago Caiapó Reduzido", subtitulo: "Composição essencial", preco: 2000 },
-        equilibrada: { handle: "conjunto-lago-itacare-reduzido-equilibrado", nome: "Conjunto Lago Itacaré Reduzido", subtitulo: "Composição equilibrada", preco: 3200 },
-        completa: { handle: "conjunto-lago-guarairas-reduzido-completo", nome: "Conjunto Lago Guarairas Reduzido", subtitulo: "Composição completa", preco: 5500 },
-      },
-    },
-    "4-a-10": {
-      somenteWestern: {
-        essencial: { handle: "conjunto-lago-carcara-essencial", nome: "Conjunto Lago Carcará", subtitulo: "Composição essencial", preco: 5500 },
-        equilibrada: { handle: "conjunto-lago-moema-equilibrado", nome: "Conjunto Lago Moema", subtitulo: "Composição equilibrada", preco: 9800 },
-        completa: { handle: "conjunto-lago-paranoa-completo", nome: "Conjunto Lago Paranoá", subtitulo: "Composição completa", preco: 15500 },
-      },
-      comNaturais: {
-        essencial: { handle: "conjunto-lago-carcara-reduzido-essencial", nome: "Conjunto Lago Carcará Reduzido", subtitulo: "Composição essencial", preco: 4000 },
-        equilibrada: { handle: "conjunto-lago-moema-reduzido-equilibrado", nome: "Conjunto Lago Moema Reduzido", subtitulo: "Composição equilibrada", preco: 7000 },
-        completa: { handle: "conjunto-lago-paranoa-reduzido-completo", nome: "Conjunto Lago Paranoá Reduzido", subtitulo: "Composição completa", preco: 11000 },
-      },
-    },
-    "10-a-20": {
-      somenteWestern: {
-        essencial: { handle: "conjunto-lago-maragogi-essencial", nome: "Conjunto Lago Maragogi", subtitulo: "Composição essencial", preco: 11500 },
-        equilibrada: { handle: "conjunto-lago-paineira-equilibrado", nome: "Conjunto Lago Paineira", subtitulo: "Composição equilibrada", preco: 18500 },
-        completa: { handle: "conjunto-lago-cambara-completo", nome: "Conjunto Lago Cambará", subtitulo: "Composição completa", preco: 26500 },
-      },
-      comNaturais: {
-        essencial: { handle: "conjunto-lago-maragogi-reduzido-essencial", nome: "Conjunto Lago Maragogi Reduzido", subtitulo: "Composição essencial", preco: 8000 },
-        equilibrada: { handle: "conjunto-lago-paineira-reduzido-equilibrado", nome: "Conjunto Lago Paineira Reduzido", subtitulo: "Composição equilibrada", preco: 13000 },
-        completa: { handle: "conjunto-lago-cambara-reduzido-completo", nome: "Conjunto Lago Cambará Reduzido", subtitulo: "Composição completa", preco: 18500 },
-      },
-    },
-    "acima-20": "consultor" as Consultor,
-  },
+type NivelMap = Record<Nivel, ConjuntoLeaf>;
+type SizeMap = Record<Tamanho, NivelMap>;
+
+// === 45 conjuntos — alinhados ao catálogo Shopify (handles oficiais) ===
+export const guideMap: Record<Tipo, SizeMap> = {
   piscina: {
-    "ate-12": {
-      essencial: { handle: "conjunto-piscina-caiapo-essencial", nome: "Conjunto Piscina Caiapó", subtitulo: "Composição essencial", preco: 2800 },
-      equilibrada: { handle: "conjunto-piscina-itacare-equilibrado", nome: "Conjunto Piscina Itacaré", subtitulo: "Composição equilibrada", preco: 5200 },
-      completa: { handle: "conjunto-piscina-guarairas-completo", nome: "Conjunto Piscina Guarairas", subtitulo: "Composição completa", preco: 8500 },
+    pequeno: {
+      // ATENÇÃO: handle Caiobá foi truncado pelo Shopify para "caio"
+      essencial:   { handle: "conjunto-piscina-caio-essencial",        nome: "Caiobá",   subtitulo: "Composição essencial",   preco: 2250 },
+      equilibrada: { handle: "conjunto-piscina-itacare-equilibrado",   nome: "Itacaré",  subtitulo: "Composição equilibrada", preco: 2800 },
+      completa:    { handle: "conjunto-piscina-trancoso-completo",     nome: "Trancoso", subtitulo: "Composição completa",    preco: 3120 },
     },
-    "12-a-32": {
-      essencial: { handle: "conjunto-piscina-carcara-essencial", nome: "Conjunto Piscina Carcará", subtitulo: "Composição essencial", preco: 6500 },
-      equilibrada: { handle: "conjunto-piscina-moema-equilibrado", nome: "Conjunto Piscina Moema", subtitulo: "Composição equilibrada", preco: 10800 },
-      completa: { handle: "conjunto-piscina-paranoa-completo", nome: "Conjunto Piscina Paranoá", subtitulo: "Composição completa", preco: 16500 },
+    medio: {
+      essencial:   { handle: "conjunto-piscina-buzios-essencial",      nome: "Búzios",   subtitulo: "Composição essencial",   preco: 3585 },
+      equilibrada: { handle: "conjunto-piscina-maresias-equilibrado",  nome: "Maresias", subtitulo: "Composição equilibrada", preco: 4750 },
+      completa:    { handle: "conjunto-piscina-pipa-completo",         nome: "Pipa",     subtitulo: "Composição completa",    preco: 5195 },
     },
-    "32-a-60": {
-      essencial: { handle: "conjunto-piscina-maragogi-essencial", nome: "Conjunto Piscina Maragogi", subtitulo: "Composição essencial", preco: 12500 },
-      equilibrada: { handle: "conjunto-piscina-paineira-equilibrado", nome: "Conjunto Piscina Paineira", subtitulo: "Composição equilibrada", preco: 19500 },
-      completa: { handle: "conjunto-piscina-cambara-completo", nome: "Conjunto Piscina Cambará", subtitulo: "Composição completa", preco: 28500 },
+    grande: {
+      essencial:   { handle: "conjunto-piscina-maragogi-essencial",      nome: "Maragogi",     subtitulo: "Composição essencial",   preco: 6410 },
+      equilibrada: { handle: "conjunto-piscina-jericoacoara-equilibrado", nome: "Jericoacoara", subtitulo: "Composição equilibrada", preco: 8050 },
+      completa:    { handle: "conjunto-piscina-noronha-completo",         nome: "Noronha",      subtitulo: "Composição completa",    preco: 9420 },
     },
-    "acima-60": "consultor" as Consultor,
   },
-  jardim: {
-    "ate-2": {
-      seco: {
-        essencial: { handle: "conjunto-jardim-caiapo-essencial", nome: "Conjunto Jardim Caiapó", subtitulo: "Composição essencial", preco: 2000 },
-        equilibrada: { handle: "conjunto-jardim-itacare-equilibrado", nome: "Conjunto Jardim Itacaré", subtitulo: "Composição equilibrada", preco: 3500 },
-        completa: { handle: "conjunto-jardim-guarairas-completo", nome: "Conjunto Jardim Guarairas", subtitulo: "Composição completa", preco: 5500 },
-      },
-      comFonte: {
-        essencial: { handle: "conjunto-jardim-caiapo-com-fonte-essencial", nome: "Conjunto Jardim Caiapó com Fonte", subtitulo: "Composição essencial", preco: 3800 },
-        equilibrada: { handle: "conjunto-jardim-itacare-com-fonte-equilibrado", nome: "Conjunto Jardim Itacaré com Fonte", subtitulo: "Composição equilibrada", preco: 5300 },
-        completa: { handle: "conjunto-jardim-guarairas-com-fonte-completo", nome: "Conjunto Jardim Guarairas com Fonte", subtitulo: "Composição completa", preco: 7300 },
-      },
+  lago: {
+    pequeno: {
+      essencial:   { handle: "conjunto-lago-abaete-essencial",     nome: "Abaeté",   subtitulo: "Composição essencial",   preco: 1870 },
+      equilibrada: { handle: "conjunto-lago-juparana-equilibrado", nome: "Juparanã", subtitulo: "Composição equilibrada", preco: 3170 },
+      completa:    { handle: "conjunto-lago-cabiunas-completo",    nome: "Cabiúnas", subtitulo: "Composição completa",    preco: 3720 },
     },
-    "2-a-10": {
-      seco: {
-        essencial: { handle: "conjunto-jardim-carcara-essencial", nome: "Conjunto Jardim Carcará", subtitulo: "Composição essencial", preco: 4500 },
-        equilibrada: { handle: "conjunto-jardim-moema-equilibrado", nome: "Conjunto Jardim Moema", subtitulo: "Composição equilibrada", preco: 7500 },
-        completa: { handle: "conjunto-jardim-paranoa-completo", nome: "Conjunto Jardim Paranoá", subtitulo: "Composição completa", preco: 11500 },
-      },
-      comFonte: {
-        essencial: { handle: "conjunto-jardim-carcara-com-fonte-essencial", nome: "Conjunto Jardim Carcará com Fonte", subtitulo: "Composição essencial", preco: 6300 },
-        equilibrada: { handle: "conjunto-jardim-moema-com-fonte-equilibrado", nome: "Conjunto Jardim Moema com Fonte", subtitulo: "Composição equilibrada", preco: 9300 },
-        completa: { handle: "conjunto-jardim-paranoa-com-fonte-completo", nome: "Conjunto Jardim Paranoá com Fonte", subtitulo: "Composição completa", preco: 13300 },
-      },
+    medio: {
+      essencial:   { handle: "conjunto-lago-saquarema-essencial",   nome: "Saquarema", subtitulo: "Composição essencial",   preco: 3520 },
+      equilibrada: { handle: "conjunto-lago-araruama-equilibrado",  nome: "Araruama",  subtitulo: "Composição equilibrada", preco: 4820 },
+      completa:    { handle: "conjunto-lago-mundau-completo",       nome: "Mundaú",    subtitulo: "Composição completa",    preco: 8580 },
     },
-    "10-a-20": {
-      seco: {
-        essencial: { handle: "conjunto-jardim-maragogi-essencial", nome: "Conjunto Jardim Maragogi", subtitulo: "Composição essencial", preco: 9500 },
-        equilibrada: { handle: "conjunto-jardim-paineira-equilibrado", nome: "Conjunto Jardim Paineira", subtitulo: "Composição equilibrada", preco: 15500 },
-        completa: { handle: "conjunto-jardim-cambara-completo", nome: "Conjunto Jardim Cambará", subtitulo: "Composição completa", preco: 22500 },
-      },
-      comFonte: {
-        essencial: { handle: "conjunto-jardim-maragogi-com-fonte-essencial", nome: "Conjunto Jardim Maragogi com Fonte", subtitulo: "Composição essencial", preco: 11300 },
-        equilibrada: { handle: "conjunto-jardim-paineira-com-fonte-equilibrado", nome: "Conjunto Jardim Paineira com Fonte", subtitulo: "Composição equilibrada", preco: 17300 },
-        completa: { handle: "conjunto-jardim-cambara-com-fonte-completo", nome: "Conjunto Jardim Cambará com Fonte", subtitulo: "Composição completa", preco: 24300 },
-      },
+    grande: {
+      essencial:   { handle: "conjunto-lago-manguaba-essencial",   nome: "Manguaba", subtitulo: "Composição essencial",   preco: 10835 },
+      equilibrada: { handle: "conjunto-lago-marau-equilibrado",    nome: "Maraú",    subtitulo: "Composição equilibrada", preco: 13085 },
+      completa:    { handle: "conjunto-lago-amazonas-completo",    nome: "Amazonas", subtitulo: "Composição completa",    preco: 16325 },
     },
-    "acima-20": "consultor" as Consultor,
   },
-} as const;
+  "lago-hibrido": {
+    pequeno: {
+      essencial:   { handle: "conjunto-lago-hibrido-vereda-essencial",     nome: "Vereda",   subtitulo: "Composição essencial",   preco: 525 },
+      equilibrada: { handle: "conjunto-lago-hibrido-igarape-equilibrado",  nome: "Igarapé",  subtitulo: "Composição equilibrada", preco: 2395 },
+      completa:    { handle: "conjunto-lago-hibrido-pororoca-completo",    nome: "Pororoca", subtitulo: "Composição completa",    preco: 2945 },
+    },
+    medio: {
+      essencial:   { handle: "conjunto-lago-hibrido-igapo-essencial",      nome: "Igapó",    subtitulo: "Composição essencial",   preco: 1625 },
+      equilibrada: { handle: "conjunto-lago-hibrido-apicum-equilibrado",   nome: "Apicum",   subtitulo: "Composição equilibrada", preco: 3495 },
+      completa:    { handle: "conjunto-lago-hibrido-sambaqui-completo",    nome: "Sambaqui", subtitulo: "Composição completa",    preco: 3645 },
+    },
+    grande: {
+      essencial:   { handle: "conjunto-lago-hibrido-ipueira-essencial",    nome: "Ipueira",  subtitulo: "Composição essencial",   preco: 3210 },
+      equilibrada: { handle: "conjunto-lago-hibrido-marajo-equilibrado",   nome: "Marajó",   subtitulo: "Composição equilibrada", preco: 5230 },
+      completa:    { handle: "conjunto-lago-hibrido-pantanal-completo",    nome: "Pantanal", subtitulo: "Composição completa",    preco: 6395 },
+    },
+  },
+  "jardim-seco": {
+    pequeno: {
+      essencial:   { handle: "conjunto-jardim-seco-carcara-essencial",     nome: "Carcará",   subtitulo: "Composição essencial",   preco: 495 },
+      equilibrada: { handle: "conjunto-jardim-seco-ibitipoca-equilibrado", nome: "Ibitipoca", subtitulo: "Composição equilibrada", preco: 670 },
+      completa:    { handle: "conjunto-jardim-seco-itacolomi-completo",    nome: "Itacolomi", subtitulo: "Composição completa",    preco: 1095 },
+    },
+    medio: {
+      essencial:   { handle: "conjunto-jardim-seco-cipo-essencial",        nome: "Cipó",     subtitulo: "Composição essencial",   preco: 870 },
+      equilibrada: { handle: "conjunto-jardim-seco-canastra-equilibrado",  nome: "Canastra", subtitulo: "Composição equilibrada", preco: 1045 },
+      completa:    { handle: "conjunto-jardim-seco-itatiaia-completo",     nome: "Itatiaia", subtitulo: "Composição completa",    preco: 1595 },
+    },
+    grande: {
+      essencial:   { handle: "conjunto-jardim-seco-araripe-essencial",     nome: "Araripe",    subtitulo: "Composição essencial",   preco: 1610 },
+      equilibrada: { handle: "conjunto-jardim-seco-guimaraes-equilibrado", nome: "Guimarães",  subtitulo: "Composição equilibrada", preco: 2825 },
+      completa:    { handle: "conjunto-jardim-seco-diamantina-completo",   nome: "Diamantina", subtitulo: "Composição completa",    preco: 4710 },
+    },
+  },
+  "jardim-fonte": {
+    pequeno: {
+      essencial:   { handle: "conjunto-jardim-fonte-esmeralda-essencial",   nome: "Esmeralda", subtitulo: "Composição essencial",   preco: 640 },
+      equilibrada: { handle: "conjunto-jardim-fonte-pratinha-equilibrado",  nome: "Pratinha",  subtitulo: "Composição equilibrada", preco: 995 },
+      completa:    { handle: "conjunto-jardim-fonte-bonito-completo",       nome: "Bonito",    subtitulo: "Composição completa",    preco: 1170 },
+    },
+    medio: {
+      essencial:   { handle: "conjunto-jardim-fonte-aurora-essencial",      nome: "Aurora",      subtitulo: "Composição essencial",   preco: 995 },
+      equilibrada: { handle: "conjunto-jardim-fonte-andorinhas-equilibrado", nome: "Andorinhas", subtitulo: "Composição equilibrada", preco: 2125 },
+      completa:    { handle: "conjunto-jardim-fonte-veu-completo",          nome: "Véu",        subtitulo: "Composição completa",    preco: 2475 },
+    },
+    grande: {
+      essencial:   { handle: "conjunto-jardim-fonte-tabocas-essencial",     nome: "Tabocas", subtitulo: "Composição essencial",   preco: 4235 },
+      equilibrada: { handle: "conjunto-jardim-fonte-iguacu-equilibrado",    nome: "Iguaçu",  subtitulo: "Composição equilibrada", preco: 5335 },
+      completa:    { handle: "conjunto-jardim-fonte-itambe-completo",       nome: "Itambé",  subtitulo: "Composição completa",    preco: 7815 },
+    },
+  },
+};
 
 export const PRODUCT_BASE_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/products`;
 export const COLLECTION_BASE_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/collections`;
 export const WHATSAPP_NUMBER = "5511993403485";
+/** Pedido mínimo da loja Western (não por conjunto). */
+export const PEDIDO_MINIMO = 700;
 
 export function formatPreco(valor: number): string {
   return new Intl.NumberFormat("pt-BR", {
@@ -129,133 +135,83 @@ export function formatPreco(valor: number): string {
 }
 
 export const tipoLabels: Record<Tipo, string> = {
-  lago: "Lago",
   piscina: "Piscina",
-  jardim: "Jardim",
+  lago: "Lago",
+  "lago-hibrido": "Lago Híbrido",
+  "jardim-seco": "Jardim Seco",
+  "jardim-fonte": "Jardim com Fonte",
 };
 
-export const tamanhoLabels: Record<string, string> = {
-  "ate-4": "Até 4 m²",
-  "4-a-10": "De 4 m² a 10 m²",
-  "10-a-20": "De 10 m² a 20 m²",
-  "acima-20": "Acima de 20 m²",
-  "ate-12": "Até 12 m²",
-  "12-a-32": "De 12 m² a 32 m²",
-  "32-a-60": "De 32 m² a 60 m²",
-  "acima-60": "Acima de 60 m²",
-  "ate-2": "Até 2 m²",
-  "2-a-10": "De 2 m² a 10 m²",
+/** Faixas de área legíveis por (tipo, tamanho). */
+export const faixaArea: Record<Tipo, Record<Tamanho, string>> = {
+  piscina: {
+    pequeno: "Até 12 m²",
+    medio: "De 12 m² a 32 m²",
+    grande: "De 32 m² a 60 m²",
+  },
+  lago: {
+    pequeno: "De 2 m² a 4 m²",
+    medio: "De 4 m² a 10 m²",
+    grande: "De 10 m² a 20 m²",
+  },
+  "lago-hibrido": {
+    pequeno: "De 2 m² a 4 m²",
+    medio: "De 4 m² a 10 m²",
+    grande: "De 10 m² a 20 m²",
+  },
+  "jardim-seco": {
+    pequeno: "Até 2 m²",
+    medio: "De 2 m² a 4 m²",
+    grande: "De 4 m² a 20 m²",
+  },
+  "jardim-fonte": {
+    pequeno: "Até 2 m²",
+    medio: "De 2 m² a 4 m²",
+    grande: "De 4 m² a 20 m²",
+  },
+};
+
+export const tamanhoLabels: Record<Tamanho, string> = {
+  pequeno: "Pequeno",
+  medio: "Médio",
+  grande: "Grande",
 };
 
 export const nivelLabels: Record<Nivel, string> = {
   essencial: "Essencial",
-  equilibrada: "Equilibrada",
-  completa: "Completa",
+  equilibrada: "Equilibrado",
+  completa: "Completo",
 };
 
-// Rótulos voltados ao usuário B2B — substitui o jargão "nível"
+// Rótulos editoriais por nível (usado nas etapas 02/03)
 export interface NivelMeta {
   label: string;
   tagline: string;
   detalhe: string;
-  faixaPreco: string;
-  pecas: string;
 }
 
-export const nivelMeta: Record<Tipo, Record<Nivel, NivelMeta>> = {
-  lago: {
-    essencial: {
-      label: "Discreto",
-      tagline: "Composição enxuta, leitura clean",
-      detalhe: "Poucas peças, foco no destaque. Ideal para projetos com paisagismo abundante.",
-      faixaPreco: "R$ 2 mil – R$ 11 mil",
-      pecas: "4–6 peças",
-    },
-    equilibrada: {
-      label: "Marcante",
-      tagline: "Equilíbrio entre presença e investimento",
-      detalhe: "A escolha mais pedida — composição com volume e acabamento de destaque.",
-      faixaPreco: "R$ 4 mil – R$ 19 mil",
-      pecas: "7–11 peças",
-    },
-    completa: {
-      label: "Cenográfico",
-      tagline: "Alto impacto, leitura imersiva",
-      detalhe: "Composição mais robusta, pensada para projetos cenográficos e áreas amplas.",
-      faixaPreco: "R$ 7 mil – R$ 27 mil",
-      pecas: "12+ peças",
-    },
+export const nivelMeta: Record<Nivel, NivelMeta> = {
+  essencial: {
+    label: "Essencial",
+    tagline: "Composição enxuta, leitura clean",
+    detalhe: "Poucas peças, foco no destaque. Ideal para projetos com paisagismo abundante.",
   },
-  piscina: {
-    essencial: {
-      label: "Discreto",
-      tagline: "Detalhe pontual de pedras decorativas",
-      detalhe: "Conjunto enxuto para complementar a borda ou um canto da piscina.",
-      faixaPreco: "R$ 2,8 mil – R$ 12,5 mil",
-      pecas: "4–6 peças",
-    },
-    equilibrada: {
-      label: "Marcante",
-      tagline: "Cascata e presença visual definida",
-      detalhe: "Combinação balanceada com cascata e composição lateral.",
-      faixaPreco: "R$ 5 mil – R$ 20 mil",
-      pecas: "7–11 peças",
-    },
-    completa: {
-      label: "Cenográfico",
-      tagline: "Borda imersiva, leitura espetacular",
-      detalhe: "Para piscinas que viram peça-chave do paisagismo.",
-      faixaPreco: "R$ 8,5 mil – R$ 28,5 mil",
-      pecas: "12+ peças",
-    },
+  equilibrada: {
+    label: "Equilibrado",
+    tagline: "Equilíbrio entre presença e investimento",
+    detalhe: "A escolha mais pedida — composição com volume e acabamento de destaque.",
   },
-  jardim: {
-    essencial: {
-      label: "Discreto",
-      tagline: "Pontuação leve e elegante",
-      detalhe: "Composição reduzida, ideal para canteiros e jardins compactos.",
-      faixaPreco: "R$ 2 mil – R$ 11,5 mil",
-      pecas: "3–5 peças",
-    },
-    equilibrada: {
-      label: "Marcante",
-      tagline: "Equilíbrio estético e volume",
-      detalhe: "Composição com presença visual definida e bom aproveitamento de área.",
-      faixaPreco: "R$ 3,5 mil – R$ 17,3 mil",
-      pecas: "6–9 peças",
-    },
-    completa: {
-      label: "Cenográfico",
-      tagline: "Acabamento premium, alto impacto",
-      detalhe: "Composição mais marcante, pensada para áreas nobres do paisagismo.",
-      faixaPreco: "R$ 5,5 mil – R$ 24,3 mil",
-      pecas: "10+ peças",
-    },
+  completa: {
+    label: "Completo",
+    tagline: "Alto impacto, leitura imersiva",
+    detalhe: "Composição mais robusta, pensada para projetos cenográficos e áreas amplas.",
   },
 };
 
-export const nivelDescricoes: Record<Tipo, Record<Nivel, string>> = {
-  lago: {
-    essencial: "Composição mais objetiva, indicada para projetos com menor volume de pedras ou primeiro pedido.",
-    equilibrada: "Equilíbrio entre volume, estética e investimento.",
-    completa: "Composição mais marcante, com maior presença visual e acabamento mais robusto.",
-  },
-  piscina: {
-    essencial: "Composição mais simples, indicada para complementar o projeto com pedras decorativas.",
-    equilibrada: "Melhor presença visual, podendo incluir cascata.",
-    completa: "Maior impacto, ideal para piscina com visual mais cenográfico.",
-  },
-  jardim: {
-    essencial: "Composição mais objetiva, ideal para pequenos espaços ou primeira compra.",
-    equilibrada: "Equilíbrio entre estética, volume e investimento.",
-    completa: "Composição mais marcante, com maior presença visual e acabamento premium.",
-  },
-};
-
-export const totalEtapasPorTipo: Record<Tipo, number> = {
-  lago: 4,
-  piscina: 3,
-  jardim: 4,
+export const nivelDescricoes: Record<Nivel, string> = {
+  essencial: "Composição mais objetiva, indicada para começar com elegância.",
+  equilibrada: "Equilíbrio entre estética, volume e investimento.",
+  completa: "Composição mais marcante, com maior presença visual e acabamento premium.",
 };
 
 export interface UpsellItem {
@@ -264,28 +220,35 @@ export interface UpsellItem {
 }
 
 export const upsellMap: Record<Tipo, UpsellItem[]> = {
+  piscina: [
+    { nome: "Cascatas", url: `${COLLECTION_BASE_URL}/cascatas` },
+    { nome: "Pedra LED", url: `${COLLECTION_BASE_URL}/pedra-led` },
+    { nome: "Pedras de borda", url: `${COLLECTION_BASE_URL}/pedras-de-borda` },
+    { nome: "Acessórios decorativos", url: `${COLLECTION_BASE_URL}/acessorios` },
+  ],
   lago: [
     { nome: "Pedras pequenas", url: `${COLLECTION_BASE_URL}/pedras-pequenas` },
     { nome: "Pedras médias", url: `${COLLECTION_BASE_URL}/pedras-medias` },
     { nome: "Cascatas", url: `${COLLECTION_BASE_URL}/cascatas` },
     { nome: "Pedra LED", url: `${COLLECTION_BASE_URL}/pedra-led` },
-    { nome: "Acessórios", url: `${COLLECTION_BASE_URL}/acessorios` },
     { nome: "Fontes para jardim", url: `${COLLECTION_BASE_URL}/fontes-para-jardim` },
   ],
-  piscina: [
+  "lago-hibrido": [
+    { nome: "Pedras pequenas", url: `${COLLECTION_BASE_URL}/pedras-pequenas` },
     { nome: "Cascatas", url: `${COLLECTION_BASE_URL}/cascatas` },
     { nome: "Pedra LED", url: `${COLLECTION_BASE_URL}/pedra-led` },
-    { nome: "Pedras de borda", url: `${COLLECTION_BASE_URL}/pedras-de-borda` },
-    { nome: "Pedras pequenas", url: `${COLLECTION_BASE_URL}/pedras-pequenas` },
-    { nome: "Acessórios decorativos", url: `${COLLECTION_BASE_URL}/acessorios` },
+    { nome: "Acessórios", url: `${COLLECTION_BASE_URL}/acessorios` },
   ],
-  jardim: [
+  "jardim-seco": [
     { nome: "Pisadas", url: `${COLLECTION_BASE_URL}/pisadas` },
+    { nome: "Pedra Sonora", url: `${PRODUCT_BASE_URL}/pedra-sonora` },
+    { nome: "Acessórios", url: `${COLLECTION_BASE_URL}/acessorios` },
+  ],
+  "jardim-fonte": [
     { nome: "Fontes para jardim", url: `${COLLECTION_BASE_URL}/fontes-para-jardim` },
+    { nome: "Pisadas", url: `${COLLECTION_BASE_URL}/pisadas` },
     { nome: "Pedra Sonora", url: `${PRODUCT_BASE_URL}/pedra-sonora` },
     { nome: "Pedra Champanheira", url: `${PRODUCT_BASE_URL}/pedra-champanheira` },
-    { nome: "Pedra Torneira", url: `${PRODUCT_BASE_URL}/pedra-torneira` },
-    { nome: "Pedras pequenas", url: `${COLLECTION_BASE_URL}/pedras-pequenas` },
     { nome: "Acessórios", url: `${COLLECTION_BASE_URL}/acessorios` },
   ],
 };
@@ -296,53 +259,55 @@ export function whatsappConsultor(tipo: Tipo, faixa: string): string {
 }
 
 export function whatsappConjunto(nome: string): string {
-  const text = `Olá, vim pelo Guia de Composição Western e gostaria de mais informações sobre o ${nome}.`;
+  const text = `Olá, vim pelo Guia de Composição Western e gostaria de mais informações sobre o conjunto ${nome}.`;
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 }
 
 export type GuideAnswers = {
   tipo?: Tipo;
-  tamanho?: string;
-  composicao?: Composicao;
-  jardim?: Jardim;
+  tamanho?: Tamanho;
   nivel?: Nivel;
 };
 
-// === Mapeamento área (m²) → tamanho id ===
-// Ranges máximos para o slider, por tipo
+// === Ranges do slider de área por tipo ===
 export const areaRangePorTipo: Record<Tipo, { min: number; max: number; default: number; snap: number[] }> = {
-  lago: { min: 1, max: 30, default: 6, snap: [1, 4, 10, 20] },
-  piscina: { min: 4, max: 80, default: 20, snap: [12, 32, 60] },
-  jardim: { min: 1, max: 30, default: 5, snap: [2, 10, 20] },
+  piscina:        { min: 4, max: 80, default: 20, snap: [12, 32, 60] },
+  lago:           { min: 2, max: 25, default: 6,  snap: [4, 10, 20] },
+  "lago-hibrido": { min: 2, max: 25, default: 6,  snap: [4, 10, 20] },
+  "jardim-seco":  { min: 1, max: 25, default: 5,  snap: [2, 4, 20] },
+  "jardim-fonte": { min: 1, max: 25, default: 5,  snap: [2, 4, 20] },
 };
 
-export function m2ToTamanhoId(tipo: Tipo, m2: number): string | "consultor" {
-  if (tipo === "lago") {
-    if (m2 <= 4) return "ate-4";
-    if (m2 <= 10) return "4-a-10";
-    if (m2 <= 20) return "10-a-20";
-    return "consultor";
-  }
+/**
+ * Mapeia área (m²) para o tamanho do conjunto.
+ * Em jardim, a faixa "4–10 m²" cai em "grande" (decisão de produto).
+ */
+export function m2ToTamanhoId(tipo: Tipo, m2: number): Tamanho | "consultor" {
   if (tipo === "piscina") {
-    if (m2 <= 12) return "ate-12";
-    if (m2 <= 32) return "12-a-32";
-    if (m2 <= 60) return "32-a-60";
+    if (m2 <= 12) return "pequeno";
+    if (m2 <= 32) return "medio";
+    if (m2 <= 60) return "grande";
     return "consultor";
   }
-  // jardim
-  if (m2 <= 2) return "ate-2";
-  if (m2 <= 10) return "2-a-10";
-  if (m2 <= 20) return "10-a-20";
+  if (tipo === "lago" || tipo === "lago-hibrido") {
+    if (m2 <= 4) return "pequeno";
+    if (m2 <= 10) return "medio";
+    if (m2 <= 20) return "grande";
+    return "consultor";
+  }
+  // jardim-seco | jardim-fonte
+  if (m2 <= 2) return "pequeno";
+  if (m2 <= 4) return "medio";
+  if (m2 <= 20) return "grande"; // inclui o gap 4–10
   return "consultor";
 }
 
-// Coleta todos os preços de um nó arbitrário do guideMap
+// === Faixas de preço (apenas fallback estatístico) ===
 function collectPrecos(node: unknown, filterNivel?: Nivel): number[] {
   const precos: number[] = [];
   const walk = (n: unknown, currentKey?: string) => {
     if (!n || typeof n !== "object") return;
     if ("preco" in (n as object) && "handle" in (n as object)) {
-      // É um ConjuntoLeaf — currentKey é o nivel
       if (!filterNivel || currentKey === filterNivel) {
         precos.push((n as ConjuntoLeaf).preco);
       }
@@ -354,18 +319,15 @@ function collectPrecos(node: unknown, filterNivel?: Nivel): number[] {
   return precos;
 }
 
-// Faixa de preço estimada por (tipo, m²) — calculada do guideMap
 export function precoEstimadoPorArea(tipo: Tipo, m2: number): { min: number; max: number } | null {
   const tamanhoId = m2ToTamanhoId(tipo, m2);
   if (tamanhoId === "consultor") return null;
-  const sizeNode = (guideMap[tipo] as Record<string, unknown>)[tamanhoId];
-  if (!sizeNode || sizeNode === "consultor") return null;
+  const sizeNode = guideMap[tipo][tamanhoId];
   const precos = collectPrecos(sizeNode);
   if (precos.length === 0) return null;
   return { min: Math.min(...precos), max: Math.max(...precos) };
 }
 
-// Faixa de preço para (tipo, m², nivel) — usada no Step Protagonismo para refletir a área já escolhida.
 export function precoEstimadoPorAreaENivel(
   tipo: Tipo,
   m2: number,
@@ -373,35 +335,18 @@ export function precoEstimadoPorAreaENivel(
 ): { min: number; max: number } | null {
   const tamanhoId = m2ToTamanhoId(tipo, m2);
   if (tamanhoId === "consultor") return null;
-  const sizeNode = (guideMap[tipo] as Record<string, unknown>)[tamanhoId];
-  if (!sizeNode || sizeNode === "consultor") return null;
+  const sizeNode = guideMap[tipo][tamanhoId];
   const precos = collectPrecos(sizeNode, nivel);
   if (precos.length === 0) return null;
   return { min: Math.min(...precos), max: Math.max(...precos) };
 }
 
-// Faixa total de preço por tipo (todas as áreas e composições) — usada nos cards de StepOnde.
 export function precoRangePorTipo(tipo: Tipo): { min: number; max: number } | null {
   const precos = collectPrecos(guideMap[tipo]);
   if (precos.length === 0) return null;
   return { min: Math.min(...precos), max: Math.max(...precos) };
 }
 
-// Faixa de peças por (tipo, nivel) — fonte única de verdade.
-export const pecasPorTipoNivel: Record<Tipo, Record<Nivel, string>> = {
-  lago: { essencial: "4–6 peças", equilibrada: "7–11 peças", completa: "12+ peças" },
-  piscina: { essencial: "4–6 peças", equilibrada: "7–11 peças", completa: "12+ peças" },
-  jardim: { essencial: "3–5 peças", equilibrada: "6–9 peças", completa: "10+ peças" },
-};
-
-// Faixa total de peças por tipo — usada nos cards de StepOnde.
-export const pecasRangePorTipo: Record<Tipo, string> = {
-  lago: "4 a 12+ peças",
-  piscina: "4 a 12+ peças",
-  jardim: "3 a 10+ peças",
-};
-
-// Formata uma faixa de preço de forma compacta (R$ X mil – Y mil ou R$ X,X mil – Y,Y mil).
 export function formatPrecoRangeMil({ min, max }: { min: number; max: number }): string {
   const fmt = (v: number) => {
     const mil = v / 1000;
@@ -410,38 +355,21 @@ export function formatPrecoRangeMil({ min, max }: { min: number; max: number }):
   return `R$ ${fmt(min)} – ${fmt(max)} mil`;
 }
 
-// === Prova social nominal por tipo (Etapa Protagonismo) ===
-export const provaSocialPorTipo: Record<Tipo, { autor: string; frase: string }> = {
-  lago: {
-    autor: "Eduardo Faisal",
-    frase: "especifica a composição marcante em 4 de 5 projetos de lago.",
-  },
-  piscina: {
-    autor: "Hayasaki Arquitetura",
-    frase: "escolhe a borda imersiva quando o projeto pede protagonismo.",
-  },
-  jardim: {
-    autor: "Luidi Paisagismo",
-    frase: "especifica a composição equilibrada para jardins residenciais.",
-  },
-};
-
-// === Upsell em 3 camadas — handles complementares por tipo+nível ===
-// Camada A: complementos (peças avulsas que somam ao conjunto)
+// === Upsell por tipo+nível (handles complementares) ===
 export const complementosPorTipo: Record<Tipo, string[]> = {
-  lago: ["pedra-led", "pedra-sonora", "pisada"],
-  piscina: ["pedra-led", "cascata-pequena", "pedra-sonora"],
-  jardim: ["pedra-sonora", "pedra-champanheira", "pedra-torneira"],
+  piscina:        ["pedra-led", "cascata-pequena", "pedra-sonora"],
+  lago:           ["pedra-led", "pedra-sonora", "pisada-pedra-grande"],
+  "lago-hibrido": ["pedra-led", "pedra-sonora", "pisada-pedra-grande"],
+  "jardim-seco":  ["pedra-sonora", "pedra-champanheira", "pedra-torneira"],
+  "jardim-fonte": ["pedra-sonora", "pedra-champanheira", "pedra-torneira"],
 };
 
-// Camada C: itens autorais da casa (sempre os mesmos, plantam segundo pedido)
 export const itensCasaHandles: string[] = [
   "pedra-champanheira",
   "pedra-torneira",
   "pedra-sonora",
 ];
 
-// === Camada B: upgrade — handle do conjunto imediatamente acima ===
 const upgradePath: Record<Nivel, Nivel | null> = {
   essencial: "equilibrada",
   equilibrada: "completa",
@@ -457,15 +385,11 @@ export function resolveUpgrade(a: GuideAnswers): ConjuntoLeaf | null {
   return result;
 }
 
-// === Lead-magnet: assets do sketch ===
-// Em produção viria de metafield Shopify. Por ora, fallback genérico.
 export interface SketchAssets {
   pdfUrl: string;
   skpUrl: string;
 }
 export function sketchAssetsFor(handle: string): SketchAssets {
-  // Quando a Western subir os arquivos no Shopify (metafield guide.sketch_pdf/skp),
-  // trocamos esta função para ler do produto. Por ora retornamos URLs canônicas.
   return {
     pdfUrl: `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/cdn/shop/files/sketches/${handle}.pdf`,
     skpUrl: `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/cdn/shop/files/sketches/${handle}.skp`,
@@ -474,20 +398,54 @@ export function sketchAssetsFor(handle: string): SketchAssets {
 
 export function resolveConjunto(a: GuideAnswers): ConjuntoLeaf | Consultor | null {
   if (!a.tipo || !a.tamanho || !a.nivel) return null;
-  const sizeNode = (guideMap[a.tipo] as Record<string, unknown>)[a.tamanho];
+  const sizeNode = guideMap[a.tipo]?.[a.tamanho];
   if (!sizeNode) return null;
-  if (sizeNode === "consultor") return "consultor";
-
-  if (a.tipo === "lago") {
-    if (!a.composicao) return null;
-    const branch = (sizeNode as Record<string, Record<Nivel, ConjuntoLeaf>>)[a.composicao];
-    return branch?.[a.nivel] ?? null;
-  }
-  if (a.tipo === "jardim") {
-    if (!a.jardim) return null;
-    const branch = (sizeNode as Record<string, Record<Nivel, ConjuntoLeaf>>)[a.jardim];
-    return branch?.[a.nivel] ?? null;
-  }
-  // piscina
-  return (sizeNode as Record<Nivel, ConjuntoLeaf>)[a.nivel] ?? null;
+  return sizeNode[a.nivel] ?? null;
 }
+
+// === Pecas (range estatístico para a UI; composição real vem do Shopify) ===
+export const pecasPorTipoNivel: Record<Nivel, string> = {
+  essencial:   "4–6 peças",
+  equilibrada: "7–11 peças",
+  completa:    "12+ peças",
+};
+
+export const pecasRangePorTipo: Record<Tipo, string> = {
+  piscina:        "4 a 12+ peças",
+  lago:           "4 a 12+ peças",
+  "lago-hibrido": "4 a 12+ peças",
+  "jardim-seco":  "3 a 10+ peças",
+  "jardim-fonte": "3 a 10+ peças",
+};
+
+// === Prova social nominal por tipo ===
+export const provaSocialPorTipo: Record<Tipo, { autor: string; frase: string }> = {
+  piscina: {
+    autor: "Hayasaki Arquitetura",
+    frase: "escolhe a borda imersiva quando o projeto pede protagonismo.",
+  },
+  lago: {
+    autor: "Eduardo Faisal",
+    frase: "especifica a composição marcante em 4 de 5 projetos de lago.",
+  },
+  "lago-hibrido": {
+    autor: "Eduardo Faisal",
+    frase: "combina estrutura Western com pedra natural para um resultado autoral.",
+  },
+  "jardim-seco": {
+    autor: "Luidi Paisagismo",
+    frase: "especifica composições secas para jardins contemplativos.",
+  },
+  "jardim-fonte": {
+    autor: "Luidi Paisagismo",
+    frase: "especifica fontes Western para jardins residenciais.",
+  },
+};
+
+export const totalEtapasPorTipo: Record<Tipo, number> = {
+  piscina: 3,
+  lago: 3,
+  "lago-hibrido": 3,
+  "jardim-seco": 3,
+  "jardim-fonte": 3,
+};

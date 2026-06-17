@@ -16,6 +16,9 @@ import type { Nivel } from "@/data/guideMap";
 export const tipoImage: Record<TipoVisual, string> = {
   piscina: coverPiscina,
   lago: coverLago,
+  // Lago Híbrido reusa a imagem de Lago temporariamente (futuro: imagem própria
+  // mostrando integração entre pedra Western e pedra natural).
+  "lago-hibrido": coverLago,
   "jardim-fonte": coverCaitoMaia,
   "jardim-seco": coverCasaPraia,
 };

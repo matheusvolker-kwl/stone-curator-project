@@ -25,21 +25,18 @@ export default function GuiaComposicoes() {
     return <Navigate to="/guia-de-composicao" replace />;
   }
 
-  const { tipo, variante, copy, label } = tipoVisualMap[ctx.tipoVisual];
+  const { tipo, copy, label } = tipoVisualMap[ctx.tipoVisual];
   const tamanhoId = m2ToTamanhoId(tipo, ctx.area);
   const acabLabel = acabamentoMeta[ctx.acabamento].label;
 
   const isConsultor = tamanhoId === "consultor";
   const conjuntos: Partial<Record<Nivel, ConjuntoLeaf>> = {};
+  const isHibrido = tipo === "lago-hibrido";
 
   if (!isConsultor) {
-    const sizeNode = (guideMap[tipo] as Record<string, unknown>)[tamanhoId] as Record<string, unknown>;
-    const node =
-      tipo === "piscina"
-        ? sizeNode
-        : ((sizeNode as Record<string, unknown>)[variante!] as Record<string, unknown>);
+    const node = guideMap[tipo][tamanhoId];
     NIVEIS.forEach((n) => {
-      const c = (node as Record<string, ConjuntoLeaf>)[n];
+      const c = node[n];
       if (c) conjuntos[n] = c;
     });
   }
@@ -67,6 +64,22 @@ export default function GuiaComposicoes() {
             Cada composição é ponto de partida. No próximo passo você ajusta peças, quantidades e adiciona itens autorais.
           </p>
         </Reveal>
+
+        {isHibrido && (
+          <Reveal variant="fade-up" duration={700} delay={180}>
+            <div className="mt-10 border-l-2 border-western-gold pl-5 py-4 bg-western-gold/[0.06] max-w-3xl">
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-2">
+                ◆ Sobre o Lago Híbrido
+              </p>
+              <p className="font-display italic text-[15px] text-western-stone-warm leading-relaxed">
+                Este conjunto fornece a estrutura principal em pedras Western. Você complementa
+                a margem do lago com pedras naturais que já possua ou adquira localmente.
+              </p>
+            </div>
+          </Reveal>
+        )}
+
+
 
         {isConsultor ? (
           <div className="mt-20 max-w-xl">

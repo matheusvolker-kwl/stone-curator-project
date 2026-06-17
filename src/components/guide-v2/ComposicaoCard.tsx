@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Info } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
-import { formatPreco, type ConjuntoLeaf, type Nivel } from "@/data/guideMap";
+import { formatPreco, PEDIDO_MINIMO, type ConjuntoLeaf, type Nivel } from "@/data/guideMap";
+import { fetchProduct } from "@/lib/shopify/queries";
 import { nivelLabelMap, nivelMicrocopy } from "./types";
 import { getPecasPlaceholder, getPecaCount } from "./pecasPlaceholder";
 
@@ -16,7 +18,21 @@ interface Props {
 export default function ComposicaoCard({ conjunto, nivel, image, highlight, refinarHref }: Props) {
   const pecas = getPecasPlaceholder(nivel);
   const resumo = pecas.slice(0, 4).map((p) => ({ nome: p.nome, qty: p.qty }));
-  const economia = Math.ceil(conjunto.preco / 0.97 - conjunto.preco);
+
+  // Preço vem do Shopify (fonte de verdade). Fallback: preço do brief no guideMap.
+  const { data: produto } = useQuery({
+    queryKey: ["conjunto-product", conjunto.handle],
+    queryFn: () => fetchProduct(conjunto.handle),
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  });
+
+  const precoShopify = produto
+    ? parseFloat(produto.priceRange.minVariantPrice.amount)
+    : NaN;
+  const preco = Number.isFinite(precoShopify) ? precoShopify : conjunto.preco;
+  const economia = Math.ceil(preco / 0.97 - preco);
+  const abaixoDoMinimo = preco < PEDIDO_MINIMO;
 
   return (
     <article
@@ -27,7 +43,6 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
           : "shadow-[0_24px_44px_-30px_hsl(var(--western-stone-dark)/0.35)] hover:shadow-[0_36px_56px_-32px_hsl(var(--western-stone-dark)/0.45)] hover:-translate-y-1"
       )}
     >
-      {/* Ribbon que escapa do frame quando highlight */}
       {highlight && (
         <div
           aria-hidden
@@ -83,11 +98,17 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
 
         <div className="mt-auto">
           <div className="font-display text-[34px] font-medium text-western-green-deep leading-none mb-2">
-            {formatPreco(conjunto.preco)}
+            {formatPreco(preco)}
           </div>
-          {economia >= 50 && (
+          {economia >= 50 && !abaixoDoMinimo && (
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-6">
               Economia de {formatPreco(economia)} vs. avulso
+            </p>
+          )}
+          {abaixoDoMinimo && (
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm mb-6 inline-flex items-start gap-1.5 leading-snug">
+              <Info className="h-3 w-3 mt-0.5 flex-shrink-0 text-western-gold" />
+              Pedido mínimo {formatPreco(PEDIDO_MINIMO)} · some itens autorais para atingir.
             </p>
           )}
 
