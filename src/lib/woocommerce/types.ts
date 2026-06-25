@@ -63,6 +63,7 @@ export interface WooProduct {
   price: string;
   regular_price?: string;
   sale_price?: string;
+  price_html?: string;
   stock_status: WooStockStatus;
   images: WooImage[];
   categories: WooCategoryRef[];
@@ -73,7 +74,14 @@ export interface WooProduct {
   meta_data: WooMetaData[];
   // Bundle-specific fields (WooCommerce Product Bundles plugin)
   bundle_price?: {
-    price?: { min?: { incl_tax?: string }; max?: { incl_tax?: string } };
+    price?: {
+      min?: { incl_tax?: string; excl_tax?: string };
+      max?: { incl_tax?: string; excl_tax?: string };
+    };
+    regular_price?: {
+      min?: { incl_tax?: string; excl_tax?: string };
+      max?: { incl_tax?: string; excl_tax?: string };
+    };
   };
   bundled_items?: Array<{ product_id: number; quantity_default?: number }>;
 }
