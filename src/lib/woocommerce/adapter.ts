@@ -206,7 +206,7 @@ export function adaptAcabamentoGroup(group: AcabamentoGroup): ShopifyProductNode
     group.members[0]!.product;
 
   const minPrice = group.members
-    .map((m) => parseFloat(m.product.price) || 0)
+    .map((m) => parseFloat(resolveWooPrice(m.product)) || 0)
     .filter((n) => n > 0)
     .reduce((min, n) => (min === 0 || n < min ? n : min), 0);
 
