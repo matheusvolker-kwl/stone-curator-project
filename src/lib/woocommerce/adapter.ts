@@ -146,7 +146,7 @@ function buildSyntheticSimpleVariant(p: WooProduct): { edges: Array<{ node: Shop
           title: p.name,
           sku: p.sku ?? null,
           availableForSale: p.stock_status === "instock",
-          price: money(p.price),
+          price: money(resolveWooPrice(p)),
           selectedOptions: [],
           image: p.images?.[0] ? img(p.images[0]) : null,
         },
