@@ -62,10 +62,35 @@ async function getAllCategories(): Promise<WooCategory[]> {
 
 async function getVariationsFor(p: WooProduct): Promise<WooVariation[]> {
   if (p.type !== "variable" || !p.variations || p.variations.length === 0) return [];
-  return wooFetch<WooVariation[]>({
-    path: `products/${p.id}/variations`,
-    params: { per_page: 100 },
+  try {
+    const res = await wooFetch<WooVariation[] | { error: string; fallback: true }>({
+      path: `products/${p.id}/variations`,
+      params: { per_page: 100 },
+    });
+    if (!Array.isArray(res)) return []; // fallback signal from proxy
+    return res;
+  } catch {
+    return []; // never let one bad product break the whole catalog
+  }
+}
+
+// Run async tasks with limited concurrency to avoid hammering the upstream WP API.
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let cursor = 0;
+  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (true) {
+      const i = cursor++;
+      if (i >= items.length) return;
+      results[i] = await fn(items[i], i);
+    }
   });
+  await Promise.all(workers);
+  return results;
 }
 
 // ─── Build adapted catalog (group bundles, adapt remaining) ──────────────────
@@ -74,15 +99,14 @@ async function buildAdaptedCatalog(): Promise<ShopifyProductNode[]> {
   const products = await getAllPublicProducts();
   const { groups, others } = groupAcabamentoBundles(products);
 
-  const adaptedOthers = await Promise.all(
-    others.map(async (p) => {
-      const variations = await getVariationsFor(p);
-      return adaptProduct(p, variations);
-    }),
-  );
+  const adaptedOthers = await mapWithConcurrency(others, 3, async (p) => {
+    const variations = await getVariationsFor(p);
+    return adaptProduct(p, variations);
+  });
   const adaptedGroups = groups.map(adaptAcabamentoGroup);
   return [...adaptedGroups, ...adaptedOthers];
 }
+
 
 // ─── Public API (mirrors shopify/queries.ts) ─────────────────────────────────
 
