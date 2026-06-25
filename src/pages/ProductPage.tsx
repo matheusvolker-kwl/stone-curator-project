@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchProduct } from "@/lib/shopify/queries";
+import { fetchProduct } from "@/lib/datasource";
 import { parseProductDescription, extractDimensions } from "@/lib/shopify/parseDescription";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";

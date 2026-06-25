@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { fetchCollection } from "@/lib/shopify/queries";
+import { fetchCollection } from "@/lib/datasource";
 import { cdnImg } from "@/lib/shopify/client";
 import { extractDimensions, parseProductDescription } from "@/lib/shopify/parseDescription";
 import { BUSINESS } from "@/config/business";

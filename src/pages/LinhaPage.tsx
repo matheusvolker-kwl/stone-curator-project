@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCollection } from "@/lib/shopify/queries";
+import { fetchCollection } from "@/lib/datasource";
 import { ChevronLeft } from "lucide-react";
 import ProductGrid from "@/components/product/ProductGrid";
 

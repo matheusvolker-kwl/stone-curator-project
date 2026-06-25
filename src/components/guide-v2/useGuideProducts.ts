@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchProductsByHandles } from "@/lib/shopify/queries";
+import { fetchProductsByHandles } from "@/lib/datasource";
 import { cdnImg } from "@/lib/shopify/client";
 import type { ShopifyProductNode } from "@/lib/shopify/types";
 import type { Nivel } from "@/data/guideMap";

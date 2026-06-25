@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
-import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/shopify/queries";
+import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/datasource";
 import { cdnImg, cdnSrcSet, formatBRL } from "@/lib/shopify/client";
 import iconePedra from "@/assets/icone-pedra-verde.png";
 import { useMemo } from "react";

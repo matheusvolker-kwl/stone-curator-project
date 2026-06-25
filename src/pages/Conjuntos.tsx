@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { fetchProductsByHandles } from "@/lib/shopify/queries";
+import { fetchProductsByHandles } from "@/lib/datasource";
 import { cdnImg } from "@/lib/shopify/client";
 import {
   guideMap,
