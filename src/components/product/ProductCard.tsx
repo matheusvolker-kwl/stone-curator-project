@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import type { ShopifyProductNode } from "@/lib/shopify/types";
 import { cdnImg, cdnSrcSet } from "@/lib/shopify/client";
-import { fetchProduct } from "@/lib/shopify/queries";
+import { fetchProduct } from "@/lib/datasource";
 import { ArrowRight } from "lucide-react";
 import WishlistButton from "./WishlistButton";
 import GatedPrice from "@/components/shared/GatedPrice";

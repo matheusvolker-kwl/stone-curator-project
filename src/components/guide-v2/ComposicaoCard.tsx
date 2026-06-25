@@ -3,7 +3,7 @@ import { ArrowRight, Info } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { formatPreco, PEDIDO_MINIMO, type ConjuntoLeaf, type Nivel } from "@/data/guideMap";
-import { fetchProduct } from "@/lib/shopify/queries";
+import { fetchProduct } from "@/lib/datasource";
 import { nivelLabelMap, nivelMicrocopy } from "./types";
 import { getPecasPlaceholder, getPecaCount } from "./pecasPlaceholder";
 

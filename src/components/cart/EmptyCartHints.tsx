@@ -5,7 +5,7 @@ import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useAuth } from "@/hooks/useAuth";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
-import { fetchProduct } from "@/lib/shopify/queries";
+import { fetchProduct } from "@/lib/datasource";
 import { cdnImg } from "@/lib/shopify/client";
 import { toast } from "sonner";
 
