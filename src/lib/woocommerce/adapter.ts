@@ -232,7 +232,7 @@ export function adaptAcabamentoGroup(group: AcabamentoGroup): ShopifyProductNode
       title: m.acabamento,
       sku: m.product.sku ?? null,
       availableForSale: m.product.stock_status === "instock",
-      price: money(m.product.price),
+      price: money(resolveWooPrice(m.product)),
       selectedOptions: [{ name: "Acabamento", value: m.acabamento }],
       image: m.product.images?.[0] ? img(m.product.images[0]) : null,
     };
