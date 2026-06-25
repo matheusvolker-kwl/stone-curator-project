@@ -1,52 +1,50 @@
-## Fase 2 — Remover Shopify do projeto
+## A) Garantia: 5 → 1 ano (P0)
 
-Hoje o Woo já é a fonte padrão, mas `src/lib/shopify/` ainda existe e ~40 arquivos importam dele (direta ou indiretamente via `src/lib/catalog/` que só re-exporta). Esta fase quebra essa dependência de verdade, apaga o código morto e limpa segredos/conexão.
+Trocar `garantiaAnos: 5` → `1` em `src/config/business.ts` e atualizar todas as cópias hard-coded com "5 anos":
 
-### Escopo
+- `src/config/business.ts` — `garantiaAnos: 1`
+- `src/pages/ProductPage.tsx` — corrigir comentário (linha 166): "filtra garantia legacy do Woo; usamos `BUSINESS.garantiaAnos` (1 ano)"; trocar `${...} anos` → `${...} ano` (singular quando = 1, via `BUSINESS.garantiaAnos === 1 ? "ano" : "anos"`)
+- `src/components/product/DeliverySignals.tsx` — mesmo tratamento singular/plural
+- `src/components/product/PurchaseProof.tsx` — "5 anos" → usar `BUSINESS.garantiaAnos` com sufixo correto
+- `src/pages/legal/TrocasAvarias.tsx` — "5 anos contra defeitos" → "1 ano contra defeitos" (texto fixo)
+- `src/pages/PorQueWestern.tsx` — duas ocorrências ("Garantia formal de 5 anos…", "5 anos formais contra defeito…") → "1 ano"
+- `src/pages/FAQ.tsx` — já usa `BUSINESS.garantiaAnos`; só aplicar plural correto
+- `src/pages/Index.tsx` — já usa `BUSINESS.garantiaAnos`; plural correto
+- `src/lib/pdf/orcamentoPdf.ts` e `src/lib/pdf/propostaPdf.ts` — `${BUSINESS.garantiaAnos} anos` → forma com singular condicional
 
-1. **Mover utilitários neutros para `@/lib/catalog/`** (donos reais, sem re-export):
-   - `client.ts` → quebrar em `catalog/format.ts` (formatBRL) e `catalog/image.ts` (cdnImg, cdnSrcSet). Descartar `storefrontApiRequest`, `SHOPIFY_*` constantes e o uso do CDN do Shopify (cdnImg passa a ser passthrough — imagens do Woo já vêm com URL absoluta).
-   - `parseDescription.ts` → `catalog/parseDescription.ts` (conteúdo real, não re-export).
-   - `sizeWeight.ts` → `catalog/sizeWeight.ts` (conteúdo real).
-   - `types.ts` → `catalog/types.ts`. Renomear símbolos: `ShopifyProduct`/`ShopifyProductNode`/`ShopifyCollection`/`ShopifyMoney`/`ShopifyVariant` → `CatalogProduct`/`CatalogProductNode`/`CatalogCollection`/`CatalogMoney`/`CatalogVariant`. Manter aliases `export type ShopifyX = CatalogX` por 1 ciclo se necessário, mas o objetivo é **trocar os usos**.
+## B) Performance: parar de buscar variações em listagens (P0)
 
-2. **Trocar imports nos ~40 arquivos** (`@/lib/shopify/*` → `@/lib/catalog/*`), incluindo o adapter Woo (`src/lib/woocommerce/adapter.ts`, `queries.ts`) que ainda importa tipos de `@/lib/shopify/types`.
+Em `src/lib/woocommerce/queries.ts`:
 
-3. **Apagar `src/data/guideMap.ts:7`** (uso de `SHOPIFY_STORE_PERMANENT_DOMAIN`) — substituir por constante local ou remover se não usado de fato (verificar onde aparece).
+1. Criar `buildListingCatalog()` que adapta o catálogo SEM chamar `getVariationsFor`:
+   - `adaptProduct(p)` sem variações (já gera synthetic variant a partir do preço resolvido)
+   - `adaptAcabamentoGroup` já não precisa de variações
+   - Memoizado em paralelo a `catalogPromise` (TTL 60 s)
+2. Trocar consumidores de listagem para a versão sem variações:
+   - `fetchCollections` — já usa só categorias, mantém
+   - `fetchCollection` → usar `buildListingCatalog()`
+   - `fetchProducts` → usar `buildListingCatalog()`
+   - `fetchProductsByHandles` → usar `buildListingCatalog()`
+3. `fetchProduct(handle)` (caminho PDP):
+   - Achar o nó na listagem cacheada para descobrir se é simple, variável ou bundle group
+   - Se for variável: localizar o `WooProduct` cru correspondente e buscar `/products/{id}/variations` APENAS desse — chamar `adaptProduct(p, variations)` para mesclar `variant.image`
+   - Se for bundle group ou simple: retornar o nó já adaptado da listagem
+4. Renomear `buildAdaptedCatalog` (ou manter como wrapper) para deixar claro o uso PDP vs listagem.
 
-4. **Apagar arquivos órfãos**:
-   - `src/lib/shopify/` inteiro.
-   - `src/pages/__WooDebug.tsx` (debug temporário da etapa 4).
-   - Rota correspondente em `src/App.tsx` se existir.
+Resultado esperado: navegação de listagens = 1 request (cacheada). PDP variável = +1 request.
 
-5. **Simplificar datasource**:
-   - `src/lib/datasource/index.ts`: remover branch shopify e o flag `VITE_DATA_SOURCE`. Passa a ser `export * from "@/lib/woocommerce/queries"`.
+## C) Galeria troca ao mudar acabamento (P1)
 
-6. **Limpar segredos e conexão Shopify**:
-   - `fetch_secrets` → identificar `SHOPIFY_*` / `VITE_SHOPIFY_*` órfãos e remover via `delete_secret` (os que forem gerenciados pelo conector Shopify saem com o disconnect).
-   - `shopify--disconnect_store` para soltar a conexão da loja.
-   - Limpar `.env.example` de variáveis `VITE_SHOPIFY_*`.
+A imagem da variação não está em `images.edges` do pai → `findIndex` da linha 94 de `ProductPage.tsx` nunca acha. Correção mínima e segura:
 
-7. **Validação**:
-   - `bunx tsgo --noEmit` verde.
-   - Smoke rápido no preview: Home, /linhas, uma PDP avulsa, uma PDP bundle, /conjuntos, abrir carrinho.
+- Em `src/lib/woocommerce/adapter.ts`, dentro de `adaptProduct`, quando `variations` for fornecido: construir `images.edges` mesclando as `p.images` + `variations[].image`, deduplicando por `url`. Isso preserva o comportamento atual do `findIndex` e a galeria troca ao selecionar Quartzo/Arenito/Moledo/Granito.
+- Para os grupos de bundle (`adaptAcabamentoGroup`): cada `member.product.images[0]` já é a foto da variação canônica do acabamento; mesclar também essas no `images.edges` (dedup por URL) para que o `findIndex` resolva a foto da variante de bundle selecionada.
+- Confirmar que `supabase/functions/woo-proxy/index.ts` não filtra o campo `image` das `/variations` (passthrough JSON cru — checar e ajustar se houver mapeamento custom).
 
-### Fora de escopo
+Nenhuma mudança em `ProductGallery.tsx` é necessária — só dados.
 
-- Mexer no checkout (já está na Store API do Woo).
-- Apagar a edge function `yampi-*` (já retornam 410, ficam como tombstone).
-- Renomear `Shopify*` em comentários/strings que não sejam código de tipo.
+## Validação
 
-### Detalhes técnicos
-
-- `cdnImg(url, w?)`/`cdnSrcSet`: hoje injetam `?width=…` no CDN do Shopify. Para Woo, retornar a URL original (sem transformação) — quem precisa de tamanhos pode usar `srcset` nativo do Woo no futuro. Sem regressão visual: o Woo já entrega imagens em resolução adequada.
-- Aliases de tipo (`ShopifyProduct = CatalogProduct`) só se a substituição surfacial gerar muito ruído em PR; meta é zero referência a "Shopify" em código TS ao fim da fase.
-- Rollback: a fase é destrutiva. Reverter = restaurar `src/lib/shopify/` e reinstalar a flag de datasource. Apontar isso ao usuário antes do disconnect.
-
-### Entregáveis
-
-- 0 imports de `@/lib/shopify` em `src/`.
-- Diretório `src/lib/shopify/` removido.
-- `datasource/index.ts` reduzido a um re-export.
-- Conexão Shopify desconectada e segredos `VITE_SHOPIFY_*` removidos.
-- Build TS verde + smoke OK.
+- `bunx tsgo --noEmit` (verde)
+- Reporte item a item (arquivos tocados em A, B, C)
+- Não publicar, não tocar checkout/cartStore
