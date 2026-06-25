@@ -190,6 +190,21 @@ export function adaptProduct(
 
   const modelo3dValue = getMetaString(p, "modelo_3d_url");
 
+  // Merge variation images into images.edges (dedup by URL) so the gallery
+  // can find the active variant.image and swap the main photo on selection.
+  const baseImages = (p.images ?? []).map(img);
+  const seen = new Set<string>(baseImages.map((i) => i.url).filter(Boolean));
+  const mergedImages = [...baseImages];
+  if (variations && variations.length > 0) {
+    for (const v of variations) {
+      if (!v.image) continue;
+      const vi = img(v.image);
+      if (!vi.url || seen.has(vi.url)) continue;
+      seen.add(vi.url);
+      mergedImages.push(vi);
+    }
+  }
+
   return {
     id: `gid://woo/product/${p.id}`,
     handle: p.slug,
@@ -200,7 +215,7 @@ export function adaptProduct(
     productType: p.categories?.[0]?.name,
     tags: (p.tags ?? []).map((t) => t.name),
     priceRange: { minVariantPrice: money(resolveWooPrice(p)) },
-    images: { edges: (p.images ?? []).map((i) => ({ node: img(i) })) },
+    images: { edges: mergedImages.map((node) => ({ node })) },
     variants,
     options: buildOptions(p),
     collections: {
