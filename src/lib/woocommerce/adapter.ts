@@ -181,7 +181,7 @@ export function adaptProduct(
     vendor: undefined,
     productType: p.categories?.[0]?.name,
     tags: (p.tags ?? []).map((t) => t.name),
-    priceRange: { minVariantPrice: money(p.price) },
+    priceRange: { minVariantPrice: money(resolveWooPrice(p)) },
     images: { edges: (p.images ?? []).map((i) => ({ node: img(i) })) },
     variants,
     options: buildOptions(p),
