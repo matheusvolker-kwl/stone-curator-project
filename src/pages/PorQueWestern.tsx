@@ -9,7 +9,7 @@ const OBJEÇÕES: { q: string; a: string }[] = [
   },
   {
     q: "Vai amarelar com o tempo, vai descascar.",
-    a: "A pintura Western é desenvolvida há 33 anos para resistir a cloro, sol, chuva e variação térmica. Não é tinta de parede aplicada por cima — são 6 camadas distintas de pigmento mineral, com 5 cores sobrepostas em cada camada, simulando a sedimentação geológica natural. Garantia formal de 5 anos contra defeito; histórico real: peças instaladas em 1995 ainda estão em pé.",
+    a: "A pintura Western é desenvolvida há 33 anos para resistir a cloro, sol, chuva e variação térmica. Não é tinta de parede aplicada por cima — são 6 camadas distintas de pigmento mineral, com 5 cores sobrepostas em cada camada, simulando a sedimentação geológica natural. Garantia formal de 1 ano contra defeito; histórico real: peças instaladas em 1995 ainda estão em pé.",
   },
   {
     q: "É caro.",
@@ -25,7 +25,7 @@ const OBJEÇÕES: { q: string; a: string }[] = [
   },
   {
     q: "Tem garantia? E se quebrar?",
-    a: "5 anos formais contra defeito de fabricação. Mas o ponto é que Western quase não quebra: você pode pular em cima, pode furar com furadeira para passar fiação, pode sentar — o composto de cimento com fibra de PET é mais resistente a impacto que pedra natural, que é frágil a fissuras laterais. Em 33 anos, parceiros como Cristal Pool e Genesis continuam comprando há mais de duas décadas — falariam abertamente se houvesse histórico de problemas.",
+    a: "1 ano formal contra defeito de fabricação. Mas o ponto é que Western quase não quebra: você pode pular em cima, pode furar com furadeira para passar fiação, pode sentar — o composto de cimento com fibra de PET é mais resistente a impacto que pedra natural, que é frágil a fissuras laterais. Em 33 anos, parceiros como Cristal Pool e Genesis continuam comprando há mais de duas décadas — falariam abertamente se houvesse histórico de problemas.",
   },
   {
     q: "Como vai ficar montado? Não quero surpresa.",

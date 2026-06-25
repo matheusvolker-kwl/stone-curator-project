@@ -163,7 +163,7 @@ export default function ProductPage() {
 
 
   // Ficha técnica: extrai dimensões individuais e separa acabamentos.
-  // Filtra garantia vinda do Shopify (legacy "1 ano") — sempre injetamos 5 anos.
+  // Filtra garantia legacy vinda do catálogo; usamos BUSINESS.garantiaLabel (1 ano).
   const dims = extractDimensions(parsed.ficha);
   const fichaCleaned = parsed.ficha.filter(
     (f) => !/comprimento|largura|altura|garantia/i.test(f.label)
@@ -171,7 +171,7 @@ export default function ProductPage() {
   const acabamentosRow = fichaCleaned.find((f) => /acabament/i.test(f.label));
   const fichaRows = [
     ...fichaCleaned.filter((f) => !/acabament/i.test(f.label)),
-    { label: "Garantia", value: `${BUSINESS.garantiaAnos} anos` },
+    { label: "Garantia", value: BUSINESS.garantiaLabel },
   ];
 
   // Peso (kg) extraído da ficha — usado nos blocos de comparativo

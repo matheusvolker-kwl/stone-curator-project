@@ -1,4 +1,5 @@
 import { Star, ShieldCheck } from "lucide-react";
+import { BUSINESS } from "@/config/business";
 
 /**
  * Micro-prova social compacta — vive logo abaixo do CTA na PDP.
@@ -24,7 +25,7 @@ export default function PurchaseProof() {
       <div className="flex items-start gap-2 text-western-stone-warm min-w-0">
         <ShieldCheck className="h-4 w-4 text-western-gold shrink-0 mt-0.5" strokeWidth={1.6} />
         <p className="font-sans text-[12px] leading-snug min-w-0 break-words">
-          5 anos de garantia · troca sem custo em caso de avaria no transporte
+          {BUSINESS.garantiaLabel} de garantia · troca sem custo em caso de avaria no transporte
         </p>
       </div>
     </div>

@@ -303,7 +303,7 @@ export default function Index() {
                 {[
                   { eyebrow: "Pedido mínimo", t: BUSINESS.pedidoMinimoLabel },
                   { eyebrow: "Prazo", t: "15 dias úteis" },
-                  { eyebrow: "Garantia", t: `${BUSINESS.garantiaAnos} anos` },
+                  { eyebrow: "Garantia", t: BUSINESS.garantiaLabel },
                   { eyebrow: "Frete", t: "Transportadora ou retirada" },
                 ].map((s) => (
                   <div key={s.t} className="bg-western-green-deep p-6 md:p-8">
