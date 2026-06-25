@@ -26,8 +26,7 @@ export default function CartDrawer({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, syncCart } =
-    useCartStore();
+  const { items, isLoading, updateQuantity, removeItem } = useCartStore();
   // (auth context obtained below)
   const [quoteOpen, setQuoteOpen] = useState(false);
   const totalQty = items.reduce((s, i) => s + i.quantity, 0);
@@ -35,10 +34,6 @@ export default function CartDrawer({
   const currency = items[0]?.price.currencyCode ?? "BRL";
   const meetsMinimum = subtotal >= MIN_ORDER;
   const savedToastShownRef = useRef(false);
-
-  useEffect(() => {
-    if (open) syncCart();
-  }, [open, syncCart]);
 
   // "Sua composição foi salva" — uma vez por sessão, 5s após mudança com itens.
   useEffect(() => {
