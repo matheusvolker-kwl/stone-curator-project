@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { formatBRL } from "@/lib/shopify/client";
+import { formatBRL } from "@/lib/catalog/client";
 import type { CartItem } from "@/stores/cartStore";
 import { BUSINESS } from "@/config/business";
 import logoHorizontalBranco from "@/assets/brand/logo-horizontal-branco.png";

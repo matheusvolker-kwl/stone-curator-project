@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { fetchProductsByHandles } from "@/lib/datasource";
-import { cdnImg } from "@/lib/shopify/client";
+import { cdnImg } from "@/lib/catalog/client";
 import {
   guideMap,
   tipoLabels,
@@ -440,7 +440,7 @@ function FilterPanel({
 }
 
 // =============== CARD ===============
-import type { ShopifyProductNode } from "@/lib/shopify/types";
+import type { ShopifyProductNode } from "@/lib/catalog/types";
 interface CardProps {
   leaf: LeafMeta;
   shopify?: ShopifyProductNode;

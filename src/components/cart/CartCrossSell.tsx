@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Plus, ArrowRight, Loader2 } from "lucide-react";
 import { fetchCollection, fetchProduct } from "@/lib/datasource";
-import { cdnImg, formatBRL } from "@/lib/shopify/client";
+import { cdnImg, formatBRL } from "@/lib/catalog/client";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";

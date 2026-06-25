@@ -4,7 +4,7 @@
 // apenas fallback caso a Storefront API falhe. Os handles devem casar
 // exatamente com os produtos da loja Western.
 
-import { SHOPIFY_STORE_PERMANENT_DOMAIN } from "@/lib/shopify/client";
+import { SHOPIFY_STORE_PERMANENT_DOMAIN } from "@/lib/catalog/client";
 
 // 5 categorias (achatadas — sem sub-variantes internas)
 export type Tipo =

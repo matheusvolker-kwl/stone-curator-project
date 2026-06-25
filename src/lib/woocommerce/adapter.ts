@@ -9,7 +9,7 @@ import type {
   ShopifyMoney,
   ShopifyProductNode,
   ShopifyVariant,
-} from "@/lib/shopify/types";
+} from "@/lib/catalog/types";
 import {
   ACABAMENTO_ORDER,
   type AcabamentoGroup,

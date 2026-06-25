@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import type { ShopifyProductNode } from "@/lib/shopify/types";
-import { cdnImg, cdnSrcSet } from "@/lib/shopify/client";
+import type { ShopifyProductNode } from "@/lib/catalog/types";
+import { cdnImg, cdnSrcSet } from "@/lib/catalog/client";
 import { fetchProduct } from "@/lib/datasource";
 import { ArrowRight } from "lucide-react";
 import WishlistButton from "./WishlistButton";

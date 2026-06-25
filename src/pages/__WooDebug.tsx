@@ -2,7 +2,7 @@
 // NOT linked from the menu. Mount at /__woo-debug to validate Etapa 2.
 
 import { useState } from "react";
-import * as shopify from "@/lib/shopify/queries";
+import * as shopify from "@/lib/catalog/queries";
 import * as woo from "@/lib/woocommerce/queries";
 
 type Source = "shopify" | "woo";

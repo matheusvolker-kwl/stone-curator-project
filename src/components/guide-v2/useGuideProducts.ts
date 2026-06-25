@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchProductsByHandles } from "@/lib/datasource";
-import { cdnImg } from "@/lib/shopify/client";
-import type { ShopifyProductNode } from "@/lib/shopify/types";
+import { cdnImg } from "@/lib/catalog/client";
+import type { ShopifyProductNode } from "@/lib/catalog/types";
 import type { Nivel } from "@/data/guideMap";
 import type { TipoVisual, ProjetoPeca } from "./types";
 import type { AutoralItem } from "./autoraisCatalog";

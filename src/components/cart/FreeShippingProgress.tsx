@@ -1,4 +1,4 @@
-import { formatBRL } from "@/lib/shopify/client";
+import { formatBRL } from "@/lib/catalog/client";
 import { Check } from "lucide-react";
 
 interface Props {

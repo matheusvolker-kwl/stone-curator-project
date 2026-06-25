@@ -16,7 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { submitQuoteLead, type QuoteOrigem } from "@/lib/leads";
 import type { PdfProjetoContext } from "@/lib/pdf/orcamentoPdf";
 import type { CartItem } from "@/stores/cartStore";
-import { formatBRL } from "@/lib/shopify/client";
+import { formatBRL } from "@/lib/catalog/client";
 
 const baseSchema = z.object({
   nome: z.string().trim().min(2, "Informe seu nome").max(120),

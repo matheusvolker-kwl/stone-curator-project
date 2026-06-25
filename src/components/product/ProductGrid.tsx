@@ -16,8 +16,8 @@ import {
   PESO_META,
   type TamanhoBucket,
   type PesoBucket,
-} from "@/lib/shopify/sizeWeight";
-import type { ShopifyProduct } from "@/lib/shopify/types";
+} from "@/lib/catalog/sizeWeight";
+import type { ShopifyProduct } from "@/lib/catalog/types";
 import { cn } from "@/lib/utils";
 
 type SortKey = "az" | "za" | "price-asc" | "price-desc";

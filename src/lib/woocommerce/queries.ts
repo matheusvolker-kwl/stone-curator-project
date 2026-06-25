@@ -5,7 +5,7 @@ import type {
   ShopifyCollection,
   ShopifyProduct,
   ShopifyProductNode,
-} from "@/lib/shopify/types";
+} from "@/lib/catalog/types";
 import { wooFetch } from "./client";
 import { adaptAcabamentoGroup, adaptCategory, adaptProduct } from "./adapter";
 import { groupAcabamentoBundles } from "./bundles";

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { ChevronLeft, ChevronRight, X, Maximize2 } from "lucide-react";
-import { cdnImg, cdnSrcSet } from "@/lib/shopify/client";
+import { cdnImg, cdnSrcSet } from "@/lib/catalog/client";
 
 interface ImageNode {
   url: string;

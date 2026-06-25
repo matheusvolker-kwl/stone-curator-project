@@ -11,7 +11,7 @@ import {
   type QuoteThread,
   type QuotePayload,
 } from "@/components/admin/quoteTypes";
-import { formatBRL } from "@/lib/shopify/client";
+import { formatBRL } from "@/lib/catalog/client";
 
 const ALL_STATUS: ("all" | QuoteStatus)[] = [
   "all", "novo", "em_atendimento", "proposta_enviada", "fechado", "perdido", "arquivado",

@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
-import { cdnImg, cdnSrcSet } from "@/lib/shopify/client";
+import { cdnImg, cdnSrcSet } from "@/lib/catalog/client";
 import iconePedra from "@/assets/icone-pedra-verde.png";
-import type { ShopifyCollection } from "@/lib/shopify/types";
+import type { ShopifyCollection } from "@/lib/catalog/types";
 import { LINHA_COVER_OVERRIDES } from "@/lib/lineCovers";
 
 interface Props {
