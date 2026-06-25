@@ -47,6 +47,53 @@ function getMetaString(p: WooProduct, key: string): string | null {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Price resolution — Woo bundles return product.price = "0"; the real total
+// lives in bundle_price.price.min.incl_tax. We also fall back to price_html
+// (already locale-rendered by WP) for any future exotic type.
+
+function parsePriceFromHtml(html?: string): number {
+  if (!html) return 0;
+  const text = html.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ");
+  const tokens = text.match(/[\d.,]+/g);
+  if (!tokens) return 0;
+  let best = 0;
+  for (const tok of tokens) {
+    let norm = tok;
+    // BR "4.235,00" -> comma is decimal sep (last comma after last dot)
+    if (tok.includes(",") && tok.lastIndexOf(",") > tok.lastIndexOf(".")) {
+      norm = tok.replace(/\./g, "").replace(",", ".");
+    } else {
+      // US "4,235.00" or plain "4235"
+      norm = tok.replace(/,/g, "");
+    }
+    const n = parseFloat(norm);
+    if (!Number.isNaN(n) && n > best) best = n;
+  }
+  return best;
+}
+
+export function resolveWooPrice(p: WooProduct): string {
+  // 1) raw price, only if numerically > 0 ("0" string is truthy in JS)
+  const direct = parseFloat(p.price ?? "");
+  if (!Number.isNaN(direct) && direct > 0) return String(direct);
+  // 2) bundle_price.price.min.incl_tax (fallback excl_tax)
+  const bp =
+    p.bundle_price?.price?.min?.incl_tax ??
+    p.bundle_price?.price?.min?.excl_tax;
+  const bpNum = parseFloat(bp ?? "");
+  if (!Number.isNaN(bpNum) && bpNum > 0) return String(bpNum);
+  // 3) parse price_html (locale-rendered fallback)
+  const fromHtml = parsePriceFromHtml(p.price_html);
+  if (fromHtml > 0) return String(fromHtml);
+  // 4) give up
+  return "0";
+}
+
+// TODO: compareAtPrice — Woo bundles expose bundle_price.regular_price.min.incl_tax.
+// Surface only when regular > price (real discount). ShopifyVariant has no
+// compareAtPrice field today; omit until the type is extended.
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Categories → Collections
 
 export function adaptCategory(c: WooCategory): ShopifyCollection {
