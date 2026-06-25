@@ -14,9 +14,18 @@ const ALLOWED_PATHS: RegExp[] = [
   /^products\/\d+\/variations$/,
 ];
 
-// In-memory cache (per edge-function instance). TTL 60s.
-const CACHE_TTL_MS = 60_000;
-const cache = new Map<string, { expires: number; status: number; body: string; contentType: string }>();
+// In-memory cache (per edge-function instance). Fresh TTL + stale fallback.
+const CACHE_TTL_MS = 5 * 60_000; // 5 min fresh
+const STALE_TTL_MS = 60 * 60_000; // 1 hr stale fallback when upstream errors
+const cache = new Map<string, { expires: number; staleUntil: number; status: number; body: string; contentType: string }>();
+
+// Simple in-flight dedupe so concurrent identical requests don't multiply upstream load.
+const inflight = new Map<string, Promise<Response>>();
+
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
 
 function jsonResponse(status: number, body: unknown) {
   return new Response(JSON.stringify(body), {
@@ -74,27 +83,83 @@ Deno.serve(async (req) => {
     });
   }
 
-  try {
-    const upstream = await fetch(target, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "X-Connection-Api-Key": WOOCOMMERCE_API_KEY,
-      },
-    });
-    const contentType = upstream.headers.get("Content-Type") ?? "application/json";
-    const body = await upstream.text();
+  // Dedupe concurrent identical fetches
+  const existing = inflight.get(cacheKey);
+  if (existing) return existing.then((r) => r.clone());
 
-    if (upstream.ok) {
-      cache.set(cacheKey, { expires: now + CACHE_TTL_MS, status: upstream.status, body, contentType });
+  const work = (async (): Promise<Response> => {
+    let lastStatus = 0;
+    let lastBody = "";
+    let lastContentType = "application/json";
+    // Retry once on 429/403 (rate limit / bot challenge) with small backoff
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const upstream = await fetch(target, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "X-Connection-Api-Key": WOOCOMMERCE_API_KEY,
+          },
+        });
+        lastContentType = upstream.headers.get("Content-Type") ?? "application/json";
+        lastBody = await upstream.text();
+        lastStatus = upstream.status;
+
+        if (upstream.ok) {
+          cache.set(cacheKey, {
+            expires: Date.now() + CACHE_TTL_MS,
+            staleUntil: Date.now() + STALE_TTL_MS,
+            status: upstream.status,
+            body: lastBody,
+            contentType: lastContentType,
+          });
+          return new Response(lastBody, {
+            status: upstream.status,
+            headers: { ...corsHeaders, "Content-Type": lastContentType, "X-Cache": "MISS" },
+          });
+        }
+
+        if (upstream.status === 429 || upstream.status === 403) {
+          if (attempt === 0) {
+            await sleep(400 + Math.random() * 400);
+            continue;
+          }
+        } else {
+          break;
+        }
+      } catch (err) {
+        lastStatus = 502;
+        lastBody = JSON.stringify({ error: "Upstream fetch failed", detail: String(err) });
+        lastContentType = "application/json";
+        if (attempt === 0) {
+          await sleep(300);
+          continue;
+        }
+      }
     }
 
-    return new Response(body, {
-      status: upstream.status,
-      headers: { ...corsHeaders, "Content-Type": contentType, "X-Cache": "MISS" },
+    // Serve stale cache on upstream failure to keep the UI working.
+    if (cached && cached.staleUntil > Date.now()) {
+      return new Response(cached.body, {
+        status: cached.status,
+        headers: { ...corsHeaders, "Content-Type": cached.contentType, "X-Cache": "STALE" },
+      });
+    }
+
+    // Return 200 with a structured fallback signal so the client doesn't blank-screen.
+    return jsonResponse(200, {
+      error: lastStatus === 429 ? "rate_limited" : lastStatus === 403 ? "blocked" : "upstream_error",
+      fallback: true,
+      upstream_status: lastStatus,
     });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return jsonResponse(502, { error: "Upstream fetch failed", detail: message });
+  })();
+
+  inflight.set(cacheKey, work);
+  try {
+    const res = await work;
+    return res.clone();
+  } finally {
+    inflight.delete(cacheKey);
   }
 });
+
