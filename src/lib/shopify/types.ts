@@ -12,6 +12,11 @@ export interface ShopifyMoney {
   currencyCode: string;
 }
 
+/**
+ * Variant shape consumed by the app. Originally Shopify-only; now carries
+ * optional WooCommerce metadata used by the Store API checkout (cartStore +
+ * woo-checkout). Optional so the Shopify path stays type-compatible.
+ */
 export interface ShopifyVariant {
   id: string;
   title: string;
@@ -20,6 +25,14 @@ export interface ShopifyVariant {
   price: ShopifyMoney;
   selectedOptions: Array<{ name: string; value: string }>;
   image?: ShopifyImage | null;
+  /** WooCommerce parent product id (numeric, as in REST). */
+  wooParentProductId?: number;
+  /** WooCommerce variation id (numeric). Null for simple/bundle products. */
+  wooVariationId?: number | null;
+  /** Kind hint for the Store API add-item payload. */
+  wooKind?: "simple" | "variation" | "bundle";
+  /** Attributes for variable products, slugified (e.g. pa_acabamento=quartzo). */
+  wooAttributes?: Array<{ slug: string; value: string }>;
 }
 
 export interface ShopifyMetafield {

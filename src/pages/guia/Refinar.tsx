@@ -62,7 +62,7 @@ export default function GuiaRefinar() {
   const { handle } = useParams();
   const [params, setParams] = useSearchParams();
   const [quoteOpen, setQuoteOpen] = useState(false);
-  const { addBundle, getCheckoutUrl, isLoading: cartLoading } = useCartStore();
+  const { addBundle, isLoading: cartLoading } = useCartStore();
 
   const found = useMemo(() => (handle ? findConjunto(handle) : null), [handle]);
   const acabamento = (params.get("acabamento") as Acabamento | null) ?? "moledo";
@@ -172,7 +172,6 @@ export default function GuiaRefinar() {
         variantTitle?: string;
       },
     ): CartItem => ({
-      lineId: null,
       productHandle: it.productHandle || it.codigo || it.id,
       productTitle: it.nome,
       productImage: it.imageUrl ?? null,
@@ -223,29 +222,31 @@ export default function GuiaRefinar() {
     }
     const dropped = quoteItems.length - purchasable.length;
     try {
-      await addBundle(purchasable.map(({ lineId: _lineId, ...item }) => item));
-      const checkoutUrl = getCheckoutUrl();
-      if (!checkoutUrl) {
+      addBundle(purchasable);
+      const { buildWooCheckoutSession } = await import("@/lib/woo-checkout");
+      const result = await buildWooCheckoutSession(purchasable);
+      if (result.skipped.length > 0) {
         void reportError({
           source: "refinar.finalizar-compra",
-          message: "Checkout URL ausente após addBundle",
-          context: { ...baseContext, dropped },
+          message: "Algumas linhas falharam no Store API",
+          context: { ...baseContext, dropped, skipped: result.skipped },
         });
-        toast.error("Não foi possível abrir o checkout. Tente novamente em instantes.");
-        return;
+        toast.message(
+          `${result.skipped.length} peça(s) não puderam ser adicionadas: ${result.skipped.map((s) => s.productTitle).join(", ")}`,
+        );
       }
       if (dropped > 0) {
         toast.message(`${dropped} peça(s) sob consulta foram retiradas do checkout. Solicite o orçamento separadamente para incluí-las.`);
       }
-      window.open(checkoutUrl, "_blank", "noopener,noreferrer");
+      window.open(result.checkoutUrl, "_blank", "noopener,noreferrer");
     } catch (e) {
       void reportError({
         source: "refinar.finalizar-compra",
-        message: "addBundle falhou",
+        message: "addBundle/checkout falhou",
         error: e,
         context: { ...baseContext, dropped },
       });
-      toast.error("Erro ao adicionar ao carrinho. Tente novamente.");
+      toast.error("Erro ao montar carrinho. Tente novamente.");
     }
   };
 

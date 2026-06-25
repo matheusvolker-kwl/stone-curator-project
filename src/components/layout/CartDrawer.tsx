@@ -26,8 +26,7 @@ export default function CartDrawer({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, syncCart } =
-    useCartStore();
+  const { items, isLoading, updateQuantity, removeItem } = useCartStore();
   // (auth context obtained below)
   const [quoteOpen, setQuoteOpen] = useState(false);
   const totalQty = items.reduce((s, i) => s + i.quantity, 0);
@@ -35,10 +34,6 @@ export default function CartDrawer({
   const currency = items[0]?.price.currencyCode ?? "BRL";
   const meetsMinimum = subtotal >= MIN_ORDER;
   const savedToastShownRef = useRef(false);
-
-  useEffect(() => {
-    if (open) syncCart();
-  }, [open, syncCart]);
 
   // "Sua composição foi salva" — uma vez por sessão, 5s após mudança com itens.
   useEffect(() => {
@@ -89,11 +84,17 @@ export default function CartDrawer({
     })();
 
     try {
-      // Sincroniza com Shopify e pega checkoutUrl persistido no store
-      await syncCart();
-      const checkoutUrl = useCartStore.getState().checkoutUrl;
+      // Monta a sessão WooCommerce via Store API (browser-side, multi-item).
+      const { buildWooCheckoutSession } = await import("@/lib/woo-checkout");
+      const result = await buildWooCheckoutSession(items);
 
-      if (!checkoutUrl) {
+      if (result.skipped.length > 0) {
+        console.warn("[checkout] skipped lines", result.skipped);
+        toast.message(
+          `${result.skipped.length} peça(s) não foram adicionadas: ${result.skipped.map((s) => s.productTitle).join(", ")}`,
+        );
+      }
+      if (result.results.every((r) => !r.ok)) {
         toast.error("Não foi possível abrir o checkout", {
           description: "Atualize a página e tente novamente, ou fale conosco no WhatsApp.",
         });
@@ -101,7 +102,7 @@ export default function CartDrawer({
       }
 
       onOpenChange(false);
-      window.location.href = checkoutUrl; // mesma aba
+      window.location.href = result.checkoutUrl;
     } catch (e) {
       console.error(e);
       toast.error("Instabilidade no checkout", {
@@ -272,10 +273,10 @@ export default function CartDrawer({
             {isApproved ? (
               <Button
                 onClick={handleCheckout}
-                disabled={isLoading || isSyncing || checkoutLoading || !meetsMinimum}
+                disabled={isLoading || checkoutLoading || !meetsMinimum}
                 className="group w-full h-14 bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-xs uppercase tracking-[0.25em] rounded-none shadow-[0_18px_40px_-20px_rgba(27,38,33,0.6)] disabled:opacity-50 transition-all"
               >
-                {isLoading || isSyncing || checkoutLoading ? (
+                {isLoading || checkoutLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <>

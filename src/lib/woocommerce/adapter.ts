@@ -120,6 +120,13 @@ function buildVariantsFromVariations(
   p: WooProduct,
   variations: WooVariation[],
 ): { edges: Array<{ node: ShopifyVariant }> } {
+  // Map attribute display name → slug (e.g. "Acabamento" → "pa_acabamento")
+  // when the parent product carries it. Falls back to the display name, which
+  // the Store API also accepts.
+  const slugByName = new Map<string, string>();
+  for (const a of p.attributes ?? []) {
+    if (a.name && a.slug) slugByName.set(a.name, a.slug);
+  }
   const edges = variations.map((v) => ({
     node: {
       id: `gid://woo/variation/${v.id}`,
@@ -132,6 +139,13 @@ function buildVariantsFromVariations(
         value: a.option ?? "",
       })),
       image: v.image ? img(v.image) : null,
+      wooParentProductId: p.id,
+      wooVariationId: v.id,
+      wooKind: "variation",
+      wooAttributes: (v.attributes ?? []).map((a) => ({
+        slug: slugByName.get(a.name) ?? a.name,
+        value: a.option ?? "",
+      })),
     } satisfies ShopifyVariant,
   }));
   return { edges };
@@ -149,6 +163,10 @@ function buildSyntheticSimpleVariant(p: WooProduct): { edges: Array<{ node: Shop
           price: money(resolveWooPrice(p)),
           selectedOptions: [],
           image: p.images?.[0] ? img(p.images[0]) : null,
+          wooParentProductId: p.id,
+          wooVariationId: null,
+          wooKind: "simple",
+          wooAttributes: [],
         },
       },
     ],
@@ -235,6 +253,10 @@ export function adaptAcabamentoGroup(group: AcabamentoGroup): ShopifyProductNode
       price: money(resolveWooPrice(m.product)),
       selectedOptions: [{ name: "Acabamento", value: m.acabamento }],
       image: m.product.images?.[0] ? img(m.product.images[0]) : null,
+      wooParentProductId: m.product.id,
+      wooVariationId: null,
+      wooKind: "bundle",
+      wooAttributes: [],
     };
     return { node };
   });
