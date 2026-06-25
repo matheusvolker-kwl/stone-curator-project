@@ -253,6 +253,10 @@ export function adaptAcabamentoGroup(group: AcabamentoGroup): ShopifyProductNode
       price: money(resolveWooPrice(m.product)),
       selectedOptions: [{ name: "Acabamento", value: m.acabamento }],
       image: m.product.images?.[0] ? img(m.product.images[0]) : null,
+      wooParentProductId: m.product.id,
+      wooVariationId: null,
+      wooKind: "bundle",
+      wooAttributes: [],
     };
     return { node };
   });
