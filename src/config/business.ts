@@ -11,7 +11,8 @@ export const BUSINESS = {
   prazoProducaoLabel: "15 dias úteis após confirmação do pedido",
 
   // Garantia
-  garantiaAnos: 5,
+  garantiaAnos: 1,
+  garantiaLabel: "1 ano",
 
   // Desconto em conjuntos pré-montados
   descontoConjuntosPercent: 3,

@@ -491,7 +491,7 @@ export async function gerarOrcamentoPdf({
     const cond = [
       `Produção em ${BUSINESS.prazoProducaoLabel}.`,
       "Orçamento válido por 7 dias. Sujeito a confirmação de estoque e logística.",
-      `Garantia de ${BUSINESS.garantiaAnos} anos contra defeitos de fabricação.`,
+      `Garantia de ${BUSINESS.garantiaLabel} contra defeitos de fabricação.`,
     ];
     cond.forEach((c) => { doc.text("·  " + c, margin, cursorY); cursorY += 13; });
   }

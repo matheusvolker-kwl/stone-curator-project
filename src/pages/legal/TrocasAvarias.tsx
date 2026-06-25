@@ -39,7 +39,7 @@ export default function TrocasAvarias() {
 
       <h2>Garantia de fabricação</h2>
       <p>
-        5 anos contra defeitos de fabricação a partir da data de emissão da nota fiscal. Cobre
+        1 ano contra defeitos de fabricação a partir da data de emissão da nota fiscal. Cobre
         falhas estruturais e de pintura não atribuíveis a uso indevido, exposição química
         anormal ou intempérie atípica.
       </p>

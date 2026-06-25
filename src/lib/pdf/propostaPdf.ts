@@ -353,7 +353,7 @@ export async function gerarPropostaPdf(opts: PropostaOptions): Promise<jsPDF> {
   if (parcelas && parcelas > 1) condLines.push(`Parcelado em até ${parcelas}× sem juros`);
   condLines.push(`Produção em ${BUSINESS.prazoProducaoLabel}.`);
   condLines.push(`Proposta válida por ${validadeDias} dias a partir da emissão.`);
-  condLines.push(`Garantia de ${BUSINESS.garantiaAnos} anos contra defeitos de fabricação.`);
+  condLines.push(`Garantia de ${BUSINESS.garantiaLabel} contra defeitos de fabricação.`);
 
   const boxH = 26 + condLines.length * 14;
   doc.rect(margin, condBoxStart, pageWidth - margin * 2, boxH, "F");

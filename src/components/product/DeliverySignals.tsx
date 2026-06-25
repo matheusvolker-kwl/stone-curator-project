@@ -33,7 +33,7 @@ export default function DeliverySignals({ variant = "minimal" }: Props) {
           </li>
           <li className="flex items-center gap-2 font-sans text-[12px] text-western-stone-warm/75">
             <ShieldCheck className="h-3 w-3 text-western-stone-warm/55 flex-shrink-0" />
-            Garantia {BUSINESS.garantiaAnos} anos
+            Garantia {BUSINESS.garantiaLabel}
           </li>
         </ul>
       )}

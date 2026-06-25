@@ -106,7 +106,7 @@ const GRUPOS: Grupo[] = [
     itens: [
       {
         q: "Qual a garantia?",
-        a: <>{BUSINESS.garantiaAnos} anos formais contra defeitos de fabricação. Mas o ponto é outro: peças instaladas em 1995 ainda estão em pé. Western não envelhece mal — envelhece melhor. Musgo natural, oxidação ambiental e pátina do tempo fazem com que a peça fique mais convincente como pedra natural.</>,
+        a: <>{BUSINESS.garantiaLabel} formal contra defeitos de fabricação. Mas o ponto é outro: peças instaladas em 1995 ainda estão em pé. Western não envelhece mal — envelhece melhor. Musgo natural, oxidação ambiental e pátina do tempo fazem com que a peça fique mais convincente como pedra natural.</>,
       },
       {
         q: "Manutenção dá trabalho?",
