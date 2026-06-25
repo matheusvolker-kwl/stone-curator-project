@@ -293,7 +293,7 @@ export function adaptAcabamentoGroup(group: AcabamentoGroup): ShopifyProductNode
     productType: canonical.categories?.[0]?.name,
     tags: Array.from(tagSet),
     priceRange: { minVariantPrice: money(String(minPrice || resolveWooPrice(canonical))) },
-    images: { edges: (canonical.images ?? []).map((i) => ({ node: img(i) })) },
+    images: { edges: buildBundleGroupImages(group, canonical).map((node) => ({ node })) },
     variants: { edges: variantEdges },
     options: [{ name: "Acabamento", values: acabamentoValues }],
     collections: { edges: Array.from(collMap.values()).map((node) => ({ node })) },
@@ -305,6 +305,28 @@ export function adaptAcabamentoGroup(group: AcabamentoGroup): ShopifyProductNode
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
+
+/**
+ * For acabamento bundle groups: start with the canonical product's images,
+ * then merge the first image of every other member so the gallery's
+ * findIndex resolves when the user selects a different acabamento variant.
+ */
+function buildBundleGroupImages(
+  group: AcabamentoGroup,
+  canonical: WooProduct,
+): ShopifyImage[] {
+  const out: ShopifyImage[] = (canonical.images ?? []).map(img);
+  const seen = new Set<string>(out.map((i) => i.url).filter(Boolean));
+  for (const m of group.members) {
+    const first = m.product.images?.[0];
+    if (!first) continue;
+    const mi = img(first);
+    if (!mi.url || seen.has(mi.url)) continue;
+    seen.add(mi.url);
+    out.push(mi);
+  }
+  return out;
+}
 
 function stripHtml(html: string): string {
   return html
