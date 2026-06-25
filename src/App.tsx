@@ -58,6 +58,7 @@ const PoliticaEntrega = lazy(() => import("./pages/legal/PoliticaEntrega.tsx"));
 const TrocasAvarias = lazy(() => import("./pages/legal/TrocasAvarias.tsx"));
 const PoliticaPrivacidade = lazy(() => import("./pages/legal/PoliticaPrivacidade.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
+const WooDebug = lazy(() => import("./pages/__WooDebug.tsx"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -92,6 +93,7 @@ const App = () => (
                 <Route path="/guia-de-composicao/composicoes" element={<GuiaComposicoes />} />
                 <Route path="/guia-de-composicao/refinar/:handle" element={<GuiaRefinar />} />
                 <Route path="/guia-de-composicao/finalizar" element={<Navigate to="/guia-de-composicao" replace />} />
+                <Route path="/__woo-debug" element={<WooDebug />} />
                 <Route element={<SiteLayout />}>
                   <Route path="/" element={<Index />} />
                   <Route path="/linhas" element={<Linhas />} />
