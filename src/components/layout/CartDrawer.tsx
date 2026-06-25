@@ -84,11 +84,17 @@ export default function CartDrawer({
     })();
 
     try {
-      // Sincroniza com Shopify e pega checkoutUrl persistido no store
-      await syncCart();
-      const checkoutUrl = useCartStore.getState().checkoutUrl;
+      // Monta a sessão WooCommerce via Store API (browser-side, multi-item).
+      const { buildWooCheckoutSession } = await import("@/lib/woo-checkout");
+      const result = await buildWooCheckoutSession(items);
 
-      if (!checkoutUrl) {
+      if (result.skipped.length > 0) {
+        console.warn("[checkout] skipped lines", result.skipped);
+        toast.message(
+          `${result.skipped.length} peça(s) não foram adicionadas: ${result.skipped.map((s) => s.productTitle).join(", ")}`,
+        );
+      }
+      if (result.results.every((r) => !r.ok)) {
         toast.error("Não foi possível abrir o checkout", {
           description: "Atualize a página e tente novamente, ou fale conosco no WhatsApp.",
         });
@@ -96,7 +102,7 @@ export default function CartDrawer({
       }
 
       onOpenChange(false);
-      window.location.href = checkoutUrl; // mesma aba
+      window.location.href = result.checkoutUrl;
     } catch (e) {
       console.error(e);
       toast.error("Instabilidade no checkout", {
