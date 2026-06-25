@@ -255,7 +255,7 @@ export function adaptAcabamentoGroup(group: AcabamentoGroup): ShopifyProductNode
     descriptionHtml: canonical.description ?? "",
     productType: canonical.categories?.[0]?.name,
     tags: Array.from(tagSet),
-    priceRange: { minVariantPrice: money(minPrice || canonical.price) },
+    priceRange: { minVariantPrice: money(String(minPrice || resolveWooPrice(canonical))) },
     images: { edges: (canonical.images ?? []).map((i) => ({ node: img(i) })) },
     variants: { edges: variantEdges },
     options: [{ name: "Acabamento", values: acabamentoValues }],
