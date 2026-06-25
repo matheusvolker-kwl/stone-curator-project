@@ -273,10 +273,10 @@ export default function CartDrawer({
             {isApproved ? (
               <Button
                 onClick={handleCheckout}
-                disabled={isLoading || isSyncing || checkoutLoading || !meetsMinimum}
+                disabled={isLoading || checkoutLoading || !meetsMinimum}
                 className="group w-full h-14 bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-xs uppercase tracking-[0.25em] rounded-none shadow-[0_18px_40px_-20px_rgba(27,38,33,0.6)] disabled:opacity-50 transition-all"
               >
-                {isLoading || isSyncing || checkoutLoading ? (
+                {isLoading || checkoutLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <>
