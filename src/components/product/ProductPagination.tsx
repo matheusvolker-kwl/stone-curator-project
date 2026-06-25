@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { fetchCollection } from "@/lib/datasource";
-import { cdnImg } from "@/lib/shopify/client";
+import { cdnImg } from "@/lib/catalog/client";
 
 interface Props {
   collectionHandle?: string;

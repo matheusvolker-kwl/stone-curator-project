@@ -6,7 +6,7 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { useAuth } from "@/hooks/useAuth";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { fetchProduct } from "@/lib/datasource";
-import { cdnImg } from "@/lib/shopify/client";
+import { cdnImg } from "@/lib/catalog/client";
 import { toast } from "sonner";
 
 interface Props {

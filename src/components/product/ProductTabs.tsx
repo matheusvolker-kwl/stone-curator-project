@@ -3,7 +3,7 @@ import HardFactsCard from "@/components/product/HardFactsCard";
 import WhatsInTheBox from "@/components/product/WhatsInTheBox";
 import { Download, Check } from "lucide-react";
 import { BUSINESS } from "@/config/business";
-import type { ParsedDescription } from "@/lib/shopify/parseDescription";
+import type { ParsedDescription } from "@/lib/catalog/parseDescription";
 
 interface Props {
   parsed: ParsedDescription;

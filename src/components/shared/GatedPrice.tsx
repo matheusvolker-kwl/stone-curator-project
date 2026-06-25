@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Lock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePartnerPricing } from "@/hooks/usePartnerPricing";
-import { formatBRL } from "@/lib/shopify/client";
+import { formatBRL } from "@/lib/catalog/client";
 
 interface Props {
   amount: string | number;

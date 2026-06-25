@@ -3,7 +3,7 @@
 // total final, validade e selo "Proposta oficial Western".
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { formatBRL } from "@/lib/shopify/client";
+import { formatBRL } from "@/lib/catalog/client";
 import { BUSINESS } from "@/config/business";
 import logoHorizontalBranco from "@/assets/brand/logo-horizontal-branco.png";
 import iconePedraBege from "@/assets/brand/icone-pedra-bege-hd.png";

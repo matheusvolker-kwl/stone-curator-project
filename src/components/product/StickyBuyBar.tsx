@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Loader2, Lock, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cdnImg, formatBRL } from "@/lib/shopify/client";
+import { cdnImg, formatBRL } from "@/lib/catalog/client";
 import { useAuth } from "@/hooks/useAuth";
 
 interface Props {

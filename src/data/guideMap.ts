@@ -4,7 +4,7 @@
 // apenas fallback caso a Storefront API falhe. Os handles devem casar
 // exatamente com os produtos da loja Western.
 
-import { SHOPIFY_STORE_PERMANENT_DOMAIN } from "@/lib/shopify/client";
+import { STORE_PUBLIC_URL } from "@/lib/catalog/client";
 
 // 5 categorias (achatadas — sem sub-variantes internas)
 export type Tipo =
@@ -120,8 +120,8 @@ export const guideMap: Record<Tipo, SizeMap> = {
   },
 };
 
-export const PRODUCT_BASE_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/products`;
-export const COLLECTION_BASE_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/collections`;
+export const PRODUCT_BASE_URL = `${STORE_PUBLIC_URL}/produto`;
+export const COLLECTION_BASE_URL = `${STORE_PUBLIC_URL}/categoria-produto`;
 export const WHATSAPP_NUMBER = "5511993403485";
 /** Pedido mínimo da loja Western (não por conjunto). */
 export const PEDIDO_MINIMO = 700;
@@ -391,8 +391,8 @@ export interface SketchAssets {
 }
 export function sketchAssetsFor(handle: string): SketchAssets {
   return {
-    pdfUrl: `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/cdn/shop/files/sketches/${handle}.pdf`,
-    skpUrl: `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/cdn/shop/files/sketches/${handle}.skp`,
+    pdfUrl: `${STORE_PUBLIC_URL}/wp-content/uploads/sketches/${handle}.pdf`,
+    skpUrl: `${STORE_PUBLIC_URL}/wp-content/uploads/sketches/${handle}.skp`,
   };
 }
 

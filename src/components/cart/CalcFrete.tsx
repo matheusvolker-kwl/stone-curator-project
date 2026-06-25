@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Loader2, MapPin, Truck } from "lucide-react";
 import { calcFrete, type FreteOpcao } from "@/lib/yampi/client";
 import { useCartStore } from "@/stores/cartStore";
-import { formatBRL } from "@/lib/shopify/client";
+import { formatBRL } from "@/lib/catalog/client";
 import { BUSINESS } from "@/config/business";
 
 type Erro = null | "sem_cobertura" | "api_indisponivel" | "cep_invalido" | "sku_nao_encontrado";

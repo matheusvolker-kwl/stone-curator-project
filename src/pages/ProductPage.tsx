@@ -1,10 +1,10 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProduct } from "@/lib/datasource";
-import { parseProductDescription, extractDimensions } from "@/lib/shopify/parseDescription";
+import { parseProductDescription, extractDimensions } from "@/lib/catalog/parseDescription";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
-import { formatBRL } from "@/lib/shopify/client";
+import { formatBRL } from "@/lib/catalog/client";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Loader2, MessageCircle, ArrowRight } from "lucide-react";
 import { BUSINESS } from "@/config/business";

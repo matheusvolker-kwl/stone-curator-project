@@ -16,7 +16,7 @@ import {
   FileDown,
 } from "lucide-react";
 import { toast } from "sonner";
-import { formatBRL } from "@/lib/shopify/client";
+import { formatBRL } from "@/lib/catalog/client";
 import { downloadPedidoPdf } from "@/lib/pdf/pedidoPdf";
 
 type Status =
