@@ -14,9 +14,18 @@ const ALLOWED_PATHS: RegExp[] = [
   /^products\/\d+\/variations$/,
 ];
 
-// In-memory cache (per edge-function instance). TTL 60s.
-const CACHE_TTL_MS = 60_000;
-const cache = new Map<string, { expires: number; status: number; body: string; contentType: string }>();
+// In-memory cache (per edge-function instance). Fresh TTL + stale fallback.
+const CACHE_TTL_MS = 5 * 60_000; // 5 min fresh
+const STALE_TTL_MS = 60 * 60_000; // 1 hr stale fallback when upstream errors
+const cache = new Map<string, { expires: number; staleUntil: number; status: number; body: string; contentType: string }>();
+
+// Simple in-flight dedupe so concurrent identical requests don't multiply upstream load.
+const inflight = new Map<string, Promise<Response>>();
+
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
 
 function jsonResponse(status: number, body: unknown) {
   return new Response(JSON.stringify(body), {
