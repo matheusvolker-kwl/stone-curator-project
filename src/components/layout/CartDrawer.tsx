@@ -84,25 +84,20 @@ export default function CartDrawer({
     })();
 
     try {
-      // Monta a sessão WooCommerce via Store API (browser-side, multi-item).
-      const { buildWooCheckoutSession } = await import("@/lib/woo-checkout");
-      const result = await buildWooCheckoutSession(items);
-
-      if (result.skipped.length > 0) {
-        console.warn("[checkout] skipped lines", result.skipped);
-        toast.message(
-          `${result.skipped.length} peça(s) não foram adicionadas: ${result.skipped.map((s) => s.productTitle).join(", ")}`,
-        );
-      }
-      if (result.results.every((r) => !r.ok)) {
+      // Hand-off top-level (form POST) → cookies first-party no domínio do Woo.
+      const { submitCheckoutHandoff } = await import("@/lib/woo-checkout");
+      const result = submitCheckoutHandoff(items);
+      if (result.submitted === 0) {
         toast.error("Não foi possível abrir o checkout", {
           description: "Atualize a página e tente novamente, ou fale conosco no WhatsApp.",
         });
         return;
       }
-
+      if (result.skipped > 0) {
+        console.warn("[checkout] skipped lines", result.skipped);
+      }
       onOpenChange(false);
-      window.location.href = result.checkoutUrl;
+      // navegação top-level já foi disparada por form.submit().
     } catch (e) {
       console.error(e);
       toast.error("Instabilidade no checkout", {

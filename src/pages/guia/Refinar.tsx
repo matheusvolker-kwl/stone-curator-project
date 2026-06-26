@@ -223,22 +223,24 @@ export default function GuiaRefinar() {
     const dropped = quoteItems.length - purchasable.length;
     try {
       addBundle(purchasable);
-      const { buildWooCheckoutSession } = await import("@/lib/woo-checkout");
-      const result = await buildWooCheckoutSession(purchasable);
-      if (result.skipped.length > 0) {
+      const { submitCheckoutHandoff } = await import("@/lib/woo-checkout");
+      const result = submitCheckoutHandoff(purchasable);
+      if (result.submitted === 0) {
         void reportError({
           source: "refinar.finalizar-compra",
-          message: "Algumas linhas falharam no Store API",
-          context: { ...baseContext, dropped, skipped: result.skipped },
+          message: "Nenhuma linha enviada ao hand-off",
+          context: { ...baseContext, dropped },
         });
-        toast.message(
-          `${result.skipped.length} peça(s) não puderam ser adicionadas: ${result.skipped.map((s) => s.productTitle).join(", ")}`,
-        );
+        toast.error("Não foi possível abrir o checkout. Tente novamente.");
+        return;
+      }
+      if (result.skipped > 0) {
+        toast.message(`${result.skipped} peça(s) sem ID Woo foram retiradas do checkout.`);
       }
       if (dropped > 0) {
         toast.message(`${dropped} peça(s) sob consulta foram retiradas do checkout. Solicite o orçamento separadamente para incluí-las.`);
       }
-      window.open(result.checkoutUrl, "_blank", "noopener,noreferrer");
+      // navegação top-level já foi disparada por form.submit().
     } catch (e) {
       void reportError({
         source: "refinar.finalizar-compra",
