@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, ChevronLeft, ChevronRight, MessageCircle, ArrowRight } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, MessageCircle, ArrowRight, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import PhoneInput from "@/components/forms/PhoneInput";
 import CnpjInput from "@/components/forms/CnpjInput";
@@ -14,12 +13,22 @@ import EmailInput from "@/components/forms/EmailInput";
 import PasswordField from "@/components/forms/PasswordField";
 import SegmentoSelect, { SEGMENTOS } from "@/components/forms/SegmentoSelect";
 import FieldLabel from "@/components/forms/FieldLabel";
+import CartaoCnpjUpload from "@/components/forms/CartaoCnpjUpload";
 import {
   cnpjSchema, phoneBRSchema, cepSchema, emailSchema, passwordSchema, UF_LIST,
   normalizeText, focusFirstInvalid,
 } from "@/lib/forms/br";
-import { useRef } from "react";
 import { z } from "zod";
+
+type CredDecisao = "aprovado" | "analise" | "reprovado" | "solicitar_cartao";
+interface CredResult {
+  decisao: CredDecisao;
+  motivo?: string;
+  protocolo?: string | null;
+  empresa?: string | null;
+  situacao?: string | null;
+}
+
 
 const CARGOS = ["Sócio / Diretor", "Arquiteto responsável", "Comprador", "Gerente comercial", "Outro"];
 
