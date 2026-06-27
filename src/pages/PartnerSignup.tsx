@@ -118,17 +118,25 @@ export default function PartnerSignup() {
   };
 
   const callCredenciar = async (userId: string | null, opts: { sem_cartao?: boolean; card_path?: string | null } = {}) => {
+    // verify_jwt=true: a função usa o sub do JWT como user_id. Garantimos que há sessão ativa.
+    const { data: sess } = await supabase.auth.getSession();
+    if (!sess.session) {
+      throw new Error(
+        "Sua conta foi criada, mas é necessário confirmar o e-mail antes de concluir o credenciamento. " +
+        "Acesse o link enviado e faça login para finalizar.",
+      );
+    }
     const { data, error } = await supabase.functions.invoke<CredResult>("credenciar", {
       body: {
         cnpj: f.cnpj,
         nome: f.nome,
         email: f.email,
-        user_id: userId ?? undefined,
         sem_cartao: opts.sem_cartao ?? false,
         card_path: opts.card_path ?? undefined,
       },
     });
     if (error) throw error;
+    void userId;
     return data!;
   };
 
