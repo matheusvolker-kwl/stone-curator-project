@@ -86,6 +86,21 @@ Deno.serve(async (req) => {
     });
   }
 
+  // Stale-while-revalidate: serve stale immediately, kick off background refresh once.
+  if (cached && cached.staleUntil > now) {
+    if (!revalidating.has(cacheKey) && !inflight.has(cacheKey)) {
+      revalidating.add(cacheKey);
+      // fire-and-forget; result lands in cache for the next request.
+      queueMicrotask(() => {
+        void revalidate(cacheKey, target).finally(() => revalidating.delete(cacheKey));
+      });
+    }
+    return new Response(cached.body, {
+      status: cached.status,
+      headers: { ...corsHeaders, "Content-Type": cached.contentType, "X-Cache": "SWR" },
+    });
+  }
+
   // Dedupe concurrent identical fetches
   const existing = inflight.get(cacheKey);
   if (existing) return existing.then((r) => r.clone());
