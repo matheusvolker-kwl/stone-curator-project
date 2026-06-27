@@ -18,8 +18,9 @@ import { cn } from "@/lib/utils";
 import PhoneInput from "@/components/forms/PhoneInput";
 import EmailInput from "@/components/forms/EmailInput";
 import FieldLabel from "@/components/forms/FieldLabel";
-import { phoneBRSchema, emailSchema, UF_LIST } from "@/lib/forms/br";
+import { phoneBRSchema, emailSchema, UF_LIST, normalizeText, focusFirstInvalid } from "@/lib/forms/br";
 import { z } from "zod";
+import { useRef } from "react";
 
 const PERFIS = ["Arquiteto", "Paisagista", "Cliente final", "Lojista", "Construtora", "Outro"];
 const HORARIOS = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00"];
@@ -60,6 +61,7 @@ export default function AgendarVisita() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
 
@@ -75,12 +77,14 @@ export default function AgendarVisita() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const r = schema.safeParse(f);
+    const normalized = { ...f, nome: normalizeText(f.nome) };
+    const r = schema.safeParse(normalized);
     if (!r.success) {
       const errs: Record<string, string> = {};
       r.error.issues.forEach((i) => (errs[i.path.join(".")] = i.message));
       setErrors(errs);
       toast.error("Confira os campos.");
+      focusFirstInvalid(formRef.current, errs);
       return;
     }
     const validSlots = f.slots.filter((s) => s.date && s.hora);
@@ -88,6 +92,7 @@ export default function AgendarVisita() {
       toast.error("Sugira ao menos uma data e horário.");
       return;
     }
+    setF(normalized);
     setErrors({});
     setLoading(true);
     const datasFmt = validSlots
@@ -158,7 +163,7 @@ export default function AgendarVisita() {
           {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · {BUSINESS.horarioAtelie} · Retirada gratuita
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
           <div>
             <FieldLabel htmlFor="nome">Nome</FieldLabel>
             <Input id="nome" value={f.nome} onChange={(e) => set("nome", e.target.value)} required

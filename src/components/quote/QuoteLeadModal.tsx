@@ -10,7 +10,8 @@ import { Loader2, FileDown, Send, CheckCircle2, MessageCircle, UserCheck } from 
 import { BUSINESS } from "@/config/business";
 import PhoneInput from "@/components/forms/PhoneInput";
 import EmailInput from "@/components/forms/EmailInput";
-import { emailSchema, phoneBRSchema } from "@/lib/forms/br";
+import { emailSchema, phoneBRSchema, normalizeText, focusFirstInvalid } from "@/lib/forms/br";
+import { useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { submitQuoteLead, type QuoteOrigem } from "@/lib/leads";
@@ -19,7 +20,7 @@ import type { CartItem } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/catalog/client";
 
 const baseSchema = z.object({
-  nome: z.string().trim().min(2, "Informe seu nome").max(120),
+  nome: z.string().transform(normalizeText).pipe(z.string().min(2, "Informe seu nome").max(120)),
   email: emailSchema,
   telefone: phoneBRSchema,
   empresa: z.string().trim().max(120).optional().or(z.literal("")),
@@ -71,6 +72,7 @@ export default function QuoteLeadModal({
   const [numero, setNumero] = useState<string>("");
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
   const [pdfStored, setPdfStored] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -114,6 +116,7 @@ export default function QuoteLeadModal({
         errs[i.path[0] as string] = i.message;
       });
       setErrors(errs);
+      focusFirstInvalid(formRef.current, errs);
       return;
     }
     setSubmitting(true);
@@ -264,7 +267,7 @@ export default function QuoteLeadModal({
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 pt-2">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 pt-2" noValidate>
             {isLogged ? (
               <div className="flex items-start gap-3 p-3 bg-western-green-deep/5 border border-western-green-deep/15">
                 <UserCheck className="h-4 w-4 text-western-green-deep mt-0.5 flex-shrink-0" />

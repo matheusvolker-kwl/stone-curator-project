@@ -10,8 +10,9 @@ import PhoneInput from "@/components/forms/PhoneInput";
 import EmailInput from "@/components/forms/EmailInput";
 import CepInput from "@/components/forms/CepInput";
 import FieldLabel from "@/components/forms/FieldLabel";
-import { emailSchema, phoneBRSchema, cepSchema, UF_LIST } from "@/lib/forms/br";
+import { emailSchema, phoneBRSchema, cepSchema, UF_LIST, normalizeText, focusFirstInvalid } from "@/lib/forms/br";
 import { z } from "zod";
+import { useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
 const PERFIS = ["Arquiteto", "Paisagista", "Lojista", "Construtora", "Cliente final"];
@@ -54,6 +55,7 @@ export default function PedirAmostras() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
 
@@ -88,14 +90,17 @@ export default function PedirAmostras() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const r = schema.safeParse(f);
+    const normalized = { ...f, nome: normalizeText(f.nome) };
+    const r = schema.safeParse(normalized);
     if (!r.success) {
       const errs: Record<string, string> = {};
       r.error.issues.forEach((i) => (errs[i.path.join(".")] = i.message));
       setErrors(errs);
       toast.error("Confira os campos.");
+      focusFirstInvalid(formRef.current, errs);
       return;
     }
+    setF(normalized);
     setErrors({});
     setLoading(true);
     const { error } = await supabase.from("leads").insert({
@@ -182,7 +187,7 @@ export default function PedirAmostras() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
           <div>
             <FieldLabel htmlFor="nome">
               Nome {isLocked && <Lock className="h-3 w-3 inline ml-1 text-western-stone-warm/60" />}
@@ -240,7 +245,7 @@ export default function PedirAmostras() {
                     cidade: d.localidade || p.cidade,
                     estado: d.uf || p.estado,
                   }))}
-                  required error={errors.cep} />
+                  focusNextId="numero" required error={errors.cep} />
               </div>
               <div className="sm:col-span-2">
                 <FieldLabel htmlFor="endereco">Logradouro</FieldLabel>

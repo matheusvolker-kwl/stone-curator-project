@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2, ShieldCheck, Clock, XCircle } from "lucide-react";
+import CnpjInput from "@/components/forms/CnpjInput";
+import PhoneInput from "@/components/forms/PhoneInput";
+import { passwordSchema } from "@/lib/forms/br";
 
 export default function PartnerAccount() {
   const { user, signOut, refresh, partnerStatus, empresa, isAdmin } = useAuth();
@@ -64,8 +67,9 @@ export default function PartnerAccount() {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPassword.length < 8) {
-      toast.error("Use ao menos 8 caracteres.");
+    const pw = passwordSchema.safeParse(newPassword);
+    if (!pw.success) {
+      toast.error(pw.error.issues[0]?.message ?? "Senha inválida.");
       return;
     }
     setPwLoading(true);
@@ -150,14 +154,20 @@ export default function PartnerAccount() {
 
         <section className="mb-14">
           <h2 className="font-display text-2xl text-western-green-deep mb-6">Dados cadastrais</h2>
-          <form onSubmit={handleSave} className="space-y-5">
-            <Row label="Razão social" value={profile.empresa} onChange={(v) => setProfile((p) => ({ ...p, empresa: v }))} />
-            <Row label="CNPJ" value={profile.cnpj} onChange={(v) => setProfile((p) => ({ ...p, cnpj: v }))} />
-            <Row label="Segmento" value={profile.segmento} onChange={(v) => setProfile((p) => ({ ...p, segmento: v }))} />
-            <Row label="Responsável" value={profile.nome} onChange={(v) => setProfile((p) => ({ ...p, nome: v }))} />
-            <Row label="Telefone" value={profile.telefone} onChange={(v) => setProfile((p) => ({ ...p, telefone: v }))} />
-            <Row label="Cidade" value={profile.cidade} onChange={(v) => setProfile((p) => ({ ...p, cidade: v }))} />
-            <Row label="Site / Instagram" value={profile.site} onChange={(v) => setProfile((p) => ({ ...p, site: v }))} />
+          <form onSubmit={handleSave} className="space-y-5" noValidate>
+            <Row label="Razão social" id="empresa" value={profile.empresa} onChange={(v) => setProfile((p) => ({ ...p, empresa: v }))} />
+            <div>
+              <Label htmlFor="cnpj" className="text-eyebrow mb-3 block">CNPJ</Label>
+              <CnpjInput id="cnpj" value={profile.cnpj} onChange={(v) => setProfile((p) => ({ ...p, cnpj: v }))} />
+            </div>
+            <Row label="Segmento" id="segmento" value={profile.segmento} onChange={(v) => setProfile((p) => ({ ...p, segmento: v }))} />
+            <Row label="Responsável" id="nome" value={profile.nome} onChange={(v) => setProfile((p) => ({ ...p, nome: v }))} />
+            <div>
+              <Label htmlFor="telefone" className="text-eyebrow mb-3 block">Telefone</Label>
+              <PhoneInput id="telefone" value={profile.telefone} onChange={(v) => setProfile((p) => ({ ...p, telefone: v }))} />
+            </div>
+            <Row label="Cidade" id="cidade" value={profile.cidade} onChange={(v) => setProfile((p) => ({ ...p, cidade: v }))} />
+            <Row label="Site / Instagram" id="site" value={profile.site} onChange={(v) => setProfile((p) => ({ ...p, site: v }))} />
             <Button
               type="submit"
               disabled={saving}
@@ -218,11 +228,12 @@ export default function PartnerAccount() {
   );
 }
 
-function Row({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+function Row({ label, id, value, onChange }: { label: string; id?: string; value: string; onChange: (v: string) => void }) {
   return (
     <div>
-      <Label className="text-eyebrow mb-3 block">{label}</Label>
+      <Label htmlFor={id} className="text-eyebrow mb-3 block">{label}</Label>
       <Input
+        id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold"

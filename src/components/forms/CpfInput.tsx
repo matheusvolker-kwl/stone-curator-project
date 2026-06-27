@@ -1,5 +1,5 @@
 import { IMaskInput } from "react-imask";
-import { isValidCNPJ } from "@/lib/forms/br";
+import { isValidCPF } from "@/lib/forms/br";
 
 interface Props {
   value: string;
@@ -11,14 +11,14 @@ interface Props {
   error?: string;
 }
 
-export default function CnpjInput({ value, onChange, onBlur, id, name, required, error }: Props) {
-  const showInvalid = !error && value.length === 14 && !isValidCNPJ(value);
-  const finalError = error ?? (showInvalid ? "CNPJ inválido" : undefined);
+export default function CpfInput({ value, onChange, onBlur, id, name, required, error }: Props) {
+  const showInvalid = !error && value.length === 11 && !isValidCPF(value);
+  const finalError = error ?? (showInvalid ? "CPF inválido" : undefined);
   const describedBy = finalError && id ? `${id}-error` : undefined;
   return (
     <div>
       <IMaskInput
-        mask="00.000.000/0000-00"
+        mask="000.000.000-00"
         definitions={{ "0": /\d/ }}
         unmask={true}
         value={value}
@@ -27,7 +27,7 @@ export default function CnpjInput({ value, onChange, onBlur, id, name, required,
         id={id}
         name={name}
         inputMode="numeric"
-        placeholder="00.000.000/0000-00"
+        placeholder="000.000.000-00"
         required={required}
         aria-invalid={!!finalError}
         aria-describedby={describedBy}

@@ -16,7 +16,9 @@ import SegmentoSelect, { SEGMENTOS } from "@/components/forms/SegmentoSelect";
 import FieldLabel from "@/components/forms/FieldLabel";
 import {
   cnpjSchema, phoneBRSchema, cepSchema, emailSchema, passwordSchema, UF_LIST,
+  normalizeText, focusFirstInvalid,
 } from "@/lib/forms/br";
+import { useRef } from "react";
 import { z } from "zod";
 
 const CARGOS = ["Sócio / Diretor", "Arquiteto responsável", "Comprador", "Gerente comercial", "Outro"];
@@ -81,19 +83,23 @@ export default function PartnerSignup() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
+  const formRef = useRef<HTMLFormElement>(null);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) =>
     setF((p) => ({ ...p, [k]: v }));
 
   const goNext = () => {
-    const r = empresaSchema.safeParse(f);
+    const normalized = { ...f, empresa: normalizeText(f.empresa) };
+    const r = empresaSchema.safeParse(normalized);
     if (!r.success) {
       const errs: Record<string, string> = {};
       r.error.issues.forEach((i) => (errs[i.path.join(".")] = i.message));
       setErrors(errs);
       toast.error("Confira os campos da empresa.");
+      focusFirstInvalid(formRef.current, errs);
       return;
     }
+    setF(normalized);
     setErrors({});
     setStep(2);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -101,14 +107,17 @@ export default function PartnerSignup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const r = respSchema.safeParse(f);
+    const normalized = { ...f, nome: normalizeText(f.nome) };
+    const r = respSchema.safeParse(normalized);
     if (!r.success) {
       const errs: Record<string, string> = {};
       r.error.issues.forEach((i) => (errs[i.path.join(".")] = i.message));
       setErrors(errs);
       toast.error("Confira os dados de acesso.");
+      focusFirstInvalid(formRef.current, errs);
       return;
     }
+    setF(normalized);
     setErrors({});
     setLoading(true);
     try {
@@ -253,7 +262,7 @@ export default function PartnerSignup() {
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
           {step === 1 && (
             <>
               <div>
@@ -322,6 +331,7 @@ export default function PartnerSignup() {
                           estado: d.uf || p.estado,
                         }));
                       }}
+                      focusNextId="numero"
                       required
                       error={errors.cep}
                     />

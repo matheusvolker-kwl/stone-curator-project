@@ -18,9 +18,13 @@ export default function EmailInput({
   value, onChange, onBlur, id, name, placeholder, required, error, autoComplete, readOnly,
 }: Props) {
   const [suggestion, setSuggestion] = useState<string | null>(null);
+  const describedBy = error && id ? `${id}-error` : undefined;
 
   const handleBlur = () => {
-    setSuggestion(suggestEmailFix(value));
+    // normaliza: trim + lowercase
+    const normalized = value.trim().toLowerCase();
+    if (normalized !== value) onChange(normalized);
+    setSuggestion(suggestEmailFix(normalized));
     onBlur?.();
   };
 
@@ -41,6 +45,8 @@ export default function EmailInput({
         readOnly={readOnly}
         autoComplete={autoComplete ?? "email"}
         spellCheck={false}
+        aria-invalid={!!error}
+        aria-describedby={describedBy}
         className={`h-12 w-full bg-transparent border px-3 rounded-none text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none transition-colors ${
           readOnly ? "opacity-70 cursor-not-allowed " : ""
         }${
@@ -62,7 +68,7 @@ export default function EmailInput({
         </button>
       )}
       {error && (
-        <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">
+        <p id={describedBy} className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">
           {error}
         </p>
       )}

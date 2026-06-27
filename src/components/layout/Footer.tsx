@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const newsletterSchema = z.object({
-  email: z.string().trim().email("E-mail inválido").max(320),
+  email: z.string().trim().toLowerCase().email("E-mail inválido").max(320),
   hp: z.string().max(0, "spam"),
 });
 

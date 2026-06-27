@@ -1,7 +1,11 @@
-// Validações & helpers brasileiros — CNPJ, telefone, CEP, e-mail.
+// Validações & helpers brasileiros — CNPJ, CPF, telefone (10/11), CEP (ViaCEP+BrasilAPI),
+// e-mail (normalizado), datas dd/mm/aaaa, normalização de texto, mapeamento Woo.
 import { z } from "zod";
 
 export const onlyDigits = (v: string) => v.replace(/\D/g, "");
+
+/** trim + colapsa espaços duplicados em strings de nome/texto livre. */
+export const normalizeText = (v: string) => v.replace(/\s+/g, " ").trim();
 
 /* ---------------- CNPJ ---------------- */
 export function isValidCNPJ(raw: string): boolean {
@@ -28,16 +32,64 @@ export const cnpjSchema = z
   .refine((v) => v.length === 14, { message: "CNPJ deve ter 14 dígitos" })
   .refine(isValidCNPJ, { message: "CNPJ inválido" });
 
+/* ---------------- CPF ---------------- */
+export function isValidCPF(raw: string): boolean {
+  const cpf = onlyDigits(raw);
+  if (cpf.length !== 11) return false;
+  if (/^(\d)\1+$/.test(cpf)) return false;
+  const calc = (slice: string) => {
+    const len = slice.length + 1;
+    let sum = 0;
+    for (let i = 0; i < slice.length; i++) {
+      sum += parseInt(slice[i], 10) * (len - i);
+    }
+    const r = (sum * 10) % 11;
+    return r === 10 ? 0 : r;
+  };
+  const d1 = calc(cpf.slice(0, 9));
+  const d2 = calc(cpf.slice(0, 10));
+  return d1 === parseInt(cpf[9], 10) && d2 === parseInt(cpf[10], 10);
+}
+
+export const cpfSchema = z
+  .string()
+  .transform(onlyDigits)
+  .refine((v) => v.length === 11, { message: "CPF deve ter 11 dígitos" })
+  .refine(isValidCPF, { message: "CPF inválido" });
+
 /* ---------------- Telefone BR ---------------- */
-/** Aceita 10 (fixo) ou 11 (celular). Retorna apenas os dígitos. */
+/** DDDs ativos no Brasil (ANATEL). */
+const VALID_DDDS = new Set([
+  11, 12, 13, 14, 15, 16, 17, 18, 19,
+  21, 22, 24, 27, 28,
+  31, 32, 33, 34, 35, 37, 38,
+  41, 42, 43, 44, 45, 46, 47, 48, 49,
+  51, 53, 54, 55,
+  61, 62, 63, 64, 65, 66, 67, 68, 69,
+  71, 73, 74, 75, 77, 79,
+  81, 82, 83, 84, 85, 86, 87, 88, 89,
+  91, 92, 93, 94, 95, 96, 97, 98, 99,
+]);
+
+export function isValidPhoneBR(raw: string): boolean {
+  const d = onlyDigits(raw);
+  if (d.length !== 10 && d.length !== 11) return false;
+  const ddd = parseInt(d.slice(0, 2), 10);
+  if (!VALID_DDDS.has(ddd)) return false;
+  // Celular (11 dígitos) precisa começar com 9 no terceiro dígito.
+  if (d.length === 11 && d[2] !== "9") return false;
+  return true;
+}
+
 export const phoneBRSchema = z
   .string()
   .transform(onlyDigits)
   .refine((v) => v.length === 10 || v.length === 11, {
     message: "Informe DDD + número (10 ou 11 dígitos)",
-  });
+  })
+  .refine(isValidPhoneBR, { message: "Telefone inválido (DDD ou formato)" });
 
-/** Formata para exibição: (11) 95896-7088 ou (11) 9589-7088. */
+/** Formata para exibição: (11) 95896-7088 ou (11) 3456-7890. */
 export function formatPhoneBR(raw: string): string {
   const d = onlyDigits(raw);
   if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
@@ -60,23 +112,46 @@ export interface ViaCepResult {
   erro?: boolean;
 }
 
+/** Busca CEP no ViaCEP; em falha, fallback BrasilAPI. Retorna no formato ViaCepResult. */
 export async function fetchCep(cep: string): Promise<ViaCepResult | null> {
   const d = onlyDigits(cep);
   if (d.length !== 8) return null;
+  // 1) ViaCEP
   try {
     const r = await fetch(`https://viacep.com.br/ws/${d}/json/`);
-    const j = (await r.json()) as ViaCepResult;
-    if (j.erro) return null;
-    return j;
+    if (r.ok) {
+      const j = (await r.json()) as ViaCepResult;
+      if (!j.erro && (j.logradouro || j.localidade)) return j;
+    }
   } catch {
-    return null;
+    /* fallback */
   }
+  // 2) BrasilAPI
+  try {
+    const r = await fetch(`https://brasilapi.com.br/api/cep/v1/${d}`);
+    if (r.ok) {
+      const j = (await r.json()) as {
+        cep: string; street?: string; neighborhood?: string; city: string; state: string;
+      };
+      return {
+        cep: j.cep,
+        logradouro: j.street ?? "",
+        bairro: j.neighborhood ?? "",
+        localidade: j.city,
+        uf: j.state,
+      };
+    }
+  } catch {
+    /* sem rede */
+  }
+  return null;
 }
 
 /* ---------------- E-mail ---------------- */
 export const emailSchema = z
   .string()
   .trim()
+  .toLowerCase()
   .min(5, { message: "E-mail muito curto" })
   .max(320, { message: "E-mail muito longo" })
   .email({ message: "E-mail inválido" });
@@ -144,6 +219,24 @@ export const passwordSchema = z
   .min(8, { message: "Mínimo 8 caracteres" })
   .refine((v) => /\d/.test(v), { message: "Inclua ao menos um número" });
 
+/* ---------------- Data dd/mm/aaaa ---------------- */
+/** Valida string dd/mm/aaaa e rejeita datas impossíveis. */
+export function isValidDateBR(raw: string): boolean {
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(raw.trim());
+  if (!m) return false;
+  const d = parseInt(m[1], 10);
+  const mo = parseInt(m[2], 10);
+  const y = parseInt(m[3], 10);
+  if (y < 1900 || y > 2100 || mo < 1 || mo > 12 || d < 1 || d > 31) return false;
+  const dt = new Date(y, mo - 1, d);
+  return dt.getFullYear() === y && dt.getMonth() === mo - 1 && dt.getDate() === d;
+}
+
+export const dateBRSchema = z
+  .string()
+  .trim()
+  .refine(isValidDateBR, { message: "Data inválida (use dd/mm/aaaa)" });
+
 /* ---------------- UFs ---------------- */
 export const UF_LIST = [
   "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
@@ -151,3 +244,51 @@ export const UF_LIST = [
 ] as const;
 
 export type UF = (typeof UF_LIST)[number];
+
+/* ---------------- Hand-off Woo (billing_*) ---------------- */
+export interface BrAddressForm {
+  cep: string; endereco: string; numero: string; complemento?: string;
+  bairro: string; cidade: string; estado: string;
+}
+export interface BrContactForm {
+  nome?: string; email?: string; telefone?: string; cnpj?: string; empresa?: string;
+}
+/** Converte os campos do formulário para o payload esperado pelo checkout Woo. */
+export function toWooBillingPayload(
+  addr: Partial<BrAddressForm>,
+  contact: Partial<BrContactForm> = {},
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (addr.cep) out.billing_postcode = onlyDigits(addr.cep);
+  if (addr.endereco) out.billing_address_1 = addr.endereco;
+  if (addr.numero) out.billing_number = addr.numero;
+  if (addr.complemento) out.billing_address_2 = addr.complemento;
+  if (addr.bairro) out.billing_neighborhood = addr.bairro;
+  if (addr.cidade) out.billing_city = addr.cidade;
+  if (addr.estado) out.billing_state = addr.estado;
+  if (contact.email) out.billing_email = contact.email.toLowerCase().trim();
+  if (contact.telefone) out.billing_phone = onlyDigits(contact.telefone);
+  if (contact.cnpj) out.billing_cnpj = onlyDigits(contact.cnpj);
+  if (contact.empresa) out.billing_company = contact.empresa;
+  if (contact.nome) {
+    const parts = normalizeText(contact.nome).split(" ");
+    out.billing_first_name = parts.shift() ?? "";
+    out.billing_last_name = parts.join(" ");
+  }
+  return out;
+}
+
+/* ---------------- Helper a11y ---------------- */
+/** Foca o primeiro campo inválido dentro do form com base no mapa de erros. */
+export function focusFirstInvalid(
+  formEl: HTMLFormElement | null,
+  errors: Record<string, string>,
+): void {
+  if (!formEl) return;
+  const firstKey = Object.keys(errors).find((k) => errors[k]);
+  if (!firstKey) return;
+  const el =
+    formEl.querySelector<HTMLElement>(`#${CSS.escape(firstKey)}`) ??
+    formEl.querySelector<HTMLElement>(`[name="${CSS.escape(firstKey)}"]`);
+  el?.focus();
+}
