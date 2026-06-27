@@ -142,6 +142,8 @@ const App = () => (
                     <Route path="amostras" element={<AdminSamples />} />
                     <Route path="usuarios" element={<AdminUsers />} />
                     <Route path="pedidos" element={<AdminPedidos />} />
+                    <Route path="credenciamentos" element={<AdminCredenciamentos />} />
+                    <Route path="cnae-whitelist" element={<AdminCnaeWhitelist />} />
                     <Route path="configuracoes" element={<AdminSettings />} />
                   </Route>
                   <Route
