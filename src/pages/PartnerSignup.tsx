@@ -262,7 +262,7 @@ export default function PartnerSignup() {
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
           {step === 1 && (
             <>
               <div>
