@@ -14,16 +14,42 @@ const ALLOWED_PATHS: RegExp[] = [
   /^products\/\d+\/variations$/,
 ];
 
-// In-memory cache (per edge-function instance). Fresh TTL + stale fallback.
-const CACHE_TTL_MS = 5 * 60_000; // 5 min fresh
-const STALE_TTL_MS = 60 * 60_000; // 1 hr stale fallback when upstream errors
+// In-memory cache (per edge-function instance). Stale-while-revalidate.
+// Catalog rarely changes — long TTL with background refresh keeps the home snappy
+// without holding hot data forever in memory.
+const CACHE_TTL_MS = 15 * 60_000; // 15 min fresh
+const STALE_TTL_MS = 24 * 60 * 60_000; // 24 hr stale fallback (served while revalidating, or on upstream error)
 const cache = new Map<string, { expires: number; staleUntil: number; status: number; body: string; contentType: string }>();
+const revalidating = new Set<string>();
 
 // Simple in-flight dedupe so concurrent identical requests don't multiply upstream load.
 const inflight = new Map<string, Promise<Response>>();
 
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
+}
+
+async function revalidate(cacheKey: string, target: string): Promise<void> {
+  try {
+    const upstream = await fetch(target, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "X-Connection-Api-Key": WOOCOMMERCE_API_KEY,
+      },
+    });
+    if (!upstream.ok) return;
+    const body = await upstream.text();
+    cache.set(cacheKey, {
+      expires: Date.now() + CACHE_TTL_MS,
+      staleUntil: Date.now() + STALE_TTL_MS,
+      status: upstream.status,
+      body,
+      contentType: upstream.headers.get("Content-Type") ?? "application/json",
+    });
+  } catch {
+    // keep existing stale entry; next request will SWR again.
+  }
 }
 
 
@@ -80,6 +106,21 @@ Deno.serve(async (req) => {
     return new Response(cached.body, {
       status: cached.status,
       headers: { ...corsHeaders, "Content-Type": cached.contentType, "X-Cache": "HIT" },
+    });
+  }
+
+  // Stale-while-revalidate: serve stale immediately, kick off background refresh once.
+  if (cached && cached.staleUntil > now) {
+    if (!revalidating.has(cacheKey) && !inflight.has(cacheKey)) {
+      revalidating.add(cacheKey);
+      // fire-and-forget; result lands in cache for the next request.
+      queueMicrotask(() => {
+        void revalidate(cacheKey, target).finally(() => revalidating.delete(cacheKey));
+      });
+    }
+    return new Response(cached.body, {
+      status: cached.status,
+      headers: { ...corsHeaders, "Content-Type": cached.contentType, "X-Cache": "SWR" },
     });
   }
 
