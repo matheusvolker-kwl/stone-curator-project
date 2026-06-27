@@ -14,10 +14,13 @@ const ALLOWED_PATHS: RegExp[] = [
   /^products\/\d+\/variations$/,
 ];
 
-// In-memory cache (per edge-function instance). Fresh TTL + stale fallback.
-const CACHE_TTL_MS = 5 * 60_000; // 5 min fresh
-const STALE_TTL_MS = 60 * 60_000; // 1 hr stale fallback when upstream errors
+// In-memory cache (per edge-function instance). Stale-while-revalidate.
+// Catalog rarely changes — long TTL with background refresh keeps the home snappy
+// without holding hot data forever in memory.
+const CACHE_TTL_MS = 15 * 60_000; // 15 min fresh
+const STALE_TTL_MS = 24 * 60 * 60_000; // 24 hr stale fallback (served while revalidating, or on upstream error)
 const cache = new Map<string, { expires: number; staleUntil: number; status: number; body: string; contentType: string }>();
+const revalidating = new Set<string>();
 
 // Simple in-flight dedupe so concurrent identical requests don't multiply upstream load.
 const inflight = new Map<string, Promise<Response>>();
