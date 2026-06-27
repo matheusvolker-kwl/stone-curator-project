@@ -4,7 +4,9 @@ import logoAsset from "@/assets/coming-soon-logo.png.asset.json";
 
 /**
  * Página de pré-lançamento — tela cheia, fora do SiteLayout.
- * Atmosfera dark/luxo, partículas no cursor, sheen no logo, glow respirando.
+ * Coreografia: fundo → bloom do glow → reveal do logo → tagline.
+ * Atmosfera viva: poeira ambiente + reativa, scene breathing,
+ * logo backlit, sheen, parallax, recompensa de interação.
  */
 export default function ComingSoon() {
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -18,29 +20,40 @@ export default function ComingSoon() {
     setReduced(mq.matches);
   }, []);
 
-  // Parallax suave do logo + glow
+  // Parallax + recompensa de interação (proximidade do centro)
   useEffect(() => {
     if (reduced) return;
-    let tx = 0, ty = 0, cx = 0, cy = 0;
+    let cx = 0, cy = 0;
     let mx = 0, my = 0;
+    let proximity = 0; // 0..1, suavizado
+    let targetProx = 0;
     let raf = 0;
 
     const onMove = (e: MouseEvent) => {
       const w = window.innerWidth, h = window.innerHeight;
       mx = (e.clientX / w - 0.5) * -1; // contrário
       my = (e.clientY / h - 0.5) * -1;
+      // distância normalizada até o centro (0 = no centro, 1 = canto)
+      const dx = (e.clientX - w / 2) / (w / 2);
+      const dy = (e.clientY - h / 2) / (h / 2);
+      const d = Math.min(1, Math.hypot(dx, dy));
+      targetProx = 1 - d; // perto do centro -> 1
     };
     window.addEventListener("mousemove", onMove);
 
     const tick = () => {
       cx += (mx - cx) * 0.06;
       cy += (my - cy) * 0.06;
-      tx = cx * 10; ty = cy * 10;
+      proximity += (targetProx - proximity) * 0.05;
+      const tx = cx * 10, ty = cy * 10;
       if (logoRef.current) {
         logoRef.current.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
       }
       if (glowRef.current) {
-        glowRef.current.style.transform = `translate3d(${cx * 24}px, ${cy * 24}px, 0) scale(2.2)`;
+        const reward = 1 + proximity * 0.18; // até +18% de escala
+        glowRef.current.style.transform =
+          `translate3d(${cx * 24}px, ${cy * 24}px, 0) scale(${2.2 * reward})`;
+        glowRef.current.style.setProperty("--cs-reward", String(1 + proximity * 0.35));
       }
       raf = requestAnimationFrame(tick);
     };
@@ -81,24 +94,24 @@ export default function ComingSoon() {
         <rect width="100%" height="100%" filter="url(#cs-noise)" />
       </svg>
 
-      {/* Vinheta */}
+      {/* Vinheta — respira (scene breathing) */}
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-[3]"
+        className="pointer-events-none fixed inset-0 z-[3] cs-vignette"
         style={{
           background:
             "radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.65) 100%)",
         }}
       />
 
-      {/* Poeira reativa */}
+      {/* Poeira (ambiente + reativa) */}
       <DustCanvas />
 
-      {/* Glow âmbar atrás do logo */}
+      {/* Glow âmbar atrás do logo — bloom de entrada + respiração */}
       <div
         ref={glowRef}
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 z-[6] cs-breathe"
+        className="pointer-events-none absolute left-1/2 top-1/2 z-[6] cs-bloom cs-breathe"
         style={{
           width: "60vmin",
           height: "60vmin",
@@ -120,12 +133,12 @@ export default function ComingSoon() {
             src={logoAsset.url}
             alt="WESTERN STORE"
             draggable={false}
+            className="cs-logo-backlit"
             style={{
               display: "block",
               width: "clamp(260px, 42vw, 620px)",
               height: "auto",
-              filter: "drop-shadow(0 0 24px rgba(201,165,126,0.15))",
-              willChange: "transform",
+              willChange: "transform, filter",
             }}
           />
           {/* Sheen */}
@@ -137,31 +150,41 @@ export default function ComingSoon() {
           </div>
         </div>
 
+        {/* Hairline elegante */}
         <div
-          className="mt-10 text-center cs-tagline"
-          style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
-        >
+          aria-hidden="true"
+          className="cs-hairline mt-9"
+          style={{
+            width: "clamp(80px, 9vw, 140px)",
+            height: "1px",
+            background:
+              "linear-gradient(90deg, transparent 0%, rgba(217,184,140,0.55) 50%, transparent 100%)",
+            boxShadow: "0 0 8px rgba(217,184,140,0.35)",
+          }}
+        />
+
+        <div className="mt-7 text-center cs-tagline font-display">
           <p
             className="cs-pulse"
             style={{
               color: "hsl(var(--western-gold))",
-              fontSize: "clamp(11px, 1.1vw, 14px)",
-              letterSpacing: "0.55em",
+              fontSize: "clamp(14px, 1.45vw, 20px)",
+              letterSpacing: "0.45em",
               fontWeight: 500,
               textTransform: "uppercase",
-              textIndent: "0.55em",
+              textIndent: "0.45em",
             }}
           >
             Lançamento em breve
           </p>
           <p
-            className="mt-4"
+            className="mt-3 font-display"
             style={{
-              color: "rgba(217,184,140,0.45)",
-              fontSize: "clamp(10px, 0.85vw, 12px)",
-              letterSpacing: "0.35em",
-              textTransform: "lowercase",
-              textIndent: "0.35em",
+              color: "rgba(217,184,140,0.5)",
+              fontSize: "clamp(12px, 1vw, 15px)",
+              letterSpacing: "0.3em",
+              fontStyle: "italic",
+              textIndent: "0.3em",
             }}
           >
             westernstore.com.br
@@ -170,12 +193,23 @@ export default function ComingSoon() {
       </div>
 
       <style>{`
-        @keyframes cs-breathe-kf {
-          0%, 100% { opacity: 0.85; transform: scale(2.1); }
-          50% { opacity: 1; transform: scale(2.35); }
+        /* ----- Bloom de entrada do glow ----- */
+        @keyframes cs-bloom-kf {
+          0%   { opacity: 0;    transform: scale(0.6); filter: blur(80px); }
+          60%  { opacity: 1;    transform: scale(2.45); filter: blur(44px); }
+          100% { opacity: 0.95; transform: scale(2.2);  filter: blur(44px); }
         }
-        .cs-breathe { animation: cs-breathe-kf 7s ease-in-out infinite; }
+        .cs-bloom { animation: cs-bloom-kf 2.4s cubic-bezier(0.22,1,0.36,1) 0.05s both; }
 
+        /* ----- Respiração contínua do glow (entra após o bloom) ----- */
+        @keyframes cs-breathe-kf {
+          0%, 100% { opacity: calc(0.82 * var(--cs-reward, 1)); }
+          50%      { opacity: calc(1.00 * var(--cs-reward, 1)); }
+        }
+        .cs-breathe { animation: cs-bloom-kf 2.4s cubic-bezier(0.22,1,0.36,1) 0.05s both,
+                                cs-breathe-kf 7s ease-in-out 2.5s infinite; }
+
+        /* ----- Grain drift ----- */
         @keyframes cs-grain-kf {
           0% { transform: translate(0,0); }
           25% { transform: translate(-2%, 1%); }
@@ -185,32 +219,59 @@ export default function ComingSoon() {
         }
         .cs-grain { animation: cs-grain-kf 8s steps(6) infinite; }
 
+        /* ----- Scene breathing (vinheta/exposição) ----- */
+        @keyframes cs-vignette-kf {
+          0%, 100% { opacity: 0.92; }
+          50%      { opacity: 1; }
+        }
+        .cs-vignette { animation: cs-vignette-kf 9.5s ease-in-out infinite; }
+
+        /* ----- Reveal do logo ----- */
         @keyframes cs-logo-reveal-kf {
-          0% { opacity: 0; filter: blur(10px); transform: translateY(14px) scale(0.985); }
-          100% { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+          0%   { opacity: 0; filter: blur(10px); transform: translateY(14px) scale(0.985); }
+          100% { opacity: 1; filter: blur(0);    transform: translateY(0) scale(1); }
         }
         .cs-logo-reveal {
-          animation: cs-logo-reveal-kf 2s cubic-bezier(0.22,1,0.36,1) 0.15s both;
+          animation: cs-logo-reveal-kf 2s cubic-bezier(0.22,1,0.36,1) 0.7s both;
         }
 
+        /* ----- Backlit pulse no drop-shadow do logo (sincroniza com o glow) ----- */
+        @keyframes cs-backlit-kf {
+          0%, 100% { filter: drop-shadow(0 0 18px rgba(201,165,126,0.12)); }
+          50%      { filter: drop-shadow(0 0 34px rgba(212,170,120,0.28)); }
+        }
+        .cs-logo-backlit { animation: cs-backlit-kf 7s ease-in-out 2.7s infinite; }
+
+        /* ----- Hairline ----- */
+        @keyframes cs-hairline-kf {
+          0%   { opacity: 0; transform: scaleX(0.2); }
+          100% { opacity: 1; transform: scaleX(1); }
+        }
+        .cs-hairline {
+          transform-origin: center;
+          animation: cs-hairline-kf 1.4s cubic-bezier(0.22,1,0.36,1) 1.6s both;
+        }
+
+        /* ----- Tagline ----- */
         @keyframes cs-tagline-kf {
-          0% { opacity: 0; transform: translateY(10px); }
+          0%   { opacity: 0; transform: translateY(10px); }
           100% { opacity: 1; transform: translateY(0); }
         }
-        .cs-tagline { animation: cs-tagline-kf 1.4s cubic-bezier(0.22,1,0.36,1) 0.9s both; }
+        .cs-tagline { animation: cs-tagline-kf 1.4s cubic-bezier(0.22,1,0.36,1) 1.9s both; }
 
         @keyframes cs-pulse-kf {
           0%, 100% { opacity: 0.78; }
-          50% { opacity: 1; }
+          50%      { opacity: 1; }
         }
         .cs-pulse { animation: cs-pulse-kf 3.6s ease-in-out infinite; }
 
+        /* ----- Sheen ----- */
         .cs-sheen-mask { mix-blend-mode: screen; }
         @keyframes cs-sheen-kf {
-          0% { transform: translateX(-120%) skewX(-12deg); opacity: 0; }
-          12% { opacity: 0.55; }
-          35% { transform: translateX(220%) skewX(-12deg); opacity: 0; }
-          100% { transform: translateX(220%) skewX(-12deg); opacity: 0; }
+          0%   { transform: translateX(-120%) skewX(-12deg); opacity: 0; }
+          12%  { opacity: 0.55; }
+          35%  { transform: translateX(220%)  skewX(-12deg); opacity: 0; }
+          100% { transform: translateX(220%)  skewX(-12deg); opacity: 0; }
         }
         .cs-sheen {
           position: absolute; top: 0; left: 0; height: 100%; width: 40%;
@@ -219,14 +280,18 @@ export default function ComingSoon() {
             rgba(255,235,200,0.22) 50%,
             rgba(255,255,255,0) 100%);
           filter: blur(4px);
-          animation: cs-sheen-kf 7s ease-in-out infinite;
+          animation: cs-sheen-kf 7s ease-in-out 2.8s infinite;
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .cs-breathe, .cs-grain, .cs-logo-reveal, .cs-tagline, .cs-pulse, .cs-sheen {
+          .cs-breathe, .cs-grain, .cs-vignette, .cs-logo-reveal, .cs-logo-backlit,
+          .cs-hairline, .cs-tagline, .cs-pulse, .cs-sheen, .cs-bloom {
             animation: none !important;
           }
           .cs-logo-reveal { opacity: 1; filter: none; transform: none; }
+          .cs-hairline { opacity: 1; transform: none; }
+          .cs-tagline { opacity: 1; transform: none; }
+          .cs-logo-backlit { filter: drop-shadow(0 0 22px rgba(201,165,126,0.18)); }
         }
       `}</style>
     </div>
