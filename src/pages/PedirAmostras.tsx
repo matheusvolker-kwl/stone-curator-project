@@ -187,7 +187,7 @@ export default function PedirAmostras() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
           <div>
             <FieldLabel htmlFor="nome">
               Nome {isLocked && <Lock className="h-3 w-3 inline ml-1 text-western-stone-warm/60" />}
@@ -245,7 +245,7 @@ export default function PedirAmostras() {
                     cidade: d.localidade || p.cidade,
                     estado: d.uf || p.estado,
                   }))}
-                  required error={errors.cep} />
+                  focusNextId="numero" required error={errors.cep} />
               </div>
               <div className="sm:col-span-2">
                 <FieldLabel htmlFor="endereco">Logradouro</FieldLabel>
