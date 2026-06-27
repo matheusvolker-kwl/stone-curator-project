@@ -3,6 +3,6 @@
 
 export const WOO_STORE_URL =
   (import.meta.env.VITE_WOO_STORE_URL as string | undefined) ??
-  "https://westernstore.com.br";
+  "https://checkout.westernstore.com.br";
 
 export const WOO_STORE_ORIGIN = WOO_STORE_URL.replace(/\/+$/, "");
