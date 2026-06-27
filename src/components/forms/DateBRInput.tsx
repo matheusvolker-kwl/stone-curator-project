@@ -1,33 +1,37 @@
 import { IMaskInput } from "react-imask";
-import { isValidCNPJ } from "@/lib/forms/br";
+import { isValidDateBR } from "@/lib/forms/br";
 
 interface Props {
   value: string;
-  onChange: (digits: string) => void;
+  onChange: (v: string) => void;
   onBlur?: () => void;
   id?: string;
   name?: string;
   required?: boolean;
   error?: string;
+  placeholder?: string;
 }
 
-export default function CnpjInput({ value, onChange, onBlur, id, name, required, error }: Props) {
-  const showInvalid = !error && value.length === 14 && !isValidCNPJ(value);
-  const finalError = error ?? (showInvalid ? "CNPJ inválido" : undefined);
+/** Entrada de data dd/mm/aaaa com validação de data real. */
+export default function DateBRInput({
+  value, onChange, onBlur, id, name, required, error, placeholder,
+}: Props) {
+  const showInvalid = !error && value.length === 10 && !isValidDateBR(value);
+  const finalError = error ?? (showInvalid ? "Data inválida" : undefined);
   const describedBy = finalError && id ? `${id}-error` : undefined;
   return (
     <div>
       <IMaskInput
-        mask="00.000.000/0000-00"
+        mask="00/00/0000"
         definitions={{ "0": /\d/ }}
-        unmask={true}
         value={value}
         onAccept={(v: string) => onChange(v)}
         onBlur={onBlur}
         id={id}
         name={name}
         inputMode="numeric"
-        placeholder="00.000.000/0000-00"
+        autoComplete="bday"
+        placeholder={placeholder ?? "dd/mm/aaaa"}
         required={required}
         aria-invalid={!!finalError}
         aria-describedby={describedBy}

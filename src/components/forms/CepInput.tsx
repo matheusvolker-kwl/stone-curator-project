@@ -6,30 +6,47 @@ import { fetchCep, type ViaCepResult } from "@/lib/forms/br";
 interface Props {
   value: string;
   onChange: (digits: string) => void;
+  /** Chamado quando ViaCEP/BrasilAPI retorna dados. */
   onResolved?: (data: ViaCepResult) => void;
+  /** Id do próximo campo (ex.: "numero") para mover o foco após o autopreencher. */
+  focusNextId?: string;
   required?: boolean;
   error?: string;
   id?: string;
 }
 
-export default function CepInput({ value, onChange, onResolved, required, error, id }: Props) {
+export default function CepInput({
+  value, onChange, onResolved, focusNextId, required, error, id,
+}: Props) {
   const [loading, setLoading] = useState(false);
   const [notFound, setNotFound] = useState(false);
 
-  const handleBlur = async () => {
-    if (value.length !== 8) return;
+  const lookup = async (cep: string) => {
+    if (cep.length !== 8) return;
     setLoading(true);
     setNotFound(false);
-    const res = await fetchCep(value);
+    const res = await fetchCep(cep);
     setLoading(false);
     if (!res) {
       setNotFound(true);
       return;
     }
     onResolved?.(res);
+    if (focusNextId) {
+      // pequeno delay para garantir que o state foi aplicado
+      window.setTimeout(() => {
+        document.getElementById(focusNextId)?.focus();
+      }, 50);
+    }
+  };
+
+  const handleAccept = (v: string) => {
+    onChange(v);
+    if (v.length === 8) void lookup(v); // dispara assim que completar — UX padrão BR
   };
 
   const finalError = error ?? (notFound ? "CEP não encontrado" : undefined);
+  const describedBy = finalError && id ? `${id}-error` : undefined;
 
   return (
     <div>
@@ -39,12 +56,15 @@ export default function CepInput({ value, onChange, onResolved, required, error,
           definitions={{ "0": /\d/ }}
           unmask={true}
           value={value}
-          onAccept={(v: string) => onChange(v)}
-          onBlur={handleBlur}
+          onAccept={handleAccept}
+          onBlur={() => void lookup(value)}
           id={id}
           inputMode="numeric"
+          autoComplete="postal-code"
           placeholder="00000-000"
           required={required}
+          aria-invalid={!!finalError}
+          aria-describedby={describedBy}
           className={`h-12 w-full bg-transparent border px-3 rounded-none text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none transition-colors ${
             finalError
               ? "border-red-700/60"
@@ -56,7 +76,7 @@ export default function CepInput({ value, onChange, onResolved, required, error,
         )}
       </div>
       {finalError && (
-        <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">
+        <p id={describedBy} className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">
           {finalError}
         </p>
       )}
