@@ -1,8 +1,10 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Canvas full-screen que emite partículas quentes seguindo o cursor/toque.
- * pointer-events-none. Respeita prefers-reduced-motion.
+ * Canvas full-screen com duas camadas:
+ *  - AMBIENTE: ~50 motes/brasas flutuando lentamente pra cima (sempre ligado)
+ *  - REATIVO: partículas quentes emitidas pelo cursor/toque
+ * pointer-events-none. Respeita prefers-reduced-motion (versão estática).
  */
 export default function DustCanvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -10,7 +12,6 @@ export default function DustCanvas() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -41,6 +42,28 @@ export default function DustCanvas() {
       [217, 184, 140],
     ];
 
+    // ===== AMBIENTE — motes flutuando =====
+    type Mote = {
+      x: number; y: number; vx: number; vy: number;
+      size: number; baseAlpha: number; phase: number; freq: number;
+      color: [number, number, number];
+    };
+    const MOTES = 52;
+    const motes: Mote[] = [];
+    const spawnMote = (initial = false): Mote => ({
+      x: Math.random() * width,
+      y: initial ? Math.random() * height : height + 10 + Math.random() * 40,
+      vx: (Math.random() - 0.5) * 0.08,
+      vy: -(0.08 + Math.random() * 0.22),
+      size: 1.1 + Math.random() * 2.4,
+      baseAlpha: 0.18 + Math.random() * 0.32,
+      phase: Math.random() * Math.PI * 2,
+      freq: 0.6 + Math.random() * 1.4,
+      color: palette[(Math.random() * palette.length) | 0],
+    });
+    for (let i = 0; i < MOTES; i++) motes.push(spawnMote(true));
+
+    // ===== REATIVO — partículas do cursor =====
     type Particle = {
       x: number; y: number; vx: number; vy: number;
       life: number; max: number; size: number; color: [number, number, number];
@@ -79,7 +102,7 @@ export default function DustCanvas() {
       const dx = x - lastX, dy = y - lastY;
       const d = Math.hypot(dx, dy);
       const n = Math.min(6, Math.max(EMIT, Math.floor(d / 6)));
-      emit(x, y, n);
+      if (!reduce) emit(x, y, n);
       lastX = x; lastY = y;
       active = true;
     };
@@ -91,19 +114,65 @@ export default function DustCanvas() {
     window.addEventListener("mousemove", onMouse, { passive: true });
     window.addEventListener("touchmove", onTouch, { passive: true });
 
+    // Versão estática quando reduzido: desenha motes uma vez e sai
+    if (reduce) {
+      ctx.globalCompositeOperation = "lighter";
+      for (const m of motes) {
+        const [r, g, b] = m.color;
+        ctx.fillStyle = `rgba(${r},${g},${b},${m.baseAlpha})`;
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return () => {
+        window.removeEventListener("resize", resize);
+        window.removeEventListener("mousemove", onMouse);
+        window.removeEventListener("touchmove", onTouch);
+      };
+    }
+
     let raf = 0;
     let last = performance.now();
+    const start = last;
 
     const tick = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
+      const t = (now - start) / 1000;
 
-      // Trail fade
+      // Trail fade (apaga camadas antigas suavemente)
       ctx.globalCompositeOperation = "destination-out";
-      ctx.fillStyle = "rgba(0,0,0,0.12)";
+      ctx.fillStyle = "rgba(0,0,0,0.10)";
       ctx.fillRect(0, 0, width, height);
 
       ctx.globalCompositeOperation = "lighter";
+
+      // ----- motes ambiente -----
+      for (let i = 0; i < motes.length; i++) {
+        const m = motes[i];
+        m.x += m.vx;
+        m.y += m.vy;
+        // drift horizontal sutil (vento)
+        m.vx += Math.sin(t * 0.3 + m.phase) * 0.0008;
+        // recicla
+        if (m.y < -10 || m.x < -10 || m.x > width + 10) {
+          motes[i] = spawnMote(false);
+          continue;
+        }
+        const flick = 0.65 + 0.35 * Math.sin(t * m.freq + m.phase);
+        const alpha = m.baseAlpha * flick;
+        const [r, g, b] = m.color;
+        // halo borrado
+        ctx.fillStyle = `rgba(${r},${g},${b},${alpha * 0.35})`;
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, m.size * 2.4, 0, Math.PI * 2);
+        ctx.fill();
+        // núcleo
+        ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // soft glow at cursor
       glowAlpha += ((active ? 0.18 : 0) - glowAlpha) * 0.08;
@@ -118,21 +187,22 @@ export default function DustCanvas() {
         ctx.fill();
       }
 
+      // ----- partículas reativas -----
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.life += dt;
         if (p.life >= p.max) { particles.splice(i, 1); continue; }
-        p.vy -= 0.02 * dt * 60; // tiny upward drift
+        p.vy -= 0.02 * dt * 60;
         p.vx *= 0.99;
         p.vy *= 0.99;
         p.x += p.vx;
         p.y += p.vy;
-        const t = p.life / p.max;
-        const alpha = (1 - t) * 0.85;
+        const k = p.life / p.max;
+        const alpha = (1 - k) * 0.85;
         const [r, g, b] = p.color;
         ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * (1 - t * 0.5), 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.size * (1 - k * 0.5), 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -153,6 +223,7 @@ export default function DustCanvas() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-[5]"
+      style={{ filter: "blur(0.4px)" }}
       aria-hidden="true"
     />
   );
