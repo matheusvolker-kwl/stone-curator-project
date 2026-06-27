@@ -90,7 +90,10 @@ export default function PartnerSignup() {
   const [f, setF] = useState<Form>(INITIAL);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [credResult, setCredResult] = useState<CredResult | null>(null);
+  const [newUserId, setNewUserId] = useState<string | null>(null);
+  const [cardPath, setCardPath] = useState<string | null>(null);
+  const [cardLoading, setCardLoading] = useState(false);
   const navigate = useNavigate();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -114,6 +117,21 @@ export default function PartnerSignup() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const callCredenciar = async (userId: string | null, opts: { sem_cartao?: boolean; card_path?: string | null } = {}) => {
+    const { data, error } = await supabase.functions.invoke<CredResult>("credenciar", {
+      body: {
+        cnpj: f.cnpj,
+        nome: f.nome,
+        email: f.email,
+        user_id: userId ?? undefined,
+        sem_cartao: opts.sem_cartao ?? false,
+        card_path: opts.card_path ?? undefined,
+      },
+    });
+    if (error) throw error;
+    return data!;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const normalized = { ...f, nome: normalizeText(f.nome) };
@@ -133,49 +151,37 @@ export default function PartnerSignup() {
       const segmentoFinal = f.segmento === "Outro" ? `Outro: ${f.segmentoOutro}` : f.segmento;
       const cargoFinal = f.cargo === "Outro" ? `Outro: ${f.cargoOutro}` : f.cargo;
 
-      const { error: authError } = await supabase.auth.signUp({
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: f.email,
         password: f.senha,
         options: {
           emailRedirectTo: `${window.location.origin}/parceiro/login`,
           data: {
-            nome: f.nome,
-            empresa: f.empresa,
-            cnpj: f.cnpj,
-            segmento: segmentoFinal,
-            telefone: f.telefone,
-            cidade: f.cidade,
-            site: f.site,
-            cep: f.cep,
-            endereco: f.endereco,
-            numero: f.numero,
-            complemento: f.complemento,
-            bairro: f.bairro,
-            estado: f.estado,
-            cargo: cargoFinal,
-            instagram: f.instagram,
+            nome: f.nome, empresa: f.empresa, cnpj: f.cnpj, segmento: segmentoFinal,
+            telefone: f.telefone, cidade: f.cidade, site: f.site,
+            cep: f.cep, endereco: f.endereco, numero: f.numero, complemento: f.complemento,
+            bairro: f.bairro, estado: f.estado, cargo: cargoFinal, instagram: f.instagram,
           },
         },
       });
       if (authError) throw authError;
 
+      const uid = authData?.user?.id ?? null;
+      setNewUserId(uid);
+
       await supabase.from("leads").insert({
         type: "partner_signup",
-        nome: f.nome,
-        email: f.email,
-        telefone: f.telefone,
-        empresa: f.empresa,
-        cnpj: f.cnpj,
-        segmento: segmentoFinal,
-        cidade: f.cidade,
-        uf: f.estado,
+        nome: f.nome, email: f.email, telefone: f.telefone, empresa: f.empresa,
+        cnpj: f.cnpj, segmento: segmentoFinal, cidade: f.cidade, uf: f.estado,
         endereco: `${f.endereco}, ${f.numero}${f.complemento ? " - " + f.complemento : ""} - ${f.bairro}`,
         cep: f.cep,
         payload: { site: f.site, instagram: f.instagram, cargo: cargoFinal },
         origem: "site/parceiro/cadastro",
       });
 
-      setSubmitted(true);
+      // Credenciamento automático
+      const result = await callCredenciar(uid);
+      setCredResult(result);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Erro desconhecido";
       if (msg.toLowerCase().includes("already") || msg.toLowerCase().includes("registered")) {
@@ -191,26 +197,126 @@ export default function PartnerSignup() {
     }
   };
 
-  if (submitted) {
+  const reenviarComCartao = async (path: string | null, semCartao: boolean) => {
+    setCardLoading(true);
+    try {
+      const result = await callCredenciar(newUserId, { card_path: path ?? undefined, sem_cartao: semCartao });
+      setCredResult(result);
+    } catch (err) {
+      toast.error("Falha ao reenviar credenciamento.", { description: err instanceof Error ? err.message : "" });
+    } finally {
+      setCardLoading(false);
+    }
+  };
+
+  if (credResult) {
+    const d = credResult.decisao;
     return (
       <div className="surface-ivory">
-        <div className="container-western py-32 max-w-2xl text-center">
-          <p className="text-eyebrow mb-6">Cadastro recebido</p>
-          <div className="w-12 h-px bg-western-gold mx-auto mb-8" />
-          <h1 className="font-display text-4xl md:text-5xl text-western-green-deep leading-tight mb-6">
-            Obrigado. Sua solicitação está em análise.
-          </h1>
-          <p className="text-western-stone-warm leading-relaxed mb-10">
-            Em até 2 dias úteis nosso time comercial libera seu acesso e envia
-            sua condição B2B por e-mail.
+        <div className="container-western py-24 max-w-2xl text-center">
+          {d === "aprovado" && <CheckCircle2 className="h-12 w-12 text-western-gold mx-auto mb-6" strokeWidth={1.4} />}
+          {(d === "analise") && <AlertTriangle className="h-12 w-12 text-amber-600 mx-auto mb-6" strokeWidth={1.4} />}
+          {d === "reprovado" && <XCircle className="h-12 w-12 text-red-700/80 mx-auto mb-6" strokeWidth={1.4} />}
+          {d === "solicitar_cartao" && <AlertTriangle className="h-12 w-12 text-amber-600 mx-auto mb-6" strokeWidth={1.4} />}
+
+          <p className="text-eyebrow mb-4">
+            {d === "aprovado" && "Cadastro aprovado"}
+            {d === "analise" && "Em análise"}
+            {d === "reprovado" && "Cadastro recusado"}
+            {d === "solicitar_cartao" && "Confirmação necessária"}
           </p>
-          <Link to="/" className="link-underline text-western-gold font-mono text-xs uppercase tracking-[0.22em]">
-            Voltar ao catálogo
-          </Link>
+          <div className="w-12 h-px bg-western-gold mx-auto mb-8" />
+
+          {d === "aprovado" && (
+            <>
+              <h1 className="font-display text-4xl md:text-5xl text-western-green-deep leading-tight mb-6">
+                Bem-vindo à Western Pro.
+              </h1>
+              <p className="text-western-stone-warm leading-relaxed mb-10">
+                Sua condição B2B já está liberada. Confirme seu e-mail e faça login para ver tabela, modelos 3D e composições.
+              </p>
+              <Link to="/parceiro/login" className="inline-block h-12 px-6 leading-[3rem] bg-western-gold text-western-green-deep font-mono text-xs uppercase tracking-[0.25em]">Acessar minha conta</Link>
+            </>
+          )}
+
+          {d === "analise" && (
+            <>
+              <h1 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight mb-6">
+                Recebemos sua solicitação.
+              </h1>
+              <p className="text-western-stone-warm leading-relaxed mb-4">
+                Em até 2 dias úteis nosso time comercial conclui a análise e libera seu acesso por e-mail.
+              </p>
+              {credResult.protocolo && (
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm mb-10">
+                  Protocolo: <span className="text-western-green-deep">{credResult.protocolo}</span>
+                </p>
+              )}
+              <Link to="/" className="link-underline text-western-gold font-mono text-xs uppercase tracking-[0.22em]">Voltar ao catálogo</Link>
+            </>
+          )}
+
+          {d === "reprovado" && (
+            <>
+              <h1 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight mb-6">
+                Não foi possível aprovar agora.
+              </h1>
+              <p className="text-western-stone-warm leading-relaxed mb-4">
+                {credResult.motivo ?? "Sua empresa não atende aos critérios B2B no momento."}
+              </p>
+              <p className="text-western-stone-warm leading-relaxed mb-10">
+                Se acredita que houve engano, fale com o comercial pelo WhatsApp.
+              </p>
+              <a
+                href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent("Olá, gostaria de revisar meu credenciamento B2B.")}`}
+                target="_blank" rel="noopener noreferrer"
+                className="inline-block h-12 px-6 leading-[3rem] bg-western-green-deep text-western-cream font-mono text-xs uppercase tracking-[0.25em]"
+              >Falar com o comercial</a>
+            </>
+          )}
+
+          {d === "solicitar_cartao" && (
+            <>
+              <h1 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight mb-6">
+                Envie seu Cartão CNPJ.
+              </h1>
+              <p className="text-western-stone-warm leading-relaxed mb-8">
+                As bases públicas não responderam agora. Envie o Cartão CNPJ ou siga para análise manual em até 2 dias úteis.
+              </p>
+              <div className="max-w-md mx-auto text-left space-y-4">
+                {newUserId && (
+                  <CartaoCnpjUpload
+                    userId={newUserId}
+                    disabled={cardLoading}
+                    onUploaded={(p) => setCardPath(p)}
+                  />
+                )}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    onClick={() => reenviarComCartao(cardPath, false)}
+                    disabled={!cardPath || cardLoading}
+                    className="flex-1 h-12 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.22em] rounded-none disabled:opacity-50"
+                  >
+                    {cardLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar para análise"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => reenviarComCartao(null, true)}
+                    disabled={cardLoading}
+                    className="h-12 border-western-stone-warm/30 text-western-green-deep hover:border-western-gold rounded-none font-mono text-xs uppercase tracking-[0.22em]"
+                  >
+                    Seguir sem enviar agora
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     );
   }
+
+
 
   return (
     <div className="surface-ivory">
