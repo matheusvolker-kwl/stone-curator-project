@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Loader2, AlertTriangle } from "lucide-react";
+import { passwordSchema } from "@/lib/forms/br";
 
 export default function AccountPreferences() {
   const { user, signOut, refresh } = useAuth();
@@ -37,7 +38,8 @@ export default function AccountPreferences() {
 
   const changePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPassword.length < 8) return toast.error("Use ao menos 8 caracteres.");
+    const r = passwordSchema.safeParse(newPassword);
+    if (!r.success) return toast.error(r.error.issues[0]?.message ?? "Senha inválida.");
     setPwLoading(true);
     const { error } = await supabase.auth.updateUser({ password: newPassword });
     setPwLoading(false);
