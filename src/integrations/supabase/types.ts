@@ -56,6 +56,108 @@ export type Database = {
         }
         Relationships: []
       }
+      cnae_whitelist: {
+        Row: {
+          codigo: string
+          created_at: string
+          descricao: string | null
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          codigo: string
+          created_at?: string
+          descricao?: string | null
+          tier: string
+          updated_at?: string
+        }
+        Update: {
+          codigo?: string
+          created_at?: string
+          descricao?: string | null
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      credenciamentos: {
+        Row: {
+          card_path: string | null
+          cnae_match: string | null
+          cnae_match_tier: string | null
+          cnae_principal: string | null
+          cnaes_secundarios: string[] | null
+          cnpj: string
+          created_at: string
+          decisao: string
+          email: string | null
+          empresa: string | null
+          fonte: string | null
+          id: string
+          motivo: string | null
+          nome: string | null
+          protocolo: string | null
+          raw_response: Json | null
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          situacao: string | null
+          status_manual: string
+          tier: string | null
+          user_id: string | null
+        }
+        Insert: {
+          card_path?: string | null
+          cnae_match?: string | null
+          cnae_match_tier?: string | null
+          cnae_principal?: string | null
+          cnaes_secundarios?: string[] | null
+          cnpj: string
+          created_at?: string
+          decisao: string
+          email?: string | null
+          empresa?: string | null
+          fonte?: string | null
+          id?: string
+          motivo?: string | null
+          nome?: string | null
+          protocolo?: string | null
+          raw_response?: Json | null
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          situacao?: string | null
+          status_manual?: string
+          tier?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          card_path?: string | null
+          cnae_match?: string | null
+          cnae_match_tier?: string | null
+          cnae_principal?: string | null
+          cnaes_secundarios?: string[] | null
+          cnpj?: string
+          created_at?: string
+          decisao?: string
+          email?: string | null
+          empresa?: string | null
+          fonte?: string | null
+          id?: string
+          motivo?: string | null
+          nome?: string | null
+          protocolo?: string | null
+          raw_response?: Json | null
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          situacao?: string | null
+          status_manual?: string
+          tier?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       guide_exports: {
         Row: {
           created_at: string
@@ -158,6 +260,9 @@ export type Database = {
           cnpj: string | null
           complemento: string | null
           created_at: string
+          credenciado_em: string | null
+          credenciado_fonte: string | null
+          credenciamento_id: string | null
           discount_override: number | null
           empresa: string | null
           endereco: string | null
@@ -186,6 +291,9 @@ export type Database = {
           cnpj?: string | null
           complemento?: string | null
           created_at?: string
+          credenciado_em?: string | null
+          credenciado_fonte?: string | null
+          credenciamento_id?: string | null
           discount_override?: number | null
           empresa?: string | null
           endereco?: string | null
@@ -214,6 +322,9 @@ export type Database = {
           cnpj?: string | null
           complemento?: string | null
           created_at?: string
+          credenciado_em?: string | null
+          credenciado_fonte?: string | null
+          credenciamento_id?: string | null
           discount_override?: number | null
           empresa?: string | null
           endereco?: string | null
@@ -231,7 +342,15 @@ export type Database = {
           tier?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "partner_profiles_credenciamento_id_fkey"
+            columns: ["credenciamento_id"]
+            isOneToOne: false
+            referencedRelation: "credenciamentos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pedido_pdf_downloads: {
         Row: {
