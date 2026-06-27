@@ -103,7 +103,15 @@ const App = () => (
           <WishlistProvider>
             <Suspense fallback={<RouteFallback />}>
               <Routes>
+                {HOLDING_PAGE && <Route path="/" element={<ComingSoon />} />}
                 <Route path="/guia-de-composicao" element={<GuiaContexto />} />
+                <Route path="/guia-de-composicao/composicoes" element={<GuiaComposicoes />} />
+                <Route path="/guia-de-composicao/refinar/:handle" element={<GuiaRefinar />} />
+                <Route path="/guia-de-composicao/finalizar" element={<Navigate to="/guia-de-composicao" replace />} />
+                <Route element={<SiteLayout />}>
+                  {HOLDING_PAGE
+                    ? <Route path="/inicio" element={<Index />} />
+                    : <Route path="/" element={<Index />} />}
                 <Route path="/guia-de-composicao/composicoes" element={<GuiaComposicoes />} />
                 <Route path="/guia-de-composicao/refinar/:handle" element={<GuiaRefinar />} />
                 <Route path="/guia-de-composicao/finalizar" element={<Navigate to="/guia-de-composicao" replace />} />
