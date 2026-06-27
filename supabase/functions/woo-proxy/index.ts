@@ -29,6 +29,29 @@ function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+async function revalidate(cacheKey: string, target: string): Promise<void> {
+  try {
+    const upstream = await fetch(target, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "X-Connection-Api-Key": WOOCOMMERCE_API_KEY,
+      },
+    });
+    if (!upstream.ok) return;
+    const body = await upstream.text();
+    cache.set(cacheKey, {
+      expires: Date.now() + CACHE_TTL_MS,
+      staleUntil: Date.now() + STALE_TTL_MS,
+      status: upstream.status,
+      body,
+      contentType: upstream.headers.get("Content-Type") ?? "application/json",
+    });
+  } catch {
+    // keep existing stale entry; next request will SWR again.
+  }
+}
+
 
 function jsonResponse(status: number, body: unknown) {
   return new Response(JSON.stringify(body), {
