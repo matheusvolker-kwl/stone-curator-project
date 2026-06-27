@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.yampi-criar-checkout]
 verify_jwt = false
+
+[functions.credenciar]
+verify_jwt = false
