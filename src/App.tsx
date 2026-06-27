@@ -9,6 +9,19 @@ import RequireAuth from "@/components/auth/RequireAuth";
 import SiteLayout from "@/components/layout/SiteLayout";
 import ScrollToTop from "@/components/ScrollToTop";
 import Index from "./pages/Index.tsx"; // home eager: maior chance de ser primeira rota
+import ComingSoon from "./pages/ComingSoon.tsx";
+
+// =====================================================================
+// PRÉ-LANÇAMENTO
+// HOLDING_PAGE = true  -> "/" mostra a página "LANÇAMENTO EM BREVE" em tela
+//                         cheia (fora do SiteLayout). A loja real continua
+//                         acessível em "/inicio" e todas as demais rotas
+//                         seguem funcionando normalmente.
+// HOLDING_PAGE = false -> "/" volta a ser a home da loja (<Index/>) e a
+//                         ComingSoon some completamente. Para reverter no
+//                         lançamento basta trocar a flag abaixo para false.
+// =====================================================================
+const HOLDING_PAGE = true;
 
 // === Páginas pesadas: lazy ===
 const AdminLayout = lazy(() => import("@/components/admin/AdminLayout"));
@@ -90,12 +103,15 @@ const App = () => (
           <WishlistProvider>
             <Suspense fallback={<RouteFallback />}>
               <Routes>
+                {HOLDING_PAGE && <Route path="/" element={<ComingSoon />} />}
                 <Route path="/guia-de-composicao" element={<GuiaContexto />} />
                 <Route path="/guia-de-composicao/composicoes" element={<GuiaComposicoes />} />
                 <Route path="/guia-de-composicao/refinar/:handle" element={<GuiaRefinar />} />
                 <Route path="/guia-de-composicao/finalizar" element={<Navigate to="/guia-de-composicao" replace />} />
                 <Route element={<SiteLayout />}>
-                  <Route path="/" element={<Index />} />
+                  {HOLDING_PAGE
+                    ? <Route path="/inicio" element={<Index />} />
+                    : <Route path="/" element={<Index />} />}
                   <Route path="/linhas" element={<Linhas />} />
                   <Route path="/linhas/:handle" element={<LinhaPage />} />
                   <Route path="/conjuntos" element={<Conjuntos />} />
