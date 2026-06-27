@@ -213,16 +213,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    // Header anti-spam (opcional — só checa se configurado)
-    if (HEADER_KEY) {
-      const got = req.headers.get("x-western-key");
-      if (got !== HEADER_KEY) {
-        return new Response(JSON.stringify({ error: "unauthorized" }), {
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-    }
+
 
     const body = await req.json().catch(() => ({}));
     const parsed = BodySchema.safeParse(body);
