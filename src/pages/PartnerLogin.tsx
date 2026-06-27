@@ -7,6 +7,9 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, ShieldCheck, MessageCircle, ArrowRight } from "lucide-react";
 import { BUSINESS } from "@/config/business";
+import EmailInput from "@/components/forms/EmailInput";
+import PasswordField from "@/components/forms/PasswordField";
+import { emailSchema } from "@/lib/forms/br";
 
 const waClienteFinalUrl = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
   "Olá Western! Sou cliente final e gostaria de comprar / fazer um projeto com pedras Western."
@@ -30,8 +33,17 @@ export default function PartnerLogin() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    const r = emailSchema.safeParse(email);
+    if (!r.success) {
+      toast.error(r.error.issues[0]?.message ?? "E-mail inválido");
+      return;
+    }
+    if (password.length < 1) {
+      toast.error("Informe sua senha.");
+      return;
+    }
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email: r.data, password });
     setLoading(false);
     if (error) {
       toast.error("Não foi possível entrar.", { description: error.message });
@@ -63,12 +75,13 @@ export default function PartnerLogin() {
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
-      toast.error("Informe seu e-mail acima.");
+    const r = emailSchema.safeParse(email);
+    if (!r.success) {
+      toast.error("Informe um e-mail válido.");
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await supabase.auth.resetPasswordForEmail(r.data, {
       redirectTo: `${window.location.origin}/parceiro/redefinir-senha`,
     });
     setLoading(false);
@@ -153,30 +166,27 @@ export default function PartnerLogin() {
               {showReset ? "Recuperar senha." : "Entrar."}
             </h1>
 
-            <form className="space-y-6" onSubmit={showReset ? handleReset : handleLogin}>
+            <form className="space-y-6" onSubmit={showReset ? handleReset : handleLogin} noValidate>
               <div>
                 <Label htmlFor="email" className="text-eyebrow mb-3 block">E-mail</Label>
-                <Input
+                <EmailInput
                   id="email"
-                  type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={setEmail}
                   required
                   autoComplete="email"
-                  className="h-12 bg-transparent border-western-stone-warm/30 rounded-none text-western-green-deep focus-visible:border-western-gold"
                 />
               </div>
               {!showReset && (
                 <div>
                   <Label htmlFor="password" className="text-eyebrow mb-3 block">Senha</Label>
-                  <Input
+                  <PasswordField
                     id="password"
-                    type="password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={setPassword}
                     required
+                    showStrength={false}
                     autoComplete="current-password"
-                    className="h-12 bg-transparent border-western-stone-warm/30 rounded-none text-western-green-deep focus-visible:border-western-gold"
                   />
                 </div>
               )}
