@@ -262,6 +262,25 @@ function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: 
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><ShieldCheck className="h-4 w-4 mr-2" /> Aprovar</>}
               </Button>
             </div>
+            <Button
+              onClick={async () => {
+                setSaving(true);
+                const { data, error } = await supabase.functions.invoke("credenciar", {
+                  body: { cnpj: cred.cnpj, nome: cred.nome ?? undefined, email: cred.email ?? undefined, mode: "reavaliar", credenciamento_id: cred.id },
+                });
+                setSaving(false);
+                if (error) { toast.error("Falha ao reavaliar.", { description: error.message }); return; }
+                const decisao = (data as { decisao?: string } | null)?.decisao ?? "?";
+                toast.success(`Reavaliado: ${decisao}.`);
+                onSaved();
+                onClose();
+              }}
+              disabled={saving}
+              variant="outline"
+              className="w-full h-11 rounded-none border-western-stone-warm/30 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold font-mono text-[11px] uppercase tracking-[0.22em]"
+            >
+              Reavaliar nas fontes (Receita/BrasilAPI/CNPJá)
+            </Button>
           </div>
         </div>
       </SheetContent>
