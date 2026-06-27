@@ -7,10 +7,12 @@ import { LINHA_COVER_OVERRIDES } from "@/lib/lineCovers";
 
 interface Props {
   collections: Array<ShopifyCollection & { count?: number }>;
+  isLoading?: boolean;
 }
 
-export default function ColecoesGrid({ collections }: Props) {
-  if (collections.length === 0) return null;
+export default function ColecoesGrid({ collections, isLoading }: Props) {
+  const showSkeleton = isLoading && collections.length === 0;
+  const showEmpty = !isLoading && collections.length === 0;
   return (
     <section className="surface-ivory py-16 md:py-24 border-t border-western-stone-warm/10">
       <div className="container-western">
@@ -29,7 +31,25 @@ export default function ColecoesGrid({ collections }: Props) {
           </Link>
         </div>
 
+        {showEmpty ? (
+          <div className="border border-dashed border-western-stone-warm/30 p-10 text-center text-sm text-western-stone-warm">
+            Não foi possível carregar as coleções agora. Tente novamente em instantes.
+          </div>
+        ) : showSkeleton ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="bg-white border border-western-stone-warm/10 overflow-hidden">
+                <div className="aspect-[4/5] bg-western-stone-warm/10 animate-pulse" />
+                <div className="p-4 md:p-5 space-y-2">
+                  <div className="h-4 w-3/4 bg-western-stone-warm/10 animate-pulse" />
+                  <div className="h-3 w-1/3 bg-western-stone-warm/10 animate-pulse" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+
           {collections.map((c) => {
             const cover = LINHA_COVER_OVERRIDES[c.handle];
 
@@ -82,7 +102,9 @@ export default function ColecoesGrid({ collections }: Props) {
             );
           })}
         </div>
+        )}
       </div>
+
     </section>
   );
 }

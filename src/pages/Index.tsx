@@ -18,14 +18,15 @@ import { BUSINESS } from "@/config/business";
 
 export default function Index() {
   const scrollY = useScrollY();
-  const { data: collections = [] } = useQuery({
+  const { data: collections = [], isLoading: loadingCollections } = useQuery({
     queryKey: ["collections"],
     queryFn: () => fetchCollections(20),
   });
-  const { data: featured = [] } = useQuery({
+  const { data: featured = [], isLoading: loadingFeatured } = useQuery({
     queryKey: ["featured-products"],
     queryFn: () => fetchProducts(8),
   });
+
 
   const linhasAll = collections.filter((c) => !isSeasonal(c) && c.handle !== "conjuntos");
   // Home: mostra no máx 8 (2 linhas × 4 col), sem "Fontes para Jardim", com "Pisadas".
@@ -185,29 +186,43 @@ export default function Index() {
 
       {/* COLEÇÕES — destaques */}
       <Reveal variant="fade-up" duration={800}>
-        <ColecoesGrid collections={linhas} />
+        <ColecoesGrid collections={linhas} isLoading={loadingCollections} />
       </Reveal>
 
       {/* MAIS ESPECIFICADOS */}
-      {featured.length > 0 && (
-        <section className="surface-paper py-12 md:py-16 border-t border-western-stone-warm/10">
-          <div className="container-western">
-            <Reveal variant="fade-up" duration={700}>
-              <div className="flex items-end justify-between mb-8 md:mb-10 flex-wrap gap-4">
-                <div>
-                  <p className="text-eyebrow mb-3">Em destaque</p>
-                  <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
-                    Produtos mais comprados.
-                  </h2>
-                </div>
-                <Link
-                  to="/linhas"
-                  className="link-underline font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep"
-                >
-                  Ver catálogo completo →
-                </Link>
+      <section className="surface-paper py-12 md:py-16 border-t border-western-stone-warm/10">
+        <div className="container-western">
+          <Reveal variant="fade-up" duration={700}>
+            <div className="flex items-end justify-between mb-8 md:mb-10 flex-wrap gap-4">
+              <div>
+                <p className="text-eyebrow mb-3">Em destaque</p>
+                <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
+                  Produtos mais comprados.
+                </h2>
               </div>
-            </Reveal>
+              <Link
+                to="/linhas"
+                className="link-underline font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep"
+              >
+                Ver catálogo completo →
+              </Link>
+            </div>
+          </Reveal>
+          {loadingFeatured && featured.length === 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="space-y-3">
+                  <div className="aspect-square bg-western-stone-warm/10 animate-pulse" />
+                  <div className="h-4 w-3/4 bg-western-stone-warm/10 animate-pulse" />
+                  <div className="h-3 w-1/3 bg-western-stone-warm/10 animate-pulse" />
+                </div>
+              ))}
+            </div>
+          ) : featured.length === 0 ? (
+            <div className="border border-dashed border-western-stone-warm/30 p-10 text-center text-sm text-western-stone-warm">
+              Catálogo indisponível no momento. Tente recarregar em instantes.
+            </div>
+          ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {featured.slice(0, 8).map((p, i) => (
                 <Reveal key={p.node.id} variant="fade-up" delay={(i % 4) * 90} duration={650} distance={20}>
@@ -215,9 +230,10 @@ export default function Index() {
                 </Reveal>
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          )}
+        </div>
+      </section>
+
 
       {/* PROJETOS — prova social */}
       <Reveal variant="fade-up" duration={800}>
