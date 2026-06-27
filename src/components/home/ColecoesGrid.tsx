@@ -7,10 +7,12 @@ import { LINHA_COVER_OVERRIDES } from "@/lib/lineCovers";
 
 interface Props {
   collections: Array<ShopifyCollection & { count?: number }>;
+  isLoading?: boolean;
 }
 
-export default function ColecoesGrid({ collections }: Props) {
-  if (collections.length === 0) return null;
+export default function ColecoesGrid({ collections, isLoading }: Props) {
+  const showSkeleton = isLoading && collections.length === 0;
+  const showEmpty = !isLoading && collections.length === 0;
   return (
     <section className="surface-ivory py-16 md:py-24 border-t border-western-stone-warm/10">
       <div className="container-western">
