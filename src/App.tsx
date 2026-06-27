@@ -21,6 +21,8 @@ const AdminSamples = lazy(() => import("./pages/admin/AdminSamples"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const AdminPedidos = lazy(() => import("./pages/admin/AdminPedidos"));
 const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
+const AdminCredenciamentos = lazy(() => import("./pages/admin/AdminCredenciamentos"));
+const AdminCnaeWhitelist = lazy(() => import("./pages/admin/AdminCnaeWhitelist"));
 
 const AccountLayout = lazy(() => import("@/components/account/AccountLayout"));
 const AccountIndex = lazy(() => import("./pages/account/AccountIndex"));
@@ -140,6 +142,8 @@ const App = () => (
                     <Route path="amostras" element={<AdminSamples />} />
                     <Route path="usuarios" element={<AdminUsers />} />
                     <Route path="pedidos" element={<AdminPedidos />} />
+                    <Route path="credenciamentos" element={<AdminCredenciamentos />} />
+                    <Route path="cnae-whitelist" element={<AdminCnaeWhitelist />} />
                     <Route path="configuracoes" element={<AdminSettings />} />
                   </Route>
                   <Route

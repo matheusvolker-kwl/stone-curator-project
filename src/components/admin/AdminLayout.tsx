@@ -9,6 +9,8 @@ import {
   Settings,
   LogOut,
   ExternalLink,
+  BadgeCheck,
+  ListChecks,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logoBege from "@/assets/logo-horizontal-bege.png";
@@ -17,9 +19,11 @@ const items = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/admin/orcamentos", label: "Orçamentos", icon: FileSignature },
   { to: "/admin/pedidos", label: "Pedidos", icon: Truck },
+  { to: "/admin/credenciamentos", label: "Credenciamentos", icon: BadgeCheck },
   { to: "/admin/parceiros", label: "Parceiros", icon: Users },
   { to: "/admin/leads", label: "Caixa de entrada", icon: Inbox },
   { to: "/admin/amostras", label: "Amostras", icon: PackageCheck },
+  { to: "/admin/cnae-whitelist", label: "Whitelist CNAE", icon: ListChecks },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ];
 

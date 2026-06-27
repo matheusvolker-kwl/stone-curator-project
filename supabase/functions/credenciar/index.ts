@@ -10,7 +10,6 @@ import { z } from "npm:zod@3.23.8";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const RECEITAWS_TOKEN = Deno.env.get("RECEITAWS_TOKEN") ?? "";
-const HEADER_KEY = Deno.env.get("WESTERN_CREDENCIAR_KEY") ?? "";
 
 const BodySchema = z.object({
   cnpj: z.string().min(11).max(20),
@@ -214,16 +213,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    // Header anti-spam (opcional — só checa se configurado)
-    if (HEADER_KEY) {
-      const got = req.headers.get("x-western-key");
-      if (got !== HEADER_KEY) {
-        return new Response(JSON.stringify({ error: "unauthorized" }), {
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-    }
+
 
     const body = await req.json().catch(() => ({}));
     const parsed = BodySchema.safeParse(body);
