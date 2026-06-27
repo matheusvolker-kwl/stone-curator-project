@@ -267,7 +267,7 @@ export default function QuoteLeadModal({
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 pt-2">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 pt-2" noValidate>
             {isLogged ? (
               <div className="flex items-start gap-3 p-3 bg-western-green-deep/5 border border-western-green-deep/15">
                 <UserCheck className="h-4 w-4 text-western-green-deep mt-0.5 flex-shrink-0" />
