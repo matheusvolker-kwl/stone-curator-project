@@ -84,8 +84,10 @@ export default function AccountProfile() {
     }
     setErrors({});
     setSaving(true);
+    const { email: _omit, ...persist } = form;
+    void _omit;
     const { error } = await supabase.from("partner_profiles").update({
-      ...form,
+      ...persist,
       empresa: normalizeText(form.empresa),
       nome: normalizeText(form.nome),
     }).eq("user_id", user.id);
