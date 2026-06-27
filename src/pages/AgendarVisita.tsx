@@ -163,7 +163,7 @@ export default function AgendarVisita() {
           {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · {BUSINESS.horarioAtelie} · Retirada gratuita
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
           <div>
             <FieldLabel htmlFor="nome">Nome</FieldLabel>
             <Input id="nome" value={f.nome} onChange={(e) => set("nome", e.target.value)} required
