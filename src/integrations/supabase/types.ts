@@ -158,6 +158,42 @@ export type Database = {
         }
         Relationships: []
       }
+      credenciar_daily_counters: {
+        Row: {
+          count: number
+          counter_key: string
+          day: string
+        }
+        Insert: {
+          count?: number
+          counter_key: string
+          day: string
+        }
+        Update: {
+          count?: number
+          counter_key?: string
+          day?: string
+        }
+        Relationships: []
+      }
+      credenciar_rate_buckets: {
+        Row: {
+          bucket_key: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          bucket_key: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          bucket_key?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       guide_exports: {
         Row: {
           created_at: string
@@ -776,6 +812,7 @@ export type Database = {
     }
     Functions: {
       claim_first_admin: { Args: never; Returns: boolean }
+      cleanup_old_cartoes_cnpj: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
