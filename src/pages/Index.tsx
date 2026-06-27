@@ -18,14 +18,15 @@ import { BUSINESS } from "@/config/business";
 
 export default function Index() {
   const scrollY = useScrollY();
-  const { data: collections = [] } = useQuery({
+  const { data: collections = [], isLoading: loadingCollections } = useQuery({
     queryKey: ["collections"],
     queryFn: () => fetchCollections(20),
   });
-  const { data: featured = [] } = useQuery({
+  const { data: featured = [], isLoading: loadingFeatured } = useQuery({
     queryKey: ["featured-products"],
     queryFn: () => fetchProducts(8),
   });
+
 
   const linhasAll = collections.filter((c) => !isSeasonal(c) && c.handle !== "conjuntos");
   // Home: mostra no máx 8 (2 linhas × 4 col), sem "Fontes para Jardim", com "Pisadas".
