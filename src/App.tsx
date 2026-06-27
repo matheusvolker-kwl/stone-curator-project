@@ -112,11 +112,6 @@ const App = () => (
                   {HOLDING_PAGE
                     ? <Route path="/inicio" element={<Index />} />
                     : <Route path="/" element={<Index />} />}
-                <Route path="/guia-de-composicao/composicoes" element={<GuiaComposicoes />} />
-                <Route path="/guia-de-composicao/refinar/:handle" element={<GuiaRefinar />} />
-                <Route path="/guia-de-composicao/finalizar" element={<Navigate to="/guia-de-composicao" replace />} />
-                <Route element={<SiteLayout />}>
-                  <Route path="/" element={<Index />} />
                   <Route path="/linhas" element={<Linhas />} />
                   <Route path="/linhas/:handle" element={<LinhaPage />} />
                   <Route path="/conjuntos" element={<Conjuntos />} />
