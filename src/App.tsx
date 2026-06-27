@@ -9,6 +9,19 @@ import RequireAuth from "@/components/auth/RequireAuth";
 import SiteLayout from "@/components/layout/SiteLayout";
 import ScrollToTop from "@/components/ScrollToTop";
 import Index from "./pages/Index.tsx"; // home eager: maior chance de ser primeira rota
+import ComingSoon from "./pages/ComingSoon.tsx";
+
+// =====================================================================
+// PRÉ-LANÇAMENTO
+// HOLDING_PAGE = true  -> "/" mostra a página "LANÇAMENTO EM BREVE" em tela
+//                         cheia (fora do SiteLayout). A loja real continua
+//                         acessível em "/inicio" e todas as demais rotas
+//                         seguem funcionando normalmente.
+// HOLDING_PAGE = false -> "/" volta a ser a home da loja (<Index/>) e a
+//                         ComingSoon some completamente. Para reverter no
+//                         lançamento basta trocar a flag abaixo para false.
+// =====================================================================
+const HOLDING_PAGE = true;
 
 // === Páginas pesadas: lazy ===
 const AdminLayout = lazy(() => import("@/components/admin/AdminLayout"));
