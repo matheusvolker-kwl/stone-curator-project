@@ -102,7 +102,9 @@ export default function ColecoesGrid({ collections, isLoading }: Props) {
             );
           })}
         </div>
+        )}
       </div>
+
     </section>
   );
 }
