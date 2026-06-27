@@ -331,6 +331,7 @@ export default function PartnerSignup() {
                           estado: d.uf || p.estado,
                         }));
                       }}
+                      focusNextId="numero"
                       required
                       error={errors.cep}
                     />
