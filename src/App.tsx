@@ -21,7 +21,7 @@ import ComingSoon from "./pages/ComingSoon.tsx";
 //                         ComingSoon some completamente. Para reverter no
 //                         lançamento basta trocar a flag abaixo para false.
 // =====================================================================
-const HOLDING_PAGE = true;
+const HOLDING_PAGE = false;
 
 // === Páginas pesadas: lazy ===
 const AdminLayout = lazy(() => import("@/components/admin/AdminLayout"));
