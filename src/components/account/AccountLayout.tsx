@@ -43,11 +43,9 @@ export default function AccountLayout() {
             <h1 className="font-display text-2xl text-western-green-deep mb-2 leading-tight">
               {empresa || user?.email?.split("@")[0]}
             </h1>
-            <span
-              className={`inline-flex items-center px-2 py-1 border font-mono text-[10px] uppercase tracking-[0.18em] mb-6 ${TIER_BADGE_CLS[tier as Tier]}`}
-            >
-              {TIER_LABEL[tier as Tier]}
-            </span>
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80 mb-6">
+              Parceiro Western
+            </p>
 
             <nav ref={navRef} className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible -mx-2 md:mx-0 px-2 md:px-0 pb-2 md:pb-0 scroll-smooth">
               {items.map((it) => (
