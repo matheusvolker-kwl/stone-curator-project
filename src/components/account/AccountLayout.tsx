@@ -3,33 +3,27 @@ import { useEffect, useRef } from "react";
 import {
   LayoutDashboard,
   User,
-  FileStack,
   ShoppingBag,
-  FileDown,
-  Heart,
-  Package,
-  Settings,
+  Truck,
+  FileStack,
   LogOut,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { TIER_LABEL, TIER_BADGE_CLS, type Tier } from "@/components/admin/adminUtils";
-import { usePartnerTier } from "@/hooks/usePartnerPricing";
 
+// Itens visíveis no menu do cliente. A lógica de tier/desconto/orçamentos/
+// sketches/favoritos/amostras/preferências continua existindo (rotas ativas e
+// tabelas intocadas) — apenas escondemos do menu enquanto o foco é o pedido.
 const items = [
   { to: "/minha-conta", label: "Visão geral", icon: LayoutDashboard, end: true },
+  { to: "/minha-conta/pedidos", label: "Meus pedidos", icon: ShoppingBag },
+  { to: "/minha-conta/rastreio", label: "Rastreio", icon: Truck },
+  { to: "/minha-conta/composicoes", label: "Composições", icon: FileStack },
   { to: "/minha-conta/perfil", label: "Meu perfil", icon: User },
-  { to: "/minha-conta/pedidos", label: "Pedidos", icon: ShoppingBag },
-  { to: "/minha-conta/orcamentos", label: "Orçamentos", icon: FileStack },
-  { to: "/minha-conta/sketches", label: "Sketches", icon: FileDown },
-  { to: "/minha-conta/favoritos", label: "Favoritos", icon: Heart },
-  { to: "/minha-conta/amostras", label: "Amostras", icon: Package },
-  { to: "/minha-conta/preferencias", label: "Preferências", icon: Settings },
 ];
 
 export default function AccountLayout() {
   const { empresa, user, signOut } = useAuth();
   const navigate = useNavigate();
-  const { tier } = usePartnerTier();
   const { pathname } = useLocation();
   const navRef = useRef<HTMLElement>(null);
 
