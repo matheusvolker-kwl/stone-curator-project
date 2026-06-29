@@ -139,6 +139,8 @@ const App = () => (
                     <Route path="perfil" element={<AccountProfile />} />
                     <Route path="orcamentos" element={<AccountQuotes />} />
                     <Route path="pedidos" element={<AccountOrders />} />
+                    <Route path="rastreio" element={<AccountTracking />} />
+                    <Route path="composicoes" element={<AccountCompositions />} />
                     <Route path="sketches" element={<AccountSketches />} />
                     <Route path="favoritos" element={<AccountFavorites />} />
                     <Route path="amostras" element={<AccountSamples />} />
