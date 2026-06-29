@@ -46,6 +46,8 @@ const AccountSketches = lazy(() => import("./pages/account/AccountSketches"));
 const AccountFavorites = lazy(() => import("./pages/account/AccountFavorites"));
 const AccountSamples = lazy(() => import("./pages/account/AccountSamples"));
 const AccountPreferences = lazy(() => import("./pages/account/AccountPreferences"));
+const AccountTracking = lazy(() => import("./pages/account/AccountTracking"));
+const AccountCompositions = lazy(() => import("./pages/account/AccountCompositions"));
 
 const Linhas = lazy(() => import("./pages/Linhas.tsx"));
 const LinhaPage = lazy(() => import("./pages/LinhaPage.tsx"));
