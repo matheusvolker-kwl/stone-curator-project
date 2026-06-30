@@ -50,7 +50,6 @@ const GALLERY = [
   { src: boxAberta.url, alt: "Western Box aberta com os quatro samples e o catálogo" },
   { src: lifestyle.url, alt: "Western Box em uso sobre a mesa de trabalho" },
   { src: catalogo.url, alt: "Catálogo oficial Western Pools" },
-  { src: hero.url, alt: "Samples Western à beira da piscina" },
 ];
 
 const ACABAMENTOS = [
@@ -491,6 +490,34 @@ export default function WesternBox() {
       {/* 1. TOPO CLÁSSICO DE PRODUTO */}
       <ProductTop topBuyRef={topBuyRef} />
 
+      {/* 1.5 RESPIRO EDITORIAL — foto hero em parallax, proporção landscape nativa */}
+      <section className="relative w-full overflow-hidden bg-western-green-deep">
+        <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] md:aspect-[21/9] max-h-[88vh]">
+          <ParallaxImage
+            src={hero.url}
+            alt="Samples Western à beira da piscina"
+            className="absolute inset-0 h-full w-full"
+            range={40}
+            scale={1.05}
+          />
+          {/* overlay sutil só na base, mantendo a foto clara */}
+          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-western-green-deep/55 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 p-6 md:p-14">
+            <div className="container-western">
+              <Reveal variant="fade-up" duration={1100} distance={30}>
+                <p className="font-display text-western-cream text-[clamp(1.1rem,2.6vw,2rem)] leading-snug tracking-[-0.01em] max-w-xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
+                  Projetos de alto padrão{" "}
+                  <span className="italic font-light text-western-gold-soft">
+                    começam pelo toque.
+                  </span>
+                </p>
+              </Reveal>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
       {/* 2. INTRO EDITORIAL */}
       <section className="bg-western-paper py-20 md:py-32">
         <div className="container-western">
@@ -903,7 +930,7 @@ export default function WesternBox() {
       {/* 11. CTA FINAL */}
       <section className="relative min-h-[70vh] md:min-h-[80vh] overflow-hidden bg-western-green-deep text-western-cream flex items-center justify-center text-center py-24 md:py-32">
         <ParallaxImage
-          src={hero.url}
+          src={lifestyle.url}
           alt=""
           className="absolute inset-0 h-full w-full opacity-40"
           range={100}
