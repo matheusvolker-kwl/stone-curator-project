@@ -696,6 +696,34 @@ export default function WesternBox() {
       {/* 5. SEGUNDO PONTO DE COMPRA */}
       <MidBuyStrip />
 
+      {/* 5.5 RESPIRO EDITORIAL — foto hero (samples à beira da piscina) em parallax wide */}
+      <section className="relative w-full overflow-hidden bg-western-green-deep">
+        <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] max-h-[90vh]">
+          <ParallaxImage
+            src={hero.url}
+            alt="Samples Western à beira da piscina"
+            className="absolute inset-0 h-full w-full"
+            range={30}
+            scale={1.06}
+            objectPosition="center 65%"
+          />
+          {/* overlay sutil só na base, mantendo a foto clara e os samples visíveis */}
+          <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-western-green-deep/45 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 p-6 md:p-12">
+            <div className="container-western">
+              <Reveal variant="fade-up" duration={1100} distance={28}>
+                <p className="font-display text-western-cream text-[clamp(1rem,2.2vw,1.75rem)] leading-snug tracking-[-0.01em] max-w-xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+                  Projetos de alto padrão{" "}
+                  <span className="italic font-light text-western-gold-soft">
+                    começam pelo toque.
+                  </span>
+                </p>
+              </Reveal>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 6. FERRAMENTA DE ESPECIFICAÇÃO */}
       <section className="bg-western-paper py-20 md:py-32">
         <div className="container-western grid md:grid-cols-12 gap-10 md:gap-14">
