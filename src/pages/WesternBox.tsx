@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { Check, ShieldCheck, Package, Truck, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useTransform, AnimatePresence, useReducedMotion } from "framer-motion";
+import { Check, ShieldCheck, Package, Truck, Sparkles, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Seo from "@/components/seo/Seo";
+import Reveal from "@/components/shared/Reveal";
 import { submitCheckoutHandoff } from "@/lib/woo-checkout";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -21,12 +23,7 @@ import pb3Moledo from "@/assets/western-box/pb3-moledo.webp.asset.json";
 import pb3Granito from "@/assets/western-box/pb3-granito.webp.asset.json";
 
 // =============================================================================
-// CONFIGURAÇÃO DO PRODUTO NO WOOCOMMERCE
-// -----------------------------------------------------------------------------
-// O produto Western Box AINDA NÃO existe no Woo. Quando for criado, basta
-// preencher o WOO_PRODUCT_ID abaixo com o product_id retornado pelo Woo e o
-// botão "Comprar" passa a disparar o hand-off de checkout normalmente.
-// Enquanto estiver `null`, o botão fica desabilitado com label "Em breve".
+// CONFIGURAÇÃO DO PRODUTO NO WOOCOMMERCE — preserve, mesma constante do anterior
 // =============================================================================
 const WESTERN_BOX_WOO_PRODUCT_ID: number | null = null;
 const PRICE_LABEL = "R$ 149,90";
@@ -85,17 +82,18 @@ const PARA_QUEM = [
   "Designers de exteriores",
   "Piscineiros",
   "Revendedores",
-  "Clientes que desejam conhecer nossos acabamentos antes da compra",
+  "Clientes finais",
 ];
 
-function BuyButton({ size = "lg", className }: { size?: "lg" | "default"; className?: string }) {
+// ---------------------------------------------------------------------------
+// BUY ACTION — usado pelo CTA inline e pelo sticky buy bar
+// ---------------------------------------------------------------------------
+function useBuyAction() {
   const disabled = WESTERN_BOX_WOO_PRODUCT_ID === null;
-
-  const handleClick = () => {
+  const buy = () => {
     if (disabled || WESTERN_BOX_WOO_PRODUCT_ID === null) return;
     submitCheckoutHandoff([
       {
-        // CartItem mínimo para o hand-off — apenas os campos Woo são necessários.
         id: `wbox-${WESTERN_BOX_WOO_PRODUCT_ID}`,
         title: "Western Box",
         handle: "western-box",
@@ -110,26 +108,118 @@ function BuyButton({ size = "lg", className }: { size?: "lg" | "default"; classN
     ]);
     toast.success("Redirecionando para o checkout…");
   };
+  return { disabled, buy };
+}
 
+function BuyButton({ size = "lg", className }: { size?: "lg" | "default"; className?: string }) {
+  const { disabled, buy } = useBuyAction();
   return (
     <Button
-      onClick={handleClick}
+      onClick={buy}
       disabled={disabled}
       size={size}
       className={cn(
-        "bg-western-gold text-western-green-deep hover:bg-western-gold-soft font-medium tracking-wide uppercase",
-        size === "lg" && "h-14 px-10 text-[13px]",
+        "group relative overflow-hidden bg-western-gold text-western-green-deep hover:bg-western-gold-soft font-medium tracking-[0.18em] uppercase transition-all duration-500",
+        size === "lg" && "h-14 px-12 text-[12px]",
         className,
       )}
     >
-      {disabled ? "Em breve" : "Quero minha Western Box"}
+      <span className="relative z-10">{disabled ? "Em breve" : "Quero minha Western Box"}</span>
+      <span
+        className="absolute inset-0 -translate-x-full bg-western-cream transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-0 group-disabled:hidden"
+        aria-hidden
+      />
     </Button>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// STICKY BUY BAR — surge depois do hero
+// ---------------------------------------------------------------------------
+function StickyBuyBar() {
+  const { disabled, buy } = useBuyAction();
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > window.innerHeight * 0.85);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ y: 80, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 80, opacity: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 w-[min(94vw,640px)]"
+        >
+          <div className="flex items-center justify-between gap-4 rounded-full border border-western-gold/30 bg-western-green-deep/95 backdrop-blur-md pl-6 pr-2 py-2 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)]">
+            <div className="flex flex-col leading-tight">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-western-gold-soft">Western Box</span>
+              <span className="font-display text-western-cream text-lg">{PRICE_LABEL}</span>
+            </div>
+            <Button
+              onClick={buy}
+              disabled={disabled}
+              className="h-11 rounded-full px-6 bg-western-gold text-western-green-deep hover:bg-western-gold-soft text-[11px] uppercase tracking-[0.16em]"
+            >
+              {disabled ? "Em breve" : "Comprar agora"}
+            </Button>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// PARALLAX IMAGE — usa useScroll para movimento sutil em containers full-bleed
+// ---------------------------------------------------------------------------
+function ParallaxImage({
+  src,
+  alt,
+  className,
+  range = 80,
+  scale = 1.1,
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+  range?: number;
+  scale?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [-range, range]);
+  return (
+    <div ref={ref} className={cn("relative overflow-hidden", className)}>
+      <motion.img
+        src={src}
+        alt={alt}
+        style={{ y, scale }}
+        className="absolute inset-0 h-full w-full object-cover will-change-transform"
+        loading="lazy"
+      />
+    </div>
   );
 }
 
 export default function WesternBox() {
   const [acabamentoAtivo, setAcabamentoAtivo] = useState<(typeof ACABAMENTOS)[number]["id"]>("quartzo");
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const ativo = ACABAMENTOS.find((a) => a.id === acabamentoAtivo)!;
+  const reduce = useReducedMotion();
+
+  // Parallax do hero
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: heroProg } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroY = useTransform(heroProg, [0, 1], reduce ? [0, 0] : [0, 220]);
+  const heroScale = useTransform(heroProg, [0, 1], reduce ? [1, 1] : [1, 1.15]);
+  const heroTitleY = useTransform(heroProg, [0, 1], reduce ? [0, 0] : [0, -60]);
+  const heroOpacity = useTransform(heroProg, [0, 0.8], [1, 0]);
 
   return (
     <>
@@ -141,340 +231,518 @@ export default function WesternBox() {
         image={hero.url}
       />
 
-      {/* ===================== HERO ===================== */}
-      <section className="relative bg-western-green-deep text-western-cream overflow-hidden">
-        <div className="absolute inset-0">
+      <StickyBuyBar />
+
+      {/* =================== HERO EDITORIAL FULL-VIEWPORT =================== */}
+      <section
+        ref={heroRef}
+        className="relative h-[100svh] min-h-[640px] w-full overflow-hidden bg-western-green-deep text-western-cream"
+      >
+        <motion.div style={{ y: heroY, scale: heroScale }} className="absolute inset-0 will-change-transform">
           <img
             src={hero.url}
             alt="Western Box à beira da piscina com os quatro samples e o catálogo Western Pools"
-            className="h-full w-full object-cover opacity-90"
+            className="h-full w-full object-cover"
             loading="eager"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-western-green-deep via-western-green-deep/55 to-western-green-deep/15" />
-          <div className="absolute inset-0 bg-gradient-to-r from-western-green-deep/70 via-transparent to-transparent" />
-        </div>
+        </motion.div>
+        <div className="absolute inset-0 bg-gradient-to-t from-western-green-deep via-western-green-deep/40 to-western-green-deep/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-western-green-deep/65 via-transparent to-transparent" />
 
-        <div className="container-western relative z-10 min-h-[88vh] flex items-end pb-20 md:pb-28 pt-28">
-          <div className="max-w-2xl">
-            <p className="text-eyebrow text-western-gold-soft mb-6">Western Box</p>
-            <h1 className="font-display text-[clamp(2.6rem,6vw,5.25rem)] leading-[1.02] tracking-tight text-western-cream">
-              O primeiro passo para escolher com confiança.
-            </h1>
-            <p className="mt-6 max-w-xl text-western-cream/85 text-lg leading-relaxed">
-              A coleção física dos quatro acabamentos Western Pools — entregue na sua mesa, com
-              catálogo oficial da marca.
+        <motion.div
+          style={{ y: heroTitleY, opacity: heroOpacity }}
+          className="container-western relative z-10 flex h-full flex-col justify-end pb-24 md:pb-32"
+        >
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="text-[11px] uppercase tracking-[0.32em] text-western-gold-soft mb-8"
+          >
+            Western Box · Edição oficial
+          </motion.p>
+          <h1 className="font-display max-w-5xl text-[clamp(3rem,9vw,8.5rem)] leading-[0.92] tracking-[-0.02em] text-western-cream">
+            {"O primeiro passo".split(" ").map((w, i) => (
+              <motion.span
+                key={i}
+                initial={{ opacity: 0, y: 60 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.1, delay: 0.35 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                className="mr-[0.25em] inline-block"
+              >
+                {w}
+              </motion.span>
+            ))}
+            <br />
+            {"para escolher com confiança.".split(" ").map((w, i) => (
+              <motion.span
+                key={i}
+                initial={{ opacity: 0, y: 60 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.1, delay: 0.55 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                className="mr-[0.25em] inline-block italic font-light text-western-gold-soft"
+              >
+                {w}
+              </motion.span>
+            ))}
+          </h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.2, delay: 1.1 }}
+            className="mt-10 max-w-md text-western-cream/70 text-base leading-relaxed font-light"
+          >
+            A coleção física dos quatro acabamentos Western Pools — entregue na sua mesa, com
+            catálogo oficial da marca.
+          </motion.p>
+        </motion.div>
+
+        {/* Scroll cue */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.6, duration: 1 }}
+          style={{ opacity: heroOpacity }}
+          className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 text-western-cream/60"
+        >
+          <span className="text-[10px] uppercase tracking-[0.3em]">Role para descobrir</span>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <ArrowDown className="h-4 w-4" />
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* =================== INTRO — FRASE DE IMPACTO =================== */}
+      <section className="bg-western-paper py-32 md:py-48">
+        <div className="container-western">
+          <Reveal variant="fade-up" duration={1100} distance={40}>
+            <p className="text-[11px] uppercase tracking-[0.28em] text-western-gold mb-10">
+              Por que existe
             </p>
-
-            <div className="mt-10 flex flex-wrap items-end gap-x-6 gap-y-3">
-              <span className="font-display text-4xl md:text-5xl text-western-cream">{PRICE_LABEL}</span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-western-gold/40 bg-western-green-mid/40 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-western-gold-soft">
-                <Sparkles className="h-3 w-3" /> 100% de volta como crédito na 1ª compra
-              </span>
-            </div>
-
-            <div className="mt-10">
-              <BuyButton />
-            </div>
+          </Reveal>
+          <div className="font-display text-[clamp(2.5rem,7vw,6rem)] leading-[1.02] tracking-[-0.02em] text-western-green-deep">
+            {["Veja.", "Toque.", "Compare.", "Decida."].map((word, i) => (
+              <Reveal
+                key={word}
+                variant="fade-up"
+                delay={i * 180}
+                duration={1100}
+                distance={60}
+                as="span"
+                className="mr-[0.3em] inline-block"
+              >
+                <span className={cn(i === 3 && "italic font-light text-western-gold")}>{word}</span>
+              </Reveal>
+            ))}
           </div>
+          <Reveal variant="fade-up" delay={700} duration={900}>
+            <p className="mt-16 max-w-xl text-western-stone-warm text-lg leading-relaxed font-light">
+              Conhecer um acabamento apenas pela tela nunca conta a história completa. A Western Box
+              leva até você uma seleção exclusiva com os quatro acabamentos, com catálogo oficial,
+              para que você analise texturas, cores e detalhes exatamente como eles serão
+              percebidos no seu projeto.
+            </p>
+          </Reveal>
         </div>
       </section>
 
-      {/* ===================== INTRO ===================== */}
-      <section className="bg-western-paper py-24 md:py-32">
-        <div className="container-western grid md:grid-cols-12 gap-12 items-start">
-          <div className="md:col-span-7 md:col-start-2 space-y-7">
-            <p className="text-eyebrow text-western-gold">Por que existe</p>
-            <p className="font-display text-2xl md:text-3xl leading-snug text-western-green-deep">
-              Conhecer um acabamento apenas pela tela nunca conta a história completa.
-            </p>
-            <p className="font-sans text-base md:text-lg text-western-stone-warm leading-relaxed max-w-2xl">
-              A Western Box leva até você uma seleção exclusiva com os quatro acabamentos da
-              Western Pools, acompanhados do catálogo oficial da marca, para que você possa analisar
-              texturas, cores e detalhes exatamente como eles serão percebidos no seu projeto.
-            </p>
-          </div>
-          <div className="md:col-span-3 md:pt-10">
-            <p className="font-display text-3xl md:text-[2.5rem] leading-[1.05] text-western-gold">
-              Veja.<br />Toque.<br />Compare.<br />Decida.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ===================== O QUE ACOMPANHA ===================== */}
-      <section className="bg-western-ivory py-24 md:py-32">
-        <div className="container-western grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-          <div className="relative">
-            <div className="absolute -inset-6 bg-western-cream/40 rounded-sm -z-10" />
-            <img
+      {/* =================== O QUE ACOMPANHA — IMAGEM HERO + CHECKLIST =================== */}
+      <section className="bg-western-ivory">
+        <div className="grid md:grid-cols-12 gap-0">
+          <Reveal
+            variant="fade"
+            duration={1400}
+            className="md:col-span-7 relative h-[70vh] md:h-[110vh] md:sticky md:top-0"
+          >
+            <ParallaxImage
               src={boxAberta.url}
               alt="Western Box aberta exibindo os quatro samples e o catálogo"
-              className="w-full h-auto rounded-sm shadow-2xl"
-              loading="lazy"
+              className="h-full w-full"
+              range={60}
+              scale={1.08}
             />
-          </div>
-          <div>
-            <p className="text-eyebrow text-western-gold mb-5">O que acompanha</p>
-            <h2 className="font-display text-4xl md:text-5xl text-western-green-deep leading-tight">
-              Tudo o que você precisa para especificar com segurança.
-            </h2>
-            <ul className="mt-10 space-y-4">
-              {INCLUI.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-western-stone-dark">
-                  <span className="mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-western-gold/20">
-                    <Check className="h-3 w-3 text-western-gold" />
-                  </span>
-                  <span className="font-sans text-base md:text-lg">{item}</span>
-                </li>
+          </Reveal>
+
+          <div className="md:col-span-5 px-6 md:px-16 py-24 md:py-40 flex flex-col justify-center">
+            <Reveal variant="fade-up" duration={900}>
+              <p className="text-[11px] uppercase tracking-[0.28em] text-western-gold mb-6">
+                O que acompanha
+              </p>
+            </Reveal>
+            <Reveal variant="fade-up" delay={100} duration={1000} distance={40}>
+              <h2 className="font-display text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em] text-western-green-deep">
+                Tudo o que você precisa para especificar com{" "}
+                <span className="italic font-light text-western-gold">segurança</span>.
+              </h2>
+            </Reveal>
+            <ul className="mt-14 space-y-0">
+              {INCLUI.map((item, i) => (
+                <Reveal key={item} variant="fade-up" delay={200 + i * 90} duration={800}>
+                  <li className="flex items-center gap-5 py-5 border-b border-western-stone-warm/15 group">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-western-gold/40 transition-all duration-500 group-hover:bg-western-gold group-hover:scale-110">
+                      <Check className="h-4 w-4 text-western-gold transition-colors duration-500 group-hover:text-western-green-deep" />
+                    </span>
+                    <span className="font-display text-xl md:text-2xl text-western-stone-dark">
+                      {item}
+                    </span>
+                  </li>
+                </Reveal>
               ))}
             </ul>
           </div>
         </div>
       </section>
 
-      {/* ===================== OS 4 ACABAMENTOS ===================== */}
-      <section className="bg-western-green-deep text-western-cream py-24 md:py-32">
+      {/* =================== OS 4 ACABAMENTOS — CENTERPIECE =================== */}
+      <section className="relative bg-western-green-deep text-western-cream py-32 md:py-48 overflow-hidden">
         <div className="container-western">
-          <div className="max-w-2xl mb-14">
-            <p className="text-eyebrow text-western-gold-soft mb-5">Os quatro acabamentos</p>
-            <h2 className="font-display text-4xl md:text-5xl leading-tight">
-              A assinatura Western, em quatro temperamentos.
-            </h2>
-            <p className="mt-5 text-western-cream/75 max-w-xl">
-              Selecione um acabamento e veja como ele aparece aplicado em uma peça real.
-            </p>
+          <div className="max-w-3xl mb-20 md:mb-28">
+            <Reveal variant="fade-up" duration={900}>
+              <p className="text-[11px] uppercase tracking-[0.28em] text-western-gold-soft mb-8">
+                Os quatro acabamentos
+              </p>
+            </Reveal>
+            <Reveal variant="fade-up" delay={100} duration={1100} distance={50}>
+              <h2 className="font-display text-[clamp(2.5rem,6vw,5.5rem)] leading-[0.98] tracking-[-0.02em]">
+                A assinatura Western,<br />
+                <span className="italic font-light text-western-gold-soft">em quatro temperamentos.</span>
+              </h2>
+            </Reveal>
           </div>
 
-          <div className="grid md:grid-cols-12 gap-8 md:gap-10 items-start">
-            {/* Cards */}
-            <div className="md:col-span-7 grid grid-cols-2 gap-4 md:gap-5">
-              {ACABAMENTOS.map((a) => {
+          <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
+            {/* Cards de textura */}
+            <div className="md:col-span-7 grid grid-cols-2 gap-4 md:gap-6">
+              {ACABAMENTOS.map((a, i) => {
                 const active = a.id === acabamentoAtivo;
+                const hovered = hoveredCard === a.id;
                 return (
-                  <button
-                    key={a.id}
-                    type="button"
-                    onClick={() => setAcabamentoAtivo(a.id)}
-                    onMouseEnter={() => setAcabamentoAtivo(a.id)}
-                    className={cn(
-                      "group text-left rounded-sm overflow-hidden border transition-all duration-300 bg-western-green-mid/40",
-                      active
-                        ? "border-western-gold shadow-[0_0_0_1px_hsl(var(--western-gold)/0.6)]"
-                        : "border-western-cream/10 hover:border-western-gold/50",
-                    )}
-                  >
-                    <div className="aspect-square overflow-hidden">
-                      <img
-                        src={a.texture}
-                        alt={`Textura ${a.nome}`}
-                        className={cn(
-                          "h-full w-full object-cover transition-transform duration-700",
-                          active ? "scale-105" : "group-hover:scale-105",
-                        )}
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="p-4 md:p-5">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-display text-xl md:text-2xl text-western-cream">{a.nome}</h3>
-                        <span
+                  <Reveal key={a.id} variant="fade-up" delay={i * 120} duration={900}>
+                    <button
+                      type="button"
+                      onClick={() => setAcabamentoAtivo(a.id)}
+                      onMouseEnter={() => {
+                        setHoveredCard(a.id);
+                        setAcabamentoAtivo(a.id);
+                      }}
+                      onMouseLeave={() => setHoveredCard(null)}
+                      className={cn(
+                        "group relative w-full text-left overflow-hidden border transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                        active
+                          ? "border-western-gold shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)]"
+                          : "border-western-cream/10 hover:border-western-gold/60",
+                      )}
+                      style={{ transform: hovered ? "translateY(-6px)" : "translateY(0)" }}
+                    >
+                      <div className="relative aspect-[4/5] overflow-hidden">
+                        {/* Textura */}
+                        <img
+                          src={a.texture}
+                          alt={`Textura ${a.nome}`}
                           className={cn(
-                            "h-1.5 w-1.5 rounded-full transition-colors",
-                            active ? "bg-western-gold" : "bg-western-cream/20",
+                            "absolute inset-0 h-full w-full object-cover transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+                            hovered ? "scale-110 opacity-0" : "scale-100 opacity-100",
                           )}
+                          loading="lazy"
                         />
+                        {/* PB3 — crossfade no hover */}
+                        <img
+                          src={a.pb3}
+                          alt={`PB3 ${a.nome}`}
+                          className={cn(
+                            "absolute inset-0 h-full w-full object-cover transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+                            hovered ? "scale-100 opacity-100" : "scale-110 opacity-0",
+                          )}
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-western-green-deep/80 via-transparent to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7 flex items-end justify-between">
+                          <div>
+                            <p className="text-[10px] uppercase tracking-[0.24em] text-western-gold-soft mb-2">
+                              {String(i + 1).padStart(2, "0")} · {hovered ? "Em peça PB3" : "Textura"}
+                            </p>
+                            <h3 className="font-display text-2xl md:text-3xl text-western-cream">
+                              {a.nome}
+                            </h3>
+                          </div>
+                          <span
+                            className={cn(
+                              "h-2 w-2 rounded-full transition-all duration-500",
+                              active ? "bg-western-gold scale-150" : "bg-western-cream/30",
+                            )}
+                          />
+                        </div>
                       </div>
-                      <p className="text-[13px] md:text-sm text-western-cream/70 leading-relaxed">
-                        {a.descricao}
-                      </p>
-                    </div>
-                  </button>
+                    </button>
+                  </Reveal>
                 );
               })}
             </div>
 
-            {/* Preview interativo PB3 */}
-            <div className="md:col-span-5 md:sticky md:top-24">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-western-green-mid/40 border border-western-cream/10">
-                {ACABAMENTOS.map((a) => (
-                  <img
-                    key={a.id}
-                    src={a.pb3}
-                    alt={`Peça PB3 com acabamento ${a.nome}`}
-                    className={cn(
-                      "absolute inset-0 h-full w-full object-cover transition-opacity duration-500",
-                      a.id === acabamentoAtivo ? "opacity-100" : "opacity-0",
-                    )}
-                    loading="lazy"
-                  />
-                ))}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-western-green-deep/80 to-transparent p-5">
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-western-gold-soft">PB3</p>
-                  <p className="font-display text-2xl text-western-cream">{ativo.nome}</p>
+            {/* Painel descritivo do ativo */}
+            <div className="md:col-span-5 md:sticky md:top-32">
+              <Reveal variant="fade-up" duration={900}>
+                <div className="border-l-2 border-western-gold/40 pl-8">
+                  <p className="text-[11px] uppercase tracking-[0.28em] text-western-gold-soft mb-6">
+                    Acabamento em destaque
+                  </p>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={ativo.id}
+                      initial={{ opacity: 0, y: 14 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -14 }}
+                      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <h3 className="font-display text-[clamp(3rem,5vw,4.5rem)] leading-[0.95] text-western-cream tracking-[-0.02em]">
+                        {ativo.nome}
+                      </h3>
+                      <p className="mt-6 text-western-cream/75 text-lg leading-relaxed font-light max-w-sm">
+                        {ativo.descricao}
+                      </p>
+                    </motion.div>
+                  </AnimatePresence>
+                  <p className="mt-10 text-[11px] uppercase tracking-[0.22em] text-western-cream/40">
+                    Passe o cursor sobre os cards
+                  </p>
                 </div>
-              </div>
-              <p className="mt-4 text-xs text-western-cream/55 text-center">
-                Acabamento aplicado em peça real — passe sobre os cards
-              </p>
+              </Reveal>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ===================== FERRAMENTA DE ESPECIFICAÇÃO ===================== */}
-      <section className="bg-western-paper py-24 md:py-32">
+      {/* =================== FERRAMENTA DE ESPECIFICAÇÃO =================== */}
+      <section className="bg-western-paper py-32 md:py-44">
         <div className="container-western grid md:grid-cols-12 gap-12">
           <div className="md:col-span-5">
-            <p className="text-eyebrow text-western-gold mb-5">Mais do que amostras</p>
-            <h2 className="font-display text-4xl md:text-5xl leading-tight text-western-green-deep">
-              Uma ferramenta de especificação.
-            </h2>
+            <Reveal variant="fade-up" duration={900}>
+              <p className="text-[11px] uppercase tracking-[0.28em] text-western-gold mb-6">
+                Mais do que amostras
+              </p>
+            </Reveal>
+            <Reveal variant="fade-up" delay={100} duration={1100} distance={50}>
+              <h2 className="font-display text-[clamp(2.25rem,5vw,4.5rem)] leading-[1] tracking-[-0.02em] text-western-green-deep">
+                Uma ferramenta de{" "}
+                <span className="italic font-light text-western-gold">especificação</span>.
+              </h2>
+            </Reveal>
           </div>
-          <ul className="md:col-span-7 space-y-5 md:pt-3">
+          <ul className="md:col-span-7 md:pt-4">
             {FERRAMENTA.map((item, i) => (
-              <li key={item} className="flex gap-5 border-b border-western-stone-warm/15 pb-5 last:border-0">
-                <span className="font-display text-western-gold text-2xl leading-none w-8 shrink-0">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="font-sans text-base md:text-lg text-western-stone-dark leading-snug">
-                  {item}
-                </span>
-              </li>
+              <Reveal key={item} variant="fade-up" delay={i * 120} duration={900}>
+                <li className="grid grid-cols-[auto_1fr] gap-8 items-baseline border-b border-western-stone-warm/15 py-7 group cursor-default">
+                  <span className="font-display text-western-gold text-3xl md:text-4xl leading-none w-12 shrink-0 transition-transform duration-500 group-hover:translate-x-1">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="font-display text-xl md:text-2xl text-western-stone-dark leading-snug">
+                    {item}
+                  </span>
+                </li>
+              </Reveal>
             ))}
           </ul>
         </div>
       </section>
 
-      {/* ===================== CATÁLOGO ===================== */}
-      <section className="bg-western-ivory py-24 md:py-32">
-        <div className="container-western grid md:grid-cols-2 gap-12 md:gap-16 items-center">
-          <div className="md:order-2">
-            <img
+      {/* =================== CATÁLOGO — FULL BLEED =================== */}
+      <section className="bg-western-ivory">
+        <div className="grid md:grid-cols-12 gap-0 items-stretch">
+          <div className="md:col-span-5 px-6 md:px-16 py-24 md:py-40 flex flex-col justify-center order-2 md:order-1">
+            <Reveal variant="fade-up" duration={900}>
+              <p className="text-[11px] uppercase tracking-[0.28em] text-western-gold mb-6">
+                Catálogo Western Pools
+              </p>
+            </Reveal>
+            <Reveal variant="fade-up" delay={100} duration={1100} distance={50}>
+              <h2 className="font-display text-[clamp(2.25rem,4.5vw,4rem)] leading-[1.02] tracking-[-0.01em] text-western-green-deep">
+                Inspiração e técnica,<br />
+                <span className="italic font-light text-western-gold">em um único material.</span>
+              </h2>
+            </Reveal>
+            <Reveal variant="fade-up" delay={250} duration={900}>
+              <p className="mt-10 font-sans text-base md:text-lg text-western-stone-warm leading-relaxed font-light max-w-md">
+                Inspirações, aplicações, informações técnicas e toda a linha Western Pools.
+                Pensado para acompanhar você durante toda a fase de especificação.
+              </p>
+            </Reveal>
+          </div>
+          <div className="md:col-span-7 relative h-[70vh] md:h-[90vh] order-1 md:order-2">
+            <ParallaxImage
               src={catalogo.url}
               alt="Catálogo oficial Western Pools"
-              className="w-full h-auto rounded-sm shadow-xl"
-              loading="lazy"
+              className="h-full w-full"
+              range={60}
+              scale={1.08}
             />
-          </div>
-          <div className="md:order-1">
-            <p className="text-eyebrow text-western-gold mb-5">Catálogo Western Pools</p>
-            <h2 className="font-display text-4xl md:text-5xl leading-tight text-western-green-deep">
-              Inspiração e técnica, em um único material.
-            </h2>
-            <p className="mt-7 font-sans text-base md:text-lg text-western-stone-warm leading-relaxed">
-              Além dos samples físicos, você recebe nosso catálogo oficial com inspirações,
-              aplicações, informações técnicas e toda a linha de produtos Western Pools. Um material
-              pensado para acompanhar você durante toda a fase de especificação do projeto.
-            </p>
           </div>
         </div>
       </section>
 
-      {/* ===================== CASHBACK ===================== */}
-      <section className="relative py-28 md:py-36 overflow-hidden bg-western-green-deep text-western-cream">
-        <img
+      {/* =================== CASHBACK — MOMENTO DRAMÁTICO =================== */}
+      <section className="relative py-40 md:py-56 overflow-hidden bg-western-green-deep text-western-cream">
+        <ParallaxImage
           src={lifestyle.url}
-          alt="Western Box e catálogo dispostos sobre a mesa"
-          className="absolute inset-0 h-full w-full object-cover opacity-30"
-          loading="lazy"
+          alt=""
+          className="absolute inset-0 h-full w-full opacity-25"
+          range={100}
+          scale={1.15}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-western-green-deep via-western-green-deep/85 to-western-green-deep/40" />
-        <div className="container-western relative z-10 max-w-3xl">
-          <p className="text-eyebrow text-western-gold-soft mb-6">Cashback</p>
-          <p className="font-display text-[clamp(3rem,8vw,6.5rem)] leading-[0.95] text-western-gold">
-            100%
-          </p>
-          <p className="mt-4 font-display text-2xl md:text-3xl text-western-cream">
-            de volta como crédito na primeira compra.
-          </p>
-          <p className="mt-8 max-w-2xl text-western-cream/80 text-base md:text-lg leading-relaxed">
-            Ao realizar sua primeira compra de produtos Western Pools, os R$ 149,90 investidos na
-            Western Box retornam integralmente como crédito. Na prática, você conhece nossos
-            materiais sem perder esse investimento.
-          </p>
+        <div className="container-western relative z-10 max-w-4xl">
+          <Reveal variant="fade-up" duration={900}>
+            <p className="text-[11px] uppercase tracking-[0.32em] text-western-gold-soft mb-10 flex items-center gap-3">
+              <Sparkles className="h-3 w-3" /> Cashback exclusivo
+            </p>
+          </Reveal>
+          <div className="relative">
+            <Reveal variant="scale" duration={1400}>
+              <p className="font-display text-[clamp(7rem,22vw,22rem)] leading-[0.85] tracking-[-0.04em] text-western-gold">
+                100<span className="text-western-gold-soft">%</span>
+              </p>
+            </Reveal>
+          </div>
+          <Reveal variant="fade-up" delay={300} duration={1100} distance={50}>
+            <p className="mt-8 font-display text-[clamp(1.75rem,3.5vw,3rem)] leading-tight text-western-cream max-w-2xl">
+              de volta como crédito na sua{" "}
+              <span className="italic font-light text-western-gold-soft">primeira compra</span>.
+            </p>
+          </Reveal>
+          <Reveal variant="fade-up" delay={500} duration={900}>
+            <p className="mt-10 max-w-xl text-western-cream/70 text-base md:text-lg leading-relaxed font-light">
+              Os {PRICE_LABEL} investidos na Western Box retornam integralmente como crédito. Na
+              prática, você conhece nossos materiais sem perder esse investimento.
+            </p>
+          </Reveal>
         </div>
       </section>
 
-      {/* ===================== PARA QUEM É ===================== */}
-      <section className="bg-western-paper py-24">
-        <div className="container-western">
-          <p className="text-eyebrow text-western-gold mb-6 text-center">Para quem é</p>
-          <h2 className="font-display text-3xl md:text-4xl text-western-green-deep text-center max-w-2xl mx-auto leading-tight">
-            Feita para quem decide com critério.
-          </h2>
-          <ul className="mt-12 flex flex-wrap justify-center gap-3 md:gap-4 max-w-3xl mx-auto">
-            {PARA_QUEM.map((p) => (
-              <li
-                key={p}
-                className="rounded-full border border-western-stone-warm/25 bg-white px-5 py-2.5 text-sm md:text-base text-western-stone-dark"
+      {/* =================== PARA QUEM É — MARQUEE =================== */}
+      <section className="bg-western-paper py-28 overflow-hidden">
+        <div className="container-western mb-14">
+          <Reveal variant="fade-up" duration={900}>
+            <p className="text-[11px] uppercase tracking-[0.28em] text-western-gold mb-6 text-center">
+              Para quem é
+            </p>
+          </Reveal>
+          <Reveal variant="fade-up" delay={100} duration={1000} distance={40}>
+            <h2 className="font-display text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.05] text-western-green-deep text-center max-w-3xl mx-auto tracking-[-0.01em]">
+              Feita para quem decide com{" "}
+              <span className="italic font-light text-western-gold">critério</span>.
+            </h2>
+          </Reveal>
+        </div>
+
+        <div className="relative w-full overflow-hidden">
+          <div className="flex gap-16 whitespace-nowrap animate-[wb-marquee_38s_linear_infinite] hover:[animation-play-state:paused]">
+            {[...PARA_QUEM, ...PARA_QUEM, ...PARA_QUEM].map((p, i) => (
+              <span
+                key={i}
+                className="font-display text-[clamp(2.5rem,6vw,5rem)] leading-none text-western-green-deep/85 flex items-center gap-16 tracking-[-0.01em]"
               >
                 {p}
-              </li>
+                <span className="h-2 w-2 rounded-full bg-western-gold shrink-0" />
+              </span>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
-      {/* ===================== ENVIO + SPECS ===================== */}
-      <section className="bg-western-ivory py-24 border-t border-western-stone-warm/10">
-        <div className="container-western grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+      {/* =================== ENVIO + SPECS =================== */}
+      <section className="bg-western-ivory py-28 border-t border-western-stone-warm/10">
+        <div className="container-western grid md:grid-cols-2 gap-16 md:gap-24 items-center">
+          <Reveal variant="fade-right" duration={1100}>
+            <div className="relative overflow-hidden">
+              <ParallaxImage
+                src={boxFechada.url}
+                alt="Western Box fechada com selo da marca"
+                className="aspect-[4/5] w-full"
+                range={40}
+                scale={1.08}
+              />
+            </div>
+          </Reveal>
           <div>
-            <img
-              src={boxFechada.url}
-              alt="Western Box fechada com selo da marca"
-              className="w-full h-auto rounded-sm shadow-xl"
-              loading="lazy"
-            />
-          </div>
-          <div>
-            <p className="text-eyebrow text-western-gold mb-5">Envio</p>
-            <h2 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight">
-              Sua Western Box é preparada cuidadosamente e enviada em até 5 a 7 dias úteis após a
-              confirmação do pedido.
-            </h2>
+            <Reveal variant="fade-up" duration={900}>
+              <p className="text-[11px] uppercase tracking-[0.28em] text-western-gold mb-6">Envio</p>
+            </Reveal>
+            <Reveal variant="fade-up" delay={100} duration={1000} distance={40}>
+              <h2 className="font-display text-[clamp(1.75rem,3vw,2.75rem)] text-western-green-deep leading-[1.1] tracking-[-0.01em]">
+                Preparada cuidadosamente e enviada em até{" "}
+                <span className="italic font-light text-western-gold">5 a 7 dias úteis</span>{" "}
+                após a confirmação do pedido.
+              </h2>
+            </Reveal>
 
-            <dl className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6 border-t border-western-stone-warm/15 pt-8">
-              <div>
-                <dt className="flex items-center gap-2 text-xs uppercase tracking-[0.14em] text-western-stone-warm">
-                  <Package className="h-3.5 w-3.5" /> Conteúdo
-                </dt>
-                <dd className="mt-2 font-display text-lg text-western-green-deep leading-snug">
-                  4 samples físicos + Catálogo oficial
-                </dd>
-              </div>
-              <div>
-                <dt className="flex items-center gap-2 text-xs uppercase tracking-[0.14em] text-western-stone-warm">
-                  <Truck className="h-3.5 w-3.5" /> Valor
-                </dt>
-                <dd className="mt-2 font-display text-lg text-western-green-deep">{PRICE_LABEL}</dd>
-              </div>
-              <div>
-                <dt className="flex items-center gap-2 text-xs uppercase tracking-[0.14em] text-western-stone-warm">
-                  <ShieldCheck className="h-3.5 w-3.5" /> Cashback
-                </dt>
-                <dd className="mt-2 font-display text-lg text-western-green-deep">100%</dd>
-              </div>
+            <dl className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-8 border-t border-western-stone-warm/15 pt-10">
+              {[
+                { icon: Package, label: "Conteúdo", value: "4 samples + Catálogo" },
+                { icon: Truck, label: "Valor", value: PRICE_LABEL },
+                { icon: ShieldCheck, label: "Cashback", value: "100%" },
+              ].map((s, i) => (
+                <Reveal key={s.label} variant="fade-up" delay={i * 120} duration={800}>
+                  <div>
+                    <dt className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
+                      <s.icon className="h-3.5 w-3.5" /> {s.label}
+                    </dt>
+                    <dd className="mt-3 font-display text-xl text-western-green-deep leading-snug">
+                      {s.value}
+                    </dd>
+                  </div>
+                </Reveal>
+              ))}
             </dl>
           </div>
         </div>
       </section>
 
-      {/* ===================== CTA FINAL ===================== */}
-      <section className="bg-western-green-deep text-western-cream py-28 md:py-36 text-center">
-        <div className="container-western max-w-3xl">
-          <p className="text-eyebrow text-western-gold-soft mb-8">Pronto para começar</p>
-          <p className="font-display text-3xl md:text-5xl leading-tight text-western-cream">
-            Receba a Western Box, descubra nossos acabamentos e transforme os R$ 149,90 em crédito
-            no seu primeiro pedido.
-          </p>
-          <div className="mt-12 flex flex-col items-center gap-4">
-            <BuyButton />
-            <span className="text-xs uppercase tracking-[0.18em] text-western-cream/55">
-              {PRICE_LABEL} · Cashback 100%
-            </span>
-          </div>
+      {/* =================== CTA FINAL DRAMÁTICO =================== */}
+      <section className="relative h-[90vh] min-h-[600px] overflow-hidden bg-western-green-deep text-western-cream flex items-center justify-center text-center">
+        <ParallaxImage
+          src={hero.url}
+          alt=""
+          className="absolute inset-0 h-full w-full opacity-40"
+          range={120}
+          scale={1.15}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-western-green-deep via-western-green-deep/70 to-western-green-deep/30" />
+
+        <div className="container-western relative z-10 max-w-4xl px-6">
+          <Reveal variant="fade-up" duration={900}>
+            <p className="text-[11px] uppercase tracking-[0.32em] text-western-gold-soft mb-10">
+              Pronto para começar
+            </p>
+          </Reveal>
+          <Reveal variant="fade-up" delay={100} duration={1300} distance={60}>
+            <p className="font-display text-[clamp(2.5rem,6.5vw,6rem)] leading-[0.98] tracking-[-0.02em] text-western-cream">
+              Veja, toque, compare<br />
+              <span className="italic font-light text-western-gold-soft">e decida com convicção.</span>
+            </p>
+          </Reveal>
+          <Reveal variant="fade-up" delay={400} duration={900}>
+            <div className="mt-14 flex flex-col items-center gap-5">
+              <BuyButton />
+              <span className="text-[10px] uppercase tracking-[0.24em] text-western-cream/55">
+                {PRICE_LABEL} · Cashback 100% · Envio em 5–7 dias úteis
+              </span>
+            </div>
+          </Reveal>
         </div>
       </section>
+
+      {/* Keyframes para o marquee */}
+      <style>{`
+        @keyframes wb-marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-33.3333%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-\\[wb-marquee_38s_linear_infinite\\] { animation: none !important; }
+        }
+      `}</style>
     </>
   );
 }
