@@ -66,7 +66,7 @@ const PartnerSignup = lazy(() => import("./pages/PartnerSignup.tsx"));
 const ParceirosArquitetos = lazy(() => import("./pages/ParceirosArquitetos.tsx"));
 const PartnerLogin = lazy(() => import("./pages/PartnerLogin.tsx"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
-const PedirAmostras = lazy(() => import("./pages/PedirAmostras.tsx"));
+
 const AgendarVisita = lazy(() => import("./pages/AgendarVisita.tsx"));
 const PorQueWestern = lazy(() => import("./pages/PorQueWestern.tsx"));
 const AplicacoesComerciais = lazy(() => import("./pages/AplicacoesComerciais.tsx"));
