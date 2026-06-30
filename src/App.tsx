@@ -66,7 +66,7 @@ const PartnerSignup = lazy(() => import("./pages/PartnerSignup.tsx"));
 const ParceirosArquitetos = lazy(() => import("./pages/ParceirosArquitetos.tsx"));
 const PartnerLogin = lazy(() => import("./pages/PartnerLogin.tsx"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
-const PedirAmostras = lazy(() => import("./pages/PedirAmostras.tsx"));
+
 const AgendarVisita = lazy(() => import("./pages/AgendarVisita.tsx"));
 const PorQueWestern = lazy(() => import("./pages/PorQueWestern.tsx"));
 const AplicacoesComerciais = lazy(() => import("./pages/AplicacoesComerciais.tsx"));
@@ -168,14 +168,8 @@ const App = () => (
                     <Route path="cnae-whitelist" element={<AdminCnaeWhitelist />} />
                     <Route path="configuracoes" element={<AdminSettings />} />
                   </Route>
-                  <Route
-                    path="/pedir-amostras"
-                    element={
-                      <RequireAuth approvedOnly>
-                        <PedirAmostras />
-                      </RequireAuth>
-                    }
-                  />
+                  {/* Rota antiga de amostras: substituída pela Western Box (página paga). */}
+                  <Route path="/pedir-amostras" element={<Navigate to="/western-box" replace />} />
                   <Route path="/visitar" element={<AgendarVisita />} />
                   <Route path="/por-que-western" element={<PorQueWestern />} />
                   <Route path="/aplicacoes-comerciais" element={<AplicacoesComerciais />} />
