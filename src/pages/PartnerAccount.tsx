@@ -146,7 +146,7 @@ export default function PartnerAccount() {
             <p className="text-eyebrow mb-2">Catálogo</p>
             <p className="text-spec text-western-green-deep">Ver linhas e preços liberados</p>
           </Link>
-          <Link to="/pedir-amostras" className="border border-western-stone-warm/20 p-5 hover:border-western-gold transition-colors">
+          <Link to="/western-box" className="border border-western-stone-warm/20 p-5 hover:border-western-gold transition-colors">
             <p className="text-eyebrow mb-2">Kit de amostras</p>
             <p className="text-spec text-western-green-deep">Receber 4 acabamentos</p>
           </Link>

@@ -108,7 +108,7 @@ export default function PorQueWestern() {
           <div className="mt-14 text-center">
             <p className="text-western-stone-warm mb-5">Tem outra pergunta?</p>
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <Link to="/pedir-amostras" className="inline-flex items-center gap-2 h-12 px-7 bg-western-green-deep text-western-cream hover:bg-western-green-deep/90 font-mono text-xs uppercase tracking-[0.22em] transition-colors">
+              <Link to="/western-box" className="inline-flex items-center gap-2 h-12 px-7 bg-western-green-deep text-western-cream hover:bg-western-green-deep/90 font-mono text-xs uppercase tracking-[0.22em] transition-colors">
                 Receber amostras grátis <ArrowRight className="h-4 w-4" />
               </Link>
               <Link to="/contato" className="inline-flex items-center gap-2 h-12 px-7 border border-western-green-deep/40 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-xs uppercase tracking-[0.22em] transition-colors">
