@@ -1,25 +1,43 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { usePartnerPricing } from "@/hooks/usePartnerPricing";
 import { supabase } from "@/integrations/supabase/client";
-import { TIER_LABEL, type Tier } from "@/components/admin/adminUtils";
-import { ArrowRight, Clock, ShieldCheck, XCircle } from "lucide-react";
+import { ArrowRight, Clock, ShieldCheck, XCircle, ShoppingBag, Truck, FileStack } from "lucide-react";
+
+interface OrderSummary {
+  id: string;
+  numero: string;
+  titulo: string;
+  status: string;
+  previsao_entrega: string | null;
+}
+
+const ACTIVE_STATUS = ["aguardando", "em_producao", "controle_qualidade", "pronto", "em_transporte"];
 
 export default function AccountIndex() {
   const { user, partnerStatus, isAdmin, empresa } = useAuth();
-  const { tier, discountPct, paymentMethods, loading } = usePartnerPricing();
-  const [counts, setCounts] = useState({ orcamentos: 0, sketches: 0, favoritos: 0 });
+  const [pendingReason, setPendingReason] = useState<string | null>(null);
+  const [activeOrders, setActiveOrders] = useState<OrderSummary[]>([]);
+  const [counts, setCounts] = useState({ ativos: 0, transito: 0, composicoes: 0 });
 
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const [q, s, f] = await Promise.all([
-        supabase.from("quote_pdfs").select("id", { count: "exact", head: true }).eq("user_id", user.id),
-        supabase.from("guide_exports").select("id", { count: "exact", head: true }).eq("user_id", user.id),
-        supabase.from("wishlists").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+      const [{ data: orders }, { data: comps }, { data: profile }] = await Promise.all([
+        supabase
+          .from("production_orders")
+          .select("id, numero, titulo, status, previsao_entrega")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false }),
+        supabase.from("leads").select("id", { count: "exact", head: true }).eq("user_id", user.id).eq("type", "orcamento"),
+        supabase.from("partner_profiles").select("pending_reason").eq("user_id", user.id).maybeSingle(),
       ]);
-      setCounts({ orcamentos: q.count ?? 0, sketches: s.count ?? 0, favoritos: f.count ?? 0 });
+      const all = (orders as OrderSummary[]) ?? [];
+      const ativos = all.filter((o) => ACTIVE_STATUS.includes(o.status));
+      const transito = all.filter((o) => o.status === "em_transporte" || o.status === "pronto").length;
+      setActiveOrders(ativos.slice(0, 3));
+      setCounts({ ativos: ativos.length, transito, composicoes: (comps as unknown as { length: number })?.length ?? 0 });
+      setPendingReason((profile as { pending_reason: string | null } | null)?.pending_reason ?? null);
     })();
   }, [user]);
 
@@ -40,28 +58,55 @@ export default function AccountIndex() {
         <div className="flex flex-wrap gap-3">{statusBadge()}</div>
       </header>
 
-      {partnerStatus !== "approved" && !isAdmin && (
+      {partnerStatus === "pending" && !isAdmin && (
         <div className="border border-western-gold/40 bg-western-gold/5 px-5 py-4 text-spec text-western-green-deep">
-          Sua conta está em análise. Liberamos o catálogo com preços, descontos e amostras assim que aprovarmos seu cadastro B2B (até 2 dias úteis).
+          {pendingReason ? (
+            <>
+              <strong className="block mb-1 font-display text-base">Cadastro em reanálise</strong>
+              {pendingReason}
+            </>
+          ) : (
+            <>Sua conta está em análise. Liberamos o catálogo completo assim que aprovarmos seu cadastro B2B (até 2 dias úteis).</>
+          )}
         </div>
       )}
 
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <KPI label="Tier" value={loading ? "…" : TIER_LABEL[tier as Tier].replace("Western Pro ", "")} />
-        <KPI label="Desconto" value={loading ? "…" : `${discountPct}%`} />
-        <KPI label="Parcelas" value={loading ? "…" : `${paymentMethods.parcelas_max}x`} />
-        <KPI label="Boleto" value={loading ? "…" : paymentMethods.boleto ? "Sim" : "Não"} />
+      <section className="grid grid-cols-3 gap-3">
+        <KPI label="Pedidos ativos" value={String(counts.ativos)} icon={ShoppingBag} />
+        <KPI label="Em trânsito" value={String(counts.transito)} icon={Truck} />
+        <KPI label="Composições" value={String(counts.composicoes)} icon={FileStack} />
       </section>
 
-      <section className="grid md:grid-cols-3 gap-3">
-        <Card to="/minha-conta/orcamentos" eyebrow="Orçamentos" title={`${counts.orcamentos} salvos`} />
-        <Card to="/minha-conta/sketches" eyebrow="Sketches" title={`${counts.sketches} salvos`} />
-        <Card to="/minha-conta/favoritos" eyebrow="Favoritos" title={`${counts.favoritos} pedras`} />
-      </section>
-
-      <section className="grid md:grid-cols-2 gap-3">
-        <Card to="/linhas" eyebrow="Catálogo" title="Ver linhas e preços liberados" />
-        <Card to="/pedir-amostras" eyebrow="Kit de amostras" title="Receber 4 acabamentos" />
+      <section>
+        <div className="flex items-baseline justify-between mb-4">
+          <p className="text-eyebrow">Pedidos em andamento</p>
+          <Link to="/minha-conta/pedidos" className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold hover:underline">
+            Ver todos
+          </Link>
+        </div>
+        {activeOrders.length === 0 ? (
+          <div className="border border-dashed border-western-stone-warm/30 p-8 text-center">
+            <p className="text-spec text-western-stone-warm">Nenhum pedido em produção no momento.</p>
+          </div>
+        ) : (
+          <ul className="space-y-2">
+            {activeOrders.map((o) => (
+              <Link
+                key={o.id}
+                to="/minha-conta/pedidos"
+                className="block border border-western-stone-warm/15 bg-white p-4 hover:border-western-gold/40 transition-colors"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">Nº {o.numero}</p>
+                    <p className="font-display text-base text-western-green-deep truncate">{o.titulo}</p>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-western-stone-warm" />
+                </div>
+              </Link>
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   );
@@ -81,23 +126,12 @@ function Badge({ tone, icon: Icon, children }: { tone: "gold" | "green" | "red" 
   );
 }
 
-function KPI({ label, value }: { label: string; value: string }) {
+function KPI({ label, value, icon: Icon }: { label: string; value: string; icon: React.ElementType }) {
   return (
     <div className="border border-western-stone-warm/15 bg-white p-4">
-      <p className="text-eyebrow mb-2">{label}</p>
-      <p className="font-display text-xl text-western-green-deep leading-tight">{value}</p>
+      <Icon className="h-4 w-4 text-western-gold mb-2" />
+      <p className="text-eyebrow mb-1">{label}</p>
+      <p className="font-display text-2xl text-western-green-deep leading-tight">{value}</p>
     </div>
-  );
-}
-
-function Card({ to, eyebrow, title }: { to: string; eyebrow: string; title: string }) {
-  return (
-    <Link to={to} className="group border border-western-stone-warm/20 bg-white p-5 hover:border-western-gold transition-colors flex items-center justify-between gap-4">
-      <div>
-        <p className="text-eyebrow mb-2">{eyebrow}</p>
-        <p className="text-spec text-western-green-deep">{title}</p>
-      </div>
-      <ArrowRight className="h-4 w-4 text-western-stone-warm group-hover:text-western-gold transition-colors" />
-    </Link>
   );
 }

@@ -86,14 +86,21 @@ export default function AccountProfile() {
     setSaving(true);
     const { email: _omit, ...persist } = form;
     void _omit;
+    // Edição de dados cadastrais dispara reanálise pelo admin — credenciamento
+    // e tier ficam intactos no banco, apenas marcamos status=pending até revisão.
     const { error } = await supabase.from("partner_profiles").update({
       ...persist,
       empresa: normalizeText(form.empresa),
       nome: normalizeText(form.nome),
+      status: "pending",
+      pending_reason: "Cadastro editado pelo parceiro — aguardando reanálise.",
     }).eq("user_id", user.id);
     setSaving(false);
     if (error) toast.error("Erro ao salvar", { description: error.message });
-    else { toast.success("Perfil atualizado."); refresh(); }
+    else {
+      toast.success("Perfil atualizado. Enviamos para reanálise da nossa equipe.");
+      refresh();
+    }
   };
 
   const inputCls = "h-11 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold";

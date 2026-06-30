@@ -3,33 +3,27 @@ import { useEffect, useRef } from "react";
 import {
   LayoutDashboard,
   User,
-  FileStack,
   ShoppingBag,
-  FileDown,
-  Heart,
-  Package,
-  Settings,
+  Truck,
+  FileStack,
   LogOut,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { TIER_LABEL, TIER_BADGE_CLS, type Tier } from "@/components/admin/adminUtils";
-import { usePartnerTier } from "@/hooks/usePartnerPricing";
 
+// Itens visíveis no menu do cliente. A lógica de tier/desconto/orçamentos/
+// sketches/favoritos/amostras/preferências continua existindo (rotas ativas e
+// tabelas intocadas) — apenas escondemos do menu enquanto o foco é o pedido.
 const items = [
   { to: "/minha-conta", label: "Visão geral", icon: LayoutDashboard, end: true },
+  { to: "/minha-conta/pedidos", label: "Meus pedidos", icon: ShoppingBag },
+  { to: "/minha-conta/rastreio", label: "Rastreio", icon: Truck },
+  { to: "/minha-conta/composicoes", label: "Composições", icon: FileStack },
   { to: "/minha-conta/perfil", label: "Meu perfil", icon: User },
-  { to: "/minha-conta/pedidos", label: "Pedidos", icon: ShoppingBag },
-  { to: "/minha-conta/orcamentos", label: "Orçamentos", icon: FileStack },
-  { to: "/minha-conta/sketches", label: "Sketches", icon: FileDown },
-  { to: "/minha-conta/favoritos", label: "Favoritos", icon: Heart },
-  { to: "/minha-conta/amostras", label: "Amostras", icon: Package },
-  { to: "/minha-conta/preferencias", label: "Preferências", icon: Settings },
 ];
 
 export default function AccountLayout() {
   const { empresa, user, signOut } = useAuth();
   const navigate = useNavigate();
-  const { tier } = usePartnerTier();
   const { pathname } = useLocation();
   const navRef = useRef<HTMLElement>(null);
 
@@ -49,11 +43,9 @@ export default function AccountLayout() {
             <h1 className="font-display text-2xl text-western-green-deep mb-2 leading-tight">
               {empresa || user?.email?.split("@")[0]}
             </h1>
-            <span
-              className={`inline-flex items-center px-2 py-1 border font-mono text-[10px] uppercase tracking-[0.18em] mb-6 ${TIER_BADGE_CLS[tier as Tier]}`}
-            >
-              {TIER_LABEL[tier as Tier]}
-            </span>
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80 mb-6">
+              Parceiro Western
+            </p>
 
             <nav ref={navRef} className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible -mx-2 md:mx-0 px-2 md:px-0 pb-2 md:pb-0 scroll-smooth">
               {items.map((it) => (

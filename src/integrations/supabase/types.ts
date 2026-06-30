@@ -309,6 +309,7 @@ export type Database = {
           nome: string | null
           numero: string | null
           payment_methods: Json
+          pending_reason: string | null
           segmento: string | null
           site: string | null
           status: Database["public"]["Enums"]["partner_status"]
@@ -340,6 +341,7 @@ export type Database = {
           nome?: string | null
           numero?: string | null
           payment_methods?: Json
+          pending_reason?: string | null
           segmento?: string | null
           site?: string | null
           status?: Database["public"]["Enums"]["partner_status"]
@@ -371,6 +373,7 @@ export type Database = {
           nome?: string | null
           numero?: string | null
           payment_methods?: Json
+          pending_reason?: string | null
           segmento?: string | null
           site?: string | null
           status?: Database["public"]["Enums"]["partner_status"]
