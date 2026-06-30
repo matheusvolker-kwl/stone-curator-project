@@ -84,6 +84,7 @@ export default function StickyBuyBar({
 
   return (
     <div
+      ref={barRef}
       role="region"
       aria-label="Barra de compra"
       aria-hidden={!visible}
