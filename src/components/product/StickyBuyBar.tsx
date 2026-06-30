@@ -42,6 +42,7 @@ export default function StickyBuyBar({
 }: Props) {
   const { isApproved } = useAuth();
   const [visible, setVisible] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = triggerRef.current;
@@ -57,6 +58,25 @@ export default function StickyBuyBar({
     obs.observe(el);
     return () => obs.disconnect();
   }, [triggerRef]);
+
+  // Publica a altura da barra (quando visível) numa CSS var global para que
+  // outros FABs (ex.: WhatsApp) se desloquem acima e não colidam.
+  useEffect(() => {
+    const root = document.documentElement;
+    const update = () => {
+      const h = visible && barRef.current ? barRef.current.offsetHeight : 0;
+      root.style.setProperty("--sticky-buy-bar-h", `${h}px`);
+    };
+    update();
+    const ro = barRef.current ? new ResizeObserver(update) : null;
+    if (ro && barRef.current) ro.observe(barRef.current);
+    window.addEventListener("resize", update);
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener("resize", update);
+      root.style.setProperty("--sticky-buy-bar-h", "0px");
+    };
+  }, [visible]);
 
   const priceLabel = priceAmount && priceCurrency
     ? formatBRL(priceAmount, priceCurrency)
