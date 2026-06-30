@@ -47,7 +47,7 @@ const PRICE_LABEL = "R$ 149,90";
 
 const GALLERY = [
   { src: boxFechada.url, alt: "Western Box fechada com selo dourado" },
-  { src: boxAberta.url, alt: "Western Box aberta com os quatro samples e o catálogo" },
+  { src: boxAberta.url, alt: "Western Box aberta com as quatro amostras e o catálogo" },
   { src: lifestyle.url, alt: "Western Box em uso sobre a mesa de trabalho" },
   { src: catalogo.url, alt: "Catálogo oficial Western Pools" },
 ];
@@ -84,10 +84,10 @@ const ACABAMENTOS = [
 ] as const;
 
 const INCLUI = [
-  "Sample Quartzo",
-  "Sample Arenito",
-  "Sample Moledo",
-  "Sample Granito",
+  "Amostra Quartzo",
+  "Amostra Arenito",
+  "Amostra Moledo",
+  "Amostra Granito",
   "Catálogo oficial Western Pools",
   "Embalagem premium exclusiva",
 ];
@@ -280,11 +280,7 @@ function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLDivElement> 
             Home
           </Link>
           <ChevronRight className="h-3 w-3 opacity-50" />
-          <Link to="/pedir-amostras" className="hover:text-western-green-deep transition-colors">
-            Amostras
-          </Link>
-          <ChevronRight className="h-3 w-3 opacity-50" />
-          <span className="text-western-green-deep">Western Box</span>
+          <span className="text-western-green-deep">Amostras</span>
         </nav>
 
         <div className="grid md:grid-cols-12 gap-8 md:gap-14 items-start">
@@ -359,7 +355,7 @@ function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLDivElement> 
             <h1 className="font-display text-[clamp(1.85rem,5vw,3.25rem)] leading-[1.02] tracking-[-0.01em] text-western-green-deep">
               Western Box
               <span className="block italic font-light text-western-gold text-[0.7em] mt-2">
-                Samples + Catálogo
+                Amostras + Catálogo
               </span>
             </h1>
 
@@ -410,7 +406,7 @@ function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLDivElement> 
               </li>
               <li className="flex items-center gap-2.5">
                 <Package className="h-3.5 w-3.5 text-western-gold shrink-0" />
-                Embalagem premium · 4 samples + catálogo
+                Embalagem premium · 4 amostras + catálogo
               </li>
             </ul>
           </div>
@@ -536,7 +532,7 @@ export default function WesternBox() {
           <div className="md:col-span-7 relative h-[60vh] md:h-[90vh] md:sticky md:top-0">
             <ParallaxImage
               src={boxAberta.url}
-              alt="Western Box aberta exibindo os quatro samples e o catálogo"
+              alt="Western Box aberta exibindo as quatro amostras e o catálogo"
               className="h-full w-full"
               range={50}
               scale={1.06}
@@ -696,18 +692,18 @@ export default function WesternBox() {
       {/* 5. SEGUNDO PONTO DE COMPRA */}
       <MidBuyStrip />
 
-      {/* 5.5 RESPIRO EDITORIAL — foto hero (samples à beira da piscina) em parallax wide */}
+      {/* 5.5 RESPIRO EDITORIAL — foto hero (amostras à beira da piscina) em parallax wide */}
       <section className="relative w-full overflow-hidden bg-western-green-deep">
         <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] max-h-[90vh]">
           <ParallaxImage
             src={hero.url}
-            alt="Samples Western à beira da piscina"
+            alt="Amostras Western à beira da piscina"
             className="absolute inset-0 h-full w-full"
             range={30}
             scale={1.06}
             objectPosition="center 65%"
           />
-          {/* overlay sutil só na base, mantendo a foto clara e os samples visíveis */}
+          {/* overlay sutil só na base, mantendo a foto clara e as amostras visíveis */}
           <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-western-green-deep/45 to-transparent pointer-events-none" />
           <div className="absolute inset-x-0 bottom-0 p-6 md:p-12">
             <div className="container-western">
@@ -903,7 +899,7 @@ export default function WesternBox() {
                 </AccordionTrigger>
                 <AccordionContent className="text-western-stone-warm leading-relaxed text-[15px]">
                   <ul className="space-y-1.5">
-                    <li>· 4 samples físicos: Quartzo, Arenito, Moledo e Granito</li>
+                    <li>· 4 amostras físicas: Quartzo, Arenito, Moledo e Granito</li>
                     <li>· Catálogo oficial Western Pools impresso</li>
                     <li>· Embalagem premium exclusiva</li>
                   </ul>

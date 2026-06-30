@@ -168,14 +168,8 @@ const App = () => (
                     <Route path="cnae-whitelist" element={<AdminCnaeWhitelist />} />
                     <Route path="configuracoes" element={<AdminSettings />} />
                   </Route>
-                  <Route
-                    path="/pedir-amostras"
-                    element={
-                      <RequireAuth approvedOnly>
-                        <PedirAmostras />
-                      </RequireAuth>
-                    }
-                  />
+                  {/* Rota antiga de amostras: substituída pela Western Box (página paga). */}
+                  <Route path="/pedir-amostras" element={<Navigate to="/western-box" replace />} />
                   <Route path="/visitar" element={<AgendarVisita />} />
                   <Route path="/por-que-western" element={<PorQueWestern />} />
                   <Route path="/aplicacoes-comerciais" element={<AplicacoesComerciais />} />

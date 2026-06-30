@@ -19,7 +19,7 @@ const nav = [
   { to: "/linhas", label: "Linhas" },
   { to: "/conjuntos", label: "Conjuntos" },
   { to: "/guia-de-composicao", label: "Guia" },
-  { to: "/pedir-amostras", label: "Amostras" },
+  { to: "/western-box", label: "Amostras" },
   { to: "/sobre", label: "Sobre" },
   { to: "/contato", label: "Contato" },
 ];
