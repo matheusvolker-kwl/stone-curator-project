@@ -56,6 +56,7 @@ const Conjuntos = lazy(() => import("./pages/Conjuntos.tsx"));
 const ProductPage = lazy(() => import("./pages/ProductPage.tsx"));
 const About = lazy(() => import("./pages/About.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
+const WesternBoxPage = lazy(() => import("./pages/WesternBox.tsx"));
 
 const GuiaContexto = lazy(() => import("./pages/guia/Contexto.tsx"));
 const GuiaComposicoes = lazy(() => import("./pages/guia/Composicoes.tsx"));
