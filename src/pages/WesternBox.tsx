@@ -50,7 +50,6 @@ const GALLERY = [
   { src: boxAberta.url, alt: "Western Box aberta com os quatro samples e o catálogo" },
   { src: lifestyle.url, alt: "Western Box em uso sobre a mesa de trabalho" },
   { src: catalogo.url, alt: "Catálogo oficial Western Pools" },
-  { src: hero.url, alt: "Samples Western à beira da piscina" },
 ];
 
 const ACABAMENTOS = [
