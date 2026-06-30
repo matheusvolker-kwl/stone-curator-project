@@ -25,7 +25,7 @@ import pb3Granito from "@/assets/western-box/pb3-granito.webp.asset.json";
 // =============================================================================
 // CONFIGURAÇÃO DO PRODUTO NO WOOCOMMERCE — preserve, mesma constante do anterior
 // =============================================================================
-const WESTERN_BOX_WOO_PRODUCT_ID: number | null = null;
+const WESTERN_BOX_WOO_PRODUCT_ID: number | null = 1559;
 const PRICE_LABEL = "R$ 149,90";
 
 const ACABAMENTOS = [
