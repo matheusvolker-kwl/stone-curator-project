@@ -24,7 +24,8 @@ export default function WhatsAppFAB() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Falar com consultor no WhatsApp"
-      className="fixed bottom-5 right-5 md:bottom-7 md:right-7 z-50 group inline-flex items-center h-12 pl-4 pr-5 rounded-full text-white bg-gradient-to-b from-[#25D366] to-[#1FAE54] ring-1 ring-inset ring-white/15 shadow-[0_6px_20px_-4px_rgba(0,0,0,0.35)] hover:shadow-[0_10px_28px_-6px_rgba(0,0,0,0.45)] transition-all duration-200 motion-safe:hover:scale-[1.02] motion-reduce:transition-none"
+      style={{ bottom: "calc(var(--sticky-buy-bar-h, 0px) + var(--wa-fab-offset, 1.25rem))" }}
+      className="fixed right-5 md:right-7 z-50 group inline-flex items-center h-12 pl-4 pr-5 rounded-full text-white bg-gradient-to-b from-[#25D366] to-[#1FAE54] ring-1 ring-inset ring-white/15 shadow-[0_6px_20px_-4px_rgba(0,0,0,0.35)] hover:shadow-[0_10px_28px_-6px_rgba(0,0,0,0.45)] transition-all duration-200 motion-safe:hover:scale-[1.02] motion-reduce:transition-none md:[--wa-fab-offset:1.75rem]"
     >
       <WhatsAppGlyph className="h-[22px] w-[22px] shrink-0" />
       <span className="hidden sm:flex items-center gap-3 ml-3 font-mono text-[11px] font-medium uppercase tracking-[0.14em]">
