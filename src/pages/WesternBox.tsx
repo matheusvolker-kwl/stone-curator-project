@@ -144,12 +144,14 @@ function ParallaxImage({
   className,
   range = 60,
   scale = 1.08,
+  objectPosition = "center",
 }: {
   src: string;
   alt: string;
   className?: string;
   range?: number;
   scale?: number;
+  objectPosition?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
@@ -160,7 +162,7 @@ function ParallaxImage({
       <motion.img
         src={src}
         alt={alt}
-        style={{ y, scale }}
+        style={{ y, scale, objectPosition }}
         className="absolute inset-0 h-full w-full object-cover will-change-transform"
         loading="lazy"
       />
@@ -490,32 +492,8 @@ export default function WesternBox() {
       {/* 1. TOPO CLÁSSICO DE PRODUTO */}
       <ProductTop topBuyRef={topBuyRef} />
 
-      {/* 1.5 RESPIRO EDITORIAL — foto hero em parallax, proporção landscape nativa */}
-      <section className="relative w-full overflow-hidden bg-western-green-deep">
-        <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] md:aspect-[21/9] max-h-[88vh]">
-          <ParallaxImage
-            src={hero.url}
-            alt="Samples Western à beira da piscina"
-            className="absolute inset-0 h-full w-full"
-            range={40}
-            scale={1.05}
-          />
-          {/* overlay sutil só na base, mantendo a foto clara */}
-          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-western-green-deep/55 to-transparent pointer-events-none" />
-          <div className="absolute inset-x-0 bottom-0 p-6 md:p-14">
-            <div className="container-western">
-              <Reveal variant="fade-up" duration={1100} distance={30}>
-                <p className="font-display text-western-cream text-[clamp(1.1rem,2.6vw,2rem)] leading-snug tracking-[-0.01em] max-w-xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
-                  Projetos de alto padrão{" "}
-                  <span className="italic font-light text-western-gold-soft">
-                    começam pelo toque.
-                  </span>
-                </p>
-              </Reveal>
-            </div>
-          </div>
-        </div>
-      </section>
+
+
 
 
       {/* 2. INTRO EDITORIAL */}
@@ -717,6 +695,34 @@ export default function WesternBox() {
 
       {/* 5. SEGUNDO PONTO DE COMPRA */}
       <MidBuyStrip />
+
+      {/* 5.5 RESPIRO EDITORIAL — foto hero (samples à beira da piscina) em parallax wide */}
+      <section className="relative w-full overflow-hidden bg-western-green-deep">
+        <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] max-h-[90vh]">
+          <ParallaxImage
+            src={hero.url}
+            alt="Samples Western à beira da piscina"
+            className="absolute inset-0 h-full w-full"
+            range={30}
+            scale={1.06}
+            objectPosition="center 65%"
+          />
+          {/* overlay sutil só na base, mantendo a foto clara e os samples visíveis */}
+          <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-western-green-deep/45 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 p-6 md:p-12">
+            <div className="container-western">
+              <Reveal variant="fade-up" duration={1100} distance={28}>
+                <p className="font-display text-western-cream text-[clamp(1rem,2.2vw,1.75rem)] leading-snug tracking-[-0.01em] max-w-xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+                  Projetos de alto padrão{" "}
+                  <span className="italic font-light text-western-gold-soft">
+                    começam pelo toque.
+                  </span>
+                </p>
+              </Reveal>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* 6. FERRAMENTA DE ESPECIFICAÇÃO */}
       <section className="bg-western-paper py-20 md:py-32">
