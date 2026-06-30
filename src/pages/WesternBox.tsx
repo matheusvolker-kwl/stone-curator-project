@@ -930,7 +930,7 @@ export default function WesternBox() {
       {/* 11. CTA FINAL */}
       <section className="relative min-h-[70vh] md:min-h-[80vh] overflow-hidden bg-western-green-deep text-western-cream flex items-center justify-center text-center py-24 md:py-32">
         <ParallaxImage
-          src={hero.url}
+          src={lifestyle.url}
           alt=""
           className="absolute inset-0 h-full w-full opacity-40"
           range={100}
