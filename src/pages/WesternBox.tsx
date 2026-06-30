@@ -144,12 +144,14 @@ function ParallaxImage({
   className,
   range = 60,
   scale = 1.08,
+  objectPosition = "center",
 }: {
   src: string;
   alt: string;
   className?: string;
   range?: number;
   scale?: number;
+  objectPosition?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
@@ -160,7 +162,7 @@ function ParallaxImage({
       <motion.img
         src={src}
         alt={alt}
-        style={{ y, scale }}
+        style={{ y, scale, objectPosition }}
         className="absolute inset-0 h-full w-full object-cover will-change-transform"
         loading="lazy"
       />
