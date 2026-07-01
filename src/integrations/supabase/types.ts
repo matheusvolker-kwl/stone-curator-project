@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      checkout_tickets: {
+        Row: {
+          consumed_at: string | null
+          consumer_ip: string | null
+          created_at: string
+          expires_at: string
+          payload: Json
+          ticket: string
+          user_id: string
+        }
+        Insert: {
+          consumed_at?: string | null
+          consumer_ip?: string | null
+          created_at?: string
+          expires_at: string
+          payload: Json
+          ticket: string
+          user_id: string
+        }
+        Update: {
+          consumed_at?: string | null
+          consumer_ip?: string | null
+          created_at?: string
+          expires_at?: string
+          payload?: Json
+          ticket?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       client_errors: {
         Row: {
           context: Json
@@ -815,7 +845,12 @@ export type Database = {
     }
     Functions: {
       claim_first_admin: { Args: never; Returns: boolean }
+      cleanup_expired_checkout_tickets: { Args: never; Returns: number }
       cleanup_old_cartoes_cnpj: { Args: never; Returns: number }
+      consume_checkout_ticket: {
+        Args: { _ip: string; _ticket: string }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
