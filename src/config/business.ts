@@ -30,8 +30,8 @@ export const BUSINESS = {
   anosOperacao: 2026 - 1993,
 
   // Contato
-  whatsappFabrica: "5511993403485",
-  whatsappLabel: "+55 11 99340-3485",
+  whatsappFabrica: "5511958967088",
+  whatsappLabel: "+55 11 95896-7088",
   emailComercial: "comercial@westernpools.com.br",
   emailSuporte: "suporte@westernpools.com.br",
   emailNewsletter: "contato@westernpools.com.br",
