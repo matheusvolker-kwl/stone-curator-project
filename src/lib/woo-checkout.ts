@@ -35,11 +35,28 @@ function toLine(item: CartItem): HandoffLine | null {
 }
 
 /**
+ * Bloco de identidade assinado pelo backend (edge function `checkout-sign`).
+ * Se presente, é enviado ao Woo para pré-preencher o checkout como PJ.
+ * O segredo NUNCA vive no frontend — a assinatura é sempre server-side.
+ */
+export interface SignedIdentity {
+  payload_b64: string;
+  signature: string;
+  timestamp: number;
+}
+
+/**
  * Submete o carrinho ao endpoint de hand-off do Woo via navegação top-level.
  * Cria um <form> POST e dispara form.submit() — o navegador sai do app e
  * passa a ser first-party no domínio westernstore.com.br.
+ *
+ * Se `identity` for fornecida (parceiro logado + aprovado), inclui os
+ * campos `identity_payload`, `identity_signature` e `identity_ts` no POST.
  */
-export function submitCheckoutHandoff(items: CartItem[]): { submitted: number; skipped: number } {
+export function submitCheckoutHandoff(
+  items: CartItem[],
+  identity?: SignedIdentity | null,
+): { submitted: number; skipped: number } {
   if (!items || items.length === 0) return { submitted: 0, skipped: 0 };
 
   const lines: HandoffLine[] = [];
@@ -57,23 +74,27 @@ export function submitCheckoutHandoff(items: CartItem[]): { submitted: number; s
   form.style.display = "none";
   // sem target → top-level navigation no tab atual.
 
-  const linesInput = document.createElement("input");
-  linesInput.type = "hidden";
-  linesInput.name = "lines";
-  linesInput.value = JSON.stringify(lines);
-  form.appendChild(linesInput);
+  appendHidden(form, "lines", JSON.stringify(lines));
 
   const token = import.meta.env.VITE_WESTERN_HANDOFF_SECRET as string | undefined;
-  if (token && token.length > 0) {
-    const tokenInput = document.createElement("input");
-    tokenInput.type = "hidden";
-    tokenInput.name = "token";
-    tokenInput.value = token;
-    form.appendChild(tokenInput);
+  if (token && token.length > 0) appendHidden(form, "token", token);
+
+  if (identity) {
+    appendHidden(form, "identity_payload", identity.payload_b64);
+    appendHidden(form, "identity_signature", identity.signature);
+    appendHidden(form, "identity_ts", String(identity.timestamp));
   }
 
   document.body.appendChild(form);
   form.submit();
 
   return { submitted: lines.length, skipped };
+}
+
+function appendHidden(form: HTMLFormElement, name: string, value: string) {
+  const input = document.createElement("input");
+  input.type = "hidden";
+  input.name = name;
+  input.value = value;
+  form.appendChild(input);
 }

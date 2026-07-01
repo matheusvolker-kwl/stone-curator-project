@@ -84,9 +84,29 @@ export default function CartDrawer({
     })();
 
     try {
+      // Se parceiro aprovado, buscar identidade assinada no backend.
+      // O segredo NUNCA vive no front — só o backend assina.
+      let identity: import("@/lib/woo-checkout").SignedIdentity | null = null;
+      if (isApproved && user) {
+        try {
+          const { data, error } = await supabase.functions.invoke("checkout-sign");
+          if (error) console.warn("[checkout-sign] failed", error);
+          else if (data?.payload_b64 && data?.signature && data?.timestamp) {
+            identity = {
+              payload_b64: data.payload_b64,
+              signature: data.signature,
+              timestamp: data.timestamp,
+            };
+          }
+        } catch (e) {
+          // Segue como visitante em caso de falha — não bloqueia checkout.
+          console.warn("[checkout-sign] exception", e);
+        }
+      }
+
       // Hand-off top-level (form POST) → cookies first-party no domínio do Woo.
       const { submitCheckoutHandoff } = await import("@/lib/woo-checkout");
-      const result = submitCheckoutHandoff(items);
+      const result = submitCheckoutHandoff(items, identity);
       if (result.submitted === 0) {
         toast.error("Não foi possível abrir o checkout", {
           description: "Atualize a página e tente novamente, ou fale conosco no WhatsApp.",
