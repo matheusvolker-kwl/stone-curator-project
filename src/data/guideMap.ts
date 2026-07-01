@@ -122,7 +122,7 @@ export const guideMap: Record<Tipo, SizeMap> = {
 
 export const PRODUCT_BASE_URL = `${STORE_PUBLIC_URL}/produto`;
 export const COLLECTION_BASE_URL = `${STORE_PUBLIC_URL}/categoria-produto`;
-export const WHATSAPP_NUMBER = "5511993403485";
+export const WHATSAPP_NUMBER = "5511958967088";
 /** Pedido mínimo da loja Western (não por conjunto). */
 export const PEDIDO_MINIMO = 700;
 
