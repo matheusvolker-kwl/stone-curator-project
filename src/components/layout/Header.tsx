@@ -165,10 +165,10 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           ) : (
             <Link
               to="/parceiro/login"
-              aria-label="Área do profissional"
-              className="hidden lg:inline-flex items-center gap-2 h-9 px-4 border border-western-green-deep/70 text-western-green-deep hover:bg-western-green-deep hover:text-western-cream font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+              aria-label="Área do parceiro"
+              className="hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors"
             >
-              <User className="h-3.5 w-3.5" /> Área do profissional
+              <User className="h-4 w-4" /> Parceiro
             </Link>
           )}
           {session && (
