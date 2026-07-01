@@ -28,7 +28,12 @@ export default function Index() {
   });
 
 
-  const linhasAll = collections.filter((c) => !isSeasonal(c) && c.handle !== "conjuntos");
+  const isAmostras = (c: typeof collections[number]) => {
+    const h = (c.handle || "").toLowerCase();
+    const t = (c.title || "").toLowerCase();
+    return h === "amostras" || h === "amostra" || h.includes("amostra") || h.includes("western-box") || t.trim() === "amostras" || t.includes("western box");
+  };
+  const linhasAll = collections.filter((c) => !isSeasonal(c) && c.handle !== "conjuntos" && !isAmostras(c));
   // Home: mostra no máx 8 (2 linhas × 4 col), sem "Fontes para Jardim", com "Pisadas".
   const semFontes = linhasAll.filter((c) => c.handle !== "fontes-para-jardim");
   const pisadas = linhasAll.find((c) => c.handle === "pisadas");
