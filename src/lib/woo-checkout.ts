@@ -35,27 +35,25 @@ function toLine(item: CartItem): HandoffLine | null {
 }
 
 /**
- * Bloco de identidade assinado pelo backend (edge function `checkout-sign`).
- * Se presente, é enviado ao Woo para pré-preencher o checkout como PJ.
- * O segredo NUNCA vive no frontend — a assinatura é sempre server-side.
+ * Ticket opaco emitido pela edge function `checkout-ticket-create` para
+ * parceiros aprovados. É apenas uma string (>=32 bytes de entropia, base64url).
+ * Nenhum dado sensível trafega pelo browser — só o ticket. O mu-plugin do Woo
+ * troca o ticket pelo payload de billing chamando `checkout-ticket-redeem`
+ * com o segredo compartilhado (server-to-server).
  */
-export interface SignedIdentity {
-  payload_b64: string;
-  signature: string;
-  timestamp: number;
-}
+export type CheckoutTicket = string;
 
 /**
  * Submete o carrinho ao endpoint de hand-off do Woo via navegação top-level.
  * Cria um <form> POST e dispara form.submit() — o navegador sai do app e
  * passa a ser first-party no domínio westernstore.com.br.
  *
- * Se `identity` for fornecida (parceiro logado + aprovado), inclui os
- * campos `identity_payload`, `identity_signature` e `identity_ts` no POST.
+ * Se `ticket` for fornecido (parceiro logado + aprovado), inclui o campo
+ * `identity_ticket` no POST. O mu-plugin troca o ticket pelo payload PJ.
  */
 export function submitCheckoutHandoff(
   items: CartItem[],
-  identity?: SignedIdentity | null,
+  ticket?: CheckoutTicket | null,
 ): { submitted: number; skipped: number } {
   if (!items || items.length === 0) return { submitted: 0, skipped: 0 };
 
@@ -79,10 +77,8 @@ export function submitCheckoutHandoff(
   const token = import.meta.env.VITE_WESTERN_HANDOFF_SECRET as string | undefined;
   if (token && token.length > 0) appendHidden(form, "token", token);
 
-  if (identity) {
-    appendHidden(form, "identity_payload", identity.payload_b64);
-    appendHidden(form, "identity_signature", identity.signature);
-    appendHidden(form, "identity_ts", String(identity.timestamp));
+  if (ticket && ticket.length >= 16) {
+    appendHidden(form, "identity_ticket", ticket);
   }
 
   document.body.appendChild(form);
@@ -98,3 +94,4 @@ function appendHidden(form: HTMLFormElement, name: string, value: string) {
   input.value = value;
   form.appendChild(input);
 }
+

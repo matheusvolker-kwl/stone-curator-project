@@ -84,29 +84,29 @@ export default function CartDrawer({
     })();
 
     try {
-      // Se parceiro aprovado, buscar identidade assinada no backend.
-      // O segredo NUNCA vive no front — só o backend assina.
-      let identity: import("@/lib/woo-checkout").SignedIdentity | null = null;
+      // Se parceiro aprovado, solicita um TICKET OPACO ao backend.
+      // O ticket é apenas uma string aleatória; o payload PJ nunca trafega
+      // pelo browser — o mu-plugin do Woo troca o ticket server-to-server.
+      let ticket: string | null = null;
       if (isApproved && user) {
         try {
-          const { data, error } = await supabase.functions.invoke("checkout-sign");
-          if (error) console.warn("[checkout-sign] failed", error);
-          else if (data?.payload_b64 && data?.signature && data?.timestamp) {
-            identity = {
-              payload_b64: data.payload_b64,
-              signature: data.signature,
-              timestamp: data.timestamp,
-            };
+          const { data, error } = await supabase.functions.invoke("checkout-ticket-create", {
+            method: "POST",
+          });
+          if (error) console.warn("[checkout-ticket-create] failed", error);
+          else if (typeof data?.ticket === "string" && data.ticket.length >= 16) {
+            ticket = data.ticket;
           }
         } catch (e) {
-          // Segue como visitante em caso de falha — não bloqueia checkout.
-          console.warn("[checkout-sign] exception", e);
+          // Segue como visitante em caso de falha — não bloqueia o checkout.
+          console.warn("[checkout-ticket-create] exception", e);
         }
       }
 
       // Hand-off top-level (form POST) → cookies first-party no domínio do Woo.
       const { submitCheckoutHandoff } = await import("@/lib/woo-checkout");
-      const result = submitCheckoutHandoff(items, identity);
+      const result = submitCheckoutHandoff(items, ticket);
+
       if (result.submitted === 0) {
         toast.error("Não foi possível abrir o checkout", {
           description: "Atualize a página e tente novamente, ou fale conosco no WhatsApp.",

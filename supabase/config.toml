@@ -14,3 +14,9 @@ verify_jwt = false
 
 [functions.credenciar]
 verify_jwt = true
+
+[functions.checkout-ticket-create]
+verify_jwt = true
+
+[functions.checkout-ticket-redeem]
+verify_jwt = false
