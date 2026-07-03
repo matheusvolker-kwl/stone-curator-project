@@ -289,7 +289,7 @@ export default function PartnerSignup() {
                 Envie seu Cartão CNPJ.
               </h1>
               <p className="text-western-stone-warm leading-relaxed mb-8">
-                As bases públicas não responderam agora. Envie o Cartão CNPJ ou siga para análise manual em até 2 dias úteis.
+                As bases públicas não responderam agora. Envie o Cartão CNPJ ou siga para análise manual e concluímos a validação em seguida.
               </p>
               <div className="max-w-md mx-auto text-left space-y-4">
                 {newUserId && (
