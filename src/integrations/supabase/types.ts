@@ -913,6 +913,7 @@ export type Database = {
         | "orcamento"
         | "pdf_pedido"
         | "pedido_novo"
+        | "b2c_orcamento"
       partner_status: "pending" | "approved" | "rejected" | "cancelled"
       production_status:
         | "aguardando"
@@ -1068,6 +1069,7 @@ export const Constants = {
         "orcamento",
         "pdf_pedido",
         "pedido_novo",
+        "b2c_orcamento",
       ],
       partner_status: ["pending", "approved", "rejected", "cancelled"],
       production_status: [
