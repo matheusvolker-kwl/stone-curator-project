@@ -223,7 +223,7 @@ export default function Orcamento() {
 
                   <div className="mt-7 space-y-5">
                     <div>
-                      <FieldLabel htmlFor="nome" required>Nome</FieldLabel>
+                      <FieldLabel htmlFor="nome">Nome</FieldLabel>
                       <Input
                         id="nome" name="nome" value={f.nome}
                         onChange={(e) => setField("nome", e.target.value)}
@@ -237,7 +237,7 @@ export default function Orcamento() {
                     </div>
 
                     <div>
-                      <FieldLabel htmlFor="telefone" required>WhatsApp</FieldLabel>
+                      <FieldLabel htmlFor="telefone">WhatsApp</FieldLabel>
                       <PhoneInput
                         id="telefone" name="telefone" value={f.telefone}
                         onChange={(v) => setField("telefone", v)}
@@ -247,7 +247,7 @@ export default function Orcamento() {
                     </div>
 
                     <div>
-                      <FieldLabel htmlFor="email" required>E-mail</FieldLabel>
+                      <FieldLabel htmlFor="email">E-mail</FieldLabel>
                       <EmailInput
                         id="email" name="email" value={f.email}
                         onChange={(v) => setField("email", v)}
@@ -258,7 +258,7 @@ export default function Orcamento() {
 
                     <div className="grid grid-cols-[1fr_100px] gap-3">
                       <div>
-                        <FieldLabel htmlFor="cidade" required>Cidade</FieldLabel>
+                        <FieldLabel htmlFor="cidade">Cidade</FieldLabel>
                         <Input
                           id="cidade" name="cidade" value={f.cidade}
                           onChange={(e) => setField("cidade", e.target.value)}
@@ -271,7 +271,7 @@ export default function Orcamento() {
                         )}
                       </div>
                       <div>
-                        <FieldLabel htmlFor="uf" required>UF</FieldLabel>
+                        <FieldLabel htmlFor="uf">UF</FieldLabel>
                         <select
                           id="uf" name="uf" value={f.uf}
                           onChange={(e) => setField("uf", e.target.value)}
@@ -290,7 +290,7 @@ export default function Orcamento() {
                     </div>
 
                     <div>
-                      <FieldLabel htmlFor="tipo" required>Tipo de projeto</FieldLabel>
+                      <FieldLabel htmlFor="tipo">Tipo de projeto</FieldLabel>
                       <select
                         id="tipo" name="tipo" value={f.tipo}
                         onChange={(e) => setField("tipo", e.target.value)}
