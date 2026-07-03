@@ -140,7 +140,7 @@ export default function FAQ() {
     <>
       <Seo
         title="FAQ — Western: dúvidas técnicas sobre pedras artesanais"
-        description="Material, fabricação, instalação, comercial e garantia: as perguntas mais frequentes de arquitetos e paisagistas sobre pedras Western."
+        description="Material, fabricação, instalação, comercial e garantia: as perguntas mais frequentes de profissionais do paisagismo e da construção sobre pedras Western."
         path="/faq"
         jsonLd={faqJsonLd}
       />
