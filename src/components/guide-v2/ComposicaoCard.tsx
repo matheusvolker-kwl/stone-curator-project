@@ -6,6 +6,7 @@ import { formatPreco, PEDIDO_MINIMO, type ConjuntoLeaf, type Nivel } from "@/dat
 import { fetchProduct } from "@/lib/datasource";
 import { nivelLabelMap, nivelMicrocopy } from "./types";
 import { getPecasPlaceholder, getPecaCount } from "./pecasPlaceholder";
+import { conjuntoComposicao, handleToDisplayName } from "@/data/conjuntoComposicao";
 
 interface Props {
   conjunto: ConjuntoLeaf;
@@ -16,8 +17,12 @@ interface Props {
 }
 
 export default function ComposicaoCard({ conjunto, nivel, image, highlight, refinarHref }: Props) {
+  const real = conjuntoComposicao[conjunto.handle];
   const pecas = getPecasPlaceholder(nivel);
-  const resumo = pecas.slice(0, 4).map((p) => ({ nome: p.nome, qty: p.qty }));
+  const resumo = real
+    ? real.slice(0, 4).map((r) => ({ nome: handleToDisplayName(r.handle), qty: r.qty }))
+    : pecas.slice(0, 4).map((p) => ({ nome: p.nome, qty: p.qty }));
+
 
   // Preço vem do Shopify (fonte de verdade). Fallback: preço do brief no guideMap.
   const { data: produto } = useQuery({
