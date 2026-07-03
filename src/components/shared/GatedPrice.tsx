@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Lock } from "lucide-react";
+import { Lock, Unlock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePartnerPricing } from "@/hooks/usePartnerPricing";
 import { formatBRL } from "@/lib/catalog/client";
