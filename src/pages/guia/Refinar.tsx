@@ -73,7 +73,7 @@ export default function GuiaRefinar() {
   const nivelParam = (params.get("nivel") as Nivel | null) ?? found?.nivel ?? "equilibrada";
 
   // Busca produtos REAIS do Shopify (peças base + autorais)
-  const { pecas: baseInicial, autorais, isLoading } = useGuideProducts(nivelParam, tipoVisual);
+  const { pecas: baseInicial, autorais, isLoading } = useGuideProducts(nivelParam, tipoVisual, handle);
 
   const [pecas, setPecas] = useState<ProjetoPeca[]>([]);
   const [extras, setExtras] = useState<ProjetoExtra[]>([]);

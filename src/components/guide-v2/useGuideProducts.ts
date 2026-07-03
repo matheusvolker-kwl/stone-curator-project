@@ -7,6 +7,8 @@ import type { TipoVisual, ProjetoPeca } from "./types";
 import type { AutoralItem } from "./autoraisCatalog";
 import { PECAS_BASE } from "./pecasBase";
 import { getAutoralHandlesFor } from "./autoraisCatalog";
+import { conjuntoComposicao } from "@/data/conjuntoComposicao";
+
 
 // Cache simples em memória — handles → produto Shopify
 const cache = new Map<string, ShopifyProductNode>();
@@ -75,7 +77,7 @@ function shopifyToAutoral(p: ShopifyProductNode): AutoralItem {
   };
 }
 
-export function useGuideProducts(nivel: Nivel, tipoVisual: TipoVisual) {
+export function useGuideProducts(nivel: Nivel, tipoVisual: TipoVisual, conjuntoHandle?: string) {
   const [pecas, setPecas] = useState<ProjetoPeca[]>([]);
   const [autorais, setAutorais] = useState<AutoralItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -83,7 +85,11 @@ export function useGuideProducts(nivel: Nivel, tipoVisual: TipoVisual) {
   useEffect(() => {
     let cancelled = false;
     setIsLoading(true);
-    const pecaEntries = PECAS_BASE[nivel];
+    // Preferir composição REAL do manifesto quando existir; senão, placeholder por nível.
+    const real = conjuntoHandle ? conjuntoComposicao[conjuntoHandle] : undefined;
+    const pecaEntries: Array<[string, number]> = real
+      ? real.map((r) => [r.handle, r.qty])
+      : PECAS_BASE[nivel];
     const autoralHandles = getAutoralHandlesFor(tipoVisual);
     const allHandles = Array.from(
       new Set([...pecaEntries.map(([h]) => h), ...autoralHandles])
@@ -114,7 +120,8 @@ export function useGuideProducts(nivel: Nivel, tipoVisual: TipoVisual) {
       });
 
     return () => { cancelled = true; };
-  }, [nivel, tipoVisual]);
+  }, [nivel, tipoVisual, conjuntoHandle]);
+
 
   return { pecas, autorais, isLoading };
 }

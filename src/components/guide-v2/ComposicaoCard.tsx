@@ -6,6 +6,7 @@ import { formatPreco, PEDIDO_MINIMO, type ConjuntoLeaf, type Nivel } from "@/dat
 import { fetchProduct } from "@/lib/datasource";
 import { nivelLabelMap, nivelMicrocopy } from "./types";
 import { getPecasPlaceholder, getPecaCount } from "./pecasPlaceholder";
+import { conjuntoComposicao, handleToDisplayName } from "@/data/conjuntoComposicao";
 
 interface Props {
   conjunto: ConjuntoLeaf;
@@ -16,8 +17,12 @@ interface Props {
 }
 
 export default function ComposicaoCard({ conjunto, nivel, image, highlight, refinarHref }: Props) {
+  const real = conjuntoComposicao[conjunto.handle];
   const pecas = getPecasPlaceholder(nivel);
-  const resumo = pecas.slice(0, 4).map((p) => ({ nome: p.nome, qty: p.qty }));
+  const resumo = real
+    ? real.slice(0, 4).map((r) => ({ nome: handleToDisplayName(r.handle), qty: r.qty }))
+    : pecas.slice(0, 4).map((p) => ({ nome: p.nome, qty: p.qty }));
+
 
   // Preço vem do Shopify (fonte de verdade). Fallback: preço do brief no guideMap.
   const { data: produto } = useQuery({
@@ -73,7 +78,7 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
 
       <div className="p-7 md:p-8 flex flex-col flex-1 border-t border-western-stone-warm/10 relative">
         <div className="eyebrow-bar mb-3">
-          {nivelLabelMap[nivel]} · {getPecaCount(nivel)} peças
+          {nivelLabelMap[nivel]} · {real ? real.reduce((s, r) => s + r.qty, 0) : getPecaCount(nivel)} peças
         </div>
         <h3 className="font-display text-[26px] md:text-[28px] text-western-green-deep leading-[1.1] mb-3">
           {conjunto.nome}

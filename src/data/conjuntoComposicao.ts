@@ -1,0 +1,64 @@
+// AUTO-GERADO a partir do manifesto Western.
+// Chave = handle do conjunto (guideMap). Valor = peças reais (handle Woo + qty).
+// Fonte de nome/preço/foto: Woo por handle (mantém-se igual ao placeholder).
+
+export const conjuntoComposicao: Record<string, { handle: string; qty: number }[]> = {
+  "conjunto-lago-abaete-essencial": [{ handle: "pedra-pequena-1", qty: 2 }, { handle: "pedra-pequena-2", qty: 2 }, { handle: "pedra-pequena-3", qty: 2 }, { handle: "pedra-pequena-4", qty: 2 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-lago-juparana-equilibrado": [{ handle: "cascata-sabino", qty: 1 }, { handle: "pedra-pequena-1", qty: 2 }, { handle: "pedra-pequena-2", qty: 2 }, { handle: "pedra-pequena-3", qty: 2 }, { handle: "pedra-pequena-4", qty: 2 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-lago-cabiunas-completo": [{ handle: "cascata-sabino", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-pequena-1", qty: 2 }, { handle: "pedra-pequena-2", qty: 2 }, { handle: "pedra-pequena-3", qty: 2 }, { handle: "pedra-pequena-4", qty: 2 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-lago-saquarema-essencial": [{ handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-4", qty: 1 }, { handle: "pedra-media-5", qty: 1 }, { handle: "pedra-pequena-1", qty: 2 }, { handle: "pedra-pequena-2", qty: 2 }, { handle: "pedra-pequena-3", qty: 2 }, { handle: "pedra-pequena-4", qty: 2 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-lago-araruama-equilibrado": [{ handle: "cascata-sabino", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-4", qty: 1 }, { handle: "pedra-media-5", qty: 1 }, { handle: "pedra-pequena-1", qty: 2 }, { handle: "pedra-pequena-2", qty: 2 }, { handle: "pedra-pequena-3", qty: 2 }, { handle: "pedra-pequena-4", qty: 2 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-lago-mundau-completo": [{ handle: "cascata-santa-clara", qty: 1 }, { handle: "pedra-media-1", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-4", qty: 1 }, { handle: "pedra-media-5", qty: 1 }, { handle: "pedra-media-6", qty: 1 }, { handle: "pedra-media-8", qty: 1 }, { handle: "pedra-pequena-1", qty: 3 }, { handle: "pedra-pequena-2", qty: 3 }, { handle: "pedra-pequena-3", qty: 3 }, { handle: "pedra-pequena-4", qty: 3 }, { handle: "pedra-pequena-5", qty: 2 }],
+  "conjunto-lago-manguaba-essencial": [{ handle: "pedra-grande-1", qty: 1 }, { handle: "pedra-grande-7", qty: 1 }, { handle: "pedra-grande-8", qty: 1 }, { handle: "pedra-grande-9", qty: 1 }, { handle: "pedra-media-1", qty: 1 }, { handle: "pedra-media-2", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-4", qty: 1 }, { handle: "pedra-media-5", qty: 1 }, { handle: "pedra-pequena-1", qty: 3 }, { handle: "pedra-pequena-2", qty: 3 }, { handle: "pedra-pequena-3", qty: 3 }, { handle: "pedra-pequena-4", qty: 3 }, { handle: "pedra-pequena-5", qty: 2 }],
+  "conjunto-lago-marau-equilibrado": [{ handle: "cascata-santa-clara", qty: 1 }, { handle: "pedra-grande-1", qty: 1 }, { handle: "pedra-grande-7", qty: 1 }, { handle: "pedra-grande-8", qty: 1 }, { handle: "pedra-grande-9", qty: 1 }, { handle: "pedra-media-1", qty: 1 }, { handle: "pedra-media-2", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-4", qty: 1 }, { handle: "pedra-media-5", qty: 1 }, { handle: "pedra-pequena-1", qty: 3 }, { handle: "pedra-pequena-2", qty: 3 }, { handle: "pedra-pequena-3", qty: 3 }, { handle: "pedra-pequena-4", qty: 3 }, { handle: "pedra-pequena-5", qty: 2 }],
+  "conjunto-lago-amazonas-completo": [{ handle: "cascata-santa-barbara", qty: 1 }, { handle: "pedra-grande-1", qty: 1 }, { handle: "pedra-grande-7", qty: 1 }, { handle: "pedra-grande-8", qty: 1 }, { handle: "pedra-grande-9", qty: 1 }, { handle: "pedra-media-1", qty: 1 }, { handle: "pedra-media-2", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-4", qty: 1 }, { handle: "pedra-media-5", qty: 1 }, { handle: "pedra-media-6", qty: 1 }, { handle: "pedra-media-7", qty: 1 }, { handle: "pedra-media-8", qty: 1 }, { handle: "pedra-pequena-1", qty: 3 }, { handle: "pedra-pequena-2", qty: 3 }, { handle: "pedra-pequena-3", qty: 3 }, { handle: "pedra-pequena-4", qty: 3 }, { handle: "pedra-pequena-5", qty: 2 }],
+  "conjunto-lago-hibrido-vereda-essencial": [{ handle: "pedra-pequena-1", qty: 1 }, { handle: "pedra-pequena-2", qty: 1 }, { handle: "pedra-pequena-3", qty: 1 }],
+  "conjunto-lago-hibrido-igarape-equilibrado": [{ handle: "cascata-sabino", qty: 1 }, { handle: "pedra-pequena-1", qty: 1 }, { handle: "pedra-pequena-2", qty: 1 }, { handle: "pedra-pequena-3", qty: 1 }, { handle: "pedra-pequena-4", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-lago-hibrido-pororoca-completo": [{ handle: "cascata-sabino", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-pequena-1", qty: 1 }, { handle: "pedra-pequena-2", qty: 1 }, { handle: "pedra-pequena-3", qty: 1 }, { handle: "pedra-pequena-4", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-lago-hibrido-igapo-essencial": [{ handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-4", qty: 1 }, { handle: "pedra-pequena-1", qty: 1 }, { handle: "pedra-pequena-2", qty: 1 }, { handle: "pedra-pequena-3", qty: 1 }],
+  "conjunto-lago-hibrido-apicum-equilibrado": [{ handle: "cascata-sabino", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-4", qty: 1 }, { handle: "pedra-pequena-1", qty: 1 }, { handle: "pedra-pequena-2", qty: 1 }, { handle: "pedra-pequena-3", qty: 1 }, { handle: "pedra-pequena-4", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-lago-hibrido-sambaqui-completo": [{ handle: "cascata-lajedo-boreal", qty: 1 }, { handle: "pedra-media-1", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-4", qty: 1 }, { handle: "pedra-pequena-1", qty: 1 }, { handle: "pedra-pequena-2", qty: 1 }, { handle: "pedra-pequena-3", qty: 1 }, { handle: "pedra-pequena-4", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-lago-hibrido-ipueira-essencial": [{ handle: "pedra-grande-1", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-4", qty: 1 }, { handle: "pedra-pequena-1", qty: 2 }, { handle: "pedra-pequena-2", qty: 2 }, { handle: "pedra-pequena-3", qty: 2 }],
+  "conjunto-lago-hibrido-marajo-equilibrado": [{ handle: "cascata-lajedo-yporanga", qty: 1 }, { handle: "pedra-grande-1", qty: 1 }, { handle: "pedra-media-1", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-4", qty: 1 }, { handle: "pedra-pequena-1", qty: 2 }, { handle: "pedra-pequena-2", qty: 2 }, { handle: "pedra-pequena-3", qty: 2 }],
+  "conjunto-lago-hibrido-pantanal-completo": [{ handle: "cascata-lajedo-yporanga", qty: 1 }, { handle: "pedra-grande-1", qty: 1 }, { handle: "pedra-media-1", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-4", qty: 1 }, { handle: "pedra-media-5", qty: 1 }, { handle: "pedra-media-8", qty: 1 }, { handle: "pedra-pequena-1", qty: 2 }, { handle: "pedra-pequena-2", qty: 2 }, { handle: "pedra-pequena-3", qty: 2 }],
+  "conjunto-piscina-caio-essencial": [{ handle: "cascata-santa-clara", qty: 1 }],
+  "conjunto-piscina-itacare-equilibrado": [{ handle: "cascata-santa-clara", qty: 1 }, { handle: "pedra-media-5", qty: 1 }],
+  "conjunto-piscina-trancoso-completo": [{ handle: "cascata-santa-clara", qty: 1 }, { handle: "pedra-media-5", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-piscina-buzios-essencial": [{ handle: "cascata-santa-barbara", qty: 1 }],
+  "conjunto-piscina-maresias-equilibrado": [{ handle: "cascata-santa-barbara", qty: 1 }, { handle: "pedra-media-5", qty: 1 }, { handle: "pedra-media-8", qty: 1 }],
+  "conjunto-piscina-pipa-completo": [{ handle: "cascata-santa-barbara", qty: 1 }, { handle: "pedra-grande-1", qty: 1 }, { handle: "pedra-media-5", qty: 1 }],
+  "conjunto-piscina-maragogi-essencial": [{ handle: "cascata-santa-barbara", qty: 1 }, { handle: "pedra-grande-1", qty: 1 }, { handle: "pedra-grande-9", qty: 1 }, { handle: "pedra-media-5", qty: 1 }],
+  "conjunto-piscina-jericoacoara-equilibrado": [{ handle: "cascata-lajedo-boreal", qty: 1 }, { handle: "cascata-santa-barbara", qty: 1 }, { handle: "pedra-grande-1", qty: 1 }, { handle: "pedra-grande-9", qty: 1 }, { handle: "pedra-media-5", qty: 1 }, { handle: "pedra-media-7", qty: 1 }],
+  "conjunto-piscina-noronha-completo": [{ handle: "cascata-sabino", qty: 1 }, { handle: "cascata-lajedo-boreal", qty: 1 }, { handle: "cascata-lajedo-yporanga", qty: 1 }, { handle: "pedra-grande-1", qty: 1 }, { handle: "pedra-grande-5", qty: 1 }, { handle: "pedra-grande-9", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-5", qty: 1 }, { handle: "pedra-media-7", qty: 1 }, { handle: "pedra-media-8", qty: 1 }],
+  "conjunto-jardim-seco-carcara-essencial": [{ handle: "pedra-pequena-1", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-jardim-seco-ibitipoca-equilibrado": [{ handle: "pedra-pequena-1", qty: 1 }, { handle: "pedra-pequena-2", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-jardim-seco-itacolomi-completo": [{ handle: "pedra-pequena-1", qty: 1 }, { handle: "pedra-pequena-2", qty: 1 }, { handle: "pedra-pequena-3", qty: 1 }, { handle: "pedra-pequena-4", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-jardim-seco-cipo-essencial": [{ handle: "pedra-media-1", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-jardim-seco-canastra-equilibrado": [{ handle: "pedra-media-1", qty: 1 }, { handle: "pedra-pequena-1", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-jardim-seco-itatiaia-completo": [{ handle: "pedra-media-1", qty: 1 }, { handle: "pedra-media-5", qty: 1 }, { handle: "pedra-pequena-1", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-jardim-seco-araripe-essencial": [{ handle: "pedra-grande-1", qty: 1 }, { handle: "pedra-media-5", qty: 1 }],
+  "conjunto-jardim-seco-guimaraes-equilibrado": [{ handle: "pedra-grande-1", qty: 1 }, { handle: "pedra-grande-9", qty: 1 }, { handle: "pedra-media-5", qty: 1 }],
+  "conjunto-jardim-seco-diamantina-completo": [{ handle: "pedra-grande-1", qty: 1 }, { handle: "pedra-grande-4", qty: 1 }, { handle: "pedra-grande-9", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-5", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }],
+  "conjunto-jardim-fonte-esmeralda-essencial": [{ handle: "fonte-mini-sabino", qty: 1 }],
+  "conjunto-jardim-fonte-pratinha-equilibrado": [{ handle: "fonte-mini-lago", qty: 1 }],
+  "conjunto-jardim-fonte-bonito-completo": [{ handle: "pedra-pequena-1", qty: 1 }, { handle: "fonte-mini-lago", qty: 1 }],
+  "conjunto-jardim-fonte-aurora-essencial": [{ handle: "fonte-mini-lago", qty: 1 }],
+  "conjunto-jardim-fonte-andorinhas-equilibrado": [{ handle: "pedra-pequena-1", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }, { handle: "fonte-santa-rita", qty: 1 }],
+  "conjunto-jardim-fonte-veu-completo": [{ handle: "pedra-pequena-1", qty: 1 }, { handle: "pedra-pequena-2", qty: 1 }, { handle: "pedra-pequena-3", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }, { handle: "fonte-santa-rita", qty: 1 }],
+  "conjunto-jardim-fonte-tabocas-essencial": [{ handle: "fonte-sabino-com-lago", qty: 1 }],
+  "conjunto-jardim-fonte-iguacu-equilibrado": [{ handle: "pedra-media-5", qty: 1 }, { handle: "pedra-media-6", qty: 1 }, { handle: "fonte-sabino-com-lago", qty: 1 }],
+  "conjunto-jardim-fonte-itambe-completo": [{ handle: "pedra-grande-1", qty: 1 }, { handle: "pedra-media-2", qty: 1 }, { handle: "pedra-media-3", qty: 1 }, { handle: "pedra-media-5", qty: 1 }, { handle: "pedra-media-6", qty: 1 }, { handle: "pedra-pequena-5", qty: 1 }, { handle: "fonte-sabino-com-lago", qty: 1 }],
+};
+
+export function getConjuntoComposicao(handle: string) {
+  return conjuntoComposicao[handle];
+}
+
+/** Formata handle Woo em nome amigável ("pedra-pequena-1" → "Pedra Pequena 1"). */
+export function handleToDisplayName(handle: string): string {
+  return handle
+    .split("-")
+    .map((w) => (/^\d+$/.test(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)))
+    .join(" ");
+}
+
