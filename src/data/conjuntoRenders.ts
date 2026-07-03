@@ -34,6 +34,16 @@ import cipo from "@/assets/conjuntos-render/conjunto-jardim-seco-cipo-essencial.
 import canastra from "@/assets/conjuntos-render/conjunto-jardim-seco-canastra-equilibrado.webp.asset.json";
 import itatiaia from "@/assets/conjuntos-render/conjunto-jardim-seco-itatiaia-completo.webp.asset.json";
 import araripe from "@/assets/conjuntos-render/conjunto-jardim-seco-araripe-essencial.webp.asset.json";
+import guimaraes from "@/assets/conjuntos-render/conjunto-jardim-seco-guimaraes-equilibrado.webp.asset.json";
+import diamantina from "@/assets/conjuntos-render/conjunto-jardim-seco-diamantina-completo.webp.asset.json";
+import esmeralda from "@/assets/conjuntos-render/conjunto-jardim-fonte-esmeralda-essencial.webp.asset.json";
+import pratinha from "@/assets/conjuntos-render/conjunto-jardim-fonte-pratinha-equilibrado.webp.asset.json";
+import bonito from "@/assets/conjuntos-render/conjunto-jardim-fonte-bonito-completo.webp.asset.json";
+import aurora from "@/assets/conjuntos-render/conjunto-jardim-fonte-aurora-essencial.webp.asset.json";
+import andorinhas from "@/assets/conjuntos-render/conjunto-jardim-fonte-andorinhas-equilibrado.webp.asset.json";
+import veu from "@/assets/conjuntos-render/conjunto-jardim-fonte-veu-completo.webp.asset.json";
+import tabocas from "@/assets/conjuntos-render/conjunto-jardim-fonte-tabocas-essencial.webp.asset.json";
+import iguacu from "@/assets/conjuntos-render/conjunto-jardim-fonte-iguacu-equilibrado.webp.asset.json";
 
 
 export const conjuntoRenders: Record<string, string> = {
