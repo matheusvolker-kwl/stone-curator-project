@@ -122,7 +122,7 @@ export default function Entrada() {
     setSubmitting(true);
     try {
       const { error } = await supabase.from("leads").insert({
-        type: "orcamento_b2c",
+        type: "b2c_orcamento",
         nome: parsed.data.nome,
         telefone: parsed.data.telefone,
         payload: { tipo_projeto: parsed.data.tipo_projeto },
