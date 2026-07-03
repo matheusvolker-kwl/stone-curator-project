@@ -297,10 +297,19 @@ export default function Parceria() {
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12 items-center">
             {/* SLOT DE IMAGEM - cliente vai fornecer */}
             <Reveal variant="fade-up" duration={800} className="lg:col-span-2 order-last lg:order-first">
-              <ImageSlot
-                aspect="aspect-[4/5]"
-                texto="[IMAGEM: laguista/profissional instalando a pedra leve, mostrando praticidade na obra]"
-              />
+              <div className="w-full aspect-[4/5] overflow-hidden bg-western-green-mid/20">
+                <img
+                  src={parceriaInstalacao.url}
+                  srcSet={`${parceriaInstalacaoSm.url} 600w, ${parceriaInstalacao.url} 1200w`}
+                  sizes="(min-width: 1024px) 40vw, 100vw"
+                  alt="Profissional instalando pedra Western — leveza que dispensa estrutura extra."
+                  loading="lazy"
+                  decoding="async"
+                  width={1200}
+                  height={1500}
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
             </Reveal>
 
             <ul className="lg:col-span-3 space-y-px bg-western-gold/20 border border-western-gold/20">
