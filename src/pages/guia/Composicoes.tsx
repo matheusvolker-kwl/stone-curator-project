@@ -6,6 +6,7 @@ import SectionDivider from "@/components/guide-v2/SectionDivider";
 import Reveal from "@/components/shared/Reveal";
 import { acabamentoMeta, tipoVisualMap } from "@/components/guide-v2/types";
 import { nivelImage } from "@/components/guide-v2/imagery";
+import { conjuntoRenders } from "@/data/conjuntoRenders";
 import { buildContextQuery, useGuideContext } from "@/components/guide-v2/useGuideQuery";
 import {
   guideMap,
@@ -114,7 +115,7 @@ export default function GuiaComposicoes() {
                       <ComposicaoCard
                         conjunto={c}
                         nivel={n}
-                        image={nivelImage[n]}
+                        image={conjuntoRenders[c.handle] ?? nivelImage[n]}
                         highlight={n === "equilibrada"}
                         refinarHref={`/guia-de-composicao/refinar/${c.handle}?${refinarParams.toString()}`}
                       />
