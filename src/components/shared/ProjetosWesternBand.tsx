@@ -56,6 +56,8 @@ export default function ProjetosWesternBand() {
                 src={foto.src}
                 alt={foto.caption}
                 loading="lazy"
+                decoding="async"
+                sizes="(min-width: 1024px) 360px, (min-width: 768px) 33vw, 50vw"
                 className="w-full h-auto object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.03]"
               />
               <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-4 pt-10 pb-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
