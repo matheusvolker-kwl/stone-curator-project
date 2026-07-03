@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Loader2, Lock, Minus, Plus, Unlock } from "lucide-react";
+import { Loader2, Minus, Plus, Unlock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cdnImg, formatBRL } from "@/lib/catalog/client";
 import { useAuth } from "@/hooks/useAuth";
