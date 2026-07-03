@@ -53,3 +53,12 @@ export const conjuntoComposicao: Record<string, { handle: string; qty: number }[
 export function getConjuntoComposicao(handle: string) {
   return conjuntoComposicao[handle];
 }
+
+/** Formata handle Woo em nome amigável ("pedra-pequena-1" → "Pedra Pequena 1"). */
+export function handleToDisplayName(handle: string): string {
+  return handle
+    .split("-")
+    .map((w) => (/^\d+$/.test(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)))
+    .join(" ");
+}
+
