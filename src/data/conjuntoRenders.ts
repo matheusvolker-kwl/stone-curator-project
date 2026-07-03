@@ -14,6 +14,17 @@ import abaete from "@/assets/conjuntos-render/conjunto-lago-abaete-essencial.web
 import juparana from "@/assets/conjuntos-render/conjunto-lago-juparana-equilibrado.webp.asset.json";
 import cabiunas from "@/assets/conjuntos-render/conjunto-lago-cabiunas-completo.webp.asset.json";
 import saquarema from "@/assets/conjuntos-render/conjunto-lago-saquarema-essencial.webp.asset.json";
+import araruama from "@/assets/conjuntos-render/conjunto-lago-araruama-equilibrado.webp.asset.json";
+import mundau from "@/assets/conjuntos-render/conjunto-lago-mundau-completo.webp.asset.json";
+import manguaba from "@/assets/conjuntos-render/conjunto-lago-manguaba-essencial.webp.asset.json";
+import marau from "@/assets/conjuntos-render/conjunto-lago-marau-equilibrado.webp.asset.json";
+import amazonas from "@/assets/conjuntos-render/conjunto-lago-amazonas-completo.webp.asset.json";
+import vereda from "@/assets/conjuntos-render/conjunto-lago-hibrido-vereda-essencial.webp.asset.json";
+import igarape from "@/assets/conjuntos-render/conjunto-lago-hibrido-igarape-equilibrado.webp.asset.json";
+import pororoca from "@/assets/conjuntos-render/conjunto-lago-hibrido-pororoca-completo.webp.asset.json";
+import apicum from "@/assets/conjuntos-render/conjunto-lago-hibrido-apicum-equilibrado.webp.asset.json";
+import sambaqui from "@/assets/conjuntos-render/conjunto-lago-hibrido-sambaqui-completo.webp.asset.json";
+
 
 export const conjuntoRenders: Record<string, string> = {
   "conjunto-piscina-buzios-essencial": buzios.url,
