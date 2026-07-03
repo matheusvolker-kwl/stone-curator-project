@@ -429,6 +429,8 @@ export default function GuiaRefinar() {
         </div>
       </main>
 
+      <ProjetosWesternBand />
+
       <AutoralProductModal
         item={modalItem}
         index={modalIndex}
