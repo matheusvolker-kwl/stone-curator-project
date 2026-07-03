@@ -19,7 +19,7 @@ interface Props {
 
 /**
  * Renderiza o preço para parceiros aprovados (com desconto do tier aplicado)
- * ou um chip "Login para preço" para visitantes/pendentes.
+ * ou um chip "Ver preço de parceiro" para visitantes/pendentes.
  */
 export default function GatedPrice({
   amount,

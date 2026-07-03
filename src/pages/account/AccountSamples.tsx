@@ -35,7 +35,7 @@ export default function AccountSamples() {
           : "O kit é cobrado simbolicamente; clientes Platinum e Partner recebem grátis."}
       </p>
 
-      <Link to="/pedir-amostras" className="inline-flex items-center gap-2 mb-10 h-11 px-5 bg-western-green-deep text-western-cream font-mono text-[11px] uppercase tracking-[0.22em] hover:bg-western-green-mid">
+      <Link to="/western-box" className="inline-flex items-center gap-2 mb-10 h-11 px-5 bg-western-green-deep text-western-cream font-mono text-[11px] uppercase tracking-[0.22em] hover:bg-western-green-mid">
         Solicitar novo kit <ArrowRight className="h-4 w-4" />
       </Link>
 

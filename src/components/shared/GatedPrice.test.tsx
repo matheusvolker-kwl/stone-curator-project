@@ -41,7 +41,7 @@ describe("GatedPrice", () => {
   it("mostra fallback de login para visitante", () => {
     setAuth({ isApproved: false, session: null });
     renderGated();
-    expect(screen.getByText(/Login para preço/i)).toBeInTheDocument();
+    expect(screen.getByText(/Ver preço de parceiro/i)).toBeInTheDocument();
     expect(screen.queryByText(/1\.234,50/)).not.toBeInTheDocument();
   });
 
