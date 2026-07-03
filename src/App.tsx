@@ -77,6 +77,7 @@ const TrocasAvarias = lazy(() => import("./pages/legal/TrocasAvarias.tsx"));
 const PoliticaPrivacidade = lazy(() => import("./pages/legal/PoliticaPrivacidade.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 const Entrada = lazy(() => import("./pages/Entrada.tsx"));
+const Parceria = lazy(() => import("./pages/Parceria.tsx"));
 const Orcamento = lazy(() => import("./pages/Orcamento.tsx"));
 
 const queryClient = new QueryClient({
@@ -119,6 +120,7 @@ const App = () => (
                     : <Route path="/" element={<Index />} />}
                   <Route path="/linhas" element={<Linhas />} />
                   <Route path="/entrada" element={<Entrada />} />
+                  <Route path="/parceria" element={<Parceria />} />
                   <Route path="/orcamento" element={<Orcamento />} />
                   <Route path="/linhas/:handle" element={<LinhaPage />} />
                   <Route path="/conjuntos" element={<Conjuntos />} />
