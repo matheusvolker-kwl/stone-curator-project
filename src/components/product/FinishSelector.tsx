@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { texturaPara } from "@/lib/acabamentoTexturas";
+
 
 interface FinishMeta {
   num: string;
