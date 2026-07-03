@@ -66,7 +66,7 @@ export default function AccountIndex() {
               {pendingReason}
             </>
           ) : (
-            <>Sua conta está em análise. Liberamos o catálogo completo assim que aprovarmos seu cadastro B2B (até 2 dias úteis).</>
+            <>Sua conta está em análise. Liberamos o catálogo completo assim que seu cadastro B2B for aprovado — avisamos por e-mail.</>
           )}
         </div>
       )}

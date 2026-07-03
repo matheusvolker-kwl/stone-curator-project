@@ -57,7 +57,7 @@ export default function PartnerLogin() {
       .maybeSingle();
     if (profile?.status === "pending") {
       toast.info("Cadastro em análise", {
-        description: "Liberaremos seu acesso em até 2 dias úteis.",
+        description: "Liberamos seu acesso por e-mail em breve.",
       });
       navigate("/minha-conta", { replace: true });
       return;
@@ -105,7 +105,7 @@ export default function PartnerLogin() {
               <p className="text-western-stone-warm leading-relaxed text-[15px] md:text-base">
                 Este site da Western atende exclusivamente arquitetos, paisagistas, construtoras e
                 garden centers com CNPJ ativo. O acesso à tabela comercial, modelos 3D e
-                composições só é liberado após análise do cadastro — leva até 2 dias úteis.
+                composições é liberado automaticamente para profissionais do ramo, na hora do cadastro.
               </p>
             </div>
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Loader2, Lock, Minus, Plus } from "lucide-react";
+import { Loader2, Minus, Plus, Unlock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cdnImg, formatBRL } from "@/lib/catalog/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -165,13 +165,13 @@ export default function StickyBuyBar({
           ) : (
             <>
               <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
-                <Lock className="h-3 w-3" /> Login para preço
+                <Unlock className="h-3 w-3" /> Ver preço de parceiro
               </span>
               <Link
-                to="/parceiro/login"
+                to="/parceiro/cadastro"
                 className="h-11 px-7 inline-flex items-center justify-center bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-xs uppercase tracking-[0.25em] flex-shrink-0"
               >
-                Acessar minha conta
+                Ver preço de parceiro
               </Link>
             </>
           )}
@@ -202,7 +202,7 @@ export default function StickyBuyBar({
                 )
               ) : (
                 <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-western-stone-warm flex items-center gap-1 mt-0.5">
-                  <Lock className="h-2.5 w-2.5" /> Login para preço
+                  <Unlock className="h-2.5 w-2.5" /> Ver preço de parceiro
                 </p>
               )}
             </div>
@@ -246,10 +246,10 @@ export default function StickyBuyBar({
             </Button>
           ) : (
             <Link
-              to="/parceiro/login"
+              to="/parceiro/cadastro"
               className="w-full h-11 inline-flex items-center justify-center bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-[11px] uppercase tracking-[0.25em]"
             >
-              Acessar minha conta
+              Ver preço de parceiro
             </Link>
           )}
         </div>

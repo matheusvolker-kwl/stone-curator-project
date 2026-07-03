@@ -131,7 +131,7 @@ export default function PartnerAccount() {
 
         {params.get("aviso") === "pendente" && partnerStatus !== "approved" && !isAdmin && (
           <div className="mb-10 border border-western-gold/40 bg-western-gold/5 px-5 py-4 text-spec text-western-green-deep">
-            Esta área é liberada após aprovação do seu cadastro B2B (até 2 dias úteis).
+            Esta área é liberada assim que seu cadastro B2B for aprovado. Avisamos por e-mail.
           </div>
         )}
 

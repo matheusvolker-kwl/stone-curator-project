@@ -131,7 +131,7 @@ function PanelBody({
                 {formatPreco(total)}
               </p>
               <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-western-cream-muted/80 mt-2">
-                {isCustomizado ? "Confirmado pela equipe em até 48h" : "Pedido único · frete otimizado"}
+                {isCustomizado ? "Confirmado pela equipe em até 3 dias úteis" : "Pedido único · frete otimizado"}
               </p>
             </div>
           </>
