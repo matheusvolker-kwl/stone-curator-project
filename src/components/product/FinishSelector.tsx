@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { texturaPara } from "@/lib/acabamentoTexturas";
+
 
 interface FinishMeta {
   num: string;
@@ -104,17 +106,19 @@ export default function FinishSelector({ values, selected, onSelect }: Props) {
               <span
                 key={isSelected ? `sel-${val}` : `idle-${val}`}
                 className={`
-                  flex-shrink-0 block w-7 h-7 rounded-full
+                  flex-shrink-0 block w-7 h-7 rounded-full bg-cover bg-center
                   ${visible ? "animate-swatch-fill" : "opacity-0"}
                   ${isSelected ? "animate-swatch-splash ring-2 ring-western-gold/50 ring-offset-2 ring-offset-western-cream" : "group-hover:animate-swatch-breathe"}
                 `}
                 style={{
                   backgroundColor: `hsl(${meta.swatch})`,
+                  backgroundImage: texturaPara(val) ? `url(${texturaPara(val)})` : undefined,
                   animationDelay: visible && !isSelected ? `${idx * 80}ms` : undefined,
                   boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.08)",
                 }}
                 aria-hidden
               />
+
               <div className="flex flex-col min-w-0">
                 <span
                   className={`font-mono text-[9px] tracking-[0.22em] transition-opacity ${

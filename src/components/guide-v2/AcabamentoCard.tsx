@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
 import type { Acabamento } from "./types";
 import { acabamentoMeta } from "./types";
+import { acabamentoTexturas } from "@/lib/acabamentoTexturas";
+
 
 interface Props {
   value: Acabamento;
@@ -36,22 +38,26 @@ export default function AcabamentoCard({ value, index, selected, onSelect }: Pro
         <span
           aria-hidden
           className={cn(
-            "w-12 h-12 rounded-full border flex-shrink-0 transition-all duration-500 relative",
+            "w-12 h-12 rounded-full border flex-shrink-0 transition-all duration-500 relative bg-cover bg-center overflow-hidden",
             selected
               ? "border-western-gold scale-110 rotate-[8deg] shadow-[0_8px_18px_-10px_hsl(var(--western-stone-dark)/0.5)]"
               : "border-western-stone-warm/20 group-hover:scale-105 group-hover:rotate-3"
           )}
-          style={{ backgroundColor: meta.chip }}
+          style={{
+            backgroundColor: meta.chip,
+            backgroundImage: acabamentoTexturas[value] ? `url(${acabamentoTexturas[value]})` : undefined,
+          }}
         >
           <span
             aria-hidden
             className="absolute inset-0 rounded-full pointer-events-none"
             style={{
               background:
-                "radial-gradient(ellipse at 30% 25%, rgba(255,255,255,0.45) 0%, transparent 55%)",
+                "radial-gradient(ellipse at 30% 25%, rgba(255,255,255,0.35) 0%, transparent 55%)",
             }}
           />
         </span>
+
         <div className="flex flex-col min-w-0">
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold">
             {String(index).padStart(2, "0")}
