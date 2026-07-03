@@ -78,6 +78,7 @@ const PoliticaPrivacidade = lazy(() => import("./pages/legal/PoliticaPrivacidade
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 const Entrada = lazy(() => import("./pages/Entrada.tsx"));
 const Parceria = lazy(() => import("./pages/Parceria.tsx"));
+const ParceriaDireto = lazy(() => import("./pages/ParceriaDireto.tsx"));
 const Orcamento = lazy(() => import("./pages/Orcamento.tsx"));
 
 const queryClient = new QueryClient({
