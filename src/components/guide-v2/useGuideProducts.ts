@@ -7,6 +7,8 @@ import type { TipoVisual, ProjetoPeca } from "./types";
 import type { AutoralItem } from "./autoraisCatalog";
 import { PECAS_BASE } from "./pecasBase";
 import { getAutoralHandlesFor } from "./autoraisCatalog";
+import { conjuntoComposicao } from "@/data/conjuntoComposicao";
+
 
 // Cache simples em memória — handles → produto Shopify
 const cache = new Map<string, ShopifyProductNode>();
