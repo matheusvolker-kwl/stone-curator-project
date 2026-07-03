@@ -20,8 +20,8 @@ import ArtistaSection from "@/components/home/ArtistaSection";
 import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
 import { useScrollY } from "@/hooks/useScrollY";
 import { BUSINESS } from "@/config/business";
-import heroCascata from "@/assets/hero-cascata.webp";
-import heroCascataSm from "@/assets/hero-cascata-sm.webp";
+import heroParceria from "@/assets/hero-parceria.webp.asset.json";
+import heroParceriaSm from "@/assets/hero-parceria-sm.webp.asset.json";
 
 type DorItem = {
   Icon: typeof Feather;
