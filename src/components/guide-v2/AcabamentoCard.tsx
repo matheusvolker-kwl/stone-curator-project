@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
 import type { Acabamento } from "./types";
 import { acabamentoMeta } from "./types";
+import { acabamentoTexturas } from "@/lib/acabamentoTexturas";
+
 
 interface Props {
   value: Acabamento;
