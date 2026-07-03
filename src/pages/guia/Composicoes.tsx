@@ -114,7 +114,7 @@ export default function GuiaComposicoes() {
                       <ComposicaoCard
                         conjunto={c}
                         nivel={n}
-                        image={nivelImage[n]}
+                        image={conjuntoRenders[c.handle] ?? nivelImage[n]}
                         highlight={n === "equilibrada"}
                         refinarHref={`/guia-de-composicao/refinar/${c.handle}?${refinarParams.toString()}`}
                       />
