@@ -15,6 +15,7 @@ import {
 } from "@/data/guideMap";
 import GatedPrice from "@/components/shared/GatedPrice";
 import { ArrowRight, SlidersHorizontal, X } from "lucide-react";
+import ProjetosWesternBand from "@/components/shared/ProjetosWesternBand";
 
 type LeafMeta = {
   handle: string;
@@ -256,6 +257,8 @@ export default function Conjuntos() {
           </main>
         </div>
       </div>
+
+      <ProjetosWesternBand />
 
       {/* MOBILE — drawer de filtros */}
       {filtersOpen && (
