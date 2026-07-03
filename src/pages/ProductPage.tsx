@@ -30,6 +30,14 @@ import ProductInUse from "@/components/product/ProductInUse";
 import WishlistButton from "@/components/product/WishlistButton";
 import PurchaseProof from "@/components/product/PurchaseProof";
 import ProjetosWesternBand from "@/components/shared/ProjetosWesternBand";
+import {
+  InstallationTrustStrip,
+  InstallationSection,
+} from "@/components/product/InstallationModule";
+import {
+  getInstallationConfig,
+  resolveInstallationType,
+} from "@/data/installation";
 
 // Pluraliza nomes de coleção singulares ("Pedra Grande" → "Pedras Grandes").
 function pluralizeCollection(title?: string): string {
@@ -191,6 +199,10 @@ export default function ProductPage() {
     brand: { "@type": "Brand", name: "Western" },
     url: `https://westernstore.lovable.app/produtos/${product.handle}`,
   };
+
+  const installationConfig = getInstallationConfig(
+    resolveInstallationType(collection?.handle, product.title),
+  );
 
   return (
     <div className="surface-ivory">
@@ -417,6 +429,12 @@ export default function ProductPage() {
                         <div className="mt-4">
                           <PurchaseProof />
                         </div>
+
+                        {/* Tira de confiança — Instalação */}
+                        <InstallationTrustStrip
+                          config={installationConfig}
+                          className="mt-4"
+                        />
                       </div>
                     )}
 
@@ -468,6 +486,9 @@ export default function ProductPage() {
         fichaRows={fichaRows}
         modelo3dValue={product.modelo3d?.value}
       />
+
+      {/* Instalação — âncora #instalacao */}
+      <InstallationSection config={installationConfig} />
 
       {/* Seções full-width abaixo do hero */}
       
