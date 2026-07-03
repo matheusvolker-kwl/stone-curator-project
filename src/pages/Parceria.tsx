@@ -20,8 +20,8 @@ import ArtistaSection from "@/components/home/ArtistaSection";
 import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
 import { useScrollY } from "@/hooks/useScrollY";
 import { BUSINESS } from "@/config/business";
-import heroCascata from "@/assets/hero-cascata.webp";
-import heroCascataSm from "@/assets/hero-cascata-sm.webp";
+import heroParceria from "@/assets/hero-parceria.webp.asset.json";
+import heroParceriaSm from "@/assets/hero-parceria-sm.webp.asset.json";
 
 type DorItem = {
   Icon: typeof Feather;
@@ -167,16 +167,16 @@ export default function Parceria() {
       {/* 1. HERO */}
       <section className="relative w-full h-[85vh] min-h-[600px] overflow-hidden bg-western-green-deep">
         <img
-          src={heroCascata}
-          srcSet={`${heroCascataSm} 900w, ${heroCascata} 1800w`}
+          src={heroParceria.url}
+          srcSet={`${heroParceriaSm.url} 900w, ${heroParceria.url} 1800w`}
           sizes="100vw"
-          alt="Cascata artesanal Western em projeto de paisagismo."
+          alt="Pedra artesanal Western à beira de piscina com água cristalina."
           loading="eager"
           {...({ fetchpriority: "high" } as Record<string, string>)}
           decoding="async"
-          width={1820}
-          height={1213}
-          className="absolute inset-0 w-full h-full object-cover object-center will-change-transform"
+          width={1800}
+          height={1343}
+          className="absolute inset-0 w-full h-full object-cover object-[center_60%] will-change-transform"
           style={{ transform: heroParallax }}
         />
         <div
