@@ -51,7 +51,7 @@ export default function Parceria() {
     <>
       <Seo
         title="Western — Parceria"
-        description="Há 33 anos recriando a natureza em pedra artesanal. Fabricamos peça a peça em Cajamar/SP para arquitetos, paisagistas e construtoras. Seja parceiro Western."
+        description="Há 33 anos recriando a natureza em pedra artesanal. Fabricamos peça a peça em Cajamar/SP para profissionais do paisagismo e da construção. Seja parceiro Western."
         path="/parceria"
         ogType="website"
       />
