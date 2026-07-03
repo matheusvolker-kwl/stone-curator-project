@@ -30,7 +30,7 @@ export default function ProjetosSection() {
               className="group text-left bg-western-green-mid/30 border border-western-gold/15 hover:border-western-gold/50 transition-colors flex flex-col"
             >
               <div className="relative aspect-[4/5] overflow-hidden bg-western-green-deep">
-                {/* Imagem com tratamento unificador (duotone sutil verde+dourado) */}
+                {/* Imagem em P&B total — remove toda cor original divergente */}
                 <img
                   src={p.cardCover ?? p.cover}
                   alt={p.titulo}
@@ -38,15 +38,24 @@ export default function ProjetosSection() {
                   decoding="async"
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                   style={{
-                    filter: "grayscale(0.55) contrast(1.05) brightness(0.92) sepia(0.18)",
+                    filter: "grayscale(1) contrast(1.08) brightness(0.9)",
                   }}
                 />
-                {/* Overlay de cor da marca — uniformiza paleta entre as fotos */}
+                {/* Duotone forte verde→dourado — tinge tudo na mesma paleta */}
                 <div
-                  className="absolute inset-0 pointer-events-none mix-blend-color opacity-60 transition-opacity duration-500 group-hover:opacity-30"
+                  className="absolute inset-0 pointer-events-none mix-blend-color opacity-90 transition-opacity duration-500 group-hover:opacity-70"
                   style={{
                     background:
-                      "linear-gradient(160deg, hsl(var(--western-green-deep)) 0%, hsl(var(--western-gold) / 0.55) 100%)",
+                      "linear-gradient(160deg, hsl(var(--western-green-deep)) 0%, hsl(var(--western-gold)) 100%)",
+                  }}
+                  aria-hidden
+                />
+                {/* Reforço de sombra/contraste em multiply para consolidar o tom */}
+                <div
+                  className="absolute inset-0 pointer-events-none mix-blend-multiply opacity-70 transition-opacity duration-500 group-hover:opacity-55"
+                  style={{
+                    background:
+                      "linear-gradient(160deg, hsl(var(--western-green-deep) / 0.85) 0%, hsl(var(--western-green-mid) / 0.6) 100%)",
                   }}
                   aria-hidden
                 />
@@ -55,11 +64,11 @@ export default function ProjetosSection() {
                   className="absolute inset-0 pointer-events-none"
                   style={{
                     background:
-                      "radial-gradient(ellipse at 50% 35%, transparent 45%, hsl(var(--western-green-deep) / 0.35) 100%)",
+                      "radial-gradient(ellipse at 50% 35%, transparent 45%, hsl(var(--western-green-deep) / 0.45) 100%)",
                   }}
                   aria-hidden
                 />
-                {/* Gradiente forte no rodapé para legibilidade do nome */}
+                {/* Gradiente forte no rodapé para legibilidade do nome — fica por cima do duotone */}
                 <div
                   className="absolute inset-0 pointer-events-none"
                   style={{
