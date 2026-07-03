@@ -2,26 +2,19 @@ import logoCobasi from "@/assets/parceiros/cobasi.svg";
 import logoCristal from "@/assets/parceiros/cristal-pool.svg";
 import logoBiopet from "@/assets/parceiros/biopet.svg";
 import logoGenesis from "@/assets/parceiros/genesis.svg";
-import logoCobasiCream from "@/assets/parceiros/cobasi-cream.png";
-import logoBiopetCream from "@/assets/parceiros/biopet-cream.png";
-import logoGenesisCream from "@/assets/parceiros/genesis-cream.png";
 
 interface Marca {
   nome: string;
   site: string;
-  /** Logo em verde — para fundos claros */
-  logoDark: string;
-  /** Logo em creme — para fundos escuros. Se ausente, usa logoDark com filtro CSS. */
-  logoLight?: string;
-  /** Largura máxima em px — calibra peso visual entre logos diferentes */
-  larguraMax: number;
+  /** Logo fonte (sempre o SVG "dark"); tratamento monocromático aplicado via CSS filter para uniformidade absoluta */
+  logo: string;
 }
 
 const PARCEIROS: Marca[] = [
-  { nome: "Biopet Lagos",        site: "https://bplagos.com.br",            logoDark: logoBiopet,  logoLight: logoBiopetCream,  larguraMax: 130 },
-  { nome: "Cristal Pool",        site: "https://www.cristalpool.com.br",    logoDark: logoCristal,                              larguraMax: 170 },
-  { nome: "Genesis Ecossistemas",site: "https://genesisecossistemas.com",   logoDark: logoGenesis, logoLight: logoGenesisCream, larguraMax: 110 },
-  { nome: "Cobasi",              site: "https://www.cobasi.com.br",         logoDark: logoCobasi,  logoLight: logoCobasiCream,  larguraMax: 170 },
+  { nome: "Biopet Lagos",         site: "https://bplagos.com.br",           logo: logoBiopet  },
+  { nome: "Cristal Pool",         site: "https://www.cristalpool.com.br",   logo: logoCristal },
+  { nome: "Genesis Ecossistemas", site: "https://genesisecossistemas.com",  logo: logoGenesis },
+  { nome: "Cobasi",               site: "https://www.cobasi.com.br",        logo: logoCobasi  },
 ];
 
 interface Props {
@@ -48,20 +41,20 @@ export default function MarcasInstitucionais({
 }: Props) {
   const isDark = variante === "dark";
 
+  // Tratamento monocromático UNIFORME para todos os logos, independente da origem do SVG.
+  // Dark: creme quente (equivalente a western-cream). Light: verde profundo da marca.
+  const monoFilter = isDark
+    ? "brightness(0) saturate(100%) invert(96%) sepia(10%) saturate(220%) hue-rotate(350deg) brightness(103%) contrast(96%)"
+    : "brightness(0) saturate(100%) invert(15%) sepia(28%) saturate(900%) hue-rotate(95deg) brightness(70%) contrast(92%)";
+
   const renderLogo = (p: Marca, className: string, maxHeightClass: string) => {
-    const useFilter = isDark && !p.logoLight;
     const content = (
       <img
-        src={isDark && p.logoLight ? p.logoLight : p.logoDark}
+        src={p.logo}
         alt={p.nome}
         loading="lazy"
-        style={{
-          maxWidth: `${p.larguraMax}px`,
-          ...(useFilter ? { filter: "brightness(0) invert(1)" } : {}),
-        }}
-        className={`w-full ${maxHeightClass} object-contain transition-all duration-500 ${
-          isDark ? "opacity-65 group-hover:opacity-100" : "opacity-75 group-hover:opacity-100"
-        } group-hover:scale-[1.04]`}
+        style={{ filter: monoFilter, maxWidth: "160px" }}
+        className={`w-auto ${maxHeightClass} object-contain transition-all duration-500 opacity-70 group-hover:opacity-100 group-hover:scale-[1.04]`}
       />
     );
 
@@ -86,6 +79,7 @@ export default function MarcasInstitucionais({
       </a>
     );
   };
+
 
   return (
     <section className={compacta ? "" : "mt-14 md:mt-16"}>
