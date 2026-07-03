@@ -80,7 +80,7 @@ const GRUPOS: Grupo[] = [
     itens: [
       {
         q: "Quem pode comprar?",
-        a: "Atendemos exclusivamente B2B: arquitetos, paisagistas, construtoras, garden centers, lojistas e revendas qualificadas com CNPJ ativo. Acesso à tabela de preços e modelos 3D após credenciamento.",
+        a: "Atendemos exclusivamente B2B: profissionais e empresas do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a laguistas, jardineiros, garden centers, lojas e construtoras. Acesso à tabela de preços e modelos 3D após o cadastro.",
       },
       {
         q: "Qual o pedido mínimo?",
