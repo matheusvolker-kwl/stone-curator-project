@@ -33,8 +33,8 @@ const schema = z.object({
   telefone: phoneBRSchema,
   email: emailSchema,
   cidade: z.string().trim().min(2, "Informe a cidade").max(80),
-  uf: z.enum(UF_LIST, { errorMap: () => ({ message: "Selecione a UF" }) }),
-  tipo: z.enum(TIPO_OPTIONS, { errorMap: () => ({ message: "Selecione o tipo" }) }),
+  uf: z.string().refine((v) => (UF_LIST as readonly string[]).includes(v), { message: "Selecione a UF" }),
+  tipo: z.string().refine((v) => (TIPO_OPTIONS as readonly string[]).includes(v), { message: "Selecione o tipo" }),
   mensagem: z.string().max(1000).optional(),
 });
 
