@@ -44,6 +44,7 @@ import andorinhas from "@/assets/conjuntos-render/conjunto-jardim-fonte-andorinh
 import veu from "@/assets/conjuntos-render/conjunto-jardim-fonte-veu-completo.webp.asset.json";
 import tabocas from "@/assets/conjuntos-render/conjunto-jardim-fonte-tabocas-essencial.webp.asset.json";
 import iguacu from "@/assets/conjuntos-render/conjunto-jardim-fonte-iguacu-equilibrado.webp.asset.json";
+import itambe from "@/assets/conjuntos-render/conjunto-jardim-fonte-itambe-completo.webp.asset.json";
 
 
 export const conjuntoRenders: Record<string, string> = {
@@ -90,4 +91,5 @@ export const conjuntoRenders: Record<string, string> = {
   "conjunto-jardim-fonte-veu-completo": veu.url,
   "conjunto-jardim-fonte-tabocas-essencial": tabocas.url,
   "conjunto-jardim-fonte-iguacu-equilibrado": iguacu.url,
+  "conjunto-jardim-fonte-itambe-completo": itambe.url,
 };
