@@ -24,6 +24,16 @@ import igarape from "@/assets/conjuntos-render/conjunto-lago-hibrido-igarape-equ
 import pororoca from "@/assets/conjuntos-render/conjunto-lago-hibrido-pororoca-completo.webp.asset.json";
 import apicum from "@/assets/conjuntos-render/conjunto-lago-hibrido-apicum-equilibrado.webp.asset.json";
 import sambaqui from "@/assets/conjuntos-render/conjunto-lago-hibrido-sambaqui-completo.webp.asset.json";
+import ipueira from "@/assets/conjuntos-render/conjunto-lago-hibrido-ipueira-essencial.webp.asset.json";
+import marajo from "@/assets/conjuntos-render/conjunto-lago-hibrido-marajo-equilibrado.webp.asset.json";
+import pantanal from "@/assets/conjuntos-render/conjunto-lago-hibrido-pantanal-completo.webp.asset.json";
+import carcara from "@/assets/conjuntos-render/conjunto-jardim-seco-carcara-essencial.webp.asset.json";
+import ibitipoca from "@/assets/conjuntos-render/conjunto-jardim-seco-ibitipoca-equilibrado.webp.asset.json";
+import itacolomi from "@/assets/conjuntos-render/conjunto-jardim-seco-itacolomi-completo.webp.asset.json";
+import cipo from "@/assets/conjuntos-render/conjunto-jardim-seco-cipo-essencial.webp.asset.json";
+import canastra from "@/assets/conjuntos-render/conjunto-jardim-seco-canastra-equilibrado.webp.asset.json";
+import itatiaia from "@/assets/conjuntos-render/conjunto-jardim-seco-itatiaia-completo.webp.asset.json";
+import araripe from "@/assets/conjuntos-render/conjunto-jardim-seco-araripe-essencial.webp.asset.json";
 
 
 export const conjuntoRenders: Record<string, string> = {
