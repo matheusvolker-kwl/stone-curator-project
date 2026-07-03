@@ -103,9 +103,7 @@ export default function PartnerLogin() {
                 Plataforma exclusiva para parceiros aprovados.
               </h2>
               <p className="text-western-stone-warm leading-relaxed text-[15px] md:text-base">
-                Este site da Western atende exclusivamente arquitetos, paisagistas, construtoras e
-                garden centers com CNPJ ativo. O acesso à tabela comercial, modelos 3D e
-                composições é liberado automaticamente para profissionais do ramo, na hora do cadastro.
+                A Western atende profissionais e empresas do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a laguistas, jardineiros, garden centers, lojas e construtoras. O acesso à tabela comercial, modelos 3D e composições é liberado automaticamente para profissionais do ramo, na hora do cadastro.
               </p>
             </div>
 

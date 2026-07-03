@@ -51,7 +51,7 @@ export default function Index() {
     <>
       <Seo
         title="Western — Pedras artesanais para paisagismo profissional"
-        description="Catálogo B2B de pedras artesanais para arquitetos e paisagistas. Fabricadas peça a peça em São Paulo, com modelos 3D no SketchUp Warehouse."
+        description="Catálogo B2B de pedras artesanais para profissionais do paisagismo e da construção. Fabricadas peça a peça em São Paulo, com modelos 3D no SketchUp Warehouse."
         path="/"
         ogType="website"
       />
@@ -312,7 +312,7 @@ export default function Index() {
                   Tabela de preços, condições comerciais e modelos 3D liberados após credenciamento.
                 </h2>
                 <p className="text-western-cream-muted leading-relaxed max-w-md mb-8">
-                  Trabalhamos exclusivamente com arquitetos, paisagistas, construtoras e garden centers com CNPJ ativo.
+                  Atendemos profissionais e empresas do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a laguistas, jardineiros, garden centers, lojas e construtoras.
                 </p>
                 <Link
                   to="/parceiro/cadastro"

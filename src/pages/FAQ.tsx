@@ -80,7 +80,7 @@ const GRUPOS: Grupo[] = [
     itens: [
       {
         q: "Quem pode comprar?",
-        a: "Atendemos exclusivamente B2B: arquitetos, paisagistas, construtoras, garden centers, lojistas e revendas qualificadas com CNPJ ativo. Acesso à tabela de preços e modelos 3D após credenciamento.",
+        a: "Atendemos exclusivamente B2B: profissionais e empresas do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a laguistas, jardineiros, garden centers, lojas e construtoras. Acesso à tabela de preços e modelos 3D após o cadastro.",
       },
       {
         q: "Qual o pedido mínimo?",
@@ -140,7 +140,7 @@ export default function FAQ() {
     <>
       <Seo
         title="FAQ — Western: dúvidas técnicas sobre pedras artesanais"
-        description="Material, fabricação, instalação, comercial e garantia: as perguntas mais frequentes de arquitetos e paisagistas sobre pedras Western."
+        description="Material, fabricação, instalação, comercial e garantia: as perguntas mais frequentes de profissionais do paisagismo e da construção sobre pedras Western."
         path="/faq"
         jsonLd={faqJsonLd}
       />
@@ -152,7 +152,7 @@ export default function FAQ() {
             Dúvidas técnicas,<br />respostas diretas.
           </h1>
           <p className="text-lg text-western-cream-muted leading-relaxed max-w-2xl">
-            O que arquitetos, paisagistas e lojistas mais perguntam antes do primeiro pedido —
+            O que profissionais do paisagismo e da construção mais perguntam antes do primeiro pedido —
             sobre material, catálogo, instalação, comercial e garantia.
           </p>
         </div>
