@@ -22,6 +22,8 @@ import { useScrollY } from "@/hooks/useScrollY";
 import { BUSINESS } from "@/config/business";
 import heroParceria from "@/assets/hero-parceria.webp.asset.json";
 import heroParceriaSm from "@/assets/hero-parceria-sm.webp.asset.json";
+import parceriaInstalacao from "@/assets/parceria-instalacao.webp.asset.json";
+import parceriaInstalacaoSm from "@/assets/parceria-instalacao-sm.webp.asset.json";
 
 type DorItem = {
   Icon: typeof Feather;
