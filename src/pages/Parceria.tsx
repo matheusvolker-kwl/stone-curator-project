@@ -26,6 +26,7 @@ import parceriaInstalacao from "@/assets/parceria-instalacao.webp.asset.json";
 import parceriaInstalacaoSm from "@/assets/parceria-instalacao-sm.webp.asset.json";
 import parceriaDetalhe from "@/assets/parceria-detalhe.webp.asset.json";
 import parceriaDetalheSm from "@/assets/parceria-detalhe-sm.webp.asset.json";
+import thiagoCastro from "@/assets/thiago-castro.webp.asset.json";
 
 type DorItem = {
   Icon: typeof Feather;
@@ -401,19 +402,24 @@ export default function Parceria() {
                 aria-hidden
               />
               <blockquote className="font-display text-xl md:text-2xl lg:text-3xl text-western-green-deep leading-[1.25] italic pl-4 md:pl-10">
-                [depoimento de um parceiro laguista/loja entra aqui — a fala real de alguém que fatura mais com Western há alguns ciclos, ancorando o resultado em números do próprio negócio dele]
+                “Instalei minha primeira cascata Western e o cliente não acreditou que não era pedra de verdade. Hoje é o serviço que mais me dá lucro — e o que mais me indicam.”
               </blockquote>
               <figcaption className="mt-10 pl-4 md:pl-10 flex items-center gap-4">
-                <div
-                  className="h-12 w-12 rounded-full bg-western-stone-warm/20 border border-western-stone-warm/30 flex-shrink-0"
-                  aria-hidden
+                <img
+                  src={thiagoCastro.url}
+                  alt="Thiago Castro, paisagista parceiro Western no Rio de Janeiro."
+                  loading="lazy"
+                  decoding="async"
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 rounded-full object-cover border border-western-stone-warm/30 flex-shrink-0"
                 />
                 <div>
                   <p className="font-display text-base text-western-green-deep leading-tight">
-                    Nome do parceiro
+                    Thiago Castro
                   </p>
                   <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-western-stone-warm mt-1">
-                    Cidade/UF · segmento
+                    Rio de Janeiro · Paisagista
                   </p>
                 </div>
               </figcaption>
