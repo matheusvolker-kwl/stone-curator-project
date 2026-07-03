@@ -253,7 +253,7 @@ export default function PartnerSignup() {
                 Recebemos sua solicitação.
               </h1>
               <p className="text-western-stone-warm leading-relaxed mb-4">
-                Em até 2 dias úteis nosso time comercial conclui a análise e libera seu acesso por e-mail.
+                Estamos concluindo a validação do seu cadastro e liberamos seu acesso por e-mail em breve.
               </p>
               {credResult.protocolo && (
                 <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm mb-10">
