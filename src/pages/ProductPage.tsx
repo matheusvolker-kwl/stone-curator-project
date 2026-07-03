@@ -429,6 +429,12 @@ export default function ProductPage() {
                         <div className="mt-4">
                           <PurchaseProof />
                         </div>
+
+                        {/* Tira de confiança — Instalação */}
+                        <InstallationTrustStrip
+                          config={installationConfig}
+                          className="mt-4"
+                        />
                       </div>
                     )}
 
