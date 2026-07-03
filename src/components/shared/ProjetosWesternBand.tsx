@@ -8,6 +8,8 @@ import img07 from "@/assets/projetos-western/07_cascata-piscina.jpg.asset.json";
 import img08 from "@/assets/projetos-western/08_piscina-paisagismo.jpg.asset.json";
 import img09 from "@/assets/projetos-western/09_piscina-cascata-2.jpg.asset.json";
 import img10 from "@/assets/projetos-western/10_piscina-vista.jpg.asset.json";
+import img11 from "@/assets/projetos-western/11_cascata-ferns.jpg.asset.json";
+import img12 from "@/assets/projetos-western/12_borda-pedra.jpg.asset.json";
 
 interface ProjetoFoto {
   src: string;
@@ -18,8 +20,10 @@ const FOTOS: ProjetoFoto[] = [
   { src: img01.url, caption: "Cascata em pedra · Tapiraí (SP)" },
   { src: img03.url, caption: "Piscina com cascata · projeto Western" },
   { src: img02.url, caption: "Detalhe do material · Western" },
+  { src: img11.url, caption: "Cascata tropical · projeto Western" },
   { src: img06.url, caption: "Cascata e serra · projeto Western" },
   { src: img04.url, caption: "Piscina e mirante · projeto Western" },
+  { src: img12.url, caption: "Borda em pedra · projeto Western" },
   { src: img05.url, caption: "Cascata escalonada · projeto Western" },
   { src: img09.url, caption: "Piscina natural · projeto Western" },
   { src: img07.url, caption: "Cascata sobre a piscina · projeto Western" },
