@@ -484,8 +484,17 @@ export default function ProductPage() {
         dimsStr={dimsStr}
         dims={dims}
         fichaRows={fichaRows}
+      <ProductTabs
+        parsed={parsed}
+        pesoKg={pesoKg}
+        dimsStr={dimsStr}
+        dims={dims}
+        fichaRows={fichaRows}
         modelo3dValue={product.modelo3d?.value}
       />
+
+      {/* Instalação — âncora #instalacao */}
+      <InstallationSection config={installationConfig} />
 
       {/* Seções full-width abaixo do hero */}
       
