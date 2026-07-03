@@ -253,7 +253,7 @@ export default function PartnerSignup() {
                 Recebemos sua solicitação.
               </h1>
               <p className="text-western-stone-warm leading-relaxed mb-4">
-                Em até 2 dias úteis nosso time comercial conclui a análise e libera seu acesso por e-mail.
+                Estamos concluindo a validação do seu cadastro e liberamos seu acesso por e-mail em breve.
               </p>
               {credResult.protocolo && (
                 <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm mb-10">
@@ -289,7 +289,7 @@ export default function PartnerSignup() {
                 Envie seu Cartão CNPJ.
               </h1>
               <p className="text-western-stone-warm leading-relaxed mb-8">
-                As bases públicas não responderam agora. Envie o Cartão CNPJ ou siga para análise manual em até 2 dias úteis.
+                As bases públicas não responderam agora. Envie o Cartão CNPJ ou siga para análise manual e concluímos a validação em seguida.
               </p>
               <div className="max-w-md mx-auto text-left space-y-4">
                 {newUserId && (
@@ -337,7 +337,7 @@ export default function PartnerSignup() {
         <p className="text-western-stone-warm text-lg leading-relaxed mb-8">
           Este site da Western atende exclusivamente arquitetos, paisagistas, construtoras
           e garden centers com CNPJ ativo. O acesso à tabela comercial, modelos 3D e
-          composições só é liberado após análise do cadastro — leva até 2 dias úteis.
+          composições é liberado automaticamente para profissionais do ramo, na hora do cadastro.
         </p>
 
         {/* Saída para cliente final — WhatsApp */}

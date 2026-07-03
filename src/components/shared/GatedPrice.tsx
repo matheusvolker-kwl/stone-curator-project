@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Lock } from "lucide-react";
+import { Lock, Unlock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePartnerPricing } from "@/hooks/usePartnerPricing";
 import { formatBRL } from "@/lib/catalog/client";
@@ -51,8 +51,9 @@ export default function GatedPrice({
 
   if (variant === "hidden") return null;
 
-  const label = lockedLabel ?? (session ? "Aguardando aprovação" : "Login para preço");
-  const to = session ? "/minha-conta" : "/parceiro/login";
+  const label = lockedLabel ?? (session ? "Aguardando aprovação" : "Ver preço de parceiro");
+  const to = session ? "/minha-conta" : "/parceiro/cadastro";
+  const Icon = session ? Lock : Unlock;
 
   if (variant === "badge") {
     return (
@@ -60,7 +61,7 @@ export default function GatedPrice({
         to={to}
         className="inline-flex items-center gap-1 font-mono text-[9px] uppercase tracking-[0.16em] px-1.5 py-0.5 border border-western-stone-warm/25 text-western-stone-warm hover:text-western-gold hover:border-western-gold/60 transition-colors"
       >
-        <Lock className="h-2.5 w-2.5" /> {label}
+        <Icon className="h-2.5 w-2.5" /> {label}
       </Link>
     );
   }
@@ -71,7 +72,7 @@ export default function GatedPrice({
         to={to}
         className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
       >
-        <Lock className="h-3.5 w-3.5" /> {label}
+        <Icon className="h-3.5 w-3.5" /> {label}
       </Link>
     );
   }
@@ -81,7 +82,7 @@ export default function GatedPrice({
       to={to}
       className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80 hover:text-western-gold transition-colors"
     >
-      <Lock className="h-3 w-3" /> {label}
+      <Icon className="h-3 w-3" /> {label}
     </Link>
   );
 }
