@@ -1,0 +1,1 @@
+ALTER TYPE public.lead_type ADD VALUE IF NOT EXISTS 'b2c_orcamento';
