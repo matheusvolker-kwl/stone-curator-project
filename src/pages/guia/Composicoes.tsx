@@ -6,6 +6,7 @@ import SectionDivider from "@/components/guide-v2/SectionDivider";
 import Reveal from "@/components/shared/Reveal";
 import { acabamentoMeta, tipoVisualMap } from "@/components/guide-v2/types";
 import { nivelImage } from "@/components/guide-v2/imagery";
+import { conjuntoRenders } from "@/data/conjuntoRenders";
 import { buildContextQuery, useGuideContext } from "@/components/guide-v2/useGuideQuery";
 import {
   guideMap,
