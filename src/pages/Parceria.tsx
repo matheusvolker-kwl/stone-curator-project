@@ -248,10 +248,19 @@ export default function Parceria() {
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-10 items-start">
             {/* SLOT DE IMAGEM - cliente vai fornecer */}
             <Reveal variant="fade-up" duration={800} className="lg:col-span-2 lg:sticky lg:top-24">
-              <ImageSlot
-                aspect="aspect-[4/5]"
-                texto="[IMAGEM: antes/depois ou pedra Western instalada que engana o olho — provar o acabamento natural]"
-              />
+              <div className="w-full aspect-[4/5] overflow-hidden bg-western-green-mid/20">
+                <img
+                  src={parceriaDetalhe.url}
+                  srcSet={`${parceriaDetalheSm.url} 600w, ${parceriaDetalhe.url} 1200w`}
+                  sizes="(min-width: 1024px) 40vw, 100vw"
+                  alt="Detalhe da pedra Western entre vegetação — acabamento natural que engana o olho."
+                  loading="lazy"
+                  decoding="async"
+                  width={1200}
+                  height={1500}
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
             </Reveal>
 
             <ul className="lg:col-span-3 space-y-6">
