@@ -1,15 +1,15 @@
-import img01 from "@/assets/projetos-western/01_hero-tapirai.jpg.asset.json";
-import img02 from "@/assets/projetos-western/02_pedra-detalhe.jpg.asset.json";
-import img03 from "@/assets/projetos-western/03_piscina-cascata.jpg.asset.json";
-import img04 from "@/assets/projetos-western/04_piscina-mirante.jpg.asset.json";
-import img05 from "@/assets/projetos-western/05_cascata-escalonada.jpg.asset.json";
-import img06 from "@/assets/projetos-western/06_piscina-cascata-serra.jpg.asset.json";
-import img07 from "@/assets/projetos-western/07_cascata-piscina.jpg.asset.json";
-import img08 from "@/assets/projetos-western/08_piscina-paisagismo.jpg.asset.json";
-import img09 from "@/assets/projetos-western/09_piscina-cascata-2.jpg.asset.json";
-import img10 from "@/assets/projetos-western/10_piscina-vista.jpg.asset.json";
-import img11 from "@/assets/projetos-western/11_cascata-ferns.jpg.asset.json";
-import img12 from "@/assets/projetos-western/12_borda-pedra.jpg.asset.json";
+import img01 from "@/assets/projetos-western/01_hero-tapirai.webp.asset.json";
+import img02 from "@/assets/projetos-western/02_pedra-detalhe.webp.asset.json";
+import img03 from "@/assets/projetos-western/03_piscina-cascata.webp.asset.json";
+import img04 from "@/assets/projetos-western/04_piscina-mirante.webp.asset.json";
+import img05 from "@/assets/projetos-western/05_cascata-escalonada.webp.asset.json";
+import img06 from "@/assets/projetos-western/06_piscina-cascata-serra.webp.asset.json";
+import img07 from "@/assets/projetos-western/07_cascata-piscina.webp.asset.json";
+import img08 from "@/assets/projetos-western/08_piscina-paisagismo.webp.asset.json";
+import img09 from "@/assets/projetos-western/09_piscina-cascata-2.webp.asset.json";
+import img10 from "@/assets/projetos-western/10_piscina-vista.webp.asset.json";
+import img11 from "@/assets/projetos-western/11_cascata-ferns.webp.asset.json";
+import img12 from "@/assets/projetos-western/12_borda-pedra.webp.asset.json";
 
 interface ProjetoFoto {
   src: string;
@@ -56,6 +56,8 @@ export default function ProjetosWesternBand() {
                 src={foto.src}
                 alt={foto.caption}
                 loading="lazy"
+                decoding="async"
+                sizes="(min-width: 1024px) 360px, (min-width: 768px) 33vw, 50vw"
                 className="w-full h-auto object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.03]"
               />
               <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-4 pt-10 pb-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
