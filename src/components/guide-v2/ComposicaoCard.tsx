@@ -78,7 +78,7 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
 
       <div className="p-7 md:p-8 flex flex-col flex-1 border-t border-western-stone-warm/10 relative">
         <div className="eyebrow-bar mb-3">
-          {nivelLabelMap[nivel]} · {getPecaCount(nivel)} peças
+          {nivelLabelMap[nivel]} · {real ? real.reduce((s, r) => s + r.qty, 0) : getPecaCount(nivel)} peças
         </div>
         <h3 className="font-display text-[26px] md:text-[28px] text-western-green-deep leading-[1.1] mb-3">
           {conjunto.nome}
