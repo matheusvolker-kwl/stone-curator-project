@@ -337,7 +337,7 @@ export default function PartnerSignup() {
         <p className="text-western-stone-warm text-lg leading-relaxed mb-8">
           Este site da Western atende exclusivamente arquitetos, paisagistas, construtoras
           e garden centers com CNPJ ativo. O acesso à tabela comercial, modelos 3D e
-          composições só é liberado após análise do cadastro — leva até 2 dias úteis.
+          composições é liberado automaticamente para profissionais do ramo, na hora do cadastro.
         </p>
 
         {/* Saída para cliente final — WhatsApp */}
