@@ -152,7 +152,7 @@ export default function FAQ() {
             Dúvidas técnicas,<br />respostas diretas.
           </h1>
           <p className="text-lg text-western-cream-muted leading-relaxed max-w-2xl">
-            O que arquitetos, paisagistas e lojistas mais perguntam antes do primeiro pedido —
+            O que profissionais do paisagismo e da construção mais perguntam antes do primeiro pedido —
             sobre material, catálogo, instalação, comercial e garantia.
           </p>
         </div>
