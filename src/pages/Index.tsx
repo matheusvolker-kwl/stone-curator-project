@@ -51,7 +51,7 @@ export default function Index() {
     <>
       <Seo
         title="Western — Pedras artesanais para paisagismo profissional"
-        description="Catálogo B2B de pedras artesanais para arquitetos e paisagistas. Fabricadas peça a peça em São Paulo, com modelos 3D no SketchUp Warehouse."
+        description="Catálogo B2B de pedras artesanais para profissionais do paisagismo e da construção. Fabricadas peça a peça em São Paulo, com modelos 3D no SketchUp Warehouse."
         path="/"
         ogType="website"
       />
