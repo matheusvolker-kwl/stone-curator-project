@@ -78,6 +78,7 @@ const PoliticaPrivacidade = lazy(() => import("./pages/legal/PoliticaPrivacidade
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 const Entrada = lazy(() => import("./pages/Entrada.tsx"));
 const Parceria = lazy(() => import("./pages/Parceria.tsx"));
+const ParceriaDireto = lazy(() => import("./pages/ParceriaDireto.tsx"));
 const Orcamento = lazy(() => import("./pages/Orcamento.tsx"));
 
 const queryClient = new QueryClient({
@@ -121,6 +122,7 @@ const App = () => (
                   <Route path="/linhas" element={<Linhas />} />
                   <Route path="/entrada" element={<Entrada />} />
                   <Route path="/parceria" element={<Parceria />} />
+                  <Route path="/parceria-direto" element={<ParceriaDireto />} />
                   <Route path="/orcamento" element={<Orcamento />} />
                   <Route path="/linhas/:handle" element={<LinhaPage />} />
                   <Route path="/conjuntos" element={<Conjuntos />} />
