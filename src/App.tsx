@@ -77,6 +77,7 @@ const TrocasAvarias = lazy(() => import("./pages/legal/TrocasAvarias.tsx"));
 const PoliticaPrivacidade = lazy(() => import("./pages/legal/PoliticaPrivacidade.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 const Entrada = lazy(() => import("./pages/Entrada.tsx"));
+const Orcamento = lazy(() => import("./pages/Orcamento.tsx"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
