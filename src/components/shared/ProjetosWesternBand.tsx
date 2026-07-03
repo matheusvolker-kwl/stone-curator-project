@@ -8,6 +8,8 @@ import img07 from "@/assets/projetos-western/07_cascata-piscina.jpg.asset.json";
 import img08 from "@/assets/projetos-western/08_piscina-paisagismo.jpg.asset.json";
 import img09 from "@/assets/projetos-western/09_piscina-cascata-2.jpg.asset.json";
 import img10 from "@/assets/projetos-western/10_piscina-vista.jpg.asset.json";
+import img11 from "@/assets/projetos-western/11_cascata-ferns.jpg.asset.json";
+import img12 from "@/assets/projetos-western/12_borda-pedra.jpg.asset.json";
 
 interface ProjetoFoto {
   src: string;
