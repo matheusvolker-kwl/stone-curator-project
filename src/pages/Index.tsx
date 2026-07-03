@@ -248,13 +248,13 @@ export default function Index() {
         <ProjetosSection />
       </Reveal>
 
-      {/* Faixa institucional — interlúdio dark editorial */}
+      {/* Faixa institucional — arquitetos + marcas fundidos num bloco só */}
       <section className="surface-forest py-14 md:py-18 border-y border-western-gold/15">
         <div className="container-western max-w-4xl">
           <Reveal variant="fade-up" duration={750}>
-            <div className="text-center mb-8 md:mb-10">
+            <div className="text-center mb-10 md:mb-12">
               <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft/85 mb-5">
-                Parceiros de longa data
+                Quem especifica e confia na Western
               </p>
               <div className="w-10 h-px bg-western-gold/50 mx-auto mb-7" />
               <h2 className="font-display text-2xl md:text-[2rem] text-western-cream leading-[1.2] max-w-2xl mx-auto">
@@ -262,7 +262,7 @@ export default function Index() {
               </h2>
               <Link
                 to="/parceiros-arquitetos"
-                className="inline-block mt-7 font-mono text-[11px] uppercase tracking-[0.28em] text-western-gold-soft/90 hover:text-western-gold transition-colors"
+                className="inline-block mt-6 font-mono text-[11px] uppercase tracking-[0.28em] text-western-gold-soft/90 hover:text-western-gold transition-colors"
               >
                 Marcelo Faisal · Fabiano Hayasaki · Ronaldo Luidi
               </Link>
@@ -270,21 +270,15 @@ export default function Index() {
           </Reveal>
 
           <Reveal variant="fade-up" delay={120} duration={750}>
-            <div className="pt-6 md:pt-8 border-t border-western-gold/15">
-              <div className="text-center max-w-2xl mx-auto mb-8 md:mb-10">
-                <h3 className="font-display text-2xl md:text-[2rem] text-western-cream leading-[1.15] mb-4">
-                  Empresas que confiam na Western.
-                </h3>
-                <p className="text-base md:text-[17px] leading-relaxed text-western-cream-muted">
-                  Biopet, Cristal Pool, Genesis e outros parceiros corporativos que mantêm a Western em seus projetos e operações ao longo dos anos.
-                </p>
-              </div>
+            <div className="pt-8 md:pt-10 border-t border-western-gold/15">
               <MarcasInstitucionais compacta variante="dark" semBordas semLinks />
+              <p className="text-center mt-6 font-mono text-[10px] uppercase tracking-[0.24em] text-western-cream-muted/75">
+                Empresas que confiam na Western em seus projetos e operações
+              </p>
             </div>
           </Reveal>
 
-
-          <div className="text-center mt-8">
+          <div className="text-center mt-10">
             <Link
               to="/sobre"
               className="font-mono text-xs uppercase tracking-[0.22em] text-western-gold-soft hover:text-western-gold transition-colors"
@@ -294,6 +288,7 @@ export default function Index() {
           </div>
         </div>
       </section>
+
 
 
       {/* ARTISTA — Ricardo */}
