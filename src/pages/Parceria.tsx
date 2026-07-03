@@ -1,5 +1,18 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Feather, Palette, Box, ShieldCheck, Quote } from "lucide-react";
+import {
+  ArrowRight,
+  Feather,
+  Palette,
+  Box,
+  ShieldCheck,
+  Quote,
+  TrendingUp,
+  LineChart,
+  Wrench,
+  Hammer,
+  Brush,
+  Layers,
+} from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
 import ProjetosSection from "@/components/home/ProjetosSection";
@@ -10,68 +23,130 @@ import { BUSINESS } from "@/config/business";
 import heroCascata from "@/assets/hero-cascata.webp";
 import heroCascataSm from "@/assets/hero-cascata-sm.webp";
 
-const DORES = [
+type DorItem = {
+  Icon: typeof Feather;
+  dor: string;
+  ancora: string;
+  virada: React.ReactNode;
+};
+
+const DORES: DorItem[] = [
   {
-    dor: "A pedra natural é pesada e cara de instalar.",
-    virada:
-      "A Western é muito mais leve: instala sem estrutura extra, com menos mão de obra e menos imprevisto na obra.",
+    Icon: Hammer,
+    dor: "Pedra natural é pesada e cara de instalar.",
+    ancora: "Muito mais leve",
+    virada: (
+      <>
+        Instala <strong className="text-western-green-deep font-semibold">sem estrutura extra</strong>, com menos mão de obra.
+      </>
+    ),
   },
   {
+    Icon: Brush,
     dor: "O acabamento artificial denuncia que é falso.",
-    virada:
-      "São 6 fases de pintura mineral feitas à mão. O cliente passa a mão e jura que é pedra de verdade.",
+    ancora: "6 fases à mão",
+    virada: (
+      <>
+        Pintura mineral em camadas. O cliente <strong className="text-western-green-deep font-semibold">jura que é pedra de verdade</strong>.
+      </>
+    ),
   },
   {
+    Icon: Layers,
     dor: "Você recusa projetos que não consegue executar.",
-    virada:
-      "Cascata de 15 metros, pele de pedra com limite de peso, aplicação em cobertura: a Western viabiliza — e isso é serviço novo que você fatura.",
+    ancora: "Viabiliza o difícil",
+    virada: (
+      <>
+        Cascata de 15m, pele em cobertura, limite de peso: <strong className="text-western-green-deep font-semibold">serviço novo que você fatura</strong>.
+      </>
+    ),
   },
 ];
 
-const GANHOS = [
+type GanhoItem = {
+  Icon: typeof TrendingUp;
+  numero: string;
+  t: string;
+  d: React.ReactNode;
+};
+
+const GANHOS: GanhoItem[] = [
   {
-    t: "Cobra mais pelo mesmo serviço",
-    d: "Acabamento premium sustenta um preço que revestimento comum não alcança — margem que fica com você.",
+    Icon: TrendingUp,
+    numero: "+",
+    t: "Cobra mais",
+    d: (
+      <>
+        Acabamento premium sustenta preço que <strong className="text-western-cream font-semibold">revestimento comum não alcança</strong>.
+      </>
+    ),
   },
   {
+    Icon: LineChart,
+    numero: "2×",
     t: "Produto que mais cresce",
-    d: "A linha de pedras artesanais dobrou de vendas nos últimos ciclos. É a alavanca de margem mais direta para quem revende.",
+    d: (
+      <>
+        A linha de pedras <strong className="text-western-cream font-semibold">dobrou de vendas</strong> nos últimos ciclos.
+      </>
+    ),
   },
   {
+    Icon: Wrench,
+    numero: "−",
     t: "Menos custo de obra",
-    d: "Leveza reduz mão de obra, transporte e reforço estrutural. O que você economiza na execução vira lucro.",
+    d: (
+      <>
+        Leveza reduz <strong className="text-western-cream font-semibold">mão de obra, transporte e estrutura</strong>.
+      </>
+    ),
   },
 ];
 
 const BENEFICIOS = [
   {
     Icon: Feather,
-    t: "Muito mais leve que pedra natural",
-    d: "Instala sem estrutura extra — acelera a obra e libera o projeto.",
+    t: "Muito mais leve",
+    d: "Instala sem estrutura extra.",
   },
   {
     Icon: Palette,
-    t: "6 fases de pintura mineral à mão",
-    d: "Resiste ao cloro, ao UV e ao tempo sem perder profundidade de cor.",
+    t: "6 fases de pintura à mão",
+    d: "Resiste ao cloro, UV e tempo.",
   },
   {
     Icon: Box,
-    t: "4 acabamentos e modelos 3D no SketchUp",
-    d: "Mais de 300 mil downloads no 3D Warehouse por profissionais do setor.",
+    t: "4 acabamentos + 3D SketchUp",
+    d: "+300 mil downloads no 3D Warehouse.",
   },
   {
     Icon: ShieldCheck,
-    t: `Durabilidade com garantia de ${BUSINESS.garantiaLabel}`,
-    d: "Composto mineral com fibra de PET reciclado — leveza, resistência e menos impacto.",
+    t: `Garantia de ${BUSINESS.garantiaLabel}`,
+    d: "Composto mineral com PET reciclado.",
   },
 ];
 
 const PASSOS = [
-  { n: "01", t: "Cadastre-se com seu CNPJ", d: "Formulário curto, feito para profissionais do ramo." },
-  { n: "02", t: "Acesso liberado", d: "Validação automática pelo ramo — liberação na hora, sem espera." },
-  { n: "03", t: "Preço de parceiro e modelos 3D", d: "Tabela de atacado, catálogo completo e arquivos SketchUp." },
-  { n: "04", t: "Compre no atacado", d: `Pedido mínimo ${BUSINESS.pedidoMinimoLabel}, produção em ${BUSINESS.prazoProducaoDias} dias úteis.` },
+  { n: "01", t: "Cadastro com CNPJ", d: "Formulário curto." },
+  { n: "02", t: "Acesso liberado", d: "Validação automática pelo ramo." },
+  { n: "03", t: "Preço e 3D", d: "Tabela de atacado e arquivos SketchUp." },
+  { n: "04", t: "Compre no atacado", d: `Mínimo ${BUSINESS.pedidoMinimoLabel} · produção ${BUSINESS.prazoProducaoDias} dias úteis.` },
 ];
+
+/** Placeholder visual — cliente preenche depois com foto real. */
+function ImageSlot({ aspect = "aspect-[4/3]", texto }: { aspect?: string; texto: string }) {
+  return (
+    <div
+      className={`w-full ${aspect} bg-western-green-mid/20 border-2 border-dashed border-western-gold/30 flex items-center justify-center p-6`}
+      role="img"
+      aria-label={texto}
+    >
+      <p className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-western-stone-warm text-center leading-relaxed max-w-xs">
+        {texto}
+      </p>
+    </div>
+  );
+}
 
 export default function Parceria() {
   const scrollY = useScrollY();
@@ -89,7 +164,7 @@ export default function Parceria() {
         ogType="website"
       />
 
-      {/* 1. HERO — promessa de resultado */}
+      {/* 1. HERO */}
       <section className="relative w-full h-[85vh] min-h-[600px] overflow-hidden bg-western-green-deep">
         <img
           src={heroCascata}
@@ -129,7 +204,7 @@ export default function Parceria() {
               </Reveal>
               <Reveal variant="fade-up" duration={800} delay={240}>
                 <p className="text-western-cream-muted text-lg md:text-xl max-w-2xl leading-relaxed mb-10">
-                  Pedra artesanal muito mais leve, com acabamento que engana o olho. Você instala mais rápido, aceita projetos que hoje recusa e cobra mais pelo resultado.
+                  Pedra artesanal leve, com acabamento que engana o olho.
                 </p>
               </Reveal>
               <Reveal variant="fade-up" duration={700} delay={360}>
@@ -166,24 +241,37 @@ export default function Parceria() {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
-            {DORES.map((item, i) => (
-              <Reveal key={item.dor} variant="fade-up" delay={i * 100} duration={750}>
-                <article className="h-full flex flex-col border-t border-western-stone-warm/25 pt-6">
-                  <p className="font-display text-lg md:text-xl text-western-stone-warm/80 leading-snug mb-6 italic">
-                    “{item.dor}”
-                  </p>
-                  <div className="mt-auto border-l-2 border-western-gold pl-5">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold mb-2">
-                      Com Western
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-10 items-start">
+            {/* SLOT DE IMAGEM - cliente vai fornecer */}
+            <Reveal variant="fade-up" duration={800} className="lg:col-span-2 lg:sticky lg:top-24">
+              <ImageSlot
+                aspect="aspect-[4/5]"
+                texto="[IMAGEM: antes/depois ou pedra Western instalada que engana o olho — provar o acabamento natural]"
+              />
+            </Reveal>
+
+            <ul className="lg:col-span-3 space-y-6">
+              {DORES.map((item, i) => (
+                <Reveal key={item.dor} variant="fade-up" delay={i * 100} duration={700}>
+                  <li className="border-t border-western-stone-warm/25 pt-6">
+                    <p className="font-display text-lg md:text-xl text-western-stone-warm/75 italic leading-snug mb-4">
+                      “{item.dor}”
                     </p>
-                    <p className="text-western-green-deep leading-relaxed text-[15px] md:text-base">
-                      {item.virada}
-                    </p>
-                  </div>
-                </article>
-              </Reveal>
-            ))}
+                    <div className="flex items-start gap-4 border-l-2 border-western-gold pl-5">
+                      <item.Icon className="h-5 w-5 text-western-gold mt-1 flex-shrink-0" strokeWidth={1.5} aria-hidden />
+                      <div>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold mb-1.5">
+                          {item.ancora}
+                        </p>
+                        <p className="text-western-stone-warm leading-relaxed text-[15px] md:text-base">
+                          {item.virada}
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                </Reveal>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
@@ -203,24 +291,43 @@ export default function Parceria() {
               </h2>
             </div>
           </Reveal>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-western-gold/20 border border-western-gold/20">
-            {GANHOS.map((g, i) => (
-              <Reveal key={g.t} variant="fade-up" delay={i * 100} duration={700}>
-                <div className="bg-western-green-deep p-8 md:p-10 h-full">
-                  <h3 className="font-display text-xl md:text-2xl text-western-cream leading-tight mb-4">
-                    {g.t}
-                  </h3>
-                  <p className="text-sm md:text-base text-western-cream-muted leading-relaxed">
-                    {g.d}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
+
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12 items-center">
+            {/* SLOT DE IMAGEM - cliente vai fornecer */}
+            <Reveal variant="fade-up" duration={800} className="lg:col-span-2 order-last lg:order-first">
+              <ImageSlot
+                aspect="aspect-[4/5]"
+                texto="[IMAGEM: laguista/profissional instalando a pedra leve, mostrando praticidade na obra]"
+              />
+            </Reveal>
+
+            <ul className="lg:col-span-3 space-y-px bg-western-gold/20 border border-western-gold/20">
+              {GANHOS.map((g, i) => (
+                <Reveal key={g.t} variant="fade-up" delay={i * 90} duration={700}>
+                  <li className="bg-western-green-deep p-7 md:p-8 flex items-start gap-5">
+                    <g.Icon className="h-6 w-6 text-western-gold flex-shrink-0 mt-1" strokeWidth={1.4} aria-hidden />
+                    <div className="flex-1">
+                      <div className="flex items-baseline gap-3 mb-2">
+                        <span className="font-display text-3xl md:text-4xl text-western-gold-soft leading-none">
+                          {g.numero}
+                        </span>
+                        <h3 className="font-display text-lg md:text-xl text-western-cream leading-tight">
+                          {g.t}
+                        </h3>
+                      </div>
+                      <p className="text-sm md:text-base text-western-cream-muted leading-relaxed">
+                        {g.d}
+                      </p>
+                    </div>
+                  </li>
+                </Reveal>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
 
-      {/* 4. PROVA — ponte para os 33 anos + Ricardo */}
+      {/* 4. PROVA — 33 anos + Ricardo */}
       <section className="surface-ivory pt-20 md:pt-28 pb-4 border-b border-western-stone-warm/10">
         <div className="container-western max-w-3xl text-center">
           <Reveal variant="fade-up" duration={700}>
@@ -229,7 +336,7 @@ export default function Parceria() {
           </Reveal>
           <Reveal variant="fade-up" duration={800} delay={100}>
             <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05] mb-6">
-              Isso não é promessa de vendedor.{" "}
+              Não é promessa de vendedor.{" "}
               <span className="italic font-light text-western-gold">
                 É o que a Western faz há {BUSINESS.anosOperacao} anos.
               </span>
@@ -237,7 +344,8 @@ export default function Parceria() {
           </Reveal>
           <Reveal variant="fade-up" duration={750} delay={200}>
             <p className="text-western-stone-warm text-base md:text-lg leading-relaxed">
-              Técnica trazida do Arizona pelos mesmos artistas que assinaram trabalhos para a Disney. Um composto mineral com fibra de PET reciclado, fabricado peça a peça em Cajamar/SP — leve, resistente, e com um acabamento que se confunde com a pedra da serra.
+              Técnica trazida do <strong className="text-western-green-deep font-semibold">Arizona</strong> pelos artistas que assinaram trabalhos para a <strong className="text-western-green-deep font-semibold">Disney</strong>.{" "}
+              Composto mineral com <strong className="text-western-green-deep font-semibold">PET reciclado</strong>, fabricado peça a peça em <strong className="text-western-green-deep font-semibold">Cajamar/SP</strong>.
             </p>
           </Reveal>
         </div>
@@ -252,12 +360,12 @@ export default function Parceria() {
         <ProjetosSection />
       </Reveal>
 
-      {/* 6. PROVA SOCIAL DO PAR — depoimento */}
-      <section className="surface-ivory py-20 md:py-28 border-t border-western-stone-warm/10">
+      {/* 6. DEPOIMENTO */}
+      <section className="surface-ivory py-24 md:py-32 border-t border-western-stone-warm/10">
         <div className="container-western max-w-3xl">
           {/* TODO: substituir por depoimento real de parceiro */}
           <Reveal variant="fade-up" duration={750}>
-            <div className="text-center mb-10">
+            <div className="text-center mb-12">
               <p className="text-eyebrow mb-3">Quem já é parceiro</p>
               <div className="w-12 h-px bg-western-gold mx-auto" />
             </div>
@@ -273,7 +381,7 @@ export default function Parceria() {
               <blockquote className="font-display text-xl md:text-2xl lg:text-3xl text-western-green-deep leading-[1.25] italic pl-4 md:pl-10">
                 [depoimento de um parceiro laguista/loja entra aqui — a fala real de alguém que fatura mais com Western há alguns ciclos, ancorando o resultado em números do próprio negócio dele]
               </blockquote>
-              <figcaption className="mt-8 pl-4 md:pl-10 flex items-center gap-4">
+              <figcaption className="mt-10 pl-4 md:pl-10 flex items-center gap-4">
                 <div
                   className="h-12 w-12 rounded-full bg-western-stone-warm/20 border border-western-stone-warm/30 flex-shrink-0"
                   aria-hidden
@@ -291,7 +399,7 @@ export default function Parceria() {
           </Reveal>
 
           <Reveal variant="fade-up" duration={700} delay={220}>
-            <p className="text-center mt-10 text-sm md:text-base text-western-stone-warm">
+            <p className="text-center mt-12 text-sm md:text-base text-western-stone-warm">
               Junte-se aos profissionais que já são parceiros Western.
             </p>
           </Reveal>
@@ -310,15 +418,15 @@ export default function Parceria() {
               </h2>
             </div>
           </Reveal>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-western-stone-warm/15 border border-western-stone-warm/15">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-western-stone-warm/15 border border-western-stone-warm/15">
             {BENEFICIOS.map(({ Icon, t, d }, i) => (
-              <Reveal key={t} variant="fade-up" delay={i * 90} duration={700}>
-                <div className="bg-western-ivory p-8 md:p-10 h-full">
-                  <Icon className="h-6 w-6 text-western-gold mb-5" strokeWidth={1.4} />
-                  <h3 className="font-display text-xl md:text-2xl text-western-green-deep leading-tight mb-3">
+              <Reveal key={t} variant="fade-up" delay={i * 80} duration={700}>
+                <div className="bg-western-ivory p-7 md:p-8 h-full">
+                  <Icon className="h-6 w-6 text-western-gold mb-5" strokeWidth={1.4} aria-hidden />
+                  <h3 className="font-display text-lg md:text-xl text-western-green-deep leading-tight mb-2">
                     {t}
                   </h3>
-                  <p className="text-sm md:text-base text-western-stone-warm leading-relaxed">
+                  <p className="text-sm text-western-stone-warm leading-relaxed">
                     {d}
                   </p>
                 </div>
@@ -371,7 +479,7 @@ export default function Parceria() {
                   <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold block mb-4">
                     {p.n}
                   </span>
-                  <h3 className="font-display text-xl md:text-2xl text-western-green-deep leading-tight mb-3">
+                  <h3 className="font-display text-xl md:text-2xl text-western-green-deep leading-tight mb-2">
                     {p.t}
                   </h3>
                   <p className="text-sm text-western-stone-warm leading-relaxed">
@@ -418,7 +526,7 @@ export default function Parceria() {
               <span className="italic font-light text-western-gold-soft">na sua região entrega?</span>
             </h2>
             <p className="text-western-cream-muted text-base md:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
-              Cadastro na hora para profissionais do paisagismo e da construção — de arquitetos e paisagistas a laguistas, jardineiros, garden centers, lojas e construtoras.
+              Cadastro na hora para profissionais do paisagismo e da construção.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Link
