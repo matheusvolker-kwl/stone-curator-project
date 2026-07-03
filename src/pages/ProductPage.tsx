@@ -200,6 +200,10 @@ export default function ProductPage() {
     url: `https://westernstore.lovable.app/produtos/${product.handle}`,
   };
 
+  const installationConfig = getInstallationConfig(
+    resolveInstallationType(collection?.handle, product.title),
+  );
+
   return (
     <div className="surface-ivory">
       <Seo
