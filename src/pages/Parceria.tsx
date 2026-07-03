@@ -26,6 +26,7 @@ import parceriaInstalacao from "@/assets/parceria-instalacao.webp.asset.json";
 import parceriaInstalacaoSm from "@/assets/parceria-instalacao-sm.webp.asset.json";
 import parceriaDetalhe from "@/assets/parceria-detalhe.webp.asset.json";
 import parceriaDetalheSm from "@/assets/parceria-detalhe-sm.webp.asset.json";
+import thiagoCastro from "@/assets/thiago-castro.webp.asset.json";
 
 type DorItem = {
   Icon: typeof Feather;
