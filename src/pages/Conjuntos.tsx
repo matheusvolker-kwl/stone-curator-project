@@ -258,6 +258,8 @@ export default function Conjuntos() {
         </div>
       </div>
 
+      <ProjetosWesternBand />
+
       {/* MOBILE — drawer de filtros */}
       {filtersOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
