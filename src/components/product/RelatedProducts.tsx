@@ -19,12 +19,12 @@ export default function RelatedProducts({
   currentHandle,
   productTitle,
 }: Props) {
-  const { data: coll } = useQuery({
+  const { data: coll, isPending: collPending } = useQuery({
     queryKey: ["collection-related", collectionHandle],
     queryFn: () => fetchCollection(collectionHandle!, 12),
     enabled: !!collectionHandle,
   });
-  const { data: conjuntos } = useQuery({
+  const { data: conjuntos, isPending: setsPending } = useQuery({
     queryKey: ["collection-related", "conjuntos"],
     queryFn: () => fetchCollection("conjuntos", 6),
   });
@@ -41,7 +41,30 @@ export default function RelatedProducts({
       .filter((p) => p.handle !== currentHandle)
       .slice(0, 2) ?? [];
 
-  if (related.length === 0 && sets.length === 0) return null;
+  const loading = (!!collectionHandle && collPending) || setsPending;
+
+  if (!loading && related.length === 0 && sets.length === 0) return null;
+
+  if (loading && related.length === 0 && sets.length === 0) {
+    return (
+      <section className="py-14 md:py-20">
+        <div className="container-western">
+          <header className="mb-10">
+            <p className="text-eyebrow mb-4">Compõe bem com</p>
+            <div className="w-12 h-px bg-western-gold mb-6" />
+            <h2 className="font-display text-2xl md:text-3xl text-western-green-deep leading-tight">
+              Pedras frequentemente especificadas em conjunto com {productTitle}
+            </h2>
+          </header>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6" aria-hidden="true">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="aspect-[4/3] bg-western-paper animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-14 md:py-20">
