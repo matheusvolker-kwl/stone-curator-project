@@ -6,6 +6,7 @@ import iconePedra from "@/assets/icone-pedra-verde.png";
 import { useMemo } from "react";
 import { ArrowRight, X } from "lucide-react";
 import { LINHA_COVER_OVERRIDES } from "@/lib/lineCovers";
+import { LINHA_DESCRIPTIONS } from "@/lib/lineDescriptions";
 
 export default function Linhas() {
   const { data: collections = [], isLoading: loadingCollections } = useQuery({
