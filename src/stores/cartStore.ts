@@ -29,6 +29,8 @@ export interface CartItem {
   wooVariationId?: number | null;
   wooKind?: "simple" | "variation" | "bundle";
   wooAttributes?: Array<{ slug: string; value: string }>;
+  /** Handle do conjunto/guia, quando o item veio de uma composição. */
+  conjuntoRef?: string;
 }
 
 interface CartStore {
