@@ -130,13 +130,13 @@ export default function SocialProof({
     if (logo) {
       return (
         <img src={logo} alt={m.nome} title={m.nome} loading="lazy" decoding="async"
-          style={{ filter: logoFilter, maxWidth: "180px" }}
-          className={`w-auto ${logoH} object-contain opacity-70 group-hover:opacity-100 transition-all duration-500 group-hover:scale-[1.04]`} />
+          style={{ filter: logoFilter }}
+          className="max-h-full max-w-full w-auto h-auto object-contain opacity-70 group-hover:opacity-100 transition-all duration-500 group-hover:scale-[1.04]" />
       );
     }
     return (
       <span title={m.nome}
-        className={`font-display leading-none ${wordmarkColor} opacity-70 group-hover:opacity-100 transition-all duration-500 ${compact ? "text-sm md:text-base" : "text-base md:text-xl"}`}>
+        className={`text-center font-display leading-tight ${wordmarkColor} opacity-70 group-hover:opacity-100 transition-all duration-500 ${compact ? "text-xs md:text-sm" : "text-sm md:text-base"}`}>
         {m.nome}
       </span>
     );
