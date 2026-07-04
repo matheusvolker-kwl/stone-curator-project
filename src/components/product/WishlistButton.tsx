@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import { cdnImg } from "@/lib/catalog/client";
 
 interface Props {
   handle: string;
