@@ -5,7 +5,7 @@ import { Plus, Minus, ArrowRight } from "lucide-react";
 const OBJEÇÕES: { q: string; a: string }[] = [
   {
     q: "Pedra artificial não fica tão bonita quanto natural.",
-    a: "Western não é pedra artificial — é pedra natural moldada. Cada peça nasce do molde de uma pedra real, com fissuras, sedimentos e textura idênticos. A diferença é que tiramos o molde sem retirar a pedra do ambiente. A três metros de distância, nem o nosso fundador acerta qual é qual. E em três anos, com pátina de musgo e oxidação ambiental, a peça fica ainda mais indistinguível.",
+    a: "Western não é 'pedra artificial' de revenda — é uma réplica autoral moldada a partir de pedra real. Cada peça nasce do molde de uma pedra natural, com fissuras, sedimentos e textura idênticos; a diferença está no material: um composto mineral (cimento estrutural + fibra de PET reciclado), até 10× mais leve, moldado sem retirar a pedra do ambiente. A três metros de distância, nem o nosso fundador acerta qual é qual. E em três anos, com pátina de musgo e oxidação ambiental, a peça fica ainda mais indistinguível.",
   },
   {
     q: "Vai amarelar com o tempo, vai descascar.",
