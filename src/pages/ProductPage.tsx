@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/catalog/client";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Loader2, MessageCircle, ArrowRight } from "lucide-react";
+import { ChevronRight, Loader2, ArrowRight } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { toast } from "sonner";
 import FinishSelector from "@/components/product/FinishSelector";
