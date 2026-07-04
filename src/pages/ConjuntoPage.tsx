@@ -52,7 +52,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { BUSINESS } from "@/config/business";
 import {
   faixaArea,
-  formatPreco,
   getConjuntoByHandle,
   nivelLabels,
   nivelMeta,
