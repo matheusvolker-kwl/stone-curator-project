@@ -510,9 +510,7 @@ function ConjuntoCard({ leaf, shopify, preco, img }: CardProps) {
           {leaf.nome}
         </h3>
         <p className="text-xs text-western-stone-warm/80 line-clamp-2">
-          {tipoLabels[leaf.tipo]} ·{" "}
-          {shopify?.description?.slice(0, 80) ??
-            "Composição curada Western pronta para projetar."}
+          {nivelMeta[leaf.nivel].tagline} · {pecasPorTipoNivel[leaf.nivel]}
         </p>
 
         <div className="mt-3 pt-3 border-t border-western-stone-warm/10 flex items-end justify-between">
