@@ -53,6 +53,7 @@ const Linhas = lazy(() => import("./pages/Linhas.tsx"));
 const LinhaPage = lazy(() => import("./pages/LinhaPage.tsx"));
 const Produtos = lazy(() => import("./pages/Produtos.tsx"));
 const Conjuntos = lazy(() => import("./pages/Conjuntos.tsx"));
+const ConjuntoPage = lazy(() => import("./pages/ConjuntoPage.tsx"));
 const ProductPage = lazy(() => import("./pages/ProductPage.tsx"));
 const About = lazy(() => import("./pages/About.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
@@ -125,6 +126,7 @@ const App = () => (
                   <Route path="/orcamento" element={<Orcamento />} />
                   <Route path="/linhas/:handle" element={<LinhaPage />} />
                   <Route path="/conjuntos" element={<Conjuntos />} />
+                  <Route path="/conjuntos/:handle" element={<ConjuntoPage />} />
                   <Route path="/produtos" element={<Produtos />} />
                   <Route path="/produtos/:handle" element={<ProductPage />} />
                   <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />

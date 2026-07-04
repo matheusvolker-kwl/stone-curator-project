@@ -117,8 +117,8 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
             </p>
           )}
 
-          <Link to={refinarHref} className="btn-dark w-full">
-            Personalizar <ArrowRight className="h-4 w-4" />
+          <Link to={`/conjuntos/${conjunto.handle}`} className="btn-dark w-full">
+            Ver esta composição <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </div>
