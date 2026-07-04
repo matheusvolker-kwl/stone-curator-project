@@ -403,6 +403,25 @@ export function resolveConjunto(a: GuideAnswers): ConjuntoLeaf | Consultor | nul
   return sizeNode[a.nivel] ?? null;
 }
 
+/**
+ * Percorre o guideMap e retorna o descritor completo do conjunto (tipo,
+ * tamanho, nivel + leaf) a partir do handle. Usado pela PDP virtual do
+ * conjunto (`/conjuntos/:handle`). Retorna null se o handle não existe.
+ */
+export function getConjuntoByHandle(
+  handle: string,
+): { tipo: Tipo; tamanho: Tamanho; nivel: Nivel; leaf: ConjuntoLeaf } | null {
+  for (const tipo of Object.keys(guideMap) as Tipo[]) {
+    for (const tamanho of Object.keys(guideMap[tipo]) as Tamanho[]) {
+      for (const nivel of Object.keys(guideMap[tipo][tamanho]) as Nivel[]) {
+        const leaf = guideMap[tipo][tamanho][nivel];
+        if (leaf.handle === handle) return { tipo, tamanho, nivel, leaf };
+      }
+    }
+  }
+  return null;
+}
+
 // === Pecas (range estatístico para a UI; composição real vem do Shopify) ===
 export const pecasPorTipoNivel: Record<Nivel, string> = {
   essencial:   "4–6 peças",
