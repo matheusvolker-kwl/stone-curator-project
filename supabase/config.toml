@@ -20,3 +20,6 @@ verify_jwt = true
 
 [functions.checkout-ticket-redeem]
 verify_jwt = false
+
+[functions.woo-order-ingest]
+verify_jwt = false
