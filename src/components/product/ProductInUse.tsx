@@ -36,7 +36,10 @@ for (const path in ASSETS) {
 
 function baseSku(sku?: string | null): string {
   if (!sku) return "";
-  return sku.trim().split("-")[0].toUpperCase();
+  // SKUs reais vêm com prefixo de marca, ex.: "WEST-CSB-A", "WEST-PP1", "WESTERN-BOX-01".
+  // Remove o prefixo e pega o código base (antes do próximo hífen de variante).
+  const s = sku.trim().toUpperCase().replace(/^WEST(ERN)?-/, "");
+  return s.split("-")[0];
 }
 
 function findImage(sku: string, kind: "CLOSE" | "AMBIENTE"): string | null {
