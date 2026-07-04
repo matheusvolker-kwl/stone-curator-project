@@ -52,7 +52,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { BUSINESS } from "@/config/business";
 import {
   faixaArea,
-  formatPreco,
   getConjuntoByHandle,
   nivelLabels,
   nivelMeta,
@@ -133,7 +132,6 @@ export default function ConjuntoPage() {
 
   const totalPecas = pecasEnriched.reduce((s, p) => s + p.qty, 0);
   const totalPreco = pecasEnriched.reduce((s, p) => s + p.unitPrice * p.qty, 0);
-  const parcela = totalPreco > 0 ? totalPreco / 10 : 0;
 
   if (!info) return <Navigate to="/conjuntos" replace />;
   const { tipo, tamanho, nivel, leaf } = info;
@@ -319,9 +317,9 @@ export default function ConjuntoPage() {
                       amount={totalPreco || leaf.preco}
                       className="font-display text-[38px] leading-none text-western-green-deep"
                     />
-                    {isApproved && totalPreco > 0 && (
+                    {totalPreco > 0 && (
                       <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
-                        ou 10× de {formatPreco(parcela)} sem juros
+                        Em até 12× no checkout
                       </p>
                     )}
                     {isApproved && (

@@ -13,7 +13,7 @@ import {
   type Acabamento,
   type TipoVisual,
 } from "@/components/guide-v2/types";
-import { tipoImage } from "@/components/guide-v2/imagery";
+import { tipoImage, tipoMicrocopy } from "@/components/guide-v2/imagery";
 import { buildContextQuery } from "@/components/guide-v2/useGuideQuery";
 import { whatsappConsultor } from "@/data/guideMap";
 import brasao from "@/assets/brasao.png";
@@ -153,6 +153,7 @@ export default function GuiaContexto() {
                   key={t.value}
                   value={t.value}
                   label={tipoVisualMap[t.value].label}
+                  microcopy={tipoMicrocopy[t.value]}
                   image={tipoImage[t.value]}
                   selected={tipo === t.value}
                   onSelect={setTipo}

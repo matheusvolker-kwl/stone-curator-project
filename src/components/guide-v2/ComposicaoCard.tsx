@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { formatPreco, PEDIDO_MINIMO, type ConjuntoLeaf, type Nivel } from "@/data/guideMap";
 import { fetchProduct } from "@/lib/datasource";
+import { useAuth } from "@/hooks/useAuth";
 import { nivelLabelMap, nivelMicrocopy } from "./types";
 import { getPecasPlaceholder, getPecaCount } from "./pecasPlaceholder";
 import { conjuntoComposicao, handleToDisplayName } from "@/data/conjuntoComposicao";
@@ -17,11 +18,14 @@ interface Props {
 }
 
 export default function ComposicaoCard({ conjunto, nivel, image, highlight, refinarHref }: Props) {
+  const { isApproved } = useAuth();
   const real = conjuntoComposicao[conjunto.handle];
   const pecas = getPecasPlaceholder(nivel);
+  const distintas = real ? real.length : pecas.length;
   const resumo = real
     ? real.slice(0, 4).map((r) => ({ nome: handleToDisplayName(r.handle), qty: r.qty }))
     : pecas.slice(0, 4).map((p) => ({ nome: p.nome, qty: p.qty }));
+  const extras = Math.max(0, distintas - 4);
 
 
   // Preço vem do Shopify (fonte de verdade). Fallback: preço do brief no guideMap.
@@ -36,7 +40,6 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
     ? parseFloat(produto.priceRange.minVariantPrice.amount)
     : NaN;
   const preco = Number.isFinite(precoShopify) ? precoShopify : conjunto.preco;
-  const economia = Math.ceil(preco / 0.97 - preco);
   const abaixoDoMinimo = preco < PEDIDO_MINIMO;
 
   return (
@@ -98,6 +101,11 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
                 <span className="text-western-green-deep">{r.qty}×</span>
               </li>
             ))}
+            {extras > 0 && (
+              <li className="pt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80 italic">
+                + {extras} outra{extras > 1 ? "s" : ""} peça{extras > 1 ? "s" : ""}
+              </li>
+            )}
           </ul>
         </div>
 
@@ -105,9 +113,9 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
           <div className="font-display text-[34px] font-medium text-western-green-deep leading-none mb-2">
             {formatPreco(preco)}
           </div>
-          {economia >= 50 && !abaixoDoMinimo && (
+          {isApproved && !abaixoDoMinimo && (
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-6">
-              Economia de {formatPreco(economia)} vs. avulso
+              Preço de parceiro aplicado
             </p>
           )}
           {abaixoDoMinimo && (
