@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { ChevronLeft, ChevronRight, X, Maximize2 } from "lucide-react";
 import { cdnImg, cdnSrcSet } from "@/lib/catalog/client";
 
