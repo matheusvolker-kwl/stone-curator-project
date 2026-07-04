@@ -471,10 +471,22 @@ function OrderCard({ order, onSelect }: { order: ProductionOrder; onSelect: () =
 
 export default function AccountOrders() {
   const { user } = useAuth();
+  const { addBundle } = useCartStore();
   const [orders, setOrders] = useState<ProductionOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"ativos" | "concluidos" | "todos">("ativos");
+
+  const handleRepetir = (order: ProductionOrder) => {
+    const cartItems = mapOrderItensToCart(order.itens);
+    if (cartItems.length === 0) {
+      toast.error("Este pedido não tem itens para repetir.");
+      return;
+    }
+    addBundle(cartItems);
+    toast.success(`${cartItems.length} item(ns) adicionados ao carrinho.`);
+  };
+
 
   useEffect(() => {
     if (!user) return;
