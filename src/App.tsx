@@ -121,90 +121,92 @@ const App = () => (
         <AuthProvider>
           <WishlistProvider>
             <Suspense fallback={<RouteFallback />}>
-              <Routes>
-                {HOLDING_PAGE && <Route path="/" element={<ComingSoon />} />}
-                <Route path="/guia-de-composicao" element={<GuiaContexto />} />
-                <Route path="/guia-de-composicao/composicoes" element={<GuiaComposicoes />} />
-                <Route path="/guia-de-composicao/refinar/:handle" element={<GuiaRefinar />} />
-                <Route path="/guia-de-composicao/finalizar" element={<Navigate to="/guia-de-composicao" replace />} />
-                <Route element={<SiteLayout />}>
-                  {HOLDING_PAGE
-                    ? <Route path="/inicio" element={<Index />} />
-                    : <Route path="/" element={<Index />} />}
-                  <Route path="/linhas" element={<Linhas />} />
-                  <Route path="/entrada" element={<Entrada />} />
-                  <Route path="/parceria" element={<Parceria />} />
-                  <Route path="/parceria-direto" element={<ParceriaDireto />} />
-                  <Route path="/orcamento" element={<Orcamento />} />
-                  <Route path="/linhas/:handle" element={<LinhaPage />} />
-                  <Route path="/conjuntos" element={<Conjuntos />} />
-                  <Route path="/conjuntos/:handle" element={<ConjuntoPage />} />
-                  <Route path="/produtos" element={<Produtos />} />
-                  <Route path="/produtos/:handle" element={<ProductPage />} />
-                  <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
-                  <Route path="/sobre" element={<About />} />
-                  <Route path="/contato" element={<Contact />} />
-                  <Route path="/western-box" element={<WesternBoxPage />} />
-                  <Route path="/contrate-a-western" element={<ContrateAWestern />} />
-                  {/* Rotas antigas removidas — redirecionamentos */}
-                  <Route path="/parceiros-arquitetos" element={<Navigate to="/sobre" replace />} />
-                  <Route path="/aplicacoes-comerciais" element={<Navigate to="/sobre" replace />} />
-                  <Route path="/parceiro/cadastro" element={<PartnerSignup />} />
-                  <Route path="/parceiro/login" element={<PartnerLogin />} />
-                  <Route path="/parceiro/redefinir-senha" element={<ResetPassword />} />
-                  <Route path="/parceiro/conta" element={<Navigate to="/minha-conta" replace />} />
-                  <Route
-                    path="/minha-conta"
-                    element={
-                      <RequireAuth>
-                        <AccountLayout />
-                      </RequireAuth>
-                    }
-                  >
-                    <Route index element={<AccountIndex />} />
-                    <Route path="perfil" element={<AccountProfile />} />
-                    <Route path="orcamentos" element={<AccountQuotes />} />
-                    <Route path="pedidos" element={<AccountOrders />} />
-                    <Route path="rastreio" element={<AccountTracking />} />
-                    <Route path="composicoes" element={<AccountCompositions />} />
-                    <Route path="sketches" element={<AccountSketches />} />
-                    <Route path="favoritos" element={<AccountFavorites />} />
-                    <Route path="amostras" element={<AccountSamples />} />
-                    <Route path="preferencias" element={<AccountPreferences />} />
+              <RouteTransition>
+                <Routes>
+                  {HOLDING_PAGE && <Route path="/" element={<ComingSoon />} />}
+                  <Route path="/guia-de-composicao" element={<GuiaContexto />} />
+                  <Route path="/guia-de-composicao/composicoes" element={<GuiaComposicoes />} />
+                  <Route path="/guia-de-composicao/refinar/:handle" element={<GuiaRefinar />} />
+                  <Route path="/guia-de-composicao/finalizar" element={<Navigate to="/guia-de-composicao" replace />} />
+                  <Route element={<SiteLayout />}>
+                    {HOLDING_PAGE
+                      ? <Route path="/inicio" element={<Index />} />
+                      : <Route path="/" element={<Index />} />}
+                    <Route path="/linhas" element={<Linhas />} />
+                    <Route path="/entrada" element={<Entrada />} />
+                    <Route path="/parceria" element={<Parceria />} />
+                    <Route path="/parceria-direto" element={<ParceriaDireto />} />
+                    <Route path="/orcamento" element={<Orcamento />} />
+                    <Route path="/linhas/:handle" element={<LinhaPage />} />
+                    <Route path="/conjuntos" element={<Conjuntos />} />
+                    <Route path="/conjuntos/:handle" element={<ConjuntoPage />} />
+                    <Route path="/produtos" element={<Produtos />} />
+                    <Route path="/produtos/:handle" element={<ProductPage />} />
+                    <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
+                    <Route path="/sobre" element={<About />} />
+                    <Route path="/contato" element={<Contact />} />
+                    <Route path="/western-box" element={<WesternBoxPage />} />
+                    <Route path="/contrate-a-western" element={<ContrateAWestern />} />
+                    {/* Rotas antigas removidas — redirecionamentos */}
+                    <Route path="/parceiros-arquitetos" element={<Navigate to="/sobre" replace />} />
+                    <Route path="/aplicacoes-comerciais" element={<Navigate to="/sobre" replace />} />
+                    <Route path="/parceiro/cadastro" element={<PartnerSignup />} />
+                    <Route path="/parceiro/login" element={<PartnerLogin />} />
+                    <Route path="/parceiro/redefinir-senha" element={<ResetPassword />} />
+                    <Route path="/parceiro/conta" element={<Navigate to="/minha-conta" replace />} />
+                    <Route
+                      path="/minha-conta"
+                      element={
+                        <RequireAuth>
+                          <AccountLayout />
+                        </RequireAuth>
+                      }
+                    >
+                      <Route index element={<AccountIndex />} />
+                      <Route path="perfil" element={<AccountProfile />} />
+                      <Route path="orcamentos" element={<AccountQuotes />} />
+                      <Route path="pedidos" element={<AccountOrders />} />
+                      <Route path="rastreio" element={<AccountTracking />} />
+                      <Route path="composicoes" element={<AccountCompositions />} />
+                      <Route path="sketches" element={<AccountSketches />} />
+                      <Route path="favoritos" element={<AccountFavorites />} />
+                      <Route path="amostras" element={<AccountSamples />} />
+                      <Route path="preferencias" element={<AccountPreferences />} />
+                    </Route>
+                    <Route
+                      path="/admin"
+                      element={
+                        <RequireAuth adminOnly>
+                          <AdminLayout />
+                        </RequireAuth>
+                      }
+                    >
+                      <Route index element={<AdminDashboard />} />
+                      <Route path="parceiros" element={<AdminPartners />} />
+                      <Route path="leads" element={<AdminLeads />} />
+                      <Route path="orcamentos" element={<AdminQuotes />} />
+                      <Route path="orcamentos/:leadId" element={<AdminQuoteDetail />} />
+                      <Route path="amostras" element={<AdminSamples />} />
+                      <Route path="usuarios" element={<AdminUsers />} />
+                      <Route path="pedidos" element={<AdminPedidos />} />
+                      <Route path="credenciamentos" element={<AdminCredenciamentos />} />
+                      <Route path="cnae-whitelist" element={<AdminCnaeWhitelist />} />
+                      <Route path="configuracoes" element={<AdminSettings />} />
+                    </Route>
+                    {/* Rota antiga de amostras: substituída pela Western Box (página paga). */}
+                    <Route path="/pedir-amostras" element={<Navigate to="/western-box" replace />} />
+                    <Route path="/visitar" element={<AgendarVisita />} />
+                    <Route path="/por-que-western" element={<PorQueWestern />} />
+                    <Route path="/faq" element={<FAQ />} />
+                    <Route path="/politica-comercial" element={<PoliticaComercial />} />
+                    <Route path="/politica-de-entrega" element={<PoliticaEntrega />} />
+                    <Route path="/trocas-e-avarias" element={<TrocasAvarias />} />
+                    <Route path="/privacidade" element={<PoliticaPrivacidade />} />
+                    <Route path="/parceiro/favoritos" element={<Navigate to="/minha-conta/favoritos" replace />} />
+                    <Route path="*" element={<NotFound />} />
                   </Route>
-                  <Route
-                    path="/admin"
-                    element={
-                      <RequireAuth adminOnly>
-                        <AdminLayout />
-                      </RequireAuth>
-                    }
-                  >
-                    <Route index element={<AdminDashboard />} />
-                    <Route path="parceiros" element={<AdminPartners />} />
-                    <Route path="leads" element={<AdminLeads />} />
-                    <Route path="orcamentos" element={<AdminQuotes />} />
-                    <Route path="orcamentos/:leadId" element={<AdminQuoteDetail />} />
-                    <Route path="amostras" element={<AdminSamples />} />
-                    <Route path="usuarios" element={<AdminUsers />} />
-                    <Route path="pedidos" element={<AdminPedidos />} />
-                    <Route path="credenciamentos" element={<AdminCredenciamentos />} />
-                    <Route path="cnae-whitelist" element={<AdminCnaeWhitelist />} />
-                    <Route path="configuracoes" element={<AdminSettings />} />
-                  </Route>
-                  {/* Rota antiga de amostras: substituída pela Western Box (página paga). */}
-                  <Route path="/pedir-amostras" element={<Navigate to="/western-box" replace />} />
-                  <Route path="/visitar" element={<AgendarVisita />} />
-                  <Route path="/por-que-western" element={<PorQueWestern />} />
-                  <Route path="/faq" element={<FAQ />} />
-                  <Route path="/politica-comercial" element={<PoliticaComercial />} />
-                  <Route path="/politica-de-entrega" element={<PoliticaEntrega />} />
-                  <Route path="/trocas-e-avarias" element={<TrocasAvarias />} />
-                  <Route path="/privacidade" element={<PoliticaPrivacidade />} />
-                  <Route path="/parceiro/favoritos" element={<Navigate to="/minha-conta/favoritos" replace />} />
-                  <Route path="*" element={<NotFound />} />
-                </Route>
-              </Routes>
+                </Routes>
+              </RouteTransition>
             </Suspense>
           </WishlistProvider>
         </AuthProvider>
