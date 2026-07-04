@@ -86,5 +86,9 @@ export function autoralToExtra(item: AutoralItem): ProjetoExtra {
     productHandle: item.handle,
     variantId: item.variantId,
     variantTitle: item.variantTitle,
+    wooParentProductId: item.wooParentProductId,
+    wooVariationId: item.wooVariationId ?? null,
+    wooKind: item.wooKind,
+    wooAttributes: item.wooAttributes ?? [],
   };
 }
