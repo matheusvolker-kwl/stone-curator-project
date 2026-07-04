@@ -100,7 +100,7 @@ export function InstallationSection({ config }: { config: InstallationConfig }) 
             id="instalacao-title"
             className="font-display text-3xl md:text-4xl leading-tight text-western-green-deep"
           >
-            Instalação
+            Fácil de instalar
           </h2>
           <p className="mt-3 font-sans text-[15px] leading-relaxed text-western-stone-warm max-w-[62ch]">
             {subtitle}

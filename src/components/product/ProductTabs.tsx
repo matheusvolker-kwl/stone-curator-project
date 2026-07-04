@@ -60,7 +60,7 @@ export default function ProductTabs({
               { v: "descricao", l: "Descrição" },
               { v: "specs", l: "Especificações" },
               { v: "modelo3d", l: "Modelo 3D" },
-              { v: "entrega", l: "Entrega & instalação" },
+              { v: "entrega", l: "Entrega" },
             ].map((t) => (
               <TabsTrigger
                 key={t.v}
@@ -251,10 +251,6 @@ export default function ProductTabs({
                       {
                         k: "Entrega",
                         v: "Frete calculado por destino e dimensões. Retira em fábrica disponível.",
-                      },
-                      {
-                        k: "Instalação",
-                        v: "Kit completo incluso. Fixação com argamassa C3 (qualquer loja de material de construção).",
                       },
                     ].map((row) => (
                       <div key={row.k}>

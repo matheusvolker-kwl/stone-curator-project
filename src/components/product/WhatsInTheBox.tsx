@@ -15,7 +15,7 @@ export default function WhatsInTheBox() {
     {
       Icon: FileText,
       title: "Manual de fixação",
-      desc: "Instruções passo a passo. Fixação com argamassa C3 (encontrada em qualquer loja de material de construção).",
+      desc: "Instruções passo a passo impressas — as mesmas do guia e do vídeo online.",
     },
   ];
 
