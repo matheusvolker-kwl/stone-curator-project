@@ -217,7 +217,7 @@ function ProgressTimeline({ order }: { order: ProductionOrder }) {
   );
 }
 
-function OrderDetail({ order, onBack }: { order: ProductionOrder; onBack: () => void }) {
+function OrderDetail({ order, onBack, onRepetir }: { order: ProductionOrder; onBack: () => void; onRepetir?: (order: ProductionOrder) => void }) {
   const [events, setEvents] = useState<OrderEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
