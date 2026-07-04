@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchCollection } from "@/lib/datasource";
 import { ChevronLeft } from "lucide-react";
 import ProductGrid from "@/components/product/ProductGrid";
+import Reveal from "@/components/shared/Reveal";
 
 export default function LinhaPage() {
   const { handle = "" } = useParams();
@@ -40,18 +41,20 @@ export default function LinhaPage() {
           <ChevronLeft className="h-4 w-4" /> Linhas
         </Link>
 
-        <div className="max-w-3xl mb-10 md:mb-14">
-          <p className="text-eyebrow mb-4">Linha</p>
-          <div className="w-12 h-px bg-western-gold mb-6" />
-          <h1 className="font-display text-4xl md:text-5xl text-western-green-deep leading-[1.05]">
-            {data?.title ?? "—"}
-          </h1>
-          {data?.description && (
-            <p className="mt-5 text-western-stone-warm leading-relaxed">
-              {data.description}
-            </p>
-          )}
-        </div>
+        <Reveal variant="fade-up">
+          <div className="max-w-3xl mb-10 md:mb-14">
+            <p className="text-eyebrow mb-4">Linha</p>
+            <div className="w-12 h-px bg-western-gold mb-6" />
+            <h1 className="font-display text-4xl md:text-5xl text-western-green-deep leading-[1.05]">
+              {data?.title ?? "—"}
+            </h1>
+            {data?.description && (
+              <p className="mt-5 text-western-stone-warm leading-relaxed">
+                {data.description}
+              </p>
+            )}
+          </div>
+        </Reveal>
 
         <ProductGrid products={products} isLoading={isLoading} />
       </div>
