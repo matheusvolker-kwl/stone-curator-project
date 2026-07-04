@@ -80,15 +80,15 @@ export default function ProjetosWesternBand() {
   const current = openIndex !== null ? items[openIndex] : null;
 
   return (
-    <section className="bg-western-cream-muted py-14 md:py-20">
+    <section className="surface-forest border-y border-western-gold/15 py-14 md:py-20">
       <div className="container-western">
         <header className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
-          <p className="text-eyebrow">Depoimentos & obras</p>
+          <p className="text-eyebrow text-western-gold-soft">Depoimentos & obras</p>
           <div className="w-12 h-px bg-western-gold mx-auto my-5" />
-          <h2 className="font-display text-3xl md:text-4xl text-western-green-deep">
+          <h2 className="font-display text-3xl md:text-4xl text-western-cream">
             Projetos que a Western tornou possível
           </h2>
-          <p className="text-spec italic text-western-stone-warm mt-4">
+          <p className="text-spec italic text-western-cream-muted mt-4">
             Arquitetos, empresários e destinos icônicos contam por que escolheram Western.
           </p>
         </header>
@@ -98,7 +98,7 @@ export default function ProjetosWesternBand() {
           <button
             type="button"
             onClick={() => setOpenIndex(items.indexOf(destaque))}
-            className="group relative block w-full overflow-hidden rounded-[2px] bg-western-stone-warm/10 mb-4 md:mb-5 aspect-[16/9] md:aspect-[21/9]"
+            className="group relative block w-full overflow-hidden rounded-[2px] bg-western-stone-warm/10 ring-1 ring-western-gold/10 shadow-[0_20px_50px_-25px_rgba(0,0,0,0.7)] mb-4 md:mb-5 aspect-[16/9] md:aspect-[21/9]"
           >
             <img
               src={destaque.posterUrl}
@@ -134,7 +134,7 @@ export default function ProjetosWesternBand() {
               type="button"
               key={caso.id}
               onClick={() => setOpenIndex(items.indexOf(caso))}
-              className="group relative block overflow-hidden rounded-[2px] bg-western-stone-warm/10 aspect-[4/5] text-left"
+              className="group relative block overflow-hidden rounded-[2px] bg-western-stone-warm/10 ring-1 ring-western-gold/10 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.7)] aspect-[4/5] text-left"
             >
               <img
                 src={caso.posterUrl}
