@@ -1,6 +1,6 @@
 import coverCascata from "@/assets/projetos/cover-cascata.webp";
 import coverCasaPraia from "@/assets/projetos/cover-casa-praia.webp";
-import coverPiscina from "@/assets/projetos/cover-piscina.avif";
+
 import coverLago from "@/assets/projetos/cover-lago.webp";
 import coverNeymar from "@/assets/projetos/cover-neymar.jpg";
 
