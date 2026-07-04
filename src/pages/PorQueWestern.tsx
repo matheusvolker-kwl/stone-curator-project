@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Plus, Minus, ArrowRight } from "lucide-react";
+import Seo from "@/components/seo/Seo";
 
 const OBJEÇÕES: { q: string; a: string }[] = [
   {
