@@ -318,9 +318,9 @@ export default function ConjuntoPage() {
                       amount={totalPreco || leaf.preco}
                       className="font-display text-[38px] leading-none text-western-green-deep"
                     />
-                    {isApproved && totalPreco > 0 && (
+                    {totalPreco > 0 && (
                       <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
-                        ou 10× de {formatPreco(parcela)} sem juros
+                        Em até 12× no checkout
                       </p>
                     )}
                     {isApproved && (
