@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronLeft, ArrowRight } from "lucide-react";
 import { fetchProducts } from "@/lib/datasource";
 import ProductGrid from "@/components/product/ProductGrid";
+import Reveal from "@/components/shared/Reveal";
 
 export default function Produtos() {
   const { data: products = [], isLoading } = useQuery({
