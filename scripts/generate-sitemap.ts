@@ -1,5 +1,5 @@
 // Generates public/sitemap.xml. Runs via predev/prebuild npm hooks.
-import { writeFileSync } from "fs";
+import { writeFileSync, readFileSync, existsSync } from "fs";
 import { resolve } from "path";
 
 const BASE_URL = "https://westernstore.com.br";
@@ -8,9 +8,10 @@ interface Entry {
   path: string;
   changefreq?: "daily" | "weekly" | "monthly" | "yearly";
   priority?: string;
+  lastmod?: string;
 }
 
-const entries: Entry[] = [
+const staticEntries: Entry[] = [
   { path: "/", changefreq: "weekly", priority: "1.0" },
   { path: "/linhas", changefreq: "weekly", priority: "0.9" },
   { path: "/produtos", changefreq: "weekly", priority: "0.9" },
@@ -30,11 +31,81 @@ const entries: Entry[] = [
   { path: "/privacidade", changefreq: "yearly", priority: "0.3" },
 ];
 
+// Read Supabase URL + anon key from .env — same values the app uses at runtime.
+function readEnv(): { url?: string; key?: string } {
+  try {
+    const envPath = resolve(".env");
+    if (!existsSync(envPath)) return {};
+    const text = readFileSync(envPath, "utf8");
+    const get = (name: string) => {
+      const m = text.match(new RegExp(`^${name}\\s*=\\s*"?([^"\\n]+)"?`, "m"));
+      return m?.[1];
+    };
+    return { url: get("VITE_SUPABASE_URL"), key: get("VITE_SUPABASE_PUBLISHABLE_KEY") };
+  } catch {
+    return {};
+  }
+}
+
+interface WooProduct {
+  slug?: string;
+  status?: string;
+  catalog_visibility?: string;
+  date_modified?: string;
+  date_modified_gmt?: string;
+}
+
+async function fetchProductEntries(): Promise<Entry[]> {
+  const { url, key } = readEnv();
+  if (!url || !key) {
+    console.warn("sitemap: skipping products (missing SUPABASE_URL/PUBLISHABLE_KEY in .env)");
+    return [];
+  }
+  const endpoint = `${url}/functions/v1/woo-proxy?path=products&per_page=100&status=publish`;
+  try {
+    const res = await fetch(endpoint, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+    });
+    if (!res.ok) {
+      console.warn(`sitemap: woo-proxy returned ${res.status}, using static entries only`);
+      return [];
+    }
+    const data = (await res.json()) as WooProduct[] | { error?: string };
+    if (!Array.isArray(data)) {
+      console.warn("sitemap: woo-proxy returned non-array, using static entries only");
+      return [];
+    }
+    const seen = new Set<string>();
+    const out: Entry[] = [];
+    for (const p of data) {
+      if (!p?.slug) continue;
+      if (p.catalog_visibility === "hidden") continue;
+      let slug = p.slug;
+      // Collapse acabamento-bundle suffixes to a single canonical page.
+      slug = slug.replace(/-(quartzo|arenito|moledo|granito)$/i, "");
+      if (seen.has(slug)) continue;
+      seen.add(slug);
+      const lastmod = (p.date_modified_gmt || p.date_modified || "").slice(0, 10) || undefined;
+      out.push({
+        path: `/produtos/${slug}`,
+        changefreq: "weekly",
+        priority: "0.8",
+        lastmod,
+      });
+    }
+    return out;
+  } catch (err) {
+    console.warn(`sitemap: fetch failed (${String(err)}), using static entries only`);
+    return [];
+  }
+}
+
 function build(items: Entry[]) {
   const urls = items.map((e) =>
     [
       "  <url>",
       `    <loc>${BASE_URL}${e.path}</loc>`,
+      e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
       e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
       e.priority ? `    <priority>${e.priority}</priority>` : null,
       "  </url>",
@@ -50,5 +121,11 @@ function build(items: Entry[]) {
   ].join("\n");
 }
 
-writeFileSync(resolve("public/sitemap.xml"), build(entries));
-console.log(`sitemap.xml written (${entries.length} entries)`);
+async function main() {
+  const products = await fetchProductEntries();
+  const all = [...staticEntries, ...products];
+  writeFileSync(resolve("public/sitemap.xml"), build(all));
+  console.log(`sitemap.xml written (${all.length} entries: ${staticEntries.length} static + ${products.length} products)`);
+}
+
+main();
