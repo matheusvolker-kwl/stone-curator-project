@@ -18,6 +18,81 @@ import {
 import { toast } from "sonner";
 import { formatBRL } from "@/lib/catalog/client";
 import { downloadPedidoPdf } from "@/lib/pdf/pedidoPdf";
+import { useCartStore, type CartItem } from "@/stores/cartStore";
+
+function mapOrderItensToCart(itens: unknown): CartItem[] {
+  if (!Array.isArray(itens)) return [];
+  const out: CartItem[] = [];
+  for (const rawIt of itens) {
+    if (!rawIt || typeof rawIt !== "object") continue;
+    const raw = rawIt as Record<string, unknown>;
+    const variantId =
+      (typeof raw.variantId === "string" && raw.variantId) ||
+      (typeof raw.variant_id === "string" && raw.variant_id) ||
+      (typeof raw.id === "string" && raw.id) ||
+      "";
+    if (!variantId) continue;
+    const priceRaw = raw.price as Record<string, unknown> | undefined;
+    const amount =
+      priceRaw && typeof priceRaw.amount === "string"
+        ? priceRaw.amount
+        : priceRaw && typeof priceRaw.amount === "number"
+        ? String(priceRaw.amount)
+        : typeof raw.price === "number"
+        ? String(raw.price)
+        : "0";
+    const currencyCode =
+      priceRaw && typeof priceRaw.currencyCode === "string" ? priceRaw.currencyCode : "BRL";
+    const options = (raw.selectedOptions ?? raw.options) as unknown;
+    const selectedOptions = Array.isArray(options)
+      ? options.filter(
+          (o): o is { name: string; value: string } =>
+            !!o && typeof o === "object" && typeof (o as { name?: unknown }).name === "string" &&
+            typeof (o as { value?: unknown }).value === "string",
+        )
+      : [];
+    const wooAttrs = raw.wooAttributes;
+    out.push({
+      productHandle:
+        typeof raw.productHandle === "string" ? raw.productHandle : String(raw.handle ?? variantId),
+      productTitle:
+        typeof raw.productTitle === "string"
+          ? raw.productTitle
+          : typeof raw.title === "string"
+          ? raw.title
+          : "Item",
+      productImage:
+        typeof raw.productImage === "string"
+          ? raw.productImage
+          : typeof raw.image === "string"
+          ? raw.image
+          : null,
+      variantId,
+      variantTitle:
+        typeof raw.variantTitle === "string" ? raw.variantTitle : "",
+      price: { amount, currencyCode },
+      quantity: typeof raw.qty === "number" ? raw.qty : typeof raw.quantity === "number" ? raw.quantity : 1,
+      selectedOptions,
+      wooParentProductId:
+        typeof raw.wooParentProductId === "number" ? raw.wooParentProductId : undefined,
+      wooVariationId:
+        typeof raw.wooVariationId === "number" ? raw.wooVariationId : null,
+      wooKind:
+        raw.wooKind === "simple" || raw.wooKind === "variation" || raw.wooKind === "bundle"
+          ? raw.wooKind
+          : undefined,
+      wooAttributes: Array.isArray(wooAttrs)
+        ? wooAttrs.filter(
+            (a): a is { slug: string; value: string } =>
+              !!a && typeof a === "object" && typeof (a as { slug?: unknown }).slug === "string" &&
+              typeof (a as { value?: unknown }).value === "string",
+          )
+        : [],
+    });
+  }
+  return out;
+}
+
 
 type Status =
   | "aguardando"
