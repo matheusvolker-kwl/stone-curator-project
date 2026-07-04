@@ -40,7 +40,6 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
     ? parseFloat(produto.priceRange.minVariantPrice.amount)
     : NaN;
   const preco = Number.isFinite(precoShopify) ? precoShopify : conjunto.preco;
-  const economia = Math.ceil(preco / 0.97 - preco);
   const abaixoDoMinimo = preco < PEDIDO_MINIMO;
 
   return (
