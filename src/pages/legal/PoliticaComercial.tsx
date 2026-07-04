@@ -31,9 +31,8 @@ export default function PoliticaComercial() {
 
       <h2>Conjuntos pré-montados</h2>
       <p>
-        Compras de conjuntos pré-montados do catálogo recebem desconto de
-        <strong> {BUSINESS.descontoConjuntosPercent}%</strong> sobre a soma das peças avulsas
-        equivalentes.
+        Conjuntos pré-montados do catálogo são a soma pura das peças que os compõem — sem
+        acréscimo e sem desconto sobre a especificação avulsa equivalente.
       </p>
 
       <h2>Pintura personalizada</h2>
