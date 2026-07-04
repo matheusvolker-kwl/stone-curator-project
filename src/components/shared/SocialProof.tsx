@@ -95,7 +95,7 @@ export default function SocialProof({
 
   const avatarSize = compact ? "w-16 h-16 md:w-[4.5rem] md:h-[4.5rem]" : "w-20 h-20 md:w-24 md:h-24";
   const rowGap = compact ? "gap-6 md:gap-8" : "gap-8 md:gap-12";
-  const logoH = compact ? "h-7 md:h-8" : "h-8 md:h-10";
+  const logoH = compact ? "h-8 md:h-9" : "h-10 md:h-12";
   const logoGap = compact ? "gap-x-8 gap-y-5" : "gap-x-10 md:gap-x-14 gap-y-7";
 
   const renderAvatarRow = (pessoas: readonly PessoaComFoto[]) => (
@@ -124,7 +124,7 @@ export default function SocialProof({
     if (logo) {
       return (
         <img src={logo} alt={m.nome} title={m.nome} loading="lazy" decoding="async"
-          style={{ filter: logoFilter, maxWidth: "150px" }}
+          style={{ filter: logoFilter, maxWidth: "180px" }}
           className={`w-auto ${logoH} object-contain opacity-70 group-hover:opacity-100 transition-all duration-500 group-hover:scale-[1.04]`} />
       );
     }
