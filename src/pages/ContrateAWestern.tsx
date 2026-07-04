@@ -230,7 +230,7 @@ export default function ContrateAWestern() {
       />
 
       {/* 1) HERO CINEMATOGRÁFICO */}
-      <section className="relative isolate overflow-hidden">
+      <section className="relative isolate overflow-hidden min-h-[80vh] flex items-center">
         <img
           src={heroImg.url}
           alt="Piscina com cascata Western em projeto residencial"
@@ -287,8 +287,8 @@ export default function ContrateAWestern() {
       <section className="bg-western-ivory py-20 md:py-28">
         <div className="container-western max-w-6xl">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
-            <Reveal variant="fade-up" duration={700}>
-              <div className="md:col-span-5">
+            <Reveal variant="fade-up" duration={700} className="md:col-span-5">
+              <div>
                 <p className="text-eyebrow">Por que a Western</p>
                 <div className="w-12 h-px bg-western-gold my-5" />
                 <h2 className="font-display text-3xl md:text-4xl text-western-green-deep leading-[1.15]">
@@ -483,7 +483,7 @@ export default function ContrateAWestern() {
       <section
         ref={formRef}
         id="contato"
-        className="relative isolate overflow-hidden border-t border-western-gold/15"
+        className="relative isolate overflow-hidden border-t border-western-gold/15 min-h-[600px] flex items-center"
       >
         <img
           src={mirsnteImg.url}
@@ -498,8 +498,8 @@ export default function ContrateAWestern() {
         <div className="absolute inset-0 bg-western-green-deep/92" />
         <div className="relative container-western max-w-5xl py-20 md:py-28">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
-            <Reveal variant="fade-up" duration={700}>
-              <div className="md:col-span-5">
+            <Reveal variant="fade-up" duration={700} className="md:col-span-5">
+              <div>
                 <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft/90 mb-5">
                   Consultoria inicial gratuita
                 </p>
@@ -527,10 +527,10 @@ export default function ContrateAWestern() {
               </div>
             </Reveal>
 
-            <Reveal variant="fade-up" delay={100} duration={700}>
+            <Reveal variant="fade-up" delay={100} duration={700} className="md:col-span-7">
               <form
                 onSubmit={handleSubmit}
-                className="md:col-span-7 bg-western-cream border border-western-gold/20 p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
+                className="bg-western-cream border border-western-gold/20 p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
                 noValidate
               >
                 <label className="block md:col-span-1">
