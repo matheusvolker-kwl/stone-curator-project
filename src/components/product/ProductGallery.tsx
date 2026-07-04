@@ -37,20 +37,75 @@ export default function ProductGallery({
     [activeIndex, total, onChange]
   );
 
-  // Keyboard nav (active only when lightbox open OR gallery focused; keep simple — global when open)
+  // Keyboard nav + focus-trap when lightbox open
   useEffect(() => {
     if (!lightboxOpen) return;
+    const getFocusables = (): HTMLElement[] => {
+      const root = dialogRef.current;
+      if (!root) return [];
+      const nodes = root.querySelectorAll<HTMLElement>(
+        'button,[href],[tabindex]:not([tabindex="-1"])',
+      );
+      return Array.from(nodes).filter(
+        (el) => !el.hasAttribute("disabled") && el.offsetParent !== null,
+      );
+    };
+    // Move focus into the dialog on open
+    const focusables = getFocusables();
+    (focusables[0] ?? dialogRef.current)?.focus();
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setLightboxOpen(false);
-      else if (e.key === "ArrowLeft") goPrev();
-      else if (e.key === "ArrowRight") goNext();
+      if (e.key === "Escape") {
+        setLightboxOpen(false);
+        return;
+      }
+      if (e.key === "ArrowLeft") {
+        goPrev();
+        return;
+      }
+      if (e.key === "ArrowRight") {
+        goNext();
+        return;
+      }
+      if (e.key === "Tab") {
+        const items = getFocusables();
+        if (items.length === 0) {
+          e.preventDefault();
+          dialogRef.current?.focus();
+          return;
+        }
+        const first = items[0];
+        const last = items[items.length - 1];
+        const active = document.activeElement as HTMLElement | null;
+        if (e.shiftKey) {
+          if (active === first || !dialogRef.current?.contains(active)) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (active === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [lightboxOpen, goPrev, goNext]);
 
+  // Return focus to trigger when closing
+  useEffect(() => {
+    if (lightboxOpen) {
+      openedOnceRef.current = true;
+    } else if (openedOnceRef.current) {
+      triggerRef.current?.focus();
+    }
+  }, [lightboxOpen]);
+
   // Lock body scroll when lightbox open
   useEffect(() => {
+
     if (lightboxOpen) {
       const prev = document.body.style.overflow;
       document.body.style.overflow = "hidden";
