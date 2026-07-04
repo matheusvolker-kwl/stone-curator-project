@@ -264,7 +264,7 @@ export default function ProductGallery({
               src={cdnImg(current.url, 2000)}
               width={2000}
               height={2000}
-              alt={current.altText ?? productTitle}
+              alt={current.altText ?? (total > 1 ? `${productTitle} — imagem ${activeIndex + 1} de ${total}` : productTitle)}
               className={`block mx-auto transition-transform duration-300 ${
                 zoomed ? "scale-[1.6]" : "scale-100"
               } max-w-[92vw] max-h-[88vh] object-contain`}
