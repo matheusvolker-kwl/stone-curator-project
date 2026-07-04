@@ -18,6 +18,7 @@ interface Props {
 }
 
 export default function ComposicaoCard({ conjunto, nivel, image, highlight, refinarHref }: Props) {
+  const { isApproved } = useAuth();
   const real = conjuntoComposicao[conjunto.handle];
   const pecas = getPecasPlaceholder(nivel);
   const distintas = real ? real.length : pecas.length;
