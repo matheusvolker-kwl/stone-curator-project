@@ -81,6 +81,7 @@ const Entrada = lazy(() => import("./pages/Entrada.tsx"));
 const Parceria = lazy(() => import("./pages/Parceria.tsx"));
 const ParceriaDireto = lazy(() => import("./pages/ParceriaDireto.tsx"));
 const Orcamento = lazy(() => import("./pages/Orcamento.tsx"));
+const FavoritosCompartilhados = lazy(() => import("./pages/FavoritosCompartilhados.tsx"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
