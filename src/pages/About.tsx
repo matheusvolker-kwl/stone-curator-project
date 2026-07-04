@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
+
 import SocialProof from "@/components/shared/SocialProof";
 import Reveal from "@/components/shared/Reveal";
 import { useScrollY } from "@/hooks/useScrollY";
@@ -409,30 +409,14 @@ export default function About() {
         </div>
       </section>
 
-      {/* ARQUITETOS + MARCAS — prova social */}
+      {/* Prova social unificada — rostos + mural de logos */}
       <section className="surface-ivory py-14 md:py-18">
         <div className="container-western max-w-5xl">
           <Reveal variant="fade-up" duration={800}>
             <SocialProof
               eyebrow="Especificada por"
-              titulo={<>Profissionais que assinam com a Western.</>}
-              groups={["celebridades", "profissionais"]}
-            />
-          </Reveal>
-
-          <Reveal variant="fade-up" delay={120} duration={800}>
-            <MarcasInstitucionais
-              eyebrow="Atendemos há mais de uma década"
-              titulo={<>Marcas que escolheram<br />repetir a Western.</>}
-              semLinks
-              descricao={
-                <>
-                  Cobasi não fica anos com fornecedor que falha. Unique Garden não revende ao seu
-                  hóspede algo que não passe no padrão de hospitalidade de luxo. Estes são parceiros
-                  institucionais que voltam a comprar há décadas — e essa é a métrica de qualidade
-                  que mais respeitamos.
-                </>
-              }
+              titulo={<>Profissionais e marcas que assinam com a Western.</>}
+              groups={["celebridades", "profissionais", "marcas"]}
             />
           </Reveal>
         </div>
