@@ -554,7 +554,7 @@ export default function AccountOrders() {
     );
   }, [orders, filter]);
 
-  if (selected) return <OrderDetail order={selected} onBack={() => setSelectedId(null)} />;
+  if (selected) return <OrderDetail order={selected} onBack={() => setSelectedId(null)} onRepetir={handleRepetir} />;
 
   return (
     <div>
