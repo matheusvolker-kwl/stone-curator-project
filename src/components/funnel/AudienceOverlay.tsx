@@ -59,7 +59,7 @@ function OptionCard({ eyebrow, title, description, ariaLabel, imageUrl, onActiva
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-t from-western-green-deep via-western-green-deep/70 to-western-green-deep/10"
+        className="absolute inset-0 bg-gradient-to-t from-western-green-deep via-western-green-deep/40 to-transparent"
       />
       <div className="relative z-10 p-6">
         <p className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-western-gold-soft">
