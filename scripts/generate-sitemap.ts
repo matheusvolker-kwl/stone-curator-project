@@ -2,7 +2,7 @@
 import { writeFileSync } from "fs";
 import { resolve } from "path";
 
-const BASE_URL = "https://westernstore.lovable.app";
+const BASE_URL = "https://westernstore.com.br";
 
 interface Entry {
   path: string;

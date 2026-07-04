@@ -13,7 +13,7 @@ import FinishSelector from "@/components/product/FinishSelector";
 import PriceGate from "@/components/shared/PriceGate";
 import { useAuth } from "@/hooks/useAuth";
 import ProductGallery from "@/components/product/ProductGallery";
-import Seo from "@/components/seo/Seo";
+import Seo, { SITE_URL } from "@/components/seo/Seo";
 import ScrollProgress from "@/components/shared/ScrollProgress";
 import BackToTop from "@/components/shared/BackToTop";
 import StickyBuyBar from "@/components/product/StickyBuyBar";
@@ -197,7 +197,7 @@ export default function ProductPage() {
     description: plainDesc.slice(0, 300),
     sku: sku || undefined,
     brand: { "@type": "Brand", name: "Western" },
-    url: `https://westernstore.lovable.app/produtos/${product.handle}`,
+    url: `${SITE_URL}/produtos/${product.handle}`,
   };
 
   const installationConfig = getInstallationConfig(

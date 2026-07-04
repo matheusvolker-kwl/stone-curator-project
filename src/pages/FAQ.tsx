@@ -48,7 +48,7 @@ const GRUPOS: Grupo[] = [
       },
       {
         q: "O que são os 'conjuntos'?",
-        a: <>Composições pré-definidas para 5 categorias de aplicação — piscina, lago, lago reduzido, jardim seco e jardim com fonte. Cada conjunto vem com desconto de <strong>{BUSINESS.descontoConjuntosPercent}%</strong> sobre a soma das peças avulsas equivalentes. Mais previsibilidade de composição com economia operacional.</>,
+        a: <>Composições pré-definidas para 5 categorias de aplicação — piscina, lago, lago reduzido, jardim seco e jardim com fonte. Cada conjunto é a soma pura das peças que o compõem, com previsibilidade de composição e economia operacional na especificação.</>,
       },
     ],
   },

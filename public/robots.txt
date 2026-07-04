@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://westernstore.lovable.app/sitemap.xml
+Sitemap: https://westernstore.com.br/sitemap.xml

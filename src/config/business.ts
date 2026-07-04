@@ -14,8 +14,8 @@ export const BUSINESS = {
   garantiaAnos: 1,
   garantiaLabel: "1 ano",
 
-  // Desconto em conjuntos pré-montados
-  descontoConjuntosPercent: 3,
+
+
 
   // Localização — ateliê em Cajamar/SP (Grande São Paulo)
   cidadeAtelie: "Cajamar",
@@ -35,8 +35,8 @@ export const BUSINESS = {
   emailComercial: "comercial@westernpools.com.br",
   emailSuporte: "suporte@westernpools.com.br",
   emailNewsletter: "contato@westernpools.com.br",
-  // TODO confirmar CNPJ real com Western — vazio = não exibir
-  cnpj: "",
+  // CNPJ confirmado (mesmo usado no checkout Woo)
+  cnpj: "10.465.584/0001-24",
 
   // Pagamento — política em definição. Não exibir condições no site por enquanto.
 

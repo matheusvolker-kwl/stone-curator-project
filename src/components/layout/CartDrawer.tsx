@@ -311,7 +311,7 @@ export default function CartDrawer({
             {/* Selo de pagamento */}
             {isApproved && (
               <div className="flex items-center justify-center gap-5 pt-1">
-                {["Pix", "Boleto", "Cartão até 6x"].map((label, i) => (
+                {["Pix", "Boleto", "Cartão até 12×"].map((label, i) => (
                   <div key={label} className="flex items-center gap-2">
                     {i > 0 && <span className="text-western-gold-soft/40 text-[8px]">◆</span>}
                     <span className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-western-cream/70">
