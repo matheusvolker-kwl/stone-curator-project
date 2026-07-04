@@ -134,7 +134,7 @@ export default function ProjetosWesternBand() {
               type="button"
               key={caso.id}
               onClick={() => setOpenIndex(items.indexOf(caso))}
-              className="group relative block overflow-hidden rounded-[2px] bg-western-stone-warm/10 aspect-[4/5] text-left"
+              className="group relative block overflow-hidden rounded-[2px] bg-western-stone-warm/10 ring-1 ring-western-gold/10 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.7)] aspect-[4/5] text-left"
             >
               <img
                 src={caso.posterUrl}
