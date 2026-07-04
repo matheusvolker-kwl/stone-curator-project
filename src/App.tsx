@@ -94,9 +94,20 @@ const queryClient = new QueryClient({
 
 // Fallback discreto — mantém o ivory para não "piscar branco"
 function RouteFallback() {
+  const [show, setShow] = useState(false);
+  useEffect(() => { const t = window.setTimeout(() => setShow(true), 180); return () => window.clearTimeout(t); }, []);
+  if (!show) return <div className="min-h-[40vh] bg-western-ivory" />;
   return (
-    <div className="min-h-[40vh] flex items-center justify-center bg-western-ivory">
-      <div className="h-5 w-5 border-2 border-western-gold/30 border-t-western-gold rounded-full animate-spin" />
+    <div className="min-h-[40vh] bg-western-ivory motion-safe:animate-fade-in">
+      <div className="container-western py-16 space-y-6" aria-hidden="true">
+        <div className="h-8 w-1/3 bg-western-stone-warm/10 animate-pulse" />
+        <div className="h-4 w-1/2 bg-western-stone-warm/10 animate-pulse" />
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="aspect-square bg-western-stone-warm/10 animate-pulse" />
+          <div className="aspect-square bg-western-stone-warm/10 animate-pulse" />
+          <div className="aspect-square bg-western-stone-warm/10 animate-pulse" />
+        </div>
+      </div>
     </div>
   );
 }
