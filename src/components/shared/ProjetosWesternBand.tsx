@@ -80,15 +80,15 @@ export default function ProjetosWesternBand() {
   const current = openIndex !== null ? items[openIndex] : null;
 
   return (
-    <section className="bg-western-cream-muted py-14 md:py-20">
+    <section className="surface-forest border-y border-western-gold/15 py-14 md:py-20">
       <div className="container-western">
         <header className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
-          <p className="text-eyebrow">Depoimentos & obras</p>
+          <p className="text-eyebrow text-western-gold-soft">Depoimentos & obras</p>
           <div className="w-12 h-px bg-western-gold mx-auto my-5" />
-          <h2 className="font-display text-3xl md:text-4xl text-western-green-deep">
+          <h2 className="font-display text-3xl md:text-4xl text-western-cream">
             Projetos que a Western tornou possível
           </h2>
-          <p className="text-spec italic text-western-stone-warm mt-4">
+          <p className="text-spec italic text-western-cream-muted mt-4">
             Arquitetos, empresários e destinos icônicos contam por que escolheram Western.
           </p>
         </header>
