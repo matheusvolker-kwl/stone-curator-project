@@ -526,22 +526,22 @@ export default function ProductPage() {
 
       {/* Seções full-width abaixo do hero */}
       
-      <ProductInUse productTitle={product.title} sku={sku || product.variants.edges[0]?.node?.sku} />
-      <ProjetosWesternBand />
-      <ProductComparison productTitle={product.title} pesoKg={pesoKg} dimensoes={dimsStr} />
-      <RelatedProducts
+      <Reveal variant="fade-up"><ProductInUse productTitle={product.title} sku={sku || product.variants.edges[0]?.node?.sku} /></Reveal>
+      <Reveal variant="fade-up"><ProjetosWesternBand /></Reveal>
+      <Reveal variant="fade-up"><ProductComparison productTitle={product.title} pesoKg={pesoKg} dimensoes={dimsStr} /></Reveal>
+      <Reveal variant="fade-up"><RelatedProducts
         collectionHandle={collection?.handle}
         collectionTitle={collection?.title}
         currentHandle={product.handle}
         productTitle={product.title}
-      />
-      <WhyWesternStrip />
-      <SocialProofBand />
-      <ProductPagination
+      /></Reveal>
+      <Reveal variant="fade-up"><WhyWesternStrip /></Reveal>
+      <Reveal variant="fade-up"><SocialProofBand /></Reveal>
+      <Reveal variant="fade-up"><ProductPagination
         collectionHandle={collection?.handle}
         collectionTitle={collection?.title}
         currentHandle={product.handle}
-      />
+      /></Reveal>
 
       {/* Sticky buy bar — aparece após sair do CTA inline */}
       <StickyBuyBar
