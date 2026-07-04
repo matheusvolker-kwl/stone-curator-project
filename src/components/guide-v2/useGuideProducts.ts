@@ -16,7 +16,7 @@ const cache = new Map<string, ShopifyProductNode>();
 async function getProducts(handles: string[]): Promise<Map<string, ShopifyProductNode>> {
   const missing = handles.filter((h) => !cache.has(h));
   if (missing.length > 0) {
-    const fetched = await fetchProductsByHandles(missing);
+    const fetched = await fetchProductsByHandlesHydrated(missing);
     fetched.forEach((p) => cache.set(p.handle, p));
   }
   const out = new Map<string, ShopifyProductNode>();
