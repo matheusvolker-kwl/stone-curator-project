@@ -303,19 +303,34 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         </nav>
 
         {/* Search */}
-        <form
-          onSubmit={handleSearch}
-          className="hidden md:flex flex-1 max-w-sm ml-auto items-center gap-2 px-3 h-10 border border-western-stone-warm/25 bg-white focus-within:border-western-gold transition-colors"
-        >
-          <Search className="h-4 w-4 text-western-stone-warm flex-shrink-0" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            type="search"
-            placeholder="Buscar linha, peça, código…"
-            className="flex-1 bg-transparent outline-none text-sm text-western-green-deep placeholder:text-western-stone-warm/60"
-          />
-        </form>
+        <div className="hidden md:block relative flex-1 max-w-sm ml-auto">
+          <form
+            onSubmit={handleSearch}
+            className="flex items-center gap-2 px-3 h-10 border border-western-stone-warm/25 bg-white focus-within:border-western-gold transition-colors"
+          >
+            <Search className="h-4 w-4 text-western-stone-warm flex-shrink-0" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={handleSuggestFocus}
+              onBlur={handleSuggestBlur}
+              onKeyDown={handleSearchKeyDown}
+              type="search"
+              placeholder="Buscar linha, peça, código…"
+              className="flex-1 bg-transparent outline-none text-sm text-western-green-deep placeholder:text-western-stone-warm/60"
+              role="combobox"
+              aria-expanded={suggestOpen}
+              aria-controls="d-search-suggestions"
+              aria-autocomplete="list"
+              aria-activedescendant={
+                activeIndex >= 0 ? `d-search-opt-${activeIndex}` : undefined
+              }
+            />
+          </form>
+          <div className="absolute left-0 right-0 top-full mt-1 z-50">
+            {renderSuggestions("d-")}
+          </div>
+        </div>
 
         {/* Search mobile (ícone) */}
         <button
