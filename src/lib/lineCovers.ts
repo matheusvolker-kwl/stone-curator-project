@@ -12,6 +12,7 @@ import revestimentosAsset from "@/assets/linhas/revestimentos.webp.asset.json";
 // Capas das linhas (categorias), por handle/slug do WooCommerce.
 // Há aliases (ex.: "fontes" e "fontes-para-jardim") para cobrir variações de slug.
 export const LINHA_COVER_OVERRIDES: Record<string, { url: string; alt: string }> = {
+  // amostras: aguardando foto real da Western Box (fornecida pelo dono) — importar amostras.webp.asset.json e adicionar aqui.
   cascatas: { url: cascatasAsset.url, alt: "Cascata Western em pedra com lâmina de água caindo na piscina, paisagismo tropical." },
   "fontes-para-jardim": { url: fontesAsset.url, alt: "Fonte Western de pedra com água em jardim tropical." },
   fontes: { url: fontesAsset.url, alt: "Fonte Western de pedra com água em jardim tropical." },
