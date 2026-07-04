@@ -2,10 +2,10 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Info } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
-import { formatPreco, PEDIDO_MINIMO, type ConjuntoLeaf, type Nivel } from "@/data/guideMap";
+import { formatPreco, nivelMeta, PEDIDO_MINIMO, type ConjuntoLeaf, type Nivel } from "@/data/guideMap";
 import { fetchProduct } from "@/lib/datasource";
 import { useAuth } from "@/hooks/useAuth";
-import { nivelLabelMap, nivelMicrocopy } from "./types";
+import { nivelLabelMap } from "./types";
 import { getPecasPlaceholder, getPecaCount } from "./pecasPlaceholder";
 import { conjuntoComposicao, handleToDisplayName } from "@/data/conjuntoComposicao";
 
