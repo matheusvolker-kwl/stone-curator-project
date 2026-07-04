@@ -30,6 +30,7 @@ import ProductInUse from "@/components/product/ProductInUse";
 import WishlistButton from "@/components/product/WishlistButton";
 import PurchaseProof from "@/components/product/PurchaseProof";
 import ProjetosWesternBand from "@/components/shared/ProjetosWesternBand";
+import Reveal from "@/components/shared/Reveal";
 import {
   InstallationTrustStrip,
   InstallationSection,
