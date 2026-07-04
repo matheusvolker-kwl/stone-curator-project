@@ -6,7 +6,6 @@ import {
   type MarcaComLogo,
 } from "@/data/socialProof";
 
-/* Rostos: resolve por slug em src/assets/famosos/ (arquivo cru ou .asset.json) */
 const faceImages = import.meta.glob("../../assets/famosos/*.{webp,jpg,jpeg,png}", {
   eager: true, query: "?url", import: "default",
 }) as Record<string, string>;
@@ -28,7 +27,6 @@ function buildFotoMap(): Record<string, string> {
 }
 const FOTOS = buildFotoMap();
 
-/* Logos: resolve por slug em src/assets/marcas/ (arquivo cru ou .asset.json) */
 const logoImages = import.meta.glob("../../assets/marcas/*.{svg,png,webp}", {
   eager: true, query: "?url", import: "default",
 }) as Record<string, string>;
@@ -61,7 +59,6 @@ function iniciais(nome: string): string {
 interface Props {
   groups?: SocialProofGroup[];
   variant?: "light" | "dark";
-  /** Compacto: retratos menores + faixa de logos enxuta (ideal PDP). */
   compact?: boolean;
   titulo?: React.ReactNode;
   eyebrow?: string;
@@ -80,7 +77,7 @@ export default function SocialProof({
   const eyebrowColor = isDark ? "text-western-gold-soft/85" : "text-western-gold";
   const nameColor = isDark ? "text-western-cream" : "text-western-green-deep";
   const goldLine = isDark ? "bg-western-gold/50" : "bg-western-gold";
-  const avatarBg = isDark ? "bg-western-green-mid/40" : "bg-western-cream";
+  const tileBg = isDark ? "bg-western-green-mid/40" : "bg-western-cream-muted";
   const monogramText = isDark ? "text-western-gold-soft" : "text-western-green-deep";
   const captionColor = isDark ? "text-western-cream" : "text-western-green-deep";
   const wordmarkColor = isDark ? "text-western-cream" : "text-western-green-deep";
@@ -93,26 +90,35 @@ export default function SocialProof({
   ) as Array<"celebridades" | "profissionais">;
   const showMarcas = groups.includes("marcas");
 
-  const avatarSize = compact ? "w-16 h-16 md:w-[4.5rem] md:h-[4.5rem]" : "w-20 h-20 md:w-24 md:h-24";
-  const rowGap = compact ? "gap-6 md:gap-8" : "gap-8 md:gap-12";
+  const tierMax = compact ? "max-w-md md:max-w-lg" : "max-w-md md:max-w-2xl";
+  const tileGap = compact ? "gap-3 md:gap-4" : "gap-4 md:gap-6";
   const logoH = compact ? "h-8 md:h-9" : "h-10 md:h-12";
   const logoGap = compact ? "gap-x-8 gap-y-5" : "gap-x-10 md:gap-x-14 gap-y-7";
 
-  const renderAvatarRow = (pessoas: readonly PessoaComFoto[]) => (
-    <ul className={`flex flex-wrap items-start justify-center ${rowGap}`}>
+  const renderTier = (pessoas: readonly PessoaComFoto[]) => (
+    <ul className={`grid grid-cols-3 ${tileGap} ${tierMax} mx-auto`}>
       {pessoas.map((c) => {
         const foto = FOTOS[c.slug];
         return (
-          <li key={c.slug} className="group flex flex-col items-center w-24 md:w-28">
-            <div className={`relative ${avatarSize} rounded-full overflow-hidden ${avatarBg} shrink-0 flex items-center justify-center ring-1 ring-western-gold/25 group-hover:ring-western-gold/60 transition-all duration-300 ease-out group-hover:scale-[1.06]`}>
+          <li key={c.slug} className="group flex flex-col items-center">
+            <div className={`relative w-full aspect-[4/5] overflow-hidden rounded-[3px] ${tileBg} ring-1 ring-western-gold/20 group-hover:ring-western-gold/50 shadow-[0_16px_34px_-20px_rgba(0,0,0,0.65)] transition-all duration-500`}>
               {foto ? (
-                <img src={foto} alt={`Retrato de ${c.nome}`} loading="lazy" decoding="async" width={96} height={96}
-                  className="w-full h-full object-cover grayscale-[45%] brightness-[0.98] group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-500 ease-out" />
+                <img
+                  src={foto}
+                  alt={`Retrato de ${c.nome}`}
+                  loading="lazy"
+                  decoding="async"
+                  width={320}
+                  height={400}
+                  className="w-full h-full object-cover object-center grayscale-[35%] brightness-[0.97] group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700 ease-out motion-safe:group-hover:scale-[1.03]"
+                />
               ) : (
-                <span className={`font-display text-xl md:text-2xl ${monogramText} tracking-wide`} aria-hidden="true">{iniciais(c.nome)}</span>
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className={`font-display text-3xl md:text-4xl ${monogramText}`} aria-hidden="true">{iniciais(c.nome)}</span>
+                </div>
               )}
             </div>
-            <p className={`mt-3 text-center font-sans text-[13px] md:text-sm leading-tight ${captionColor}`}>{c.nome}</p>
+            <p className={`mt-3 text-center font-display text-sm md:text-base leading-tight ${captionColor}`}>{c.nome}</p>
           </li>
         );
       })}
@@ -139,23 +145,23 @@ export default function SocialProof({
   return (
     <div className={className}>
       {(eyebrow || titulo) && (
-        <div className="text-center mb-10 md:mb-14">
-          {eyebrow && <p className={`font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-5`}>{eyebrow}</p>}
-          <div className={`w-10 h-px ${goldLine} mx-auto mb-6`} />
+        <div className="text-center mb-9 md:mb-12">
+          {eyebrow && <p className={`font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-4`}>{eyebrow}</p>}
+          <div className={`w-10 h-px ${goldLine} mx-auto mb-5`} />
           {titulo && <h2 className={`font-display text-2xl md:text-[2rem] ${nameColor} leading-[1.2] max-w-2xl mx-auto`}>{titulo}</h2>}
         </div>
       )}
 
       {avatarGroups.map((g) => (
-        <div key={g} className={compact ? "mb-9 md:mb-10" : "mb-12 md:mb-16"}>
-          <p className={`text-center font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-6 md:mb-7`}>{SOCIAL_PROOF_LABELS[g]}</p>
-          {renderAvatarRow(SOCIAL_PROOF[g] as readonly PessoaComFoto[])}
+        <div key={g} className={compact ? "mb-8 md:mb-9" : "mb-10 md:mb-12"}>
+          <p className={`text-center font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-5 md:mb-6`}>{SOCIAL_PROOF_LABELS[g]}</p>
+          {renderTier(SOCIAL_PROOF[g] as readonly PessoaComFoto[])}
         </div>
       ))}
 
       {showMarcas && (
-        <div className={avatarGroups.length ? "mt-2" : ""}>
-          <p className={`text-center font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-6 md:mb-8`}>{SOCIAL_PROOF_LABELS.marcas}</p>
+        <div className={avatarGroups.length ? "mt-1" : ""}>
+          <p className={`text-center font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-6 md:mb-7`}>{SOCIAL_PROOF_LABELS.marcas}</p>
           <ul className={`flex flex-wrap items-center justify-center max-w-full ${logoGap}`}>
             {(SOCIAL_PROOF.marcas as readonly MarcaComLogo[]).map((m) => (
               <li key={m.slug} className={`group flex items-center justify-center ${logoH}`}>{renderMarca(m)}</li>

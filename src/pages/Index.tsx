@@ -242,7 +242,7 @@ export default function Index() {
       </section>
 
       {/* Faixa institucional — prova social unificada (rostos + mural de logos) */}
-      <section className="surface-forest py-24 md:py-32 border-y border-western-gold/15">
+      <section className="surface-forest py-16 md:py-20 border-y border-western-gold/15">
         <div className="container-western max-w-5xl">
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
@@ -252,7 +252,7 @@ export default function Index() {
               groups={["celebridades", "profissionais", "marcas"]}
             />
           </Reveal>
-          <div className="text-center mt-16 md:mt-20">
+          <div className="text-center mt-10 md:mt-12">
             <Link
               to="/sobre"
               className="font-mono text-xs uppercase tracking-[0.22em] text-western-gold-soft hover:text-western-gold transition-colors"
