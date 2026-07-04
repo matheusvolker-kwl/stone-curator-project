@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { submitSecureLead } from "@/lib/leads";
+import TurnstileWidget from "@/components/security/TurnstileWidget";
 import { BUSINESS } from "@/config/business";
 import { Loader2, MapPin, Trash2, Plus } from "lucide-react";
 import {
@@ -61,6 +63,7 @@ export default function AgendarVisita() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
@@ -94,12 +97,16 @@ export default function AgendarVisita() {
     }
     setF(normalized);
     setErrors({});
+    if (!captchaToken) {
+      toast.error("Confirme que você não é um robô.");
+      return;
+    }
     setLoading(true);
     const datasFmt = validSlots
       .map((s) => `${format(s.date!, "dd/MM/yyyy", { locale: ptBR })} às ${s.hora}`)
       .join(" · ");
 
-    const { error } = await supabase.from("leads").insert({
+    const res = await submitSecureLead({
       type: "visita",
       nome: f.nome,
       email: f.email,
@@ -115,10 +122,11 @@ export default function AgendarVisita() {
         slots: validSlots.map((s) => ({ date: s.date!.toISOString(), hora: s.hora })),
       },
       origem: "site/visitar",
-    });
+    }, captchaToken);
     setLoading(false);
-    if (error) {
-      toast.error("Não foi possível enviar agora.", { description: error.message });
+    setCaptchaToken(null);
+    if (!res.ok) {
+      toast.error("Não foi possível enviar agora.", { description: res.error });
       return;
     }
     setDone(true);
