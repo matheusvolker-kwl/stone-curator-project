@@ -34,8 +34,7 @@ function PanelBody({
   const { isApproved, session } = useAuth();
   const subBase = pecas.reduce((a, p) => a + p.preco * p.qty, 0);
   const subExtras = extras.reduce((a, e) => a + e.preco * e.qty, 0);
-  const desconto = isCustomizado ? 0 : Math.round(subBase * 0.03);
-  const total = subBase + subExtras - desconto;
+  const total = subBase + subExtras;
 
   return (
     <div className="surface-forest shadow-[0_36px_56px_-30px_hsl(var(--western-stone-dark)/0.45)] flex flex-col relative overflow-hidden">
@@ -113,12 +112,6 @@ function PanelBody({
                 <div className="flex justify-between text-western-cream-muted">
                   <span>Peças adicionais</span>
                   <span className="font-sans tabular-nums">{formatPreco(subExtras)}</span>
-                </div>
-              )}
-              {desconto > 0 && (
-                <div className="flex justify-between text-western-gold">
-                  <span>Desconto conjunto (3%)</span>
-                  <span className="font-sans tabular-nums">−{formatPreco(desconto)}</span>
                 </div>
               )}
             </div>
@@ -219,8 +212,7 @@ export default function ProjetoSidebar(props: Props) {
     props.pecas.reduce((a, p) => a + p.qty, 0) + props.extras.reduce((a, e) => a + e.qty, 0);
   const subBase = props.pecas.reduce((a, p) => a + p.preco * p.qty, 0);
   const subExtras = props.extras.reduce((a, e) => a + e.preco * e.qty, 0);
-  const desconto = props.isCustomizado ? 0 : Math.round(subBase * 0.03);
-  const total = subBase + subExtras - desconto;
+  const total = subBase + subExtras;
   const { isApproved } = useAuth();
 
   return (
