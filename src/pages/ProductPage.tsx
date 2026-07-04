@@ -524,7 +524,7 @@ export default function ProductPage() {
 
       {/* Seções full-width abaixo do hero */}
       
-      <ProductInUse productHandle={product.handle} productTitle={product.title} />
+      <ProductInUse productTitle={product.title} sku={sku || product.variants.edges[0]?.node?.sku} />
       <ProjetosWesternBand />
       <ProductComparison productTitle={product.title} pesoKg={pesoKg} dimensoes={dimsStr} />
       <RelatedProducts
