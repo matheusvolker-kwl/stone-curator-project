@@ -4,9 +4,12 @@ import { ShoppingBag, User, Menu, X, Search, ShieldCheck, LogOut, Heart, Home } 
 import { useWishlist } from "@/hooks/useWishlist";
 import logoVerde from "@/assets/logo-horizontal-verde.png";
 import logoBege from "@/assets/logo-horizontal-bege.png";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
+import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/datasource";
+import { cdnImg, formatBRL } from "@/lib/catalog/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,11 +62,205 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
 
   useEffect(() => setMenuOpen(false), [pathname]);
 
+  const [suggestOpen, setSuggestOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const blurTimerRef = useRef<number | null>(null);
+
+  const { data: allProducts = [] } = useQuery({
+    queryKey: ["search-catalog-products"],
+    queryFn: () => fetchProducts(300),
+    staleTime: 60_000,
+  });
+  const { data: allCollections = [] } = useQuery({
+    queryKey: ["search-catalog-collections"],
+    queryFn: () => fetchCollections(50),
+    staleTime: 60_000,
+  });
+
+  const suggestions = useMemo(() => {
+    const term = query.trim().toLowerCase();
+    if (term.length < 2) return { linhas: [], produtos: [], flatCount: 0 };
+    const linhas = allCollections
+      .filter((c) => !isSeasonal({ handle: c.handle, description: c.description }))
+      .filter(
+        (c) =>
+          c.title.toLowerCase().includes(term) ||
+          c.handle.toLowerCase().includes(term),
+      )
+      .slice(0, 3);
+    const produtos = allProducts
+      .filter((p) => {
+        const n = p.node;
+        if (n.title.toLowerCase().includes(term)) return true;
+        return (n.tags ?? []).some((t) => t.toLowerCase().includes(term));
+      })
+      .slice(0, 6);
+    return { linhas, produtos, flatCount: linhas.length + produtos.length };
+  }, [query, allCollections, allProducts]);
+
+  useEffect(() => {
+    setActiveIndex(-1);
+  }, [query]);
+
+  const flatItems = useMemo(
+    () => [
+      ...suggestions.linhas.map((c) => ({ kind: "linha" as const, handle: c.handle })),
+      ...suggestions.produtos.map((p) => ({ kind: "produto" as const, handle: p.node.handle })),
+    ],
+    [suggestions],
+  );
+
+  const closeSuggest = () => {
+    setSuggestOpen(false);
+    setActiveIndex(-1);
+  };
+
+  const handleSuggestFocus = () => {
+    if (blurTimerRef.current) window.clearTimeout(blurTimerRef.current);
+    if (query.trim().length >= 2 && suggestions.flatCount > 0) setSuggestOpen(true);
+  };
+  const handleSuggestBlur = () => {
+    if (blurTimerRef.current) window.clearTimeout(blurTimerRef.current);
+    blurTimerRef.current = window.setTimeout(() => setSuggestOpen(false), 120);
+  };
+
+  useEffect(() => {
+    if (query.trim().length >= 2 && suggestions.flatCount > 0) setSuggestOpen(true);
+    else setSuggestOpen(false);
+  }, [query, suggestions.flatCount]);
+
+  const goToItem = (item: { kind: "linha" | "produto"; handle: string }) => {
+    closeSuggest();
+    setSearchOpen(false);
+    setQuery("");
+    if (item.kind === "linha") navigate(`/linhas/${item.handle}`);
+    else navigate(`/produtos/${item.handle}`);
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!suggestOpen || flatItems.length === 0) {
+      if (e.key === "Escape") closeSuggest();
+      return;
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((i) => Math.min(flatItems.length - 1, i + 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((i) => Math.max(-1, i - 1));
+    } else if (e.key === "Enter" && activeIndex >= 0) {
+      e.preventDefault();
+      goToItem(flatItems[activeIndex]);
+    } else if (e.key === "Escape") {
+      closeSuggest();
+    }
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
+    closeSuggest();
     setSearchOpen(false);
     navigate(`/linhas?q=${encodeURIComponent(query.trim())}`);
+  };
+
+  const renderSuggestions = (idPrefix: string) => {
+    if (!suggestOpen || suggestions.flatCount === 0) return null;
+    let idx = -1;
+    return (
+      <ul
+        id={`${idPrefix}search-suggestions`}
+        role="listbox"
+        className="bg-white border border-western-stone-warm/25 shadow-lg max-h-[70vh] overflow-y-auto"
+      >
+        {suggestions.linhas.length > 0 && (
+          <li className="px-3 pt-3 pb-1 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70">
+            Linhas
+          </li>
+        )}
+        {suggestions.linhas.map((c) => {
+          idx += 1;
+          const i = idx;
+          const active = i === activeIndex;
+          return (
+            <li
+              key={`linha-${c.handle}`}
+              id={`${idPrefix}search-opt-${i}`}
+              role="option"
+              aria-selected={active}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                goToItem({ kind: "linha", handle: c.handle });
+              }}
+              onMouseEnter={() => setActiveIndex(i)}
+              className={`flex items-center gap-3 px-3 py-2 cursor-pointer ${
+                active ? "bg-western-gold/10" : "hover:bg-western-gold/10"
+              }`}
+            >
+              <div className="h-10 w-10 flex-shrink-0 bg-western-paper overflow-hidden">
+                {c.image?.url && (
+                  <img
+                    src={cdnImg(c.image.url, 80)}
+                    alt=""
+                    loading="lazy"
+                    className="w-full h-full object-cover"
+                  />
+                )}
+              </div>
+              <span className="text-sm text-western-green-deep truncate">{c.title}</span>
+            </li>
+          );
+        })}
+        {suggestions.produtos.length > 0 && (
+          <li className="px-3 pt-3 pb-1 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70">
+            Produtos
+          </li>
+        )}
+        {suggestions.produtos.map((p) => {
+          idx += 1;
+          const i = idx;
+          const active = i === activeIndex;
+          const node = p.node;
+          const img = node.images.edges[0]?.node;
+          const price = node.priceRange?.minVariantPrice;
+          return (
+            <li
+              key={`produto-${node.handle}`}
+              id={`${idPrefix}search-opt-${i}`}
+              role="option"
+              aria-selected={active}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                goToItem({ kind: "produto", handle: node.handle });
+              }}
+              onMouseEnter={() => setActiveIndex(i)}
+              className={`flex items-center gap-3 px-3 py-2 cursor-pointer ${
+                active ? "bg-western-gold/10" : "hover:bg-western-gold/10"
+              }`}
+            >
+              <div className="h-10 w-10 flex-shrink-0 bg-western-paper overflow-hidden">
+                {img?.url && (
+                  <img
+                    src={cdnImg(img.url, 80)}
+                    alt=""
+                    loading="lazy"
+                    className="w-full h-full object-contain p-1"
+                  />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-western-green-deep truncate">{node.title}</p>
+                {price && (
+                  <p className="text-[11px] font-mono text-western-stone-warm">
+                    {formatBRL(price.amount, price.currencyCode)}
+                  </p>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    );
   };
 
   return (
@@ -106,19 +303,34 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         </nav>
 
         {/* Search */}
-        <form
-          onSubmit={handleSearch}
-          className="hidden md:flex flex-1 max-w-sm ml-auto items-center gap-2 px-3 h-10 border border-western-stone-warm/25 bg-white focus-within:border-western-gold transition-colors"
-        >
-          <Search className="h-4 w-4 text-western-stone-warm flex-shrink-0" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            type="search"
-            placeholder="Buscar linha, peça, código…"
-            className="flex-1 bg-transparent outline-none text-sm text-western-green-deep placeholder:text-western-stone-warm/60"
-          />
-        </form>
+        <div className="hidden md:block relative flex-1 max-w-sm ml-auto">
+          <form
+            onSubmit={handleSearch}
+            className="flex items-center gap-2 px-3 h-10 border border-western-stone-warm/25 bg-white focus-within:border-western-gold transition-colors"
+          >
+            <Search className="h-4 w-4 text-western-stone-warm flex-shrink-0" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={handleSuggestFocus}
+              onBlur={handleSuggestBlur}
+              onKeyDown={handleSearchKeyDown}
+              type="search"
+              placeholder="Buscar linha, peça, código…"
+              className="flex-1 bg-transparent outline-none text-sm text-western-green-deep placeholder:text-western-stone-warm/60"
+              role="combobox"
+              aria-expanded={suggestOpen}
+              aria-controls="d-search-suggestions"
+              aria-autocomplete="list"
+              aria-activedescendant={
+                activeIndex >= 0 ? `d-search-opt-${activeIndex}` : undefined
+              }
+            />
+          </form>
+          <div className="absolute left-0 right-0 top-full mt-1 z-50">
+            {renderSuggestions("d-")}
+          </div>
+        </div>
 
         {/* Search mobile (ícone) */}
         <button
@@ -326,9 +538,17 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
               type="search"
               placeholder="Buscar linha, peça, código…"
               className="flex-1 bg-transparent outline-none text-base text-western-green-deep placeholder:text-western-stone-warm/60"
+              role="combobox"
+              aria-expanded={suggestOpen}
+              aria-controls="m-search-suggestions"
+              aria-autocomplete="list"
+              aria-activedescendant={
+                activeIndex >= 0 ? `m-search-opt-${activeIndex}` : undefined
+              }
             />
             {query && (
               <button type="button" onClick={() => setQuery("")} aria-label="Limpar" className="text-western-stone-warm hover:text-western-green-deep">
@@ -336,6 +556,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               </button>
             )}
           </form>
+          <div className="mt-3">{renderSuggestions("m-")}</div>
           <p className="text-spec text-western-stone-warm mt-3">Pressione Enter para buscar.</p>
         </SheetContent>
       </Sheet>

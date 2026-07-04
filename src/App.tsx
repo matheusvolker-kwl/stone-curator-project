@@ -81,6 +81,7 @@ const Entrada = lazy(() => import("./pages/Entrada.tsx"));
 const Parceria = lazy(() => import("./pages/Parceria.tsx"));
 const ParceriaDireto = lazy(() => import("./pages/ParceriaDireto.tsx"));
 const Orcamento = lazy(() => import("./pages/Orcamento.tsx"));
+const FavoritosCompartilhados = lazy(() => import("./pages/FavoritosCompartilhados.tsx"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -147,6 +148,7 @@ const App = () => (
                     <Route path="/contato" element={<Contact />} />
                     <Route path="/western-box" element={<WesternBoxPage />} />
                     <Route path="/contrate-a-western" element={<ContrateAWestern />} />
+                    <Route path="/favoritos-compartilhados" element={<FavoritosCompartilhados />} />
                     {/* Rotas antigas removidas — redirecionamentos */}
                     <Route path="/parceiros-arquitetos" element={<Navigate to="/sobre" replace />} />
                     <Route path="/aplicacoes-comerciais" element={<Navigate to="/sobre" replace />} />
