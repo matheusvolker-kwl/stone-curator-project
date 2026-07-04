@@ -63,13 +63,12 @@ const GuiaComposicoes = lazy(() => import("./pages/guia/Composicoes.tsx"));
 const GuiaRefinar = lazy(() => import("./pages/guia/Refinar.tsx"));
 
 const PartnerSignup = lazy(() => import("./pages/PartnerSignup.tsx"));
-const ParceirosArquitetos = lazy(() => import("./pages/ParceirosArquitetos.tsx"));
 const PartnerLogin = lazy(() => import("./pages/PartnerLogin.tsx"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 
 const AgendarVisita = lazy(() => import("./pages/AgendarVisita.tsx"));
 const PorQueWestern = lazy(() => import("./pages/PorQueWestern.tsx"));
-const AplicacoesComerciais = lazy(() => import("./pages/AplicacoesComerciais.tsx"));
+const ContrateAWestern = lazy(() => import("./pages/ContrateAWestern.tsx"));
 const FAQ = lazy(() => import("./pages/FAQ.tsx"));
 const PoliticaComercial = lazy(() => import("./pages/legal/PoliticaComercial.tsx"));
 const PoliticaEntrega = lazy(() => import("./pages/legal/PoliticaEntrega.tsx"));
@@ -132,7 +131,10 @@ const App = () => (
                   <Route path="/sobre" element={<About />} />
                   <Route path="/contato" element={<Contact />} />
                   <Route path="/western-box" element={<WesternBoxPage />} />
-                  <Route path="/parceiros-arquitetos" element={<ParceirosArquitetos />} />
+                  <Route path="/contrate-a-western" element={<ContrateAWestern />} />
+                  {/* Rotas antigas removidas — redirecionamentos */}
+                  <Route path="/parceiros-arquitetos" element={<Navigate to="/sobre" replace />} />
+                  <Route path="/aplicacoes-comerciais" element={<Navigate to="/sobre" replace />} />
                   <Route path="/parceiro/cadastro" element={<PartnerSignup />} />
                   <Route path="/parceiro/login" element={<PartnerLogin />} />
                   <Route path="/parceiro/redefinir-senha" element={<ResetPassword />} />
@@ -180,7 +182,6 @@ const App = () => (
                   <Route path="/pedir-amostras" element={<Navigate to="/western-box" replace />} />
                   <Route path="/visitar" element={<AgendarVisita />} />
                   <Route path="/por-que-western" element={<PorQueWestern />} />
-                  <Route path="/aplicacoes-comerciais" element={<AplicacoesComerciais />} />
                   <Route path="/faq" element={<FAQ />} />
                   <Route path="/politica-comercial" element={<PoliticaComercial />} />
                   <Route path="/politica-de-entrega" element={<PoliticaEntrega />} />

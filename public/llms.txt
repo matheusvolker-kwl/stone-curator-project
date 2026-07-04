@@ -13,8 +13,7 @@ A Western produz pedras artesanais (cascatas, pedras grandes/médias/pequenas, p
 - [Guia de composição](/guia-de-composicao): assistente para montar uma composição a partir do contexto do projeto.
 - [Sobre](/sobre): história da Western e do ateliê.
 - [Por que Western](/por-que-western): argumentário técnico e comparativos.
-- [Aplicações comerciais](/aplicacoes-comerciais): usos em hotelaria, varejo e empreendimentos.
-- [Parceiros arquitetos](/parceiros-arquitetos): especificadores de referência.
+- [Contrate a Western](/contrate-a-western): serviços de consultoria, projeto, render e instalação.
 - [FAQ](/faq): perguntas frequentes sobre material, instalação, comercial e garantia.
 - [Contato](/contato): canais de atendimento.
 - [Agendar visita](/visitar): visita ao ateliê em São Paulo.

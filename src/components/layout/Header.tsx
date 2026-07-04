@@ -20,6 +20,7 @@ const nav = [
   { to: "/conjuntos", label: "Conjuntos" },
   { to: "/guia-de-composicao", label: "Guia" },
   { to: "/western-box", label: "Amostras" },
+  { to: "/contrate-a-western", label: "Contrate" },
   { to: "/sobre", label: "Sobre" },
   { to: "/contato", label: "Contato" },
 ];
