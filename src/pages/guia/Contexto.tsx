@@ -84,7 +84,7 @@ export default function GuiaContexto() {
             </h1>
             <div className="w-12 h-px bg-western-gold mb-5" />
             <p className="font-display italic text-[15px] md:text-[17px] text-western-stone-warm max-w-md leading-relaxed">
-              Em três perguntas, mostramos três caminhos de composição com peças, preço e prévia em SketchUp.
+              Em três perguntas, mostramos três caminhos de composição com peças, preço e visualização da composição.
             </p>
           </div>
           <div className="relative h-[280px] md:h-[460px] overflow-hidden">
@@ -110,7 +110,7 @@ export default function GuiaContexto() {
             {[
               { n: "01", t: "Conte sobre o ambiente", d: "Tipo, área aproximada e o tom de acabamento." },
               { n: "02", t: "Veja três caminhos", d: "Composições essencial, equilibrada e completa." },
-              { n: "03", t: "Refine e baixe o SketchUp", d: "Ajuste peças, some autorais e leve a prévia." },
+              { n: "03", t: "Refine e finalize", d: "Ajuste peças, some autorais e feche o pedido." },
             ].map((s) => (
               <li key={s.n} className="flex gap-4">
                 <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold pt-1.5">{s.n}</span>

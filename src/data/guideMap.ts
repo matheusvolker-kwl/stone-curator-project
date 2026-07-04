@@ -385,16 +385,6 @@ export function resolveUpgrade(a: GuideAnswers): ConjuntoLeaf | null {
   return result;
 }
 
-export interface SketchAssets {
-  pdfUrl: string;
-  skpUrl: string;
-}
-export function sketchAssetsFor(handle: string): SketchAssets {
-  return {
-    pdfUrl: `${STORE_PUBLIC_URL}/wp-content/uploads/sketches/${handle}.pdf`,
-    skpUrl: `${STORE_PUBLIC_URL}/wp-content/uploads/sketches/${handle}.skp`,
-  };
-}
 
 export function resolveConjunto(a: GuideAnswers): ConjuntoLeaf | Consultor | null {
   if (!a.tipo || !a.tamanho || !a.nivel) return null;
