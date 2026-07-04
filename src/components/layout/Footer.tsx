@@ -184,6 +184,13 @@ export default function Footer() {
                 </button>
               </form>
             )}
+            {!done && (
+              <TurnstileWidget
+                onToken={setCaptchaToken}
+                onExpire={() => setCaptchaToken(null)}
+                className="mt-3"
+              />
+            )}
             <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-cream-muted/70 mt-2">
               Sem spam. Cancele quando quiser.
             </p>
