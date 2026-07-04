@@ -31,6 +31,7 @@ export default function Footer() {
   const [hp, setHp] = useState(""); // honeypot
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const handleNewsletter = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,16 +41,21 @@ export default function Footer() {
       if (msg !== "spam") toast.error(msg);
       return;
     }
+    if (!captchaToken) {
+      toast.error("Confirme que você não é um robô.");
+      return;
+    }
     setLoading(true);
-    const { error } = await supabase.from("leads").insert({
+    const res = await submitSecureLead({
       type: "newsletter",
       email: parsed.data.email,
       origem: "site/footer/newsletter",
       payload: { source: "footer", consent: true, ts: new Date().toISOString() },
-    });
+    }, captchaToken);
     setLoading(false);
-    if (error) {
-      toast.error("Não foi possível inscrever agora.", { description: "Tente novamente em instantes." });
+    setCaptchaToken(null);
+    if (!res.ok) {
+      toast.error("Não foi possível inscrever agora.", { description: res.error ?? "Tente novamente em instantes." });
       return;
     }
     setEmail("");
