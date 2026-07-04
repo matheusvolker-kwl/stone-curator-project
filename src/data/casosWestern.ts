@@ -9,6 +9,7 @@ import rosewoodPoster from "@/assets/casos-western/rosewood-poster.webp.asset.js
 import nicoleVideo from "@/assets/casos-western/nicole-sigaud.mp4.asset.json";
 import clienteVideo from "@/assets/casos-western/cliente-western.mp4.asset.json";
 import rosewoodVideo from "@/assets/casos-western/rosewood.mp4.asset.json";
+import projetoResidencial from "@/assets/casos-western/projeto-residencial.webp.asset.json";
 
 export type CasoTipo = "video" | "image";
 
@@ -82,5 +83,15 @@ export const CASOS_WESTERN: CasoWestern[] = [
     credito: "Fazzenda Park Resort · Gaspar/SC",
     titulo: "Cascata em pedras Western",
     story: "Cascata de grande porte executada com peças Western.",
+  },
+  {
+    id: "projeto-residencial",
+    tipo: "image",
+    mediaUrl: projetoResidencial.url,
+    posterUrl: projetoResidencial.url,
+    credito: "Cascata Santa Bárbara",
+    titulo: "Projeto residencial",
+    story:
+      "Cascata Santa Bárbara e outras peças Western distribuídas pelo espaço da residência, compondo um ambiente orgânico e integrado à natureza.",
   },
 ];

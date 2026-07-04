@@ -18,11 +18,11 @@ function toEmbedUrl(url: string) {
 
 function Caption({ caso }: { caso: CasoWestern }) {
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent px-4 pt-14 pb-4">
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold/90">
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/65 to-transparent px-4 pt-20 pb-4">
+      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
         {caso.credito}
       </p>
-      <p className="font-display text-base md:text-lg text-western-cream mt-1.5 leading-snug">
+      <p className="font-display text-base md:text-lg text-western-cream mt-1.5 leading-snug drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
         {caso.titulo}
       </p>
     </div>
@@ -113,14 +113,14 @@ export default function ProjetosWesternBand() {
                 <PlayOverlay />
               </>
             )}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent px-6 md:px-10 pt-20 pb-6 md:pb-8">
-              <p className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-western-gold">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent px-6 md:px-10 pt-20 pb-6 md:pb-8">
+              <p className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-western-gold drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
                 {destaque.credito}
               </p>
-              <p className="font-display text-xl md:text-3xl text-western-cream mt-2 leading-snug max-w-2xl">
+              <p className="font-display text-xl md:text-3xl text-western-cream mt-2 leading-snug max-w-2xl drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
                 {destaque.titulo}
               </p>
-              <p className="hidden md:block text-western-cream/85 mt-3 max-w-2xl text-sm leading-relaxed">
+              <p className="hidden md:block text-western-cream/85 mt-3 max-w-2xl text-sm leading-relaxed drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
                 {destaque.story}
               </p>
             </div>
