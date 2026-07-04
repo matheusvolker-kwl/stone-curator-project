@@ -153,6 +153,7 @@ export default function GuiaContexto() {
                   key={t.value}
                   value={t.value}
                   label={tipoVisualMap[t.value].label}
+                  microcopy={tipoMicrocopy[t.value]}
                   image={tipoImage[t.value]}
                   selected={tipo === t.value}
                   onSelect={setTipo}
