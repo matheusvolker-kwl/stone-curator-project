@@ -19,9 +19,11 @@ import {
   ChevronRight,
   Download,
   Info,
+  Maximize2,
   ShieldCheck,
   Sparkles,
   Truck,
+  X,
 } from "lucide-react";
 
 import Seo from "@/components/seo/Seo";
