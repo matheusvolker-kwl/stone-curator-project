@@ -98,7 +98,7 @@ export default function ProjetosWesternBand() {
           <button
             type="button"
             onClick={() => setOpenIndex(items.indexOf(destaque))}
-            className="group relative block w-full overflow-hidden rounded-[2px] bg-western-stone-warm/10 mb-4 md:mb-5 aspect-[16/9] md:aspect-[21/9]"
+            className="group relative block w-full overflow-hidden rounded-[2px] bg-western-stone-warm/10 ring-1 ring-western-gold/10 shadow-[0_20px_50px_-25px_rgba(0,0,0,0.7)] mb-4 md:mb-5 aspect-[16/9] md:aspect-[21/9]"
           >
             <img
               src={destaque.posterUrl}
