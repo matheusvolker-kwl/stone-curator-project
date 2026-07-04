@@ -86,6 +86,20 @@ export default function ConjuntoPage() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [zoomed, setZoomed] = useState(false);
 
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [lightboxOpen]);
+
   const info = useMemo(() => (handle ? getConjuntoByHandle(handle) : null), [handle]);
 
   // Contexto vindo do guia (query) — usado só p/ chips e link do Refinar
