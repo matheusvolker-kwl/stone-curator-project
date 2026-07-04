@@ -74,6 +74,8 @@ export default function ProductGallery({
               src={cdnImg(current.url, 1200)}
               srcSet={cdnSrcSet(current.url, [600, 1000, 1400])}
               sizes="(min-width: 768px) 50vw, 100vw"
+              width={1200}
+              height={1200}
               alt={current.altText ?? productTitle}
               decoding="async"
               className="w-full h-full object-contain p-4 md:p-8 animate-fade-in pointer-events-none"
