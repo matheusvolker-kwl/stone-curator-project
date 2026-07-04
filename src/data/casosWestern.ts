@@ -1,14 +1,14 @@
 // Casos reais / prova social — Western
-// TODO: Cliente vai substituir mediaUrl (vídeos) e posterUrl (imagens/thumbs) pelas URLs reais.
-// Para os itens do tipo "video", preencher mediaUrl com um link direto para o arquivo (mp4)
-// ou um embed URL (YouTube/Vimeo). Enquanto isso, usamos posters/imagens já existentes
-// no projeto como placeholders visuais.
-import img01 from "@/assets/projetos-western/01_hero-tapirai.webp.asset.json";
-import img02 from "@/assets/projetos-western/02_pedra-detalhe.webp.asset.json";
-import img03 from "@/assets/projetos-western/03_piscina-cascata.webp.asset.json";
-import img05 from "@/assets/projetos-western/05_cascata-escalonada.webp.asset.json";
-import img06 from "@/assets/projetos-western/06_piscina-cascata-serra.webp.asset.json";
-import img08 from "@/assets/projetos-western/08_piscina-paisagismo.webp.asset.json";
+// Mídia real conectada. Imagens e vídeos hospedados como assets do projeto.
+import caitoMaia from "@/assets/casos-western/caito-maia.webp.asset.json";
+import uniqueGarden from "@/assets/casos-western/unique-garden.webp.asset.json";
+import fazzendaPark from "@/assets/casos-western/fazzenda-park.webp.asset.json";
+import nicolePoster from "@/assets/casos-western/nicole-sigaud-poster.webp.asset.json";
+import clientePoster from "@/assets/casos-western/cliente-western-poster.webp.asset.json";
+import rosewoodPoster from "@/assets/casos-western/rosewood-poster.webp.asset.json";
+import nicoleVideo from "@/assets/casos-western/nicole-sigaud.mp4.asset.json";
+import clienteVideo from "@/assets/casos-western/cliente-western.mp4.asset.json";
+import rosewoodVideo from "@/assets/casos-western/rosewood.mp4.asset.json";
 
 export type CasoTipo = "video" | "image";
 
@@ -29,9 +29,8 @@ export const CASOS_WESTERN: CasoWestern[] = [
   {
     id: "nicole-sigaud",
     tipo: "video",
-    // TODO: substituir por URL real do vídeo (mp4 ou embed)
-    mediaUrl: "",
-    posterUrl: img01.url,
+    mediaUrl: nicoleVideo.url,
+    posterUrl: nicolePoster.url,
     credito: "Nicole Sigaud · Arquiteta",
     titulo: "Piscina e cascata em terreno íngreme",
     story:
@@ -41,19 +40,17 @@ export const CASOS_WESTERN: CasoWestern[] = [
   {
     id: "cliente-western",
     tipo: "video",
-    // TODO: URL real do vídeo
-    mediaUrl: "",
-    posterUrl: img03.url,
-    credito: "Cliente Western",
+    mediaUrl: clienteVideo.url,
+    posterUrl: clientePoster.url,
+    credito: "Conrado · Cliente",
     titulo: "Como a Western transformou o ambiente",
     story: "Depoimento de cliente sobre o resultado no seu espaço.",
   },
   {
     id: "unique-garden",
     tipo: "image",
-    // TODO: URL real da imagem em alta
-    mediaUrl: img02.url,
-    posterUrl: img02.url,
+    mediaUrl: uniqueGarden.url,
+    posterUrl: uniqueGarden.url,
     credito: "Unique Garden",
     titulo: "Chalé simbionte com o morro",
     story:
@@ -62,9 +59,8 @@ export const CASOS_WESTERN: CasoWestern[] = [
   {
     id: "caito-maia",
     tipo: "image",
-    // TODO: URL real da imagem
-    mediaUrl: img08.url,
-    posterUrl: img08.url,
+    mediaUrl: caitoMaia.url,
+    posterUrl: caitoMaia.url,
     credito: "Caito Maia · Empresário",
     titulo: "Base de mesa em pedra Western",
     story: "Peça sob medida para o escritório, feita com pedra Western.",
@@ -72,9 +68,8 @@ export const CASOS_WESTERN: CasoWestern[] = [
   {
     id: "rosewood",
     tipo: "video",
-    // TODO: URL real do vídeo
-    mediaUrl: "",
-    posterUrl: img06.url,
+    mediaUrl: rosewoodVideo.url,
+    posterUrl: rosewoodPoster.url,
     credito: "Rosewood · Ed. Matarazzo",
     titulo: "Revestimentos e pedras Western",
     story: "Aplicação em um dos endereços mais icônicos de São Paulo.",
@@ -82,9 +77,8 @@ export const CASOS_WESTERN: CasoWestern[] = [
   {
     id: "fazzenda-park",
     tipo: "image",
-    // TODO: URL real da imagem
-    mediaUrl: img05.url,
-    posterUrl: img05.url,
+    mediaUrl: fazzendaPark.url,
+    posterUrl: fazzendaPark.url,
     credito: "Fazzenda Park Resort · Gaspar/SC",
     titulo: "Cascata em pedras Western",
     story: "Cascata de grande porte executada com peças Western.",
