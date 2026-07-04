@@ -456,6 +456,43 @@ export default function ProductPage() {
                       <DeliverySignals variant="full" />
                     </div>
 
+                    {/* 2.6 — Callout Modelo 3D SketchUp */}
+                    {(() => {
+                      const m3d = product.modelo3d?.value?.trim();
+                      const url = m3d || BUSINESS.sketchupWarehouse;
+                      const isProductSpecific = !!m3d;
+                      return (
+                        <div
+                          id="modelo-3d-callout"
+                          className="border border-western-green-deep/20 bg-western-cream/60 px-4 py-4 flex items-start gap-3"
+                        >
+                          <div className="h-9 w-9 flex items-center justify-center bg-western-green-deep/5 border border-western-green-deep/15 flex-shrink-0">
+                            <Box className="h-4 w-4 text-western-green-deep" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-display text-[15px] leading-tight text-western-green-deep">
+                              Modelo 3D SketchUp disponível
+                            </p>
+                            <p className="text-[12.5px] text-western-stone-warm/90 leading-snug mt-1">
+                              Baixe e aprove a composição com seu cliente antes de comprar.
+                            </p>
+                          </div>
+                          <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 h-9 px-3 border border-western-green-deep/30 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-[10px] uppercase tracking-[0.2em] transition-colors flex-shrink-0 self-center"
+                          >
+                            <Download className="h-3.5 w-3.5" />
+                            <span className="hidden sm:inline">
+                              {isProductSpecific ? "Baixar .skp" : "3D Warehouse"}
+                            </span>
+                          </a>
+                        </div>
+                      );
+                    })()}
+
+
                   </>
                 );
               })()}
