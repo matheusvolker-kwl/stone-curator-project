@@ -32,17 +32,17 @@ export default function PriceGate({ children, variant = "inline" }: Props) {
 
   // ─── Block (PDP): pitch de parceria, preço 100% oculto ───
   const beneficios = [
-    "Catálogo completo pronto pra montar o pedido e comprar",
+    "Catálogo completo pronto para montar seu pedido e comprar",
     "Artes, modelos SketchUp, guia de compra e de instalação",
     "Fotos aplicadas, de estúdio e descrições detalhadas",
-    "Pagamento em Pix, boleto ou cartão",
+    "Pagamento em Pix, boleto ou cartão de crédito",
   ];
 
   return (
     <div className="border border-western-gold/40 bg-western-gold/[0.06] px-5 py-6 md:px-6 md:py-7 min-w-0">
-      <p className="text-eyebrow mb-3">Preço exclusivo para parceiros</p>
+      <p className="text-eyebrow mb-3">PREÇO EXCLUSIVO PARA PARCEIROS B2B</p>
       <h3 className="font-display text-2xl md:text-[26px] leading-[1.15] text-western-green-deep mb-3">
-        Preço de parceiro, liberado na hora
+        Preço de parceiro comercial, liberado na hora
       </h3>
       <p className="text-spec text-western-green-deep/85 leading-relaxed mb-5">
         A Western Store é exclusiva para parceiros. A aprovação é automática e
