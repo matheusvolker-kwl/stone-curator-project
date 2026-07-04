@@ -96,7 +96,7 @@ export default function Index() {
                 Pedras artesanais para projetos profissionais.
               </h1>
               <p className="text-western-cream-muted text-sm md:text-base leading-relaxed max-w-lg mt-4 mb-8">
-                Preço de parceiro liberado para profissionais com CNPJ — cadastre-se grátis e veja os valores de atacado.
+                Loja&nbsp; para profissionais com CNPJ — cadastre-se grátis e veja os valores de atacado.
               </p>
               <div className="flex flex-wrap items-center gap-3">
                 <Link
