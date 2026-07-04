@@ -92,6 +92,12 @@ export default function AudienceOverlay() {
     return () => window.clearTimeout(t);
   }, [location.pathname]);
 
+  useEffect(() => {
+    const onReopen = () => setOpen(true);
+    window.addEventListener("western:open-audience", onReopen);
+    return () => window.removeEventListener("western:open-audience", onReopen);
+  }, []);
+
   const choosePro = () => {
     writeChoice("pro");
     setOpen(false);
