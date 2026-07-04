@@ -443,24 +443,6 @@ export default function ProductPage() {
                       <DeliverySignals variant="full" />
                     </div>
 
-                    {/* 2.6 — Link discreto: pintura personalizada */}
-                    {visibleOptions.some((o) => /acabament/i.test(o.name)) && (
-                      <div className="pt-1">
-                        <button
-                          onClick={() => {
-                            const msg = `Olá! Gostaria de uma pintura personalizada para ${product.title}.`;
-                            window.open(
-                              `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`,
-                              "_blank"
-                            );
-                          }}
-                          className="inline-flex items-start gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors text-left max-w-full"
-                        >
-                          <MessageCircle className="h-3.5 w-3.5 shrink-0 mt-px" />
-                          <span className="break-words">Pintura personalizada · falar com consultor</span>
-                        </button>
-                      </div>
-                    )}
                   </>
                 );
               })()}
