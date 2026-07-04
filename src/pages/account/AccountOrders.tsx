@@ -312,6 +312,16 @@ function OrderDetail({ order, onBack, onRepetir }: { order: ProductionOrder; onB
             >
               <FileDown className="h-3 w-3" /> Baixar PDF
             </button>
+            {onRepetir && Array.isArray(order.itens) && order.itens.length > 0 && (
+              <button
+                type="button"
+                onClick={() => onRepetir(order)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep border border-western-green-deep/30 hover:bg-western-cream"
+              >
+                <Copy className="h-3 w-3" /> Repetir pedido
+              </button>
+            )}
+
           </div>
         </div>
       </div>
