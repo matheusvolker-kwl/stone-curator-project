@@ -4,9 +4,18 @@ import { Link } from "react-router-dom";
 import { formatPreco, type ConjuntoLeaf } from "@/data/guideMap";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import type { Acabamento, ProjetoExtra, ProjetoPeca } from "./types";
 import { acabamentoMeta } from "./types";
 import { toast } from "sonner";
+
+export interface ProjetoMeta {
+  conjuntoHandle?: string;
+  conjuntoNome?: string;
+  tipoVisual?: string;
+  areaM2?: number;
+  nivel?: string;
+}
 
 interface Props {
   conjunto: ConjuntoLeaf;
@@ -18,7 +27,9 @@ interface Props {
   onFinalizar: () => void;
   onFinalizarCompra?: () => void;
   checkoutLoading?: boolean;
+  projetoMeta?: ProjetoMeta;
 }
+
 
 function PanelBody({
   conjunto,
@@ -30,11 +41,65 @@ function PanelBody({
   onFinalizar,
   onFinalizarCompra,
   checkoutLoading = false,
+  projetoMeta,
 }: Props) {
-  const { isApproved, session } = useAuth();
+  const { isApproved, session, user } = useAuth();
   const subBase = pecas.reduce((a, p) => a + p.preco * p.qty, 0);
   const subExtras = extras.reduce((a, e) => a + e.preco * e.qty, 0);
   const total = subBase + subExtras;
+  const [salvando, setSalvando] = useState(false);
+
+  const handleSalvar = async () => {
+    if (salvando) return;
+    setSalvando(true);
+    const snapshot = {
+      kind: "composicao_guia" as const,
+      savedAt: new Date().toISOString(),
+      acabamento: acabamentoMeta[acabamento].label,
+      conjunto: conjunto.nome,
+      ...projetoMeta,
+      total,
+      pecas: pecas.map((p) => ({
+        id: p.id,
+        nome: p.nome,
+        qty: p.qty,
+        preco: p.preco,
+        variantId: (p as unknown as { variantId?: string }).variantId,
+        productHandle: (p as unknown as { productHandle?: string }).productHandle,
+      })),
+      extras: extras.map((e) => ({
+        id: e.id,
+        nome: e.nome,
+        qty: e.qty,
+        preco: e.preco,
+        variantId: (e as unknown as { variantId?: string }).variantId,
+        productHandle: (e as unknown as { productHandle?: string }).productHandle,
+      })),
+    };
+    try {
+      if (user) {
+        const { error } = await supabase.from("guide_exports").insert({
+          user_id: user.id,
+          payload: snapshot,
+        });
+        if (error) throw error;
+        toast.success("Projeto salvo em Minha conta.");
+      } else {
+        const key = "western-projetos-salvos";
+        const raw = localStorage.getItem(key);
+        const arr = raw ? (JSON.parse(raw) as unknown[]) : [];
+        const next = [snapshot, ...arr].slice(0, 20);
+        localStorage.setItem(key, JSON.stringify(next));
+        toast.success("Projeto salvo neste navegador.");
+      }
+    } catch (err) {
+      console.warn("[salvar-projeto]", err);
+      toast.error("Não foi possível salvar. Tente novamente.");
+    } finally {
+      setSalvando(false);
+    }
+  };
+
 
   return (
     <div className="surface-forest shadow-[0_36px_56px_-30px_hsl(var(--western-stone-dark)/0.45)] flex flex-col relative overflow-hidden">
@@ -186,11 +251,13 @@ function PanelBody({
           )}
           <button
             type="button"
-            onClick={() => toast(session ? "Projeto salvo no seu painel." : "Faça login para salvar o projeto.")}
-            className="text-[12px] text-western-cream-muted hover:text-western-cream underline-offset-4 hover:underline self-center"
+            onClick={handleSalvar}
+            disabled={salvando}
+            className="text-[12px] text-western-cream-muted hover:text-western-cream underline-offset-4 hover:underline self-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Salvar projeto e decidir depois
+            {salvando ? "Salvando…" : "Salvar projeto e decidir depois"}
           </button>
+
         </div>
       </div>
     </div>

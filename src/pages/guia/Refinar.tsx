@@ -435,7 +435,15 @@ export default function GuiaRefinar() {
             onFinalizar={onBaixarComposicao}
             onFinalizarCompra={onFinalizarCompra}
             checkoutLoading={cartLoading}
+            projetoMeta={{
+              conjuntoHandle: handle,
+              conjuntoNome: found?.conjunto.nome,
+              tipoVisual: tipoVisualMap[tipoVisual].label,
+              areaM2: area ? Number(area) : undefined,
+              nivel: nivelParam,
+            }}
           />
+
         </div>
       </main>
 

@@ -18,6 +18,81 @@ import {
 import { toast } from "sonner";
 import { formatBRL } from "@/lib/catalog/client";
 import { downloadPedidoPdf } from "@/lib/pdf/pedidoPdf";
+import { useCartStore, type CartItem } from "@/stores/cartStore";
+
+function mapOrderItensToCart(itens: unknown): CartItem[] {
+  if (!Array.isArray(itens)) return [];
+  const out: CartItem[] = [];
+  for (const rawIt of itens) {
+    if (!rawIt || typeof rawIt !== "object") continue;
+    const raw = rawIt as Record<string, unknown>;
+    const variantId =
+      (typeof raw.variantId === "string" && raw.variantId) ||
+      (typeof raw.variant_id === "string" && raw.variant_id) ||
+      (typeof raw.id === "string" && raw.id) ||
+      "";
+    if (!variantId) continue;
+    const priceRaw = raw.price as Record<string, unknown> | undefined;
+    const amount =
+      priceRaw && typeof priceRaw.amount === "string"
+        ? priceRaw.amount
+        : priceRaw && typeof priceRaw.amount === "number"
+        ? String(priceRaw.amount)
+        : typeof raw.price === "number"
+        ? String(raw.price)
+        : "0";
+    const currencyCode =
+      priceRaw && typeof priceRaw.currencyCode === "string" ? priceRaw.currencyCode : "BRL";
+    const options = (raw.selectedOptions ?? raw.options) as unknown;
+    const selectedOptions = Array.isArray(options)
+      ? options.filter(
+          (o): o is { name: string; value: string } =>
+            !!o && typeof o === "object" && typeof (o as { name?: unknown }).name === "string" &&
+            typeof (o as { value?: unknown }).value === "string",
+        )
+      : [];
+    const wooAttrs = raw.wooAttributes;
+    out.push({
+      productHandle:
+        typeof raw.productHandle === "string" ? raw.productHandle : String(raw.handle ?? variantId),
+      productTitle:
+        typeof raw.productTitle === "string"
+          ? raw.productTitle
+          : typeof raw.title === "string"
+          ? raw.title
+          : "Item",
+      productImage:
+        typeof raw.productImage === "string"
+          ? raw.productImage
+          : typeof raw.image === "string"
+          ? raw.image
+          : null,
+      variantId,
+      variantTitle:
+        typeof raw.variantTitle === "string" ? raw.variantTitle : "",
+      price: { amount, currencyCode },
+      quantity: typeof raw.qty === "number" ? raw.qty : typeof raw.quantity === "number" ? raw.quantity : 1,
+      selectedOptions,
+      wooParentProductId:
+        typeof raw.wooParentProductId === "number" ? raw.wooParentProductId : undefined,
+      wooVariationId:
+        typeof raw.wooVariationId === "number" ? raw.wooVariationId : null,
+      wooKind:
+        raw.wooKind === "simple" || raw.wooKind === "variation" || raw.wooKind === "bundle"
+          ? raw.wooKind
+          : undefined,
+      wooAttributes: Array.isArray(wooAttrs)
+        ? wooAttrs.filter(
+            (a): a is { slug: string; value: string } =>
+              !!a && typeof a === "object" && typeof (a as { slug?: unknown }).slug === "string" &&
+              typeof (a as { value?: unknown }).value === "string",
+          )
+        : [],
+    });
+  }
+  return out;
+}
+
 
 type Status =
   | "aguardando"
@@ -45,9 +120,11 @@ interface ProductionOrder {
   endereco_entrega: string | null;
   valor_total: number | null;
   observacoes_cliente: string | null;
+  itens?: unknown;
   created_at: string;
   updated_at: string;
 }
+
 
 interface OrderEvent {
   id: string;
@@ -140,7 +217,7 @@ function ProgressTimeline({ order }: { order: ProductionOrder }) {
   );
 }
 
-function OrderDetail({ order, onBack }: { order: ProductionOrder; onBack: () => void }) {
+function OrderDetail({ order, onBack, onRepetir }: { order: ProductionOrder; onBack: () => void; onRepetir?: (order: ProductionOrder) => void }) {
   const [events, setEvents] = useState<OrderEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -235,6 +312,16 @@ function OrderDetail({ order, onBack }: { order: ProductionOrder; onBack: () => 
             >
               <FileDown className="h-3 w-3" /> Baixar PDF
             </button>
+            {onRepetir && Array.isArray(order.itens) && order.itens.length > 0 && (
+              <button
+                type="button"
+                onClick={() => onRepetir(order)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep border border-western-green-deep/30 hover:bg-western-cream"
+              >
+                <Copy className="h-3 w-3" /> Repetir pedido
+              </button>
+            )}
+
           </div>
         </div>
       </div>
@@ -384,10 +471,22 @@ function OrderCard({ order, onSelect }: { order: ProductionOrder; onSelect: () =
 
 export default function AccountOrders() {
   const { user } = useAuth();
+  const { addBundle } = useCartStore();
   const [orders, setOrders] = useState<ProductionOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"ativos" | "concluidos" | "todos">("ativos");
+
+  const handleRepetir = (order: ProductionOrder) => {
+    const cartItems = mapOrderItensToCart(order.itens);
+    if (cartItems.length === 0) {
+      toast.error("Este pedido não tem itens para repetir.");
+      return;
+    }
+    addBundle(cartItems);
+    toast.success(`${cartItems.length} item(ns) adicionados ao carrinho.`);
+  };
+
 
   useEffect(() => {
     if (!user) return;
@@ -455,7 +554,7 @@ export default function AccountOrders() {
     );
   }, [orders, filter]);
 
-  if (selected) return <OrderDetail order={selected} onBack={() => setSelectedId(null)} />;
+  if (selected) return <OrderDetail order={selected} onBack={() => setSelectedId(null)} onRepetir={handleRepetir} />;
 
   return (
     <div>

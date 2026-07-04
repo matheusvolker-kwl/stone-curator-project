@@ -27,11 +27,32 @@ const TIPOS: Array<{ value: TipoVisual }> = [
   { value: "jardim-seco" },
 ];
 
+const STORAGE_KEY = "western-guia-contexto";
+const VALID_TIPOS: TipoVisual[] = ["piscina", "lago", "lago-hibrido", "jardim-fonte", "jardim-seco"];
+
+function readStored(): { tipo?: TipoVisual; area?: string; acabamento?: Acabamento } {
+  try {
+    const raw = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as { tipo?: unknown; area?: unknown; acabamento?: unknown };
+    const tipo = typeof parsed.tipo === "string" && (VALID_TIPOS as string[]).includes(parsed.tipo)
+      ? (parsed.tipo as TipoVisual)
+      : undefined;
+    const area = typeof parsed.area === "string" ? parsed.area : "";
+    const acabamento = typeof parsed.acabamento === "string" && parsed.acabamento in acabamentoMeta
+      ? (parsed.acabamento as Acabamento)
+      : undefined;
+    return { tipo, area, acabamento };
+  } catch {
+    return {};
+  }
+}
+
 export default function GuiaContexto() {
   const navigate = useNavigate();
-  const [tipo, setTipo] = useState<TipoVisual | undefined>();
-  const [area, setArea] = useState("");
-  const [acabamento, setAcabamento] = useState<Acabamento | undefined>();
+  const [tipo, setTipo] = useState<TipoVisual | undefined>(() => readStored().tipo);
+  const [area, setArea] = useState(() => readStored().area ?? "");
+  const [acabamento, setAcabamento] = useState<Acabamento | undefined>(() => readStored().acabamento);
   const [highlight, setHighlight] = useState<string | null>(null);
 
   const refTipo = useRef<HTMLDivElement>(null);
@@ -42,10 +63,19 @@ export default function GuiaContexto() {
   const valid = !!tipo && areaNum >= 1 && areaNum <= 200 && !!acabamento;
 
   useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ tipo, area, acabamento }));
+    } catch {
+      /* ignore */
+    }
+  }, [tipo, area, acabamento]);
+
+  useEffect(() => {
     if (!highlight) return;
     const t = setTimeout(() => setHighlight(null), 2000);
     return () => clearTimeout(t);
   }, [highlight]);
+
 
   const handleSubmit = () => {
     if (!tipo) {
