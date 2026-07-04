@@ -92,7 +92,7 @@ export default function Linhas() {
                 const img = p.images?.edges?.[0]?.node;
                 const minPrice = p.priceRange?.minVariantPrice;
                 return (
-                  <Link key={p.handle} to={`/produto/${p.handle}`} className="group block">
+                  <Link key={p.handle} to={`/produtos/${p.handle}`} className="group block">
                     <div className="frame-product aspect-square overflow-hidden mb-3 bg-western-stone-warm/5">
                       {img ? (
                         <img
