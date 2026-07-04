@@ -125,11 +125,15 @@ export default function ConjuntoPage() {
   });
 
   const pecasEnriched = useMemo(() => {
+    const acabLabel = acabamentoMeta[acabamento].label;
     if (!composicao) return [];
     const byHandle = new Map((produtos ?? []).map((p) => [p.handle, p] as const));
     return composicao.map((row) => {
       const prod = byHandle.get(row.handle);
-      const variant = prod?.variants.edges[0]?.node;
+      const variant =
+        prod?.variants.edges.find((e) =>
+          e.node.selectedOptions?.some((o) => o.name === "Acabamento" && o.value === acabLabel),
+        )?.node ?? prod?.variants.edges[0]?.node;
       const unit = variant
         ? parseFloat(variant.price.amount)
         : prod
@@ -144,9 +148,13 @@ export default function ConjuntoPage() {
         imageUrl: img?.url ? cdnImg(img.url, 800) : undefined,
         variantId: variant?.id,
         variantTitle: variant?.title,
+        wooParentProductId: variant?.wooParentProductId,
+        wooVariationId: variant?.wooVariationId ?? null,
+        wooKind: variant?.wooKind,
+        wooAttributes: variant?.wooAttributes ?? [],
       };
     });
-  }, [composicao, produtos]);
+  }, [composicao, produtos, acabamento]);
 
   const totalPecas = pecasEnriched.reduce((s, p) => s + p.qty, 0);
   const totalPreco = pecasEnriched.reduce((s, p) => s + p.unitPrice * p.qty, 0);
