@@ -207,15 +207,6 @@ export default function CartDrawer({
                           onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
                           className="h-11 w-11 flex items-center justify-center hover:bg-western-gold/10 transition-colors"
                           aria-label="Aumentar"
-
-                        >
-                          <Minus className="h-3 w-3" />
-                        </button>
-                        <span className="px-3 font-sans text-base tabular-nums min-w-[2ch] text-center">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                          className="h-9 w-9 flex items-center justify-center hover:bg-western-gold/10 transition-colors"
-                          aria-label="Aumentar"
                         >
                           <Plus className="h-3 w-3" />
                         </button>
@@ -224,8 +215,9 @@ export default function CartDrawer({
                   </div>
                   <button
                     onClick={() => removeItem(item.variantId)}
-                    className="absolute top-0 right-0 p-1.5 -m-1.5 text-western-cream-muted hover:text-western-gold-soft transition-colors"
+                    className="absolute top-0 right-0 h-11 w-11 flex items-center justify-center -m-1.5 text-western-cream-muted hover:text-western-gold-soft transition-colors"
                     aria-label="Remover peça"
+
                   >
                     <X className="h-4 w-4" />
                   </button>
