@@ -119,7 +119,7 @@ export default function ConjuntoPage() {
 
   const { data: produtos, isLoading } = useQuery({
     queryKey: ["conjunto-page", handle, composicaoHandles],
-    queryFn: () => fetchProductsByHandles(composicaoHandles),
+    queryFn: () => fetchProductsByHandlesHydrated(composicaoHandles),
     enabled: composicaoHandles.length > 0,
     staleTime: 5 * 60 * 1000,
   });
