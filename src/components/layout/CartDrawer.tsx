@@ -223,15 +223,19 @@ export default function CartDrawer({
             </ul>
           )}
 
-          {items.length > 0 && (
-            <div className="mt-8 -mx-5 md:-mx-8">
-              <CartCrossSell
-                collectionHandle={undefined}
-                excludeHandles={items.map((i) => i.productHandle)}
-                onNavigate={() => onOpenChange(false)}
-              />
-            </div>
-          )}
+          {items.length > 0 && (() => {
+            const soAvulsos = items.every((i) => i.wooKind !== "bundle" && !i.conjuntoRef);
+            const crossHandle = soAvulsos ? "conjuntos" : (items[0]?.collectionHandle ?? "conjuntos");
+            return (
+              <div className="mt-8 -mx-5 md:-mx-8">
+                <CartCrossSell
+                  collectionHandle={crossHandle}
+                  excludeHandles={items.map((i) => i.productHandle)}
+                  onNavigate={() => onOpenChange(false)}
+                />
+              </div>
+            );
+          })()}
         </div>
 
         {items.length > 0 && (
@@ -245,32 +249,29 @@ export default function CartDrawer({
                 </span>
               </div>
               {isApproved && (
-                <div className="border border-western-gold/15 bg-western-green-deep/30 px-3 py-2.5 space-y-1">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <Truck className="h-4 w-4 text-western-gold-soft flex-shrink-0" />
-                      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold-soft/90">
-                        Frete
-                      </span>
+                <div className="border border-western-gold/15 bg-western-green-deep/30 px-3 py-2.5 space-y-1.5">
+                  <div className="flex items-start gap-2">
+                    <Truck className="h-4 w-4 text-western-gold-soft flex-shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold-soft/90">
+                        Frete calculado no checkout
+                      </p>
+                      <p className="text-[11px] text-western-cream/70 mt-1 leading-snug">
+                        Cotamos por CEP, incluindo pedidos multivolume, na etapa de pagamento.
+                        Retirada grátis em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
+                      </p>
+                      <a
+                        href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
+                          "Olá, Western. Estou montando um pedido grande / de obra e gostaria de uma cotação logística dedicada.",
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block mt-1.5 text-[11px] text-western-cream/70 hover:text-western-gold-soft transition-colors"
+                      >
+                        Pedido grande ou obra? Falar no WhatsApp →
+                      </a>
                     </div>
-                    <span className="font-sans text-[12px] text-western-cream">
-                      Calculado no checkout
-                    </span>
                   </div>
-                  {items.some((i) => (i.pesoKg ?? 0) > 100) ? (
-                    <a
-                      href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent("Olá, Western. Estou montando um pedido com peças de grande porte e gostaria de condição logística personalizada.")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block text-[11px] text-western-cream/70 hover:text-western-gold-soft transition-colors pl-6"
-                    >
-                      Peça grande? Cotação dedicada via WhatsApp →
-                    </a>
-                  ) : (
-                    <p className="text-[11px] text-western-cream/65 pl-6">
-                      Todo o Brasil · Retirada grátis em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}
-                    </p>
-                  )}
                 </div>
               )}
             </div>
