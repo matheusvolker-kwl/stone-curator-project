@@ -478,7 +478,7 @@ export default function ConjuntoPage() {
                         <GatedPrice amount={p.unitPrice} suffix="/ un." />
                       </div>
                     </div>
-                  </article>
+                  </Link>
                 ))}
           </div>
         </div>
