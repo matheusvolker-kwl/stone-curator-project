@@ -428,14 +428,14 @@ export default function ContrateAWestern() {
         </div>
       </section>
 
-      {/* 5) PROVA SOCIAL */}
-      <section className="surface-forest py-20 md:py-28 border-y border-western-gold/15">
+      {/* 5) PROVA SOCIAL — rostos + mural de logos */}
+      <section className="surface-ivory py-16 md:py-24 border-t border-western-stone-warm/10">
         <div className="container-western max-w-5xl">
-          <Reveal variant="fade-up" duration={700}>
+          <Reveal variant="fade-up" duration={750}>
             <SocialProof
-              variant="dark"
-              eyebrow="Assinado por quem entende"
-              titulo="A pedra Western já está nos projetos que definem o paisagismo brasileiro."
+              eyebrow="Quem confia na Western"
+              titulo={<>Especificada por quem define o paisagismo brasileiro.</>}
+              groups={["celebridades", "profissionais", "marcas"]}
             />
           </Reveal>
         </div>
