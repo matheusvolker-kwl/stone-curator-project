@@ -1,5 +1,5 @@
 // Generates public/sitemap.xml. Runs via predev/prebuild npm hooks.
-import { writeFileSync, readFileSync, existsSync } from "fs";
+import { writeFileSync } from "fs";
 import { resolve } from "path";
 
 const BASE_URL = "https://westernstore.com.br";
@@ -31,21 +31,10 @@ const staticEntries: Entry[] = [
   { path: "/privacidade", changefreq: "yearly", priority: "0.3" },
 ];
 
-// Read Supabase URL + anon key from .env — same values the app uses at runtime.
-function readEnv(): { url?: string; key?: string } {
-  try {
-    const envPath = resolve(".env");
-    if (!existsSync(envPath)) return {};
-    const text = readFileSync(envPath, "utf8");
-    const get = (name: string) => {
-      const m = text.match(new RegExp(`^${name}\\s*=\\s*"?([^"\\n]+)"?`, "m"));
-      return m?.[1];
-    };
-    return { url: get("VITE_SUPABASE_URL"), key: get("VITE_SUPABASE_PUBLISHABLE_KEY") };
-  } catch {
-    return {};
-  }
-}
+// Supabase URL + anon key are public (embedded in the app bundle). Hardcoded
+// fallbacks keep the sitemap generator working in prod builds that lack `.env`.
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || "https://zibtysewpbeycngtbjjk.supabase.co";
+const SUPABASE_ANON = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppYnR5c2V3cGJleWNuZ3RiamprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNDE3NjMsImV4cCI6MjA5MzkxNzc2M30.NGI4k2HuA2DlNlIXS5twA5ZxB3mEn4vbHgyHH1e6ytA";
 
 interface WooProduct {
   slug?: string;
@@ -56,15 +45,10 @@ interface WooProduct {
 }
 
 async function fetchProductEntries(): Promise<Entry[]> {
-  const { url, key } = readEnv();
-  if (!url || !key) {
-    console.warn("sitemap: skipping products (missing SUPABASE_URL/PUBLISHABLE_KEY in .env)");
-    return [];
-  }
-  const endpoint = `${url}/functions/v1/woo-proxy?path=products&per_page=100&status=publish`;
+  const endpoint = `${SUPABASE_URL}/functions/v1/woo-proxy?path=products&per_page=100&status=publish`;
   try {
     const res = await fetch(endpoint, {
-      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` },
     });
     if (!res.ok) {
       console.warn(`sitemap: woo-proxy returned ${res.status}, using static entries only`);
