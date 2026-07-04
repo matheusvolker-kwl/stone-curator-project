@@ -64,6 +64,8 @@ export default function ColecoesGrid({ collections, isLoading }: Props) {
                     <img
                       src={cover.url}
                       sizes="(min-width: 1024px) 25vw, 45vw"
+                      width={800}
+                      height={1000}
                       alt={cover.alt}
                       loading="lazy"
                       decoding="async"
@@ -74,6 +76,8 @@ export default function ColecoesGrid({ collections, isLoading }: Props) {
                       src={cdnImg(c.image.url, 600)}
                       srcSet={cdnSrcSet(c.image.url, [400, 600, 900])}
                       sizes="(min-width: 1024px) 25vw, 45vw"
+                      width={800}
+                      height={1000}
                       alt={c.image.altText ?? c.title}
                       loading="lazy"
                       decoding="async"
