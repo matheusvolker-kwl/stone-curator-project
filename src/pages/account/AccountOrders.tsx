@@ -120,9 +120,11 @@ interface ProductionOrder {
   endereco_entrega: string | null;
   valor_total: number | null;
   observacoes_cliente: string | null;
+  itens?: unknown;
   created_at: string;
   updated_at: string;
 }
+
 
 interface OrderEvent {
   id: string;
