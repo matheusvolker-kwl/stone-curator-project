@@ -123,6 +123,7 @@ export default function ProductGallery({
       <div className="relative group">
         <div className="frame-product aspect-square overflow-hidden relative">
           <button
+            ref={triggerRef}
             type="button"
             onClick={() => setLightboxOpen(true)}
             className="absolute inset-0 w-full h-full cursor-zoom-in"
@@ -135,11 +136,12 @@ export default function ProductGallery({
               sizes="(min-width: 768px) 50vw, 100vw"
               width={1200}
               height={1200}
-              alt={current.altText ?? productTitle}
+              alt={current.altText ?? (total > 1 ? `${productTitle} — imagem ${activeIndex + 1} de ${total}` : productTitle)}
               decoding="async"
               className="w-full h-full object-contain p-4 md:p-8 animate-fade-in pointer-events-none"
             />
           </button>
+
 
           {/* Expand hint */}
           <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 px-2 py-1 bg-western-cream/85 border border-western-stone-warm/20 font-mono text-[9px] uppercase tracking-[0.2em] text-western-green-deep pointer-events-none opacity-70 group-hover:opacity-100 transition-opacity">
