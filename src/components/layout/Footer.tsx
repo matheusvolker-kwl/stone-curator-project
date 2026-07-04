@@ -4,7 +4,8 @@ import { z } from "zod";
 import logo from "@/assets/logo-horizontal-bege.png";
 import { Mail, Send, Loader2, Check } from "lucide-react";
 import { BUSINESS } from "@/config/business";
-import { supabase } from "@/integrations/supabase/client";
+import { submitSecureLead } from "@/lib/leads";
+import TurnstileWidget from "@/components/security/TurnstileWidget";
 import { toast } from "sonner";
 
 const newsletterSchema = z.object({
