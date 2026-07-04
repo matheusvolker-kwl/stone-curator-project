@@ -197,7 +197,7 @@ export default function ProductPage() {
     description: plainDesc.slice(0, 300),
     sku: sku || undefined,
     brand: { "@type": "Brand", name: "Western" },
-    url: `https://westernstore.lovable.app/produtos/${product.handle}`,
+    url: `${SITE_URL}/produtos/${product.handle}`,
   };
 
   const installationConfig = getInstallationConfig(
