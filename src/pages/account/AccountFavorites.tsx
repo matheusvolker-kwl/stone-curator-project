@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Heart, Trash2, ArrowRight } from "lucide-react";
+import { Heart, Trash2, ArrowRight, Share2 } from "lucide-react";
 import { useWishlist } from "@/hooks/useWishlist";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -15,9 +15,35 @@ export default function AccountFavorites() {
     });
   };
 
+  const handleShare = async () => {
+    const handles = items.map((i) => i.product_handle).join(",");
+    const url = `${window.location.origin}/favoritos-compartilhados?itens=${encodeURIComponent(handles)}`;
+    try {
+      if (typeof navigator !== "undefined" && "share" in navigator) {
+        await navigator.share({ title: "Seleção Western", url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast.success("Link copiado");
+      }
+    } catch {
+      /* cancelamento silencioso */
+    }
+  };
+
   return (
     <div>
-      <p className="text-eyebrow mb-3">Favoritos</p>
+      <div className="flex items-start justify-between gap-4 mb-3">
+        <p className="text-eyebrow">Favoritos</p>
+        {items.length > 0 && (
+          <button
+            type="button"
+            onClick={handleShare}
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors"
+          >
+            <Share2 className="h-4 w-4" /> Compartilhar lista
+          </button>
+        )}
+      </div>
       <h2 className="font-display text-3xl text-western-green-deep mb-2">Pedras salvas</h2>
       <p className="text-western-stone-warm mb-8 max-w-prose">
         Salve pedras para revisitar antes de fechar pedido ou montar moodboards.
