@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 import SocialProof from "@/components/shared/SocialProof";
 import Reveal from "@/components/shared/Reveal";
+import ProjetosWesternBand from "@/components/shared/ProjetosWesternBand";
 import { useScrollY } from "@/hooks/useScrollY";
 import { ArrowRight, Layers, Mountain, Recycle, Hammer, Quote } from "lucide-react";
 import retrato from "@/assets/ricardo-luiz-carlos.webp";
@@ -9,12 +10,6 @@ import irmaosGruta from "@/assets/irmaos-botelho-gruta.webp";
 import heroCascata from "@/assets/hero-cascata.webp";
 import respiroPedra from "@/assets/respiro-pedra.webp";
 import projetoCascata from "@/assets/projetos/cover-cascata.webp";
-import obraCascataTropical from "@/assets/about-projetos/cascata-tropical.webp";
-import obraCascataMirante from "@/assets/about-projetos/cascata-mirante.webp";
-import obraPiscinaPraia from "@/assets/about-projetos/piscina-praia.webp";
-import obraDetalheMatriz from "@/assets/about-projetos/detalhe-matriz.jpg";
-import obraBordaPedra from "@/assets/about-projetos/borda-pedra.webp";
-import obraCascataEscalonada from "@/assets/about-projetos/cascata-escalonada.jpg";
 import iconePedraBranco from "@/assets/icone-pedra-branco.png";
 import { BUSINESS } from "@/config/business";
 
