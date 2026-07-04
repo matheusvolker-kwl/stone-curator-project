@@ -250,7 +250,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-western-green-deep truncate">{node.title}</p>
-                {price && (
+                {price && isApproved && (
                   <p className="text-[11px] font-mono text-western-stone-warm">
                     {formatBRL(price.amount, price.currencyCode)}
                   </p>
