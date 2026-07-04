@@ -324,6 +324,12 @@ export default function Orcamento() {
                     </div>
                   </div>
 
+                  <TurnstileWidget
+                    onToken={setCaptchaToken}
+                    onExpire={() => setCaptchaToken(null)}
+                    className="mt-6"
+                  />
+
                   <Button
                     type="submit"
                     disabled={loading}
