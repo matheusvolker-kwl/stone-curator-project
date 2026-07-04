@@ -44,6 +44,13 @@ export default function Linhas() {
   const totalResults = q ? linhas.length + products.length : 0;
   const isSearching = q.length >= 2 && (loadingCollections || loadingProducts);
 
+  const linhasList = useMemo(() => {
+    const src = q && totalResults === 0 ? collections.filter((c) => !isSeasonal(c)) : linhas;
+    const seen = new Set<string>();
+    return src.filter((c) => { if (seen.has(c.handle)) return false; seen.add(c.handle); return true; });
+  }, [q, totalResults, collections, linhas]);
+
+
   return (
     <div className="surface-ivory">
       <div className="container-western py-20 md:py-28">
