@@ -251,6 +251,17 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                   {item.label}
                 </NavLink>
               ))}
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  window.dispatchEvent(new Event("western:open-audience"));
+                }}
+                aria-label="É para a minha casa? Solicitar orçamento residencial"
+                className="mt-2 flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold"
+              >
+                <Home className="h-4 w-4" /> É para minha casa?
+              </button>
               <div className="h-px bg-western-gold/15 my-6" />
               <p className="text-eyebrow mb-3 text-western-cream-muted">Parceiro</p>
               {session ? (
