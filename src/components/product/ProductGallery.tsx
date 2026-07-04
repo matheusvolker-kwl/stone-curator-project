@@ -22,6 +22,10 @@ export default function ProductGallery({
 }: Props) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [zoomed, setZoomed] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const openedOnceRef = useRef(false);
+
 
   const total = images.length;
   const goPrev = useCallback(
