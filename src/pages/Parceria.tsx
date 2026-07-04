@@ -17,7 +17,7 @@ import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
 import ProjetosSection from "@/components/home/ProjetosSection";
 import ArtistaSection from "@/components/home/ArtistaSection";
-import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
+
 import SocialProof from "@/components/shared/SocialProof";
 import { useScrollY } from "@/hooks/useScrollY";
 import { BUSINESS } from "@/config/business";
@@ -465,7 +465,7 @@ export default function Parceria() {
         </div>
       </section>
 
-      {/* 8. MARCAS + PROVA SOCIAL */}
+      {/* 8. PROVA SOCIAL — rostos + mural de logos */}
       <section className="surface-forest py-16 md:py-20 border-y border-western-gold/15">
         <div className="container-western max-w-5xl">
           <Reveal variant="fade-up" duration={750}>
@@ -473,13 +473,8 @@ export default function Parceria() {
               variant="dark"
               eyebrow="Especificada por quem define o mercado"
               titulo={<>Profissionais e marcas que mantêm a Western em seus projetos.</>}
-              groups={["celebridades", "profissionais", "parceiros", "empresas"]}
+              groups={["celebridades", "profissionais", "marcas"]}
             />
-          </Reveal>
-          <Reveal variant="fade-up" delay={120} duration={750}>
-            <div className="mt-12 pt-8 border-t border-western-gold/15">
-              <MarcasInstitucionais compacta variante="dark" semBordas semLinks />
-            </div>
           </Reveal>
         </div>
       </section>

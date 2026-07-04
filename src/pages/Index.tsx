@@ -243,39 +243,18 @@ export default function Index() {
         </div>
       </section>
 
-
-      {/* PROJETOS — prova social */}
-      <Reveal variant="fade-up" duration={800}>
-        <ProjetosSection />
-      </Reveal>
-
-      {/* Faixa institucional — muro de credibilidade (momento galeria) */}
-      <section className="surface-forest py-24 md:py-36 border-y border-western-gold/15">
+      {/* Faixa institucional — prova social unificada (rostos + mural de logos) */}
+      <section className="surface-forest py-24 md:py-32 border-y border-western-gold/15">
         <div className="container-western max-w-5xl">
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
               variant="dark"
               eyebrow="Quem especifica e confia na Western"
               titulo={<>Especificada pelo topo do mercado — de celebridades a profissionais de referência.</>}
-              groups={["celebridades", "profissionais", "parceiros", "empresas"]}
-              className="[&_ul.flex]:gap-8 md:[&_ul.flex]:gap-14 [&>div.mb-10]:mb-16 md:[&>div.mb-10]:mb-20"
+              groups={["celebridades", "profissionais", "marcas"]}
             />
           </Reveal>
-
-          <Reveal variant="fade-up" delay={120} duration={750}>
-            <div className="mt-24 md:mt-32">
-              <div className="flex items-center justify-center gap-4 mb-10 md:mb-12">
-                <span className="h-px w-10 md:w-16 bg-western-gold/40" aria-hidden />
-                <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft/90 text-center">
-                  Empresas que confiam na Western
-                </p>
-                <span className="h-px w-10 md:w-16 bg-western-gold/40" aria-hidden />
-              </div>
-              <MarcasInstitucionais compacta variante="dark" semBordas semLinks />
-            </div>
-          </Reveal>
-
-          <div className="text-center mt-20 md:mt-24">
+          <div className="text-center mt-16 md:mt-20">
             <Link
               to="/sobre"
               className="font-mono text-xs uppercase tracking-[0.22em] text-western-gold-soft hover:text-western-gold transition-colors"
