@@ -136,6 +136,8 @@ export default function ProductGallery({
             >
               <img
                 src={cdnImg(img.url, 200)}
+                width={80}
+                height={80}
                 alt=""
                 loading="lazy"
                 decoding="async"
