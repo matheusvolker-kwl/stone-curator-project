@@ -31,6 +31,8 @@ export interface CartItem {
   wooAttributes?: Array<{ slug: string; value: string }>;
   /** Handle do conjunto/guia, quando o item veio de uma composição. */
   conjuntoRef?: string;
+  /** Handle da 1ª coleção/categoria do produto — usado para cross-sell inteligente. */
+  collectionHandle?: string;
 }
 
 interface CartStore {
