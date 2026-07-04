@@ -34,7 +34,7 @@ export default function WishlistButton({ handle, title, image, variant = "icon",
       });
       return;
     }
-    const r = await toggle({ handle, title, image });
+    const r = await toggle({ handle, title, image: image ? cdnImg(image, 800) : image });
     if (r === "added") toast.success("Adicionado aos favoritos.");
     if (r === "removed") toast("Removido dos favoritos.");
   };
