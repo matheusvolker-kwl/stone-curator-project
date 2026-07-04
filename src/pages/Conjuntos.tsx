@@ -9,6 +9,8 @@ import {
   tamanhoLabels,
   faixaArea,
   formatPreco,
+  nivelMeta,
+  pecasPorTipoNivel,
   type Tipo,
   type Tamanho,
   type Nivel,
