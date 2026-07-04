@@ -260,12 +260,9 @@ export default function Index() {
               <h2 className="font-display text-2xl md:text-[2rem] text-western-cream leading-[1.2] max-w-2xl mx-auto">
                 Especificada pelos arquitetos que assinam os jardins mais publicados do país.
               </h2>
-              <Link
-                to="/parceiros-arquitetos"
-                className="inline-block mt-6 font-mono text-[11px] uppercase tracking-[0.28em] text-western-gold-soft/90 hover:text-western-gold transition-colors"
-              >
+              <p className="inline-block mt-6 font-mono text-[11px] uppercase tracking-[0.28em] text-western-gold-soft/90">
                 Marcelo Faisal · Fabiano Hayasaki · Ronaldo Luidi
-              </Link>
+              </p>
             </div>
           </Reveal>
 

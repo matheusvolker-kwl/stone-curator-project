@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
 import faisalFoto from "@/assets/arquitetos/marcelo-faisal.png";
 import hayasakiFoto from "@/assets/arquitetos/fabiano-hayasaki.jpeg";
 import luidiFoto from "@/assets/arquitetos/ronaldo-luidi.webp";
@@ -34,40 +32,29 @@ export default function ArquitetosStrip({ eyebrow, titulo, descricao }: Props) {
 
       <ul className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
         {ARQUITETOS.map((a) => (
-          <li key={a.nome}>
-            <Link
-              to="/parceiros-arquitetos"
-              className="group block bg-western-cream border border-western-stone-warm/15 hover:border-western-gold/50 shadow-[0_14px_40px_-28px_rgba(20,40,30,0.35)] hover:shadow-[0_22px_55px_-28px_rgba(20,40,30,0.45)] transition-all"
-            >
-              <div className="aspect-[4/5] overflow-hidden bg-western-green-deep">
-                <img
-                  src={a.foto}
-                  alt={`Retrato de ${a.nome}`}
-                  loading="lazy"
-                  className="w-full h-full object-cover grayscale-[15%] group-hover:grayscale-0 group-hover:scale-[1.02] transition-all duration-700"
-                />
-              </div>
-              <div className="p-5">
-                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-1.5">
-                  {a.cidade}
-                </p>
-                <h3 className="font-display text-xl md:text-2xl text-western-green-deep leading-tight">
-                  {a.nome}
-                </h3>
-              </div>
-            </Link>
+          <li
+            key={a.nome}
+            className="block bg-western-cream border border-western-stone-warm/15 shadow-[0_14px_40px_-28px_rgba(20,40,30,0.35)]"
+          >
+            <div className="aspect-[4/5] overflow-hidden bg-western-green-deep">
+              <img
+                src={a.foto}
+                alt={`Retrato de ${a.nome}`}
+                loading="lazy"
+                className="w-full h-full object-cover grayscale-[15%]"
+              />
+            </div>
+            <div className="p-5">
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-1.5">
+                {a.cidade}
+              </p>
+              <h3 className="font-display text-xl md:text-2xl text-western-green-deep leading-tight">
+                {a.nome}
+              </h3>
+            </div>
           </li>
         ))}
       </ul>
-
-      <div className="mt-8">
-        <Link
-          to="/parceiros-arquitetos"
-          className="inline-flex items-center gap-2 link-underline font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep"
-        >
-          Ver todos os arquitetos parceiros <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
-      </div>
     </section>
   );
 }
