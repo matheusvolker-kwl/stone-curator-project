@@ -9,6 +9,7 @@ import rosewoodPoster from "@/assets/casos-western/rosewood-poster.webp.asset.js
 import nicoleVideo from "@/assets/casos-western/nicole-sigaud.mp4.asset.json";
 import clienteVideo from "@/assets/casos-western/cliente-western.mp4.asset.json";
 import rosewoodVideo from "@/assets/casos-western/rosewood.mp4.asset.json";
+import projetoResidencial from "@/assets/casos-western/projeto-residencial.webp.asset.json";
 
 export type CasoTipo = "video" | "image";
 
