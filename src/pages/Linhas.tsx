@@ -166,11 +166,9 @@ export default function Linhas() {
                 </div>
               </Link>
             )}
-            {(q && totalResults === 0
-              ? collections.filter((c) => !isSeasonal(c))
-              : linhas
-            ).map((c) => {
+            {linhasList.map((c) => {
               const cover = LINHA_COVER_OVERRIDES[c.handle];
+              const desc = LINHA_DESCRIPTIONS[c.handle] ?? c.description;
 
               return (
                 <Link key={c.handle} to={`/linhas/${c.handle}`} className="group block">
@@ -195,7 +193,7 @@ export default function Linhas() {
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
+                      <div className="w-full h-full flex items-center justify-center bg-western-stone-warm/5">
                         <img src={iconePedra} alt="" className="h-16 opacity-30" />
                       </div>
                     )}
@@ -203,9 +201,9 @@ export default function Linhas() {
                   <h3 className="font-display text-2xl text-western-green-deep group-hover:text-western-gold transition-colors">
                     {c.title}
                   </h3>
-                  {c.description && (
+                  {desc && (
                     <p className="text-spec text-western-stone-warm mt-2 line-clamp-2">
-                      {c.description}
+                      {desc}
                     </p>
                   )}
                 </Link>
