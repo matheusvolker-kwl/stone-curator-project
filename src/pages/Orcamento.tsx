@@ -148,8 +148,7 @@ export default function Orcamento() {
                   Vamos tirar seu projeto do papel.
                 </h1>
                 <p className="mt-5 text-base md:text-lg leading-relaxed text-western-stone-warm max-w-xl">
-                  A Western cria ambientes sob medida com pedra natural — do projeto ao acabamento.
-                  Conte um pouco do que você imagina e nosso time retorna com uma proposta.
+                  A Western cria ambientes sob medida em pedra artesanal — réplica autoral moldada e pintada à mão em composto mineral, até 10× mais leve que a pedra natural e sem extração ambiental. Do projeto ao acabamento: conte o que você imagina e nosso time retorna com uma proposta.
                 </p>
 
                 <ul className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl">
