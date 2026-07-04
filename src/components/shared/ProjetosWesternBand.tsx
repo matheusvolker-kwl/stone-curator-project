@@ -1,74 +1,192 @@
-import img01 from "@/assets/projetos-western/01_hero-tapirai.webp.asset.json";
-import img02 from "@/assets/projetos-western/02_pedra-detalhe.webp.asset.json";
-import img03 from "@/assets/projetos-western/03_piscina-cascata.webp.asset.json";
-import img04 from "@/assets/projetos-western/04_piscina-mirante.webp.asset.json";
-import img05 from "@/assets/projetos-western/05_cascata-escalonada.webp.asset.json";
-import img06 from "@/assets/projetos-western/06_piscina-cascata-serra.webp.asset.json";
-import img07 from "@/assets/projetos-western/07_cascata-piscina.webp.asset.json";
-import img08 from "@/assets/projetos-western/08_piscina-paisagismo.webp.asset.json";
-import img09 from "@/assets/projetos-western/09_piscina-cascata-2.webp.asset.json";
-import img10 from "@/assets/projetos-western/10_piscina-vista.webp.asset.json";
-import img11 from "@/assets/projetos-western/11_cascata-ferns.webp.asset.json";
-import img12 from "@/assets/projetos-western/12_borda-pedra.webp.asset.json";
+import { useMemo, useState, useEffect, useCallback } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { OBRAS_WESTERN, type ObraCategoria, type ObraWestern } from "@/data/obrasWestern";
 
-interface ProjetoFoto {
-  src: string;
-  caption: string;
-}
+type FilterKey = "todos" | ObraCategoria;
 
-const FOTOS: ProjetoFoto[] = [
-  { src: img01.url, caption: "Cascata em pedra · Tapiraí (SP)" },
-  { src: img03.url, caption: "Piscina com cascata · projeto Western" },
-  { src: img02.url, caption: "Detalhe do material · Western" },
-  { src: img11.url, caption: "Cascata tropical · projeto Western" },
-  { src: img06.url, caption: "Cascata e serra · projeto Western" },
-  { src: img04.url, caption: "Piscina e mirante · projeto Western" },
-  { src: img12.url, caption: "Borda em pedra · projeto Western" },
-  { src: img05.url, caption: "Cascata escalonada · projeto Western" },
-  { src: img09.url, caption: "Piscina natural · projeto Western" },
-  { src: img07.url, caption: "Cascata sobre a piscina · projeto Western" },
-  { src: img08.url, caption: "Piscina com paisagismo · projeto Western" },
-  { src: img10.url, caption: "Vista do projeto · projeto Western" },
+const FILTERS: { key: FilterKey; label: string }[] = [
+  { key: "todos", label: "Todos" },
+  { key: "piscinas", label: "Piscinas" },
+  { key: "cascatas", label: "Cascatas" },
+  { key: "jardins", label: "Jardins" },
 ];
 
+function Caption({ obra }: { obra: ObraWestern }) {
+  return (
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-4 pt-12 pb-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100">
+      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-cream leading-snug">
+        {obra.obra}
+        <span className="opacity-70"> · {obra.local}</span>
+      </p>
+      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold/90 mt-1">
+        {obra.produto}
+      </p>
+    </div>
+  );
+}
+
 export default function ProjetosWesternBand() {
+  const [filter, setFilter] = useState<FilterKey>("todos");
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const filtered = useMemo(
+    () =>
+      filter === "todos"
+        ? OBRAS_WESTERN
+        : OBRAS_WESTERN.filter((o) => o.categoria === filter),
+    [filter]
+  );
+
+  const destaque = filtered.find((o) => o.destaque) ?? filtered[0];
+  const restantes = filtered.filter((o) => o.id !== destaque?.id);
+
+  const close = useCallback(() => setOpenIndex(null), []);
+  const next = useCallback(
+    () => setOpenIndex((i) => (i === null ? null : (i + 1) % filtered.length)),
+    [filtered.length]
+  );
+  const prev = useCallback(
+    () =>
+      setOpenIndex((i) =>
+        i === null ? null : (i - 1 + filtered.length) % filtered.length
+      ),
+    [filtered.length]
+  );
+
+  useEffect(() => {
+    if (openIndex === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") next();
+      if (e.key === "ArrowLeft") prev();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [openIndex, next, prev]);
+
+  const current = openIndex !== null ? filtered[openIndex] : null;
+
   return (
     <section className="bg-western-cream-muted py-14 md:py-20">
       <div className="container-western">
-        <header className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
+        <header className="text-center max-w-2xl mx-auto mb-8 md:mb-10">
           <p className="text-eyebrow">Obras Western</p>
           <div className="w-12 h-px bg-western-gold mx-auto my-5" />
           <h2 className="font-display text-3xl md:text-4xl text-western-green-deep">
             Cascatas e pedras instaladas por nós
           </h2>
           <p className="text-spec italic text-western-stone-warm mt-4">
-            Projetos executados pela Western. Cada obra é única — tonalidades e composições variam conforme o ambiente.
+            Portfólio selecionado de projetos executados com peças Western — em piscinas, cascatas e jardins.
           </p>
         </header>
 
-        <div className="columns-2 md:columns-3 lg:columns-4 gap-4">
-          {FOTOS.map((foto, i) => (
-            <figure
-              key={foto.src}
-              className="group relative overflow-hidden rounded-[2px] break-inside-avoid mb-4 bg-western-stone-warm/10"
+        {/* Filtro */}
+        <div className="flex flex-wrap justify-center gap-2 mb-10 md:mb-12">
+          {FILTERS.map((f) => {
+            const active = filter === f.key;
+            return (
+              <button
+                key={f.key}
+                onClick={() => setFilter(f.key)}
+                className={`px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] border transition-colors ${
+                  active
+                    ? "border-western-gold text-western-gold bg-western-gold/5"
+                    : "border-western-stone-warm/25 text-western-stone-warm hover:border-western-gold/60 hover:text-western-green-deep"
+                }`}
+              >
+                {f.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Destaque + grade 4:5 */}
+        {destaque && (
+          <button
+            type="button"
+            onClick={() => setOpenIndex(filtered.indexOf(destaque))}
+            className="group relative block w-full overflow-hidden rounded-[2px] bg-western-stone-warm/10 mb-4 md:mb-5 aspect-[16/9] md:aspect-[21/9]"
+          >
+            <img
+              src={destaque.src}
+              alt={`${destaque.obra} — ${destaque.local}`}
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.02]"
+            />
+            <Caption obra={destaque} />
+          </button>
+        )}
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+          {restantes.map((obra) => (
+            <button
+              type="button"
+              key={obra.id}
+              onClick={() => setOpenIndex(filtered.indexOf(obra))}
+              className="group relative block overflow-hidden rounded-[2px] bg-western-stone-warm/10 aspect-[4/5]"
             >
               <img
-                src={foto.src}
-                alt={foto.caption}
+                src={obra.src}
+                alt={`${obra.obra} — ${obra.local}`}
                 loading="lazy"
                 decoding="async"
-                sizes="(min-width: 1024px) 360px, (min-width: 768px) 33vw, 50vw"
-                className="w-full h-auto object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.03]"
+                sizes="(min-width: 1024px) 300px, (min-width: 768px) 33vw, 50vw"
+                className="w-full h-full object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.04]"
               />
-              <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-4 pt-10 pb-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-cream">
-                  {foto.caption}
-                </span>
-              </figcaption>
-            </figure>
+              <Caption obra={obra} />
+            </button>
           ))}
         </div>
       </div>
+
+      {/* Lightbox */}
+      <Dialog open={openIndex !== null} onOpenChange={(o) => !o && close()}>
+        <DialogContent
+          className="max-w-6xl w-[95vw] p-0 bg-western-green-deep border-western-gold/20 [&>button]:hidden"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          {current && (
+            <div className="relative">
+              <img
+                src={current.src}
+                alt={`${current.obra} — ${current.local}`}
+                className="w-full max-h-[80vh] object-contain bg-black"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent px-6 pt-16 pb-5">
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-cream">
+                  {current.obra} <span className="opacity-70">· {current.local}</span>
+                </p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold mt-1.5">
+                  {current.produto}
+                </p>
+              </div>
+
+              <button
+                onClick={close}
+                aria-label="Fechar"
+                className="absolute top-3 right-3 h-10 w-10 flex items-center justify-center bg-black/50 text-western-cream hover:bg-black/80 transition-colors rounded-full"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <button
+                onClick={prev}
+                aria-label="Anterior"
+                className="absolute top-1/2 -translate-y-1/2 left-3 h-11 w-11 flex items-center justify-center bg-black/50 text-western-cream hover:bg-black/80 transition-colors rounded-full"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <button
+                onClick={next}
+                aria-label="Próxima"
+                className="absolute top-1/2 -translate-y-1/2 right-3 h-11 w-11 flex items-center justify-center bg-black/50 text-western-cream hover:bg-black/80 transition-colors rounded-full"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
