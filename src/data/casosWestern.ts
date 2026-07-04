@@ -84,4 +84,14 @@ export const CASOS_WESTERN: CasoWestern[] = [
     titulo: "Cascata em pedras Western",
     story: "Cascata de grande porte executada com peças Western.",
   },
+  {
+    id: "projeto-residencial",
+    tipo: "image",
+    mediaUrl: projetoResidencial.url,
+    posterUrl: projetoResidencial.url,
+    credito: "Cascata Santa Bárbara",
+    titulo: "Projeto residencial",
+    story:
+      "Cascata Santa Bárbara e outras peças Western distribuídas pelo espaço da residência, compondo um ambiente orgânico e integrado à natureza.",
+  },
 ];
