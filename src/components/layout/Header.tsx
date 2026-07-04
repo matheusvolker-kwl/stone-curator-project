@@ -81,7 +81,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
     const term = query.trim().toLowerCase();
     if (term.length < 2) return { linhas: [], produtos: [], flatCount: 0 };
     const linhas = allCollections
-      .filter((c) => !isSeasonal(c.handle))
+      .filter((c) => !isSeasonal({ handle: c.handle, description: c.description }))
       .filter(
         (c) =>
           c.title.toLowerCase().includes(term) ||
