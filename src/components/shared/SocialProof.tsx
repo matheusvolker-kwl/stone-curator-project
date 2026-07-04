@@ -130,7 +130,7 @@ export default function SocialProof({
     }
     return (
       <span title={m.nome}
-        className={`font-display leading-none ${wordmarkColor} opacity-70 group-hover:opacity-100 transition-all duration-500 ${compact ? "text-base md:text-lg" : "text-lg md:text-2xl"}`}>
+        className={`font-display leading-none ${wordmarkColor} opacity-70 group-hover:opacity-100 transition-all duration-500 ${compact ? "text-sm md:text-base" : "text-base md:text-xl"}`}>
         {m.nome}
       </span>
     );
@@ -156,7 +156,7 @@ export default function SocialProof({
       {showMarcas && (
         <div className={avatarGroups.length ? "mt-2" : ""}>
           <p className={`text-center font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-6 md:mb-8`}>{SOCIAL_PROOF_LABELS.marcas}</p>
-          <ul className={`flex flex-wrap items-center justify-center ${logoGap}`}>
+          <ul className={`flex flex-wrap items-center justify-center max-w-full ${logoGap}`}>
             {(SOCIAL_PROOF.marcas as readonly MarcaComLogo[]).map((m) => (
               <li key={m.slug} className={`group flex items-center justify-center ${logoH}`}>{renderMarca(m)}</li>
             ))}
