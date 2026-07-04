@@ -39,9 +39,12 @@ function extractMeta(p: ShopifyProductNode): { pesoKg: number; dim: string } {
   };
 }
 
-function shopifyToPeca(p: ShopifyProductNode, qty: number, key: string): ProjetoPeca {
+function shopifyToPeca(p: ShopifyProductNode, qty: number, key: string, acabamentoLabel?: string): ProjetoPeca {
   const meta = extractMeta(p);
-  const variant = p.variants.edges[0]?.node;
+  const variant =
+    p.variants.edges.find((e) =>
+      e.node.selectedOptions?.some((o) => o.name === "Acabamento" && o.value === acabamentoLabel),
+    )?.node ?? p.variants.edges[0]?.node;
   const preco = variant ? parseFloat(variant.price.amount) : parseFloat(p.priceRange.minVariantPrice.amount);
   return {
     id: `${p.handle}-${key}`,
@@ -55,12 +58,19 @@ function shopifyToPeca(p: ShopifyProductNode, qty: number, key: string): Projeto
     preco: Number.isFinite(preco) ? preco : 0,
     qty,
     imageUrl: p.images.edges[0]?.node?.url ? cdnImg(p.images.edges[0].node.url, 240) : undefined,
+    wooParentProductId: variant?.wooParentProductId,
+    wooVariationId: variant?.wooVariationId ?? null,
+    wooKind: variant?.wooKind,
+    wooAttributes: variant?.wooAttributes ?? [],
   } as ProjetoPeca & { imageUrl?: string };
 }
 
-function shopifyToAutoral(p: ShopifyProductNode): AutoralItem {
+function shopifyToAutoral(p: ShopifyProductNode, acabamentoLabel?: string): AutoralItem {
   const meta = extractMeta(p);
-  const variant = p.variants.edges[0]?.node;
+  const variant =
+    p.variants.edges.find((e) =>
+      e.node.selectedOptions?.some((o) => o.name === "Acabamento" && o.value === acabamentoLabel),
+    )?.node ?? p.variants.edges[0]?.node;
   const preco = variant ? parseFloat(variant.price.amount) : parseFloat(p.priceRange.minVariantPrice.amount);
   return {
     id: p.handle,
@@ -74,6 +84,10 @@ function shopifyToAutoral(p: ShopifyProductNode): AutoralItem {
     descricao: p.description ?? "",
     dim: meta.dim,
     imageUrl: p.images.edges[0]?.node?.url ? cdnImg(p.images.edges[0].node.url, 800) : undefined,
+    wooParentProductId: variant?.wooParentProductId,
+    wooVariationId: variant?.wooVariationId ?? null,
+    wooKind: variant?.wooKind,
+    wooAttributes: variant?.wooAttributes ?? [],
   };
 }
 
