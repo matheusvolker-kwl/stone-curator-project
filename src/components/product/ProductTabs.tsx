@@ -60,7 +60,7 @@ export default function ProductTabs({
               { v: "descricao", l: "Descrição" },
               { v: "specs", l: "Especificações" },
               { v: "modelo3d", l: "Modelo 3D" },
-              { v: "entrega", l: "Entrega & instalação" },
+              { v: "entrega", l: "Entrega" },
             ].map((t) => (
               <TabsTrigger
                 key={t.v}
