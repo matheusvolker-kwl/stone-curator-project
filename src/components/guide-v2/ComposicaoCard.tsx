@@ -87,7 +87,7 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
           {conjunto.nome}
         </h3>
         <p className="font-display italic text-[15px] text-western-stone-warm leading-relaxed mb-6">
-          {nivelMicrocopy[nivel]}
+          {nivelMeta[nivel].detalhe}
         </p>
 
         <div className="border-t border-western-stone-warm/15 pt-5 mb-6">
