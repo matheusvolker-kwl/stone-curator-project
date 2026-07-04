@@ -101,6 +101,11 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
                 <span className="text-western-green-deep">{r.qty}×</span>
               </li>
             ))}
+            {extras > 0 && (
+              <li className="pt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80 italic">
+                + {extras} outra{extras > 1 ? "s" : ""} peça{extras > 1 ? "s" : ""}
+              </li>
+            )}
           </ul>
         </div>
 
@@ -108,9 +113,9 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
           <div className="font-display text-[34px] font-medium text-western-green-deep leading-none mb-2">
             {formatPreco(preco)}
           </div>
-          {economia >= 50 && !abaixoDoMinimo && (
+          {isApproved && !abaixoDoMinimo && (
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-6">
-              Economia de {formatPreco(economia)} vs. avulso
+              Preço de parceiro aplicado
             </p>
           )}
           {abaixoDoMinimo && (
