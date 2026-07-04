@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchCollection } from "@/lib/datasource";
 import { ChevronLeft } from "lucide-react";
 import ProductGrid from "@/components/product/ProductGrid";
+import Reveal from "@/components/shared/Reveal";
 
 export default function LinhaPage() {
   const { handle = "" } = useParams();
