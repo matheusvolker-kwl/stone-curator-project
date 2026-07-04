@@ -240,12 +240,25 @@ export default function ProductPage() {
         <div className="grid md:grid-cols-2 gap-10 lg:gap-20 items-start">
           {/* Gallery — sticky no desktop */}
           <div className="md:sticky md:top-24 min-w-0">
-            <ProductGallery
-              images={images}
-              activeIndex={activeImage}
-              onChange={setActiveImage}
-              productTitle={product.title}
-            />
+            <div className="relative">
+              <ProductGallery
+                images={images}
+                activeIndex={activeImage}
+                onChange={setActiveImage}
+                productTitle={product.title}
+              />
+              <a
+                href="#modelo-3d"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById("modelo-3d-callout")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                }}
+                className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-2.5 py-1 bg-western-green-deep/90 text-western-gold border border-western-gold/40 font-mono text-[9px] uppercase tracking-[0.2em] hover:bg-western-green-deep transition-colors"
+                aria-label="Modelo 3D SketchUp disponível"
+              >
+                <Box className="h-3 w-3" /> Modelo 3D · SketchUp
+              </a>
+            </div>
           </div>
 
           {/* Details */}
