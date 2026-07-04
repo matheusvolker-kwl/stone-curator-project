@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Lock, Unlock, Check, Package } from "lucide-react";
+import { Lock, Unlock, Check, Package, MessageCircle } from "lucide-react";
+import { BUSINESS } from "@/config/business";
 
 interface Props {
   /** Conteúdo exibido para parceiros aprovados/admin (preço real). Opcional para variant="block". */
@@ -9,9 +10,11 @@ interface Props {
   variant?: "inline" | "block";
   /** Texto do CTA (usado apenas na variante inline legacy) */
   ctaLabel?: string;
+  /** Handle/nome do produto — usado para linkar o orçamento B2C com contexto */
+  productRef?: string;
 }
 
-export default function PriceGate({ children, variant = "inline" }: Props) {
+export default function PriceGate({ children, variant = "inline", productRef }: Props) {
   const { isApproved, session } = useAuth();
   if (isApproved) return <>{children}</>;
 
@@ -37,6 +40,15 @@ export default function PriceGate({ children, variant = "inline" }: Props) {
     "Fotos aplicadas, de estúdio e descrições detalhadas",
     "Pagamento em Pix, boleto ou cartão de crédito",
   ];
+
+  const orcamentoTo = productRef
+    ? `/orcamento?ref=${encodeURIComponent(productRef)}`
+    : "/orcamento";
+  const waHref = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
+    productRef
+      ? `Olá Western! Tenho interesse no produto "${productRef}" para o meu projeto residencial.`
+      : "Olá Western! Gostaria de um orçamento para o meu projeto residencial."
+  )}`;
 
   return (
     <div className="border border-western-gold/40 bg-western-gold/[0.06] px-5 py-6 md:px-6 md:py-7 min-w-0">
@@ -89,6 +101,39 @@ export default function PriceGate({ children, variant = "inline" }: Props) {
       <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80">
         Grátis · aprovação na hora
       </p>
+
+      {/* ─── Trilha B2C — cliente final sem CNPJ ─── */}
+      <div className="mt-6 pt-5 border-t border-western-green-deep/15">
+        <div className="flex items-center gap-3 mb-3">
+          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70">
+            ou
+          </span>
+          <span className="h-px flex-1 bg-western-green-deep/15" />
+        </div>
+        <h4 className="font-display text-lg md:text-xl text-western-green-deep leading-tight mb-1.5">
+          É para o seu projeto residencial?
+        </h4>
+        <p className="text-[13px] leading-snug text-western-green-deep/80 mb-4">
+          Sem CNPJ? A gente monta seu orçamento.
+        </p>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <Link
+            to={orcamentoTo}
+            className="flex items-center justify-center text-center h-11 px-5 bg-western-green-deep text-western-cream hover:bg-western-green-deep/90 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors w-full sm:w-auto whitespace-normal"
+          >
+            Peça um orçamento
+          </Link>
+          <a
+            href={waHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors"
+          >
+            <MessageCircle className="h-3.5 w-3.5" /> Falar no WhatsApp
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
+

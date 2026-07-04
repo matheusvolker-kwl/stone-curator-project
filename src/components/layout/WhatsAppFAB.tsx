@@ -14,19 +14,14 @@ function WhatsAppGlyph({ className }: { className?: string }) {
 }
 
 export default function WhatsAppFAB() {
-  const { pathname } = useLocation();
-  // PDPs têm CTA "Falar com consultor" próprio.
-  if (pathname.startsWith("/produtos/") || pathname.startsWith("/produto/")) return null;
-  // /western-box: a barra de compra é a prioridade — esconder FAB.
-  if (pathname.startsWith("/western-box")) return null;
-
   return (
     <a
       href="https://wa.me/5511958967088?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20Western%20e%20gostaria%20de%20falar%20com%20um%20consultor."
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Falar com consultor no WhatsApp"
-      className="group fixed bottom-5 right-5 md:bottom-7 md:right-7 z-50 inline-flex items-center h-11 md:h-12 pl-3 pr-3 md:hover:pr-5 rounded-full bg-western-green-deep text-western-gold-soft ring-1 ring-inset ring-western-gold/25 shadow-[0_6px_18px_-6px_rgba(0,0,0,0.45)] hover:shadow-[0_10px_24px_-8px_rgba(0,0,0,0.5)] transition-all duration-300 ease-out motion-reduce:transition-none"
+      style={{ bottom: "calc(1.25rem + var(--sticky-buy-bar-h, 0px))" }}
+      className="group fixed right-5 md:right-7 z-50 inline-flex items-center h-11 md:h-12 pl-3 pr-3 md:hover:pr-5 rounded-full bg-western-green-deep text-western-gold-soft ring-1 ring-inset ring-western-gold/25 shadow-[0_6px_18px_-6px_rgba(0,0,0,0.45)] hover:shadow-[0_10px_24px_-8px_rgba(0,0,0,0.5)] transition-all duration-300 ease-out motion-reduce:transition-none"
     >
       <WhatsAppGlyph className="h-[20px] w-[20px] md:h-[22px] md:w-[22px] shrink-0" />
       <span className="hidden md:inline-block max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover:max-w-[200px] group-hover:opacity-100 group-hover:ml-2.5 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-western-cream transition-all duration-300 ease-out">
