@@ -104,8 +104,8 @@ const PEDRA: InstallationConfig = {
       text: "Monte no chão alternando volumes, sem alinhamentos retos.",
     },
     {
-      title: "Fixe as peças",
-      text: "Buchas, pitões e arame galvanizado — maiores primeiro, menores preenchendo.",
+      title: "Fixe com argamassa",
+      text: "Fixação com argamassa C3, encontrada em qualquer loja de material de construção. Comece pelas maiores e preencha com as menores.",
     },
     {
       title: "Trate as juntas",
