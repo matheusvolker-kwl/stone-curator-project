@@ -204,6 +204,11 @@ export default function ConjuntoPage() {
         price: { amount: String(p.unitPrice), currencyCode: "BRL" },
         quantity: p.qty,
         selectedOptions: [{ name: "Acabamento", value: acabLabel }],
+        wooParentProductId: p.wooParentProductId,
+        wooVariationId: p.wooVariationId ?? null,
+        wooKind: p.wooKind,
+        wooAttributes: p.wooAttributes ?? [],
+        conjuntoRef: leaf.handle,
       }));
 
   const onAdicionarOrcamento = () => {
