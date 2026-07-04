@@ -1,6 +1,6 @@
 import coverCascata from "@/assets/projetos/cover-cascata.webp";
 import coverCasaPraia from "@/assets/projetos/cover-casa-praia.webp";
-import coverPiscina from "@/assets/projetos/cover-piscina.avif";
+
 import coverLago from "@/assets/projetos/cover-lago.webp";
 import coverNeymar from "@/assets/projetos/cover-neymar.jpg";
 
@@ -53,24 +53,6 @@ export const PROJETOS: Projeto[] = [
     ],
     cover: coverCasaPraia,
     video: "/videos/projetos/casa-praia.mp4",
-  },
-  {
-    slug: "piscina-suspensa",
-    eyebrow: "Thiago Nigro & Maíra Cardi",
-    titulo: "Piscina Suspensa",
-    snippet:
-      "Mais de cinquenta peças em uma piscina suspensa. A leveza do composto mineral viabilizou uma obra estruturalmente impossível com pedra natural.",
-    texto: [
-      "A complexidade de uma piscina suspensa exigia uma resposta técnica precisa: reduzir drasticamente a carga sem abrir mão da estética de pedra natural. As peças Western, em composto mineral de alta resistência, viabilizaram a execução sem guindaste e sem comprometer a integridade do conjunto.",
-      "Mais de cinquenta peças foram aplicadas na piscina praia, reproduzindo o aspecto e a textura das pedras naturais com a leveza que o projeto demandava — uma solução que só uma pedra artificial de alta fidelidade poderia entregar.",
-    ],
-    ficha: [
-      "Piscina suspensa",
-      "50+ peças aplicadas",
-      "Composto mineral de alta resistência",
-    ],
-    cover: coverPiscina,
-    video: "/videos/projetos/piscina.mp4",
   },
   {
     slug: "lago-ornamental",

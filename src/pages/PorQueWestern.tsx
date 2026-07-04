@@ -21,7 +21,7 @@ const OBJEÇÕES: { q: string; a: string }[] = [
   },
   {
     q: "Mas o cliente vai querer pedra de verdade.",
-    a: "Os clientes que mais conhecem o mercado já sabem que pedra natural em escala de cascata é um pesadelo logístico — vários já tiveram experiência ruim. Western entrega a estética da natural sem os custos invisíveis. Prova social: já está nos projetos de Neymar, Thiago Nigro, Diogo Nogueira; em Unique Garden, Cobasi; nas pranchas de Eduardo Faisal e Fabiano Hayasaki. Esses clientes não aceitariam algo que parecesse 'artificial barato'.",
+    a: "Os clientes que mais conhecem o mercado já sabem que pedra natural em escala de cascata é um pesadelo logístico — vários já tiveram experiência ruim. Western entrega a estética da natural sem os custos invisíveis. Prova social: já está nos projetos de Neymar Jr., Caito Maia e Tato (Falamansa); em Unique Garden, Cobasi, Rosewood; nas pranchas de Alex Hanazaki, Jader Almeida, Cristina Volker e Mandaia Arquitetura. Esses clientes não aceitariam algo que parecesse 'artificial barato'.",
   },
   {
     q: "Tem garantia? E se quebrar?",

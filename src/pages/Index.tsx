@@ -9,6 +9,7 @@ import ProjetosSection from "@/components/home/ProjetosSection";
 import ArtistaSection from "@/components/home/ArtistaSection";
 import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
 import Reveal from "@/components/shared/Reveal";
+import SocialProof from "@/components/shared/SocialProof";
 import { useScrollY } from "@/hooks/useScrollY";
 import { ArrowRight, ShieldCheck, Truck, Box } from "lucide-react";
 import heroCascata from "@/assets/hero-cascata.webp";
@@ -248,26 +249,20 @@ export default function Index() {
         <ProjetosSection />
       </Reveal>
 
-      {/* Faixa institucional — arquitetos + marcas fundidos num bloco só */}
+      {/* Faixa institucional — prova social única */}
       <section className="surface-forest py-14 md:py-18 border-y border-western-gold/15">
-        <div className="container-western max-w-4xl">
+        <div className="container-western max-w-5xl">
           <Reveal variant="fade-up" duration={750}>
-            <div className="text-center mb-10 md:mb-12">
-              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft/85 mb-5">
-                Quem especifica e confia na Western
-              </p>
-              <div className="w-10 h-px bg-western-gold/50 mx-auto mb-7" />
-              <h2 className="font-display text-2xl md:text-[2rem] text-western-cream leading-[1.2] max-w-2xl mx-auto">
-                Especificada pelos arquitetos que assinam os jardins mais publicados do país.
-              </h2>
-              <p className="inline-block mt-6 font-mono text-[11px] uppercase tracking-[0.28em] text-western-gold-soft/90">
-                Marcelo Faisal · Fabiano Hayasaki · Ronaldo Luidi
-              </p>
-            </div>
+            <SocialProof
+              variant="dark"
+              eyebrow="Quem especifica e confia na Western"
+              titulo={<>Especificada pelo topo do mercado — de celebridades a profissionais de referência.</>}
+              groups={["celebridades", "profissionais", "parceiros", "empresas"]}
+            />
           </Reveal>
 
           <Reveal variant="fade-up" delay={120} duration={750}>
-            <div className="pt-8 md:pt-10 border-t border-western-gold/15">
+            <div className="mt-12 pt-8 md:pt-10 border-t border-western-gold/15">
               <MarcasInstitucionais compacta variante="dark" semBordas semLinks />
               <p className="text-center mt-6 font-mono text-[10px] uppercase tracking-[0.24em] text-western-cream-muted/75">
                 Empresas que confiam na Western em seus projetos e operações
