@@ -4,7 +4,7 @@
  * Consumido pelo componente único `src/components/shared/SocialProof.tsx`.
  */
 
-export interface Celebridade {
+export interface PessoaComFoto {
   nome: string;
   /** slug em kebab-case; foto opcional em src/assets/famosos/{slug}.(webp|jpg|png|jpeg) */
   slug: string;
@@ -15,17 +15,17 @@ export const SOCIAL_PROOF = {
     { nome: "Neymar Jr.", slug: "neymar-jr" },
     { nome: "Caito Maia", slug: "caito-maia" },
     { nome: "Tato (Falamansa)", slug: "tato-falamansa" },
-  ] as Celebridade[],
+  ] as PessoaComFoto[],
   profissionais: [
-    "Alex Hanazaki",
-    "Jader Almeida",
-    "Cristina Volker",
-    "Mandaia Arquitetura",
-  ],
+    { nome: "Alex Hanazaki", slug: "alex-hanazaki" },
+    { nome: "Jader Almeida", slug: "jader-almeida" },
+    { nome: "Marcelo Faisal", slug: "marcelo-faisal" },
+  ] as PessoaComFoto[],
   parceiros: [
     "Cristal Pool",
     "Genesis Ecossistemas",
     "Biopet Lagos",
+    "Mandaia Arquitetura",
   ],
   empresas: [
     "Cobasi",
@@ -43,3 +43,6 @@ export const SOCIAL_PROOF_LABELS = {
 } as const;
 
 export type SocialProofGroup = keyof typeof SOCIAL_PROOF;
+
+/** @deprecated use PessoaComFoto */
+export type Celebridade = PessoaComFoto;

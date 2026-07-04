@@ -1,4 +1,4 @@
-import { SOCIAL_PROOF, SOCIAL_PROOF_LABELS, type SocialProofGroup } from "@/data/socialProof";
+import { SOCIAL_PROOF, SOCIAL_PROOF_LABELS, type SocialProofGroup, type PessoaComFoto } from "@/data/socialProof";
 
 // Resolve fotos automaticamente pela convenção src/assets/famosos/{slug}.(webp|jpg|jpeg|png)
 const rawImages = import.meta.glob(
@@ -21,7 +21,6 @@ function buildFotoMap(): Record<string, string> {
   }
   for (const [path, mod] of Object.entries(rawPointers)) {
     const file = path.split("/").pop() ?? "";
-    // Ex.: caito-maia.webp.asset.json → slug "caito-maia"
     const slug = file.replace(/\.(webp|jpg|jpeg|png)\.asset\.json$/i, "");
     const url = (mod?.default?.url ?? mod?.url) as string | undefined;
     if (url && !map[slug]) map[slug] = url;
@@ -40,13 +39,9 @@ function iniciais(nome: string): string {
 }
 
 interface Props {
-  /** Quais grupos exibir e em qual ordem. Default: todos. */
   groups?: SocialProofGroup[];
-  /** Fundo claro (padrão) ou escuro (surface-forest). */
   variant?: "light" | "dark";
-  /** Título opcional acima do bloco. */
   titulo?: React.ReactNode;
-  /** Eyebrow opcional acima do título. */
   eyebrow?: string;
   className?: string;
 }
@@ -64,16 +59,54 @@ export default function SocialProof({
   const dividerColor = isDark ? "bg-western-gold/25" : "bg-western-stone-warm/20";
   const goldLine = isDark ? "bg-western-gold/50" : "bg-western-gold";
   const avatarBg = isDark
-    ? "bg-western-green-mid/40 border-western-gold/30"
-    : "bg-western-cream border-western-stone-warm/20";
+    ? "bg-western-green-mid/40"
+    : "bg-western-cream";
   const monogramText = isDark ? "text-western-gold-soft" : "text-western-green-deep";
   const captionColor = isDark ? "text-western-cream" : "text-western-green-deep";
 
-  const showCelebs = groups.includes("celebridades");
-  const textGroups = groups.filter((g) => g !== "celebridades") as Exclude<
-    SocialProofGroup,
-    "celebridades"
-  >[];
+  const avatarGroups = groups.filter((g) => g === "celebridades" || g === "profissionais") as Array<
+    "celebridades" | "profissionais"
+  >;
+  const textGroups = groups.filter((g) => g === "parceiros" || g === "empresas") as Array<
+    "parceiros" | "empresas"
+  >;
+
+  const renderAvatarRow = (pessoas: readonly PessoaComFoto[]) => (
+    <ul className="flex flex-wrap items-start justify-center gap-6 md:gap-10">
+      {pessoas.map((c) => {
+        const foto = FOTOS[c.slug];
+        return (
+          <li key={c.slug} className="group flex flex-col items-center w-24 md:w-28">
+            <div
+              className={`relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden ${avatarBg} shrink-0 flex items-center justify-center ring-1 ring-western-gold/25 group-hover:ring-western-gold/60 transition-all duration-300 ease-out group-hover:scale-[1.06]`}
+            >
+              {foto ? (
+                <img
+                  src={foto}
+                  alt={`Retrato de ${c.nome}`}
+                  loading="lazy"
+                  decoding="async"
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-cover grayscale-[45%] brightness-[0.98] group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-300 ease-out"
+                />
+              ) : (
+                <span
+                  className={`font-display text-lg md:text-xl ${monogramText} tracking-wide`}
+                  aria-hidden="true"
+                >
+                  {iniciais(c.nome)}
+                </span>
+              )}
+            </div>
+            <p className={`mt-3 text-center font-sans text-[13px] leading-tight ${captionColor}`}>
+              {c.nome}
+            </p>
+          </li>
+        );
+      })}
+    </ul>
+  );
 
   return (
     <div className={className}>
@@ -93,56 +126,19 @@ export default function SocialProof({
         </div>
       )}
 
-      {showCelebs && (
-        <div className="mb-10 md:mb-12">
+      {avatarGroups.map((g, idx) => (
+        <div key={g} className={idx === avatarGroups.length - 1 ? "mb-10 md:mb-12" : "mb-10 md:mb-12"}>
           <p className={`text-center font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-6`}>
-            {SOCIAL_PROOF_LABELS.celebridades}
+            {SOCIAL_PROOF_LABELS[g]}
           </p>
-          <ul className="flex flex-wrap items-start justify-center gap-6 md:gap-10">
-            {SOCIAL_PROOF.celebridades.map((c) => {
-              const foto = FOTOS[c.slug];
-              return (
-                <li key={c.slug} className="flex flex-col items-center w-24 md:w-28">
-                  <div
-                    className={`w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border ${avatarBg} shrink-0 flex items-center justify-center`}
-                  >
-                    {foto ? (
-                      <img
-                        src={foto}
-                        alt={`Retrato de ${c.nome}`}
-                        loading="lazy"
-                        decoding="async"
-                        width={80}
-                        height={80}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span
-                        className={`font-display text-lg md:text-xl ${monogramText} tracking-wide`}
-                        aria-hidden="true"
-                      >
-                        {iniciais(c.nome)}
-                      </span>
-                    )}
-                  </div>
-                  <p className={`mt-3 text-center font-sans text-[13px] leading-tight ${captionColor}`}>
-                    {c.nome}
-                  </p>
-                </li>
-              );
-            })}
-          </ul>
+          {renderAvatarRow(SOCIAL_PROOF[g] as readonly PessoaComFoto[])}
         </div>
-      )}
+      ))}
 
       {textGroups.length > 0 && (
         <ul
           className={`grid gap-y-8 ${
-            textGroups.length === 3
-              ? "md:grid-cols-3"
-              : textGroups.length === 2
-              ? "md:grid-cols-2"
-              : "md:grid-cols-1"
+            textGroups.length === 2 ? "md:grid-cols-2" : "md:grid-cols-1"
           } md:gap-y-0 md:divide-x ${dividerColor}`}
         >
           {textGroups.map((g) => {
