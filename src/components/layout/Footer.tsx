@@ -102,6 +102,7 @@ export default function Footer() {
               <li><Link to="/sobre" className="text-western-cream hover:text-western-gold-soft transition-colors">Sobre</Link></li>
               <li><Link to="/por-que-western" className="text-western-cream hover:text-western-gold-soft transition-colors">Por que Western</Link></li>
               <li><Link to="/contrate-a-western" className="text-western-cream hover:text-western-gold-soft transition-colors">Contrate a Western</Link></li>
+              <li><Link to="/visitar" className="text-western-cream hover:text-western-gold-soft transition-colors">Agendar visita</Link></li>
               <li><Link to="/faq" className="text-western-cream hover:text-western-gold-soft transition-colors">Perguntas frequentes</Link></li>
               <li><Link to="/contato" className="text-western-cream hover:text-western-gold-soft transition-colors">Contato</Link></li>
               <li><Link to="/privacidade" className="text-western-cream hover:text-western-gold-soft transition-colors">Privacidade</Link></li>
