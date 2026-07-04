@@ -35,6 +35,7 @@ export const BUSINESS = {
   emailComercial: "comercial@westernpools.com.br",
   emailSuporte: "suporte@westernpools.com.br",
   emailNewsletter: "contato@westernpools.com.br",
+  razaoSocial: "Western Pools - Cascatas e Pedras Artesanais LTDA",
   // CNPJ confirmado (mesmo usado no checkout Woo)
   cnpj: "10.465.584/0001-24",
 
