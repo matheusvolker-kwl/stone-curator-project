@@ -309,8 +309,8 @@ export default function GuiaRefinar() {
                   <Info className="h-3 w-3" /> Projeto autoral · sob consulta
                 </p>
                 <p className="font-display italic text-[15px] text-western-stone-warm leading-relaxed max-w-[620px]">
-                  Você está ajustando a composição original. O SketchUp é entregue apenas para os conjuntos
-                  curados — projetos personalizados seguem para nossa equipe e voltam com prévia em até 3 dias úteis.
+                  Você está ajustando a composição original. Projetos personalizados seguem para nossa equipe
+                  e voltam com uma proposta em até 3 dias úteis.
                 </p>
                 <div className="flex flex-wrap items-center gap-3 mt-5">
                   <button

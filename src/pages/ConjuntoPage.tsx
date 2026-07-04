@@ -532,7 +532,7 @@ export default function ConjuntoPage() {
             <Fact label="Área indicada" value={faixa} />
             <Fact label="Peças no conjunto" value={totalPecas ? `${totalPecas} peças` : "Sob curadoria"} />
             <Fact label="Frete" value="Calculado por destino" />
-            <Fact label="Extras" value="3D SketchUp · Garantia 1 ano" />
+            <Fact label="Extras" value="Garantia 1 ano" />
           </div>
           <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/70 inline-flex items-center gap-2">
             <Info className="h-3 w-3" /> Produção em Cajamar/SP · {BUSINESS.prazoProducaoLabel}

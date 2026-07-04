@@ -48,7 +48,7 @@ function PanelBody({
               : "inline-flex items-center gap-2 self-start px-2.5 py-1 bg-western-gold/15 border border-western-gold/50 text-western-gold-soft font-mono text-[9px] uppercase tracking-[0.22em]"
           }
         >
-          ◆ {isCustomizado ? "Projeto autoral · sob consulta" : "Conjunto curado · SketchUp incluso"}
+          ◆ {isCustomizado ? "Projeto autoral · sob consulta" : "Conjunto curado Western"}
         </div>
 
         <div>
@@ -182,15 +182,6 @@ function PanelBody({
               className="inline-flex items-center justify-center gap-2 h-10 border border-western-cream/40 text-western-cream font-sans text-[12.5px] hover:border-western-gold hover:text-western-gold transition-colors"
             >
               <Download className="h-3.5 w-3.5" /> Baixar composição (PDF)
-            </button>
-          )}
-          {!isCustomizado && (
-            <button
-              type="button"
-              onClick={() => toast("Prévia em SketchUp em breve.")}
-              className="inline-flex items-center justify-center gap-2 h-10 border border-western-cream/40 text-western-cream font-sans text-[12.5px] hover:border-western-gold hover:text-western-gold transition-colors"
-            >
-              <Download className="h-3.5 w-3.5" /> Baixar prévia em SketchUp
             </button>
           )}
           <button
