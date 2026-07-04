@@ -52,17 +52,17 @@ export default function GuiaComposicoes() {
       <main className="container-western pt-14 md:pt-20 pb-32 relative">
         <Reveal variant="fade-up" duration={800}>
           <p className="font-display italic text-xl md:text-2xl text-western-green-deep mb-5">
-            Três caminhos. Mesma alma.
+            Três pontos de partida. Uma cena, três densidades.
           </p>
         </Reveal>
         <Reveal variant="fade-up" duration={700} delay={120}>
           <p className="eyebrow-bar mb-5">Guia de composição · Etapa 02</p>
           <h1 className="font-display text-3xl md:text-[48px] text-western-green-deep leading-[1.08] mb-6 max-w-4xl">
-            Para {copy} de {ctx.area} m² no {acabLabel}.
+            Para os {ctx.area} m² do seu projeto ({copy}, {acabLabel.toLowerCase()}), três pontos de partida.
           </h1>
           <div className="w-12 h-px bg-western-gold mb-6" />
           <p className="font-display italic text-lg text-western-stone-warm max-w-2xl leading-relaxed">
-            Cada composição é ponto de partida. No próximo passo você ajusta peças, quantidades e adiciona itens autorais.
+            A mesma cena em três densidades. Escolha a base mais próxima — no próximo passo você ajusta tudo peça por peça.
           </p>
         </Reveal>
 
