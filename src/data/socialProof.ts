@@ -1,12 +1,15 @@
 /**
  * Fonte única de verdade da prova social Western.
- * Todo bloco de "quem especifica / usa / confia" no site consome deste arquivo.
  * Consumido pelo componente único `src/components/shared/SocialProof.tsx`.
  */
-
 export interface PessoaComFoto {
   nome: string;
-  /** slug em kebab-case; foto opcional em src/assets/famosos/{slug}.(webp|jpg|png|jpeg) */
+  /** slug kebab-case; foto em src/assets/famosos/{slug}.(webp|jpg|png) */
+  slug: string;
+}
+export interface MarcaComLogo {
+  nome: string;
+  /** slug kebab-case; logo em src/assets/marcas/{slug}.(svg|png|webp) — senão wordmark */
   slug: string;
 }
 
@@ -21,28 +24,24 @@ export const SOCIAL_PROOF = {
     { nome: "Jader Almeida", slug: "jader-almeida" },
     { nome: "Marcelo Faisal", slug: "marcelo-faisal" },
   ] as PessoaComFoto[],
-  parceiros: [
-    "Cristal Pool",
-    "Genesis Ecossistemas",
-    "Biopet Lagos",
-    "Mandaia Arquitetura",
-  ],
-  empresas: [
-    "Cobasi",
-    "Unique Garden",
-    "Hotel Rosewood",
-    "All Resort Club Residence Porto Belo",
-  ],
+  marcas: [
+    { nome: "Cobasi", slug: "cobasi" },
+    { nome: "Unique Garden", slug: "unique-garden" },
+    { nome: "Hotel Rosewood", slug: "hotel-rosewood" },
+    { nome: "All Resort Porto Belo", slug: "all-resort-porto-belo" },
+    { nome: "Cristal Pool", slug: "cristal-pool" },
+    { nome: "Genesis Ecossistemas", slug: "genesis-ecossistemas" },
+    { nome: "Biopet Lagos", slug: "biopet-lagos" },
+    { nome: "Mandaia Arquitetura", slug: "mandaia-arquitetura" },
+  ] as MarcaComLogo[],
 } as const;
 
 export const SOCIAL_PROOF_LABELS = {
   celebridades: "Nas casas de celebridades",
   profissionais: "Especificada por profissionais renomados",
-  parceiros: "Parceiros comerciais",
-  empresas: "Escolhida por empresas de renome",
+  marcas: "Escolhida por marcas de referência",
 } as const;
 
 export type SocialProofGroup = keyof typeof SOCIAL_PROOF;
-
 /** @deprecated use PessoaComFoto */
 export type Celebridade = PessoaComFoto;
