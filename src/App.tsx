@@ -126,6 +126,7 @@ const App = () => (
                   <Route path="/orcamento" element={<Orcamento />} />
                   <Route path="/linhas/:handle" element={<LinhaPage />} />
                   <Route path="/conjuntos" element={<Conjuntos />} />
+                  <Route path="/conjuntos/:handle" element={<ConjuntoPage />} />
                   <Route path="/produtos" element={<Produtos />} />
                   <Route path="/produtos/:handle" element={<ProductPage />} />
                   <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
