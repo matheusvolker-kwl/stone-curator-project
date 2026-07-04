@@ -171,6 +171,10 @@ export default function GuiaRefinar() {
         productHandle?: string;
         variantId?: string;
         variantTitle?: string;
+        wooParentProductId?: number;
+        wooVariationId?: number | null;
+        wooKind?: "simple" | "variation" | "bundle";
+        wooAttributes?: Array<{ slug: string; value: string }>;
       },
     ): CartItem => ({
       productHandle: it.productHandle || it.codigo || it.id,
@@ -181,9 +185,14 @@ export default function GuiaRefinar() {
       price: { amount: String(it.preco || 0), currencyCode: "BRL" },
       quantity: it.qty,
       selectedOptions: [{ name: "Acabamento", value: acabLabel }],
+      wooParentProductId: it.wooParentProductId,
+      wooVariationId: it.wooVariationId ?? null,
+      wooKind: it.wooKind,
+      wooAttributes: it.wooAttributes ?? [],
+      conjuntoRef: handle,
     });
     return [...pecas.map(toItem), ...extras.map(toItem)];
-  }, [pecas, extras, acabamento]);
+  }, [pecas, extras, acabamento, handle]);
 
   const quoteSubtotal = quoteItems.reduce(
     (s, i) => s + parseFloat(i.price.amount) * i.quantity,
