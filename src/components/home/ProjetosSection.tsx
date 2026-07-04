@@ -7,105 +7,67 @@ export default function ProjetosSection() {
   const [active, setActive] = useState<Projeto | null>(null);
 
   return (
-    <section className="surface-forest py-16 md:py-24 border-t border-western-gold/15">
+    <section className="surface-paper py-20 md:py-28 border-t border-western-stone-warm/10">
       <div className="container-western">
-        <div className="flex items-end justify-between flex-wrap gap-4 mb-10 md:mb-14">
-          <div>
-            <p className="text-eyebrow mb-3">Projetos especificados</p>
-            <h2 className="font-display text-3xl md:text-5xl text-western-cream leading-[1.05] max-w-2xl">
-              Obras assinadas com{" "}
-              <span className="text-western-gold-soft italic font-light">Western.</span>
-            </h2>
-          </div>
-          <p className="text-western-cream-muted text-sm max-w-xs">
-            Prova social — projetos de arquitetos e paisagistas que escolheram a Western como resposta técnica e estética.
+        <div className="max-w-3xl mb-14 md:mb-20">
+          <p className="text-eyebrow mb-4">Projetos especificados</p>
+          <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05] mb-6">
+            Obras assinadas com{" "}
+            <span className="text-western-gold italic font-light">Western.</span>
+          </h2>
+          <p className="text-western-stone-warm text-base md:text-[17px] leading-relaxed max-w-xl">
+            Arquitetos, paisagistas e clientes que escolheram a pedra artesanal Western como resposta técnica e estética.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-          {PROJETOS.map((p) => (
-            <button
-              key={p.slug}
-              onClick={() => setActive(p)}
-              className="group text-left bg-western-green-mid/30 border border-western-gold/15 hover:border-western-gold/50 transition-colors flex flex-col"
-            >
-              <div className="relative aspect-[4/5] overflow-hidden bg-western-green-deep">
-                {/* Imagem em P&B total — remove toda cor original divergente */}
-                <img
-                  src={p.cardCover ?? p.cover}
-                  alt={p.titulo}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                  style={{
-                    filter: "grayscale(1) contrast(1.08) brightness(0.9)",
-                  }}
-                />
-                {/* Duotone forte verde→dourado — tinge tudo na mesma paleta */}
-                <div
-                  className="absolute inset-0 pointer-events-none mix-blend-color opacity-90 transition-opacity duration-500 group-hover:opacity-70"
-                  style={{
-                    background:
-                      "linear-gradient(160deg, hsl(var(--western-green-deep)) 0%, hsl(var(--western-gold)) 100%)",
-                  }}
-                  aria-hidden
-                />
-                {/* Reforço de sombra/contraste em multiply para consolidar o tom */}
-                <div
-                  className="absolute inset-0 pointer-events-none mix-blend-multiply opacity-70 transition-opacity duration-500 group-hover:opacity-55"
-                  style={{
-                    background:
-                      "linear-gradient(160deg, hsl(var(--western-green-deep) / 0.85) 0%, hsl(var(--western-green-mid) / 0.6) 100%)",
-                  }}
-                  aria-hidden
-                />
-                {/* Vinheta sutil para foco no rosto */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background:
-                      "radial-gradient(ellipse at 50% 35%, transparent 45%, hsl(var(--western-green-deep) / 0.45) 100%)",
-                  }}
-                  aria-hidden
-                />
-                {/* Gradiente forte no rodapé para legibilidade do nome — fica por cima do duotone */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background:
-                      "linear-gradient(to top, hsl(var(--western-green-deep) / 0.96) 0%, hsl(var(--western-green-deep) / 0.7) 28%, transparent 60%)",
-                  }}
-                  aria-hidden
-                />
-                <div className="absolute bottom-4 left-4 right-4">
-                  {(() => {
-                    const [nome, contexto] = p.eyebrow.split("·").map((s) => s.trim());
-                    return (
-                      <>
-                        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-western-gold-soft mb-2">
-                          {p.titulo}
-                        </p>
-                        <h3 className="font-display text-2xl md:text-[1.7rem] text-western-cream leading-[1.05] line-clamp-2 drop-shadow-[0_2px_8px_hsl(var(--western-green-deep)/0.6)]">
-                          {nome}
-                        </h3>
-                        {contexto && (
-                          <p className="text-[11px] text-western-cream-muted mt-1.5 line-clamp-1">
-                            {contexto}
-                          </p>
-                        )}
-                      </>
-                    );
-                  })()}
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+          {PROJETOS.map((p) => {
+            const [autor, contexto] = p.eyebrow.split("·").map((s) => s.trim());
+            return (
+              <button
+                key={p.slug}
+                onClick={() => setActive(p)}
+                className="group text-left flex flex-col"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden bg-western-stone-warm/10 mb-6">
+                  <img
+                    src={p.cover}
+                    alt={`Obra: ${p.titulo}`}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.03]"
+                  />
+                  <div
+                    className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, transparent 55%, hsl(var(--western-green-deep) / 0.35) 100%)",
+                    }}
+                    aria-hidden
+                  />
                 </div>
-              </div>
-              <div className="px-3 py-2.5 border-t border-western-gold/10 flex items-center justify-between">
-                <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-cream-muted">
-                  Ver projeto
-                </span>
-                <ArrowRight className="h-3 w-3 text-western-gold-soft group-hover:translate-x-0.5 transition-transform" />
-              </div>
-            </button>
-          ))}
+
+                <div className="space-y-2.5">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-western-gold">
+                    Projeto
+                  </p>
+                  <h3 className="font-display text-2xl md:text-3xl text-western-green-deep leading-[1.15]">
+                    {p.titulo}
+                  </h3>
+                  <p className="text-sm text-western-stone-warm leading-relaxed">
+                    {autor}
+                    {contexto && (
+                      <span className="text-western-stone-warm/70"> · {contexto}</span>
+                    )}
+                  </p>
+                  <div className="pt-3 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep border-b border-western-green-deep/25 group-hover:border-western-gold group-hover:text-western-gold transition-colors pb-1">
+                    Ver projeto
+                    <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
