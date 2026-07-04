@@ -131,6 +131,14 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         </button>
 
         <div className="flex items-center gap-1 lg:gap-3 ml-auto md:ml-0">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event("western:open-audience"))}
+            aria-label="É para a minha casa? Solicitar orçamento residencial"
+            className="hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2 focus-visible:ring-offset-western-ivory"
+          >
+            <Home className="h-4 w-4" /> É para minha casa?
+          </button>
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
