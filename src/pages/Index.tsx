@@ -5,9 +5,7 @@ import Seo from "@/components/seo/Seo";
 
 import ProductCard from "@/components/product/ProductCard";
 import ColecoesGrid from "@/components/home/ColecoesGrid";
-import ProjetosSection from "@/components/home/ProjetosSection";
 import ArtistaSection from "@/components/home/ArtistaSection";
-import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
 import Reveal from "@/components/shared/Reveal";
 import SocialProof from "@/components/shared/SocialProof";
 import { useScrollY } from "@/hooks/useScrollY";
