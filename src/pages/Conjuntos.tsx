@@ -16,6 +16,8 @@ import {
 import GatedPrice from "@/components/shared/GatedPrice";
 import { ArrowRight, SlidersHorizontal, X } from "lucide-react";
 import ProjetosWesternBand from "@/components/shared/ProjetosWesternBand";
+import { conjuntoRenders } from "@/data/conjuntoRenders";
+import { nivelImage } from "@/components/guide-v2/imagery";
 
 type LeafMeta = {
   handle: string;
@@ -458,20 +460,36 @@ function ConjuntoCard({ leaf, shopify, preco, img }: CardProps) {
       className="group flex flex-col bg-white border border-western-stone-warm/10 hover:border-western-gold/60 transition-all duration-300"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-western-paper">
-        {img ? (
-          <img
-            src={cdnImg(img.url, 800)}
-            alt={img.altText ?? leaf.nome}
-            loading="lazy"
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/50">
-              Imagem em breve
-            </span>
-          </div>
-        )}
+        {(() => {
+          const render = conjuntoRenders[leaf.handle] ?? nivelImage[leaf.nivel];
+          if (render) {
+            return (
+              <img
+                src={render}
+                alt={leaf.nome}
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+              />
+            );
+          }
+          if (img) {
+            return (
+              <img
+                src={cdnImg(img.url, 800)}
+                alt={img.altText ?? leaf.nome}
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+              />
+            );
+          }
+          return (
+            <div className="w-full h-full flex items-center justify-center">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/50">
+                Imagem em breve
+              </span>
+            </div>
+          );
+        })()}
         <span className="absolute top-3 left-3 font-mono text-[10px] uppercase tracking-[0.18em] text-western-cream bg-western-green-deep/80 px-2 py-1">
           {tamanhoLabels[leaf.tamanho]} · {faixaArea[leaf.tipo][leaf.tamanho]}
         </span>
