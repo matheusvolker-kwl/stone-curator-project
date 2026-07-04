@@ -564,6 +564,7 @@ export default function ProductPage() {
           visibleOptions.find((o) => !activeOptions[o.name])?.name.toLowerCase() ?? null
         }
         available={!!variant?.availableForSale}
+        productRef={product.handle}
       />
     </div>
   );

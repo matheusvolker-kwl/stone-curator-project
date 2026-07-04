@@ -22,6 +22,7 @@ interface Props {
   canAdd: boolean;
   pendingOptionLabel?: string | null;
   available: boolean;
+  productRef?: string;
 }
 
 export default function StickyBuyBar({
@@ -39,8 +40,12 @@ export default function StickyBuyBar({
   canAdd,
   pendingOptionLabel,
   available,
+  productRef,
 }: Props) {
   const { isApproved } = useAuth();
+  const orcamentoTo = productRef
+    ? `/orcamento?ref=${encodeURIComponent(productRef)}`
+    : "/orcamento";
   const [visible, setVisible] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
 
