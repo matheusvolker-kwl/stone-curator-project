@@ -48,7 +48,7 @@ import {
 import { buildContextQuery } from "@/components/guide-v2/useGuideQuery";
 
 import { cdnImg } from "@/lib/catalog/client";
-import { fetchProductsByHandles } from "@/lib/datasource";
+import { fetchProductsByHandlesHydrated } from "@/lib/datasource";
 import { useCartStore, type CartItem } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { BUSINESS } from "@/config/business";
@@ -119,7 +119,7 @@ export default function ConjuntoPage() {
 
   const { data: produtos, isLoading } = useQuery({
     queryKey: ["conjunto-page", handle, composicaoHandles],
-    queryFn: () => fetchProductsByHandles(composicaoHandles),
+    queryFn: () => fetchProductsByHandlesHydrated(composicaoHandles),
     enabled: composicaoHandles.length > 0,
     staleTime: 5 * 60 * 1000,
   });

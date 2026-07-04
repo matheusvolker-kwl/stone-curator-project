@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchProductsByHandles } from "@/lib/datasource";
+import { fetchProductsByHandlesHydrated } from "@/lib/datasource";
 import { cdnImg } from "@/lib/catalog/client";
 import type { ShopifyProductNode } from "@/lib/catalog/types";
 import type { Nivel } from "@/data/guideMap";
@@ -16,7 +16,7 @@ const cache = new Map<string, ShopifyProductNode>();
 async function getProducts(handles: string[]): Promise<Map<string, ShopifyProductNode>> {
   const missing = handles.filter((h) => !cache.has(h));
   if (missing.length > 0) {
-    const fetched = await fetchProductsByHandles(missing);
+    const fetched = await fetchProductsByHandlesHydrated(missing);
     fetched.forEach((p) => cache.set(p.handle, p));
   }
   const out = new Map<string, ShopifyProductNode>();
