@@ -74,6 +74,8 @@ export default function ProductGallery({
               src={cdnImg(current.url, 1200)}
               srcSet={cdnSrcSet(current.url, [600, 1000, 1400])}
               sizes="(min-width: 768px) 50vw, 100vw"
+              width={1200}
+              height={1200}
               alt={current.altText ?? productTitle}
               decoding="async"
               className="w-full h-full object-contain p-4 md:p-8 animate-fade-in pointer-events-none"
@@ -134,6 +136,8 @@ export default function ProductGallery({
             >
               <img
                 src={cdnImg(img.url, 200)}
+                width={80}
+                height={80}
                 alt=""
                 loading="lazy"
                 decoding="async"
@@ -193,6 +197,8 @@ export default function ProductGallery({
             <img
               key={activeIndex}
               src={cdnImg(current.url, 2000)}
+              width={2000}
+              height={2000}
               alt={current.altText ?? productTitle}
               className={`block mx-auto transition-transform duration-300 ${
                 zoomed ? "scale-[1.6]" : "scale-100"

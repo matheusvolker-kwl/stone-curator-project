@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { fetchCollection } from "@/lib/datasource";
-import { cdnImg } from "@/lib/catalog/client";
+import { cdnImg, cdnSrcSet } from "@/lib/catalog/client";
 import { extractDimensions, parseProductDescription } from "@/lib/catalog/parseDescription";
 
 
@@ -73,8 +73,13 @@ export default function RelatedProducts({
                         {img && (
                           <img
                             src={cdnImg(img.url, 600)}
+                            srcSet={cdnSrcSet(img.url, [400, 600, 900])}
+                            sizes="(min-width: 768px) 25vw, 45vw"
+                            width={600}
+                            height={450}
                             alt={img.altText ?? p.title}
                             loading="lazy"
+                            decoding="async"
                             className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.04]"
                           />
                         )}
@@ -119,6 +124,9 @@ export default function RelatedProducts({
                           {img && (
                             <img
                               src={cdnImg(img.url, 400)}
+                              width={280}
+                              height={280}
+                              decoding="async"
                               alt={img.altText ?? s.title}
                               loading="lazy"
                               className="w-full h-full object-contain p-2"

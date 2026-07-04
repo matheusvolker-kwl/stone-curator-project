@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 import SocialProof from "@/components/shared/SocialProof";
 import Reveal from "@/components/shared/Reveal";
+import ProjetosWesternBand from "@/components/shared/ProjetosWesternBand";
 import { useScrollY } from "@/hooks/useScrollY";
 import { ArrowRight, Layers, Mountain, Recycle, Hammer, Quote } from "lucide-react";
 import retrato from "@/assets/ricardo-luiz-carlos.webp";
@@ -9,12 +10,6 @@ import irmaosGruta from "@/assets/irmaos-botelho-gruta.webp";
 import heroCascata from "@/assets/hero-cascata.webp";
 import respiroPedra from "@/assets/respiro-pedra.webp";
 import projetoCascata from "@/assets/projetos/cover-cascata.webp";
-import obraCascataTropical from "@/assets/about-projetos/cascata-tropical.webp";
-import obraCascataMirante from "@/assets/about-projetos/cascata-mirante.webp";
-import obraPiscinaPraia from "@/assets/about-projetos/piscina-praia.webp";
-import obraDetalheMatriz from "@/assets/about-projetos/detalhe-matriz.jpg";
-import obraBordaPedra from "@/assets/about-projetos/borda-pedra.webp";
-import obraCascataEscalonada from "@/assets/about-projetos/cascata-escalonada.jpg";
 import iconePedraBranco from "@/assets/icone-pedra-branco.png";
 import { BUSINESS } from "@/config/business";
 
@@ -215,15 +210,9 @@ export default function About() {
       </section>
 
       {/* CITAÇÃO — quebra editorial em surface-paper com imagem larga */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden bg-western-green-deep">
         <div className="relative h-[44vh] min-h-[340px] w-full">
-          <img
-            src={respiroPedra}
-            alt=""
-            aria-hidden
-            className="absolute left-0 top-[-12%] w-full h-[124%] object-cover will-change-transform"
-            style={{ transform: `translate3d(0, ${(scrollY - 800) * 0.05}px, 0)` }}
-          />
+          <img src={respiroPedra} alt="" aria-hidden className="absolute left-0 top-[-20%] w-full h-[140%] object-cover will-change-transform" style={{ transform: `translate3d(0, ${Math.min(0, (scrollY - 2000) * 0.04)}px, 0)` }} />
           <div
             className="absolute inset-0"
             aria-hidden
@@ -280,90 +269,8 @@ export default function About() {
         </div>
       </section>
 
-      {/* GALERIA — Mural editorial de obras */}
-      <section className="surface-ivory py-14 md:py-18 border-t border-western-stone-warm/10">
-        <div className="container-western max-w-6xl">
-          <Reveal variant="fade-up" duration={750}>
-            <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-end mb-8 md:mb-12">
-              <div>
-                <p className="text-eyebrow mb-3">Repertório</p>
-                <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
-                  Obras que assinamos<br />nas últimas décadas.
-                </h2>
-              </div>
-              <p className="text-western-stone-warm leading-relaxed text-sm md:text-base max-w-md md:justify-self-end">
-                Cascatas, prainhas, lagos ornamentais e bordas integradas em residências de alto padrão, hospitalidade de luxo e paisagismo autoral pelo Brasil.
-              </p>
-            </div>
-          </Reveal>
-
-          {(() => {
-            const hero = {
-              src: obraBordaPedra,
-              alt: "Borda de pedra integrada à piscina em projeto Western",
-              tipologia: "Borda Integrada",
-              local: "Pool · Acabamento natural",
-            };
-            const obras = [
-              { src: obraCascataTropical, alt: "Cascata em pedra Western em piscina tropical", tipologia: "Cascata Tropical", local: "Residencial" },
-              { src: obraCascataMirante, alt: "Cascata Western escalonada com vista de serra", tipologia: "Cascata Mirante", local: "Vista de serra" },
-              { src: obraPiscinaPraia, alt: "Piscina-praia com pedra sonora aplicada", tipologia: "Piscina-Praia", local: "Pedra sonora" },
-            ];
-
-            const Caption = ({ index, tipologia, local }: { index: number; tipologia: string; local: string }) => (
-              <figcaption className="pt-3 flex items-baseline justify-between gap-3 border-t border-western-stone-warm/20">
-                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep">
-                  <span className="text-western-gold/70 mr-2">{String(index).padStart(2, "0")}</span>
-                  {tipologia}
-                </p>
-                <p className="text-[10px] text-western-stone-warm font-mono uppercase tracking-[0.16em] text-right">
-                  {local}
-                </p>
-              </figcaption>
-            );
-
-            return (
-              <div className="space-y-6 md:space-y-8">
-                {/* Hero panorâmica */}
-                <Reveal variant="fade-up" duration={800}>
-                  <figure className="group">
-                    <div className="relative aspect-[16/9] md:aspect-[21/9] overflow-hidden">
-                      <img
-                        src={hero.src}
-                        alt={hero.alt}
-                        loading="lazy"
-                        decoding="async"
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1600ms] ease-out group-hover:scale-[1.03]"
-                      />
-                    </div>
-                    <Caption index={1} tipologia={hero.tipologia} local={hero.local} />
-                  </figure>
-                </Reveal>
-
-                {/* Trio vertical */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
-                  {obras.map((o, i) => (
-                    <Reveal key={i} variant="fade-up" delay={i * 110} duration={750}>
-                      <figure className="group">
-                        <div className="relative aspect-[4/5] overflow-hidden">
-                          <img
-                            src={o.src}
-                            alt={o.alt}
-                            loading="lazy"
-                            decoding="async"
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04]"
-                          />
-                        </div>
-                        <Caption index={i + 2} tipologia={o.tipologia} local={o.local} />
-                      </figure>
-                    </Reveal>
-                  ))}
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-      </section>
+      {/* GALERIA — padrão canônico de obras */}
+      <ProjetosWesternBand />
 
       {/* MANIFESTO — vocabulário & filosofia */}
       <section className="surface-forest py-14 md:py-18 relative overflow-hidden">

@@ -80,6 +80,8 @@ export default function ProductCard({ product }: Props) {
             src={cdnImg(img.url, 700)}
             srcSet={cdnSrcSet(img.url, [400, 700, 1000])}
             sizes="(min-width: 1024px) 320px, 45vw"
+            width={700}
+            height={700}
             alt={img.altText ?? product.title}
             loading="lazy"
             decoding="async"
