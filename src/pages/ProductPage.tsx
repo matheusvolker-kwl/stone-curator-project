@@ -311,7 +311,7 @@ export default function ProductPage() {
                       {isApproved ? (
                         <>
                           <p className="text-price">{formatBRL(priceAmount, priceCurrency)}</p>
-                          <p className="text-meta mt-2">Preço parceiro · à vista</p>
+                          <p className="text-meta mt-2">À VISTA&nbsp;·&nbsp;PARCELAMENTO DISPONÍVEL NO CHECKOUT</p>
                         </>
                       ) : (
                         <PriceGate variant="block" />
