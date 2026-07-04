@@ -13,6 +13,10 @@ export interface AutoralItem {
   descricao: string;
   dim: string;
   imageUrl?: string;
+  wooParentProductId?: number;
+  wooVariationId?: number | null;
+  wooKind?: "simple" | "variation" | "bundle";
+  wooAttributes?: Array<{ slug: string; value: string }>;
 }
 
 // Handles dos produtos autorais reais por tipo de ambiente.
