@@ -1,20 +1,21 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Lock, Unlock } from "lucide-react";
+import { Lock, Unlock, Check, Package } from "lucide-react";
 
 interface Props {
   /** Conteúdo exibido para parceiros aprovados/admin (preço real). Opcional para variant="block". */
   children?: React.ReactNode;
   /** Estilo compacto (cards) ou completo (PDP) */
   variant?: "inline" | "block";
-  /** Texto do CTA */
+  /** Texto do CTA (usado apenas na variante inline legacy) */
   ctaLabel?: string;
 }
 
-export default function PriceGate({ children, variant = "inline", ctaLabel = "Ver preço de parceiro" }: Props) {
-  const { isApproved, session, partnerStatus } = useAuth();
+export default function PriceGate({ children, variant = "inline" }: Props) {
+  const { isApproved, session } = useAuth();
   if (isApproved) return <>{children}</>;
 
+  // ─── Inline (cards de listagem): enxuto, sem pitch ───
   if (variant === "inline") {
     const to = session ? "/minha-conta" : "/parceiro/cadastro";
     const Icon = session ? Lock : Unlock;
@@ -29,38 +30,65 @@ export default function PriceGate({ children, variant = "inline", ctaLabel = "Ve
     );
   }
 
-  // block (PDP)
-  const msg = !session
-    ? "Os preços do catálogo são exclusivos para parceiros credenciados. Faça login ou solicite seu cadastro B2B."
-    : partnerStatus === "pending"
-    ? "Seu cadastro está em análise. Liberamos os preços e a tabela completa por e-mail em breve."
-    : "Acesso indisponível. Fale com o nosso comercial.";
-  const IconBlock = !session ? Unlock : Lock;
+  // ─── Block (PDP): pitch de parceria, preço 100% oculto ───
+  const beneficios = [
+    "Catálogo completo pronto pra montar o pedido e comprar",
+    "Artes, modelos SketchUp, guia de compra e de instalação",
+    "Fotos aplicadas, de estúdio e descrições detalhadas",
+    "Pagamento em Pix, boleto ou cartão",
+  ];
+
   return (
-    <div className="border border-western-gold/40 bg-western-gold/5 px-5 py-6 min-w-0">
-      <div className="flex items-start gap-3 mb-4 min-w-0">
-        <IconBlock className="h-4 w-4 text-western-gold mt-0.5 flex-shrink-0" />
-        <div className="min-w-0">
-          <p className="text-eyebrow mb-2">Condição parceiro</p>
-          <p className="text-spec text-western-green-deep leading-relaxed break-words">{msg}</p>
-        </div>
+    <div className="border border-western-gold/40 bg-western-gold/[0.06] px-5 py-6 md:px-6 md:py-7 min-w-0">
+      <p className="text-eyebrow mb-3">Preço exclusivo para parceiros</p>
+      <h3 className="font-display text-2xl md:text-[26px] leading-[1.15] text-western-green-deep mb-3">
+        Preço de parceiro, liberado na hora
+      </h3>
+      <p className="text-spec text-western-green-deep/85 leading-relaxed mb-5">
+        A Western Store é exclusiva para parceiros. A aprovação é automática e
+        imediata para empresas com CNAE compatível — sem espera, sem análise manual.
+      </p>
+
+      <ul className="space-y-2 mb-5">
+        {beneficios.map((b) => (
+          <li
+            key={b}
+            className="flex items-start gap-2 text-[13px] leading-snug text-western-green-deep/90"
+          >
+            <Check className="h-4 w-4 text-western-gold mt-0.5 flex-shrink-0" />
+            <span>{b}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="border border-western-green-deep/15 bg-western-cream/60 px-4 py-3 mb-5 flex items-start gap-3">
+        <Package className="h-4 w-4 text-western-green-deep mt-0.5 flex-shrink-0" />
+        <p className="text-[12.5px] leading-snug text-western-green-deep/90">
+          <span className="font-mono uppercase tracking-[0.14em] text-[11px] text-western-green-deep">
+            Western Box
+          </span>{" "}
+          — leve o kit de amostras + catálogo e receba 100% de volta em cashback
+          na primeira compra.
+        </p>
       </div>
-      {!session && (
-        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 mt-3">
-          <Link
-            to="/parceiro/cadastro"
-            className="flex items-center justify-center text-center h-11 px-5 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors w-full sm:w-auto whitespace-normal"
-          >
-            {ctaLabel}
-          </Link>
-          <Link
-            to="/parceiro/login"
-            className="flex items-center justify-center text-center h-11 px-5 border border-western-green-deep/30 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-[11px] uppercase tracking-[0.22em] w-full sm:w-auto whitespace-normal"
-          >
-            Já sou parceiro · Entrar
-          </Link>
-        </div>
-      )}
+
+      <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
+        <Link
+          to="/parceiro/cadastro"
+          className="flex items-center justify-center text-center h-11 px-5 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors w-full sm:w-auto whitespace-normal"
+        >
+          Criar conta de parceiro
+        </Link>
+        <Link
+          to="/parceiro/login"
+          className="flex items-center justify-center text-center h-11 px-5 border border-western-green-deep/30 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-[11px] uppercase tracking-[0.22em] w-full sm:w-auto whitespace-normal"
+        >
+          Já sou parceiro · Entrar
+        </Link>
+      </div>
+      <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80">
+        Grátis · aprovação na hora
+      </p>
     </div>
   );
 }
