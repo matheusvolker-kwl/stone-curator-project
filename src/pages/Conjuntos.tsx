@@ -454,7 +454,7 @@ interface CardProps {
 function ConjuntoCard({ leaf, shopify, preco, img }: CardProps) {
   return (
     <Link
-      to={`/produtos/${leaf.handle}`}
+      to={`/conjuntos/${leaf.handle}`}
       className="group flex flex-col bg-white border border-western-stone-warm/10 hover:border-western-gold/60 transition-all duration-300"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-western-paper">
