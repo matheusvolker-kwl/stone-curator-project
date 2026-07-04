@@ -45,15 +45,10 @@ interface WooProduct {
 }
 
 async function fetchProductEntries(): Promise<Entry[]> {
-  const { url, key } = readEnv();
-  if (!url || !key) {
-    console.warn("sitemap: skipping products (missing SUPABASE_URL/PUBLISHABLE_KEY in .env)");
-    return [];
-  }
-  const endpoint = `${url}/functions/v1/woo-proxy?path=products&per_page=100&status=publish`;
+  const endpoint = `${SUPABASE_URL}/functions/v1/woo-proxy?path=products&per_page=100&status=publish`;
   try {
     const res = await fetch(endpoint, {
-      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` },
     });
     if (!res.ok) {
       console.warn(`sitemap: woo-proxy returned ${res.status}, using static entries only`);
