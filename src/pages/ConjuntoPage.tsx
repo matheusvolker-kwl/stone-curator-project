@@ -83,6 +83,8 @@ export default function ConjuntoPage() {
   const { isApproved, session } = useAuth();
   const { addBundle } = useCartStore();
   const [quoteOpen, setQuoteOpen] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [zoomed, setZoomed] = useState(false);
 
   const info = useMemo(() => (handle ? getConjuntoByHandle(handle) : null), [handle]);
 
