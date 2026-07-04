@@ -251,11 +251,13 @@ function PanelBody({
           )}
           <button
             type="button"
-            onClick={() => toast(session ? "Projeto salvo no seu painel." : "Faça login para salvar o projeto.")}
-            className="text-[12px] text-western-cream-muted hover:text-western-cream underline-offset-4 hover:underline self-center"
+            onClick={handleSalvar}
+            disabled={salvando}
+            className="text-[12px] text-western-cream-muted hover:text-western-cream underline-offset-4 hover:underline self-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Salvar projeto e decidir depois
+            {salvando ? "Salvando…" : "Salvar projeto e decidir depois"}
           </button>
+
         </div>
       </div>
     </div>
