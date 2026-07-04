@@ -137,5 +137,6 @@ export function buildCartItem(
     wooVariationId: variant.wooVariationId ?? null,
     wooKind: variant.wooKind,
     wooAttributes: variant.wooAttributes ?? [],
+    collectionHandle: product.collections?.edges?.[0]?.node?.handle,
   };
 }
