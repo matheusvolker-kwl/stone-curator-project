@@ -213,11 +213,14 @@ export default function ProductGallery({
       {/* Lightbox */}
       {lightboxOpen && (
         <div
+          ref={dialogRef}
+          tabIndex={-1}
           className="fixed inset-0 z-[100] bg-western-green-deep flex items-center justify-center"
           role="dialog"
           aria-modal="true"
           aria-label="Visualização ampliada"
         >
+
           <button
             type="button"
             onClick={() => setLightboxOpen(false)}
