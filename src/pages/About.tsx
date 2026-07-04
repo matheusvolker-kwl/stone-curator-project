@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
-import ArquitetosStrip from "@/components/shared/ArquitetosStrip";
+import SocialProof from "@/components/shared/SocialProof";
 import Reveal from "@/components/shared/Reveal";
 import { useScrollY } from "@/hooks/useScrollY";
 import { ArrowRight, Layers, Mountain, Recycle, Hammer, Quote } from "lucide-react";
@@ -413,15 +413,10 @@ export default function About() {
       <section className="surface-ivory py-14 md:py-18">
         <div className="container-western max-w-5xl">
           <Reveal variant="fade-up" duration={800}>
-            <ArquitetosStrip
+            <SocialProof
               eyebrow="Especificada por"
-              titulo={<>Arquitetos que assinam<br />com a Western.</>}
-              descricao={
-                <>
-                  Estúdios de referência nacional que tornam Western parte recorrente do
-                  repertório em residências de alto padrão e hospitalidade de luxo.
-                </>
-              }
+              titulo={<>Profissionais que assinam com a Western.</>}
+              groups={["celebridades", "profissionais"]}
             />
           </Reveal>
 
