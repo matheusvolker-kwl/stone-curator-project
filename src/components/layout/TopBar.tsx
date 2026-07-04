@@ -48,7 +48,7 @@ export default function TopBar() {
         </ul>
         {/* Mobile — marquee horizontal */}
         <div className="md:hidden w-full overflow-hidden pr-10 relative">
-          <div className="flex w-max animate-marquee-x gap-10 whitespace-nowrap motion-reduce:animate-none">
+          <div className="flex w-max animate-marquee-x gap-10 whitespace-nowrap motion-reduce:animate-none hover:[animation-play-state:paused] focus-within:[animation-play-state:paused]">
             {[...items, ...items].map(({ Icon, text }, i) => (
               <span
                 key={i}
