@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Plus, Minus, ArrowRight } from "lucide-react";
+import Seo from "@/components/seo/Seo";
 
 const OBJEÇÕES: { q: string; a: string }[] = [
   {
     q: "Pedra artificial não fica tão bonita quanto natural.",
-    a: "Western não é pedra artificial — é pedra natural moldada. Cada peça nasce do molde de uma pedra real, com fissuras, sedimentos e textura idênticos. A diferença é que tiramos o molde sem retirar a pedra do ambiente. A três metros de distância, nem o nosso fundador acerta qual é qual. E em três anos, com pátina de musgo e oxidação ambiental, a peça fica ainda mais indistinguível.",
+    a: "Western não é 'pedra artificial' de revenda — é uma réplica autoral moldada a partir de pedra real. Cada peça nasce do molde de uma pedra natural, com fissuras, sedimentos e textura idênticos; a diferença está no material: um composto mineral (cimento estrutural + fibra de PET reciclado), até 10× mais leve, moldado sem retirar a pedra do ambiente. A três metros de distância, nem o nosso fundador acerta qual é qual. E em três anos, com pátina de musgo e oxidação ambiental, a peça fica ainda mais indistinguível.",
   },
   {
     q: "Vai amarelar com o tempo, vai descascar.",
@@ -57,6 +58,11 @@ export default function PorQueWestern() {
   const [open, setOpen] = useState<number | null>(0);
   return (
     <>
+      <Seo
+        title="Por que Western — 12 respostas para arquitetos e paisagistas"
+        description="As objeções mais comuns sobre pedra artesanal, respondidas com dados e casos reais de 33 anos de obras Western: peso, durabilidade, custo instalado, garantia e mais."
+        path="/por-que-western"
+      />
       <section className="surface-forest">
         <div className="container-western py-20 md:py-28 max-w-4xl">
           <p className="text-eyebrow text-western-gold-soft mb-5">Por que Western</p>
