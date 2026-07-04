@@ -596,6 +596,44 @@ export default function ConjuntoPage() {
           origem: "pdp_conjunto",
         }}
       />
+
+      {lightboxOpen && (
+        <div
+          className="fixed inset-0 z-[100] bg-western-green-deep flex items-center justify-center"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Render ampliado"
+        >
+          <button
+            type="button"
+            onClick={() => setLightboxOpen(false)}
+            aria-label="Fechar (Esc)"
+            className="absolute top-4 right-4 h-11 w-11 flex items-center justify-center text-western-cream/80 hover:text-western-cream border border-western-cream/20 hover:border-western-cream/60 transition-colors z-10"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setZoomed((z) => !z)}
+            className={`relative block mx-auto max-w-[92vw] max-h-[88vh] overflow-auto ${
+              zoomed ? "cursor-zoom-out" : "cursor-zoom-in"
+            }`}
+            aria-label={zoomed ? "Reduzir zoom" : "Ampliar"}
+          >
+            <img
+              src={render}
+              alt={`Render do conjunto ${leaf.nome}`}
+              className={`block mx-auto transition-transform duration-300 ${
+                zoomed ? "scale-[1.8]" : "scale-100"
+              } max-w-[92vw] max-h-[88vh] object-contain touch-pinch-zoom`}
+              style={{ touchAction: "pinch-zoom" }}
+            />
+          </button>
+          <span className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.25em] text-western-cream/70 text-center px-4">
+            Clique na imagem para ampliar · esc para fechar
+          </span>
+        </div>
+      )}
     </div>
   );
 }
