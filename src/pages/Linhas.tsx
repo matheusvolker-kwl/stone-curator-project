@@ -205,6 +205,14 @@ export default function Linhas() {
             })}
           </div>
         )}
+
+        <Link to="/orcamento" className="group mt-14 md:mt-20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border border-western-gold/30 bg-western-green-deep px-6 py-6 md:px-10 md:py-8 text-western-cream transition-colors hover:bg-western-green-deep/90">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold-soft mb-2">Projeto residencial? Sem CNPJ?</p>
+            <p className="font-display text-xl md:text-2xl leading-tight">Conte sobre o seu projeto e receba um orçamento sob medida.</p>
+          </div>
+          <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold whitespace-nowrap">Pedir orçamento <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
+        </Link>
       </div>
     </div>
   );
