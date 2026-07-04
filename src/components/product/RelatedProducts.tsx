@@ -140,9 +140,6 @@ export default function RelatedProducts({
                 );
               })}
             </ul>
-            <p className="text-center font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mt-6">
-              Conjuntos prontos têm {BUSINESS.descontoConjuntosPercent}% de desconto sobre a soma das peças avulsas
-            </p>
           </div>
         )}
       </div>
