@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import PhoneInput from "@/components/forms/PhoneInput";
 import EmailInput from "@/components/forms/EmailInput";
 import FieldLabel from "@/components/forms/FieldLabel";
-import { supabase } from "@/integrations/supabase/client";
 import { submitSecureLead } from "@/lib/leads";
 import TurnstileWidget from "@/components/security/TurnstileWidget";
 import { BUSINESS } from "@/config/business";
