@@ -37,6 +37,17 @@ export async function submitContactLead(input: {
   return { ok: true };
 }
 
+export async function submitSecureLead(
+  lead: Record<string, unknown>,
+  token: string,
+): Promise<{ ok: boolean; id?: string; error?: string }> {
+  const { data, error } = await supabase.functions.invoke("lead-submit", {
+    body: { token, lead },
+  });
+  if (error) return { ok: false, error: error.message };
+  return (data as { ok: boolean; id?: string; error?: string }) ?? { ok: false, error: "sem resposta" };
+}
+
 export interface QuoteContact {
   nome: string;
   email: string;
