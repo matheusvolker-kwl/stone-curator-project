@@ -1,42 +1,39 @@
-import { Truck, Clock, MapPin, ShieldCheck, Package } from "lucide-react";
+import { Clock, MapPin, ShieldCheck, Package } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 
 interface Props {
-  /** "minimal" = 3 ícones (default). "full" = adiciona linha com pedido mínimo + garantia. */
+  /** "minimal" = só os dois sinais principais. "full" = adiciona pedido mínimo + garantia. */
   variant?: "minimal" | "full";
 }
 
 export default function DeliverySignals({ variant = "minimal" }: Props) {
-  const items = [
-    { Icon: Truck, label: "Frete cotado por região" },
+  const base = [
     { Icon: Clock, label: `Pronto em ${BUSINESS.prazoProducaoDias} dias úteis` },
-    { Icon: MapPin, label: `Retira grátis em ${BUSINESS.cidadeAtelie}/${BUSINESS.ufAtelie}` },
+    {
+      Icon: MapPin,
+      label: `Retirada em fábrica · ${BUSINESS.cidadeAtelie}/${BUSINESS.ufAtelie}`,
+    },
   ];
+  const extra = [
+    { Icon: ShieldCheck, label: `Garantia ${BUSINESS.garantiaLabel}` },
+    { Icon: Package, label: `Pedido mínimo ${BUSINESS.pedidoMinimoLabel}` },
+  ];
+  const items = variant === "full" ? [...base, ...extra] : base;
+  const gridCols =
+    variant === "full"
+      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+      : "grid-cols-1 sm:grid-cols-2";
   return (
-    <div className="space-y-3">
-      <ul className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-2">
-        {items.map(({ Icon, label }) => (
-          <li
-            key={label}
-            className="flex items-center gap-2 font-sans text-[12px] text-western-stone-warm/85"
-          >
-            <Icon className="h-3.5 w-3.5 text-western-stone-warm/60 flex-shrink-0" />
-            <span className="leading-tight">{label}</span>
-          </li>
-        ))}
-      </ul>
-      {variant === "full" && (
-        <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-3 border-t border-western-stone-warm/15">
-          <li className="flex items-center gap-2 font-sans text-[12px] text-western-stone-warm/75">
-            <Package className="h-3 w-3 text-western-stone-warm/55 flex-shrink-0" />
-            Pedido mínimo {BUSINESS.pedidoMinimoLabel}
-          </li>
-          <li className="flex items-center gap-2 font-sans text-[12px] text-western-stone-warm/75">
-            <ShieldCheck className="h-3 w-3 text-western-stone-warm/55 flex-shrink-0" />
-            Garantia {BUSINESS.garantiaLabel}
-          </li>
-        </ul>
-      )}
-    </div>
+    <ul className={`grid ${gridCols} gap-x-4 gap-y-2`}>
+      {items.map(({ Icon, label }) => (
+        <li
+          key={label}
+          className="flex items-center gap-2 font-sans text-[12px] text-western-stone-warm/85"
+        >
+          <Icon className="h-3.5 w-3.5 text-western-stone-warm/60 flex-shrink-0" />
+          <span className="leading-tight">{label}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
