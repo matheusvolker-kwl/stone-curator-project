@@ -11,6 +11,8 @@ import PhoneInput from "@/components/forms/PhoneInput";
 import EmailInput from "@/components/forms/EmailInput";
 import FieldLabel from "@/components/forms/FieldLabel";
 import { supabase } from "@/integrations/supabase/client";
+import { submitSecureLead } from "@/lib/leads";
+import TurnstileWidget from "@/components/security/TurnstileWidget";
 import { BUSINESS } from "@/config/business";
 import {
   emailSchema,
@@ -62,6 +64,7 @@ export default function Orcamento() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const setField = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
@@ -88,9 +91,13 @@ export default function Orcamento() {
     }
     setF(normalized);
     setErrors({});
+    if (!captchaToken) {
+      toast.error("Confirme que você não é um robô.");
+      return;
+    }
     setLoading(true);
     try {
-      const { error } = await supabase.from("leads").insert({
+      const res = await submitSecureLead({
         type: "b2c_orcamento",
         nome: parsed.data.nome,
         email: parsed.data.email,
@@ -98,12 +105,10 @@ export default function Orcamento() {
         cidade: parsed.data.cidade,
         uf: parsed.data.uf,
         mensagem: parsed.data.mensagem || null,
-        payload: {
-          tipo_projeto: parsed.data.tipo,
-        },
+        payload: { tipo_projeto: parsed.data.tipo },
         origem: "site/orcamento",
-      });
-      if (error) throw error;
+      }, captchaToken);
+      if (!res.ok) throw new Error(res.error ?? "erro");
       setSuccess(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
@@ -111,6 +116,7 @@ export default function Orcamento() {
       toast.error("Não foi possível enviar seu pedido.", { description: msg });
     } finally {
       setLoading(false);
+      setCaptchaToken(null);
     }
   };
 
