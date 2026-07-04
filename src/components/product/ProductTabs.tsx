@@ -252,7 +252,7 @@ export default function ProductTabs({
                         k: "Entrega",
                         v: "Frete calculado por destino e dimensões. Retira em fábrica disponível.",
                       },
-                    ]).map((row) => (
+                    ].map((row) => (
                       <div key={row.k}>
                         <dt className="font-sans font-medium text-[13px] text-western-green-deep mb-1">
                           {row.k}
