@@ -182,6 +182,7 @@ export default function Footer() {
           <div className="flex items-center gap-5">
             <img src={logo} alt="Western" className="h-16 w-auto opacity-100" />
             <p className="text-spec text-western-cream-muted text-xs leading-snug">
+              {BUSINESS.razaoSocial && <>{BUSINESS.razaoSocial}<br /></>}
               {BUSINESS.cnpj && <>CNPJ {BUSINESS.cnpj} · </>}Ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · Brasil
             </p>
           </div>
