@@ -38,7 +38,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   const [query, setQuery] = useState("");
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { session, isAdmin, empresa, signOut, user } = useAuth();
+  const { session, isAdmin, isApproved, empresa, signOut, user } = useAuth();
   const { items: wishItems } = useWishlist();
   const wishCount = wishItems.length;
 
