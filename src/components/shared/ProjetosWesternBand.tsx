@@ -1,57 +1,70 @@
-import { useMemo, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { OBRAS_WESTERN, type ObraCategoria, type ObraWestern } from "@/data/obrasWestern";
+import { ChevronLeft, ChevronRight, X, Play } from "lucide-react";
+import { CASOS_WESTERN, type CasoWestern } from "@/data/casosWestern";
 
-type FilterKey = "todos" | ObraCategoria;
+function isEmbed(url: string) {
+  return /youtube\.com|youtu\.be|vimeo\.com/i.test(url);
+}
 
-const FILTERS: { key: FilterKey; label: string }[] = [
-  { key: "todos", label: "Todos" },
-  { key: "piscinas", label: "Piscinas" },
-  { key: "cascatas", label: "Cascatas" },
-  { key: "jardins", label: "Jardins" },
-];
+function toEmbedUrl(url: string) {
+  // YouTube
+  const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+  if (yt) return `https://www.youtube.com/embed/${yt[1]}?autoplay=1&rel=0`;
+  const vm = url.match(/vimeo\.com\/(\d+)/);
+  if (vm) return `https://player.vimeo.com/video/${vm[1]}?autoplay=1`;
+  return url;
+}
 
-function Caption({ obra }: { obra: ObraWestern }) {
+function Caption({ caso }: { caso: CasoWestern }) {
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-4 pt-12 pb-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100">
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-cream leading-snug">
-        {obra.obra}
-        <span className="opacity-70"> · {obra.local}</span>
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent px-4 pt-14 pb-4">
+      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold/90">
+        {caso.credito}
       </p>
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold/90 mt-1">
-        {obra.produto}
+      <p className="font-display text-base md:text-lg text-western-cream mt-1.5 leading-snug">
+        {caso.titulo}
       </p>
     </div>
   );
 }
 
-export default function ProjetosWesternBand() {
-  const [filter, setFilter] = useState<FilterKey>("todos");
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
-  const filtered = useMemo(
-    () =>
-      filter === "todos"
-        ? OBRAS_WESTERN
-        : OBRAS_WESTERN.filter((o) => o.categoria === filter),
-    [filter]
+function PlayBadge() {
+  return (
+    <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-1 bg-western-cream/90 border border-western-stone-warm/20 font-mono text-[9px] uppercase tracking-[0.22em] text-western-green-deep">
+      <Play className="h-3 w-3 fill-current" /> Vídeo
+    </span>
   );
+}
 
-  const destaque = filtered.find((o) => o.destaque) ?? filtered[0];
-  const restantes = filtered.filter((o) => o.id !== destaque?.id);
+function PlayOverlay() {
+  return (
+    <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
+      <span className="h-14 w-14 md:h-16 md:w-16 rounded-full bg-western-cream/95 border border-western-gold/40 flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110">
+        <Play className="h-6 w-6 md:h-7 md:w-7 text-western-green-deep fill-current translate-x-[2px]" />
+      </span>
+    </span>
+  );
+}
+
+export default function ProjetosWesternBand() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const items = CASOS_WESTERN;
+
+  const destaque = items.find((c) => c.destaque) ?? items[0];
+  const restantes = items.filter((c) => c.id !== destaque?.id);
 
   const close = useCallback(() => setOpenIndex(null), []);
   const next = useCallback(
-    () => setOpenIndex((i) => (i === null ? null : (i + 1) % filtered.length)),
-    [filtered.length]
+    () => setOpenIndex((i) => (i === null ? null : (i + 1) % items.length)),
+    [items.length]
   );
   const prev = useCallback(
     () =>
       setOpenIndex((i) =>
-        i === null ? null : (i - 1 + filtered.length) % filtered.length
+        i === null ? null : (i - 1 + items.length) % items.length
       ),
-    [filtered.length]
+    [items.length]
   );
 
   useEffect(() => {
@@ -64,77 +77,80 @@ export default function ProjetosWesternBand() {
     return () => window.removeEventListener("keydown", onKey);
   }, [openIndex, next, prev]);
 
-  const current = openIndex !== null ? filtered[openIndex] : null;
+  const current = openIndex !== null ? items[openIndex] : null;
 
   return (
     <section className="bg-western-cream-muted py-14 md:py-20">
       <div className="container-western">
-        <header className="text-center max-w-2xl mx-auto mb-8 md:mb-10">
-          <p className="text-eyebrow">Obras Western</p>
+        <header className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
+          <p className="text-eyebrow">Depoimentos & obras</p>
           <div className="w-12 h-px bg-western-gold mx-auto my-5" />
           <h2 className="font-display text-3xl md:text-4xl text-western-green-deep">
-            Cascatas e pedras instaladas por nós
+            Projetos que a Western tornou possível
           </h2>
           <p className="text-spec italic text-western-stone-warm mt-4">
-            Portfólio selecionado de projetos executados com peças Western — em piscinas, cascatas e jardins.
+            Arquitetos, empresários e destinos icônicos contam por que escolheram Western.
           </p>
         </header>
 
-        {/* Filtro */}
-        <div className="flex flex-wrap justify-center gap-2 mb-10 md:mb-12">
-          {FILTERS.map((f) => {
-            const active = filter === f.key;
-            return (
-              <button
-                key={f.key}
-                onClick={() => setFilter(f.key)}
-                className={`px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] border transition-colors ${
-                  active
-                    ? "border-western-gold text-western-gold bg-western-gold/5"
-                    : "border-western-stone-warm/25 text-western-stone-warm hover:border-western-gold/60 hover:text-western-green-deep"
-                }`}
-              >
-                {f.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Destaque + grade 4:5 */}
+        {/* Destaque */}
         {destaque && (
           <button
             type="button"
-            onClick={() => setOpenIndex(filtered.indexOf(destaque))}
+            onClick={() => setOpenIndex(items.indexOf(destaque))}
             className="group relative block w-full overflow-hidden rounded-[2px] bg-western-stone-warm/10 mb-4 md:mb-5 aspect-[16/9] md:aspect-[21/9]"
           >
             <img
-              src={destaque.src}
-              alt={`${destaque.obra} — ${destaque.local}`}
+              src={destaque.posterUrl}
+              alt={`${destaque.titulo} — ${destaque.credito}`}
               loading="lazy"
               decoding="async"
               className="w-full h-full object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.02]"
             />
-            <Caption obra={destaque} />
+            {destaque.tipo === "video" && (
+              <>
+                <PlayBadge />
+                <PlayOverlay />
+              </>
+            )}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent px-6 md:px-10 pt-20 pb-6 md:pb-8">
+              <p className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-western-gold">
+                {destaque.credito}
+              </p>
+              <p className="font-display text-xl md:text-3xl text-western-cream mt-2 leading-snug max-w-2xl">
+                {destaque.titulo}
+              </p>
+              <p className="hidden md:block text-western-cream/85 mt-3 max-w-2xl text-sm leading-relaxed">
+                {destaque.story}
+              </p>
+            </div>
           </button>
         )}
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-          {restantes.map((obra) => (
+        {/* Grade dos demais */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+          {restantes.map((caso) => (
             <button
               type="button"
-              key={obra.id}
-              onClick={() => setOpenIndex(filtered.indexOf(obra))}
-              className="group relative block overflow-hidden rounded-[2px] bg-western-stone-warm/10 aspect-[4/5]"
+              key={caso.id}
+              onClick={() => setOpenIndex(items.indexOf(caso))}
+              className="group relative block overflow-hidden rounded-[2px] bg-western-stone-warm/10 aspect-[4/5] text-left"
             >
               <img
-                src={obra.src}
-                alt={`${obra.obra} — ${obra.local}`}
+                src={caso.posterUrl}
+                alt={`${caso.titulo} — ${caso.credito}`}
                 loading="lazy"
                 decoding="async"
-                sizes="(min-width: 1024px) 300px, (min-width: 768px) 33vw, 50vw"
+                sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
                 className="w-full h-full object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.04]"
               />
-              <Caption obra={obra} />
+              {caso.tipo === "video" && (
+                <>
+                  <PlayBadge />
+                  <PlayOverlay />
+                </>
+              )}
+              <Caption caso={caso} />
             </button>
           ))}
         </div>
@@ -148,38 +164,72 @@ export default function ProjetosWesternBand() {
         >
           {current && (
             <div className="relative">
-              <img
-                src={current.src}
-                alt={`${current.obra} — ${current.local}`}
-                className="w-full max-h-[80vh] object-contain bg-black"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent px-6 pt-16 pb-5">
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-cream">
-                  {current.obra} <span className="opacity-70">· {current.local}</span>
+              <div className="w-full bg-black flex items-center justify-center">
+                {current.tipo === "video" && current.mediaUrl ? (
+                  isEmbed(current.mediaUrl) ? (
+                    <div className="w-full aspect-video">
+                      <iframe
+                        src={toEmbedUrl(current.mediaUrl)}
+                        title={current.titulo}
+                        allow="autoplay; encrypted-media; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full"
+                      />
+                    </div>
+                  ) : (
+                    <video
+                      src={current.mediaUrl}
+                      poster={current.posterUrl}
+                      controls
+                      autoPlay
+                      playsInline
+                      className="w-full max-h-[80vh] object-contain bg-black"
+                    />
+                  )
+                ) : (
+                  <img
+                    src={current.mediaUrl || current.posterUrl}
+                    alt={`${current.titulo} — ${current.credito}`}
+                    className="w-full max-h-[80vh] object-contain bg-black"
+                  />
+                )}
+              </div>
+
+              <div className="px-6 md:px-8 pt-5 pb-6 bg-western-green-deep">
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold">
+                  {current.credito}
                 </p>
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold mt-1.5">
-                  {current.produto}
+                <p className="font-display text-lg md:text-xl text-western-cream mt-2">
+                  {current.titulo}
                 </p>
+                <p className="text-western-cream/80 text-sm mt-2 leading-relaxed max-w-3xl">
+                  {current.story}
+                </p>
+                {current.tipo === "video" && !current.mediaUrl && (
+                  <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold/70">
+                    Vídeo em breve
+                  </p>
+                )}
               </div>
 
               <button
                 onClick={close}
                 aria-label="Fechar"
-                className="absolute top-3 right-3 h-10 w-10 flex items-center justify-center bg-black/50 text-western-cream hover:bg-black/80 transition-colors rounded-full"
+                className="absolute top-3 right-3 h-10 w-10 flex items-center justify-center bg-black/60 text-western-cream hover:bg-black/85 transition-colors rounded-full"
               >
                 <X className="h-5 w-5" />
               </button>
               <button
                 onClick={prev}
                 aria-label="Anterior"
-                className="absolute top-1/2 -translate-y-1/2 left-3 h-11 w-11 flex items-center justify-center bg-black/50 text-western-cream hover:bg-black/80 transition-colors rounded-full"
+                className="absolute top-[38%] -translate-y-1/2 left-3 h-11 w-11 flex items-center justify-center bg-black/60 text-western-cream hover:bg-black/85 transition-colors rounded-full"
               >
                 <ChevronLeft className="h-6 w-6" />
               </button>
               <button
                 onClick={next}
                 aria-label="Próxima"
-                className="absolute top-1/2 -translate-y-1/2 right-3 h-11 w-11 flex items-center justify-center bg-black/50 text-western-cream hover:bg-black/80 transition-colors rounded-full"
+                className="absolute top-[38%] -translate-y-1/2 right-3 h-11 w-11 flex items-center justify-center bg-black/60 text-western-cream hover:bg-black/85 transition-colors rounded-full"
               >
                 <ChevronRight className="h-6 w-6" />
               </button>
