@@ -197,6 +197,8 @@ export default function ProductGallery({
             <img
               key={activeIndex}
               src={cdnImg(current.url, 2000)}
+              width={2000}
+              height={2000}
               alt={current.altText ?? productTitle}
               className={`block mx-auto transition-transform duration-300 ${
                 zoomed ? "scale-[1.6]" : "scale-100"
