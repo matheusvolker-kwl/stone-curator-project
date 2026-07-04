@@ -5,6 +5,7 @@ import Footer from "./Footer";
 import CartDrawer from "./CartDrawer";
 import TopBar from "./TopBar";
 import WhatsAppFAB from "./WhatsAppFAB";
+import AudienceOverlay from "@/components/funnel/AudienceOverlay";
 import { useCartSync } from "@/hooks/useCartSync";
 
 export default function SiteLayout() {
