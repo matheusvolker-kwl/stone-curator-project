@@ -73,8 +73,13 @@ export default function RelatedProducts({
                         {img && (
                           <img
                             src={cdnImg(img.url, 600)}
+                            srcSet={cdnSrcSet(img.url, [400, 600, 900])}
+                            sizes="(min-width: 768px) 25vw, 45vw"
+                            width={600}
+                            height={450}
                             alt={img.altText ?? p.title}
                             loading="lazy"
+                            decoding="async"
                             className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.04]"
                           />
                         )}
