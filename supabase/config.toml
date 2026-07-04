@@ -3,6 +3,9 @@ project_id = "zibtysewpbeycngtbjjk"
 [functions.log-client-error]
 verify_jwt = false
 
+[functions.lead-submit]
+verify_jwt = false
+
 [functions.yampi-sku-mapping]
 verify_jwt = false
 
