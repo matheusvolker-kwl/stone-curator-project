@@ -575,6 +575,14 @@ export default function ContrateAWestern() {
                   />
                 </label>
 
+                <div className="md:col-span-2">
+                  <TurnstileWidget
+                    onToken={setCaptchaToken}
+                    onExpire={() => setCaptchaToken(null)}
+                    className="mb-4"
+                  />
+                </div>
+
                 <div className="md:col-span-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
                   <button
                     type="submit"
