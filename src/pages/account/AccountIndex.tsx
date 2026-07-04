@@ -23,7 +23,7 @@ export default function AccountIndex() {
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const [{ data: orders }, { data: comps }, { data: profile }] = await Promise.all([
+      const [{ data: orders }, { count: composicoesCount }, { data: profile }] = await Promise.all([
         supabase
           .from("production_orders")
           .select("id, numero, titulo, status, previsao_entrega")
@@ -32,6 +32,7 @@ export default function AccountIndex() {
         supabase.from("leads").select("id", { count: "exact", head: true }).eq("user_id", user.id).eq("type", "orcamento"),
         supabase.from("partner_profiles").select("pending_reason").eq("user_id", user.id).maybeSingle(),
       ]);
+
       const all = (orders as OrderSummary[]) ?? [];
       const ativos = all.filter((o) => ACTIVE_STATUS.includes(o.status));
       const transito = all.filter((o) => o.status === "em_transporte" || o.status === "pronto").length;
