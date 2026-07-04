@@ -13,7 +13,7 @@ import {
   type Acabamento,
   type TipoVisual,
 } from "@/components/guide-v2/types";
-import { tipoImage } from "@/components/guide-v2/imagery";
+import { tipoImage, tipoMicrocopy } from "@/components/guide-v2/imagery";
 import { buildContextQuery } from "@/components/guide-v2/useGuideQuery";
 import { whatsappConsultor } from "@/data/guideMap";
 import brasao from "@/assets/brasao.png";
