@@ -59,7 +59,7 @@ function OptionCard({ eyebrow, title, description, ariaLabel, imageUrl, onActiva
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-t from-western-green-deep via-western-green-deep/70 to-western-green-deep/10"
+        className="absolute inset-0 bg-gradient-to-t from-western-green-deep via-western-green-deep/40 to-transparent"
       />
       <div className="relative z-10 p-6">
         <p className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-western-gold-soft">
@@ -91,6 +91,12 @@ export default function AudienceOverlay() {
     const t = window.setTimeout(() => setOpen(true), 600);
     return () => window.clearTimeout(t);
   }, [location.pathname]);
+
+  useEffect(() => {
+    const onReopen = () => setOpen(true);
+    window.addEventListener("western:open-audience", onReopen);
+    return () => window.removeEventListener("western:open-audience", onReopen);
+  }, []);
 
   const choosePro = () => {
     writeChoice("pro");

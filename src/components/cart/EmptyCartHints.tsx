@@ -53,7 +53,31 @@ export default function EmptyCartHints({ onNavigate }: Props) {
   const showWishlist = session && wishItems.length > 0;
   const showRecents = recents.length > 0;
 
-  if (!showWishlist && !showRecents) return null;
+  if (!showWishlist && !showRecents) {
+    const hints = [
+      { to: "/guia-de-composicao", label: "Guia de composição", desc: "Monte seu conjunto passo a passo" },
+      { to: "/conjuntos", label: "Conjuntos prontos", desc: "Combinações já pensadas para começar" },
+      { to: "/orcamento", label: "Pedir um orçamento", desc: "Projeto residencial ou sem CNPJ" },
+    ];
+    return (
+      <div className="mt-10">
+        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mb-3">Por onde começar</p>
+        <ul className="space-y-2">
+          {hints.map((h) => (
+            <li key={h.to}>
+              <Link to={h.to} onClick={onNavigate} className="group flex items-center justify-between gap-3 p-3 border border-western-gold/15 hover:border-western-gold/40 transition-colors bg-western-green-deep/30">
+                <span className="min-w-0">
+                  <span className="block font-display text-sm text-western-cream group-hover:text-western-gold-soft transition-colors">{h.label}</span>
+                  <span className="block text-[12px] text-western-cream-muted truncate">{h.desc}</span>
+                </span>
+                <ArrowRight className="h-4 w-4 text-western-cream-muted group-hover:text-western-gold-soft transition-colors shrink-0" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-10 space-y-8">
