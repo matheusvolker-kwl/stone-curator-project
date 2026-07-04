@@ -35,6 +35,7 @@ export default function SiteLayout() {
       <Footer />
       <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
       <WhatsAppFAB />
+      <AudienceOverlay />
     </div>
   );
 }
