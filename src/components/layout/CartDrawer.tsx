@@ -195,8 +195,19 @@ export default function CartDrawer({
                       <div className="flex items-center border border-western-cream/25">
                         <button
                           onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
-                          className="h-9 w-9 flex items-center justify-center hover:bg-western-gold/10 transition-colors"
+                          className="h-11 w-11 flex items-center justify-center hover:bg-western-gold/10 transition-colors"
                           aria-label="Diminuir"
+                        >
+                          <Minus className="h-3 w-3" />
+                        </button>
+                        <span className="px-2 text-xs min-w-[2ch] text-center tabular-nums">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
+                          className="h-11 w-11 flex items-center justify-center hover:bg-western-gold/10 transition-colors"
+                          aria-label="Aumentar"
+
                         >
                           <Minus className="h-3 w-3" />
                         </button>
