@@ -538,9 +538,17 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
               type="search"
               placeholder="Buscar linha, peça, código…"
               className="flex-1 bg-transparent outline-none text-base text-western-green-deep placeholder:text-western-stone-warm/60"
+              role="combobox"
+              aria-expanded={suggestOpen}
+              aria-controls="m-search-suggestions"
+              aria-autocomplete="list"
+              aria-activedescendant={
+                activeIndex >= 0 ? `m-search-opt-${activeIndex}` : undefined
+              }
             />
             {query && (
               <button type="button" onClick={() => setQuery("")} aria-label="Limpar" className="text-western-stone-warm hover:text-western-green-deep">
@@ -548,6 +556,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               </button>
             )}
           </form>
+          <div className="mt-3">{renderSuggestions("m-")}</div>
           <p className="text-spec text-western-stone-warm mt-3">Pressione Enter para buscar.</p>
         </SheetContent>
       </Sheet>
