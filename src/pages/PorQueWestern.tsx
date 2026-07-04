@@ -58,6 +58,11 @@ export default function PorQueWestern() {
   const [open, setOpen] = useState<number | null>(0);
   return (
     <>
+      <Seo
+        title="Por que Western — 12 respostas para arquitetos e paisagistas"
+        description="As objeções mais comuns sobre pedra artesanal, respondidas com dados e casos reais de 33 anos de obras Western: peso, durabilidade, custo instalado, garantia e mais."
+        path="/por-que-western"
+      />
       <section className="surface-forest">
         <div className="container-western py-20 md:py-28 max-w-4xl">
           <p className="text-eyebrow text-western-gold-soft mb-5">Por que Western</p>
