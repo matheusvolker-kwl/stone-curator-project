@@ -212,8 +212,7 @@ export default function ProjetoSidebar(props: Props) {
     props.pecas.reduce((a, p) => a + p.qty, 0) + props.extras.reduce((a, e) => a + e.qty, 0);
   const subBase = props.pecas.reduce((a, p) => a + p.preco * p.qty, 0);
   const subExtras = props.extras.reduce((a, e) => a + e.preco * e.qty, 0);
-  const desconto = props.isCustomizado ? 0 : Math.round(subBase * 0.03);
-  const total = subBase + subExtras - desconto;
+  const total = subBase + subExtras;
   const { isApproved } = useAuth();
 
   return (

@@ -285,10 +285,11 @@ export default function GuiaRefinar() {
                     <Tag>{nivelLabelMap[nivelParam]}</Tag>
                     <Tag>{acabamentoMeta[acabamento].label}</Tag>
                   </div>
-                  <p className="font-display italic text-lg md:text-xl text-western-stone-warm leading-relaxed mt-6 max-w-[620px]">
-                    {conjunto.subtitulo}. Cascata central com pedras de apoio que constroem volume sem
-                    sobrecarregar o espaço.
-                  </p>
+                  {conjunto.subtitulo && (
+                    <p className="font-display italic text-lg md:text-xl text-western-stone-warm leading-relaxed mt-6 max-w-[620px]">
+                      {conjunto.subtitulo}.
+                    </p>
+                  )}
                 </div>
                 <Link
                   to={backToCaminhos}
