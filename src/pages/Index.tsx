@@ -9,6 +9,7 @@ import ProjetosSection from "@/components/home/ProjetosSection";
 import ArtistaSection from "@/components/home/ArtistaSection";
 import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
 import Reveal from "@/components/shared/Reveal";
+import SocialProof from "@/components/shared/SocialProof";
 import { useScrollY } from "@/hooks/useScrollY";
 import { ArrowRight, ShieldCheck, Truck, Box } from "lucide-react";
 import heroCascata from "@/assets/hero-cascata.webp";
