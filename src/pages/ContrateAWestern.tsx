@@ -29,11 +29,6 @@ import { toast } from "sonner";
 // Imagens reais reaproveitadas do projeto (webp otimizadas)
 import heroImg from "@/assets/projetos-western/03_piscina-cascata.webp.asset.json";
 import serraImg from "@/assets/projetos-western/06_piscina-cascata-serra.webp.asset.json";
-import detalheImg from "@/assets/projetos-western/02_pedra-detalhe.webp.asset.json";
-import cascataFernsImg from "@/assets/projetos-western/11_cascata-ferns.webp.asset.json";
-import tapiraiImg from "@/assets/projetos-western/01_hero-tapirai.webp.asset.json";
-import bordaImg from "@/assets/projetos-western/12_borda-pedra.webp.asset.json";
-import mirsnteImg from "@/assets/projetos-western/04_piscina-mirante.webp.asset.json";
 
 const WHATSAPP_MSG_DEFAULT =
   "Olá, Western! Quero agendar a consultoria gratuita para o meu projeto.";
@@ -77,25 +72,21 @@ const SERVICOS = [
     icon: Sparkles,
     titulo: "Consultoria",
     desc: "Especificação, viabilidade técnica e orientação sobre acabamentos, quantidades e integração ao projeto.",
-    img: detalheImg.url,
   },
   {
     icon: PencilRuler,
     titulo: "Projeto & Render",
     desc: "Visualização 3D fotorrealista antes da obra — decida com segurança e alinhe expectativas com o cliente.",
-    img: cascataFernsImg.url,
   },
   {
     icon: HardHat,
     titulo: "Instalação",
     desc: "Execução pela equipe Western, com técnica apurada, fixação correta e acabamento integrado ao paisagismo.",
-    img: tapiraiImg.url,
   },
   {
     icon: LifeBuoy,
     titulo: "Acompanhamento",
     desc: "Suporte contínuo do conceito à entrega — logística, cronograma e ajustes finos no local da obra.",
-    img: bordaImg.url,
   },
 ];
 
@@ -350,29 +341,16 @@ export default function ContrateAWestern() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
             {SERVICOS.map((s, i) => (
               <Reveal key={s.titulo} variant="fade-up" delay={i * 80} duration={650}>
-                <div className="h-full bg-western-cream border border-western-stone-warm/15 hover:border-western-gold/40 transition-colors overflow-hidden flex flex-col">
-                  <div className="aspect-[4/3] overflow-hidden">
-                    <img
-                      src={s.img}
-                      alt={`Serviço Western: ${s.titulo}`}
-                      width={480}
-                      height={360}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-6 flex-1 flex flex-col">
-                    <span className="inline-flex h-10 w-10 items-center justify-center border border-western-gold/40 text-western-gold mb-4">
-                      <s.icon className="h-5 w-5" />
-                    </span>
-                    <h3 className="font-display text-xl text-western-green-deep mb-2">
-                      {s.titulo}
-                    </h3>
-                    <p className="text-sm text-western-stone-warm leading-relaxed">
-                      {s.desc}
-                    </p>
-                  </div>
+                <div className="h-full bg-western-cream border border-western-stone-warm/15 hover:border-western-gold/40 transition-colors p-7 md:p-8 flex flex-col">
+                  <span className="inline-flex h-12 w-12 items-center justify-center border border-western-gold/40 text-western-gold mb-6">
+                    <s.icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="font-display text-xl text-western-green-deep mb-3 leading-tight">
+                    {s.titulo}
+                  </h3>
+                  <p className="text-sm text-western-stone-warm leading-relaxed">
+                    {s.desc}
+                  </p>
                 </div>
               </Reveal>
             ))}
@@ -483,20 +461,9 @@ export default function ContrateAWestern() {
       <section
         ref={formRef}
         id="contato"
-        className="relative isolate overflow-hidden border-t border-western-gold/15 min-h-[600px] flex items-center"
+        className="surface-forest border-t border-western-gold/15"
       >
-        <img
-          src={mirsnteImg.url}
-          alt=""
-          aria-hidden="true"
-          width={1600}
-          height={900}
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-western-green-deep/92" />
-        <div className="relative container-western max-w-5xl py-20 md:py-28">
+        <div className="container-western max-w-5xl py-20 md:py-28">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
             <Reveal variant="fade-up" duration={700} className="md:col-span-5">
               <div>
