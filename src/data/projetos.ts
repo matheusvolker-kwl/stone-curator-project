@@ -1,8 +1,5 @@
-import coverCascata from "@/assets/projetos/cover-cascata.webp";
 import coverCasaPraia from "@/assets/projetos/cover-casa-praia.webp";
-
 import coverLago from "@/assets/projetos/cover-lago.webp";
-import coverNeymar from "@/assets/projetos/cover-neymar.jpg";
 
 export interface Projeto {
   slug: string;
@@ -21,20 +18,6 @@ export interface Projeto {
 }
 
 export const PROJETOS: Projeto[] = [
-  {
-    slug: "cascata-integrada",
-    eyebrow: "Evandro Mesquita · Rio de Janeiro",
-    titulo: "Cascata Integrada",
-    snippet:
-      "A cascata que parece sempre ter estado ali. Uma queda d'água articulada ao riacho natural existente, em meio a paisagismo tropical.",
-    texto: [
-      "O desafio era integrar uma nova cascata e todo o paisagismo ao cenário natural existente. A piscina — antes um lago com pedra natural incrustada no fundo — inspirou a criação de um conjunto em que a intervenção parece ter sempre feito parte do lugar.",
-      "A cascata foi articulada a um riacho natural já existente, compondo uma queda d'água que convive com o paisagismo tropical e com as folhagens que margeiam a piscina. Arquitetura e natureza deixam de ter fronteira visível.",
-    ],
-    ficha: ["Cascata artificial", "Paisagismo tropical", "Rio de Janeiro"],
-    cover: coverCascata,
-    video: "/videos/projetos/cascata.mp4",
-  },
   {
     slug: "casa-de-praia",
     eyebrow: "Tato (Falamansa) · JJ Arquitetura",
@@ -69,7 +52,6 @@ export const PROJETOS: Projeto[] = [
       "1.000+ m² de lago artificial",
     ],
     cover: coverLago,
-    cardCover: coverNeymar,
     video: "/videos/projetos/lago.mp4",
   },
 ];
