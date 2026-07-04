@@ -23,7 +23,8 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { BUSINESS } from "@/config/business";
-import { supabase } from "@/integrations/supabase/client";
+import { submitSecureLead } from "@/lib/leads";
+import TurnstileWidget from "@/components/security/TurnstileWidget";
 import { toast } from "sonner";
 
 // Imagens reais reaproveitadas do projeto (webp otimizadas)
@@ -153,6 +154,7 @@ export default function ContrateAWestern() {
   const [perfil, setPerfil] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const scrollToForm = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -183,12 +185,16 @@ export default function ContrateAWestern() {
       toast.error("Preencha nome e WhatsApp (mínimo 10 dígitos).");
       return;
     }
+    if (!captchaToken) {
+      toast.error("Confirme que você não é um robô.");
+      return;
+    }
 
     setEnviando(true);
 
     // 1) grava lead — não bloqueia o fluxo se falhar
     try {
-      const { error } = await supabase.from("leads").insert({
+      const res = await submitSecureLead({
         type: "contato",
         nome: nome.trim(),
         email: email.trim() || null,
@@ -199,8 +205,8 @@ export default function ContrateAWestern() {
           perfil: perfil || null,
           pagina: "/contrate-a-western",
         },
-      });
-      if (error) throw error;
+      }, captchaToken);
+      if (!res.ok) throw new Error(res.error ?? "erro");
     } catch (err) {
       console.warn("[contrate-a-western] falha ao gravar lead:", err);
       // silencioso — não bloqueia o WhatsApp
@@ -210,6 +216,7 @@ export default function ContrateAWestern() {
     window.open(waLink(buildWhatsMsg()), "_blank", "noopener,noreferrer");
     toast.success("Abrimos o WhatsApp com sua mensagem pronta.");
     setEnviando(false);
+    setCaptchaToken(null);
   };
 
   return (
@@ -567,6 +574,14 @@ export default function ContrateAWestern() {
                     className="mt-1.5 w-full px-3 py-2.5 bg-white border border-western-stone-warm/25 focus:border-western-gold focus:ring-2 focus:ring-western-gold/20 outline-none text-western-green-deep resize-none transition-all"
                   />
                 </label>
+
+                <div className="md:col-span-2">
+                  <TurnstileWidget
+                    onToken={setCaptchaToken}
+                    onExpire={() => setCaptchaToken(null)}
+                    className="mb-4"
+                  />
+                </div>
 
                 <div className="md:col-span-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
                   <button

@@ -30,6 +30,7 @@ import {
   focusFirstInvalid,
 } from "@/lib/forms/br";
 import { submitContactLead } from "@/lib/leads";
+import TurnstileWidget from "@/components/security/TurnstileWidget";
 
 const waUrl = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
   "Olá Western! Gostaria de conversar com a fábrica."
@@ -113,6 +114,7 @@ export default function Contact() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const setField = <K extends keyof ContactForm>(k: K, v: ContactForm[K]) =>
@@ -133,6 +135,10 @@ export default function Contact() {
       return;
     }
     setErrors({});
+    if (!captchaToken) {
+      toast.error("Confirme que você não é um robô.");
+      return;
+    }
     setLoading(true);
     const res = await submitContactLead({
       nome: parsed.data.nome,
@@ -142,8 +148,9 @@ export default function Contact() {
       mensagem: parsed.data.mensagem,
       origem: "site/contato",
       payload: parsed.data.assunto ? { assunto: parsed.data.assunto } : {},
-    });
+    }, captchaToken);
     setLoading(false);
+    setCaptchaToken(null);
     if (!res.ok) {
       toast.error("Não foi possível enviar sua mensagem.", { description: res.error });
       return;
@@ -389,6 +396,12 @@ export default function Contact() {
                     )}
                   </div>
                 </div>
+
+                <TurnstileWidget
+                  onToken={setCaptchaToken}
+                  onExpire={() => setCaptchaToken(null)}
+                  className="mt-6"
+                />
 
                 <Button
                   type="submit"

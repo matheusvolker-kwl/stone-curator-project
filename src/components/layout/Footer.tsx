@@ -4,7 +4,8 @@ import { z } from "zod";
 import logo from "@/assets/logo-horizontal-bege.png";
 import { Mail, Send, Loader2, Check } from "lucide-react";
 import { BUSINESS } from "@/config/business";
-import { supabase } from "@/integrations/supabase/client";
+import { submitSecureLead } from "@/lib/leads";
+import TurnstileWidget from "@/components/security/TurnstileWidget";
 import { toast } from "sonner";
 
 const newsletterSchema = z.object({
@@ -30,6 +31,7 @@ export default function Footer() {
   const [hp, setHp] = useState(""); // honeypot
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const handleNewsletter = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,16 +41,21 @@ export default function Footer() {
       if (msg !== "spam") toast.error(msg);
       return;
     }
+    if (!captchaToken) {
+      toast.error("Confirme que você não é um robô.");
+      return;
+    }
     setLoading(true);
-    const { error } = await supabase.from("leads").insert({
+    const res = await submitSecureLead({
       type: "newsletter",
       email: parsed.data.email,
       origem: "site/footer/newsletter",
       payload: { source: "footer", consent: true, ts: new Date().toISOString() },
-    });
+    }, captchaToken);
     setLoading(false);
-    if (error) {
-      toast.error("Não foi possível inscrever agora.", { description: "Tente novamente em instantes." });
+    setCaptchaToken(null);
+    if (!res.ok) {
+      toast.error("Não foi possível inscrever agora.", { description: res.error ?? "Tente novamente em instantes." });
       return;
     }
     setEmail("");
@@ -176,6 +183,13 @@ export default function Footer() {
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                 </button>
               </form>
+            )}
+            {!done && (
+              <TurnstileWidget
+                onToken={setCaptchaToken}
+                onExpire={() => setCaptchaToken(null)}
+                className="mt-3"
+              />
             )}
             <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-cream-muted/70 mt-2">
               Sem spam. Cancele quando quiser.
