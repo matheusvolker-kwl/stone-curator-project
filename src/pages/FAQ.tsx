@@ -4,117 +4,119 @@ import { Plus, Minus, ArrowRight } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import Seo from "@/components/seo/Seo";
 
-type Item = { q: string; a: React.ReactNode };
+type Item = { q: string; a: React.ReactNode; text: string };
 type Grupo = { eyebrow: string; titulo: string; itens: Item[] };
 
 const GRUPOS: Grupo[] = [
   {
-    eyebrow: "Material & fabricação",
-    titulo: "Como a pedra é feita",
+    eyebrow: "Confiança",
+    titulo: "Quem é a Western",
     itens: [
       {
-        q: "Do que é feita uma pedra Western?",
-        a: "Composto mineral de cimento estrutural reforçado com fibra de fios de PET reciclado. Os fios formam, internamente, uma teia tridimensional — descrita pelos fundadores como 'teia de aranha de liga' — que dá ao composto resistência mecânica, leveza e durabilidade muito superiores ao cimento puro ou ao gesso. É um material 100% sustentável: aproveita garrafas plásticas que iriam para aterro como armadura primária do produto.",
-      },
-      {
-        q: "Por que as pedras são ocas por dentro?",
-        a: "Por três motivos práticos: (1) ficam até 10× mais leves que pedra natural equivalente, podendo ser instaladas manualmente por 1 ou 2 pessoas; (2) o espaço interno permite passar tubulação de fontes, fiação de iluminação e conduítes de bombas, escondendo a engenharia hidráulica e elétrica; (3) manutenção zero — bombas, LEDs e tubos podem ser trocados sem demolir nada.",
-      },
-      {
-        q: "Cada peça vem de uma pedra natural real?",
-        a: "Sim. Toda matriz é moldada a partir de uma pedra natural encontrada em ambientes selecionados — Mata Atlântica, Cerrado, Caatinga e formações rochosas brasileiras. O molde é feito no próprio local, sem mover a pedra original, em respeito absoluto ao ambiente. Hoje produzimos uma matriz em cerca de 1 dia (em 1993, levava 40).",
-      },
-      {
-        q: "Como funciona a pintura?",
-        a: "São 6 fases de pintura manual, com 5 cores distintas sobrepostas a cada fase, simulando os processos naturais de sedimentação geológica. Toda pintura é feita à mão, peça por peça. Resiste a cloro de piscina, intempéries, raios UV, chuva e variação térmica — não desbota, não escama, não exige manutenção.",
+        q: "Quem é a Western?",
+        text: `Fabricante artesanal de pedras decorativas para paisagismo, com ateliê em ${BUSINESS.cidadeAtelie}/${BUSINESS.ufAtelie} desde ${BUSINESS.fundadaEm}. ${BUSINESS.razaoSocial} — CNPJ ${BUSINESS.cnpj}.`,
+        a: (
+          <>
+            Fabricante artesanal de pedras decorativas para paisagismo, com ateliê em{" "}
+            {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} desde {BUSINESS.fundadaEm}. {BUSINESS.razaoSocial} —
+            CNPJ {BUSINESS.cnpj}.
+          </>
+        ),
       },
     ],
   },
   {
-    eyebrow: "Catálogo & acabamentos",
-    titulo: "O que está disponível",
+    eyebrow: "Produto",
+    titulo: "O que é a pedra Western",
     itens: [
       {
-        q: "Quantos produtos existem no catálogo?",
-        a: "50 modelos catalogados, divididos em 11 coleções: Cascatas, Pedras Grandes, Médias, Pequenas, de Borda, Revestimentos (painéis), Fontes, Acessórios (Champanheira, Torneira, Sonora), Pisadas, Fósseis Decorativos e Pedra LED. Cada modelo é oferecido em 4 acabamentos — totalizando 200 SKUs.",
+        q: "A pedra é natural ou artificial?",
+        text: "Réplica autoral em composto mineral (cimento estrutural + fibra de PET reciclado), moldada e pintada à mão. Até 10× mais leve que a pedra natural e sem extração ambiental.",
+        a: "Réplica autoral em composto mineral (cimento estrutural + fibra de PET reciclado), moldada e pintada à mão. Até 10× mais leve que a pedra natural e sem extração ambiental.",
       },
       {
-        q: "Quais são os 4 acabamentos?",
-        a: "Quartzo (claro, cremoso, off-white com leve tom quente), Arenito (médio, areia, terroso — o mais versátil), Moledo (rústico, marrom morno com textura mais marcada) e Granito (escuro, granulado, com pontilhado mineral). Todos têm o mesmo preço — a escolha é estética, não comercial.",
-      },
-      {
-        q: "Vocês fazem pintura personalizada?",
-        a: "Sim. Além dos 4 padrões, podemos pintar peças em tonalidades adaptadas a um ambiente específico — respeitando a biologia do local, fazendo a peça conversar com a vegetação, com a tinta da fachada, com o piso. É serviço sob demanda, comum em projetos premium.",
-      },
-      {
-        q: "O que são os 'conjuntos'?",
-        a: <>Composições pré-definidas para 5 categorias de aplicação — piscina, lago, lago reduzido, jardim seco e jardim com fonte. Cada conjunto é a soma pura das peças que o compõem, com previsibilidade de composição e economia operacional na especificação.</>,
+        q: "A pedra aguenta sol, chuva, cloro e peso?",
+        text: "Sim. A pintura em 6 fases resiste a sol, chuva, cloro e variação térmica; é indicada para uso externo e suporta peso e perfuração. Há peças instaladas em 1995 ainda em pé.",
+        a: "Sim. A pintura em 6 fases resiste a sol, chuva, cloro e variação térmica; é indicada para uso externo e suporta peso e perfuração. Há peças instaladas em 1995 ainda em pé.",
       },
     ],
   },
   {
-    eyebrow: "Projeto & instalação",
-    titulo: "Como especificar e instalar",
+    eyebrow: "Preço & cadastro",
+    titulo: "Como funciona o valor",
     itens: [
       {
-        q: "Como uso o catálogo no meu projeto 3D?",
-        a: <>Toda peça do catálogo Western tem modelo 3D no SketchUp Warehouse — canal <a href={BUSINESS.sketchupWarehouse} target="_blank" rel="noopener noreferrer" className="underline decoration-western-gold/40 underline-offset-2 hover:decoration-western-gold">3dwarehouse.sketchup.com/by/WesternPools</a>. Você baixa as peças, monta a composição inteira no SketchUp do estúdio, testa enquadramentos, valida com cliente, e só compra depois que está aprovado em 3D. Zero surpresa.</>,
+        q: "Quanto custa?",
+        text: "O valor depende do produto e do porte do projeto — de peças avulsas a composições completas. Preços de parceiro ficam liberados após o cadastro (gratuito); para projetos residenciais, solicite um orçamento sem compromisso.",
+        a: (
+          <>
+            O valor depende do produto e do porte do projeto — de peças avulsas a composições completas.
+            Preços de parceiro ficam liberados após o <Link to="/parceria" className="underline decoration-western-gold/40 underline-offset-2 hover:decoration-western-gold">cadastro</Link> (gratuito);
+            para projetos residenciais, solicite um{" "}
+            <Link to="/orcamento" className="underline decoration-western-gold/40 underline-offset-2 hover:decoration-western-gold">orçamento sem compromisso</Link>.
+          </>
+        ),
       },
       {
-        q: "Como é a instalação?",
-        a: "A peça chega pronta para instalação. Assentamento com argamassa C3 (encontrada em qualquer loja de material de construção). Junto à peça enviamos kit de pintura com as tintas exatas usadas no acabamento, para retoque dos pontos onde a argamassa fica visível — 3 demãos e a peça está integrada ao ambiente como se fosse uma única pedra. Tempo de instalação de uma cascata completa: algumas horas.",
+        q: "Por que preciso me cadastrar para ver o preço? Quanto leva a aprovação?",
+        text: "A loja é um canal exclusivo para parceiros do ramo — arquitetos, paisagistas, laguistas, revendas e profissionais correlatos — que compram para aplicar nos projetos dos seus clientes. Por isso o preço de parceiro é liberado após o cadastro. A aprovação é automática e imediata para CNAEs compatíveis; casos que exigem análise manual têm retorno em até 2 dias úteis.",
+        a: "A loja é um canal exclusivo para parceiros do ramo — arquitetos, paisagistas, laguistas, revendas e profissionais correlatos — que compram para aplicar nos projetos dos seus clientes. Por isso o preço de parceiro é liberado após o cadastro. A aprovação é automática e imediata para CNAEs compatíveis; casos que exigem análise manual têm retorno em até 2 dias úteis.",
       },
       {
-        q: "Quanto pesa uma peça Western?",
-        a: "Pedras Pequenas (PP): até 10 kg. Pedras Médias (PM): 30 a 40 kg. Pedras Grandes (PG): 50 a 100+ kg. Cascatas: 60 a 215 kg. Pedra natural equivalente pesa até 10× mais — uma cascata natural de 2 toneladas exige guindaste, alvará e fechamento de via. Western é entregue em caminhão comum, descarregada manualmente, instalada por 2-3 pessoas em horas.",
-      },
-      {
-        q: "A peça aguenta peso, perfuração e impacto?",
-        a: "Sim. Suporta peso humano (você pode pisar, sentar, pular sobre ela), suporta perfuração com furadeira (para passagem de fios sem fraturar), suporta impacto e carga estrutural compatível com o uso paisagístico. Não trinca, não estilhaça, não escama.",
+        q: "Posso comprar uma peça só ou uma amostra antes?",
+        text: `O pedido mínimo é ${BUSINESS.pedidoMinimoLabel}. Para conhecer o material antes, temos a Western Box (amostras com cashback). Clientes com serviço contratado ou pedidos maiores podem negociar um kit de amostras diretamente com o nosso time.`,
+        a: (
+          <>
+            O pedido mínimo é <strong>{BUSINESS.pedidoMinimoLabel}</strong>. Para conhecer o material antes,
+            temos a <Link to="/western-box" className="underline decoration-western-gold/40 underline-offset-2 hover:decoration-western-gold">Western Box</Link> (amostras com cashback).
+            Clientes com serviço contratado ou pedidos maiores podem negociar um kit de amostras diretamente com o nosso time.
+          </>
+        ),
       },
     ],
   },
   {
-    eyebrow: "Comercial & entrega",
-    titulo: "Como comprar e receber",
+    eyebrow: "Logística",
+    titulo: "Entrega e prazo",
     itens: [
       {
-        q: "Quem pode comprar?",
-        a: "Atendemos exclusivamente B2B: profissionais e empresas do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a laguistas, jardineiros, garden centers, lojas e construtoras. Acesso à tabela de preços e modelos 3D após o cadastro.",
+        q: "Vocês entregam na minha cidade? Quanto custa o frete?",
+        text: `Enviamos para todo o Brasil por transportadora, com o frete cotado no checkout (ou junto da proposta de orçamento). Você também pode retirar no ateliê em ${BUSINESS.cidadeAtelie}/${BUSINESS.ufAtelie} (segunda a sexta, 9h às 16h): basta aguardar a confirmação de que o pedido está pronto e agendar a coleta com o nosso time, ou contratar a transportadora direto no checkout.`,
+        a: (
+          <>
+            Enviamos para todo o Brasil por transportadora, com o frete cotado no checkout (ou junto da
+            proposta de orçamento). Você também pode retirar no ateliê em {BUSINESS.cidadeAtelie}/
+            {BUSINESS.ufAtelie} (segunda a sexta, 9h às 16h): basta aguardar a confirmação de que o pedido
+            está pronto e agendar a coleta com o nosso time, ou contratar a transportadora direto no checkout.
+          </>
+        ),
       },
       {
-        q: "Qual o pedido mínimo?",
-        a: <>Pedido mínimo por nota: <strong>{BUSINESS.pedidoMinimoLabel}</strong>. Esse valor é consistente em todo o site, em todo o catálogo e em todas as condições comerciais — fonte única de verdade.</>,
-      },
-      {
-        q: "Como funciona o pagamento?",
-        a: <>As condições de pagamento são definidas caso a caso e informadas ao parceiro durante a negociação comercial.</>,
-      },
-      {
-        q: "Qual o prazo de produção?",
-        a: <>{BUSINESS.prazoProducaoLabel}. Conjuntos personalizados (tonalidade ou volume fora do padrão) podem ter prazo estendido — informamos por escrito antes da confirmação.</>,
-      },
-      {
-        q: "Como recebo o pedido?",
-        a: <>Duas modalidades: retirada gratuita no ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} (com agendamento prévio) ou envio por transportadora contratada pelo parceiro — preparamos a embalagem e liberamos a coleta. Não temos frota própria.</>,
+        q: "Qual o prazo de produção e entrega?",
+        text: "Produção em cerca de 15 dias úteis após a confirmação do pedido, mais o prazo de transporte. A estimativa aparece no carrinho e na proposta.",
+        a: "Produção em cerca de 15 dias úteis após a confirmação do pedido, mais o prazo de transporte. A estimativa aparece no carrinho e na proposta.",
       },
     ],
   },
   {
-    eyebrow: "Garantia & durabilidade",
-    titulo: "O que esperar ao longo do tempo",
+    eyebrow: "Compra & pagamento",
+    titulo: "Como pagar",
     itens: [
       {
-        q: "Qual a garantia?",
-        a: <>{BUSINESS.garantiaLabel} formal contra defeitos de fabricação. Mas o ponto é outro: peças instaladas em 1995 ainda estão em pé. Western não envelhece mal — envelhece melhor. Musgo natural, oxidação ambiental e pátina do tempo fazem com que a peça fique mais convincente como pedra natural.</>,
+        q: "Como funciona o pagamento e o parcelamento?",
+        text: "Pix, boleto ou cartão de crédito — no cartão, em até 12× (com juros).",
+        a: "Pix, boleto ou cartão de crédito — no cartão, em até 12× (com juros).",
       },
+    ],
+  },
+  {
+    eyebrow: "Pós-venda",
+    titulo: "Acompanhamento e nota fiscal",
+    itens: [
       {
-        q: "Manutenção dá trabalho?",
-        a: "Manutenção zero. A pintura é resistente a cloro, sol, chuva e variação térmica. Não escama, não desbota, não exige retoque periódico. E como a peça é oca por dentro, qualquer troca de bomba, LED ou fiação é feita por dentro, sem demolição.",
-      },
-      {
-        q: "E se chegar uma peça avariada no transporte?",
-        a: "Avarias de transporte devem ser registradas no canhoto da nota fiscal no ato do recebimento, com fotos enviadas em até 24h. A Western produz peça de reposição equivalente, sem custo adicional para o parceiro, dentro do prazo padrão de produção.",
+        q: "Como acompanho meu pedido e recebo a nota fiscal?",
+        text: "O status é enviado por e-mail e também fica disponível no seu painel de cliente na plataforma. A nota fiscal é emitida em toda venda.",
+        a: "O status é enviado por e-mail e também fica disponível no seu painel de cliente na plataforma. A nota fiscal é emitida em toda venda.",
       },
     ],
   },
@@ -131,7 +133,7 @@ export default function FAQ() {
         name: it.q,
         acceptedAnswer: {
           "@type": "Answer",
-          text: typeof it.a === "string" ? it.a : it.q,
+          text: it.text,
         },
       }))
     ),
@@ -139,8 +141,8 @@ export default function FAQ() {
   return (
     <>
       <Seo
-        title="FAQ — Western: dúvidas técnicas sobre pedras artesanais"
-        description="Material, fabricação, instalação, comercial e garantia: as perguntas mais frequentes de profissionais do paisagismo e da construção sobre pedras Western."
+        title="FAQ — Western: dúvidas de quem compra pedra artesanal"
+        description="Produto, preço, cadastro, entrega, prazo, pagamento e pós-venda: as perguntas mais frequentes sobre as pedras artesanais Western."
         path="/faq"
         jsonLd={faqJsonLd}
       />
@@ -149,11 +151,11 @@ export default function FAQ() {
           <p className="text-eyebrow text-western-gold-soft mb-5">Perguntas frequentes</p>
           <div className="w-12 h-px bg-western-gold mb-8" />
           <h1 className="font-display text-4xl md:text-6xl text-western-cream leading-[1.05] mb-6">
-            Dúvidas técnicas,<br />respostas diretas.
+            Dúvidas diretas,<br />respostas diretas.
           </h1>
           <p className="text-lg text-western-cream-muted leading-relaxed max-w-2xl">
-            O que profissionais do paisagismo e da construção mais perguntam antes do primeiro pedido —
-            sobre material, catálogo, instalação, comercial e garantia.
+            O que profissionais e clientes mais perguntam antes de fechar pedido —
+            sobre produto, preço, cadastro, entrega, pagamento e pós-venda.
           </p>
         </div>
       </section>
