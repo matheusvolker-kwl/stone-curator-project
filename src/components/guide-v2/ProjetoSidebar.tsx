@@ -114,12 +114,6 @@ function PanelBody({
                   <span className="font-sans tabular-nums">{formatPreco(subExtras)}</span>
                 </div>
               )}
-              {desconto > 0 && (
-                <div className="flex justify-between text-western-gold">
-                  <span>Desconto conjunto (3%)</span>
-                  <span className="font-sans tabular-nums">−{formatPreco(desconto)}</span>
-                </div>
-              )}
             </div>
 
             <div className="border-t border-western-cream/15 pt-4">
