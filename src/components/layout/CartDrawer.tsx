@@ -1,7 +1,7 @@
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
-import { formatBRL } from "@/lib/catalog/client";
+import { formatBRL, cdnImg } from "@/lib/catalog/client";
 import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock, ArrowLeft, ArrowRight, Download, Truck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
@@ -175,7 +175,7 @@ export default function CartDrawer({
                   <div className="frame-gallery w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
                     {item.productImage && (
                       <img
-                        src={item.productImage}
+                        src={cdnImg(item.productImage, 200)}
                         alt={item.productTitle}
                         className="w-full h-full object-contain p-1"
                       />

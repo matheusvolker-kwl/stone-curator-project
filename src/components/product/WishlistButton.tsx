@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import { cdnImg } from "@/lib/catalog/client";
 
 interface Props {
   handle: string;
@@ -33,7 +34,7 @@ export default function WishlistButton({ handle, title, image, variant = "icon",
       });
       return;
     }
-    const r = await toggle({ handle, title, image });
+    const r = await toggle({ handle, title, image: image ? cdnImg(image, 800) : image });
     if (r === "added") toast.success("Adicionado aos favoritos.");
     if (r === "removed") toast("Removido dos favoritos.");
   };

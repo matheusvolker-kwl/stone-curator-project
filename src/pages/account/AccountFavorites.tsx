@@ -3,6 +3,7 @@ import { Heart, Trash2, ArrowRight } from "lucide-react";
 import { useWishlist } from "@/hooks/useWishlist";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { cdnImg } from "@/lib/catalog/client";
 
 export default function AccountFavorites() {
   const { items, loading, remove } = useWishlist();
@@ -40,7 +41,7 @@ export default function AccountFavorites() {
             <div key={it.id} className="group bg-white border border-western-stone-warm/15 hover:border-western-gold/60 transition-colors flex flex-col">
               <Link to={`/produtos/${it.product_handle}`} className="block aspect-square bg-western-paper overflow-hidden">
                 {it.product_image ? (
-                  <img src={it.product_image} alt={it.product_title ?? it.product_handle} className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.04]" loading="lazy" />
+                  <img src={cdnImg(it.product_image, 400)} alt={it.product_title ?? it.product_handle} className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.04]" loading="lazy" />
                 ) : (
                   <div className="w-full h-full grid place-items-center text-western-stone-warm/40"><Heart className="h-8 w-8" /></div>
                 )}
