@@ -37,7 +37,7 @@ export default function AccountIndex() {
       const ativos = all.filter((o) => ACTIVE_STATUS.includes(o.status));
       const transito = all.filter((o) => o.status === "em_transporte" || o.status === "pronto").length;
       setActiveOrders(ativos.slice(0, 3));
-      setCounts({ ativos: ativos.length, transito, composicoes: (comps as unknown as { length: number })?.length ?? 0 });
+      setCounts({ ativos: ativos.length, transito, composicoes: composicoesCount ?? 0 });
       setPendingReason((profile as { pending_reason: string | null } | null)?.pending_reason ?? null);
     })();
   }, [user]);
