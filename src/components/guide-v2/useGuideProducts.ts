@@ -91,7 +91,12 @@ function shopifyToAutoral(p: ShopifyProductNode, acabamentoLabel?: string): Auto
   };
 }
 
-export function useGuideProducts(nivel: Nivel, tipoVisual: TipoVisual, conjuntoHandle?: string) {
+export function useGuideProducts(
+  nivel: Nivel,
+  tipoVisual: TipoVisual,
+  conjuntoHandle?: string,
+  acabamentoLabel?: string,
+) {
   const [pecas, setPecas] = useState<ProjetoPeca[]>([]);
   const [autorais, setAutorais] = useState<AutoralItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -115,13 +120,13 @@ export function useGuideProducts(nivel: Nivel, tipoVisual: TipoVisual, conjuntoH
         const nextPecas: ProjetoPeca[] = pecaEntries
           .map(([h, qty], i) => {
             const p = map.get(h);
-            return p ? shopifyToPeca(p, qty, String(i)) : null;
+            return p ? shopifyToPeca(p, qty, String(i), acabamentoLabel) : null;
           })
           .filter((x): x is ProjetoPeca => !!x);
         const nextAutorais: AutoralItem[] = autoralHandles
           .map((h) => map.get(h))
           .filter((p): p is ShopifyProductNode => !!p)
-          .map(shopifyToAutoral);
+          .map((p) => shopifyToAutoral(p, acabamentoLabel));
         setPecas(nextPecas);
         setAutorais(nextAutorais);
       })
@@ -134,7 +139,7 @@ export function useGuideProducts(nivel: Nivel, tipoVisual: TipoVisual, conjuntoH
       });
 
     return () => { cancelled = true; };
-  }, [nivel, tipoVisual, conjuntoHandle]);
+  }, [nivel, tipoVisual, conjuntoHandle, acabamentoLabel]);
 
 
   return { pecas, autorais, isLoading };
