@@ -12,7 +12,7 @@ import { phoneBRSchema, normalizeText, formatPhoneBR } from "@/lib/forms/br";
 import { BUSINESS } from "@/config/business";
 import logo from "@/assets/logo-vertical-bege.png";
 import proImage from "@/assets/projetos-western/05_cascata-escalonada.webp.asset.json";
-import residencialImage from "@/assets/projetos-western/08_piscina-paisagismo.webp.asset.json";
+import residencialImage from "@/assets/projetos-western/08_piscina-paisagismo.webp";
 
 type TipoProjeto = "Cascata" | "Lago / piscina natural" | "Área de lazer completa" | "Outro";
 
@@ -189,7 +189,7 @@ export default function Entrada() {
                   title="É para um projeto meu"
                   description="Cascata, lago ou área de lazer na sua casa."
                   ariaLabel="É para um projeto meu — solicitar orçamento"
-                  imageUrl={residencialImage.url}
+                  imageUrl={residencialImage}
                   onActivate={() => setView("form")}
                 />
               </div>

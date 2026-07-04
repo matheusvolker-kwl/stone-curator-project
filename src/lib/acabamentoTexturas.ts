@@ -1,13 +1,13 @@
-import quartzo from "@/assets/western-box/tex-quartzo.webp.asset.json";
-import arenito from "@/assets/western-box/tex-arenito.webp.asset.json";
-import moledo from "@/assets/western-box/tex-moledo.webp.asset.json";
-import granito from "@/assets/western-box/tex-granito.webp.asset.json";
+import quartzo from "@/assets/western-box/tex-quartzo.webp";
+import arenito from "@/assets/western-box/tex-arenito.webp";
+import moledo from "@/assets/western-box/tex-moledo.webp";
+import granito from "@/assets/western-box/tex-granito.webp";
 
 export const acabamentoTexturas: Record<string, string> = {
-  quartzo: quartzo.url,
-  arenito: arenito.url,
-  moledo: moledo.url,
-  granito: granito.url,
+  quartzo: quartzo,
+  arenito: arenito,
+  moledo: moledo,
+  granito: granito,
 };
 
 export function texturaPara(value: string): string | undefined {

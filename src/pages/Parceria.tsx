@@ -21,11 +21,11 @@ import ArtistaSection from "@/components/home/ArtistaSection";
 import SocialProof from "@/components/shared/SocialProof";
 import { useScrollY } from "@/hooks/useScrollY";
 import { BUSINESS } from "@/config/business";
-import heroParceria from "@/assets/hero-parceria.webp.asset.json";
+import heroParceria from "@/assets/hero-parceria.webp";
 import heroParceriaSm from "@/assets/hero-parceria-sm.webp.asset.json";
-import parceriaInstalacao from "@/assets/parceria-instalacao.webp.asset.json";
+import parceriaInstalacao from "@/assets/parceria-instalacao.webp";
 import parceriaInstalacaoSm from "@/assets/parceria-instalacao-sm.webp.asset.json";
-import parceriaDetalhe from "@/assets/parceria-detalhe.webp.asset.json";
+import parceriaDetalhe from "@/assets/parceria-detalhe.webp";
 import parceriaDetalheSm from "@/assets/parceria-detalhe-sm.webp.asset.json";
 import thiagoCastro from "@/assets/thiago-castro.webp.asset.json";
 
@@ -173,8 +173,8 @@ export default function Parceria() {
       {/* 1. HERO */}
       <section className="relative w-full h-[85vh] min-h-[600px] overflow-hidden bg-western-green-deep">
         <img
-          src={heroParceria.url}
-          srcSet={`${heroParceriaSm.url} 900w, ${heroParceria.url} 1800w`}
+          src={heroParceria}
+          srcSet={`${heroParceriaSm.url} 900w, ${heroParceria} 1800w`}
           sizes="100vw"
           alt="Pedra artesanal Western à beira de piscina com água cristalina."
           loading="eager"
@@ -252,8 +252,8 @@ export default function Parceria() {
             <Reveal variant="fade-up" duration={800} className="lg:col-span-2 lg:sticky lg:top-24">
               <div className="w-full aspect-[4/5] overflow-hidden bg-western-green-mid/20">
                 <img
-                  src={parceriaDetalhe.url}
-                  srcSet={`${parceriaDetalheSm.url} 600w, ${parceriaDetalhe.url} 1200w`}
+                  src={parceriaDetalhe}
+                  srcSet={`${parceriaDetalheSm.url} 600w, ${parceriaDetalhe} 1200w`}
                   sizes="(min-width: 1024px) 40vw, 100vw"
                   alt="Detalhe da pedra Western entre vegetação — acabamento natural que engana o olho."
                   loading="lazy"
@@ -312,8 +312,8 @@ export default function Parceria() {
             <Reveal variant="fade-up" duration={800} className="lg:col-span-2 order-last lg:order-first">
               <div className="w-full aspect-[4/5] overflow-hidden bg-western-green-mid/20">
                 <img
-                  src={parceriaInstalacao.url}
-                  srcSet={`${parceriaInstalacaoSm.url} 600w, ${parceriaInstalacao.url} 1200w`}
+                  src={parceriaInstalacao}
+                  srcSet={`${parceriaInstalacaoSm.url} 600w, ${parceriaInstalacao} 1200w`}
                   sizes="(min-width: 1024px) 40vw, 100vw"
                   alt="Profissional instalando pedra Western — leveza que dispensa estrutura extra."
                   loading="lazy"

@@ -25,19 +25,19 @@ import { submitCheckoutHandoff } from "@/lib/woo-checkout";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-import hero from "@/assets/western-box/hero.webp.asset.json";
-import boxFechada from "@/assets/western-box/box-fechada.webp.asset.json";
-import boxAberta from "@/assets/western-box/box-aberta.webp.asset.json";
-import lifestyle from "@/assets/western-box/lifestyle.webp.asset.json";
-import catalogo from "@/assets/western-box/catalogo.webp.asset.json";
-import texQuartzo from "@/assets/western-box/tex-quartzo.webp.asset.json";
-import texArenito from "@/assets/western-box/tex-arenito.webp.asset.json";
-import texMoledo from "@/assets/western-box/tex-moledo.webp.asset.json";
-import texGranito from "@/assets/western-box/tex-granito.webp.asset.json";
-import pb3Quartzo from "@/assets/western-box/pb3-quartzo.webp.asset.json";
-import pb3Arenito from "@/assets/western-box/pb3-arenito.webp.asset.json";
-import pb3Moledo from "@/assets/western-box/pb3-moledo.webp.asset.json";
-import pb3Granito from "@/assets/western-box/pb3-granito.webp.asset.json";
+import hero from "@/assets/western-box/hero.webp";
+import boxFechada from "@/assets/western-box/box-fechada.webp";
+import boxAberta from "@/assets/western-box/box-aberta.webp";
+import lifestyle from "@/assets/western-box/lifestyle.webp";
+import catalogo from "@/assets/western-box/catalogo.webp";
+import texQuartzo from "@/assets/western-box/tex-quartzo.webp";
+import texArenito from "@/assets/western-box/tex-arenito.webp";
+import texMoledo from "@/assets/western-box/tex-moledo.webp";
+import texGranito from "@/assets/western-box/tex-granito.webp";
+import pb3Quartzo from "@/assets/western-box/pb3-quartzo.webp";
+import pb3Arenito from "@/assets/western-box/pb3-arenito.webp";
+import pb3Moledo from "@/assets/western-box/pb3-moledo.webp";
+import pb3Granito from "@/assets/western-box/pb3-granito.webp";
 
 // =============================================================================
 // CONFIG — mesma constante do anterior (Woo product id real)
@@ -46,10 +46,10 @@ const WESTERN_BOX_WOO_PRODUCT_ID: number | null = 1559;
 const PRICE_LABEL = "R$ 149,90";
 
 const GALLERY = [
-  { src: boxFechada.url, alt: "Western Box fechada com selo dourado" },
-  { src: boxAberta.url, alt: "Western Box aberta com as quatro amostras e o catálogo" },
-  { src: lifestyle.url, alt: "Western Box em uso sobre a mesa de trabalho" },
-  { src: catalogo.url, alt: "Catálogo oficial Western Pools" },
+  { src: boxFechada, alt: "Western Box fechada com selo dourado" },
+  { src: boxAberta, alt: "Western Box aberta com as quatro amostras e o catálogo" },
+  { src: lifestyle, alt: "Western Box em uso sobre a mesa de trabalho" },
+  { src: catalogo, alt: "Catálogo oficial Western Pools" },
 ];
 
 const ACABAMENTOS = [
@@ -57,29 +57,29 @@ const ACABAMENTOS = [
     id: "quartzo",
     nome: "Quartzo",
     descricao: "Elegância contemporânea, textura refinada e visual sofisticado.",
-    texture: texQuartzo.url,
-    pb3: pb3Quartzo.url,
+    texture: texQuartzo,
+    pb3: pb3Quartzo,
   },
   {
     id: "arenito",
     nome: "Arenito",
     descricao: "Tons naturais e acolhedores, perfeitos para projetos integrados à natureza.",
-    texture: texArenito.url,
-    pb3: pb3Arenito.url,
+    texture: texArenito,
+    pb3: pb3Arenito,
   },
   {
     id: "moledo",
     nome: "Moledo",
     descricao: "Textura marcante, personalidade e aspecto orgânico.",
-    texture: texMoledo.url,
-    pb3: pb3Moledo.url,
+    texture: texMoledo,
+    pb3: pb3Moledo,
   },
   {
     id: "granito",
     nome: "Granito",
     descricao: "Versatilidade, equilíbrio e um acabamento atemporal.",
-    texture: texGranito.url,
-    pb3: pb3Granito.url,
+    texture: texGranito,
+    pb3: pb3Granito,
   },
 ] as const;
 
@@ -204,7 +204,7 @@ function StickyBuyBar({ topBuyRef }: { topBuyRef: React.RefObject<HTMLElement> }
           <div className="flex items-center justify-between gap-3 rounded-full border border-western-gold/30 bg-western-green-deep/95 backdrop-blur-md pl-5 pr-1.5 py-1.5 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.55)]">
             <div className="flex items-center gap-3 min-w-0">
               <img
-                src={boxFechada.url}
+                src={boxFechada}
                 alt=""
                 className="hidden sm:block h-10 w-10 rounded-full object-cover border border-western-gold/30"
               />
@@ -426,11 +426,11 @@ function MidBuyStrip() {
       <div className="container-western">
         <div className="grid md:grid-cols-[160px_1fr_auto] gap-6 md:gap-10 items-center">
           <div className="hidden md:block aspect-square w-40 overflow-hidden bg-western-paper border border-western-stone-warm/15">
-            <img src={boxFechada.url} alt="" className="h-full w-full object-cover" loading="lazy" />
+            <img src={boxFechada} alt="" className="h-full w-full object-cover" loading="lazy" />
           </div>
           <div className="flex md:hidden items-center gap-4">
             <div className="aspect-square w-20 shrink-0 overflow-hidden bg-western-paper border border-western-stone-warm/15">
-              <img src={boxFechada.url} alt="" className="h-full w-full object-cover" loading="lazy" />
+              <img src={boxFechada} alt="" className="h-full w-full object-cover" loading="lazy" />
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-[0.24em] text-western-gold mb-1">Western Box</p>
@@ -480,7 +480,7 @@ export default function WesternBox() {
         description="Os quatro acabamentos Western em mãos, com catálogo oficial e cashback de 100%. Veja, toque, compare e decida antes do projeto."
         path="/western-box"
         ogType="product"
-        image={hero.url}
+        image={hero}
       />
 
       <StickyBuyBar topBuyRef={topBuyRef as never} />
@@ -531,7 +531,7 @@ export default function WesternBox() {
         <div className="grid md:grid-cols-12 gap-0">
           <div className="md:col-span-7 relative h-[60vh] md:h-[90vh] md:sticky md:top-0">
             <ParallaxImage
-              src={boxAberta.url}
+              src={boxAberta}
               alt="Western Box aberta exibindo as quatro amostras e o catálogo"
               className="h-full w-full"
               range={50}
@@ -696,7 +696,7 @@ export default function WesternBox() {
       <section className="relative w-full overflow-hidden bg-western-green-deep">
         <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] max-h-[90vh]">
           <ParallaxImage
-            src={hero.url}
+            src={hero}
             alt="Amostras Western à beira da piscina"
             className="absolute inset-0 h-full w-full"
             range={30}
@@ -777,7 +777,7 @@ export default function WesternBox() {
           </div>
           <div className="md:col-span-7 relative h-[55vh] md:h-[80vh] order-1 md:order-2">
             <ParallaxImage
-              src={catalogo.url}
+              src={catalogo}
               alt="Catálogo oficial Western Pools"
               className="h-full w-full"
               range={50}
@@ -790,7 +790,7 @@ export default function WesternBox() {
       {/* 8. CASHBACK 100% */}
       <section className="relative py-24 md:py-40 overflow-hidden bg-western-green-deep text-western-cream">
         <ParallaxImage
-          src={lifestyle.url}
+          src={lifestyle}
           alt=""
           className="absolute inset-0 h-full w-full opacity-25"
           range={80}
@@ -872,7 +872,7 @@ export default function WesternBox() {
             <Reveal variant="fade" delay={250} duration={900}>
               <div className="hidden md:block mt-10 aspect-[4/5] overflow-hidden border border-western-stone-warm/15">
                 <img
-                  src={boxFechada.url}
+                  src={boxFechada}
                   alt="Western Box fechada com selo da marca"
                   className="h-full w-full object-cover"
                   loading="lazy"
@@ -937,7 +937,7 @@ export default function WesternBox() {
       {/* 11. CTA FINAL */}
       <section className="relative min-h-[70vh] md:min-h-[80vh] overflow-hidden bg-western-green-deep text-western-cream flex items-center justify-center text-center py-24 md:py-32">
         <ParallaxImage
-          src={lifestyle.url}
+          src={lifestyle}
           alt=""
           className="absolute inset-0 h-full w-full opacity-40"
           range={100}

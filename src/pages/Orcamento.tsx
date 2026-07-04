@@ -20,7 +20,7 @@ import {
   focusFirstInvalid,
   UF_LIST,
 } from "@/lib/forms/br";
-import heroImage from "@/assets/projetos-western/04_piscina-mirante.webp.asset.json";
+import heroImage from "@/assets/projetos-western/04_piscina-mirante.webp";
 
 const TIPO_OPTIONS = [
   "Piscina natural / lago",
@@ -134,7 +134,7 @@ export default function Orcamento() {
             <div>
               <div className="relative overflow-hidden rounded-[2px] border border-western-stone-warm/20">
                 <img
-                  src={heroImage.url}
+                  src={heroImage}
                   alt="Projeto residencial Western"
                   className="h-[320px] md:h-[440px] w-full object-cover"
                   decoding="async"
