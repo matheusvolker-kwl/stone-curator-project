@@ -117,6 +117,11 @@ export default function Footer() {
               </li>
               <li className="text-western-cream-muted">{BUSINESS.horarioAtelie}</li>
               <li>
+                <Link to="/orcamento" className="text-western-cream hover:text-western-gold-soft transition-colors">
+                  Para o seu projeto · Peça um orçamento
+                </Link>
+              </li>
+              <li>
                 <a href="https://instagram.com/westernpools" target="_blank" rel="noopener noreferrer" className="text-western-cream hover:text-western-gold-soft transition-colors">
                   Instagram @westernpools
                 </a>
