@@ -3,6 +3,7 @@ import { Heart, Trash2, ArrowRight } from "lucide-react";
 import { useWishlist } from "@/hooks/useWishlist";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { cdnImg } from "@/lib/catalog/client";
 
 export default function AccountFavorites() {
   const { items, loading, remove } = useWishlist();
