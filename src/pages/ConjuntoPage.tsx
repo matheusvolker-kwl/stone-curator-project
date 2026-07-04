@@ -282,13 +282,26 @@ export default function ConjuntoPage() {
           {/* Coluna esquerda: render + título */}
           <div className="min-w-0">
             <Reveal variant="fade-up" duration={750}>
-              <div className="relative aspect-[4/3] bg-western-paper overflow-hidden shadow-[0_44px_64px_-32px_hsl(var(--western-stone-dark)/0.5)]">
-                <img
-                  src={render}
-                  alt={`Render do conjunto ${leaf.nome}`}
-                  className="w-full h-full object-cover"
-                />
-                <p className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent px-6 py-4 font-display italic text-[13px] text-western-cream leading-snug">
+              <div className="relative aspect-[4/3] bg-western-paper overflow-hidden shadow-[0_44px_64px_-32px_hsl(var(--western-stone-dark)/0.5)] group">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setZoomed(false);
+                    setLightboxOpen(true);
+                  }}
+                  className="absolute inset-0 w-full h-full cursor-zoom-in"
+                  aria-label="Ampliar render do conjunto"
+                >
+                  <img
+                    src={render}
+                    alt={`Render do conjunto ${leaf.nome}`}
+                    className="w-full h-full object-cover pointer-events-none"
+                  />
+                </button>
+                <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 px-2 py-1 bg-western-cream/85 border border-western-stone-warm/20 font-mono text-[9px] uppercase tracking-[0.2em] text-western-green-deep pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity">
+                  <Maximize2 className="h-3 w-3" /> Clique para ampliar
+                </span>
+                <p className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent px-6 py-4 font-display italic text-[13px] text-western-cream leading-snug pointer-events-none">
                   Uma composição possível. No próximo passo você adapta cada peça ao seu espaço.
                 </p>
               </div>
