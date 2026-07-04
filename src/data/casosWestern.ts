@@ -1,15 +1,15 @@
 // Casos reais / prova social — Western
 // Mídia real conectada. Imagens e vídeos hospedados como assets do projeto.
-import caitoMaia from "@/assets/casos-western/caito-maia.webp.asset.json";
-import uniqueGarden from "@/assets/casos-western/unique-garden.webp.asset.json";
-import fazzendaPark from "@/assets/casos-western/fazzenda-park.webp.asset.json";
+import caitoMaia from "@/assets/casos-western/caito-maia.webp";
+import uniqueGarden from "@/assets/casos-western/unique-garden.webp";
+import fazzendaPark from "@/assets/casos-western/fazzenda-park.webp";
 import nicolePoster from "@/assets/casos-western/nicole-sigaud-poster.webp.asset.json";
 import clientePoster from "@/assets/casos-western/cliente-western-poster.webp.asset.json";
 import rosewoodPoster from "@/assets/casos-western/rosewood-poster.webp.asset.json";
 import nicoleVideo from "@/assets/casos-western/nicole-sigaud.mp4.asset.json";
 import clienteVideo from "@/assets/casos-western/cliente-western.mp4.asset.json";
 import rosewoodVideo from "@/assets/casos-western/rosewood.mp4.asset.json";
-import projetoResidencial from "@/assets/casos-western/projeto-residencial.webp.asset.json";
+import projetoResidencial from "@/assets/casos-western/projeto-residencial.webp";
 
 export type CasoTipo = "video" | "image";
 
@@ -50,8 +50,8 @@ export const CASOS_WESTERN: CasoWestern[] = [
   {
     id: "unique-garden",
     tipo: "image",
-    mediaUrl: uniqueGarden.url,
-    posterUrl: uniqueGarden.url,
+    mediaUrl: uniqueGarden,
+    posterUrl: uniqueGarden,
     credito: "Unique Garden",
     titulo: "Chalé simbionte com o morro",
     story:
@@ -60,8 +60,8 @@ export const CASOS_WESTERN: CasoWestern[] = [
   {
     id: "caito-maia",
     tipo: "image",
-    mediaUrl: caitoMaia.url,
-    posterUrl: caitoMaia.url,
+    mediaUrl: caitoMaia,
+    posterUrl: caitoMaia,
     credito: "Caito Maia · Empresário",
     titulo: "Base de mesa em pedra Western",
     story: "Peça sob medida para o escritório, feita com pedra Western.",
@@ -78,8 +78,8 @@ export const CASOS_WESTERN: CasoWestern[] = [
   {
     id: "fazzenda-park",
     tipo: "image",
-    mediaUrl: fazzendaPark.url,
-    posterUrl: fazzendaPark.url,
+    mediaUrl: fazzendaPark,
+    posterUrl: fazzendaPark,
     credito: "Fazzenda Park Resort · Gaspar/SC",
     titulo: "Cascata em pedras Western",
     story: "Cascata de grande porte executada com peças Western.",
@@ -87,8 +87,8 @@ export const CASOS_WESTERN: CasoWestern[] = [
   {
     id: "projeto-residencial",
     tipo: "image",
-    mediaUrl: projetoResidencial.url,
-    posterUrl: projetoResidencial.url,
+    mediaUrl: projetoResidencial,
+    posterUrl: projetoResidencial,
     credito: "Cascata Santa Bárbara",
     titulo: "Projeto residencial",
     story:

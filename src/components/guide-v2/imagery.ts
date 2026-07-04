@@ -1,8 +1,8 @@
-import piscinaMaresias from "@/assets/conjuntos-render/conjunto-piscina-maresias-equilibrado.webp.asset.json";
-import lagoAraruama from "@/assets/conjuntos-render/conjunto-lago-araruama-equilibrado.webp.asset.json";
-import lagoHibridoMarajo from "@/assets/conjuntos-render/conjunto-lago-hibrido-marajo-equilibrado.webp.asset.json";
-import jardimFonteIguacu from "@/assets/conjuntos-render/conjunto-jardim-fonte-iguacu-equilibrado.webp.asset.json";
-import jardimSecoDiamantina from "@/assets/conjuntos-render/conjunto-jardim-seco-diamantina-completo.webp.asset.json";
+import piscinaMaresias from "@/assets/conjuntos-render/conjunto-piscina-maresias-equilibrado.webp";
+import lagoAraruama from "@/assets/conjuntos-render/conjunto-lago-araruama-equilibrado.webp";
+import lagoHibridoMarajo from "@/assets/conjuntos-render/conjunto-lago-hibrido-marajo-equilibrado.webp";
+import jardimFonteIguacu from "@/assets/conjuntos-render/conjunto-jardim-fonte-iguacu-equilibrado.webp";
+import jardimSecoDiamantina from "@/assets/conjuntos-render/conjunto-jardim-seco-diamantina-completo.webp";
 
 import cascataEscalonada from "@/assets/about-projetos/cascata-escalonada.jpg";
 import cascataMirante from "@/assets/about-projetos/cascata-mirante.webp";
@@ -17,11 +17,11 @@ import type { Nivel } from "@/data/guideMap";
 // Renders representativos (nível equilibrado, com exceção do jardim seco que usa completo)
 // por tipo — consistência fotográfica no quiz de contexto.
 export const tipoImage: Record<TipoVisual, string> = {
-  piscina: piscinaMaresias.url,
-  lago: lagoAraruama.url,
-  "lago-hibrido": lagoHibridoMarajo.url,
-  "jardim-fonte": jardimFonteIguacu.url,
-  "jardim-seco": jardimSecoDiamantina.url,
+  piscina: piscinaMaresias,
+  lago: lagoAraruama,
+  "lago-hibrido": lagoHibridoMarajo,
+  "jardim-fonte": jardimFonteIguacu,
+  "jardim-seco": jardimSecoDiamantina,
 };
 
 export const tipoMicrocopy: Record<TipoVisual, string> = {

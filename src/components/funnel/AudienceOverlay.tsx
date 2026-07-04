@@ -9,7 +9,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import proImage from "@/assets/projetos-western/05_cascata-escalonada.webp.asset.json";
-import residencialImage from "@/assets/projetos-western/08_piscina-paisagismo.webp.asset.json";
+import residencialImage from "@/assets/projetos-western/08_piscina-paisagismo.webp";
 
 const STORAGE_KEY = "western:entry-choice-v1";
 type Choice = "pro" | "b2c" | "browse";
@@ -150,7 +150,7 @@ export default function AudienceOverlay() {
             title="É para o meu projeto"
             description="Cliente final: cascata, lago ou área de lazer em casa."
             ariaLabel="É para o meu projeto — solicitar orçamento"
-            imageUrl={residencialImage.url}
+            imageUrl={residencialImage}
             onActivate={chooseB2c}
           />
         </div>
