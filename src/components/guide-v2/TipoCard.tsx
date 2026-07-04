@@ -60,7 +60,7 @@ export default function TipoCard({ value, label, microcopy, image, selected, onS
       <div className="px-5 pt-4 pb-5 border-t border-western-stone-warm/10">
         <div className="font-display text-[18px] text-western-green-deep leading-tight">{label}</div>
         {microcopy && (
-          <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold">
+          <div className="mt-1.5 font-display italic text-[13px] leading-snug text-western-stone-warm">
             {microcopy}
           </div>
         )}
