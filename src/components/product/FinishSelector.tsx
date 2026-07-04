@@ -75,9 +75,30 @@ export default function FinishSelector({ values, selected, onSelect }: Props) {
       ? metaFor(selected, values.findIndex((v) => v === selected))
       : null;
 
+  const handleKey = (e: KeyboardEvent<HTMLButtonElement>, idx: number) => {
+    if (values.length === 0) return;
+    let next = idx;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      next = (idx + 1) % values.length;
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      next = (idx - 1 + values.length) % values.length;
+    } else if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      onSelect(values[idx]);
+      return;
+    } else {
+      return;
+    }
+    e.preventDefault();
+    onSelect(values[next]);
+    const group = e.currentTarget.parentElement;
+    const radios = group?.querySelectorAll<HTMLButtonElement>('[role="radio"]');
+    radios?.[next]?.focus();
+  };
+
   return (
     <div ref={sectionRef}>
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-2 gap-2.5" role="radiogroup" aria-label="Acabamento">
         {values.map((val, idx) => {
           const meta = metaFor(val, idx);
           const isSelected = selected === val;
@@ -85,6 +106,11 @@ export default function FinishSelector({ values, selected, onSelect }: Props) {
           return (
             <button
               key={val}
+              type="button"
+              role="radio"
+              aria-checked={isSelected}
+              tabIndex={isSelected ? 0 : selected == null && idx === 0 ? 0 : -1}
+              onKeyDown={(e) => handleKey(e, idx)}
               onClick={() => onSelect(val)}
               className={`
                 group relative text-left flex items-center gap-3
@@ -98,6 +124,7 @@ export default function FinishSelector({ values, selected, onSelect }: Props) {
                 }
               `}
             >
+
               {isBestseller && (
                 <span className="absolute -top-2 -right-2 px-1.5 py-0.5 bg-western-gold text-western-green-deep font-mono text-[8px] uppercase tracking-[0.18em] leading-none rounded-sm shadow-sm">
                   + vendido
