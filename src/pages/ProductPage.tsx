@@ -322,8 +322,8 @@ export default function ProductPage() {
                     {acabOption && (
                       <div className="pt-6 border-t border-western-stone-warm/15">
                         <p className="text-eyebrow mb-3">
-                          Acabamento{" "}
-                          <span className="text-western-gold">· obrigatório</span>
+                          ESCOLHA O ACABAMENTO{" "}
+                          <span className="text-western-gold">· OBRIGATÓRIO</span>
                         </p>
                         <div
                           className={
