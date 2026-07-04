@@ -401,7 +401,7 @@ export default function ProductPage() {
                             <button
                               onClick={() => setQty(qty + 1)}
                               disabled={acabPending}
-                              className="h-14 w-10 sm:w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg disabled:cursor-not-allowed"
+                              className="h-14 w-11 sm:w-12 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep text-lg disabled:cursor-not-allowed"
                               aria-label="Aumentar"
                             >
                               +
