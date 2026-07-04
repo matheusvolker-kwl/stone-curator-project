@@ -82,7 +82,7 @@ export default function ProductCard({ product }: Props) {
             sizes="(min-width: 1024px) 320px, 45vw"
             width={700}
             height={700}
-            alt={img.altText ?? product.title}
+            alt={img.altText || product.title}
             loading="lazy"
             decoding="async"
             className="w-full h-full object-contain p-4 transition-transform duration-700 ease-out group-hover:scale-[1.04]"

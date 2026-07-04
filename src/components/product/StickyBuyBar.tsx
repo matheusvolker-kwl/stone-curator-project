@@ -215,10 +215,10 @@ export default function StickyBuyBar({
               )}
             </div>
             {isApproved && (
-              <div className="flex items-center border border-western-stone-warm/30 h-9 flex-shrink-0">
+              <div className="flex items-center border border-western-stone-warm/30 h-11 flex-shrink-0">
                 <button
                   onClick={() => onQtyChange(Math.max(1, qty - 1))}
-                  className="h-9 w-8 flex items-center justify-center text-western-green-deep"
+                  className="h-11 w-11 flex items-center justify-center text-western-green-deep"
                   aria-label="Diminuir"
                 >
                   <Minus className="h-3 w-3" />
@@ -228,12 +228,13 @@ export default function StickyBuyBar({
                 </span>
                 <button
                   onClick={() => onQtyChange(qty + 1)}
-                  className="h-9 w-8 flex items-center justify-center text-western-green-deep"
+                  className="h-11 w-11 flex items-center justify-center text-western-green-deep"
                   aria-label="Aumentar"
                 >
                   <Plus className="h-3 w-3" />
                 </button>
               </div>
+
             )}
           </div>
           {isApproved ? (

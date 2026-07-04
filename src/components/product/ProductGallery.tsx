@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { ChevronLeft, ChevronRight, X, Maximize2 } from "lucide-react";
 import { cdnImg, cdnSrcSet } from "@/lib/catalog/client";
 
@@ -22,6 +22,10 @@ export default function ProductGallery({
 }: Props) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [zoomed, setZoomed] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const openedOnceRef = useRef(false);
+
 
   const total = images.length;
   const goPrev = useCallback(
@@ -33,20 +37,75 @@ export default function ProductGallery({
     [activeIndex, total, onChange]
   );
 
-  // Keyboard nav (active only when lightbox open OR gallery focused; keep simple — global when open)
+  // Keyboard nav + focus-trap when lightbox open
   useEffect(() => {
     if (!lightboxOpen) return;
+    const getFocusables = (): HTMLElement[] => {
+      const root = dialogRef.current;
+      if (!root) return [];
+      const nodes = root.querySelectorAll<HTMLElement>(
+        'button,[href],[tabindex]:not([tabindex="-1"])',
+      );
+      return Array.from(nodes).filter(
+        (el) => !el.hasAttribute("disabled") && el.offsetParent !== null,
+      );
+    };
+    // Move focus into the dialog on open
+    const focusables = getFocusables();
+    (focusables[0] ?? dialogRef.current)?.focus();
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setLightboxOpen(false);
-      else if (e.key === "ArrowLeft") goPrev();
-      else if (e.key === "ArrowRight") goNext();
+      if (e.key === "Escape") {
+        setLightboxOpen(false);
+        return;
+      }
+      if (e.key === "ArrowLeft") {
+        goPrev();
+        return;
+      }
+      if (e.key === "ArrowRight") {
+        goNext();
+        return;
+      }
+      if (e.key === "Tab") {
+        const items = getFocusables();
+        if (items.length === 0) {
+          e.preventDefault();
+          dialogRef.current?.focus();
+          return;
+        }
+        const first = items[0];
+        const last = items[items.length - 1];
+        const active = document.activeElement as HTMLElement | null;
+        if (e.shiftKey) {
+          if (active === first || !dialogRef.current?.contains(active)) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (active === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [lightboxOpen, goPrev, goNext]);
 
+  // Return focus to trigger when closing
+  useEffect(() => {
+    if (lightboxOpen) {
+      openedOnceRef.current = true;
+    } else if (openedOnceRef.current) {
+      triggerRef.current?.focus();
+    }
+  }, [lightboxOpen]);
+
   // Lock body scroll when lightbox open
   useEffect(() => {
+
     if (lightboxOpen) {
       const prev = document.body.style.overflow;
       document.body.style.overflow = "hidden";
@@ -64,6 +123,7 @@ export default function ProductGallery({
       <div className="relative group">
         <div className="frame-product aspect-square overflow-hidden relative">
           <button
+            ref={triggerRef}
             type="button"
             onClick={() => setLightboxOpen(true)}
             className="absolute inset-0 w-full h-full cursor-zoom-in"
@@ -76,11 +136,12 @@ export default function ProductGallery({
               sizes="(min-width: 768px) 50vw, 100vw"
               width={1200}
               height={1200}
-              alt={current.altText ?? productTitle}
+              alt={current.altText ?? (total > 1 ? `${productTitle} — imagem ${activeIndex + 1} de ${total}` : productTitle)}
               decoding="async"
               className="w-full h-full object-contain p-4 md:p-8 animate-fade-in pointer-events-none"
             />
           </button>
+
 
           {/* Expand hint */}
           <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 px-2 py-1 bg-western-cream/85 border border-western-stone-warm/20 font-mono text-[9px] uppercase tracking-[0.2em] text-western-green-deep pointer-events-none opacity-70 group-hover:opacity-100 transition-opacity">
@@ -102,7 +163,7 @@ export default function ProductGallery({
               type="button"
               onClick={goPrev}
               aria-label="Imagem anterior"
-              className="absolute left-0 md:-left-4 top-1/2 -translate-y-1/2 h-10 w-10 md:h-11 md:w-11 flex items-center justify-center bg-western-cream border border-western-stone-warm/25 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold transition-colors shadow-sm"
+              className="absolute left-0 md:-left-4 top-1/2 -translate-y-1/2 h-11 w-11 md:h-11 md:w-11 flex items-center justify-center bg-western-cream border border-western-stone-warm/25 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold transition-colors shadow-sm"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -110,10 +171,11 @@ export default function ProductGallery({
               type="button"
               onClick={goNext}
               aria-label="Próxima imagem"
-              className="absolute right-0 md:-right-4 top-1/2 -translate-y-1/2 h-10 w-10 md:h-11 md:w-11 flex items-center justify-center bg-western-cream border border-western-stone-warm/25 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold transition-colors shadow-sm"
+              className="absolute right-0 md:-right-4 top-1/2 -translate-y-1/2 h-11 w-11 md:h-11 md:w-11 flex items-center justify-center bg-western-cream border border-western-stone-warm/25 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold transition-colors shadow-sm"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
+
           </>
         )}
       </div>
@@ -151,11 +213,14 @@ export default function ProductGallery({
       {/* Lightbox */}
       {lightboxOpen && (
         <div
+          ref={dialogRef}
+          tabIndex={-1}
           className="fixed inset-0 z-[100] bg-western-green-deep flex items-center justify-center"
           role="dialog"
           aria-modal="true"
           aria-label="Visualização ampliada"
         >
+
           <button
             type="button"
             onClick={() => setLightboxOpen(false)}
@@ -199,7 +264,7 @@ export default function ProductGallery({
               src={cdnImg(current.url, 2000)}
               width={2000}
               height={2000}
-              alt={current.altText ?? productTitle}
+              alt={current.altText ?? (total > 1 ? `${productTitle} — imagem ${activeIndex + 1} de ${total}` : productTitle)}
               className={`block mx-auto transition-transform duration-300 ${
                 zoomed ? "scale-[1.6]" : "scale-100"
               } max-w-[92vw] max-h-[88vh] object-contain`}
