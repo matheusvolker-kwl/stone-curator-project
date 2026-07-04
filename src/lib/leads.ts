@@ -4,39 +4,6 @@ import { orcamentoPdfBlob, type PdfProjetoContext } from "@/lib/pdf/orcamentoPdf
 import { computeItemsHash } from "@/lib/leads/itemsHash";
 import { reportError } from "@/lib/telemetry";
 
-export async function submitContactLead(input: {
-  nome: string;
-  email: string;
-  telefone: string;
-  cidade?: string;
-  uf?: string;
-  mensagem?: string;
-  origem: string;
-  payload?: Record<string, unknown>;
-}): Promise<{ ok: boolean; error?: string }> {
-  const { error } = await supabase.from("leads").insert({
-    type: "contato",
-    nome: input.nome,
-    email: input.email,
-    telefone: input.telefone,
-    cidade: input.cidade ?? null,
-    uf: input.uf ?? null,
-    mensagem: input.mensagem ?? null,
-    origem: input.origem,
-    payload: (input.payload ?? {}) as never,
-  });
-  if (error) {
-    void reportError({
-      source: "submitContactLead",
-      message: "Falha ao registrar lead de contato",
-      error,
-      context: { origem: input.origem },
-    });
-    return { ok: false, error: error.message };
-  }
-  return { ok: true };
-}
-
 export async function submitSecureLead(
   lead: Record<string, unknown>,
   token: string,
@@ -46,6 +13,45 @@ export async function submitSecureLead(
   });
   if (error) return { ok: false, error: error.message };
   return (data as { ok: boolean; id?: string; error?: string }) ?? { ok: false, error: "sem resposta" };
+}
+
+export async function submitContactLead(
+  input: {
+    nome: string;
+    email: string;
+    telefone: string;
+    cidade?: string;
+    uf?: string;
+    mensagem?: string;
+    origem: string;
+    payload?: Record<string, unknown>;
+  },
+  token: string,
+): Promise<{ ok: boolean; error?: string }> {
+  const res = await submitSecureLead(
+    {
+      type: "contato",
+      nome: input.nome,
+      email: input.email || null,
+      telefone: input.telefone || null,
+      cidade: input.cidade ?? null,
+      uf: input.uf ?? null,
+      mensagem: input.mensagem ?? null,
+      origem: input.origem,
+      payload: input.payload ?? {},
+    },
+    token,
+  );
+  if (!res.ok) {
+    void reportError({
+      source: "submitContactLead",
+      message: "Falha ao registrar lead de contato",
+      error: new Error(res.error ?? "unknown"),
+      context: { origem: input.origem },
+    });
+    return { ok: false, error: res.error };
+  }
+  return { ok: true };
 }
 
 export interface QuoteContact {
