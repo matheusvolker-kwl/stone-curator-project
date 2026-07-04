@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { fetchCollection } from "@/lib/datasource";
 import { cdnImg } from "@/lib/catalog/client";
 import { extractDimensions, parseProductDescription } from "@/lib/catalog/parseDescription";
-import { BUSINESS } from "@/config/business";
+
 
 interface Props {
   collectionHandle?: string;
