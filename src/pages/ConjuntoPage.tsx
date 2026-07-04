@@ -8,7 +8,7 @@
 // A PDP é a etapa "avaliar de perto" entre os 3 cards (/guia-de-composicao/composicoes)
 // e o Refinar (/guia-de-composicao/refinar/:handle).
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -19,9 +19,11 @@ import {
   ChevronRight,
   Download,
   Info,
+  Maximize2,
   ShieldCheck,
   Sparkles,
   Truck,
+  X,
 } from "lucide-react";
 
 import Seo from "@/components/seo/Seo";
@@ -81,6 +83,22 @@ export default function ConjuntoPage() {
   const { isApproved, session } = useAuth();
   const { addBundle } = useCartStore();
   const [quoteOpen, setQuoteOpen] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [zoomed, setZoomed] = useState(false);
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [lightboxOpen]);
 
   const info = useMemo(() => (handle ? getConjuntoByHandle(handle) : null), [handle]);
 
@@ -264,13 +282,26 @@ export default function ConjuntoPage() {
           {/* Coluna esquerda: render + título */}
           <div className="min-w-0">
             <Reveal variant="fade-up" duration={750}>
-              <div className="relative aspect-[4/3] bg-western-paper overflow-hidden shadow-[0_44px_64px_-32px_hsl(var(--western-stone-dark)/0.5)]">
-                <img
-                  src={render}
-                  alt={`Render do conjunto ${leaf.nome}`}
-                  className="w-full h-full object-cover"
-                />
-                <p className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent px-6 py-4 font-display italic text-[13px] text-western-cream leading-snug">
+              <div className="relative aspect-[4/3] bg-western-paper overflow-hidden shadow-[0_44px_64px_-32px_hsl(var(--western-stone-dark)/0.5)] group">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setZoomed(false);
+                    setLightboxOpen(true);
+                  }}
+                  className="absolute inset-0 w-full h-full cursor-zoom-in"
+                  aria-label="Ampliar render do conjunto"
+                >
+                  <img
+                    src={render}
+                    alt={`Render do conjunto ${leaf.nome}`}
+                    className="w-full h-full object-cover pointer-events-none"
+                  />
+                </button>
+                <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 px-2 py-1 bg-western-cream/85 border border-western-stone-warm/20 font-mono text-[9px] uppercase tracking-[0.2em] text-western-green-deep pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity">
+                  <Maximize2 className="h-3 w-3" /> Clique para ampliar
+                </span>
+                <p className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent px-6 py-4 font-display italic text-[13px] text-western-cream leading-snug pointer-events-none">
                   Uma composição possível. No próximo passo você adapta cada peça ao seu espaço.
                 </p>
               </div>
@@ -418,9 +449,11 @@ export default function ConjuntoPage() {
                   </div>
                 ))
               : pecasEnriched.map((p, i) => (
-                  <article
+                  <Link
                     key={`${p.handle}-${i}`}
-                    className="bg-white border border-western-stone-warm/10 flex flex-col"
+                    to={`/produtos/${p.handle}`}
+                    className="group bg-white border border-western-stone-warm/10 flex flex-col hover:border-western-gold/60 hover:shadow-[0_20px_36px_-24px_hsl(var(--western-stone-dark)/0.35)] transition-all"
+                    aria-label={`Ver peça ${p.title}`}
                   >
                     <div className="relative aspect-square bg-western-paper overflow-hidden">
                       {p.imageUrl ? (
@@ -428,7 +461,7 @@ export default function ConjuntoPage() {
                           src={p.imageUrl}
                           alt={p.title}
                           loading="lazy"
-                          className="w-full h-full object-contain p-3"
+                          className="w-full h-full object-contain p-3 transition-transform duration-500 group-hover:scale-[1.03]"
                         />
                       ) : (
                         <div className="w-full h-full" />
@@ -445,7 +478,7 @@ export default function ConjuntoPage() {
                         <GatedPrice amount={p.unitPrice} suffix="/ un." />
                       </div>
                     </div>
-                  </article>
+                  </Link>
                 ))}
           </div>
         </div>
@@ -563,6 +596,44 @@ export default function ConjuntoPage() {
           origem: "pdp_conjunto",
         }}
       />
+
+      {lightboxOpen && (
+        <div
+          className="fixed inset-0 z-[100] bg-western-green-deep flex items-center justify-center"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Render ampliado"
+        >
+          <button
+            type="button"
+            onClick={() => setLightboxOpen(false)}
+            aria-label="Fechar (Esc)"
+            className="absolute top-4 right-4 h-11 w-11 flex items-center justify-center text-western-cream/80 hover:text-western-cream border border-western-cream/20 hover:border-western-cream/60 transition-colors z-10"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setZoomed((z) => !z)}
+            className={`relative block mx-auto max-w-[92vw] max-h-[88vh] overflow-auto ${
+              zoomed ? "cursor-zoom-out" : "cursor-zoom-in"
+            }`}
+            aria-label={zoomed ? "Reduzir zoom" : "Ampliar"}
+          >
+            <img
+              src={render}
+              alt={`Render do conjunto ${leaf.nome}`}
+              className={`block mx-auto transition-transform duration-300 ${
+                zoomed ? "scale-[1.8]" : "scale-100"
+              } max-w-[92vw] max-h-[88vh] object-contain touch-pinch-zoom`}
+              style={{ touchAction: "pinch-zoom" }}
+            />
+          </button>
+          <span className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.25em] text-western-cream/70 text-center px-4">
+            Clique na imagem para ampliar · esc para fechar
+          </span>
+        </div>
+      )}
     </div>
   );
 }
