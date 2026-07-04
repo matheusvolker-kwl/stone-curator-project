@@ -314,7 +314,7 @@ export default function ProductPage() {
                           <p className="text-meta mt-2">À VISTA&nbsp;·&nbsp;PARCELAMENTO DISPONÍVEL NO CHECKOUT</p>
                         </>
                       ) : (
-                        <PriceGate variant="block" />
+                        <PriceGate variant="block" productRef={product.handle} />
                       )}
                     </div>
 
@@ -564,6 +564,7 @@ export default function ProductPage() {
           visibleOptions.find((o) => !activeOptions[o.name])?.name.toLowerCase() ?? null
         }
         available={!!variant?.availableForSale}
+        productRef={product.handle}
       />
     </div>
   );

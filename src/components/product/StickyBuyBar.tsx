@@ -22,6 +22,7 @@ interface Props {
   canAdd: boolean;
   pendingOptionLabel?: string | null;
   available: boolean;
+  productRef?: string;
 }
 
 export default function StickyBuyBar({
@@ -39,8 +40,12 @@ export default function StickyBuyBar({
   canAdd,
   pendingOptionLabel,
   available,
+  productRef,
 }: Props) {
   const { isApproved } = useAuth();
+  const orcamentoTo = productRef
+    ? `/orcamento?ref=${encodeURIComponent(productRef)}`
+    : "/orcamento";
   const [visible, setVisible] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
 
@@ -164,14 +169,17 @@ export default function StickyBuyBar({
             </>
           ) : (
             <>
-              <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
-                <Unlock className="h-3 w-3" /> Ver preço de parceiro
-              </span>
+              <Link
+                to={orcamentoTo}
+                className="h-11 px-6 inline-flex items-center justify-center bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono font-bold text-xs uppercase tracking-[0.22em] flex-shrink-0"
+              >
+                Peça um orçamento
+              </Link>
               <Link
                 to="/parceiro/cadastro"
-                className="h-11 px-7 inline-flex items-center justify-center bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-xs uppercase tracking-[0.25em] flex-shrink-0"
+                className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors flex-shrink-0"
               >
-                Ver preço de parceiro
+                <Unlock className="h-3 w-3" /> Sou parceiro · Ver preço
               </Link>
             </>
           )}
@@ -245,12 +253,20 @@ export default function StickyBuyBar({
               )}
             </Button>
           ) : (
-            <Link
-              to="/parceiro/cadastro"
-              className="w-full h-11 inline-flex items-center justify-center bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-[11px] uppercase tracking-[0.25em]"
-            >
-              Ver preço de parceiro
-            </Link>
+            <div className="flex flex-col gap-2">
+              <Link
+                to={orcamentoTo}
+                className="w-full h-11 inline-flex items-center justify-center bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono font-bold text-[11px] uppercase tracking-[0.22em]"
+              >
+                Peça um orçamento
+              </Link>
+              <Link
+                to="/parceiro/cadastro"
+                className="w-full inline-flex items-center justify-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors"
+              >
+                <Unlock className="h-3 w-3" /> Sou parceiro · Ver preço
+              </Link>
+            </div>
           )}
         </div>
       </div>
