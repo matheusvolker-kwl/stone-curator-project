@@ -14,8 +14,8 @@ export const BUSINESS = {
   garantiaAnos: 1,
   garantiaLabel: "1 ano",
 
-  // Desconto em conjuntos pré-montados
-  descontoConjuntosPercent: 3,
+
+
 
   // Localização — ateliê em Cajamar/SP (Grande São Paulo)
   cidadeAtelie: "Cajamar",
