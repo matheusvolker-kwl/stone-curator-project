@@ -93,7 +93,7 @@ const PEDRA: InstallationConfig = {
     { label: "Acompanha", value: "Manual + vídeo" },
   ],
   reassure:
-    "Peça leve, fixação com buchas e pitões — sem sistema proprietário. Manual, vídeo e suporte inclusos.",
+    "Kit completo incluso e peça pronta para instalar. Fixação com argamassa C3 — sem sistema proprietário. Manual, vídeo e suporte inclusos.",
   steps: [
     {
       title: "Confira e prepare a base",
