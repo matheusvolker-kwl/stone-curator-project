@@ -461,20 +461,9 @@ export default function ContrateAWestern() {
       <section
         ref={formRef}
         id="contato"
-        className="relative isolate overflow-hidden border-t border-western-gold/15 min-h-[600px] flex items-center"
+        className="surface-forest border-t border-western-gold/15"
       >
-        <img
-          src={mirsnteImg.url}
-          alt=""
-          aria-hidden="true"
-          width={1600}
-          height={900}
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-western-green-deep/92" />
-        <div className="relative container-western max-w-5xl py-20 md:py-28">
+        <div className="container-western max-w-5xl py-20 md:py-28">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
             <Reveal variant="fade-up" duration={700} className="md:col-span-5">
               <div>
