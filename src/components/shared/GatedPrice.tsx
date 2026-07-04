@@ -34,7 +34,14 @@ export default function GatedPrice({
 
   if (isApproved) {
     const base = typeof amount === "number" ? amount : parseFloat(amount);
-    const hasDiscount = discountPct > 0 && Number.isFinite(base);
+    if (!Number.isFinite(base) || base <= 0) {
+      return (
+        <span className={`${className ?? ""} inline-flex items-baseline`}>
+          <span>Sob consulta</span>
+        </span>
+      );
+    }
+    const hasDiscount = discountPct > 0;
     const final = hasDiscount ? base * (1 - discountPct / 100) : base;
     return (
       <span className={`${className ?? ""} inline-flex flex-wrap items-baseline gap-x-2 gap-y-0.5`}>
