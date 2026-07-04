@@ -449,9 +449,11 @@ export default function ConjuntoPage() {
                   </div>
                 ))
               : pecasEnriched.map((p, i) => (
-                  <article
+                  <Link
                     key={`${p.handle}-${i}`}
-                    className="bg-white border border-western-stone-warm/10 flex flex-col"
+                    to={`/produtos/${p.handle}`}
+                    className="group bg-white border border-western-stone-warm/10 flex flex-col hover:border-western-gold/60 hover:shadow-[0_20px_36px_-24px_hsl(var(--western-stone-dark)/0.35)] transition-all"
+                    aria-label={`Ver peça ${p.title}`}
                   >
                     <div className="relative aspect-square bg-western-paper overflow-hidden">
                       {p.imageUrl ? (
@@ -459,7 +461,7 @@ export default function ConjuntoPage() {
                           src={p.imageUrl}
                           alt={p.title}
                           loading="lazy"
-                          className="w-full h-full object-contain p-3"
+                          className="w-full h-full object-contain p-3 transition-transform duration-500 group-hover:scale-[1.03]"
                         />
                       ) : (
                         <div className="w-full h-full" />
