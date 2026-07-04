@@ -48,7 +48,7 @@ import {
 import { buildContextQuery } from "@/components/guide-v2/useGuideQuery";
 
 import { cdnImg } from "@/lib/catalog/client";
-import { fetchProductsByHandles } from "@/lib/datasource";
+import { fetchProductsByHandles, fetchProductsByHandlesHydrated } from "@/lib/datasource";
 import { useCartStore, type CartItem } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { BUSINESS } from "@/config/business";
