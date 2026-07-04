@@ -6,6 +6,7 @@ import iconePedra from "@/assets/icone-pedra-verde.png";
 import { useMemo } from "react";
 import { ArrowRight, X } from "lucide-react";
 import { LINHA_COVER_OVERRIDES } from "@/lib/lineCovers";
+import { LINHA_DESCRIPTIONS } from "@/lib/lineDescriptions";
 
 export default function Linhas() {
   const { data: collections = [], isLoading: loadingCollections } = useQuery({
@@ -42,6 +43,13 @@ export default function Linhas() {
 
   const totalResults = q ? linhas.length + products.length : 0;
   const isSearching = q.length >= 2 && (loadingCollections || loadingProducts);
+
+  const linhasList = useMemo(() => {
+    const src = q && totalResults === 0 ? collections.filter((c) => !isSeasonal(c)) : linhas;
+    const seen = new Set<string>();
+    return src.filter((c) => { if (seen.has(c.handle)) return false; seen.add(c.handle); return true; });
+  }, [q, totalResults, collections, linhas]);
+
 
   return (
     <div className="surface-ivory">
@@ -158,11 +166,9 @@ export default function Linhas() {
                 </div>
               </Link>
             )}
-            {(q && totalResults === 0
-              ? collections.filter((c) => !isSeasonal(c))
-              : linhas
-            ).map((c) => {
+            {linhasList.map((c) => {
               const cover = LINHA_COVER_OVERRIDES[c.handle];
+              const desc = LINHA_DESCRIPTIONS[c.handle] ?? c.description;
 
               return (
                 <Link key={c.handle} to={`/linhas/${c.handle}`} className="group block">
@@ -187,7 +193,7 @@ export default function Linhas() {
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
+                      <div className="w-full h-full flex items-center justify-center bg-western-stone-warm/5">
                         <img src={iconePedra} alt="" className="h-16 opacity-30" />
                       </div>
                     )}
@@ -195,9 +201,9 @@ export default function Linhas() {
                   <h3 className="font-display text-2xl text-western-green-deep group-hover:text-western-gold transition-colors">
                     {c.title}
                   </h3>
-                  {c.description && (
+                  {desc && (
                     <p className="text-spec text-western-stone-warm mt-2 line-clamp-2">
-                      {c.description}
+                      {desc}
                     </p>
                   )}
                 </Link>

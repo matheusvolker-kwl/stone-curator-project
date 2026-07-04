@@ -130,13 +130,13 @@ export default function SocialProof({
     if (logo) {
       return (
         <img src={logo} alt={m.nome} title={m.nome} loading="lazy" decoding="async"
-          style={{ filter: logoFilter, maxWidth: "180px" }}
-          className={`w-auto ${logoH} object-contain opacity-70 group-hover:opacity-100 transition-all duration-500 group-hover:scale-[1.04]`} />
+          style={{ filter: logoFilter }}
+          className="max-h-full max-w-full w-auto h-auto object-contain opacity-70 group-hover:opacity-100 transition-all duration-500 group-hover:scale-[1.04]" />
       );
     }
     return (
       <span title={m.nome}
-        className={`font-display leading-none ${wordmarkColor} opacity-70 group-hover:opacity-100 transition-all duration-500 ${compact ? "text-sm md:text-base" : "text-base md:text-xl"}`}>
+        className={`text-center font-display leading-tight ${wordmarkColor} opacity-70 group-hover:opacity-100 transition-all duration-500 ${compact ? "text-xs md:text-sm" : "text-sm md:text-base"}`}>
         {m.nome}
       </span>
     );
@@ -164,7 +164,9 @@ export default function SocialProof({
           <p className={`text-center font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-6 md:mb-7`}>{SOCIAL_PROOF_LABELS.marcas}</p>
           <ul className={`flex flex-wrap items-center justify-center max-w-full ${logoGap}`}>
             {(SOCIAL_PROOF.marcas as readonly MarcaComLogo[]).map((m) => (
-              <li key={m.slug} className={`group flex items-center justify-center ${logoH}`}>{renderMarca(m)}</li>
+              <li key={m.slug} className={`group flex items-center justify-center ${logoH} ${compact ? "w-28 md:w-32" : "w-32 md:w-40"} shrink-0`}>
+                {renderMarca(m)}
+              </li>
             ))}
           </ul>
         </div>
