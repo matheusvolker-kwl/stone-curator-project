@@ -18,6 +18,7 @@ import Reveal from "@/components/shared/Reveal";
 import ProjetosSection from "@/components/home/ProjetosSection";
 import ArtistaSection from "@/components/home/ArtistaSection";
 import MarcasInstitucionais from "@/components/shared/MarcasInstitucionais";
+import SocialProof from "@/components/shared/SocialProof";
 import { useScrollY } from "@/hooks/useScrollY";
 import { BUSINESS } from "@/config/business";
 import heroParceria from "@/assets/hero-parceria.webp.asset.json";
@@ -464,25 +465,19 @@ export default function Parceria() {
         </div>
       </section>
 
-      {/* 8. MARCAS + ARQUITETOS */}
+      {/* 8. MARCAS + PROVA SOCIAL */}
       <section className="surface-forest py-16 md:py-20 border-y border-western-gold/15">
-        <div className="container-western max-w-4xl">
+        <div className="container-western max-w-5xl">
           <Reveal variant="fade-up" duration={750}>
-            <div className="text-center mb-10 md:mb-12">
-              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft/85 mb-5">
-                Especificada por quem define o mercado
-              </p>
-              <div className="w-10 h-px bg-western-gold/50 mx-auto mb-7" />
-              <h2 className="font-display text-2xl md:text-[2rem] text-western-cream leading-[1.2] max-w-2xl mx-auto">
-                Arquitetos e marcas que mantêm a Western em seus projetos.
-              </h2>
-              <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-western-gold-soft/90 mt-6">
-                Marcelo Faisal · Fabiano Hayasaki · Ronaldo Luidi
-              </p>
-            </div>
+            <SocialProof
+              variant="dark"
+              eyebrow="Especificada por quem define o mercado"
+              titulo={<>Profissionais e marcas que mantêm a Western em seus projetos.</>}
+              groups={["celebridades", "profissionais", "parceiros", "empresas"]}
+            />
           </Reveal>
           <Reveal variant="fade-up" delay={120} duration={750}>
-            <div className="pt-8 border-t border-western-gold/15">
+            <div className="mt-12 pt-8 border-t border-western-gold/15">
               <MarcasInstitucionais compacta variante="dark" semBordas semLinks />
             </div>
           </Reveal>
