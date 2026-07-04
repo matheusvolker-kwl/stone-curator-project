@@ -133,7 +133,6 @@ export default function ConjuntoPage() {
 
   const totalPecas = pecasEnriched.reduce((s, p) => s + p.qty, 0);
   const totalPreco = pecasEnriched.reduce((s, p) => s + p.unitPrice * p.qty, 0);
-  const parcela = totalPreco > 0 ? totalPreco / 10 : 0;
 
   if (!info) return <Navigate to="/conjuntos" replace />;
   const { tipo, tamanho, nivel, leaf } = info;
