@@ -315,6 +315,12 @@ export default function AgendarVisita() {
           </label>
           {errors.aceite && <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.aceite}</p>}
 
+          <TurnstileWidget
+            onToken={setCaptchaToken}
+            onExpire={() => setCaptchaToken(null)}
+            className="mt-4"
+          />
+
           <Button
             type="submit"
             disabled={loading}
