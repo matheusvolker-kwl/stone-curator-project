@@ -1,6 +1,5 @@
 // Catalog client utilities — currency formatting + image URL helpers.
-// Source-agnostic: works with WooCommerce/Jetpack URLs (passthrough) and
-// historically with Shopify CDN URLs.
+// Source-agnostic: handles WooCommerce (Jetpack Photon) and legacy Shopify CDN URLs.
 
 export const STORE_PUBLIC_URL = "https://westernstore.com.br";
 
@@ -14,20 +13,32 @@ export function formatBRL(amount: string | number, currency = "BRL") {
   }).format(num);
 }
 
+function isWooImage(url: string): boolean {
+  return /checkout\.westernstore\.com\.br|\/wp-content\/uploads\//.test(url);
+}
+
 /**
- * Image URL helper. For legacy Shopify CDN URLs, injects width/format hints;
- * for everything else (Woo/Jetpack) returns the URL unchanged — Woo already
- * serves appropriately sized images.
+ * Image URL helper. Rewrites Shopify CDN URLs (legacy) and Woo/Jetpack URLs
+ * with width hints. Jetpack Photon returns WebP automatically when the browser
+ * sends `Accept: image/webp`, and `?w=` preserves PNG transparency.
  */
 export function cdnImg(url: string | undefined | null, width = 800): string {
   if (!url) return "";
-  if (!url.includes("cdn.shopify.com")) return url;
-  const sep = url.includes("?") ? "&" : "?";
-  return `${url}${sep}width=${width}&format=webp`;
+  if (url.includes("cdn.shopify.com")) {
+    const sep = url.includes("?") ? "&" : "?";
+    return `${url}${sep}width=${width}&format=webp`;
+  }
+  if (isWooImage(url)) {
+    const sep = url.includes("?") ? "&" : "?";
+    return `${url}${sep}w=${width}&quality=82&strip=all`;
+  }
+  return url;
 }
 
 export function cdnSrcSet(url: string | undefined | null, widths: number[] = [400, 800, 1200]): string {
   if (!url) return "";
-  if (!url.includes("cdn.shopify.com")) return url;
-  return widths.map((w) => `${cdnImg(url, w)} ${w}w`).join(", ");
+  if (url.includes("cdn.shopify.com") || isWooImage(url)) {
+    return widths.map((w) => `${cdnImg(url, w)} ${w}w`).join(", ");
+  }
+  return url;
 }
