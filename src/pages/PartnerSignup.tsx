@@ -332,7 +332,7 @@ export default function PartnerSignup() {
         <p className="text-eyebrow mb-5">Cadastro B2B</p>
         <div className="w-12 h-px bg-western-gold mb-8" />
         <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05] mb-6">
-          Solicite acesso de parceiro.
+          Solicite acesso de parceiro comercial.
         </h1>
         <p className="text-western-stone-warm text-lg leading-relaxed mb-8">
           A Western atende profissionais e empresas do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a laguistas, jardineiros, garden centers, lojas e construtoras. O acesso à tabela comercial, modelos 3D e composições é liberado automaticamente para profissionais do ramo, na hora do cadastro.
