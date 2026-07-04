@@ -129,9 +129,9 @@ export default function ParceriaDireto() {
           </Reveal>
           <Reveal variant="fade-up" duration={800} delay={100}>
             <p className="font-display text-xl md:text-2xl lg:text-[1.7rem] text-western-green-deep leading-[1.35] mb-10 md:mb-12">
-              Projetos de Neymar a resorts, especificada por arquitetos como{" "}
+              Projetos de Neymar a resorts, especificada por{" "}
               <span className="italic font-light text-western-gold">
-                Marcelo Faisal, Fabiano Hayasaki e Ronaldo Luidi.
+                profissionais renomados do paisagismo brasileiro.
               </span>
             </p>
           </Reveal>
