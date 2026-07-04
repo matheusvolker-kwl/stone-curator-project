@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { fetchCollection } from "@/lib/datasource";
-import { cdnImg } from "@/lib/catalog/client";
+import { cdnImg, cdnSrcSet } from "@/lib/catalog/client";
 import { extractDimensions, parseProductDescription } from "@/lib/catalog/parseDescription";
 
 
