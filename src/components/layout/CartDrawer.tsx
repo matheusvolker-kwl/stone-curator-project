@@ -115,6 +115,10 @@ export default function CartDrawer({
       }
       if (result.skipped > 0) {
         console.warn("[checkout] skipped lines", result.skipped);
+        toast.warning("Alguns itens não puderam ser enviados ao checkout", {
+          description: `${result.skipped} ${result.skipped === 1 ? "item ficou" : "itens ficaram"} de fora. Revise sua composição ou fale no WhatsApp.`,
+          duration: 8000,
+        });
       }
       onOpenChange(false);
       // navegação top-level já foi disparada por form.submit().
