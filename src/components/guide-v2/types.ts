@@ -33,6 +33,10 @@ export type ProjetoExtra = {
   productHandle?: string;
   variantId?: string;
   variantTitle?: string;
+  wooParentProductId?: number;
+  wooVariationId?: number | null;
+  wooKind?: "simple" | "variation" | "bundle";
+  wooAttributes?: Array<{ slug: string; value: string }>;
 };
 export type ProjetoPeca = {
   id: string;
@@ -46,6 +50,10 @@ export type ProjetoPeca = {
   productHandle?: string;
   variantId?: string;
   variantTitle?: string;
+  wooParentProductId?: number;
+  wooVariationId?: number | null;
+  wooKind?: "simple" | "variation" | "bundle";
+  wooAttributes?: Array<{ slug: string; value: string }>;
 };
 
 export const nivelLabelMap: Record<Nivel, string> = {
