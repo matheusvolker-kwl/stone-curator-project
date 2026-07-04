@@ -1,5 +1,5 @@
 // Generates public/sitemap.xml. Runs via predev/prebuild npm hooks.
-import { writeFileSync, readFileSync, existsSync } from "fs";
+import { writeFileSync } from "fs";
 import { resolve } from "path";
 
 const BASE_URL = "https://westernstore.com.br";
