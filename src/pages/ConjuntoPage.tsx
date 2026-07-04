@@ -8,7 +8,7 @@
 // A PDP é a etapa "avaliar de perto" entre os 3 cards (/guia-de-composicao/composicoes)
 // e o Refinar (/guia-de-composicao/refinar/:handle).
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
