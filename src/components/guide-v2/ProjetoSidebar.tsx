@@ -4,9 +4,18 @@ import { Link } from "react-router-dom";
 import { formatPreco, type ConjuntoLeaf } from "@/data/guideMap";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import type { Acabamento, ProjetoExtra, ProjetoPeca } from "./types";
 import { acabamentoMeta } from "./types";
 import { toast } from "sonner";
+
+export interface ProjetoMeta {
+  conjuntoHandle?: string;
+  conjuntoNome?: string;
+  tipoVisual?: string;
+  areaM2?: number;
+  nivel?: string;
+}
 
 interface Props {
   conjunto: ConjuntoLeaf;
@@ -18,7 +27,9 @@ interface Props {
   onFinalizar: () => void;
   onFinalizarCompra?: () => void;
   checkoutLoading?: boolean;
+  projetoMeta?: ProjetoMeta;
 }
+
 
 function PanelBody({
   conjunto,
