@@ -21,17 +21,20 @@ interface HandoffLine {
   attributes: Array<{ slug: string; value: string }>;
   quantity: number;
   kind: "simple" | "variation" | "bundle";
+  conjunto?: string;
 }
 
 function toLine(item: CartItem): HandoffLine | null {
   if (!item.wooParentProductId || !item.wooKind) return null;
-  return {
+  const line: HandoffLine = {
     product_id: item.wooParentProductId,
     variation_id: item.wooVariationId ?? null,
     attributes: item.wooAttributes ?? [],
     quantity: item.quantity,
     kind: item.wooKind,
   };
+  if (item.conjuntoRef) line.conjunto = item.conjuntoRef;
+  return line;
 }
 
 /**

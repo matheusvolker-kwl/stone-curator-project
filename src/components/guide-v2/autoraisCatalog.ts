@@ -13,6 +13,10 @@ export interface AutoralItem {
   descricao: string;
   dim: string;
   imageUrl?: string;
+  wooParentProductId?: number;
+  wooVariationId?: number | null;
+  wooKind?: "simple" | "variation" | "bundle";
+  wooAttributes?: Array<{ slug: string; value: string }>;
 }
 
 // Handles dos produtos autorais reais por tipo de ambiente.
@@ -82,5 +86,9 @@ export function autoralToExtra(item: AutoralItem): ProjetoExtra {
     productHandle: item.handle,
     variantId: item.variantId,
     variantTitle: item.variantTitle,
+    wooParentProductId: item.wooParentProductId,
+    wooVariationId: item.wooVariationId ?? null,
+    wooKind: item.wooKind,
+    wooAttributes: item.wooAttributes ?? [],
   };
 }
