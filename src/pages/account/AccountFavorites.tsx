@@ -19,10 +19,11 @@ export default function AccountFavorites() {
     const handles = items.map((i) => i.product_handle).join(",");
     const url = `${window.location.origin}/favoritos-compartilhados?itens=${encodeURIComponent(handles)}`;
     try {
-      if (typeof navigator !== "undefined" && "share" in navigator) {
-        await navigator.share({ title: "Seleção Western", url });
-      } else {
-        await navigator.clipboard.writeText(url);
+      const nav = typeof navigator !== "undefined" ? navigator : null;
+      if (nav && "share" in nav) {
+        await nav.share({ title: "Seleção Western", url });
+      } else if (nav?.clipboard) {
+        await nav.clipboard.writeText(url);
         toast.success("Link copiado");
       }
     } catch {
