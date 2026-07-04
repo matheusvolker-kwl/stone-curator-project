@@ -4,9 +4,12 @@ import { ShoppingBag, User, Menu, X, Search, ShieldCheck, LogOut, Heart, Home } 
 import { useWishlist } from "@/hooks/useWishlist";
 import logoVerde from "@/assets/logo-horizontal-verde.png";
 import logoBege from "@/assets/logo-horizontal-bege.png";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
+import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/datasource";
+import { cdnImg, formatBRL } from "@/lib/catalog/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
