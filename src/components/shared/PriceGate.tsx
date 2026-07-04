@@ -67,7 +67,7 @@ export default function PriceGate({ children, variant = "inline" }: Props) {
           <span className="font-mono uppercase tracking-[0.14em] text-[11px] text-western-green-deep">
             Western Box
           </span>{" "}
-          — leve o kit de amostras + catálogo e receba 100% de volta em cashback
+          — leve o kit de amostras + catálogo e receba o valor 100% de volta em cashback
           na primeira compra.
         </p>
       </div>
@@ -77,7 +77,7 @@ export default function PriceGate({ children, variant = "inline" }: Props) {
           to="/parceiro/cadastro"
           className="flex items-center justify-center text-center h-11 px-5 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors w-full sm:w-auto whitespace-normal"
         >
-          Criar conta de parceiro
+          CRIAR CONTA DE PARCEIRO COMERCIAL
         </Link>
         <Link
           to="/parceiro/login"
