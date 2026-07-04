@@ -8,11 +8,31 @@ interface Props {
 
 // Resolução automática das imagens aplicadas por SKU.
 // Convenção: src/assets/produtos-aplicados/{SKU}_close.{ext} e {SKU}_ambiente[_sufixo].{ext}
-// Ver README dentro da pasta.
-const APLICADAS = import.meta.glob(
+// Aceita arquivos de imagem crus (?url) e assets do Lovable (.asset.json). Ver README na pasta.
+const RAW = import.meta.glob(
   "/src/assets/produtos-aplicados/*.{webp,jpg,jpeg,png}",
   { eager: true, query: "?url", import: "default" }
 ) as Record<string, string>;
+
+const ASSETS = import.meta.glob(
+  "/src/assets/produtos-aplicados/*.{webp,jpg,jpeg,png}.asset.json",
+  { eager: true }
+) as Record<string, { url?: string; default?: { url?: string } }>;
+
+// Mapa: NOME_BASE (maiúsculo, sem extensão) -> url
+const APLICADAS: Record<string, string> = {};
+for (const path in RAW) {
+  const file = path.split("/").pop() ?? "";
+  const name = file.replace(/\.[^.]+$/, "").toUpperCase();
+  APLICADAS[name] = RAW[path];
+}
+for (const path in ASSETS) {
+  const file = path.split("/").pop() ?? "";
+  const name = file.replace(/\.asset\.json$/i, "").replace(/\.[^.]+$/, "").toUpperCase();
+  const mod = ASSETS[path];
+  const url = mod?.url ?? mod?.default?.url;
+  if (url && !(name in APLICADAS)) APLICADAS[name] = url;
+}
 
 function baseSku(sku?: string | null): string {
   if (!sku) return "";
@@ -22,12 +42,10 @@ function baseSku(sku?: string | null): string {
 function findImage(sku: string, kind: "CLOSE" | "AMBIENTE"): string | null {
   if (!sku) return null;
   const prefix = `${sku}_${kind}`;
-  for (const path in APLICADAS) {
-    const file = path.split("/").pop() ?? "";
-    const name = file.replace(/\.[^.]+$/, "").toUpperCase();
-    if (kind === "CLOSE" && name === prefix) return APLICADAS[path];
+  for (const name in APLICADAS) {
+    if (kind === "CLOSE" && name === prefix) return APLICADAS[name];
     if (kind === "AMBIENTE" && (name === prefix || name.startsWith(`${prefix}_`)))
-      return APLICADAS[path];
+      return APLICADAS[name];
   }
   return null;
 }
