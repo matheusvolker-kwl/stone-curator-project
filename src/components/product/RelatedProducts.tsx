@@ -124,6 +124,9 @@ export default function RelatedProducts({
                           {img && (
                             <img
                               src={cdnImg(img.url, 400)}
+                              width={280}
+                              height={280}
+                              decoding="async"
                               alt={img.altText ?? s.title}
                               loading="lazy"
                               className="w-full h-full object-contain p-2"
