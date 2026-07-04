@@ -210,15 +210,9 @@ export default function About() {
       </section>
 
       {/* CITAÇÃO — quebra editorial em surface-paper com imagem larga */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden bg-western-green-deep">
         <div className="relative h-[44vh] min-h-[340px] w-full">
-          <img
-            src={respiroPedra}
-            alt=""
-            aria-hidden
-            className="absolute left-0 top-[-12%] w-full h-[124%] object-cover will-change-transform"
-            style={{ transform: `translate3d(0, ${(scrollY - 800) * 0.05}px, 0)` }}
-          />
+          <img src={respiroPedra} alt="" aria-hidden className="absolute left-0 top-[-20%] w-full h-[140%] object-cover will-change-transform" style={{ transform: `translate3d(0, ${Math.min(0, (scrollY - 2000) * 0.04)}px, 0)` }} />
           <div
             className="absolute inset-0"
             aria-hidden
