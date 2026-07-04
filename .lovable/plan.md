@@ -1,92 +1,64 @@
-# Relatório: ocorrências de "sketch" / "skp" em /src
+# Auditoria de preço — Conjuntos vs peças reais
 
-Grep case-insensitive rodado em `src/`. Classificação por item + sugestão de copy/ação para os itens da categoria (A), que serão removidos.
+Puxei o catálogo Woo pelo connector (WESTERN WOOCOMMERCE, mesma rota do app) e as composições de `src/data/conjuntoComposicao.ts` + fallbacks de `src/data/guideMap.ts`.
 
----
+## Achado #1 — preço NÃO varia por acabamento
 
-## (A) PROMESSA DE ENTREGA DE SKETCHUP AO CLIENTE — REMOVER
+Amostrei as variações de 3 peças representativas (`pedra-grande-1`, `cascata-sabino`, `pedra-media-5`). Nas 4 variações (Arenito/Granito/Moledo/Quartzo) o `price` é **idêntico** em cada peça. Assumindo que o mesmo vale para todo o catálogo (padrão confirmado em amostra), **soma Arenito = soma Moledo = soma Quartzo = soma Granito** em todos os conjuntos. Por isso mostro uma coluna única `soma real`.
 
-Estes prometem entregar um arquivo `.skp` ou "prévia em SketchUp" ao cliente final. **Alvo de remoção.**
+Se você quiser certeza total de que nenhuma peça tem variação diferenciada, posso rodar as 40+ chamadas de `/variations` — avisa.
 
-1. `src/data/guideMap.ts:388-396` → `interface SketchAssets { pdfUrl; skpUrl }` e `sketchAssetsFor(handle)` retornando `.pdf` e `.skp` em `/wp-content/uploads/sketches/`.
-   → **Sugestão:** remover a interface e a função inteira. Buscar call sites e limpar.
+## Achado #2 (crítico) — bug T1 persiste: 3 peças voltam com `price="0"`
 
-2. `src/pages/ConjuntoPage.tsx:535` → `<Fact label="Extras" value="3D SketchUp · Garantia 1 ano" />`
-   → **Sugestão:** trocar para `value="Garantia 1 ano"` (ou outro fact editorial equivalente).
+Estas peças são produtos WooCommerce do tipo `bundle` cujo parent devolve `price="0"` no endpoint `/products`; o preço real está nas caixas-filho (`CSC — Caixa 1/3` etc.):
 
-3. `src/pages/ProductPage.tsx:257-259` → badge `Modelo 3D · SketchUp` com `aria-label="Modelo 3D SketchUp disponível"`.
-   → **Sugestão:** remover a badge inteira (a PDP não vai mais prometer SketchUp).
+| handle (parent) | price parent | preço real (soma caixas) | como |
+|---|---|---|---|
+| `cascata-santa-clara` | **0** | **R$ 2.250** | 3× `csc-caixa-*/3` @ R$ 750 |
+| `cascata-santa-barbara` | **0** | **R$ 3.585** | 3× `csb-caixa-*/3` @ R$ 1.195 |
+| `fonte-sabino-com-lago` | **0** | **R$ 4.235** | 2× `fsl-caixa-*/2` @ R$ 2.117,50 |
 
-4. `src/pages/ProductPage.tsx:459-490` → Callout "Modelo 3D SketchUp disponível" com CTA `Baixar .skp` / `3D Warehouse`.
-   → **Sugestão:** remover o bloco inteiro do callout.
+Se o front pegar o `price` do parent (que é o que `fetchProductsByHandles` recebe hoje), qualquer conjunto que contenha essas 3 peças fica com preço somado **abaixo do fallback** — em 6 casos vai a zero de contribuição da peça-chave, e nos essenciais o carrinho vai literalmente a R$ 0 ao lado de um fallback de milhares de reais.
 
-5. `src/components/product/ProductTabs.tsx:36-40` → constante `SKETCHUP_INCLUI` (bullets "Compatível com SketchUp Pro e Free…").
-   → **Sugestão:** remover a constante.
+## Tabela (ordenada pela divergência PARENT × fallback — o risco real)
 
-6. `src/components/product/ProductTabs.tsx:197-232` → aba inteira "MODELO 3D · SKETCHUP" com CTA `Baixar modelo 3D (.skp)` / `Abrir no 3D Warehouse` e lista `SKETCHUP_INCLUI`.
-   → **Sugestão:** remover a `TabsTrigger value="modelo3d"` (linha ~77 do arquivo — verificar) e o `TabsContent value="modelo3d"` inteiro.
+Legenda: `Δ parent%` = como o app calcula hoje via preço do parent Woo (0 nos bundles). `Δ real%` = soma reconstruída somando as caixas.
 
-7. `src/components/guide-v2/ProjetoSidebar.tsx:51` → badge `"Conjunto curado · SketchUp incluso"`.
-   → **Sugestão:** trocar por `"Conjunto curado Western"` (ou apenas `"Conjunto curado"`).
+| conjunto | fallback | soma (parent Woo) | soma real | Δ parent | Δ real | bundle-zero |
+|---|---:|---:|---:|---:|---:|---|
+| conjunto-piscina-caio-essencial | 2.250 | **0** | 2.250 | **−100,0%** | 0,0% | cascata-santa-clara×1 |
+| conjunto-piscina-buzios-essencial | 3.585 | **0** | 3.585 | **−100,0%** | 0,0% | cascata-santa-barbara×1 |
+| conjunto-jardim-fonte-tabocas-essencial | 4.235 | **0** | 4.235 | **−100,0%** | 0,0% | fonte-sabino-com-lago×1 |
+| conjunto-piscina-itacare-equilibrado | 2.800 | 550 | 2.800 | −80,4% | 0,0% | cascata-santa-clara×1 |
+| conjunto-jardim-fonte-iguacu-equilibrado | 5.335 | 1.100 | 5.335 | −79,4% | 0,0% | fonte-sabino-com-lago×1 |
+| conjunto-piscina-maresias-equilibrado | 4.750 | 1.165 | 4.750 | −75,5% | 0,0% | cascata-santa-barbara×1 |
+| conjunto-piscina-trancoso-completo | 3.120 | 870 | 3.120 | −72,1% | 0,0% | cascata-santa-clara×1 |
+| conjunto-piscina-pipa-completo | 5.195 | 1.610 | 5.195 | −69,0% | 0,0% | cascata-santa-barbara×1 |
+| conjunto-piscina-maragogi-essencial | 6.410 | 2.825 | 6.410 | −55,9% | 0,0% | cascata-santa-barbara×1 |
+| conjunto-jardim-fonte-itambe-completo | 7.815 | 3.580 | 7.815 | −54,2% | 0,0% | fonte-sabino-com-lago×1 |
+| conjunto-piscina-jericoacoara-equilibrado | 8.050 | 4.465 | 8.050 | −44,5% | 0,0% | cascata-santa-barbara×1 |
+| conjunto-lago-mundau-completo | 8.580 | 6.330 | 8.580 | −26,2% | 0,0% | cascata-santa-clara×1 |
+| conjunto-lago-amazonas-completo | 16.325 | 12.740 | 16.325 | −22,0% | 0,0% | cascata-santa-barbara×1 |
+| conjunto-lago-marau-equilibrado | 13.085 | 10.835 | 13.085 | −17,2% | 0,0% | cascata-santa-clara×1 |
+| — todos os outros 31 conjuntos — | ✓ | igual ao real | igual | 0,0% | 0,0% | — |
 
-8. `src/components/guide-v2/ProjetoSidebar.tsx:190-193` → botão `Baixar prévia em SketchUp` com `toast("Prévia em SketchUp em breve.")`.
-   → **Sugestão:** remover o botão inteiro.
-
-9. `src/pages/guia/Refinar.tsx:312` → texto "…O SketchUp é entregue apenas para os conjuntos…"
-   → **Sugestão:** reescrever sem menção a SketchUp (ex.: "Você está ajustando a composição original — as peças e o total são recalculados em tempo real.") ou remover a frase.
-
-10. `src/pages/guia/Contexto.tsx:87` → "…mostramos três caminhos de composição com peças, preço e prévia em SketchUp."
-    → **Sugestão:** trocar `e prévia em SketchUp` por `e visualização da composição` (ou remover o trecho final).
-
-11. `src/pages/guia/Contexto.tsx:113` → passo "03 — Refine e baixe o SketchUp / Ajuste peças, some autorais e leve a prévia."
-    → **Sugestão:** trocar para algo como `{ n: "03", t: "Refine e finalize", d: "Ajuste peças, some autorais e envie ao cliente." }`.
-
-12. `src/components/shared/PriceGate.tsx:36` → item da lista de benefícios: `"Artes, modelos SketchUp, guia de compra e de instalação"`.
-    → **Sugestão:** trocar para `"Artes, guia de compra e de instalação"` (remover "modelos SketchUp").
-
----
-
-## (A?) Fronteira — INSTITUCIONAL sobre o 3D Warehouse público
-
-Estas menções **não** prometem entrega de `.skp` privado ao cliente — apontam para o canal público `3dwarehouse.sketchup.com/by/WesternPools` (arquivos disponíveis livremente lá). Preciso da tua decisão: **manter** (é diferencial institucional real) ou **remover junto** (descontinuar toda menção pública a SketchUp)?
-
-- `src/config/business.ts:48` → `sketchupWarehouse: "https://3dwarehouse.sketchup.com/by/WesternPools"` (constante base).
-- `src/pages/Index.tsx:55` → meta description "…modelos 3D no SketchUp Warehouse."
-- `src/pages/Index.tsx:127` → card "Modelos 3D em SketchUp · +300 mil downloads…"
-- `src/pages/FAQ.tsx:61` → resposta longa sobre baixar peças no 3D Warehouse.
-- `src/pages/Contact.tsx:37-40` → card de canal "SketchUp 3D Warehouse".
-- `src/pages/Parceria.tsx:125` → "4 acabamentos + 3D SketchUp".
-- `src/pages/Parceria.tsx:138` → "Preço e 3D · Tabela de atacado e arquivos SketchUp."
-- `src/pages/PorQueWestern.tsx:32,52` → argumentos longos sobre SketchUp Warehouse resolver "antes de comprar".
-- `src/pages/ParceriaDireto.tsx:13` → "+300 mil · downloads dos modelos 3D no SketchUp".
-- `src/components/product/WhyWesternStrip.tsx:24-27` → tile "Downloads no SketchUp Warehouse" com link.
-- `src/components/layout/TopBar.tsx:8` → topbar "Modelos 3D · +300 mil downloads no SketchUp Warehouse".
-
-Se a diretriz for "descontinuar TODA menção a SketchUp" (inclusive Warehouse público), este bloco vira (A) e sai junto. Se for só "não prometemos mais entregar .skp específico ao cliente/conjunto", este bloco fica como está.
-
----
-
-## (B) FEATURE "MEUS SKETCHES" DA CONTA — não relacionada ao SketchUp
-
-- `src/App.tsx:45` → `const AccountSketches = lazy(...)`
-- `src/App.tsx:158` → `<Route path="sketches" element={<AccountSketches />} />`
-- `src/pages/account/AccountSketches.tsx:6,13,15,22,27,29,36,45` → página inteira "Últimos guias salvos" (lê `guide_exports`, chama de "sketch" internamente).
-- `src/components/account/AccountLayout.tsx:14` → comentário mencionando "sketches/favoritos/amostras/preferências" (rota escondida do menu mas ativa).
-
-Nada aqui promete SketchUp — é o histórico de composições salvas do Guia de Compra. Fora do escopo desta limpeza.
-
----
-
-## (C) OUTRO
-
-Nenhuma ocorrência que não caiba em (A) ou (B).
-
----
+Os 31 conjuntos restantes (todas as famílias `lago`, `lago-hibrido`, `jardim-seco`, e as duas fontes `andorinhas`/`veu` etc.) batem exatamente com o fallback, **inclusive `conjunto-piscina-noronha-completo`** que só usa cascatas do tipo variable com preço no parent.
 
 ## Resumo executivo
 
-- **12 pontos claros de (A)** para remoção/reescrita (itens 1–12 acima) — concentrados em PDP (ProductPage, ProductTabs), Guia (ProjetoSidebar, Refinar, Contexto), ConjuntoPage, PriceGate e helper `sketchAssetsFor` em guideMap.
-- **~11 pontos institucionais** apontando ao 3D Warehouse público — **preciso da tua decisão** antes de tocar.
-- **(B) intocado.**
+- **0 / 45** conjuntos divergem >10% quando o preço é reconstruído corretamente (fallback está calibrado).
+- **14 / 45** conjuntos (31%) divergem >10% pelo que o app enxerga hoje via parent-price, com **6 conjuntos indo a preço zero na peça-âncora** (essencial → carrinho pode fechar a R$ 0).
+- **14 / 45** têm ao menos uma peça em bundle-zero (mesmos 14 acima). Peças-âncora:
+  - `cascata-santa-clara` — em 5 conjuntos (mundau, caio, itacare, trancoso, + implícito em piscina/lago).
+  - `cascata-santa-barbara` — em 6 conjuntos (amazonas, buzios, maresias, pipa, maragogi, jericoacoara).
+  - `fonte-sabino-com-lago` — em 3 conjuntos (tabocas, iguacu, itambe).
+- Nenhuma peça está ausente do catálogo (todos os handles foram resolvidos pelo Woo).
 
-Me confirma: (a) removo só os 12 itens de promessa direta ao cliente e mantenho as menções institucionais ao 3D Warehouse público, ou (b) descontinuo TODA menção a SketchUp no site (inclusive Warehouse)? Com a resposta eu volto com um plano de edição.
+## Próximo passo sugerido (quando for corrigir — não agora)
+
+O bug não está nos preços do guideMap — está em como o front resolve `cascata-santa-clara`, `cascata-santa-barbara` e `fonte-sabino-com-lago` no catálogo. Duas rotas:
+
+1. **Ajustar `groupAcabamentoBundles`/`adaptAcabamentoGroup`** para somar as caixas-filho quando o `bundle.price` vier `0`; ou
+2. **Corrigir no Woo** (definir o preço do bundle como soma dos itens) e a leitura passa a bater sozinha.
+
+Me avisa qual rota você quer que eu monte em plano de implementação — não editei nada agora.
