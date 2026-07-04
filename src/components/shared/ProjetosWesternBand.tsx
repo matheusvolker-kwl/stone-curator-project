@@ -113,14 +113,14 @@ export default function ProjetosWesternBand() {
                 <PlayOverlay />
               </>
             )}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent px-6 md:px-10 pt-20 pb-6 md:pb-8">
-              <p className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-western-gold">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent px-6 md:px-10 pt-20 pb-6 md:pb-8">
+              <p className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-western-gold drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
                 {destaque.credito}
               </p>
-              <p className="font-display text-xl md:text-3xl text-western-cream mt-2 leading-snug max-w-2xl">
+              <p className="font-display text-xl md:text-3xl text-western-cream mt-2 leading-snug max-w-2xl drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
                 {destaque.titulo}
               </p>
-              <p className="hidden md:block text-western-cream/85 mt-3 max-w-2xl text-sm leading-relaxed">
+              <p className="hidden md:block text-western-cream/85 mt-3 max-w-2xl text-sm leading-relaxed drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
                 {destaque.story}
               </p>
             </div>
