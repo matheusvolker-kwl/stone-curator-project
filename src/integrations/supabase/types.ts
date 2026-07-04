@@ -485,14 +485,19 @@ export type Database = {
       }
       production_orders: {
         Row: {
+          conjuntos: string | null
           created_at: string
           endereco_entrega: string | null
           id: string
+          itens: Json | null
           lead_id: string | null
           modo_entrega: Database["public"]["Enums"]["fulfillment_mode"]
+          needs_linking: boolean | null
           numero: string
           observacoes_admin: string | null
           observacoes_cliente: string | null
+          origem: string | null
+          payment_status: string | null
           prazo_dias_uteis: number
           previsao_entrega: string | null
           produzir_ate: string | null
@@ -503,16 +508,22 @@ export type Database = {
           updated_at: string
           user_id: string
           valor_total: number | null
+          woo_order_id: number | null
         }
         Insert: {
+          conjuntos?: string | null
           created_at?: string
           endereco_entrega?: string | null
           id?: string
+          itens?: Json | null
           lead_id?: string | null
           modo_entrega?: Database["public"]["Enums"]["fulfillment_mode"]
+          needs_linking?: boolean | null
           numero: string
           observacoes_admin?: string | null
           observacoes_cliente?: string | null
+          origem?: string | null
+          payment_status?: string | null
           prazo_dias_uteis?: number
           previsao_entrega?: string | null
           produzir_ate?: string | null
@@ -523,16 +534,22 @@ export type Database = {
           updated_at?: string
           user_id: string
           valor_total?: number | null
+          woo_order_id?: number | null
         }
         Update: {
+          conjuntos?: string | null
           created_at?: string
           endereco_entrega?: string | null
           id?: string
+          itens?: Json | null
           lead_id?: string | null
           modo_entrega?: Database["public"]["Enums"]["fulfillment_mode"]
+          needs_linking?: boolean | null
           numero?: string
           observacoes_admin?: string | null
           observacoes_cliente?: string | null
+          origem?: string | null
+          payment_status?: string | null
           prazo_dias_uteis?: number
           previsao_entrega?: string | null
           produzir_ate?: string | null
@@ -543,6 +560,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
           valor_total?: number | null
+          woo_order_id?: number | null
         }
         Relationships: []
       }
