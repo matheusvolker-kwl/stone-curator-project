@@ -547,11 +547,14 @@ export default function AdminQuoteDetail() {
                   key={it._key}
                   className="grid grid-cols-[1fr_auto_auto_auto] gap-3 items-center border border-western-stone-warm/15 p-3"
                 >
-                  <div className="min-w-0">
+                  <div className="min-w-0 space-y-1">
                     <p className="font-display text-western-green-deep truncate">{it.title}</p>
-                    <p className="text-xs text-western-stone-warm font-mono uppercase tracking-wider">
-                      {it.options?.map((o) => o.value).join(" · ") || it.variantTitle || "—"}
-                    </p>
+                    <Input
+                      value={it.acabamento ?? ""}
+                      onChange={(e) => updateItem(it._key, { acabamento: e.target.value })}
+                      placeholder="Acabamento / cor"
+                      className="h-7 rounded-none text-xs font-mono uppercase tracking-wider"
+                    />
                   </div>
                   <div className="flex items-center gap-1">
                     <button
@@ -570,14 +573,11 @@ export default function AdminQuoteDetail() {
                       <Plus className="h-3 w-3" />
                     </button>
                   </div>
-                  <Input
-                    type="number"
-                    step="0.01"
+                  <BRLInput
                     value={it.unitPrice}
-                    onChange={(e) =>
-                      updateItem(it._key, { unitPrice: Number(e.target.value) || 0 })
-                    }
-                    className="h-8 w-28 rounded-none text-right font-mono text-sm"
+                    onChange={(n) => updateItem(it._key, { unitPrice: n })}
+                    className="h-8 w-32 rounded-none text-right font-mono text-sm"
+                    placeholder="R$ 0,00"
                   />
                   <button
                     onClick={() => removeItem(it._key)}
