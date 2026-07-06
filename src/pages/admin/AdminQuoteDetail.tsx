@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { formatBRL } from "@/lib/catalog/client";
+import { formatBRL, parseBRL } from "@/lib/catalog/client";
 import { type Lead } from "@/components/admin/adminUtils";
 import {
   QUOTE_STATUS_LABEL, QUOTE_STATUS_CLS,
@@ -35,6 +35,56 @@ const FORMAS_PAGAMENTO = [
 interface EditableItem extends QuotePayloadItem {
   /** key local pra render */
   _key: string;
+  /** acabamento/cor editável pelo admin (sobrescreve options no PDF) */
+  acabamento?: string;
+}
+
+/** Input monetário em formato BR: aceita "1.500,00", "R$ 1.500,00", "1500.5" etc. */
+function BRLInput({
+  value, onChange, placeholder, className,
+}: {
+  value: number;
+  onChange: (n: number) => void;
+  placeholder?: string;
+  className?: string;
+}) {
+  const [text, setText] = useState<string>(() =>
+    Number.isFinite(value) && value !== 0 ? formatBRL(value, "BRL") : "",
+  );
+  const [focused, setFocused] = useState(false);
+  // Sincroniza quando o valor externo muda e o campo NÃO está sendo editado
+  useEffect(() => {
+    if (!focused) {
+      setText(Number.isFinite(value) && value !== 0 ? formatBRL(value, "BRL") : "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+  return (
+    <Input
+      type="text"
+      inputMode="decimal"
+      value={text}
+      placeholder={placeholder}
+      className={className}
+      onFocus={() => setFocused(true)}
+      onChange={(e) => {
+        const raw = e.target.value;
+        setText(raw);
+        const parsed = parseBRL(raw);
+        if (Number.isFinite(parsed)) onChange(parsed);
+      }}
+      onBlur={() => {
+        setFocused(false);
+        const parsed = parseBRL(text);
+        if (Number.isFinite(parsed)) {
+          onChange(parsed);
+          setText(formatBRL(parsed, "BRL"));
+        } else {
+          setText(Number.isFinite(value) && value !== 0 ? formatBRL(value, "BRL") : "");
+        }
+      }}
+    />
+  );
 }
 
 export default function AdminQuoteDetail() {
@@ -61,13 +111,14 @@ export default function AdminQuoteDetail() {
 
   // Mini-form "incluir item"
   const [newItemTitle, setNewItemTitle] = useState("");
+  const [newItemAcabamento, setNewItemAcabamento] = useState("");
   const [newItemQty, setNewItemQty] = useState<string>("1");
-  const [newItemPrice, setNewItemPrice] = useState<string>("0");
+  const [newItemPrice, setNewItemPrice] = useState<number>(0);
 
   // Fechar venda
   const [saleForma, setSaleForma] = useState("PIX");
   const [saleParcelas, setSaleParcelas] = useState(1);
-  const [saleValor, setSaleValor] = useState<string>("");
+  const [saleValor, setSaleValor] = useState<number | null>(null);
   const [saleObs, setSaleObs] = useState("");
 
   // Notas internas
@@ -103,7 +154,7 @@ export default function AdminQuoteDetail() {
       setNotas(t.notas ?? "");
       setSaleForma(t.forma_pagamento || "PIX");
       setSaleParcelas(t.parcelas || 1);
-      setSaleValor(t.valor_final ? String(t.valor_final) : "");
+      setSaleValor(t.valor_final != null ? Number(t.valor_final) : null);
       setSaleObs(t.observacoes_venda ?? "");
     }
 
@@ -119,7 +170,15 @@ export default function AdminQuoteDetail() {
     const sourceItems = rawSourceItems.filter((i) => !i.handle?.startsWith("__meta_"));
 
     setItems(
-      sourceItems.map((it, idx) => ({ ...it, _key: `${it.handle}-${idx}-${Math.random()}` })),
+      sourceItems.map((it, idx) => ({
+        ...it,
+        _key: `${it.handle}-${idx}-${Math.random()}`,
+        acabamento:
+          (it as EditableItem).acabamento ||
+          it.options?.map((o) => o.value).join(" · ") ||
+          it.variantTitle ||
+          "",
+      })),
     );
     setJurosLabel(restoredJuros);
     if (seed) {
@@ -191,7 +250,7 @@ export default function AdminQuoteDetail() {
     if (closingSale) return;
 
     // Validação de valor / parcelas
-    const valorNum = saleValor ? Number(saleValor) : total;
+    const valorNum = saleValor != null && Number.isFinite(saleValor) ? saleValor : total;
     if (!Number.isFinite(valorNum) || valorNum <= 0) {
       return toast.error("Valor final da venda precisa ser maior que zero.");
     }
@@ -239,18 +298,25 @@ export default function AdminQuoteDetail() {
   const addItem = () => {
     const title = newItemTitle.trim();
     const qty = Number(newItemQty);
-    const price = Number(newItemPrice);
+    const price = Number.isFinite(newItemPrice) ? newItemPrice : 0;
     if (!title) return toast.error("Informe o nome do item.");
     if (!Number.isInteger(qty) || qty < 1) return toast.error("Quantidade deve ser inteiro ≥ 1.");
     if (!Number.isFinite(price) || price < 0) return toast.error("Preço deve ser ≥ 0.");
     const key = "manual-" + crypto.randomUUID();
     setItems((prev) => [
       ...prev,
-      { handle: key, title, unitPrice: price, quantity: qty, options: [], _key: key },
+      {
+        handle: key, title,
+        unitPrice: price, quantity: qty,
+        options: [],
+        acabamento: newItemAcabamento.trim() || undefined,
+        _key: key,
+      },
     ]);
     setNewItemTitle("");
+    setNewItemAcabamento("");
     setNewItemQty("1");
-    setNewItemPrice("0");
+    setNewItemPrice(0);
   };
 
   const handleGeneratePdf = async (download: boolean) => {
@@ -285,7 +351,10 @@ export default function AdminQuoteDetail() {
         },
         items: items.map((i) => ({
           productTitle: i.title,
-          acabamento: i.options?.map((o) => o.value).join(" · ") || i.variantTitle,
+          acabamento:
+            (i.acabamento && i.acabamento.trim())
+              ? i.acabamento.trim()
+              : (i.options?.map((o) => o.value).join(" · ") || i.variantTitle || undefined),
           quantity: i.quantity,
           unitPrice: i.unitPrice,
           productImage: i.image,
@@ -478,11 +547,14 @@ export default function AdminQuoteDetail() {
                   key={it._key}
                   className="grid grid-cols-[1fr_auto_auto_auto] gap-3 items-center border border-western-stone-warm/15 p-3"
                 >
-                  <div className="min-w-0">
+                  <div className="min-w-0 space-y-1">
                     <p className="font-display text-western-green-deep truncate">{it.title}</p>
-                    <p className="text-xs text-western-stone-warm font-mono uppercase tracking-wider">
-                      {it.options?.map((o) => o.value).join(" · ") || it.variantTitle || "—"}
-                    </p>
+                    <Input
+                      value={it.acabamento ?? ""}
+                      onChange={(e) => updateItem(it._key, { acabamento: e.target.value })}
+                      placeholder="Acabamento / cor"
+                      className="h-7 rounded-none text-xs font-mono uppercase tracking-wider"
+                    />
                   </div>
                   <div className="flex items-center gap-1">
                     <button
@@ -501,14 +573,11 @@ export default function AdminQuoteDetail() {
                       <Plus className="h-3 w-3" />
                     </button>
                   </div>
-                  <Input
-                    type="number"
-                    step="0.01"
+                  <BRLInput
                     value={it.unitPrice}
-                    onChange={(e) =>
-                      updateItem(it._key, { unitPrice: Number(e.target.value) || 0 })
-                    }
-                    className="h-8 w-28 rounded-none text-right font-mono text-sm"
+                    onChange={(n) => updateItem(it._key, { unitPrice: n })}
+                    className="h-8 w-32 rounded-none text-right font-mono text-sm"
+                    placeholder="R$ 0,00"
                   />
                   <button
                     onClick={() => removeItem(it._key)}
@@ -524,11 +593,17 @@ export default function AdminQuoteDetail() {
             {/* Mini-form: incluir item livre */}
             <div className="border border-western-stone-warm/15 bg-western-cream/40 p-3 mb-5">
               <p className="text-eyebrow mb-2">Incluir item</p>
-              <div className="grid grid-cols-[1fr_80px_120px_auto] gap-2 items-end">
+              <div className="grid grid-cols-[1fr_1fr_70px_130px_auto] gap-2 items-end">
                 <Input
                   value={newItemTitle}
                   onChange={(e) => setNewItemTitle(e.target.value)}
                   placeholder="Nome do item"
+                  className="h-9 rounded-none"
+                />
+                <Input
+                  value={newItemAcabamento}
+                  onChange={(e) => setNewItemAcabamento(e.target.value)}
+                  placeholder="Acabamento (cor)"
                   className="h-9 rounded-none"
                 />
                 <Input
@@ -537,10 +612,10 @@ export default function AdminQuoteDetail() {
                   placeholder="Qtd"
                   className="h-9 rounded-none text-right font-mono"
                 />
-                <Input
-                  type="number" step="0.01" min={0} value={newItemPrice}
-                  onChange={(e) => setNewItemPrice(e.target.value)}
-                  placeholder="Preço unit."
+                <BRLInput
+                  value={newItemPrice}
+                  onChange={(n) => setNewItemPrice(n)}
+                  placeholder="R$ 0,00"
                   className="h-9 rounded-none text-right font-mono"
                 />
                 <Button
@@ -552,6 +627,7 @@ export default function AdminQuoteDetail() {
                 </Button>
               </div>
             </div>
+
 
 
             {/* Condições */}
@@ -756,10 +832,10 @@ export default function AdminQuoteDetail() {
               </div>
               <div>
                 <Label className="text-eyebrow mb-1 block">Valor final (R$)</Label>
-                <Input
-                  type="number" step="0.01" value={saleValor}
-                  onChange={(e) => setSaleValor(e.target.value)}
-                  placeholder={String(total)}
+                <BRLInput
+                  value={saleValor ?? 0}
+                  onChange={(n) => setSaleValor(Number.isFinite(n) ? n : null)}
+                  placeholder={formatBRL(total, "BRL")}
                   className="h-10 rounded-none bg-white"
                 />
               </div>
