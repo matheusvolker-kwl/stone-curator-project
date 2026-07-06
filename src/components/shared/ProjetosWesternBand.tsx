@@ -159,7 +159,7 @@ export default function ProjetosWesternBand() {
       {/* Lightbox */}
       <Dialog open={openIndex !== null} onOpenChange={(o) => !o && close()}>
         <DialogContent
-          className="max-w-6xl w-[95vw] p-0 bg-western-green-deep border-western-gold/20 [&>button]:hidden"
+          className="max-w-6xl w-[95vw] max-h-[90dvh] overflow-y-auto p-0 bg-western-green-deep border-western-gold/20 [&>button]:hidden"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           {current && (
