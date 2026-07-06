@@ -158,8 +158,14 @@ export default function AdminQuoteDetail() {
   };
 
   const handleSaveNotes = async () => {
-    await updateThread({ status: statusLocal, notas });
-    toast.success("Atualizações salvas.");
+    if (savingThread) return;
+    try {
+      await updateThread({ status: statusLocal, notas });
+      toast.success("Atualizações salvas.");
+    } finally {
+      // updateThread já reseta savingThread; garantia extra
+      setSavingThread(false);
+    }
   };
 
   const handleArchive = async () => {
@@ -178,28 +184,49 @@ export default function AdminQuoteDetail() {
     navigate("/admin/orcamentos");
   };
 
+  const jaVendida = !!(thread?.pago_em && thread?.valor_final);
+
   const handleCloseSale = async () => {
     if (!thread || !lead) return;
-    setClosingSale(true);
-    await updateThread({
-      status: "fechado",
-      pago_em: new Date().toISOString(),
-      forma_pagamento: saleForma,
-      parcelas: saleParcelas,
-      valor_final: saleValor ? Number(saleValor) : total,
-      observacoes_venda: saleObs || null,
-    });
-    // Promove o lead 'orcamento' → 'pedido_novo' (1 lead atualizado, conforme regra)
-    const { error: promoteErr } = await supabase.rpc("promote_quote_lead_to_order", {
-      _lead_id: lead.id,
-      _order_id: null,
-    });
-    if (promoteErr) {
-      console.warn("promote_quote_lead_to_order falhou", promoteErr);
+    if (closingSale) return;
+
+    // Validação de valor / parcelas
+    const valorNum = saleValor ? Number(saleValor) : total;
+    if (!Number.isFinite(valorNum) || valorNum <= 0) {
+      return toast.error("Valor final da venda precisa ser maior que zero.");
     }
-    setStatusLocal("fechado");
-    setClosingSale(false);
-    toast.success("Venda registrada.");
+    if (!Number.isInteger(saleParcelas) || saleParcelas < 1) {
+      return toast.error("Número de parcelas inválido.");
+    }
+
+    // Idempotência: se já vendida, exigir confirmação
+    if (jaVendida) {
+      if (!confirm("Esta venda já foi fechada. Regravar os dados de fechamento?")) return;
+    }
+
+    setClosingSale(true);
+    try {
+      await updateThread({
+        status: "fechado",
+        pago_em: new Date().toISOString(),
+        forma_pagamento: saleForma,
+        parcelas: saleParcelas,
+        valor_final: valorNum,
+        observacoes_venda: saleObs || null,
+      });
+      // Só promove se ainda não foi promovido antes
+      if (!jaVendida) {
+        const { error: promoteErr } = await supabase.rpc("promote_quote_lead_to_order", {
+          _lead_id: lead.id,
+          _order_id: null,
+        });
+        if (promoteErr) console.warn("promote_quote_lead_to_order falhou", promoteErr);
+      }
+      setStatusLocal("fechado");
+      toast.success("Venda registrada.");
+    } finally {
+      setClosingSale(false);
+    }
   };
 
   // ----- Proposta -----
@@ -209,13 +236,44 @@ export default function AdminQuoteDetail() {
   const removeItem = (key: string) =>
     setItems((prev) => prev.filter((i) => i._key !== key));
 
+  const addItem = () => {
+    const title = newItemTitle.trim();
+    const qty = Number(newItemQty);
+    const price = Number(newItemPrice);
+    if (!title) return toast.error("Informe o nome do item.");
+    if (!Number.isInteger(qty) || qty < 1) return toast.error("Quantidade deve ser inteiro ≥ 1.");
+    if (!Number.isFinite(price) || price < 0) return toast.error("Preço deve ser ≥ 0.");
+    const key = "manual-" + crypto.randomUUID();
+    setItems((prev) => [
+      ...prev,
+      { handle: key, title, unitPrice: price, quantity: qty, options: [], _key: key },
+    ]);
+    setNewItemTitle("");
+    setNewItemQty("1");
+    setNewItemPrice("0");
+  };
+
   const handleGeneratePdf = async (download: boolean) => {
     if (!lead) return;
+    if (sendingProposal) return;
     if (items.length === 0) return toast.error("Adicione itens à proposta.");
+    if (total <= 0) {
+      return toast.error("Total da proposta é R$ 0 — revise itens/desconto antes de gerar.");
+    }
 
     setSendingProposal(true);
     try {
-      const propNumero = `${numero}-P${(proposals.length + 1).toString().padStart(2, "0")}`;
+      // Numeração sequencial por lead, contando no banco (count exato)
+      const baseNumero = payload?.numero ?? lead.id.slice(0, 5).toUpperCase();
+      let seq = proposals.length + 1;
+      if (!download) {
+        const { count } = await supabase
+          .from("quote_proposals")
+          .select("id", { count: "exact", head: true })
+          .eq("lead_id", lead.id);
+        if (typeof count === "number") seq = count + 1;
+      }
+      const propNumero = `${baseNumero}-P${seq.toString().padStart(2, "0")}`;
       const opts = {
         numero: propNumero,
         cliente: {
@@ -234,11 +292,11 @@ export default function AdminQuoteDetail() {
         })),
         subtotal, discountPct, discountValue, total,
         formaPagamento, parcelas, validadeDias, observacoes,
+        jurosLabel,
       };
 
       if (download) {
         await downloadPropostaPdf(opts);
-        setSendingProposal(false);
         return;
       }
 
@@ -250,12 +308,18 @@ export default function AdminQuoteDetail() {
         .upload(path, blob, { contentType: "application/pdf", upsert: true });
       if (upErr) throw upErr;
 
+      // Persiste jurosLabel como sentinel dentro de items (sem criar coluna)
+      const itemsToSave: QuotePayloadItem[] = [
+        ...items.map(({ _key, ...rest }) => rest),
+        { handle: "__meta_juros__", title: jurosLabel, quantity: 0, unitPrice: 0 },
+      ];
+
       const { data: created, error: insErr } = await supabase
         .from("quote_proposals")
         .insert({
           lead_id: lead.id,
           numero: propNumero,
-          items: items.map(({ _key, ...rest }) => rest),
+          items: itemsToSave,
           subtotal, discount_pct: discountPct, discount_value: discountValue, total,
           forma_pagamento: formaPagamento, parcelas, validade_dias: validadeDias,
           observacoes: observacoes || null,
