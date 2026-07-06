@@ -838,7 +838,11 @@ export default function AdminPedidos() {
         <p className="text-sm text-western-stone-warm">Carregando…</p>
       ) : visible.length === 0 ? (
         <div className="border border-dashed border-western-stone-warm/30 bg-white p-10 text-center">
-          <p className="text-western-stone-warm mb-3">Nenhum pedido encontrado.</p>
+          <p className="text-western-stone-warm mb-3">
+            {orders.length === 0
+              ? "Nenhum pedido de produção ainda — crie o primeiro."
+              : "Nenhum pedido encontrado com esses filtros."}
+          </p>
           {partners.length === 0 ? (
             <p className="text-xs text-western-stone-warm">
               Aprove parceiros primeiro para poder criar pedidos.
