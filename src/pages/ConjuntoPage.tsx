@@ -9,6 +9,7 @@
 // e o Refinar (/guia-de-composicao/refinar/:handle).
 
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -610,9 +611,9 @@ export default function ConjuntoPage() {
         }}
       />
 
-      {lightboxOpen && (
+      {lightboxOpen && typeof document !== "undefined" && createPortal(
         <div
-          className="fixed inset-0 z-[100] bg-western-green-deep flex items-center justify-center"
+          className="fixed inset-0 z-[999] bg-western-green-deep flex items-center justify-center"
           role="dialog"
           aria-modal="true"
           aria-label="Render ampliado"
@@ -636,6 +637,8 @@ export default function ConjuntoPage() {
             <img
               src={render}
               alt={`Render do conjunto ${leaf.nome}`}
+              decoding="async"
+              loading="eager"
               className={`block mx-auto transition-transform duration-300 ${
                 zoomed ? "scale-[1.8]" : "scale-100"
               } max-w-[92vw] max-h-[88vh] object-contain touch-pinch-zoom`}
@@ -645,7 +648,8 @@ export default function ConjuntoPage() {
           <span className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.25em] text-western-cream/70 text-center px-4">
             Clique na imagem para ampliar · esc para fechar
           </span>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

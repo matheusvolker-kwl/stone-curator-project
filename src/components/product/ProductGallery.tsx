@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X, Maximize2 } from "lucide-react";
 import { cdnImg, cdnSrcSet } from "@/lib/catalog/client";
 
@@ -29,12 +30,22 @@ export default function ProductGallery({
 
   const total = images.length;
   const goPrev = useCallback(
-    () => onChange((activeIndex - 1 + total) % total),
-    [activeIndex, total, onChange]
+    () => {
+      const nextIdx = (activeIndex - 1 + total) % total;
+      const nx = images[nextIdx];
+      if (nx) { const img = new Image(); img.src = cdnImg(nx.url, 1200); }
+      onChange(nextIdx);
+    },
+    [activeIndex, total, onChange, images]
   );
   const goNext = useCallback(
-    () => onChange((activeIndex + 1) % total),
-    [activeIndex, total, onChange]
+    () => {
+      const nextIdx = (activeIndex + 1) % total;
+      const nx = images[nextIdx];
+      if (nx) { const img = new Image(); img.src = cdnImg(nx.url, 1200); }
+      onChange(nextIdx);
+    },
+    [activeIndex, total, onChange, images]
   );
 
   // Keyboard nav + focus-trap when lightbox open
@@ -163,7 +174,7 @@ export default function ProductGallery({
               type="button"
               onClick={goPrev}
               aria-label="Imagem anterior"
-              className="absolute left-0 md:-left-4 top-1/2 -translate-y-1/2 h-11 w-11 md:h-11 md:w-11 flex items-center justify-center bg-western-cream border border-western-stone-warm/25 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold transition-colors shadow-sm"
+              className="absolute z-10 left-2 md:-left-4 top-[58%] md:top-1/2 -translate-y-1/2 h-11 w-11 md:h-11 md:w-11 flex items-center justify-center bg-western-cream border border-western-stone-warm/25 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold transition-colors shadow-sm"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -171,7 +182,7 @@ export default function ProductGallery({
               type="button"
               onClick={goNext}
               aria-label="Próxima imagem"
-              className="absolute right-0 md:-right-4 top-1/2 -translate-y-1/2 h-11 w-11 md:h-11 md:w-11 flex items-center justify-center bg-western-cream border border-western-stone-warm/25 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold transition-colors shadow-sm"
+              className="absolute z-10 right-2 md:-right-4 top-[58%] md:top-1/2 -translate-y-1/2 h-11 w-11 md:h-11 md:w-11 flex items-center justify-center bg-western-cream border border-western-stone-warm/25 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold transition-colors shadow-sm"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
@@ -211,11 +222,11 @@ export default function ProductGallery({
       )}
 
       {/* Lightbox */}
-      {lightboxOpen && (
+      {lightboxOpen && typeof document !== "undefined" && createPortal(
         <div
           ref={dialogRef}
           tabIndex={-1}
-          className="fixed inset-0 z-[100] bg-western-green-deep flex items-center justify-center"
+          className="fixed inset-0 z-[999] bg-western-green-deep flex items-center justify-center"
           role="dialog"
           aria-modal="true"
           aria-label="Visualização ampliada"
@@ -261,9 +272,11 @@ export default function ProductGallery({
           >
             <img
               key={activeIndex}
-              src={cdnImg(current.url, 2000)}
-              width={2000}
-              height={2000}
+              src={cdnImg(current.url, 1200)}
+              srcSet={cdnSrcSet(current.url, [800, 1200, 2000])}
+              sizes="100vw"
+              decoding="async"
+              loading="eager"
               alt={current.altText ?? (total > 1 ? `${productTitle} — imagem ${activeIndex + 1} de ${total}` : productTitle)}
               className={`block mx-auto transition-transform duration-300 ${
                 zoomed ? "scale-[1.6]" : "scale-100"
@@ -274,7 +287,8 @@ export default function ProductGallery({
           <span className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.25em] text-western-cream/70">
             {activeIndex + 1} / {total} · ← → para navegar · esc para fechar
           </span>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
