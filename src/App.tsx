@@ -184,12 +184,13 @@ const App = () => (
                       <Route path="leads" element={<AdminLeads />} />
                       <Route path="orcamentos" element={<AdminQuotes />} />
                       <Route path="orcamentos/:leadId" element={<AdminQuoteDetail />} />
-                      <Route path="amostras" element={<AdminSamples />} />
-                      <Route path="usuarios" element={<AdminUsers />} />
                       <Route path="pedidos" element={<AdminPedidos />} />
-                      <Route path="credenciamentos" element={<AdminCredenciamentos />} />
-                      <Route path="cnae-whitelist" element={<AdminCnaeWhitelist />} />
                       <Route path="configuracoes" element={<AdminSettings />} />
+                      {/* Redirects de rotas antigas — herdam o RequireAuth adminOnly da rota-pai */}
+                      <Route path="amostras" element={<Navigate to="/admin/leads" replace />} />
+                      <Route path="usuarios" element={<Navigate to="/admin/parceiros?tab=ativos" replace />} />
+                      <Route path="credenciamentos" element={<Navigate to="/admin/parceiros?tab=credenciamento" replace />} />
+                      <Route path="cnae-whitelist" element={<Navigate to="/admin/configuracoes?tab=cnae" replace />} />
                     </Route>
                     {/* Rota antiga de amostras: substituída pela Western Box (página paga). */}
                     <Route path="/pedir-amostras" element={<Navigate to="/western-box" replace />} />
