@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+    const RESEND_API_KEY = Deno.env.get('RESEND_DIRECT_API_KEY') || Deno.env.get('RESEND_API_KEY');
     if (!RESEND_API_KEY) {
       console.error('send-quote-email: missing RESEND_API_KEY');
       return new Response(JSON.stringify({ ok: false, error: 'RESEND_API_KEY not configured' }), {
