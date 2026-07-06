@@ -65,7 +65,14 @@ export default function AdminSamples() {
       </div>
 
       <div className="space-y-3">
-        {filtered.length === 0 && <p className="text-western-stone-warm py-10 text-center">Nenhuma amostra nesse status.</p>}
+        {samples.length === 0 ? (
+          <div className="border border-dashed border-western-stone-warm/30 bg-white p-10 text-center">
+            <p className="text-western-green-deep font-medium mb-1">As amostras agora são atendidas pela Western Box.</p>
+            <p className="text-xs text-western-stone-warm">Esta fila fica aqui para histórico e para receber pedidos legados.</p>
+          </div>
+        ) : filtered.length === 0 ? (
+          <p className="text-western-stone-warm py-10 text-center">Nenhuma amostra nesse status.</p>
+        ) : null}
         {filtered.map((l) => {
           const st = getStatus(l);
           const endereco = [l.endereco, l.cidade, l.uf, l.cep].filter(Boolean).join(", ");

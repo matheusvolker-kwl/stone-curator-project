@@ -110,6 +110,7 @@ export const LEAD_TYPE_LABEL: Record<string, string> = {
   visita: "Visita",
   contato: "Contato",
   orcamento: "Orçamento",
+  b2c_orcamento: "Orçamento (cliente final)",
   pedido_novo: "Pedido novo",
   pdf_pedido: "PDF re-baixado",
 };
@@ -121,6 +122,7 @@ export const LEAD_TYPE_BADGE_CLS: Record<string, string> = {
   visita: "border-indigo-500/50 text-indigo-700 bg-indigo-50",
   contato: "border-zinc-400/50 text-zinc-600 bg-zinc-50",
   orcamento: "border-amber-500/60 text-amber-800 bg-amber-50",
+  b2c_orcamento: "border-rose-500/50 text-rose-700 bg-rose-50",
   pedido_novo: "border-emerald-600/60 text-emerald-800 bg-emerald-50 font-semibold",
   pdf_pedido: "border-western-gold/60 text-western-green-deep bg-western-gold/10",
 };

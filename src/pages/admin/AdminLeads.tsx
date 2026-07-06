@@ -9,7 +9,7 @@ import {
 import { toCSV, downloadCSV, chipCls, KV, type Lead, LEAD_TYPE_LABEL, LEAD_TYPE_BADGE_CLS } from "@/components/admin/adminUtils";
 
 const PAGE_SIZE = 50;
-const KNOWN_TYPES = ["partner_signup", "newsletter", "amostras", "visita", "contato", "pedido_novo", "pdf_pedido"];
+const KNOWN_TYPES = ["partner_signup", "newsletter", "amostras", "visita", "contato", "pedido_novo", "b2c_orcamento", "pdf_pedido"];
 
 export default function AdminLeads() {
   const [leads, setLeads] = useState<Lead[]>([]);
