@@ -157,7 +157,7 @@ export default function PartnerLogin() {
           </aside>
 
           {/* COLUNA DIREITA — formulário */}
-          <div className="md:max-w-md md:mx-auto w-full">
+          <div className="md:max-w-md md:mx-auto w-full order-1 md:order-2">
             <p className="text-eyebrow mb-5">Acesso de parceiro</p>
             <div className="w-12 h-px bg-western-gold mb-8" />
             <h1 className="font-display text-4xl md:text-5xl text-western-green-deep leading-[1.05] mb-10">
