@@ -772,10 +772,10 @@ export default function AdminQuoteDetail() {
             <Button
               onClick={handleCloseSale}
               disabled={closingSale}
-              className="rounded-none bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-[11px] uppercase tracking-[0.22em] h-11"
+              className="rounded-none bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-[11px] uppercase tracking-[0.22em] h-11 disabled:opacity-60"
             >
               {closingSale ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
-              Marcar como vendido
+              {jaVendida ? "Venda já fechada — regravar" : "Marcar como vendido"}
             </Button>
             {thread.pago_em && (
               <p className="text-xs text-emerald-800 font-mono mt-3">
