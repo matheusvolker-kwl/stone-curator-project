@@ -1,6 +1,6 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 
-const GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend';
+const RESEND_URL = 'https://api.resend.com/emails';
 
 const FROM = 'Western <no-reply@westernstore.com.br>';
 const WHATSAPP_LABEL = '+55 11 95896-7088';
@@ -67,21 +67,19 @@ Deno.serve(async (req) => {
       });
     }
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-    if (!LOVABLE_API_KEY || !RESEND_API_KEY) {
-      console.error('send-quote-email: missing gateway credentials');
-      return new Response(JSON.stringify({ ok: false, error: 'gateway not configured' }), {
-        status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    if (!RESEND_API_KEY) {
+      console.error('send-quote-email: missing RESEND_API_KEY');
+      return new Response(JSON.stringify({ ok: false, error: 'RESEND_API_KEY not configured' }), {
+        status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const resp = await fetch(`${GATEWAY_URL}/emails`, {
+    const resp = await fetch(RESEND_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        'X-Connection-Api-Key': RESEND_API_KEY,
+        Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
         from: FROM,
@@ -91,7 +89,6 @@ Deno.serve(async (req) => {
         attachments: [{
           filename: `western-orcamento-${numero}.pdf`,
           content: pdfBase64,
-          contentType: 'application/pdf',
         }],
       }),
     });
@@ -100,7 +97,7 @@ Deno.serve(async (req) => {
       const txt = await resp.text();
       console.error(`send-quote-email resend failed [${resp.status}]: ${txt}`);
       return new Response(JSON.stringify({ ok: false, error: txt, status: resp.status }), {
-        status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: resp.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
