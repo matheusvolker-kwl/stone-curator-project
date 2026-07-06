@@ -298,18 +298,25 @@ export default function AdminQuoteDetail() {
   const addItem = () => {
     const title = newItemTitle.trim();
     const qty = Number(newItemQty);
-    const price = Number(newItemPrice);
+    const price = Number.isFinite(newItemPrice) ? newItemPrice : 0;
     if (!title) return toast.error("Informe o nome do item.");
     if (!Number.isInteger(qty) || qty < 1) return toast.error("Quantidade deve ser inteiro ≥ 1.");
     if (!Number.isFinite(price) || price < 0) return toast.error("Preço deve ser ≥ 0.");
     const key = "manual-" + crypto.randomUUID();
     setItems((prev) => [
       ...prev,
-      { handle: key, title, unitPrice: price, quantity: qty, options: [], _key: key },
+      {
+        handle: key, title,
+        unitPrice: price, quantity: qty,
+        options: [],
+        acabamento: newItemAcabamento.trim() || undefined,
+        _key: key,
+      },
     ]);
     setNewItemTitle("");
+    setNewItemAcabamento("");
     setNewItemQty("1");
-    setNewItemPrice("0");
+    setNewItemPrice(0);
   };
 
   const handleGeneratePdf = async (download: boolean) => {
