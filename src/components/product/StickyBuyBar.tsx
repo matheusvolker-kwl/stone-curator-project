@@ -43,9 +43,7 @@ export default function StickyBuyBar({
   productRef,
 }: Props) {
   const { isApproved } = useAuth();
-  const orcamentoTo = productRef
-    ? `/orcamento?ref=${encodeURIComponent(productRef)}`
-    : "/orcamento";
+  const orcamentoTo = "/contrate-a-western";
   const [visible, setVisible] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
 

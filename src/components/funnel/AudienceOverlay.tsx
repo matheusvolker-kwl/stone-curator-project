@@ -105,7 +105,7 @@ export default function AudienceOverlay() {
   const chooseB2c = () => {
     writeChoice("b2c");
     setOpen(false);
-    navigate("/orcamento");
+    navigate("/contrate-a-western");
   };
   const chooseBrowse = () => {
     writeChoice("browse");

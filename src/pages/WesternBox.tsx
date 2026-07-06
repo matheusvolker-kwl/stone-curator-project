@@ -928,7 +928,7 @@ export default function WesternBox() {
             <div className="mt-8 border-t border-western-stone-warm/20 pt-8">
               <p className="font-display text-lg md:text-xl text-western-green-deep leading-snug">Ficou em dúvida sobre o acabamento ideal?</p>
               <p className="mt-2 text-western-stone-warm text-[15px] leading-relaxed">Conte sobre o seu projeto e nosso time ajuda a especificar — sem compromisso de compra.</p>
-              <Link to="/orcamento" className="mt-5 inline-flex items-center gap-2 border border-western-green-deep/30 px-6 h-12 items-center font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep hover:bg-western-green-deep hover:text-western-cream transition-colors">Falar sobre meu projeto</Link>
+              <Link to="/contrate-a-western" className="mt-5 inline-flex items-center gap-2 border border-western-green-deep/30 px-6 h-12 items-center font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep hover:bg-western-green-deep hover:text-western-cream transition-colors">Falar sobre meu projeto</Link>
             </div>
           </div>
         </div>
