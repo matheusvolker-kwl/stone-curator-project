@@ -109,17 +109,24 @@ export default function AdminQuoteDetail() {
 
     // Inicializa editor com itens originais (ou última proposta se houver)
     const seed = (propData as unknown as QuoteProposal[] | null)?.[0];
-    const sourceItems: QuotePayloadItem[] = seed
+    const rawSourceItems: QuotePayloadItem[] = seed
       ? seed.items
       : ((l?.payload as unknown as QuotePayload)?.items ?? []);
+
+    // Extrai marker de juros (sentinel embutido em items) e filtra
+    const jurosSentinel = rawSourceItems.find((i) => i.handle === "__meta_juros__");
+    const restoredJuros = (jurosSentinel?.title as "nao_informar" | "sem_juros" | "com_juros" | undefined) ?? "nao_informar";
+    const sourceItems = rawSourceItems.filter((i) => !i.handle?.startsWith("__meta_"));
+
     setItems(
       sourceItems.map((it, idx) => ({ ...it, _key: `${it.handle}-${idx}-${Math.random()}` })),
     );
+    setJurosLabel(restoredJuros);
     if (seed) {
       setDiscountPct(Number(seed.discount_pct));
       setFormaPagamento(seed.forma_pagamento || "PIX");
       setParcelas(seed.parcelas || 1);
-      setValidadeDias(seed.validade_dias || 7);
+      setValidadeDias(seed.validade_dias || 15);
       setObservacoes(seed.observacoes ?? "");
     }
     setLoading(false);
