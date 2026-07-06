@@ -1,4 +1,4 @@
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formatBRL } from "@/lib/catalog/client";
 import type { CartItem } from "@/stores/cartStore";
