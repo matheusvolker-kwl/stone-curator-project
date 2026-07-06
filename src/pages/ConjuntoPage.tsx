@@ -9,6 +9,7 @@
 // e o Refinar (/guia-de-composicao/refinar/:handle).
 
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
