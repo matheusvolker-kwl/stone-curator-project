@@ -582,16 +582,30 @@ export default function AdminQuoteDetail() {
                 />
               </div>
               <div>
+                <Label className="text-eyebrow mb-1 block">Parcelamento</Label>
+                <Select
+                  value={jurosLabel}
+                  onValueChange={(v) => setJurosLabel(v as typeof jurosLabel)}
+                >
+                  <SelectTrigger className="h-10 rounded-none"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="nao_informar">Não informar</SelectItem>
+                    <SelectItem value="sem_juros">Sem juros</SelectItem>
+                    <SelectItem value="com_juros">Com juros</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
                 <Label className="text-eyebrow mb-1 block">Validade (dias)</Label>
                 <Input
                   type="number" min={1} value={validadeDias}
-                  onChange={(e) => setValidadeDias(Math.max(1, Number(e.target.value) || 7))}
+                  onChange={(e) => setValidadeDias(Math.max(1, Number(e.target.value) || 15))}
                   className="h-10 rounded-none"
                 />
               </div>
             </div>
 
-            <div className="mb-5">
+            <div className="mb-3">
               <Label className="text-eyebrow mb-1 block">Observações (vão no PDF)</Label>
               <Textarea
                 value={observacoes} onChange={(e) => setObservacoes(e.target.value)}
@@ -599,6 +613,11 @@ export default function AdminQuoteDetail() {
                 placeholder="Ex.: Frete por conta da Western até Cajamar/SP."
               />
             </div>
+
+            <p className="text-[11px] font-mono text-western-stone-warm/80 mb-5">
+              ⓘ O PDF já inclui automaticamente: produção em {BUSINESS.prazoProducaoLabel} · garantia de {BUSINESS.garantiaLabel}.
+            </p>
+
 
             {/* Totais */}
             <div className="border-t border-western-stone-warm/15 pt-4 mb-5">
