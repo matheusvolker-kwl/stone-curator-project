@@ -351,7 +351,10 @@ export default function AdminQuoteDetail() {
         },
         items: items.map((i) => ({
           productTitle: i.title,
-          acabamento: i.options?.map((o) => o.value).join(" · ") || i.variantTitle,
+          acabamento:
+            (i.acabamento && i.acabamento.trim())
+              ? i.acabamento.trim()
+              : (i.options?.map((o) => o.value).join(" · ") || i.variantTitle || undefined),
           quantity: i.quantity,
           unitPrice: i.unitPrice,
           productImage: i.image,
