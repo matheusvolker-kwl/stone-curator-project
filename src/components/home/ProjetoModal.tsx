@@ -22,8 +22,9 @@ export default function ProjetoModal({ projeto, onClose }: Props) {
                   src={projeto.video}
                   poster={projeto.cover}
                   controls
-                  preload="metadata"
+                  muted
                   playsInline
+                  preload="metadata"
                   className="w-full h-full object-contain"
                 />
               ) : (
