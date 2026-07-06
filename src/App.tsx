@@ -31,12 +31,8 @@ const AdminPartners = lazy(() => import("./pages/admin/AdminPartners"));
 const AdminLeads = lazy(() => import("./pages/admin/AdminLeads"));
 const AdminQuotes = lazy(() => import("./pages/admin/AdminQuotes"));
 const AdminQuoteDetail = lazy(() => import("./pages/admin/AdminQuoteDetail"));
-const AdminSamples = lazy(() => import("./pages/admin/AdminSamples"));
-const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const AdminPedidos = lazy(() => import("./pages/admin/AdminPedidos"));
 const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
-const AdminCredenciamentos = lazy(() => import("./pages/admin/AdminCredenciamentos"));
-const AdminCnaeWhitelist = lazy(() => import("./pages/admin/AdminCnaeWhitelist"));
 
 const AccountLayout = lazy(() => import("@/components/account/AccountLayout"));
 const AccountIndex = lazy(() => import("./pages/account/AccountIndex"));
