@@ -222,11 +222,11 @@ export default function ProductGallery({
       )}
 
       {/* Lightbox */}
-      {lightboxOpen && (
+      {lightboxOpen && typeof document !== "undefined" && createPortal(
         <div
           ref={dialogRef}
           tabIndex={-1}
-          className="fixed inset-0 z-[100] bg-western-green-deep flex items-center justify-center"
+          className="fixed inset-0 z-[999] bg-western-green-deep flex items-center justify-center"
           role="dialog"
           aria-modal="true"
           aria-label="Visualização ampliada"
@@ -272,9 +272,11 @@ export default function ProductGallery({
           >
             <img
               key={activeIndex}
-              src={cdnImg(current.url, 2000)}
-              width={2000}
-              height={2000}
+              src={cdnImg(current.url, 1200)}
+              srcSet={cdnSrcSet(current.url, [800, 1200, 2000])}
+              sizes="100vw"
+              decoding="async"
+              loading="eager"
               alt={current.altText ?? (total > 1 ? `${productTitle} — imagem ${activeIndex + 1} de ${total}` : productTitle)}
               className={`block mx-auto transition-transform duration-300 ${
                 zoomed ? "scale-[1.6]" : "scale-100"
@@ -285,7 +287,8 @@ export default function ProductGallery({
           <span className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.25em] text-western-cream/70">
             {activeIndex + 1} / {total} · ← → para navegar · esc para fechar
           </span>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
