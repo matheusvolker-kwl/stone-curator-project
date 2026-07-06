@@ -111,13 +111,14 @@ export default function AdminQuoteDetail() {
 
   // Mini-form "incluir item"
   const [newItemTitle, setNewItemTitle] = useState("");
+  const [newItemAcabamento, setNewItemAcabamento] = useState("");
   const [newItemQty, setNewItemQty] = useState<string>("1");
-  const [newItemPrice, setNewItemPrice] = useState<string>("0");
+  const [newItemPrice, setNewItemPrice] = useState<number>(0);
 
   // Fechar venda
   const [saleForma, setSaleForma] = useState("PIX");
   const [saleParcelas, setSaleParcelas] = useState(1);
-  const [saleValor, setSaleValor] = useState<string>("");
+  const [saleValor, setSaleValor] = useState<number | null>(null);
   const [saleObs, setSaleObs] = useState("");
 
   // Notas internas
