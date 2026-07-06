@@ -593,11 +593,17 @@ export default function AdminQuoteDetail() {
             {/* Mini-form: incluir item livre */}
             <div className="border border-western-stone-warm/15 bg-western-cream/40 p-3 mb-5">
               <p className="text-eyebrow mb-2">Incluir item</p>
-              <div className="grid grid-cols-[1fr_80px_120px_auto] gap-2 items-end">
+              <div className="grid grid-cols-[1fr_1fr_70px_130px_auto] gap-2 items-end">
                 <Input
                   value={newItemTitle}
                   onChange={(e) => setNewItemTitle(e.target.value)}
                   placeholder="Nome do item"
+                  className="h-9 rounded-none"
+                />
+                <Input
+                  value={newItemAcabamento}
+                  onChange={(e) => setNewItemAcabamento(e.target.value)}
+                  placeholder="Acabamento (cor)"
                   className="h-9 rounded-none"
                 />
                 <Input
@@ -606,10 +612,10 @@ export default function AdminQuoteDetail() {
                   placeholder="Qtd"
                   className="h-9 rounded-none text-right font-mono"
                 />
-                <Input
-                  type="number" step="0.01" min={0} value={newItemPrice}
-                  onChange={(e) => setNewItemPrice(e.target.value)}
-                  placeholder="Preço unit."
+                <BRLInput
+                  value={newItemPrice}
+                  onChange={(n) => setNewItemPrice(n)}
+                  placeholder="R$ 0,00"
                   className="h-9 rounded-none text-right font-mono"
                 />
                 <Button
@@ -621,6 +627,7 @@ export default function AdminQuoteDetail() {
                 </Button>
               </div>
             </div>
+
 
 
             {/* Condições */}
