@@ -30,12 +30,22 @@ export default function ProductGallery({
 
   const total = images.length;
   const goPrev = useCallback(
-    () => onChange((activeIndex - 1 + total) % total),
-    [activeIndex, total, onChange]
+    () => {
+      const nextIdx = (activeIndex - 1 + total) % total;
+      const nx = images[nextIdx];
+      if (nx) { const img = new Image(); img.src = cdnImg(nx.url, 1200); }
+      onChange(nextIdx);
+    },
+    [activeIndex, total, onChange, images]
   );
   const goNext = useCallback(
-    () => onChange((activeIndex + 1) % total),
-    [activeIndex, total, onChange]
+    () => {
+      const nextIdx = (activeIndex + 1) % total;
+      const nx = images[nextIdx];
+      if (nx) { const img = new Image(); img.src = cdnImg(nx.url, 1200); }
+      onChange(nextIdx);
+    },
+    [activeIndex, total, onChange, images]
   );
 
   // Keyboard nav + focus-trap when lightbox open
