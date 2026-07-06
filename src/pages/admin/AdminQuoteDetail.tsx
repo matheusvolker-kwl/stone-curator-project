@@ -55,8 +55,14 @@ export default function AdminQuoteDetail() {
   const [discountPct, setDiscountPct] = useState(0);
   const [formaPagamento, setFormaPagamento] = useState("PIX");
   const [parcelas, setParcelas] = useState(1);
-  const [validadeDias, setValidadeDias] = useState(7);
+  const [validadeDias, setValidadeDias] = useState(15);
   const [observacoes, setObservacoes] = useState("");
+  const [jurosLabel, setJurosLabel] = useState<"nao_informar" | "sem_juros" | "com_juros">("nao_informar");
+
+  // Mini-form "incluir item"
+  const [newItemTitle, setNewItemTitle] = useState("");
+  const [newItemQty, setNewItemQty] = useState<string>("1");
+  const [newItemPrice, setNewItemPrice] = useState<string>("0");
 
   // Fechar venda
   const [saleForma, setSaleForma] = useState("PIX");
@@ -103,17 +109,24 @@ export default function AdminQuoteDetail() {
 
     // Inicializa editor com itens originais (ou última proposta se houver)
     const seed = (propData as unknown as QuoteProposal[] | null)?.[0];
-    const sourceItems: QuotePayloadItem[] = seed
+    const rawSourceItems: QuotePayloadItem[] = seed
       ? seed.items
       : ((l?.payload as unknown as QuotePayload)?.items ?? []);
+
+    // Extrai marker de juros (sentinel embutido em items) e filtra
+    const jurosSentinel = rawSourceItems.find((i) => i.handle === "__meta_juros__");
+    const restoredJuros = (jurosSentinel?.title as "nao_informar" | "sem_juros" | "com_juros" | undefined) ?? "nao_informar";
+    const sourceItems = rawSourceItems.filter((i) => !i.handle?.startsWith("__meta_"));
+
     setItems(
       sourceItems.map((it, idx) => ({ ...it, _key: `${it.handle}-${idx}-${Math.random()}` })),
     );
+    setJurosLabel(restoredJuros);
     if (seed) {
       setDiscountPct(Number(seed.discount_pct));
       setFormaPagamento(seed.forma_pagamento || "PIX");
       setParcelas(seed.parcelas || 1);
-      setValidadeDias(seed.validade_dias || 7);
+      setValidadeDias(seed.validade_dias || 15);
       setObservacoes(seed.observacoes ?? "");
     }
     setLoading(false);
@@ -145,8 +158,14 @@ export default function AdminQuoteDetail() {
   };
 
   const handleSaveNotes = async () => {
-    await updateThread({ status: statusLocal, notas });
-    toast.success("Atualizações salvas.");
+    if (savingThread) return;
+    try {
+      await updateThread({ status: statusLocal, notas });
+      toast.success("Atualizações salvas.");
+    } finally {
+      // updateThread já reseta savingThread; garantia extra
+      setSavingThread(false);
+    }
   };
 
   const handleArchive = async () => {
@@ -165,28 +184,49 @@ export default function AdminQuoteDetail() {
     navigate("/admin/orcamentos");
   };
 
+  const jaVendida = !!(thread?.pago_em && thread?.valor_final);
+
   const handleCloseSale = async () => {
     if (!thread || !lead) return;
-    setClosingSale(true);
-    await updateThread({
-      status: "fechado",
-      pago_em: new Date().toISOString(),
-      forma_pagamento: saleForma,
-      parcelas: saleParcelas,
-      valor_final: saleValor ? Number(saleValor) : total,
-      observacoes_venda: saleObs || null,
-    });
-    // Promove o lead 'orcamento' → 'pedido_novo' (1 lead atualizado, conforme regra)
-    const { error: promoteErr } = await supabase.rpc("promote_quote_lead_to_order", {
-      _lead_id: lead.id,
-      _order_id: null,
-    });
-    if (promoteErr) {
-      console.warn("promote_quote_lead_to_order falhou", promoteErr);
+    if (closingSale) return;
+
+    // Validação de valor / parcelas
+    const valorNum = saleValor ? Number(saleValor) : total;
+    if (!Number.isFinite(valorNum) || valorNum <= 0) {
+      return toast.error("Valor final da venda precisa ser maior que zero.");
     }
-    setStatusLocal("fechado");
-    setClosingSale(false);
-    toast.success("Venda registrada.");
+    if (!Number.isInteger(saleParcelas) || saleParcelas < 1) {
+      return toast.error("Número de parcelas inválido.");
+    }
+
+    // Idempotência: se já vendida, exigir confirmação
+    if (jaVendida) {
+      if (!confirm("Esta venda já foi fechada. Regravar os dados de fechamento?")) return;
+    }
+
+    setClosingSale(true);
+    try {
+      await updateThread({
+        status: "fechado",
+        pago_em: new Date().toISOString(),
+        forma_pagamento: saleForma,
+        parcelas: saleParcelas,
+        valor_final: valorNum,
+        observacoes_venda: saleObs || null,
+      });
+      // Só promove se ainda não foi promovido antes
+      if (!jaVendida) {
+        const { error: promoteErr } = await supabase.rpc("promote_quote_lead_to_order", {
+          _lead_id: lead.id,
+          _order_id: null,
+        });
+        if (promoteErr) console.warn("promote_quote_lead_to_order falhou", promoteErr);
+      }
+      setStatusLocal("fechado");
+      toast.success("Venda registrada.");
+    } finally {
+      setClosingSale(false);
+    }
   };
 
   // ----- Proposta -----
@@ -196,13 +236,44 @@ export default function AdminQuoteDetail() {
   const removeItem = (key: string) =>
     setItems((prev) => prev.filter((i) => i._key !== key));
 
+  const addItem = () => {
+    const title = newItemTitle.trim();
+    const qty = Number(newItemQty);
+    const price = Number(newItemPrice);
+    if (!title) return toast.error("Informe o nome do item.");
+    if (!Number.isInteger(qty) || qty < 1) return toast.error("Quantidade deve ser inteiro ≥ 1.");
+    if (!Number.isFinite(price) || price < 0) return toast.error("Preço deve ser ≥ 0.");
+    const key = "manual-" + crypto.randomUUID();
+    setItems((prev) => [
+      ...prev,
+      { handle: key, title, unitPrice: price, quantity: qty, options: [], _key: key },
+    ]);
+    setNewItemTitle("");
+    setNewItemQty("1");
+    setNewItemPrice("0");
+  };
+
   const handleGeneratePdf = async (download: boolean) => {
     if (!lead) return;
+    if (sendingProposal) return;
     if (items.length === 0) return toast.error("Adicione itens à proposta.");
+    if (total <= 0) {
+      return toast.error("Total da proposta é R$ 0 — revise itens/desconto antes de gerar.");
+    }
 
     setSendingProposal(true);
     try {
-      const propNumero = `${numero}-P${(proposals.length + 1).toString().padStart(2, "0")}`;
+      // Numeração sequencial por lead, contando no banco (count exato)
+      const baseNumero = payload?.numero ?? lead.id.slice(0, 5).toUpperCase();
+      let seq = proposals.length + 1;
+      if (!download) {
+        const { count } = await supabase
+          .from("quote_proposals")
+          .select("id", { count: "exact", head: true })
+          .eq("lead_id", lead.id);
+        if (typeof count === "number") seq = count + 1;
+      }
+      const propNumero = `${baseNumero}-P${seq.toString().padStart(2, "0")}`;
       const opts = {
         numero: propNumero,
         cliente: {
@@ -221,11 +292,11 @@ export default function AdminQuoteDetail() {
         })),
         subtotal, discountPct, discountValue, total,
         formaPagamento, parcelas, validadeDias, observacoes,
+        jurosLabel,
       };
 
       if (download) {
         await downloadPropostaPdf(opts);
-        setSendingProposal(false);
         return;
       }
 
@@ -237,12 +308,18 @@ export default function AdminQuoteDetail() {
         .upload(path, blob, { contentType: "application/pdf", upsert: true });
       if (upErr) throw upErr;
 
+      // Persiste jurosLabel como sentinel dentro de items (sem criar coluna)
+      const itemsToSave: QuotePayloadItem[] = [
+        ...items.map(({ _key, ...rest }) => rest),
+        { handle: "__meta_juros__", title: jurosLabel, quantity: 0, unitPrice: 0 },
+      ];
+
       const { data: created, error: insErr } = await supabase
         .from("quote_proposals")
         .insert({
           lead_id: lead.id,
           numero: propNumero,
-          items: items.map(({ _key, ...rest }) => rest),
+          items: itemsToSave as unknown as never,
           subtotal, discount_pct: discountPct, discount_value: discountValue, total,
           forma_pagamento: formaPagamento, parcelas, validade_dias: validadeDias,
           observacoes: observacoes || null,
@@ -390,10 +467,10 @@ export default function AdminQuoteDetail() {
             </div>
 
             {/* Itens */}
-            <div className="space-y-2 mb-5">
+            <div className="space-y-2 mb-4">
               {items.length === 0 && (
                 <div className="border border-dashed border-western-stone-warm/30 p-6 text-center text-sm text-western-stone-warm">
-                  Sem itens. Use o orçamento original para começar ou adicione manualmente abaixo.
+                  Sem itens. Use “+ Incluir item” abaixo para adicionar.
                 </div>
               )}
               {items.map((it) => (
@@ -444,6 +521,39 @@ export default function AdminQuoteDetail() {
               ))}
             </div>
 
+            {/* Mini-form: incluir item livre */}
+            <div className="border border-western-stone-warm/15 bg-western-cream/40 p-3 mb-5">
+              <p className="text-eyebrow mb-2">Incluir item</p>
+              <div className="grid grid-cols-[1fr_80px_120px_auto] gap-2 items-end">
+                <Input
+                  value={newItemTitle}
+                  onChange={(e) => setNewItemTitle(e.target.value)}
+                  placeholder="Nome do item"
+                  className="h-9 rounded-none"
+                />
+                <Input
+                  type="number" min={1} value={newItemQty}
+                  onChange={(e) => setNewItemQty(e.target.value)}
+                  placeholder="Qtd"
+                  className="h-9 rounded-none text-right font-mono"
+                />
+                <Input
+                  type="number" step="0.01" min={0} value={newItemPrice}
+                  onChange={(e) => setNewItemPrice(e.target.value)}
+                  placeholder="Preço unit."
+                  className="h-9 rounded-none text-right font-mono"
+                />
+                <Button
+                  variant="outline"
+                  onClick={addItem}
+                  className="rounded-none border-western-stone-warm/30 font-mono text-[11px] uppercase tracking-[0.18em] h-9"
+                >
+                  <Plus className="h-3.5 w-3.5 mr-1" /> Incluir item
+                </Button>
+              </div>
+            </div>
+
+
             {/* Condições */}
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
               <div>
@@ -472,16 +582,30 @@ export default function AdminQuoteDetail() {
                 />
               </div>
               <div>
+                <Label className="text-eyebrow mb-1 block">Parcelamento</Label>
+                <Select
+                  value={jurosLabel}
+                  onValueChange={(v) => setJurosLabel(v as typeof jurosLabel)}
+                >
+                  <SelectTrigger className="h-10 rounded-none"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="nao_informar">Não informar</SelectItem>
+                    <SelectItem value="sem_juros">Sem juros</SelectItem>
+                    <SelectItem value="com_juros">Com juros</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
                 <Label className="text-eyebrow mb-1 block">Validade (dias)</Label>
                 <Input
                   type="number" min={1} value={validadeDias}
-                  onChange={(e) => setValidadeDias(Math.max(1, Number(e.target.value) || 7))}
+                  onChange={(e) => setValidadeDias(Math.max(1, Number(e.target.value) || 15))}
                   className="h-10 rounded-none"
                 />
               </div>
             </div>
 
-            <div className="mb-5">
+            <div className="mb-3">
               <Label className="text-eyebrow mb-1 block">Observações (vão no PDF)</Label>
               <Textarea
                 value={observacoes} onChange={(e) => setObservacoes(e.target.value)}
@@ -489,6 +613,11 @@ export default function AdminQuoteDetail() {
                 placeholder="Ex.: Frete por conta da Western até Cajamar/SP."
               />
             </div>
+
+            <p className="text-[11px] font-mono text-western-stone-warm/80 mb-5">
+              ⓘ O PDF já inclui automaticamente: produção em {BUSINESS.prazoProducaoLabel} · garantia de {BUSINESS.garantiaLabel}.
+            </p>
+
 
             {/* Totais */}
             <div className="border-t border-western-stone-warm/15 pt-4 mb-5">
@@ -643,10 +772,10 @@ export default function AdminQuoteDetail() {
             <Button
               onClick={handleCloseSale}
               disabled={closingSale}
-              className="rounded-none bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-[11px] uppercase tracking-[0.22em] h-11"
+              className="rounded-none bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-[11px] uppercase tracking-[0.22em] h-11 disabled:opacity-60"
             >
               {closingSale ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
-              Marcar como vendido
+              {jaVendida ? "Venda já fechada — regravar" : "Marcar como vendido"}
             </Button>
             {thread.pago_em && (
               <p className="text-xs text-emerald-800 font-mono mt-3">

@@ -31,6 +31,8 @@ export interface PdfOptions {
   showPrices: boolean;
   numero?: string;
   projeto?: PdfProjetoContext;
+  /** Validade do orçamento em dias. Default: 15. */
+  validadeDias?: number;
 }
 
 const GREEN: [number, number, number] = [27, 50, 41];
@@ -222,6 +224,14 @@ function drawFooter(
     footerY + 44,
     { align: "right" },
   );
+
+  // Linha inferior — razão social + CNPJ
+  doc.setFontSize(6.5);
+  doc.setTextColor(...GOLD_SOFT);
+  doc.text(
+    `${BUSINESS.razaoSocial}  ·  CNPJ ${BUSINESS.cnpj}`,
+    pageWidth / 2, footerY + 56, { align: "center", charSpace: 0.4 },
+  );
 }
 
 function drawClientCard(
@@ -277,6 +287,7 @@ export async function gerarOrcamentoPdf({
   showPrices,
   numero,
   projeto,
+  validadeDias = 15,
 }: PdfOptions): Promise<jsPDF> {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -490,7 +501,7 @@ export async function gerarOrcamentoPdf({
     doc.setTextColor(...STONE);
     const cond = [
       `Produção em ${BUSINESS.prazoProducaoLabel}.`,
-      "Orçamento válido por 7 dias. Sujeito a confirmação de estoque e logística.",
+      `Orçamento válido por ${validadeDias} dias. Sujeito a confirmação de estoque e logística.`,
       `Garantia de ${BUSINESS.garantiaLabel} contra defeitos de fabricação.`,
     ];
     cond.forEach((c) => { doc.text("·  " + c, margin, cursorY); cursorY += 13; });

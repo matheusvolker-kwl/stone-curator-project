@@ -37,6 +37,8 @@ export interface PropostaOptions {
   validadeDias?: number;
   observacoes?: string;
   currency?: string;
+  /** Como descrever o parcelamento no PDF. Default: "nao_informar" (nunca afirma sem juros). */
+  jurosLabel?: "nao_informar" | "sem_juros" | "com_juros";
 }
 
 const GREEN: [number, number, number] = [27, 50, 41];
@@ -174,6 +176,14 @@ function drawFooter(doc: jsPDF, pageWidth: number, pageHeight: number, brand: Br
     `WhatsApp ${BUSINESS.whatsappLabel}  ·  ${BUSINESS.emailComercial}`,
     pageWidth - margin, footerY + 44, { align: "right" },
   );
+
+  // Linha inferior — razão social + CNPJ
+  doc.setFontSize(6.5);
+  doc.setTextColor(...GOLD_SOFT);
+  doc.text(
+    `${BUSINESS.razaoSocial}  ·  CNPJ ${BUSINESS.cnpj}`,
+    pageWidth / 2, footerY + 56, { align: "center", charSpace: 0.4 },
+  );
 }
 
 function drawClientCard(doc: jsPDF, pageWidth: number, y: number, cliente: PropostaCliente): number {
@@ -219,7 +229,8 @@ function drawClientCard(doc: jsPDF, pageWidth: number, y: number, cliente: Propo
 export async function gerarPropostaPdf(opts: PropostaOptions): Promise<jsPDF> {
   const {
     numero, cliente, items, subtotal, discountPct, discountValue, total,
-    formaPagamento, parcelas, validadeDias = 7, observacoes, currency = "BRL",
+    formaPagamento, parcelas, validadeDias = 15, observacoes, currency = "BRL",
+    jurosLabel = "nao_informar",
   } = opts;
 
   const doc = new jsPDF({ unit: "pt", format: "a4" });
@@ -350,7 +361,13 @@ export async function gerarPropostaPdf(opts: PropostaOptions): Promise<jsPDF> {
   const condBoxStart = cursorY;
   const condLines: string[] = [];
   if (formaPagamento) condLines.push(`Forma de pagamento: ${formaPagamento}`);
-  if (parcelas && parcelas > 1) condLines.push(`Parcelado em até ${parcelas}× sem juros`);
+  if (parcelas && parcelas > 1) {
+    const suffix =
+      jurosLabel === "sem_juros" ? " sem juros"
+      : jurosLabel === "com_juros" ? " (com juros)"
+      : "";
+    condLines.push(`Parcelado em até ${parcelas}×${suffix}`);
+  }
   condLines.push(`Produção em ${BUSINESS.prazoProducaoLabel}.`);
   condLines.push(`Proposta válida por ${validadeDias} dias a partir da emissão.`);
   condLines.push(`Garantia de ${BUSINESS.garantiaLabel} contra defeitos de fabricação.`);
