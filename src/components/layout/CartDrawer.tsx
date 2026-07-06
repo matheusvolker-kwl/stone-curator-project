@@ -120,7 +120,7 @@ export default function CartDrawer({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-full sm:max-w-lg flex flex-col p-0 bg-western-green-mid border-l border-western-gold/20 text-western-cream"
+        className="w-full sm:max-w-lg h-[100dvh] flex flex-col min-h-0 p-0 bg-western-green-mid border-l border-western-gold/20 text-western-cream"
       >
         <div className="px-5 md:px-8 pt-5 md:pt-6 pb-4 border-b border-western-gold/15 space-y-3">
           <button
