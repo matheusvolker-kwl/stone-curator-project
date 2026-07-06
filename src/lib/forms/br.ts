@@ -83,7 +83,13 @@ export function isValidPhoneBR(raw: string): boolean {
 
 export const phoneBRSchema = z
   .string()
-  .transform(onlyDigits)
+  .transform((v) => {
+    const d = onlyDigits(v);
+    if ((d.length === 12 || d.length === 13) && d.startsWith("55")) {
+      return d.slice(2);
+    }
+    return d;
+  })
   .refine((v) => v.length === 10 || v.length === 11, {
     message: "Informe DDD + número (10 ou 11 dígitos)",
   })
