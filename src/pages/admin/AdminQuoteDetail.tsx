@@ -467,10 +467,10 @@ export default function AdminQuoteDetail() {
             </div>
 
             {/* Itens */}
-            <div className="space-y-2 mb-5">
+            <div className="space-y-2 mb-4">
               {items.length === 0 && (
                 <div className="border border-dashed border-western-stone-warm/30 p-6 text-center text-sm text-western-stone-warm">
-                  Sem itens. Use o orçamento original para começar ou adicione manualmente abaixo.
+                  Sem itens. Use “+ Incluir item” abaixo para adicionar.
                 </div>
               )}
               {items.map((it) => (
@@ -520,6 +520,39 @@ export default function AdminQuoteDetail() {
                 </div>
               ))}
             </div>
+
+            {/* Mini-form: incluir item livre */}
+            <div className="border border-western-stone-warm/15 bg-western-cream/40 p-3 mb-5">
+              <p className="text-eyebrow mb-2">Incluir item</p>
+              <div className="grid grid-cols-[1fr_80px_120px_auto] gap-2 items-end">
+                <Input
+                  value={newItemTitle}
+                  onChange={(e) => setNewItemTitle(e.target.value)}
+                  placeholder="Nome do item"
+                  className="h-9 rounded-none"
+                />
+                <Input
+                  type="number" min={1} value={newItemQty}
+                  onChange={(e) => setNewItemQty(e.target.value)}
+                  placeholder="Qtd"
+                  className="h-9 rounded-none text-right font-mono"
+                />
+                <Input
+                  type="number" step="0.01" min={0} value={newItemPrice}
+                  onChange={(e) => setNewItemPrice(e.target.value)}
+                  placeholder="Preço unit."
+                  className="h-9 rounded-none text-right font-mono"
+                />
+                <Button
+                  variant="outline"
+                  onClick={addItem}
+                  className="rounded-none border-western-stone-warm/30 font-mono text-[11px] uppercase tracking-[0.18em] h-9"
+                >
+                  <Plus className="h-3.5 w-3.5 mr-1" /> Incluir item
+                </Button>
+              </div>
+            </div>
+
 
             {/* Condições */}
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
