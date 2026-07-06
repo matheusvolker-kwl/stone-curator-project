@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { formatBRL } from "@/lib/catalog/client";
+import { formatBRL, parseBRL } from "@/lib/catalog/client";
 import { type Lead } from "@/components/admin/adminUtils";
 import {
   QUOTE_STATUS_LABEL, QUOTE_STATUS_CLS,
