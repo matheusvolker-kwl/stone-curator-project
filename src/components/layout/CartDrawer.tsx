@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
 import { formatBRL, cdnImg } from "@/lib/catalog/client";
 import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock, ArrowLeft, ArrowRight, Download, Truck } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { BUSINESS } from "@/config/business";
 import { useAuth } from "@/hooks/useAuth";
@@ -33,22 +33,6 @@ export default function CartDrawer({
   const subtotal = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
   const currency = items[0]?.price.currencyCode ?? "BRL";
   const meetsMinimum = subtotal >= MIN_ORDER;
-  const savedToastShownRef = useRef(false);
-
-  // "Sua composição foi salva" — uma vez por sessão, 5s após mudança com itens.
-  useEffect(() => {
-    if (items.length === 0 || savedToastShownRef.current) return;
-    const t = window.setTimeout(() => {
-      if (savedToastShownRef.current) return;
-      savedToastShownRef.current = true;
-      toast.success("Sua composição foi salva", {
-        description: "Você pode voltar mais tarde — ela continua aqui.",
-        position: "bottom-right",
-        duration: 4000,
-      });
-    }, 5000);
-    return () => window.clearTimeout(t);
-  }, [items.length]);
 
   const { user, isApproved, empresa } = useAuth();
   const [checkoutLoading, setCheckoutLoading] = useState(false);

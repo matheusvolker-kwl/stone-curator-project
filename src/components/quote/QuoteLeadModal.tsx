@@ -143,7 +143,11 @@ export default function QuoteLeadModal({
       setPdfBlob(res.pdfBlob ?? null);
       setPdfStored(res.pdfStored);
       setSuccess(true);
-      toast.success(res.pdfStored || !user ? "PDF liberado! Baixe abaixo." : "PDF gerado para download.");
+      if (res.pdfBlob) {
+        toast.success(res.pdfStored || !user ? "PDF liberado! Baixe abaixo." : "PDF gerado para download.");
+      } else {
+        toast.success("Orçamento recebido! Nosso time entra em contato.");
+      }
     } catch (err) {
       console.error(err);
       toast.error("Não foi possível enviar agora. Tente novamente em instantes.");
@@ -187,11 +191,17 @@ export default function QuoteLeadModal({
         <DialogHeader>
           <p className="text-eyebrow">Composição em PDF</p>
           <DialogTitle className="font-display text-2xl text-western-green-deep">
-            {success ? "Pronto! Seu PDF está liberado." : headerTitle}
+            {success
+              ? pdfBlob
+                ? "Pronto! Seu PDF está liberado."
+                : `Orçamento recebido${numero ? ` · Nº ${numero}` : ""}`
+              : headerTitle}
           </DialogTitle>
           <DialogDescription className="text-western-stone-warm">
             {success
-              ? "Baixe o PDF abaixo. Se quiser, fale com um vendedor pelo WhatsApp para tirar dúvidas."
+              ? pdfBlob
+                ? "Baixe o PDF abaixo. Se quiser, fale com um vendedor pelo WhatsApp para tirar dúvidas."
+                : "Recebemos sua composição — nosso time comercial entra em contato em breve. Se preferir, fale agora pelo WhatsApp."
               : isLogged
                 ? "Confirme seus dados e libere o PDF — também salvamos na sua conta."
                 : "Preencha rapidinho para liberar o PDF da sua composição."}
@@ -213,7 +223,7 @@ export default function QuoteLeadModal({
                 </p>
                 {isLogged ? (
                   <p className="text-western-stone-warm leading-relaxed mt-2 text-xs">
-                    {pdfStored ? (
+                    {pdfBlob && pdfStored ? (
                       <>
                         O PDF também ficou disponível em{" "}
                         <Link
@@ -224,20 +234,37 @@ export default function QuoteLeadModal({
                         </Link>
                         .
                       </>
-                    ) : (
+                    ) : pdfBlob ? (
                       "Baixe o PDF abaixo para guardar sua composição."
+                    ) : (
+                      <>
+                        Sua composição ficou registrada em{" "}
+                        <Link
+                          to="/minha-conta/orcamentos"
+                          className="text-western-green-deep font-medium underline-offset-2 hover:underline"
+                        >
+                          Minha conta · Orçamentos
+                        </Link>
+                        . Nosso time comercial entra em contato em breve.
+                      </>
                     )}
                   </p>
                 ) : (
                   <p className="text-western-stone-warm leading-relaxed mt-2 text-xs">
-                    Quer guardar todas as suas composições?{" "}
-                    <Link
-                      to="/parceiro/cadastro"
-                      className="text-western-green-deep font-medium underline-offset-2 hover:underline"
-                    >
-                      Crie uma conta
-                    </Link>{" "}
-                    e elas ficam salvas pra sempre.
+                    {pdfBlob ? (
+                      <>
+                        Quer guardar todas as suas composições?{" "}
+                        <Link
+                          to="/parceiro/cadastro"
+                          className="text-western-green-deep font-medium underline-offset-2 hover:underline"
+                        >
+                          Crie uma conta
+                        </Link>{" "}
+                        e elas ficam salvas pra sempre.
+                      </>
+                    ) : (
+                      "Recebemos sua composição — nosso time comercial entra em contato em breve pelo e-mail ou WhatsApp informado."
+                    )}
                   </p>
                 )}
               </div>
@@ -250,14 +277,15 @@ export default function QuoteLeadModal({
             >
               <MessageCircle className="h-4 w-4" /> Falar com vendedor agora
             </a>
-            <button
-              type="button"
-              onClick={handleDownloadPdf}
-              disabled={!pdfBlob}
-              className="w-full h-11 inline-flex items-center justify-center gap-2 border border-western-green-deep/30 text-western-green-deep hover:border-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] transition-colors disabled:opacity-50"
-            >
-              <FileDown className="h-4 w-4" /> Baixar PDF da composição
-            </button>
+            {pdfBlob && (
+              <button
+                type="button"
+                onClick={handleDownloadPdf}
+                className="w-full h-11 inline-flex items-center justify-center gap-2 border border-western-green-deep/30 text-western-green-deep hover:border-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+              >
+                <FileDown className="h-4 w-4" /> Baixar PDF da composição
+              </button>
+            )}
             <button
               type="button"
               onClick={() => onOpenChange(false)}

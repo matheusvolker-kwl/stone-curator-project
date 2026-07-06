@@ -1,7 +1,7 @@
 // PDF de PROPOSTA COMERCIAL (admin → cliente).
 // Reutiliza a identidade visual do orçamento, mas adiciona desconto, parcelamento,
 // total final, validade e selo "Proposta oficial Western".
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formatBRL } from "@/lib/catalog/client";
 import { BUSINESS } from "@/config/business";
