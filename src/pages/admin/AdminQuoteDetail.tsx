@@ -250,7 +250,7 @@ export default function AdminQuoteDetail() {
     if (closingSale) return;
 
     // Validação de valor / parcelas
-    const valorNum = saleValor ? Number(saleValor) : total;
+    const valorNum = saleValor != null && Number.isFinite(saleValor) ? saleValor : total;
     if (!Number.isFinite(valorNum) || valorNum <= 0) {
       return toast.error("Valor final da venda precisa ser maior que zero.");
     }
