@@ -120,7 +120,7 @@ export default function CartDrawer({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-full sm:max-w-lg flex flex-col p-0 bg-western-green-mid border-l border-western-gold/20 text-western-cream"
+        className="w-full sm:max-w-lg h-[100dvh] flex flex-col min-h-0 p-0 bg-western-green-mid border-l border-western-gold/20 text-western-cream"
       >
         <div className="px-5 md:px-8 pt-5 md:pt-6 pb-4 border-b border-western-gold/15 space-y-3">
           <button
@@ -146,7 +146,7 @@ export default function CartDrawer({
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 md:px-8 py-5">
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 md:px-8 py-5">
           {items.length === 0 ? (
             <div className="space-y-6">
               <div className="text-center py-6">
@@ -230,7 +230,7 @@ export default function CartDrawer({
         </div>
 
         {items.length > 0 && (
-          <div className="px-5 md:px-8 py-5 border-t border-western-gold/15 space-y-4">
+          <div className="px-5 md:px-8 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-western-gold/15 space-y-4">
             {/* Bloco 1: Subtotal — protagonista */}
             <div className="space-y-1.5">
               <div className="flex justify-between items-baseline">

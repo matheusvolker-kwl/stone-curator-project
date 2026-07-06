@@ -9,7 +9,7 @@ interface Props {
 export default function ProjetoModal({ projeto, onClose }: Props) {
   return (
     <Dialog open={!!projeto} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-western-green-deep border border-western-gold/20 text-western-cream p-0">
+      <DialogContent className="max-w-3xl max-h-[90dvh] overflow-y-auto bg-western-green-deep border border-western-gold/20 text-western-cream p-0">
         {projeto && (
           <>
             <DialogTitle className="sr-only">{projeto.titulo}</DialogTitle>
@@ -22,8 +22,9 @@ export default function ProjetoModal({ projeto, onClose }: Props) {
                   src={projeto.video}
                   poster={projeto.cover}
                   controls
-                  preload="metadata"
+                  muted
                   playsInline
+                  preload="metadata"
                   className="w-full h-full object-contain"
                 />
               ) : (

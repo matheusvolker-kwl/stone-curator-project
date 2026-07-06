@@ -159,7 +159,7 @@ export default function ProjetosWesternBand() {
       {/* Lightbox */}
       <Dialog open={openIndex !== null} onOpenChange={(o) => !o && close()}>
         <DialogContent
-          className="max-w-6xl w-[95vw] p-0 bg-western-green-deep border-western-gold/20 [&>button]:hidden"
+          className="max-w-6xl w-[95vw] max-h-[90dvh] overflow-y-auto p-0 bg-western-green-deep border-western-gold/20 [&>button]:hidden"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           {current && (
@@ -181,6 +181,7 @@ export default function ProjetosWesternBand() {
                       src={current.mediaUrl}
                       poster={current.posterUrl}
                       controls
+                      muted
                       autoPlay
                       playsInline
                       className="w-full max-h-[80vh] object-contain bg-black"
@@ -215,21 +216,21 @@ export default function ProjetosWesternBand() {
               <button
                 onClick={close}
                 aria-label="Fechar"
-                className="absolute top-3 right-3 h-10 w-10 flex items-center justify-center bg-black/60 text-western-cream hover:bg-black/85 transition-colors rounded-full"
+                className="absolute top-[max(0.75rem,env(safe-area-inset-top))] right-3 h-11 w-11 flex items-center justify-center bg-black/75 text-western-cream hover:bg-black/90 transition-colors rounded-full z-10"
               >
                 <X className="h-5 w-5" />
               </button>
               <button
                 onClick={prev}
                 aria-label="Anterior"
-                className="absolute top-[38%] -translate-y-1/2 left-3 h-11 w-11 flex items-center justify-center bg-black/60 text-western-cream hover:bg-black/85 transition-colors rounded-full"
+                className="absolute top-1/2 -translate-y-1/2 left-3 h-11 w-11 flex items-center justify-center bg-black/60 text-western-cream hover:bg-black/85 transition-colors rounded-full"
               >
                 <ChevronLeft className="h-6 w-6" />
               </button>
               <button
                 onClick={next}
                 aria-label="Próxima"
-                className="absolute top-[38%] -translate-y-1/2 right-3 h-11 w-11 flex items-center justify-center bg-black/60 text-western-cream hover:bg-black/85 transition-colors rounded-full"
+                className="absolute top-1/2 -translate-y-1/2 right-3 h-11 w-11 flex items-center justify-center bg-black/60 text-western-cream hover:bg-black/85 transition-colors rounded-full"
               >
                 <ChevronRight className="h-6 w-6" />
               </button>
