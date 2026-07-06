@@ -143,7 +143,11 @@ export default function QuoteLeadModal({
       setPdfBlob(res.pdfBlob ?? null);
       setPdfStored(res.pdfStored);
       setSuccess(true);
-      toast.success(res.pdfStored || !user ? "PDF liberado! Baixe abaixo." : "PDF gerado para download.");
+      if (res.pdfBlob) {
+        toast.success(res.pdfStored || !user ? "PDF liberado! Baixe abaixo." : "PDF gerado para download.");
+      } else {
+        toast.success("Orçamento recebido! Nosso time entra em contato.");
+      }
     } catch (err) {
       console.error(err);
       toast.error("Não foi possível enviar agora. Tente novamente em instantes.");
@@ -187,11 +191,17 @@ export default function QuoteLeadModal({
         <DialogHeader>
           <p className="text-eyebrow">Composição em PDF</p>
           <DialogTitle className="font-display text-2xl text-western-green-deep">
-            {success ? "Pronto! Seu PDF está liberado." : headerTitle}
+            {success
+              ? pdfBlob
+                ? "Pronto! Seu PDF está liberado."
+                : `Orçamento recebido${numero ? ` · Nº ${numero}` : ""}`
+              : headerTitle}
           </DialogTitle>
           <DialogDescription className="text-western-stone-warm">
             {success
-              ? "Baixe o PDF abaixo. Se quiser, fale com um vendedor pelo WhatsApp para tirar dúvidas."
+              ? pdfBlob
+                ? "Baixe o PDF abaixo. Se quiser, fale com um vendedor pelo WhatsApp para tirar dúvidas."
+                : "Recebemos sua composição — nosso time comercial entra em contato em breve. Se preferir, fale agora pelo WhatsApp."
               : isLogged
                 ? "Confirme seus dados e libere o PDF — também salvamos na sua conta."
                 : "Preencha rapidinho para liberar o PDF da sua composição."}
