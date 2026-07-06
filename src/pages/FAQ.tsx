@@ -53,7 +53,7 @@ const GRUPOS: Grupo[] = [
             O valor depende do produto e do porte do projeto — de peças avulsas a composições completas.
             Preços de parceiro ficam liberados após o <Link to="/parceria" className="underline decoration-western-gold/40 underline-offset-2 hover:decoration-western-gold">cadastro</Link> (gratuito);
             para projetos residenciais, solicite um{" "}
-            <Link to="/orcamento" className="underline decoration-western-gold/40 underline-offset-2 hover:decoration-western-gold">orçamento sem compromisso</Link>.
+            <Link to="/contrate-a-western" className="underline decoration-western-gold/40 underline-offset-2 hover:decoration-western-gold">orçamento sem compromisso</Link>.
           </>
         ),
       },

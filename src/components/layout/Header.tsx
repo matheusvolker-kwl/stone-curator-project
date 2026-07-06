@@ -24,7 +24,6 @@ const nav = [
   { to: "/guia-de-composicao", label: "Guia" },
   { to: "/western-box", label: "Amostras" },
   { to: "/contrate-a-western", label: "Contrate" },
-  { to: "/orcamento", label: "Meu projeto" },
   { to: "/sobre", label: "Sobre" },
   { to: "/contato", label: "Contato" },
 ];

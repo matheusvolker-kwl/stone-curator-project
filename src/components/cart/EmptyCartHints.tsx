@@ -57,7 +57,7 @@ export default function EmptyCartHints({ onNavigate }: Props) {
     const hints = [
       { to: "/guia-de-composicao", label: "Guia de composição", desc: "Monte seu conjunto passo a passo" },
       { to: "/conjuntos", label: "Conjuntos prontos", desc: "Combinações já pensadas para começar" },
-      { to: "/orcamento", label: "Pedir um orçamento", desc: "Projeto residencial ou sem CNPJ" },
+      { to: "/contrate-a-western", label: "Pedir um orçamento", desc: "Projeto residencial ou sem CNPJ" },
     ];
     return (
       <div className="mt-10">

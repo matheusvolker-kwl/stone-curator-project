@@ -41,9 +41,7 @@ export default function PriceGate({ children, variant = "inline", productRef }: 
     "Pagamento em Pix, boleto ou cartão de crédito",
   ];
 
-  const orcamentoTo = productRef
-    ? `/orcamento?ref=${encodeURIComponent(productRef)}`
-    : "/orcamento";
+  const contrateTo = "/contrate-a-western";
   const waHref = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
     productRef
       ? `Olá Western! Tenho interesse no produto "${productRef}" para o meu projeto residencial.`
@@ -118,7 +116,7 @@ export default function PriceGate({ children, variant = "inline", productRef }: 
         </p>
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <Link
-            to={orcamentoTo}
+            to={contrateTo}
             className="flex items-center justify-center text-center h-11 px-5 bg-western-green-deep text-western-cream hover:bg-western-green-deep/90 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors w-full sm:w-auto whitespace-normal"
           >
             Peça um orçamento
