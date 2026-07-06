@@ -171,7 +171,7 @@ export default function Linhas() {
               const desc = LINHA_DESCRIPTIONS[c.handle] ?? c.description;
 
               return (
-                <Link key={c.handle} to={`/linhas/${c.handle}`} className="group block">
+                <Link key={c.handle} to={c.handle === "amostras" ? "/western-box" : `/linhas/${c.handle}`} className="group block">
                   <div className="frame-product aspect-[4/3] overflow-hidden mb-5">
                     {cover ? (
                       <img
