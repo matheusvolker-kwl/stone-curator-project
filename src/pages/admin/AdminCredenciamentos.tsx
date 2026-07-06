@@ -143,6 +143,8 @@ export function CredenciamentoTab() {
   );
 }
 
+export default CredenciamentoTab;
+
 function decisaoCls(d: string) {
   if (d === "aprovado") return "border-emerald-600/60 text-emerald-800 bg-emerald-50";
   if (d === "analise") return "border-amber-500/60 text-amber-800 bg-amber-50";
