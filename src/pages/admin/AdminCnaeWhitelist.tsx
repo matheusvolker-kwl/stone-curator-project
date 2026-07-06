@@ -72,9 +72,7 @@ export default function AdminCnaeWhitelist() {
 
   return (
     <div>
-      <p className="text-eyebrow mb-3">Whitelist CNAE</p>
-      <div className="w-12 h-px bg-western-gold mb-6" />
-      <h1 className="font-display text-3xl mb-2">CNAEs que credenciam</h1>
+      <h2 className="font-display text-2xl mb-2 text-western-green-deep">CNAEs que credenciam</h2>
       <p className="text-western-stone-warm mb-8">
         <strong className="text-emerald-700">Verde</strong>: aprovação automática.{" "}
         <strong className="text-amber-700">Amarela</strong> e <strong className="text-orange-700">Laranja</strong>: enviam para análise manual.
