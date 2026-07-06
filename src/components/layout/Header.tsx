@@ -1,6 +1,6 @@
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
-import { ShoppingBag, User, Menu, X, Search, ShieldCheck, LogOut, Heart, Home } from "lucide-react";
+import { ShoppingBag, User, Menu, X, Search, ShieldCheck, LogOut, Heart } from "lucide-react";
 import { useWishlist } from "@/hooks/useWishlist";
 import logoVerde from "@/assets/logo-horizontal-verde.png";
 import logoBege from "@/assets/logo-horizontal-bege.png";
@@ -342,14 +342,6 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         </button>
 
         <div className="flex items-center gap-1 lg:gap-3 ml-auto md:ml-0">
-          <button
-            type="button"
-            onClick={() => window.dispatchEvent(new Event("western:open-audience"))}
-            aria-label="É para a minha casa? Solicitar orçamento residencial"
-            className="hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2 focus-visible:ring-offset-western-ivory"
-          >
-            <Home className="h-4 w-4" /> É para minha casa?
-          </button>
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -386,10 +378,12 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           ) : (
             <Link
               to="/parceiro/login"
-              aria-label="Área do parceiro"
+              aria-label="Criar conta ou acessar"
               className="hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors"
             >
-              <User className="h-4 w-4" /> Parceiro
+              <User className="h-4 w-4" />
+              <span className="hidden xl:inline">Criar conta / Acesse</span>
+              <span className="xl:hidden">Entrar</span>
             </Link>
           )}
           {session && (
@@ -462,17 +456,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                   {item.label}
                 </NavLink>
               ))}
-              <button
-                type="button"
-                onClick={() => {
-                  setMenuOpen(false);
-                  window.dispatchEvent(new Event("western:open-audience"));
-                }}
-                aria-label="É para a minha casa? Solicitar orçamento residencial"
-                className="mt-2 flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold"
-              >
-                <Home className="h-4 w-4" /> É para minha casa?
-              </button>
+              <div className="h-px bg-western-gold/15 my-6" />
               <div className="h-px bg-western-gold/15 my-6" />
               <p className="text-eyebrow mb-3 text-western-cream-muted">Parceiro</p>
               {session ? (
