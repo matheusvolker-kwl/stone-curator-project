@@ -1,3 +1,4 @@
+import amostrasAsset from "@/assets/linhas/amostras.webp.asset.json";
 import cascatasAsset from "@/assets/linhas/cascatas.webp.asset.json";
 import fontesAsset from "@/assets/linhas/fontes-para-jardim.webp.asset.json";
 import fosseisAsset from "@/assets/linhas/fosseis-decorativos.webp.asset.json";
