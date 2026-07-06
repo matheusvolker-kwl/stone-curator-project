@@ -230,7 +230,7 @@ export default function CartDrawer({
         </div>
 
         {items.length > 0 && (
-          <div className="px-5 md:px-8 py-5 border-t border-western-gold/15 space-y-4">
+          <div className="px-5 md:px-8 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-western-gold/15 space-y-4">
             {/* Bloco 1: Subtotal — protagonista */}
             <div className="space-y-1.5">
               <div className="flex justify-between items-baseline">
