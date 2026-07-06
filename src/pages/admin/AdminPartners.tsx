@@ -33,7 +33,7 @@ export default function AdminPartners() {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [adminIds, setAdminIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState<"all" | Partner["status"]>("pending");
+  const [statusFilter, setStatusFilter] = useState<"all" | Partner["status"]>("all");
   const [segmentFilter, setSegmentFilter] = useState<string>("all");
   const [ufFilter, setUfFilter] = useState<string>("all");
   const [q, setQ] = useState("");
