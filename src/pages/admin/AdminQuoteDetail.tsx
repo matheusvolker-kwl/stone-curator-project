@@ -832,10 +832,10 @@ export default function AdminQuoteDetail() {
               </div>
               <div>
                 <Label className="text-eyebrow mb-1 block">Valor final (R$)</Label>
-                <Input
-                  type="number" step="0.01" value={saleValor}
-                  onChange={(e) => setSaleValor(e.target.value)}
-                  placeholder={String(total)}
+                <BRLInput
+                  value={saleValor ?? 0}
+                  onChange={(n) => setSaleValor(Number.isFinite(n) ? n : null)}
+                  placeholder={formatBRL(total, "BRL")}
                   className="h-10 rounded-none bg-white"
                 />
               </div>
