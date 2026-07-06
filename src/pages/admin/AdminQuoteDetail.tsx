@@ -154,7 +154,7 @@ export default function AdminQuoteDetail() {
       setNotas(t.notas ?? "");
       setSaleForma(t.forma_pagamento || "PIX");
       setSaleParcelas(t.parcelas || 1);
-      setSaleValor(t.valor_final ? String(t.valor_final) : "");
+      setSaleValor(t.valor_final != null ? Number(t.valor_final) : null);
       setSaleObs(t.observacoes_venda ?? "");
     }
 
