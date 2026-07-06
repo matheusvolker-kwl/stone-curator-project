@@ -439,7 +439,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <nav className="flex-1 px-6 py-8 flex flex-col gap-1">
+            <nav className="flex-1 min-h-0 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] px-6 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] flex flex-col gap-1">
               <p className="text-eyebrow mb-5 text-western-cream-muted">Catálogo</p>
               {nav.map((item) => (
                 <NavLink
