@@ -135,7 +135,7 @@ export default function AdminDashboard() {
   const hotQueues = [
     { label: "Orçamentos a responder", value: counts.orcamentosNovos, to: "/admin/orcamentos", icon: MessageSquare },
     { label: "Leads de checkout (7d)", value: counts.pedidoNovo7d, to: "/admin/leads", icon: ShoppingBag },
-    { label: "Credenciamentos pendentes", value: counts.credPendentes, to: "/admin/credenciamentos", icon: ShieldCheck },
+    { label: "Credenciamentos pendentes", value: counts.credPendentes, to: "/admin/parceiros?tab=credenciamento", icon: ShieldCheck },
     { label: "Cadastros de parceiro (7d)", value: counts.partnerSignup7d, to: "/admin/leads", icon: UserPlus },
   ];
   const totalHot = hotQueues.reduce((s, q) => s + q.value, 0);

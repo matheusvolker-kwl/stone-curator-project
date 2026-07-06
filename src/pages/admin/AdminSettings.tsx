@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, Save } from "lucide-react";
@@ -6,7 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { TIERS, TIER_LABEL, type Tier } from "@/components/admin/adminUtils";
+import AdminCnaeWhitelist from "./AdminCnaeWhitelist";
 
 interface TierDefault {
   tier: Tier;
@@ -17,6 +20,42 @@ interface TierDefault {
 }
 
 export default function AdminSettings() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const rawTab = searchParams.get("tab");
+  const tab: "tiers" | "cnae" = rawTab === "cnae" ? "cnae" : "tiers";
+
+  return (
+    <div>
+      <p className="text-eyebrow mb-3">Configurações</p>
+      <div className="w-12 h-px bg-western-gold mb-6" />
+      <h1 className="font-display text-3xl mb-2">Configurações</h1>
+      <p className="text-western-stone-warm mb-8">Defaults do programa Western Pro e whitelist de CNAEs que credenciam automaticamente.</p>
+
+      <Tabs
+        value={tab}
+        onValueChange={(v) => {
+          const next = new URLSearchParams(searchParams);
+          next.set("tab", v);
+          setSearchParams(next, { replace: true });
+        }}
+      >
+        <TabsList className="mb-6 rounded-none bg-western-paper border border-western-stone-warm/20 h-auto p-1">
+          <TabsTrigger value="tiers" className="rounded-none font-mono text-[11px] uppercase tracking-[0.18em] data-[state=active]:bg-western-gold/15 data-[state=active]:text-western-green-deep">
+            Defaults dos tiers
+          </TabsTrigger>
+          <TabsTrigger value="cnae" className="rounded-none font-mono text-[11px] uppercase tracking-[0.18em] data-[state=active]:bg-western-gold/15 data-[state=active]:text-western-green-deep">
+            Whitelist CNAE
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="tiers" className="mt-0"><TierDefaultsTab /></TabsContent>
+        <TabsContent value="cnae" className="mt-0"><AdminCnaeWhitelist /></TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
+function TierDefaultsTab() {
   const [defs, setDefs] = useState<TierDefault[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<Tier | null>(null);
@@ -48,18 +87,13 @@ export default function AdminSettings() {
 
   if (loading) return <div className="py-20 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-western-gold" /></div>;
 
-  // Garante 4 linhas (cria as faltantes localmente para edição)
   const ensured: TierDefault[] = TIERS.map((t) =>
     defs.find((d) => d.tier === t) ?? { tier: t, discount_pct: 0, boleto: false, parcelas_max: 1, kit_gratis: false }
   );
 
   return (
     <div>
-      <p className="text-eyebrow mb-3">Configurações</p>
-      <div className="w-12 h-px bg-western-gold mb-6" />
-      <h1 className="font-display text-3xl mb-2">Defaults dos tiers</h1>
-      <p className="text-western-stone-warm mb-8">Esses valores se aplicam automaticamente a todos os parceiros do tier (a menos que haja override individual em /admin/usuarios).</p>
-
+      <p className="text-western-stone-warm mb-6 text-sm">Esses valores se aplicam automaticamente a todos os parceiros do tier (a menos que haja override individual em /admin/parceiros).</p>
       <div className="grid sm:grid-cols-2 gap-4">
         {ensured.map((t) => (
           <div key={t.tier} className="border border-western-stone-warm/20 bg-white p-5">

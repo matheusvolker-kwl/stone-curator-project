@@ -39,7 +39,7 @@ interface Cred {
 const formatCnpj = (c: string) => c.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
 const formatCnae = (c: string | null) => c ? c.replace(/^(\d{4})(\d)(\d{2})$/, "$1-$2/$3") : "—";
 
-export default function AdminCredenciamentos() {
+export function CredenciamentoTab() {
   const [rows, setRows] = useState<Cred[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"pendentes" | "decididos">("pendentes");
@@ -73,10 +73,8 @@ export default function AdminCredenciamentos() {
 
   return (
     <div>
-      <p className="text-eyebrow mb-3">Credenciamento B2B</p>
-      <div className="w-12 h-px bg-western-gold mb-6" />
-      <h1 className="font-display text-3xl mb-2">Fila de análise manual</h1>
-      <p className="text-western-stone-warm mb-8">Cadastros que precisam de revisão humana — CNAE em faixa amarela/laranja, fora da whitelist, ou Cartão CNPJ enviado.</p>
+      <p className="text-western-stone-warm mb-6 text-sm">Cadastros que precisam de revisão humana — CNAE em faixa amarela/laranja, fora da whitelist, ou Cartão CNPJ enviado.</p>
+
 
       <div className="flex flex-wrap gap-2 mb-6">
         {(["pendentes", "decididos"] as const).map((t) => (
@@ -144,6 +142,8 @@ export default function AdminCredenciamentos() {
     </div>
   );
 }
+
+export default CredenciamentoTab;
 
 function decisaoCls(d: string) {
   if (d === "aprovado") return "border-emerald-600/60 text-emerald-800 bg-emerald-50";

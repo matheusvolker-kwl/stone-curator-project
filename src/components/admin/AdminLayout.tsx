@@ -5,14 +5,10 @@ import {
   Users,
   Inbox,
   FileSignature,
-  PackageCheck,
   Truck,
   Settings,
   LogOut,
   ExternalLink,
-  BadgeCheck,
-  ListChecks,
-  UserCog,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,13 +25,9 @@ const items: Array<{
 }> = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/admin/orcamentos", label: "Orçamentos", icon: FileSignature, badgeKey: "orcamentos" },
-  { to: "/admin/pedidos", label: "Pedidos", icon: Truck },
-  { to: "/admin/credenciamentos", label: "Credenciamentos", icon: BadgeCheck, badgeKey: "credenciamentos" },
-  { to: "/admin/parceiros", label: "Parceiros", icon: Users, badgeKey: "parceiros" },
-  { to: "/admin/usuarios", label: "Usuários & Tiers", icon: UserCog },
   { to: "/admin/leads", label: "Caixa de entrada", icon: Inbox, badgeKey: "leads" },
-  { to: "/admin/amostras", label: "Amostras", icon: PackageCheck },
-  { to: "/admin/cnae-whitelist", label: "Whitelist CNAE", icon: ListChecks },
+  { to: "/admin/pedidos", label: "Pedidos", icon: Truck },
+  { to: "/admin/parceiros", label: "Parceiros", icon: Users, badgeKey: "parceiros" },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ];
 

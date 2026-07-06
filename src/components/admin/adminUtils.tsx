@@ -80,6 +80,7 @@ export interface Partner {
   cancelled_at: string | null;
   created_at: string;
   approved_at: string | null;
+  credenciamento_id?: string | null;
 }
 
 export interface Lead {
