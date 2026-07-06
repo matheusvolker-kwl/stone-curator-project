@@ -319,7 +319,7 @@ export default function AdminQuoteDetail() {
         .insert({
           lead_id: lead.id,
           numero: propNumero,
-          items: itemsToSave,
+          items: itemsToSave as unknown as never,
           subtotal, discount_pct: discountPct, discount_value: discountValue, total,
           forma_pagamento: formaPagamento, parcelas, validade_dias: validadeDias,
           observacoes: observacoes || null,
