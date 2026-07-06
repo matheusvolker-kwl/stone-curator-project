@@ -501,7 +501,7 @@ export async function gerarOrcamentoPdf({
     doc.setTextColor(...STONE);
     const cond = [
       `Produção em ${BUSINESS.prazoProducaoLabel}.`,
-      "Orçamento válido por 7 dias. Sujeito a confirmação de estoque e logística.",
+      `Orçamento válido por ${validadeDias} dias. Sujeito a confirmação de estoque e logística.`,
       `Garantia de ${BUSINESS.garantiaLabel} contra defeitos de fabricação.`,
     ];
     cond.forEach((c) => { doc.text("·  " + c, margin, cursorY); cursorY += 13; });
