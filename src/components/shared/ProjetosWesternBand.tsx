@@ -181,6 +181,7 @@ export default function ProjetosWesternBand() {
                       src={current.mediaUrl}
                       poster={current.posterUrl}
                       controls
+                      muted
                       autoPlay
                       playsInline
                       className="w-full max-h-[80vh] object-contain bg-black"
