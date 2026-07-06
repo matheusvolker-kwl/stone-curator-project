@@ -35,6 +35,56 @@ const FORMAS_PAGAMENTO = [
 interface EditableItem extends QuotePayloadItem {
   /** key local pra render */
   _key: string;
+  /** acabamento/cor editável pelo admin (sobrescreve options no PDF) */
+  acabamento?: string;
+}
+
+/** Input monetário em formato BR: aceita "1.500,00", "R$ 1.500,00", "1500.5" etc. */
+function BRLInput({
+  value, onChange, placeholder, className,
+}: {
+  value: number;
+  onChange: (n: number) => void;
+  placeholder?: string;
+  className?: string;
+}) {
+  const [text, setText] = useState<string>(() =>
+    Number.isFinite(value) && value !== 0 ? formatBRL(value, "BRL") : "",
+  );
+  const [focused, setFocused] = useState(false);
+  // Sincroniza quando o valor externo muda e o campo NÃO está sendo editado
+  useEffect(() => {
+    if (!focused) {
+      setText(Number.isFinite(value) && value !== 0 ? formatBRL(value, "BRL") : "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+  return (
+    <Input
+      type="text"
+      inputMode="decimal"
+      value={text}
+      placeholder={placeholder}
+      className={className}
+      onFocus={() => setFocused(true)}
+      onChange={(e) => {
+        const raw = e.target.value;
+        setText(raw);
+        const parsed = parseBRL(raw);
+        if (Number.isFinite(parsed)) onChange(parsed);
+      }}
+      onBlur={() => {
+        setFocused(false);
+        const parsed = parseBRL(text);
+        if (Number.isFinite(parsed)) {
+          onChange(parsed);
+          setText(formatBRL(parsed, "BRL"));
+        } else {
+          setText(Number.isFinite(value) && value !== 0 ? formatBRL(value, "BRL") : "");
+        }
+      }}
+    />
+  );
 }
 
 export default function AdminQuoteDetail() {
