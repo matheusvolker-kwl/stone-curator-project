@@ -30,12 +30,13 @@ export default function AdminSettings() {
 
   const saveTier = async (t: TierDefault) => {
     setSaving(t.tier);
-    const { error } = await supabase.from("tier_defaults").update({
+    const { error } = await supabase.from("tier_defaults").upsert({
+      tier: t.tier,
       discount_pct: t.discount_pct,
       boleto: t.boleto,
       parcelas_max: t.parcelas_max,
       kit_gratis: t.kit_gratis,
-    } as never).eq("tier", t.tier);
+    } as never, { onConflict: "tier" });
     setSaving(null);
     if (error) { toast.error("Erro ao salvar.", { description: error.message }); return; }
     toast.success(`${TIER_LABEL[t.tier]} atualizado.`);
