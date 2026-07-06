@@ -378,12 +378,11 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           ) : (
             <Link
               to="/parceiro/login"
-              aria-label="Criar conta ou acessar"
-              className="hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors"
+              aria-label="Entrar"
+              className="hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors whitespace-nowrap"
             >
               <User className="h-4 w-4" />
-              <span className="hidden xl:inline">Criar conta / Acesse</span>
-              <span className="xl:hidden">Entrar</span>
+              <span>Entrar</span>
             </Link>
           )}
           {session && (
