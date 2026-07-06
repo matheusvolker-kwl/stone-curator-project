@@ -55,8 +55,14 @@ export default function AdminQuoteDetail() {
   const [discountPct, setDiscountPct] = useState(0);
   const [formaPagamento, setFormaPagamento] = useState("PIX");
   const [parcelas, setParcelas] = useState(1);
-  const [validadeDias, setValidadeDias] = useState(7);
+  const [validadeDias, setValidadeDias] = useState(15);
   const [observacoes, setObservacoes] = useState("");
+  const [jurosLabel, setJurosLabel] = useState<"nao_informar" | "sem_juros" | "com_juros">("nao_informar");
+
+  // Mini-form "incluir item"
+  const [newItemTitle, setNewItemTitle] = useState("");
+  const [newItemQty, setNewItemQty] = useState<string>("1");
+  const [newItemPrice, setNewItemPrice] = useState<string>("0");
 
   // Fechar venda
   const [saleForma, setSaleForma] = useState("PIX");
