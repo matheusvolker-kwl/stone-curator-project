@@ -47,7 +47,7 @@ function OptionCard({ eyebrow, title, description, ariaLabel, imageUrl, onActiva
       type="button"
       onClick={onActivate}
       aria-label={ariaLabel}
-      className="group relative flex h-[280px] sm:h-[320px] flex-col justify-end overflow-hidden rounded-[2px] border border-western-gold/25 text-left transition-all duration-300 ease-out hover:-translate-y-1 hover:border-western-gold hover:shadow-[0_24px_50px_-24px_rgba(0,0,0,0.7)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2 focus-visible:ring-offset-western-green-deep motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+      className="group relative flex h-[38dvh] min-h-[180px] max-h-[300px] sm:h-[320px] flex-col justify-end overflow-hidden rounded-[2px] border border-western-gold/25 text-left transition-all duration-300 ease-out hover:-translate-y-1 hover:border-western-gold hover:shadow-[0_24px_50px_-24px_rgba(0,0,0,0.7)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2 focus-visible:ring-offset-western-green-deep motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
       <img
         src={imageUrl}
