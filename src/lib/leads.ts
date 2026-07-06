@@ -230,5 +230,19 @@ export async function submitQuoteLead({
     }
   }
 
+  // Fire-and-forget: envia o PDF por e-mail ao cliente (logado ou anônimo).
+  if (pdfBlob && contact.email) {
+    void (async () => {
+      try {
+        const pdfBase64 = await blobToBase64(pdfBlob);
+        await supabase.functions.invoke("send-quote-email", {
+          body: { email: contact.email, nome: contact.nome, numero, pdfBase64 },
+        });
+      } catch (e) {
+        console.warn("send-quote-email failed", e);
+      }
+    })();
+  }
+
   return { leadId: lead.id, numero, pdfStored, pdfBlob };
 }
