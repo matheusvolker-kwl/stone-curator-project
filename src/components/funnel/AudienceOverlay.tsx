@@ -122,7 +122,7 @@ export default function AudienceOverlay() {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-2xl border-western-gold/30 bg-western-green-deep text-western-cream rounded-[2px] p-8 md:p-10 gap-6">
+      <DialogContent className="max-w-2xl max-h-[90dvh] overflow-y-auto border-western-gold/30 bg-western-green-deep text-western-cream rounded-[2px] p-5 sm:p-8 md:p-10 gap-6">
         <DialogHeader className="text-left space-y-3">
           <p className="font-mono text-[10px] font-medium uppercase tracking-[0.28em] text-western-gold-soft">
             Bem-vindo à Western
