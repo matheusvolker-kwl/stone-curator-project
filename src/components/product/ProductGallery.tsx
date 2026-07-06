@@ -174,7 +174,7 @@ export default function ProductGallery({
               type="button"
               onClick={goPrev}
               aria-label="Imagem anterior"
-              className="absolute left-0 md:-left-4 top-1/2 -translate-y-1/2 h-11 w-11 md:h-11 md:w-11 flex items-center justify-center bg-western-cream border border-western-stone-warm/25 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold transition-colors shadow-sm"
+              className="absolute z-10 left-2 md:-left-4 top-[58%] md:top-1/2 -translate-y-1/2 h-11 w-11 md:h-11 md:w-11 flex items-center justify-center bg-western-cream border border-western-stone-warm/25 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold transition-colors shadow-sm"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -182,7 +182,7 @@ export default function ProductGallery({
               type="button"
               onClick={goNext}
               aria-label="Próxima imagem"
-              className="absolute right-0 md:-right-4 top-1/2 -translate-y-1/2 h-11 w-11 md:h-11 md:w-11 flex items-center justify-center bg-western-cream border border-western-stone-warm/25 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold transition-colors shadow-sm"
+              className="absolute z-10 right-2 md:-right-4 top-[58%] md:top-1/2 -translate-y-1/2 h-11 w-11 md:h-11 md:w-11 flex items-center justify-center bg-western-cream border border-western-stone-warm/25 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold transition-colors shadow-sm"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
