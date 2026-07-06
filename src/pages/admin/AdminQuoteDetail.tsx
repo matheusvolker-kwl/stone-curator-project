@@ -170,7 +170,15 @@ export default function AdminQuoteDetail() {
     const sourceItems = rawSourceItems.filter((i) => !i.handle?.startsWith("__meta_"));
 
     setItems(
-      sourceItems.map((it, idx) => ({ ...it, _key: `${it.handle}-${idx}-${Math.random()}` })),
+      sourceItems.map((it, idx) => ({
+        ...it,
+        _key: `${it.handle}-${idx}-${Math.random()}`,
+        acabamento:
+          (it as EditableItem).acabamento ||
+          it.options?.map((o) => o.value).join(" · ") ||
+          it.variantTitle ||
+          "",
+      })),
     );
     setJurosLabel(restoredJuros);
     if (seed) {
