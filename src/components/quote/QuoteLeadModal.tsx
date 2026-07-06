@@ -385,7 +385,7 @@ export default function QuoteLeadModal({
             )}
 
             {/* Campos faltantes para usuário logado (caso profile incompleto) */}
-            {isLogged && !form.telefone && (
+            {isLogged && (!form.telefone || errors.telefone) && (
               <div>
                 <Label className="text-spec text-western-stone-warm">WhatsApp *</Label>
                 <PhoneInput
