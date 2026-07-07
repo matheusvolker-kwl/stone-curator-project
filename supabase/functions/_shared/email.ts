@@ -72,7 +72,8 @@ export interface BrandedEmailInput {
 }
 
 export function brandedEmailHtml({ heading, eyebrow, bodyHtml, ctaLabel, ctaUrl }: BrandedEmailInput): string {
-  const { green, gold, cream, atelieEndereco, whatsappLabel, whatsappLink, atendimentoEmail } = BRAND;
+  const { green, gold, cream, atelieEndereco, whatsappLabel, whatsappLink, atendimentoEmail, razaoSocial, cnpj, siteUrl, horarioAtendimento } = BRAND;
+  const year = new Date().getFullYear();
 
   const eyebrowHtml = eyebrow
     ? `<div style="font-family:Georgia,'Times New Roman',serif;color:${gold};letter-spacing:0.22em;font-size:11px;text-transform:uppercase;margin-bottom:10px;">${eyebrow}</div>`
