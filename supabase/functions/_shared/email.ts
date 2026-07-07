@@ -13,6 +13,11 @@ export const BRAND = {
   whatsappLabel: '+55 11 95896-7088',
   whatsappLink: 'https://wa.me/5511958967088',
   atendimentoEmail: 'atendimento@westernstore.com.br',
+  razaoSocial: 'Western Pools - Cascatas e Pedras Artesanais LTDA',
+  cnpj: '10.465.584/0001-24',
+  siteUrl: 'https://westernstore.com.br',
+  horarioAtendimento: 'Seg–Sex · 9h às 17h',
+  // instagram: (não configurado em business.ts)
 } as const;
 
 export interface SendEmailInput {
