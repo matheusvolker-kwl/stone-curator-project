@@ -233,9 +233,9 @@ export function adaptProduct(
 // Acabamento bundle group → 1 virtual ShopifyProductNode
 
 export function adaptAcabamentoGroup(group: AcabamentoGroup): ShopifyProductNode {
-  // Canonical product: Quartzo if present, else first.
+  // Canonical product: Moledo if present, else first.
   const canonical =
-    group.members.find((m) => m.acabamento === "Quartzo")?.product ??
+    group.members.find((m) => m.acabamento === "Moledo")?.product ??
     group.members[0]!.product;
 
   const minPrice = group.members
