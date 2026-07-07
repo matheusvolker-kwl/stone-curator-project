@@ -17,6 +17,7 @@ export const BRAND = {
   cnpj: '10.465.584/0001-24',
   siteUrl: 'https://westernstore.com.br',
   horarioAtendimento: 'Seg–Sex · 9h às 17h',
+  iconUrl: 'https://zibtysewpbeycngtbjjk.supabase.co/storage/v1/object/public/brand/icone-pedra.png',
   // instagram: (não configurado em business.ts)
 } as const;
 
@@ -72,7 +73,7 @@ export interface BrandedEmailInput {
 }
 
 export function brandedEmailHtml({ heading, eyebrow, bodyHtml, ctaLabel, ctaUrl }: BrandedEmailInput): string {
-  const { green, gold, cream, atelieEndereco, whatsappLabel, whatsappLink, atendimentoEmail, razaoSocial, cnpj, siteUrl, horarioAtendimento } = BRAND;
+  const { green, gold, cream, atelieEndereco, whatsappLabel, whatsappLink, atendimentoEmail, razaoSocial, cnpj, siteUrl, horarioAtendimento, iconUrl } = BRAND;
   const year = new Date().getFullYear();
 
   const eyebrowHtml = eyebrow
@@ -92,8 +93,9 @@ export function brandedEmailHtml({ heading, eyebrow, bodyHtml, ctaLabel, ctaUrl 
     <tr><td align="center">
       <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border:1px solid rgba(29,48,37,0.10);">
 
-        <!-- Header: creme com wordmark verde (igual ao site) -->
+        <!-- Header: creme com ícone + wordmark verde (igual ao site) -->
         <tr><td style="background:${cream};padding:26px 28px;text-align:center;border-bottom:1px solid rgba(29,48,37,0.08);">
+          <img src="${iconUrl}" alt="" width="44" style="display:block;margin:0 auto 10px;width:44px;height:auto;border:0;outline:none;" />
           <div style="font-family:Georgia,'Times New Roman',serif;color:${green};font-size:28px;letter-spacing:0.42em;font-weight:normal;">WESTERN</div>
           <div style="font-family:Georgia,serif;color:${gold};letter-spacing:0.28em;font-size:10px;text-transform:uppercase;margin-top:6px;">Pedras Artesanais</div>
         </td></tr>
