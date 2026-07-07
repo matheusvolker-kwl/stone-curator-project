@@ -109,19 +109,38 @@ export function brandedEmailHtml({ heading, eyebrow, bodyHtml, ctaLabel, ctaUrl 
         <!-- Divider dourado -->
         <tr><td style="padding:0 30px;"><div style="height:1px;background:${gold};opacity:0.35;"></div></td></tr>
 
-        <!-- Rodapé padrão -->
-        <tr><td style="padding:22px 30px 26px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#4a5a50;">
-          <p style="margin:0 0 12px;color:#6b7a70;font-style:italic;">Este é um e-mail automático e não recebe respostas. Para falar com a gente, escreva para <a href="mailto:${atendimentoEmail}" style="color:${gold};text-decoration:none;">${atendimentoEmail}</a>.</p>
-          <p style="margin:0 0 4px;"><strong style="color:${green};">Ateliê Western</strong><br/>${atelieEndereco}</p>
-          <p style="margin:8px 0 0;">
-            WhatsApp: <a href="${whatsappLink}" style="color:${gold};text-decoration:none;">${whatsappLabel}</a><br/>
-            E-mail: <a href="mailto:${atendimentoEmail}" style="color:${gold};text-decoration:none;">${atendimentoEmail}</a>
+        <!-- Rodapé: link para a loja -->
+        <tr><td style="padding:20px 30px 6px;text-align:center;font-family:Georgia,'Times New Roman',serif;">
+          <a href="${siteUrl}" style="color:${green};font-size:13px;letter-spacing:0.18em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid ${gold};padding-bottom:2px;">Visitar a loja →</a>
+        </td></tr>
+
+        <!-- Rodapé: aviso -->
+        <tr><td style="padding:16px 30px 0;text-align:center;">
+          <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#6b7a70;font-style:italic;">
+            Este é um e-mail automático e não recebe respostas.<br/>Para falar com a gente, escreva para <a href="mailto:${atendimentoEmail}" style="color:${gold};text-decoration:none;font-style:normal;">${atendimentoEmail}</a>.
+          </p>
+        </td></tr>
+
+        <!-- Rodapé: contato -->
+        <tr><td style="padding:18px 30px 10px;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.7;color:#2a3a30;">
+          <a href="${whatsappLink}" style="color:${green};text-decoration:none;">WhatsApp <span style="color:${gold};">${whatsappLabel}</span></a>
+          <span style="color:${gold};padding:0 10px;">·</span>
+          <a href="mailto:${atendimentoEmail}" style="color:${green};text-decoration:none;">${atendimentoEmail}</a>
+        </td></tr>
+
+        <!-- Rodapé: institucional -->
+        <tr><td style="padding:14px 30px 24px;text-align:center;">
+          <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.7;color:#6b7a70;letter-spacing:0.01em;">
+            ${razaoSocial}<br/>
+            CNPJ ${cnpj}<br/>
+            ${atelieEndereco}<br/>
+            ${horarioAtendimento}
           </p>
         </td></tr>
 
         <!-- Faixa final verde -->
-        <tr><td style="background:${green};padding:12px 28px;text-align:center;color:${cream};font-family:Georgia,serif;font-size:10px;letter-spacing:0.28em;text-transform:uppercase;">
-          Western · Pedras Artesanais
+        <tr><td style="background:${green};padding:14px 28px;text-align:center;color:${cream};font-family:Georgia,serif;font-size:10px;letter-spacing:0.28em;text-transform:uppercase;">
+          © ${year} Western · Pedras Artesanais
         </td></tr>
 
       </table>
