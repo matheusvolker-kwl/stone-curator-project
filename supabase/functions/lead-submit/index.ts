@@ -133,5 +133,18 @@ Deno.serve(async (req) => {
     return json(500, { ok: false, error: error.message });
   }
 
+  // Fire-and-forget: notifica o time interno. Nunca bloqueia a resposta.
+  try {
+    supabase.functions.invoke("notify-lead", {
+      body: {
+        tipo: type,
+        nome, email, telefone, empresa, cidade,
+        mensagem, origem,
+      },
+    }).catch((e) => console.warn("notify-lead invoke failed", e));
+  } catch (e) {
+    console.warn("notify-lead dispatch error", e);
+  }
+
   return json(200, { ok: true, id: (data as { id: string }).id });
 });
