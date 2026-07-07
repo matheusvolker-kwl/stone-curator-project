@@ -244,5 +244,24 @@ export async function submitQuoteLead({
     })();
   }
 
+  // Fire-and-forget: notifica o time comercial internamente.
+  try {
+    void supabase.functions.invoke("notify-lead", {
+      body: {
+        tipo: "orcamento",
+        nome: contact.nome,
+        email: contact.email,
+        telefone: contact.telefone,
+        empresa: contact.empresa,
+        cidade: contact.cidade,
+        mensagem: contact.mensagem,
+        origem,
+        resumo: lineSummary,
+      },
+    });
+  } catch (e) {
+    console.warn("notify-lead invoke failed", e);
+  }
+
   return { leadId: lead.id, numero, pdfStored, pdfBlob };
 }
