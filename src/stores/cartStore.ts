@@ -78,7 +78,11 @@ export const useCartStore = create<CartStore>()(
         for (const item of newItems) {
           const idx = next.findIndex((i) => i.variantId === item.variantId);
           if (idx >= 0) {
-            next[idx] = { ...next[idx], quantity: next[idx].quantity + item.quantity };
+            next[idx] = {
+              ...next[idx],
+              quantity: next[idx].quantity + item.quantity,
+              conjuntoRef: item.conjuntoRef ?? next[idx].conjuntoRef,
+            };
           } else {
             next.push(item);
           }
