@@ -433,11 +433,14 @@ function PartnerDrawer({
       <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
         <SheetHeader>
           <SheetTitle>{partner.empresa || "Parceiro"}</SheetTitle>
-          <SheetDescription>{partner.nome} · {partner.user_id.slice(0, 8)}</SheetDescription>
+          <SheetDescription>{partner.nome}</SheetDescription>
         </SheetHeader>
 
         <div className="mt-6 space-y-4 text-sm">
-          <KV k="Status" v={partner.status} />
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm w-32 flex-shrink-0">Status</span>
+            <StatusChip status={partner.status} />
+          </div>
           <KV k="Responsável" v={[partner.nome, partner.cargo].filter(Boolean).join(" · ") || "—"} />
           <KV k="CNPJ" v={partner.cnpj} />
           <KV k="Segmento" v={partner.segmento} />
