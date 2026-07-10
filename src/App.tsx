@@ -52,6 +52,7 @@ const Produtos = lazy(() => import("./pages/Produtos.tsx"));
 const Conjuntos = lazy(() => import("./pages/Conjuntos.tsx"));
 const ConjuntoPage = lazy(() => import("./pages/ConjuntoPage.tsx"));
 const ProductPage = lazy(() => import("./pages/ProductPage.tsx"));
+const ProductPageLab = lazy(() => import("./pages/lab/ProductPageLab.tsx"));
 const About = lazy(() => import("./pages/About.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
 const WesternBoxPage = lazy(() => import("./pages/WesternBox.tsx"));
