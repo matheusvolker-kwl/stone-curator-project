@@ -259,12 +259,22 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
                   {p.instagram && <span>@{p.instagram.replace(/^@/, "")}</span>}
                   {p.site && <span>{p.site}</span>}
                   <span>Cadastro: {new Date(p.created_at).toLocaleDateString("pt-BR")}</span>
-                  {p.status === "approved" && (
-                    <span>
-                      {p.discount_override != null ? `Desconto: ${p.discount_override}% (override)` : "Desconto: padrão do tier"}
-                      {pm.boleto ? " · Boleto" : ""}{pm.kit_gratis ? " · Kit grátis" : ""}{isAdminUser ? " · Admin" : ""}
-                    </span>
-                  )}
+                  {p.status === "approved" && (() => {
+                    const tierPct = tierDefaults[p.tier] ?? null;
+                    const usedPct = p.discount_override ?? tierPct;
+                    const label = p.discount_override != null
+                      ? `Desconto: ${p.discount_override}% (personalizado)`
+                      : tierPct != null
+                        ? `Desconto: ${tierPct}% (padrão ${TIER_LABEL[p.tier as Tier]})`
+                        : `Desconto: padrão ${TIER_LABEL[p.tier as Tier]}`;
+                    return (
+                      <span>
+                        {label}
+                        {pm.boleto ? " · Boleto" : ""}{pm.kit_gratis ? " · Kit grátis" : ""}{isAdminUser ? " · Admin" : ""}
+                        {usedPct == null ? "" : ""}
+                      </span>
+                    );
+                  })()}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {hasCred && p.status !== "approved" && p.status !== "cancelled" ? (
