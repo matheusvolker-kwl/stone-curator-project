@@ -142,10 +142,10 @@ export function CredenciamentoTab() {
                 <td className="px-4 py-3 font-mono text-xs">
                   <p>{formatCnae(r.cnae_principal)}</p>
                   {r.cnae_match && r.cnae_match !== r.cnae_principal && (
-                    <p className="text-western-stone-warm">match: {formatCnae(r.cnae_match)} ({r.cnae_match_tier})</p>
+                    <p className="text-western-stone-warm" title="Verde = liberado direto; amarela/laranja = precisa da sua avaliação.">match: {formatCnae(r.cnae_match)} ({r.cnae_match_tier})</p>
                   )}
                 </td>
-                <td className="px-4 py-3 text-xs">{r.fonte ?? "—"}</td>
+                <td className="px-4 py-3 text-xs">{fonteLabel(r.fonte)}</td>
                 <td className="px-4 py-3">{r.card_path ? <span className="text-xs text-western-gold">enviado</span> : <span className="text-xs text-western-stone-warm/60">—</span>}</td>
                 <td className="px-4 py-3 text-xs text-western-stone-warm">{new Date(r.created_at).toLocaleString("pt-BR")}</td>
                 <td className="px-4 py-3 text-right">
