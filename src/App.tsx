@@ -140,6 +140,7 @@ const App = () => (
                     <Route path="/conjuntos/:handle" element={<ConjuntoPage />} />
                     <Route path="/produtos" element={<Produtos />} />
                     <Route path="/produtos/:handle" element={<ProductPage />} />
+                    <Route path="/lab/produtos/:handle" element={<ProductPageLab />} />
                     <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
                     <Route path="/sobre" element={<About />} />
                     <Route path="/contato" element={<Contact />} />
