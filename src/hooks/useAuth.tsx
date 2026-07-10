@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { clearCatalogCache } from "@/lib/woocommerce/queries";
+
 
 type PartnerStatus = "pending" | "approved" | "rejected" | null;
 
