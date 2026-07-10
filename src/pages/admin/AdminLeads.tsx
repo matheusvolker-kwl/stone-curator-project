@@ -145,6 +145,8 @@ export default function AdminLeads() {
 
       {loading ? (
         <div className="py-20 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-western-gold" /></div>
+      ) : loadError ? (
+        <LoadError onRetry={() => setReloadNonce((n) => n + 1)} />
       ) : (
         <div className="space-y-2">
           {leads.length === 0 && <p className="text-western-stone-warm py-10 text-center">Nenhum lead nesse filtro.</p>}
