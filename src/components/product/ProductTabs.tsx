@@ -12,7 +12,9 @@ interface Props {
   dims: { c: string; l: string; a: string } | null;
   fichaRows: Array<{ label: string; value: string }>;
   modelo3dValue?: string;
+  hideModelo3d?: boolean;
 }
+
 
 const COMPOSICAO = [
   {
