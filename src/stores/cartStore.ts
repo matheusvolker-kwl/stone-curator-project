@@ -81,7 +81,8 @@ export const useCartStore = create<CartStore>()(
         } else {
           set({ items: [...get().items, item] });
         }
-        notifyCartChanged();
+        notifyCartChanged({ toastLabel: "Adicionada ao orçamento" });
+
       },
 
       addBundle: (newItems) => {
