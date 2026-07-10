@@ -147,9 +147,7 @@ export default function Conjuntos() {
             <p className="text-eyebrow mb-5">Curadoria · Conjuntos</p>
             <div className="w-12 h-px bg-western-gold mb-8" />
             <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05]">
-              Conjuntos curados,
-              <br />
-              prontos para projetar.
+              Conjuntos curados, prontos para projetar.
             </h1>
             <p className="mt-8 text-western-stone-warm text-lg leading-relaxed">
               45 composições organizadas pelo local de aplicação — piscinas,

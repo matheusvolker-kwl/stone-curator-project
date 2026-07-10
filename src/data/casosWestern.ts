@@ -35,7 +35,7 @@ export const CASOS_WESTERN: CasoWestern[] = [
     credito: "Nicole Sigaud · Arquiteta",
     titulo: "Piscina e cascata em terreno íngreme",
     story:
-      "Um projeto complexo numa casa em declive acentuado que só se tornou viável com a leveza, o baixo impacto ambiental e a facilidade de instalação da Western — respeitando a natureza do morro.",
+      "Um projeto complexo numa casa em declive acentuado que só se tornou viável com a leveza, o baixo impacto ambiental e a facilidade de instalação das peças — respeitando a natureza do morro.",
     destaque: true,
   },
   {

@@ -26,7 +26,7 @@ const PILARES = [
     eyebrow: "Pintura",
     titulo: "6 camadas, 5 cores em cada",
     texto:
-      "Toda peça recebe seis fases de pintura manual com cinco pigmentos sobrepostos por camada — simulando a sedimentação geológica natural. Resiste a cloro, sol, chuva e variação térmica. Não desbota, não escama, não exige manutenção.",
+      "Toda peça recebe seis fases de pintura manual com cinco pigmentos sobrepostos por camada — simulando a sedimentação geológica natural. Projetada para resistir a cloro, sol, chuva e variação térmica por décadas, com manutenção mínima. Garantia contratual de 1 ano contra defeito de fabricação.",
   },
   {
     Icon: Hammer,

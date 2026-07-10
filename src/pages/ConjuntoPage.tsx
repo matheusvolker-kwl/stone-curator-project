@@ -164,6 +164,10 @@ export default function ConjuntoPage() {
   const { tipo, tamanho, nivel, leaf } = info;
   const faixa = faixaArea[tipo][tamanho];
   const tipoLbl = tipoLabels[tipo];
+  // Gender agreement: only "piscina" is feminine → "Pequena/Média/Grande"
+  const sizeLabel = tipo === "piscina"
+    ? { pequeno: "Pequena", medio: "Média", grande: "Grande" }[tamanho]
+    : tamanhoLabels[tamanho];
   const tipoVisual: TipoVisual = tipoVisualQP ?? tipo;
   const render = conjuntoRenders[leaf.handle] ?? nivelImage[nivel];
   const isSugestao = nivel === "equilibrada";
@@ -222,7 +226,7 @@ export default function ConjuntoPage() {
     }
     addBundle(items);
     toast.success(`Conjunto ${leaf.nome} adicionado ao orçamento`, {
-      description: `${items.length} peça(s) · ${faixa} · acabamento ${acabLabel}`,
+      description: `${items.length} ${items.length === 1 ? "peça" : "peças"} · ${faixa} · acabamento ${acabLabel}`,
     });
   };
 
@@ -263,8 +267,8 @@ export default function ConjuntoPage() {
   return (
     <div className="surface-ivory min-h-screen relative">
       <Seo
-        title={`Conjunto ${leaf.nome} · ${tipoLbl} ${tamanhoLabels[tamanho]} · Western`}
-        description={`${leaf.subtitulo}. Composição ${nivelLabels[nivel].toLowerCase()} pronta para ${tipoLbl.toLowerCase()} — ${faixa}. Veja peças, preço e ajuste tudo peça por peça.`}
+        title={`Conjunto ${leaf.nome} · ${tipoLbl} ${sizeLabel} · Western`}
+        description={`${leaf.subtitulo} pronta para ${tipoLbl.toLowerCase()} de ${faixa.toLowerCase()}. Veja peças, preço e ajuste tudo peça por peça.`}
         path={`/conjuntos/${leaf.handle}`}
         ogType="product"
         image={render}
@@ -324,7 +328,7 @@ export default function ConjuntoPage() {
             <Reveal variant="fade-up" duration={700} delay={120}>
               <div className="mt-8">
                 <p className="eyebrow-bar mb-4">
-                  Sua sugestão · {nivelLabels[nivel]} para {faixa}
+                  Sua sugestão · {nivelLabels[nivel]} para {faixa.toLowerCase()}
                 </p>
                 <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.02]">
                   {leaf.nome}
@@ -335,7 +339,7 @@ export default function ConjuntoPage() {
                 </p>
                 <div className="mt-6 flex flex-wrap gap-2">
                   <Tag>{tipoLbl}</Tag>
-                  <Tag>{tamanhoLabels[tamanho]} · {faixa}</Tag>
+                  <Tag>{sizeLabel} · {faixa}</Tag>
                   <Tag>{nivelLabels[nivel]}</Tag>
                   <Tag>Acabamento {acabLabel}</Tag>
                 </div>
@@ -346,7 +350,7 @@ export default function ConjuntoPage() {
           {/* Rail sticky à direita */}
           <aside className="lg:sticky lg:top-24">
             <div className="bg-white border border-western-stone-warm/15 p-6 md:p-7 shadow-[0_24px_44px_-30px_hsl(var(--western-stone-dark)/0.35)]">
-              <p className="eyebrow-bar mb-3">Para {faixa}</p>
+              <p className="eyebrow-bar mb-3">Para {faixa.toLowerCase()}</p>
               {isSugestao && (
                 <div className="mb-4 inline-flex items-center gap-2 bg-western-gold/15 text-western-gold px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.22em]">
                   <Sparkles className="h-3 w-3" /> Nossa sugestão para o seu espaço
@@ -414,7 +418,7 @@ export default function ConjuntoPage() {
                 <ul className="space-y-2 font-sans text-[12.5px] text-western-green-deep/85 leading-snug">
                   <li className="flex items-start gap-2">
                     <Check className="h-3.5 w-3.5 text-western-gold mt-0.5 flex-shrink-0" />
-                    {totalPecas || leaf.preco > 0 ? `${totalPecas} peça(s) na composição` : "Composição curada"}
+                    {totalPecas || leaf.preco > 0 ? `${totalPecas} ${totalPecas === 1 ? "peça" : "peças"} na composição` : "Composição curada"}
                   </li>
                   <li className="flex items-start gap-2">
                     <Truck className="h-3.5 w-3.5 text-western-gold mt-0.5 flex-shrink-0" />
@@ -513,7 +517,7 @@ export default function ConjuntoPage() {
             </p>
             <p className="mt-4 text-[15.5px] text-western-stone-warm leading-relaxed max-w-[62ch]">
               O conjunto {leaf.nome} nasceu de projetos reais especificados no ateliê
-              Western — os volumes conversam entre si e o acabamento {acabLabel.toLowerCase()}
+              Western — os volumes conversam entre si e o acabamento {acabLabel.toLowerCase()}{" "}
               amarra a leitura mineral do espaço.
             </p>
           </div>

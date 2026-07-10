@@ -14,7 +14,7 @@ const OBJEÇÕES: { q: string; a: string }[] = [
   },
   {
     q: "É caro.",
-    a: "Comparando só o número da peça com pedra natural, sim. Mas a conta completa muda tudo: pedra natural equivalente pesa até 10× mais — guindaste, fechamento de rua, alvará municipal, equipe de içamento por dias. Western entrega em caminhão comum, descarrega manual, instala em horas com argamassa C3 de loja de bairro. No custo total instalado, fica de 30 a 50% mais barato que pedra natural — e mais previsível.",
+    a: "Comparando só o número da peça com pedra natural, sim. Mas a conta completa muda tudo: pedra natural equivalente pesa até 10× mais — guindaste, fechamento de rua, alvará municipal, equipe de içamento por dias. Western entrega em caminhão comum, descarrega manual e a instalação leva horas com argamassa C3 de loja de bairro. No custo total instalado, fica de 30 a 50% mais barato que pedra natural — e mais previsível.",
   },
   {
     q: "É pesada para a laje? Aguenta?",

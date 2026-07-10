@@ -26,8 +26,8 @@ export default function ProductPagination({
   const idx = products.findIndex((p) => p.handle === currentHandle);
   if (idx < 0 || products.length < 2) return null;
 
-  const prev = products[(idx - 1 + products.length) % products.length];
-  const next = products[(idx + 1) % products.length];
+  const prev = idx > 0 ? products[idx - 1] : null;
+  const next = idx < products.length - 1 ? products[idx + 1] : null;
 
   const Side = ({
     p,
@@ -91,11 +91,11 @@ export default function ProductPagination({
   return (
     <section className="border-t border-western-stone-warm/15 py-12 md:py-16">
       <div className="container-western grid grid-cols-1 md:grid-cols-3 items-center gap-8">
-        <Side p={prev} side="prev" />
+        {prev ? <Side p={prev} side="prev" /> : <div />}
         <p className="hidden md:block text-center font-mono text-[10px] uppercase tracking-[0.3em] text-western-stone-warm/70">
           {collectionTitle ?? "Coleção"} · {idx + 1} de {products.length}
         </p>
-        <Side p={next} side="next" />
+        {next ? <Side p={next} side="next" /> : <div />}
       </div>
     </section>
   );

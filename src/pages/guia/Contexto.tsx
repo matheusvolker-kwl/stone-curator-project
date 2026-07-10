@@ -140,7 +140,7 @@ export default function GuiaContexto() {
             {[
               { n: "01", t: "Conte sobre o ambiente", d: "Tipo, área aproximada e o tom de acabamento." },
               { n: "02", t: "Veja três caminhos", d: "Composições essencial, equilibrada e completa." },
-              { n: "03", t: "Refine e finalize", d: "Ajuste peças, some autorais e feche o pedido." },
+              { n: "03", t: "Refine e finalize", d: "Ajuste peças, adicione autorais (exclusivas) e feche o pedido." },
             ].map((s) => (
               <li key={s.n} className="flex gap-4">
                 <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold pt-1.5">{s.n}</span>

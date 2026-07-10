@@ -3,7 +3,7 @@ import { BUSINESS } from "@/config/business";
 
 export default function PoliticaComercial() {
   return (
-    <LegalPage eyebrow="Política comercial" titulo="Como compramos e vendemos." atualizadoEm="maio de 2026">
+    <LegalPage eyebrow="Política comercial" titulo="Como compramos e vendemos." atualizadoEm="maio de 2026" seoPath="/politica-comercial" seoTitle="Política comercial — Western" seoDescription="Regras B2B da Western: pedido mínimo, condições de pagamento, credenciamento e catálogo profissional.">
       <p>
         A Western Pools opera exclusivamente no canal B2B, atendendo profissionais e empresas
         do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a laguistas,
@@ -13,8 +13,8 @@ export default function PoliticaComercial() {
 
       <h2>Pedido mínimo</h2>
       <p>
-        Pedido mínimo por nota: <strong>{BUSINESS.pedidoMinimoLabel}</strong>. Esse valor é
-        consistente em todo o site, em todo o catálogo e em todas as condições comerciais.
+        Pedido mínimo por nota: <strong>{BUSINESS.pedidoMinimoLabel}</strong>. Aplica-se a todo
+        o catálogo, independentemente da linha ou condição comercial.
       </p>
 
       <h2>Pagamento</h2>

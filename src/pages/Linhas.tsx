@@ -79,13 +79,13 @@ export default function Linhas() {
           ) : (
             <>
               <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05]">
-                Nosso catálogo completo,<br />organizado por linhas.
+                Nosso catálogo completo, organizado por linhas.
               </h1>
               <p className="mt-8 text-western-stone-warm text-lg leading-relaxed">
                 As linhas são nossas categorias permanentes do catálogo — cascatas,
                 pedras grandes, fósseis decorativos, pisadas, bordas, fontes.
-                Todos são complementares e estão disponíveis em 04 tipos de
-                acabamentos: Quartzo, Arenito, Moledo e Granito.
+                Todas são complementares e a maioria das peças está disponível em até
+                4 acabamentos: Quartzo, Arenito, Moledo e Granito.
               </p>
             </>
           )}

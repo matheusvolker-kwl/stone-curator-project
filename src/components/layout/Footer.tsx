@@ -15,7 +15,7 @@ const newsletterSchema = z.object({
 
 const COLECOES: { label: string; handle: string }[] = [
   { label: "Cascatas", handle: "cascatas" },
-  { label: "Fontes", handle: "fontes-para-jardim" },
+  { label: "Fontes para Jardim", handle: "fontes-para-jardim" },
   { label: "Pedras Grandes", handle: "pedras-grandes" },
   { label: "Pedras Médias", handle: "pedras-medias" },
   { label: "Pedras Pequenas", handle: "pedras-pequenas" },
@@ -87,7 +87,7 @@ export default function Footer() {
           <div>
             <h4 className="text-eyebrow mb-5">Para parceiros</h4>
             <ul className="space-y-2.5 text-sm">
-              <li><Link to="/guia-de-composicao" className="text-western-cream hover:text-western-gold-soft transition-colors">Como comprar</Link></li>
+              <li><Link to="/guia-de-composicao" className="text-western-cream hover:text-western-gold-soft transition-colors">Guia de composição</Link></li>
               <li><Link to="/politica-comercial" className="text-western-cream hover:text-western-gold-soft transition-colors">Política comercial</Link></li>
               <li><Link to="/politica-de-entrega" className="text-western-cream hover:text-western-gold-soft transition-colors">Política de entrega</Link></li>
               <li><Link to="/trocas-e-avarias" className="text-western-cream hover:text-western-gold-soft transition-colors">Trocas e avarias</Link></li>
