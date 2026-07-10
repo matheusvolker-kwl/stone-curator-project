@@ -58,6 +58,7 @@ const canais = [
     icon: Mail,
     href: `mailto:${BUSINESS.emailComercial}`,
     cta: "Enviar e-mail",
+    destaque: false,
     internal: false,
   },
   {
@@ -67,6 +68,7 @@ const canais = [
     icon: Instagram,
     href: "https://instagram.com/westernpools",
     cta: "Seguir no Instagram",
+    destaque: false,
     internal: false,
   },
   {
@@ -76,6 +78,7 @@ const canais = [
     icon: Box,
     href: BUSINESS.sketchupWarehouse,
     cta: "Abrir biblioteca",
+    destaque: false,
     internal: false,
   },
   {
@@ -85,9 +88,10 @@ const canais = [
     icon: MapPin,
     href: "/visitar",
     cta: "Agendar visita",
+    destaque: false,
     internal: true,
   },
-] as const;
+];
 
 // email OU telefone obrigatório — RLS exige ao menos um.
 const contactSchema = z
