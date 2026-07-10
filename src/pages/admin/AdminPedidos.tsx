@@ -289,7 +289,7 @@ function OrderEditor({
           />
         </Field>
 
-        <Field label="Produzir até">
+        <Field label="Prazo interno de produção">
           <input
             type="date"
             value={draft.produzir_ate ?? ""}
