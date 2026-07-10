@@ -47,11 +47,20 @@ interface CartStore {
   clearCart: () => void;
 }
 
-function notifyCartChanged() {
+function notifyCartChanged(opts?: { toastLabel?: string }) {
   if (typeof window === "undefined") return;
-  window.dispatchEvent(new CustomEvent("western:open-cart"));
+  // Não abre o drawer automaticamente — só pulsa o ícone e dispara toast discreto.
   window.dispatchEvent(new CustomEvent("western:cart-pulse"));
+  if (opts?.toastLabel) {
+    toast.success(opts.toastLabel, {
+      action: {
+        label: "Ver",
+        onClick: () => window.dispatchEvent(new CustomEvent("western:open-cart")),
+      },
+    });
+  }
 }
+
 
 export const useCartStore = create<CartStore>()(
   persist(
