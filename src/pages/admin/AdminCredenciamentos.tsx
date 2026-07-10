@@ -39,6 +39,27 @@ interface Cred {
 const formatCnpj = (c: string) => c.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
 const formatCnae = (c: string | null) => c ? c.replace(/^(\d{4})(\d)(\d{2})$/, "$1-$2/$3") : "—";
 
+const DECISAO_LABEL: Record<string, string> = {
+  aprovado: "Aprovado",
+  analise: "Precisa da sua análise",
+  reprovado: "Reprovado (empresa inativa)",
+  solicitar_cartao: "Aguardando Cartão CNPJ",
+};
+
+const STATUS_MANUAL_LABEL: Record<string, string> = {
+  pendente: "Pendente",
+  aprovado: "Aprovado manualmente",
+  recusado: "Recusado manualmente",
+  na: "Sem ação necessária",
+};
+
+function fonteLabel(f: string | null | undefined): string {
+  if (!f || f === "na") return "Não confirmado";
+  if (f === "receitaws" || f === "brasilapi" || f === "cnpja") return "Governo (Receita)";
+  if (f === "cartao" || f === "documento") return "Documento enviado";
+  return f;
+}
+
 export function CredenciamentoTab() {
   const [rows, setRows] = useState<Cred[]>([]);
   const [loading, setLoading] = useState(true);
