@@ -297,7 +297,11 @@ export default function AdminDashboard() {
             </Link>
           </header>
           <div className="py-1">
-            {counts.productionOrders === 0 ? (
+            {errors.has("recentOrders") || errors.has("productionOrders") ? (
+              <div className="px-5 py-4">
+                <LoadError compact onRetry={load} />
+              </div>
+            ) : counts.productionOrders === 0 ? (
               <p className="px-5 py-6 text-sm text-western-stone-warm text-center">Nenhum pedido de produção ainda.</p>
             ) : (
               recentOrders.map((o) => (
