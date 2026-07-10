@@ -30,7 +30,7 @@ import {
   focusFirstInvalid,
 } from "@/lib/forms/br";
 import { submitContactLead } from "@/lib/leads";
-import TurnstileWidget from "@/components/security/TurnstileWidget";
+import InvisibleTurnstile, { type InvisibleTurnstileHandle } from "@/components/security/InvisibleTurnstile";
 
 const waUrl = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
   "Olá Western! Gostaria de conversar com a fábrica."
