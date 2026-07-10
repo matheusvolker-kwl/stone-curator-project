@@ -126,6 +126,27 @@ const App = () => (
                   <Route path="/guia-de-composicao/composicoes" element={<GuiaComposicoes />} />
                   <Route path="/guia-de-composicao/refinar/:handle" element={<GuiaRefinar />} />
                   <Route path="/guia-de-composicao/finalizar" element={<Navigate to="/guia-de-composicao" replace />} />
+                  {/* Admin fora do SiteLayout — sem header/footer/FAB/carrinho da loja */}
+                  <Route
+                    path="/admin"
+                    element={
+                      <RequireAuth adminOnly>
+                        <AdminLayout />
+                      </RequireAuth>
+                    }
+                  >
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="parceiros" element={<AdminPartners />} />
+                    <Route path="leads" element={<AdminLeads />} />
+                    <Route path="orcamentos" element={<AdminQuotes />} />
+                    <Route path="orcamentos/:leadId" element={<AdminQuoteDetail />} />
+                    <Route path="pedidos" element={<AdminPedidos />} />
+                    <Route path="configuracoes" element={<AdminSettings />} />
+                    <Route path="amostras" element={<Navigate to="/admin/leads" replace />} />
+                    <Route path="usuarios" element={<Navigate to="/admin/parceiros?tab=ativos" replace />} />
+                    <Route path="credenciamentos" element={<Navigate to="/admin/parceiros?tab=credenciamento" replace />} />
+                    <Route path="cnae-whitelist" element={<Navigate to="/admin/configuracoes?tab=cnae" replace />} />
+                  </Route>
                   <Route element={<SiteLayout />}>
                     {HOLDING_PAGE
                       ? <Route path="/inicio" element={<Index />} />
@@ -174,26 +195,9 @@ const App = () => (
                       <Route path="preferencias" element={<AccountPreferences />} />
                     </Route>
                     <Route
-                      path="/admin"
-                      element={
-                        <RequireAuth adminOnly>
-                          <AdminLayout />
-                        </RequireAuth>
-                      }
-                    >
-                      <Route index element={<AdminDashboard />} />
-                      <Route path="parceiros" element={<AdminPartners />} />
-                      <Route path="leads" element={<AdminLeads />} />
-                      <Route path="orcamentos" element={<AdminQuotes />} />
-                      <Route path="orcamentos/:leadId" element={<AdminQuoteDetail />} />
-                      <Route path="pedidos" element={<AdminPedidos />} />
-                      <Route path="configuracoes" element={<AdminSettings />} />
-                      {/* Redirects de rotas antigas — herdam o RequireAuth adminOnly da rota-pai */}
-                      <Route path="amostras" element={<Navigate to="/admin/leads" replace />} />
-                      <Route path="usuarios" element={<Navigate to="/admin/parceiros?tab=ativos" replace />} />
-                      <Route path="credenciamentos" element={<Navigate to="/admin/parceiros?tab=credenciamento" replace />} />
-                      <Route path="cnae-whitelist" element={<Navigate to="/admin/configuracoes?tab=cnae" replace />} />
-                    </Route>
+                      path="/admin-legacy-inside-store-do-not-use"
+                      element={<Navigate to="/admin" replace />}
+                    />
                     {/* Rota antiga de amostras: substituída pela Western Box (página paga). */}
                     <Route path="/pedir-amostras" element={<Navigate to="/western-box" replace />} />
                     <Route path="/visitar" element={<AgendarVisita />} />

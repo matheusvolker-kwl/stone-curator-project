@@ -13,8 +13,16 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import logoBege from "@/assets/logo-horizontal-bege.png";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type BadgeKey = "orcamentos" | "credenciamentos" | "parceiros" | "leads";
+
+const BADGE_HINT: Record<BadgeKey, string> = {
+  orcamentos: "orçamentos em aberto",
+  credenciamentos: "cadastros aguardando análise",
+  parceiros: "parceiros aguardando aprovação",
+  leads: "novos nos últimos 7 dias",
+};
 
 const items: Array<{
   to: string;
@@ -83,12 +91,22 @@ export default function AdminLayout() {
         <div className="px-6 py-6 border-b border-western-gold/15">
           <img src={logoBege} alt="Western" className="h-10 w-auto mb-3" />
           <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-western-gold-soft">
-            Backoffice
+            Painel
           </p>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1">
           {items.map((it) => {
             const badge = it.badgeKey ? counts[it.badgeKey] : 0;
+            const badgeEl = badge > 0 && it.badgeKey ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="min-w-[20px] h-5 px-1.5 inline-flex items-center justify-center rounded-full bg-western-gold text-western-green-deep text-[10px] font-bold tabular-nums cursor-help">
+                    {badge > 99 ? "99+" : badge}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="right">{BADGE_HINT[it.badgeKey]}</TooltipContent>
+              </Tooltip>
+            ) : null;
             return (
               <NavLink
                 key={it.to}
@@ -104,11 +122,7 @@ export default function AdminLayout() {
               >
                 <it.icon className="h-4 w-4" />
                 <span className="flex-1">{it.label}</span>
-                {badge > 0 && (
-                  <span className="min-w-[20px] h-5 px-1.5 inline-flex items-center justify-center rounded-full bg-western-gold text-western-green-deep text-[10px] font-bold tabular-nums">
-                    {badge > 99 ? "99+" : badge}
-                  </span>
-                )}
+                {badgeEl}
               </NavLink>
             );
           })}
@@ -156,8 +170,28 @@ export default function AdminLayout() {
         })}
       </div>
 
+      {/* Mobile: rodapé com e-mail + Sair (versão fixa embaixo) */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-western-green-deep border-t border-western-gold/15 px-4 py-2 flex items-center justify-between gap-3">
+        <p className="text-[10px] font-mono text-western-cream/50 truncate flex-1">
+          {user?.email}
+        </p>
+        <button
+          onClick={() => navigate("/")}
+          className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.18em] text-western-cream/70 hover:text-western-gold-soft"
+          aria-label="Ver site"
+        >
+          <ExternalLink className="h-3.5 w-3.5" /> Site
+        </button>
+        <button
+          onClick={async () => { await signOut(); navigate("/", { replace: true }); }}
+          className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.18em] text-western-cream/70 hover:text-red-300"
+        >
+          <LogOut className="h-3.5 w-3.5" /> Sair
+        </button>
+      </div>
+
       {/* Content */}
-      <main className="flex-1 bg-western-ivory text-western-green-deep min-w-0 mt-[52px] md:mt-0">
+      <main className="flex-1 bg-western-ivory text-western-green-deep min-w-0 mt-[52px] md:mt-0 pb-14 md:pb-0">
         <div className="p-6 md:p-10 max-w-7xl">
           <Outlet />
         </div>

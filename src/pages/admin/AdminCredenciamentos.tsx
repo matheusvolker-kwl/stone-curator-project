@@ -39,6 +39,27 @@ interface Cred {
 const formatCnpj = (c: string) => c.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
 const formatCnae = (c: string | null) => c ? c.replace(/^(\d{4})(\d)(\d{2})$/, "$1-$2/$3") : "—";
 
+const DECISAO_LABEL: Record<string, string> = {
+  aprovado: "Aprovado",
+  analise: "Precisa da sua análise",
+  reprovado: "Reprovado (empresa inativa)",
+  solicitar_cartao: "Aguardando Cartão CNPJ",
+};
+
+const STATUS_MANUAL_LABEL: Record<string, string> = {
+  pendente: "Pendente",
+  aprovado: "Aprovado manualmente",
+  recusado: "Recusado manualmente",
+  na: "Sem ação necessária",
+};
+
+function fonteLabel(f: string | null | undefined): string {
+  if (!f || f === "na") return "Não confirmado";
+  if (f === "receitaws" || f === "brasilapi" || f === "cnpja") return "Governo (Receita)";
+  if (f === "cartao" || f === "documento") return "Documento enviado";
+  return f;
+}
+
 export function CredenciamentoTab() {
   const [rows, setRows] = useState<Cred[]>([]);
   const [loading, setLoading] = useState(true);
@@ -95,7 +116,7 @@ export function CredenciamentoTab() {
               <th className="text-left px-4 py-3">Empresa / CNPJ</th>
               <th className="text-left px-4 py-3">Decisão auto</th>
               <th className="text-left px-4 py-3">CNAE</th>
-              <th className="text-left px-4 py-3">Fonte</th>
+              <th className="text-left px-4 py-3">Confirmação</th>
               <th className="text-left px-4 py-3">Cartão</th>
               <th className="text-left px-4 py-3">Criado</th>
               <th />
@@ -113,18 +134,18 @@ export function CredenciamentoTab() {
                   {r.protocolo && <p className="text-[10px] font-mono text-western-stone-warm/80 mt-0.5">{r.protocolo}</p>}
                 </td>
                 <td className="px-4 py-3">
-                  <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] ${decisaoCls(r.decisao)}`}>{r.decisao}</span>
+                  <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] ${decisaoCls(r.decisao)}`}>{DECISAO_LABEL[r.decisao] ?? r.decisao}</span>
                   {r.status_manual !== "na" && r.status_manual !== "pendente" && (
-                    <p className="text-[10px] font-mono uppercase mt-1 text-western-stone-warm">manual: {r.status_manual}</p>
+                    <p className="text-[10px] font-mono uppercase mt-1 text-western-stone-warm">{STATUS_MANUAL_LABEL[r.status_manual] ?? r.status_manual}</p>
                   )}
                 </td>
                 <td className="px-4 py-3 font-mono text-xs">
                   <p>{formatCnae(r.cnae_principal)}</p>
                   {r.cnae_match && r.cnae_match !== r.cnae_principal && (
-                    <p className="text-western-stone-warm">match: {formatCnae(r.cnae_match)} ({r.cnae_match_tier})</p>
+                    <p className="text-western-stone-warm" title="Verde = liberado direto; amarela/laranja = precisa da sua avaliação.">match: {formatCnae(r.cnae_match)} ({r.cnae_match_tier})</p>
                   )}
                 </td>
-                <td className="px-4 py-3 text-xs">{r.fonte ?? "—"}</td>
+                <td className="px-4 py-3 text-xs">{fonteLabel(r.fonte)}</td>
                 <td className="px-4 py-3">{r.card_path ? <span className="text-xs text-western-gold">enviado</span> : <span className="text-xs text-western-stone-warm/60">—</span>}</td>
                 <td className="px-4 py-3 text-xs text-western-stone-warm">{new Date(r.created_at).toLocaleString("pt-BR")}</td>
                 <td className="px-4 py-3 text-right">
@@ -213,8 +234,8 @@ function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: 
           <div className="border border-western-stone-warm/20 p-4 bg-western-paper/40">
             <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm mb-2">Decisão automática</p>
             <div className="flex items-center gap-3 mb-2">
-              <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] ${decisaoCls(cred.decisao)}`}>{cred.decisao}</span>
-              <span className="text-xs text-western-stone-warm">fonte: {cred.fonte ?? "nenhuma"}</span>
+              <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] ${decisaoCls(cred.decisao)}`}>{DECISAO_LABEL[cred.decisao] ?? cred.decisao}</span>
+              <span className="text-xs text-western-stone-warm" title="Verde = liberado direto; amarela/laranja = precisa da sua avaliação.">Confirmação: {fonteLabel(cred.fonte)}</span>
             </div>
             <p className="text-xs text-western-stone-warm">{cred.motivo}</p>
           </div>

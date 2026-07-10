@@ -106,6 +106,7 @@ export default function AdminPartners() {
 function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void }) {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [adminIds, setAdminIds] = useState<Set<string>>(new Set());
+  const [tierDefaults, setTierDefaults] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<"all" | Partner["status"]>("all");
   const [segmentFilter, setSegmentFilter] = useState<string>("all");
@@ -116,12 +117,16 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
 
   const load = async () => {
     setLoading(true);
-    const [{ data }, { data: roles }] = await Promise.all([
+    const [{ data }, { data: roles }, { data: tds }] = await Promise.all([
       supabase.from("partner_profiles").select("*").order("created_at", { ascending: false }),
       supabase.from("user_roles").select("user_id, role").eq("role", "admin"),
+      supabase.from("tier_defaults").select("tier, discount_pct"),
     ]);
     setPartners((data as Partner[]) ?? []);
     setAdminIds(new Set((roles ?? []).map((r) => r.user_id)));
+    const map: Record<string, number> = {};
+    ((tds ?? []) as Array<{ tier: string; discount_pct: number }>).forEach((t) => { map[t.tier] = t.discount_pct; });
+    setTierDefaults(map);
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
@@ -254,12 +259,22 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
                   {p.instagram && <span>@{p.instagram.replace(/^@/, "")}</span>}
                   {p.site && <span>{p.site}</span>}
                   <span>Cadastro: {new Date(p.created_at).toLocaleDateString("pt-BR")}</span>
-                  {p.status === "approved" && (
-                    <span>
-                      {p.discount_override != null ? `Desconto: ${p.discount_override}% (override)` : "Desconto: padrão do tier"}
-                      {pm.boleto ? " · Boleto" : ""}{pm.kit_gratis ? " · Kit grátis" : ""}{isAdminUser ? " · Admin" : ""}
-                    </span>
-                  )}
+                  {p.status === "approved" && (() => {
+                    const tierPct = tierDefaults[p.tier] ?? null;
+                    const usedPct = p.discount_override ?? tierPct;
+                    const label = p.discount_override != null
+                      ? `Desconto: ${p.discount_override}% (personalizado)`
+                      : tierPct != null
+                        ? `Desconto: ${tierPct}% (padrão ${TIER_LABEL[p.tier as Tier]})`
+                        : `Desconto: padrão ${TIER_LABEL[p.tier as Tier]}`;
+                    return (
+                      <span>
+                        {label}
+                        {pm.boleto ? " · Boleto" : ""}{pm.kit_gratis ? " · Kit grátis" : ""}{isAdminUser ? " · Admin" : ""}
+                        {usedPct == null ? "" : ""}
+                      </span>
+                    );
+                  })()}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {hasCred && p.status !== "approved" && p.status !== "cancelled" ? (
@@ -342,7 +357,7 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
               })}
             </tbody>
           </table>
-          <p className="px-4 py-2 text-[10px] text-western-stone-warm">* Override individual sobrescreve o desconto padrão do tier.</p>
+          <p className="px-4 py-2 text-[10px] text-western-stone-warm">* Desconto personalizado (sobrescreve o padrão do nível).</p>
         </div>
       )}
 
@@ -418,11 +433,14 @@ function PartnerDrawer({
       <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
         <SheetHeader>
           <SheetTitle>{partner.empresa || "Parceiro"}</SheetTitle>
-          <SheetDescription>{partner.nome} · {partner.user_id.slice(0, 8)}</SheetDescription>
+          <SheetDescription>{partner.nome}</SheetDescription>
         </SheetHeader>
 
         <div className="mt-6 space-y-4 text-sm">
-          <KV k="Status" v={partner.status} />
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm w-32 flex-shrink-0">Status</span>
+            <StatusChip status={partner.status} />
+          </div>
           <KV k="Responsável" v={[partner.nome, partner.cargo].filter(Boolean).join(" · ") || "—"} />
           <KV k="CNPJ" v={partner.cnpj} />
           <KV k="Segmento" v={partner.segmento} />
@@ -471,23 +489,23 @@ function PartnerDrawer({
             </div>
 
             <div>
-              <Label className="text-eyebrow mb-2 block">Tier</Label>
+              <Label className="text-eyebrow mb-2 block">Nível</Label>
               <Select value={tier} onValueChange={(v) => setTier(v as Tier)}>
                 <SelectTrigger className="h-11 rounded-none border-western-stone-warm/25"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {TIERS.map((t) => <SelectItem key={t} value={t}>{TIER_LABEL[t]}</SelectItem>)}
                 </SelectContent>
               </Select>
-              <p className="text-xs text-western-stone-warm mt-2">O tier define os defaults de desconto, boleto e parcelas (configuráveis em Configurações).</p>
+              <p className="text-xs text-western-stone-warm mt-2">O nível define os padrões de desconto, boleto e parcelas (configuráveis em Configurações).</p>
             </div>
 
             <div>
-              <Label className="text-eyebrow mb-2 block">Desconto override (%) — opcional</Label>
+              <Label className="text-eyebrow mb-2 block">Desconto personalizado (%) — opcional</Label>
               <Input
                 type="number" min={0} max={100} step="0.5"
                 value={discount}
                 onChange={(e) => setDiscount(e.target.value)}
-                placeholder="Vazio = usa default do tier"
+                placeholder="Vazio = usa o padrão do nível"
                 className="h-11 rounded-none border-western-stone-warm/25"
               />
             </div>

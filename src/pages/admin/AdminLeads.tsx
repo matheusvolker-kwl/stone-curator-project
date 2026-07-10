@@ -157,8 +157,26 @@ export default function AdminLeads() {
                     {downloads && downloads > 1 && <span className="ml-2 text-[10px] font-mono text-western-gold">×{downloads} downloads</span>}
                   </p>
                   <p className="text-xs text-western-stone-warm mt-0.5 flex flex-wrap gap-x-4">
-                    {l.email && <span className="inline-flex items-center gap-1"><Mail className="h-3 w-3" /> {l.email}</span>}
-                    {l.telefone && <span className="inline-flex items-center gap-1"><Phone className="h-3 w-3" /> {l.telefone}</span>}
+                    {l.email && (
+                      <a
+                        href={`mailto:${l.email}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-1 hover:text-western-gold hover:underline"
+                      >
+                        <Mail className="h-3 w-3" /> {l.email}
+                      </a>
+                    )}
+                    {l.telefone && (
+                      <a
+                        href={`https://wa.me/${l.telefone.replace(/\D/g, "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-1 hover:text-western-gold hover:underline"
+                      >
+                        <Phone className="h-3 w-3" /> {l.telefone}
+                      </a>
+                    )}
                     {(l.cidade || l.uf) && <span>{[l.cidade, l.uf].filter(Boolean).join("/")}</span>}
                     {l.origem && <span className="text-western-stone-warm/60">{l.origem}</span>}
                   </p>
