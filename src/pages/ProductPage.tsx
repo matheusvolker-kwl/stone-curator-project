@@ -229,7 +229,7 @@ export default function ProductPage() {
         path={`/produtos/${product.handle}`}
         ogType="product"
         image={images[0]?.url}
-        jsonLd={productJsonLd}
+        jsonLd={[productJsonLd, breadcrumbJsonLd]}
       />
       <ScrollProgress />
       <BackToTop />
