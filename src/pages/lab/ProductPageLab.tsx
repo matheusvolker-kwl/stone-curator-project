@@ -490,6 +490,7 @@ export default function ProductPageLab() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-2">
                     <Link
+                      ref={addBtnRef as React.RefObject<HTMLAnchorElement>}
                       to="/orcamento"
                       className="inline-flex items-center justify-center h-11 px-5 border border-western-green-deep/30 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
                     >
