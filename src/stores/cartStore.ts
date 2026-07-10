@@ -11,7 +11,9 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { toast } from "sonner";
 import type { ShopifyMoney, ShopifyProductNode } from "@/lib/catalog/types";
+
 
 export interface CartItem {
   productHandle: string;
@@ -45,11 +47,20 @@ interface CartStore {
   clearCart: () => void;
 }
 
-function notifyCartChanged() {
+function notifyCartChanged(opts?: { toastLabel?: string }) {
   if (typeof window === "undefined") return;
-  window.dispatchEvent(new CustomEvent("western:open-cart"));
+  // Não abre o drawer automaticamente — só pulsa o ícone e dispara toast discreto.
   window.dispatchEvent(new CustomEvent("western:cart-pulse"));
+  if (opts?.toastLabel) {
+    toast.success(opts.toastLabel, {
+      action: {
+        label: "Ver",
+        onClick: () => window.dispatchEvent(new CustomEvent("western:open-cart")),
+      },
+    });
+  }
 }
+
 
 export const useCartStore = create<CartStore>()(
   persist(
@@ -70,7 +81,8 @@ export const useCartStore = create<CartStore>()(
         } else {
           set({ items: [...get().items, item] });
         }
-        notifyCartChanged();
+        notifyCartChanged({ toastLabel: "Adicionada ao orçamento" });
+
       },
 
       addBundle: (newItems) => {
@@ -88,7 +100,14 @@ export const useCartStore = create<CartStore>()(
           }
         }
         set({ items: next });
-        notifyCartChanged();
+        const totalQty = newItems.reduce((s, i) => s + i.quantity, 0);
+        notifyCartChanged({
+          toastLabel:
+            newItems.length > 1
+              ? `${newItems.length} peças adicionadas ao orçamento`
+              : `${totalQty > 1 ? `${totalQty} ` : ""}Adicionada ao orçamento`,
+        });
+
       },
 
       updateQuantity: (variantId, quantity) => {

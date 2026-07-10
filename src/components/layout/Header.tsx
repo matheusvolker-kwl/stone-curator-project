@@ -396,14 +396,19 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           <button
             onClick={onCartOpen}
             aria-label="Abrir orçamento"
-            className={`relative inline-flex items-center justify-center -mr-2 p-2 text-western-green-deep hover:text-western-gold transition-all duration-300 ${
-              pulse ? "scale-110" : "scale-100"
+            className={`relative inline-flex items-center gap-2 -mr-2 p-2 text-western-green-deep hover:text-western-gold transition-all duration-300 ${
+              pulse ? "scale-[1.04]" : "scale-100"
             }`}
           >
             <ShoppingBag className={`h-5 w-5 transition-transform ${pulse ? "animate-pulse" : ""}`} />
             {totalItems > 0 && (
+              <span className="hidden lg:inline font-mono text-[11px] uppercase tracking-[0.22em] whitespace-nowrap">
+                Orçamento ({totalItems})
+              </span>
+            )}
+            {totalItems > 0 && (
               <span
-                className={`absolute top-0 right-0 bg-western-gold text-western-green-deep font-mono text-[10px] tracking-wider px-1.5 py-0.5 leading-none transition-shadow ${
+                className={`lg:hidden absolute top-0 right-0 bg-western-gold text-western-green-deep font-mono text-[10px] tracking-wider px-1.5 py-0.5 leading-none transition-shadow ${
                   pulse ? "ring-2 ring-western-gold/60 ring-offset-1 ring-offset-western-ivory" : ""
                 }`}
               >
@@ -411,6 +416,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               </span>
             )}
           </button>
+
         </div>
       </div>
 
@@ -450,7 +456,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 </NavLink>
               ))}
               <div className="h-px bg-western-gold/15 my-6" />
-              <div className="h-px bg-western-gold/15 my-6" />
+
               <p className="text-eyebrow mb-3 text-western-cream-muted">Parceiro</p>
               {session ? (
                 <>
