@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Search, ShieldCheck, ShieldX, ExternalLink } from "lucide-react";
+import { Loader2, Search, ShieldCheck, ShieldX, ExternalLink, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { TIERS, TIER_LABEL, type Tier } from "@/components/admin/adminUtils";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 
 interface Cred {
   id: string;
