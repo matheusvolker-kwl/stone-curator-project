@@ -328,7 +328,7 @@ export default function ConjuntoPage() {
             <Reveal variant="fade-up" duration={700} delay={120}>
               <div className="mt-8">
                 <p className="eyebrow-bar mb-4">
-                  Sua sugestão · {nivelLabels[nivel]} para {faixa}
+                  Sua sugestão · {nivelLabels[nivel]} para {faixa.toLowerCase()}
                 </p>
                 <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.02]">
                   {leaf.nome}
