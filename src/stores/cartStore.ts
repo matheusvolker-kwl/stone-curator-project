@@ -11,7 +11,9 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { toast } from "sonner";
 import type { ShopifyMoney, ShopifyProductNode } from "@/lib/catalog/types";
+
 
 export interface CartItem {
   productHandle: string;
