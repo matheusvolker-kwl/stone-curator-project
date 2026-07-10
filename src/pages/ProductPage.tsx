@@ -201,6 +201,22 @@ export default function ProductPage() {
     url: `${SITE_URL}/produtos/${product.handle}`,
   };
 
+  const breadcrumbJsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Catálogo", item: `${SITE_URL}/linhas` },
+      ...(collection
+        ? [{ "@type": "ListItem", position: 2, name: parentLabel, item: `${SITE_URL}${parentRoute}` }]
+        : []),
+      {
+        "@type": "ListItem",
+        position: collection ? 3 : 2,
+        name: product.title,
+        item: `${SITE_URL}/produtos/${product.handle}`,
+      },
+    ],
+  };
   const installationConfig = getInstallationConfig(
     resolveInstallationType(collection?.handle, product.title),
   );
