@@ -505,7 +505,7 @@ function PartnerDrawer({
                 type="number" min={0} max={100} step="0.5"
                 value={discount}
                 onChange={(e) => setDiscount(e.target.value)}
-                placeholder="Vazio = usa default do tier"
+                placeholder="Vazio = usa o padrão do nível"
                 className="h-11 rounded-none border-western-stone-warm/25"
               />
             </div>
