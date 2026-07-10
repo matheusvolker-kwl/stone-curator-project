@@ -32,6 +32,7 @@ import ProductInUse from "@/components/product/ProductInUse";
 import WishlistButton from "@/components/product/WishlistButton";
 import Reveal from "@/components/shared/Reveal";
 import { InstallationSection } from "@/components/product/InstallationModule";
+import StickyBuyBarLab from "@/components/product/lab/StickyBuyBarLab";
 import {
   getInstallationConfig,
   resolveInstallationType,
