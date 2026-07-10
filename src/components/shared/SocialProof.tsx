@@ -63,9 +63,6 @@ export default function SocialProof({
   const monogramText = isDark ? "text-western-gold-soft" : "text-western-green-deep";
   const captionColor = isDark ? "text-western-cream" : "text-western-green-deep";
   const wordmarkColor = isDark ? "text-western-cream" : "text-western-green-deep";
-  const logoFilter = isDark
-    ? "brightness(0) saturate(100%) invert(96%) sepia(10%) saturate(220%) hue-rotate(350deg) brightness(103%) contrast(96%)"
-    : "brightness(0) saturate(100%) invert(15%) sepia(28%) saturate(900%) hue-rotate(95deg) brightness(70%) contrast(92%)";
 
   const avatarGroups = groups.filter(
     (g) => g === "celebridades" || g === "profissionais",
@@ -74,6 +71,7 @@ export default function SocialProof({
 
   const tierMax = compact ? "max-w-md md:max-w-lg" : "max-w-md md:max-w-2xl";
   const tileGap = compact ? "gap-3 md:gap-4" : "gap-4 md:gap-6";
+
   // Altura óptica base para logos (px). Wordmarks se alinham à mesma cap-height.
   const logoBaseH = compact ? { mobile: 20, desktop: 26 } : { mobile: 22, desktop: 30 };
   const logoMaxW = compact ? 130 : 150;
