@@ -114,8 +114,14 @@ export default function Contact() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [f, setF] = useState<ContactForm>(INITIAL);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
+  const captchaRef = useRef<InvisibleTurnstileHandle>(null);
+
 
   const setField = <K extends keyof ContactForm>(k: K, v: ContactForm[K]) =>
     setF((p) => ({ ...p, [k]: v }));
