@@ -129,16 +129,41 @@ export default function SocialProof({
 
   const renderMarca = (m: MarcaComLogo) => {
     const logo = LOGOS[m.slug];
+    const scale = m.logoScale ?? 1;
+    const hMobile = Math.round(logoBaseH.mobile * scale);
+    const hDesktop = Math.round(logoBaseH.desktop * scale);
     if (logo) {
       return (
-        <img src={logo} alt={m.nome} title={m.nome} loading="lazy" decoding="async"
-          style={{ filter: logoFilter }}
-          className="max-h-full max-w-full w-auto h-auto object-contain opacity-70 group-hover:opacity-100 transition-all duration-500 group-hover:scale-[1.04]" />
+        <img
+          src={logo}
+          alt={m.nome}
+          title={m.nome}
+          loading="lazy"
+          decoding="async"
+          style={{
+            filter: logoFilter,
+            height: `${hMobile}px`,
+            maxWidth: `${logoMaxW}px`,
+            ["--logo-h-md" as string]: `${hDesktop}px`,
+          }}
+          className="w-auto object-contain opacity-70 group-hover:opacity-100 transition-all duration-500 group-hover:scale-[1.04] md:h-[var(--logo-h-md)]"
+        />
       );
     }
+    // Wordmark — dimensionado para bater a cap-height aproximada (~0.72 * font-size).
+    const fontMobile = Math.round(hMobile / 0.72);
+    const fontDesktop = Math.round(hDesktop / 0.72);
     return (
-      <span title={m.nome}
-        className={`text-center font-display leading-tight ${wordmarkColor} opacity-70 group-hover:opacity-100 transition-all duration-500 ${compact ? "text-xs md:text-sm" : "text-sm md:text-base"}`}>
+      <span
+        title={m.nome}
+        style={{
+          fontSize: `${fontMobile}px`,
+          lineHeight: 1,
+          maxWidth: `${logoMaxW}px`,
+          ["--wm-fs-md" as string]: `${fontDesktop}px`,
+        }}
+        className={`text-center font-display leading-none ${wordmarkColor} opacity-70 group-hover:opacity-100 transition-all duration-500 md:text-[length:var(--wm-fs-md)]`}
+      >
         {m.nome}
       </span>
     );
