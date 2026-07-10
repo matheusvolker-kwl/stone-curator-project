@@ -72,10 +72,6 @@ export default function SocialProof({
   const tierMax = compact ? "max-w-md md:max-w-lg" : "max-w-md md:max-w-2xl";
   const tileGap = compact ? "gap-3 md:gap-4" : "gap-4 md:gap-6";
 
-  // Altura óptica base para logos (px). Wordmarks se alinham à mesma cap-height.
-  const logoBaseH = compact ? { mobile: 20, desktop: 26 } : { mobile: 22, desktop: 30 };
-  const logoMaxW = compact ? 130 : 150;
-  const logoGap = compact ? "gap-x-8 gap-y-5" : "gap-x-10 md:gap-x-14 gap-y-7";
 
   const renderTier = (pessoas: readonly PessoaComFoto[]) => (
     <ul className={`grid grid-cols-3 ${tileGap} ${tierMax} mx-auto`}>
