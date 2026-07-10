@@ -136,6 +136,12 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
   const [layout, setLayout] = useState<"cards" | "table">("cards");
   const [loadError, setLoadError] = useState(false);
   const [pendingStatus, setPendingStatus] = useState<{ p: Partner; status: Partner["status"] } | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [confirmRevokeOpen, setConfirmRevokeOpen] = useState(false);
+  const [tierChangeOpen, setTierChangeOpen] = useState(false);
+  const [bulkTier, setBulkTier] = useState<Tier>("light");
+  const [confirmTierOpen, setConfirmTierOpen] = useState(false);
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   const load = async () => {
     setLoading(true);
