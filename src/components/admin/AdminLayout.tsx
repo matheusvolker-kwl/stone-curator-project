@@ -97,6 +97,16 @@ export default function AdminLayout() {
         <nav className="flex-1 px-3 py-4 space-y-1">
           {items.map((it) => {
             const badge = it.badgeKey ? counts[it.badgeKey] : 0;
+            const badgeEl = badge > 0 && it.badgeKey ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="min-w-[20px] h-5 px-1.5 inline-flex items-center justify-center rounded-full bg-western-gold text-western-green-deep text-[10px] font-bold tabular-nums cursor-help">
+                    {badge > 99 ? "99+" : badge}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="right">{BADGE_HINT[it.badgeKey]}</TooltipContent>
+              </Tooltip>
+            ) : null;
             return (
               <NavLink
                 key={it.to}
@@ -112,11 +122,7 @@ export default function AdminLayout() {
               >
                 <it.icon className="h-4 w-4" />
                 <span className="flex-1">{it.label}</span>
-                {badge > 0 && (
-                  <span className="min-w-[20px] h-5 px-1.5 inline-flex items-center justify-center rounded-full bg-western-gold text-western-green-deep text-[10px] font-bold tabular-nums">
-                    {badge > 99 ? "99+" : badge}
-                  </span>
-                )}
+                {badgeEl}
               </NavLink>
             );
           })}
