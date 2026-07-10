@@ -164,6 +164,10 @@ export default function ConjuntoPage() {
   const { tipo, tamanho, nivel, leaf } = info;
   const faixa = faixaArea[tipo][tamanho];
   const tipoLbl = tipoLabels[tipo];
+  // Gender agreement: only "piscina" is feminine → "Pequena/Média/Grande"
+  const sizeLabel = tipo === "piscina"
+    ? { pequeno: "Pequena", medio: "Média", grande: "Grande" }[tamanho]
+    : tamanhoLabels[tamanho];
   const tipoVisual: TipoVisual = tipoVisualQP ?? tipo;
   const render = conjuntoRenders[leaf.handle] ?? nivelImage[nivel];
   const isSugestao = nivel === "equilibrada";
@@ -263,8 +267,8 @@ export default function ConjuntoPage() {
   return (
     <div className="surface-ivory min-h-screen relative">
       <Seo
-        title={`Conjunto ${leaf.nome} · ${tipoLbl} ${tamanhoLabels[tamanho]} · Western`}
-        description={`${leaf.subtitulo}. Composição ${nivelLabels[nivel].toLowerCase()} pronta para ${tipoLbl.toLowerCase()} — ${faixa}. Veja peças, preço e ajuste tudo peça por peça.`}
+        title={`Conjunto ${leaf.nome} · ${tipoLbl} ${sizeLabel} · Western`}
+        description={`${leaf.subtitulo} pronta para ${tipoLbl.toLowerCase()} de ${faixa.toLowerCase()}. Veja peças, preço e ajuste tudo peça por peça.`}
         path={`/conjuntos/${leaf.handle}`}
         ogType="product"
         image={render}
