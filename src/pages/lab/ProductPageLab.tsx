@@ -69,7 +69,7 @@ export default function ProductPageLab() {
   const [qty, setQty] = useState(1);
   const addItem = useCartStore((s) => s.addItem);
   const isLoadingCart = useCartStore((s) => s.isLoading);
-  const addBtnRef = useRef<HTMLButtonElement>(null);
+  const addBtnRef = useRef<HTMLElement>(null);
 
   const visibleOptions = useMemo(
     () =>
