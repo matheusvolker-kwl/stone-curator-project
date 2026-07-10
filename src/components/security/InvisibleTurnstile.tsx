@@ -8,7 +8,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 const TURNSTILE_SITE_KEY = "0x4AAAAAADvqfB5u6x5egdiF";
 const TURNSTILE_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
-interface TurnstileAPI {
+interface InvisibleTurnstileAPI {
   render: (
     el: HTMLElement,
     opts: {
@@ -17,24 +17,25 @@ interface TurnstileAPI {
       "expired-callback"?: () => void;
       "error-callback"?: () => void;
       "timeout-callback"?: () => void;
-      size?: "invisible" | "normal" | "compact" | "flexible";
-      appearance?: "always" | "execute" | "interaction-only";
-      execution?: "render" | "execute";
-      theme?: "light" | "dark" | "auto";
-      retry?: "auto" | "never";
+      size?: string;
+      appearance?: string;
+      execution?: string;
+      theme?: string;
+      retry?: string;
     },
   ) => string;
   execute: (widgetId: string) => void;
   remove: (widgetId: string) => void;
   reset: (widgetId?: string) => void;
-  getResponse: (widgetId?: string) => string | undefined;
+  getResponse?: (widgetId?: string) => string | undefined;
 }
 
-declare global {
-  interface Window {
-    turnstile?: TurnstileAPI;
-  }
+function ts(): InvisibleTurnstileAPI | undefined {
+  return typeof window === "undefined"
+    ? undefined
+    : (window as unknown as { turnstile?: InvisibleTurnstileAPI }).turnstile;
 }
+
 
 let scriptPromise: Promise<void> | null = null;
 
