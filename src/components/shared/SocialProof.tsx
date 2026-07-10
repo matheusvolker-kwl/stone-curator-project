@@ -27,26 +27,8 @@ function buildFotoMap(): Record<string, string> {
 }
 const FOTOS = buildFotoMap();
 
-const logoImages = import.meta.glob("../../assets/marcas/*.{svg,png,webp}", {
-  eager: true, query: "?url", import: "default",
-}) as Record<string, string>;
-const logoPointers = import.meta.glob("../../assets/marcas/*.{svg,png,webp}.asset.json", {
-  eager: true,
-}) as Record<string, { url?: string; default?: { url?: string } }>;
-function buildLogoMap(): Record<string, string> {
-  const map: Record<string, string> = {};
-  for (const [path, url] of Object.entries(logoImages)) {
-    const slug = (path.split("/").pop() ?? "").replace(/\.(svg|png|webp)$/i, "");
-    map[slug] = url as string;
-  }
-  for (const [path, mod] of Object.entries(logoPointers)) {
-    const slug = (path.split("/").pop() ?? "").replace(/\.(svg|png|webp)\.asset\.json$/i, "");
-    const url = mod?.url ?? mod?.default?.url;
-    if (url && !map[slug]) map[slug] = url;
-  }
-  return map;
-}
-const LOGOS = buildLogoMap();
+// (Logos de marcas descontinuados: renderizamos wordmark tipográfico padronizado.)
+
 
 function iniciais(nome: string): string {
   const limpo = nome.replace(/\(.*?\)/g, "").trim();
