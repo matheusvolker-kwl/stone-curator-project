@@ -246,17 +246,8 @@ export default function ProductPageLab() {
               onChange={setActiveImage}
               productTitle={product.title}
             />
-            {/* Link fino modelo 3D */}
-            <a
-              href={m3dUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-gold transition-colors"
-            >
-              <Box className="h-3 w-3" />
-              Modelo 3D SketchUp — {m3dIsProductSpecific ? "baixar .skp" : "3D Warehouse"}
-            </a>
           </div>
+
 
           {/* Details */}
           <div className="md:py-2 text-western-green-deep min-w-0">
