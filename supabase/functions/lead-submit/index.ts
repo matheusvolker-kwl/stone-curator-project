@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
     return json(405, { ok: false, error: "method_not_allowed" });
   }
 
-  let body: { token?: string; lead?: Record<string, unknown> };
+  let body: { token?: string; lead?: Record<string, unknown>; hp?: string };
   try {
     body = await req.json();
   } catch {
@@ -71,16 +71,31 @@ Deno.serve(async (req) => {
   }
 
   const token = typeof body?.token === "string" ? body.token : "";
+  const honeypot = typeof body?.hp === "string" ? body.hp : "";
   const lead = (body?.lead ?? {}) as Record<string, unknown>;
-  if (!token) return json(400, { ok: false, error: "missing_token" });
+
+  // Honeypot: if a bot fills the hidden field, silently accept and drop.
+  if (honeypot.trim().length > 0) {
+    console.warn("lead-submit honeypot triggered", { origem: lead?.origem });
+    return json(200, { ok: true, id: "hp" });
+  }
 
   const ip =
     req.headers.get("CF-Connecting-IP") ||
     (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() ||
     null;
 
-  const captcha = await verifyCaptcha(token, ip);
-  if (!captcha.ok) return json(captcha.status, { ok: false, error: captcha.error });
+  // Captcha is best-effort: if the widget failed client-side (no token),
+  // we still accept the lead — honeypot + server validation are the fallback.
+  if (token) {
+    const captcha = await verifyCaptcha(token, ip);
+    if (!captcha.ok) {
+      console.warn("lead-submit captcha rejected, accepting via fallback", { origem: lead?.origem });
+    }
+  } else {
+    console.warn("lead-submit no captcha token, accepting via honeypot fallback", { origem: lead?.origem });
+  }
+
 
   // ---- Validation + sanitization (mirrors RLS) ----
   const type = typeof lead.type === "string" ? lead.type : "";
