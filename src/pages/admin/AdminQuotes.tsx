@@ -230,7 +230,7 @@ export default function AdminQuotes() {
     );
 
   return (
-    <div>
+    <div className={selectedIds.size > 0 ? "pb-28 sm:pb-24" : undefined}>
       <p className="text-eyebrow mb-3">Comercial</p>
       <div className="w-12 h-px bg-western-gold mb-6" />
       <h1 className="font-display text-3xl mb-2">Orçamentos</h1>
@@ -265,71 +265,151 @@ export default function AdminQuotes() {
 
       {/* Lista */}
       <div className="space-y-2">
-        {filtered.length === 0 && (
+        {filtered.length === 0 ? (
           <div className="border border-dashed border-western-stone-warm/25 bg-white p-10 text-center text-western-stone-warm">
             Nenhum orçamento neste filtro.
           </div>
+        ) : (
+          <div className="flex items-center gap-3 px-2 pb-1 border-b border-western-stone-warm/15">
+            <Checkbox
+              checked={allFilteredSelected ? true : someFilteredSelected ? "indeterminate" : false}
+              onCheckedChange={(v) => toggleAllFiltered(v === true)}
+              aria-label="Selecionar todos (filtro atual)"
+            />
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
+              {selectedIds.size > 0 ? `${selectedIds.size} selecionado(s)` : "Selecionar todos (filtro atual)"}
+            </span>
+          </div>
         )}
-        {filtered.map((r) => (
-          <Link
-            key={r.lead.id}
-            to={`/admin/orcamentos/${r.lead.id}`}
-            className="block border border-western-stone-warm/15 bg-white hover:border-western-gold/60 transition-colors"
-          >
-            <div className="p-4 md:p-5 grid md:grid-cols-[180px_1fr_auto] gap-4 items-center">
-              {/* Status + número + data */}
-              <div className="space-y-2">
-                <span
-                  className={`inline-flex px-2 py-1 border font-mono text-[10px] uppercase tracking-[0.18em] ${QUOTE_STATUS_CLS[r.thread.status]}`}
-                >
-                  {QUOTE_STATUS_LABEL[r.thread.status]}
-                </span>
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
-                  Nº {r.payload.numero ?? r.lead.id.slice(0, 5).toUpperCase()}
-                </p>
-                <p className="text-[10px] font-mono text-western-stone-warm/70">
-                  {new Date(r.lead.created_at).toLocaleString("pt-BR")}
-                </p>
+        {filtered.map((r) => {
+          const checked = selectedIds.has(r.lead.id);
+          return (
+            <div
+              key={r.lead.id}
+              className={`flex items-stretch border bg-white hover:border-western-gold/60 transition-colors ${checked ? "border-western-gold/60 bg-western-gold/5" : "border-western-stone-warm/15"}`}
+            >
+              <div
+                className="pl-3 pr-1 flex items-center"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Checkbox
+                  checked={checked}
+                  onCheckedChange={(v) => toggleOne(r.lead.id, v === true)}
+                  aria-label={`Selecionar orçamento ${r.payload.numero ?? r.lead.id.slice(0, 5)}`}
+                />
               </div>
+              <Link
+                to={`/admin/orcamentos/${r.lead.id}`}
+                className="flex-1 block"
+              >
+                <div className="p-4 md:p-5 grid md:grid-cols-[180px_1fr_auto] gap-4 items-center">
+                  {/* Status + número + data */}
+                  <div className="space-y-2">
+                    <span
+                      className={`inline-flex px-2 py-1 border font-mono text-[10px] uppercase tracking-[0.18em] ${QUOTE_STATUS_CLS[r.thread.status]}`}
+                    >
+                      {QUOTE_STATUS_LABEL[r.thread.status]}
+                    </span>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
+                      Nº {r.payload.numero ?? r.lead.id.slice(0, 5).toUpperCase()}
+                    </p>
+                    <p className="text-[10px] font-mono text-western-stone-warm/70">
+                      {new Date(r.lead.created_at).toLocaleString("pt-BR")}
+                    </p>
+                  </div>
 
-              {/* Cliente + resumo */}
-              <div className="min-w-0">
-                <p className="font-display text-lg text-western-green-deep">
-                  {r.lead.nome || r.lead.empresa || r.lead.email || "(sem nome)"}
-                </p>
-                <div className="text-xs text-western-stone-warm mt-1 flex flex-wrap gap-x-4 gap-y-1">
-                  {r.lead.empresa && (
-                    <span className="inline-flex items-center gap-1">
-                      <Building2 className="h-3 w-3" /> {r.lead.empresa}
-                    </span>
-                  )}
-                  {r.lead.email && (
-                    <span className="inline-flex items-center gap-1">
-                      <Mail className="h-3 w-3" /> {r.lead.email}
-                    </span>
-                  )}
-                  {r.lead.telefone && (
-                    <span className="inline-flex items-center gap-1">
-                      <Phone className="h-3 w-3" /> {r.lead.telefone}
-                    </span>
-                  )}
+                  {/* Cliente + resumo */}
+                  <div className="min-w-0">
+                    <p className="font-display text-lg text-western-green-deep">
+                      {r.lead.nome || r.lead.empresa || r.lead.email || "(sem nome)"}
+                    </p>
+                    <div className="text-xs text-western-stone-warm mt-1 flex flex-wrap gap-x-4 gap-y-1">
+                      {r.lead.empresa && (
+                        <span className="inline-flex items-center gap-1">
+                          <Building2 className="h-3 w-3" /> {r.lead.empresa}
+                        </span>
+                      )}
+                      {r.lead.email && (
+                        <span className="inline-flex items-center gap-1">
+                          <Mail className="h-3 w-3" /> {r.lead.email}
+                        </span>
+                      )}
+                      {r.lead.telefone && (
+                        <span className="inline-flex items-center gap-1">
+                          <Phone className="h-3 w-3" /> {r.lead.telefone}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-western-green-deep mt-2">
+                      {r.payload.items?.length ?? 0}{" "}
+                      {r.payload.items?.length === 1 ? "item" : "itens"} ·{" "}
+                      <span className="font-mono">
+                        {r.payload.subtotal > 0
+                          ? formatBRL(r.payload.subtotal, r.payload.currency || "BRL")
+                          : "—"}
+                      </span>
+                    </p>
+                  </div>
+
+                  <ArrowRight className="hidden md:block h-4 w-4 text-western-stone-warm" />
                 </div>
-                <p className="text-sm text-western-green-deep mt-2">
-                  {r.payload.items?.length ?? 0}{" "}
-                  {r.payload.items?.length === 1 ? "item" : "itens"} ·{" "}
-                  <span className="font-mono">
-                    {r.payload.subtotal > 0
-                      ? formatBRL(r.payload.subtotal, r.payload.currency || "BRL")
-                      : "—"}
-                  </span>
-                </p>
-              </div>
-
-              <ArrowRight className="hidden md:block h-4 w-4 text-western-stone-warm" />
+              </Link>
             </div>
-          </Link>
-        ))}
+          );
+        })}
       </div>
+
+      {selectedIds.size > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-western-stone-warm/30 bg-western-cream/98 backdrop-blur px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] sm:sticky sm:bottom-4 sm:mt-6 sm:border sm:shadow-md">
+          <div className="max-w-6xl mx-auto flex flex-wrap items-center gap-2 sm:gap-3">
+            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-western-green-deep">
+              {selectedIds.size} selecionado(s)
+            </span>
+            <div className="flex-1" />
+            <Button
+              onClick={() => setConfirmArchiveOpen(true)}
+              disabled={archiving || deleting}
+              className="h-9 rounded-none bg-western-green-deep hover:bg-western-green-mid text-western-cream font-mono text-[11px] uppercase tracking-[0.18em]"
+            >
+              {archiving ? <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" /> : <Archive className="h-3.5 w-3.5 mr-2" />} Arquivar
+            </Button>
+            <Button
+              onClick={() => setConfirmDeleteOpen(true)}
+              disabled={archiving || deleting}
+              className="h-9 rounded-none bg-red-700 hover:bg-red-800 text-white font-mono text-[11px] uppercase tracking-[0.18em]"
+            >
+              {deleting ? <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" /> : <Trash2 className="h-3.5 w-3.5 mr-2" />} Excluir
+            </Button>
+            <Button
+              onClick={clearSelection}
+              variant="ghost"
+              className="h-9 rounded-none font-mono text-[11px] uppercase tracking-[0.18em]"
+            >
+              <X className="h-3.5 w-3.5 mr-1" /> Limpar
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <ConfirmDialog
+        open={confirmArchiveOpen}
+        onOpenChange={setConfirmArchiveOpen}
+        title={`Arquivar ${selectedIds.size} orçamento(s)?`}
+        description="Eles somem da lista padrão mas continuam acessíveis pelo filtro Arquivado. Nada é apagado."
+        confirmLabel={archiving ? "Arquivando…" : "Arquivar"}
+        onConfirm={handleArchiveSelected}
+      />
+
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        title={`Excluir ${selectedIds.size} orçamento(s) e todo o histórico?`}
+        description="Não tem volta. Os orçamentos selecionados, propostas, mensagens e PDFs vinculados serão apagados."
+        confirmLabel={deleting ? "Excluindo…" : "Excluir"}
+        danger
+        onConfirm={handleDeleteSelected}
+      />
     </div>
   );
 }
+
