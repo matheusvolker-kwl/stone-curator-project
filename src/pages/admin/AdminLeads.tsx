@@ -16,6 +16,8 @@ export default function AdminLeads() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadNonce, setReloadNonce] = useState(0);
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [qInput, setQInput] = useState("");
   const [q, setQ] = useState(""); // valor com debounce
