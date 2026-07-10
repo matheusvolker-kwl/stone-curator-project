@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Check, X, Phone, Search, Download, Eye, Save, ShieldCheck, LayoutGrid, Table as TableIcon, ExternalLink } from "lucide-react";
+import { Loader2, Check, X, Phone, Search, Download, Eye, Save, ShieldCheck, LayoutGrid, Table as TableIcon, ExternalLink, ShieldX, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
