@@ -401,6 +401,18 @@ export default function ProductPageLab() {
                     />
                   </div>
 
+                  {/* Modelo 3D — botão secundário */}
+                  <a
+                    href={m3dUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex w-full sm:w-auto items-center justify-center gap-2 h-11 px-5 border border-western-green-deep/30 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+                  >
+                    <Box className="h-4 w-4" />
+                    {m3dIsProductSpecific ? "Baixar modelo 3D (.skp)" : "Abrir no 3D Warehouse"}
+                  </a>
+
+
                   {/* Linha de confiança */}
                   <p className="mt-5 font-sans text-[12.5px] text-western-stone-warm leading-relaxed flex flex-wrap items-center gap-x-2 gap-y-1">
                     <span className="inline-flex items-center gap-1.5">
