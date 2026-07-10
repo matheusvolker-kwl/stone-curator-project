@@ -191,7 +191,7 @@ export default function SocialProof({
           <p className={`text-center font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-6 md:mb-7`}>{SOCIAL_PROOF_LABELS.marcas}</p>
           <ul className={`flex flex-wrap items-center justify-center max-w-full ${logoGap}`}>
             {(SOCIAL_PROOF.marcas as readonly MarcaComLogo[]).map((m) => (
-              <li key={m.slug} className={`group flex items-center justify-center ${logoH} ${compact ? "w-28 md:w-32" : "w-32 md:w-40"} shrink-0`}>
+              <li key={m.slug} className="group flex items-center justify-center shrink-0">
                 {renderMarca(m)}
               </li>
             ))}
