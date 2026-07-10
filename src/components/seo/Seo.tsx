@@ -21,7 +21,7 @@ export default function Seo({ title, description, path, ogType = "website", imag
   const blocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
   return (
-    <Helmet>
+    <Helmet defer={false}>
       <title>{title}</title>
       <meta name="description" content={desc} />
       <link rel="canonical" href={url} />
