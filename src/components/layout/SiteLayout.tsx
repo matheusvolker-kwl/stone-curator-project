@@ -6,6 +6,7 @@ import CartDrawer from "./CartDrawer";
 import TopBar from "./TopBar";
 import WhatsAppFAB from "./WhatsAppFAB";
 import AudienceOverlay from "@/components/funnel/AudienceOverlay";
+import CartReminderPill from "@/components/cart/CartReminderPill";
 import { useCartSync } from "@/hooks/useCartSync";
 
 export default function SiteLayout() {
@@ -34,8 +35,10 @@ export default function SiteLayout() {
       </main>
       <Footer />
       <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
+      <CartReminderPill cartOpen={cartOpen} />
       <WhatsAppFAB />
       <AudienceOverlay />
     </div>
   );
 }
+
