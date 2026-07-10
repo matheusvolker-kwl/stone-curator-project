@@ -166,9 +166,9 @@ export default function SocialProof({
       {showMarcas && (
         <div className={avatarGroups.length ? "mt-1" : ""}>
           <p className={`text-center font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-6 md:mb-7`}>{SOCIAL_PROOF_LABELS.marcas}</p>
-          <ul className={`flex flex-wrap items-center justify-center max-w-full ${logoGap}`}>
+          <ul className="grid grid-cols-2 gap-x-6 gap-y-5 md:flex md:flex-wrap md:items-center md:justify-center md:gap-x-10 lg:gap-x-14 md:gap-y-6 max-w-full">
             {(SOCIAL_PROOF.marcas as readonly MarcaComLogo[]).map((m) => (
-              <li key={m.slug} className="group flex items-center justify-center shrink-0">
+              <li key={m.slug} className="group flex items-center justify-center">
                 {renderMarca(m)}
               </li>
             ))}
