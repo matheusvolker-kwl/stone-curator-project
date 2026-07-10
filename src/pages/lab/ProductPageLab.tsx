@@ -418,7 +418,7 @@ export default function ProductPageLab() {
                     <span className="inline-flex items-center gap-1.5">
                       <MapPin className="h-3.5 w-3.5 text-western-gold" />
                       <span>
-                        <span className="text-western-green-deep">+1.000 peças</span> instaladas Brasil afora
+                        <span className="text-western-green-deep">+1.000 peças</span> vendidas Brasil afora
                       </span>
                     </span>
                     <span className="opacity-40">·</span>
