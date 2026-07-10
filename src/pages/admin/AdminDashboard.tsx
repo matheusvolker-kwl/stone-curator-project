@@ -126,7 +126,7 @@ export default function AdminDashboard() {
     setCounts({
       orcamentosNovos: orcNovosRes.count ?? 0,
       pedidoNovo7d: pedidoNovo7Res.count ?? 0,
-      credPendentes: credPendRes.count ?? 0,
+      credPendentes: credPendRes.error ? 0 : ((credPendRes.data as { id: string }[] | null)?.length ?? 0),
       partnerSignup7d: partnerSignup7Res.count ?? 0,
       inboxTotal: inboxTotalRes.count ?? 0,
       leadsMonth: leadsMonthRes.count ?? 0,
