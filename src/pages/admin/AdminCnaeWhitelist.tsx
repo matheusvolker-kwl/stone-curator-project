@@ -26,6 +26,7 @@ export default function AdminCnaeWhitelist() {
   const [filter, setFilter] = useState<Tier | "todos">("todos");
   const [novo, setNovo] = useState({ codigo: "", tier: "verde" as Tier, descricao: "" });
   const [saving, setSaving] = useState(false);
+  const [pendingTier, setPendingTier] = useState<{ codigo: string; tier: Tier } | null>(null);
 
   const load = async () => {
     setLoading(true);
