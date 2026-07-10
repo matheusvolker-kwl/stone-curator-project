@@ -89,7 +89,7 @@ export default function AdminDashboard() {
     ] = await Promise.all([
       supabase.from("quote_threads").select("id", { count: "exact", head: true }).eq("status", "novo"),
       supabase.from("leads").select("id", { count: "exact", head: true }).eq("type", "pedido_novo").gte("created_at", sevenDays),
-      supabase.from("credenciamentos").select("id", { count: "exact", head: true }).eq("status_manual", "pendente"),
+      supabase.from("credenciamentos").select("id").eq("status_manual", "pendente"),
       supabase.from("leads").select("id", { count: "exact", head: true }).eq("type", "partner_signup").gte("created_at", sevenDays),
       supabase.from("leads").select("id", { count: "exact", head: true })
         .in("type", ["pedido_novo", "contato", "visita", "partner_signup", "newsletter"]),
