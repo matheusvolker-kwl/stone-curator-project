@@ -42,21 +42,21 @@ export default function CartReminderPill({ cartOpen }: { cartOpen: boolean }) {
 
   return (
     <div
-      className={`md:hidden fixed left-0 right-0 z-30 pointer-events-none transition-all duration-300 ${
+      className={`md:hidden fixed left-3 z-30 pointer-events-none transition-all duration-300 ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
       }`}
       style={{
-        bottom: "calc(0.75rem + var(--sticky-buy-bar-h, 0px) + env(safe-area-inset-bottom, 0px))",
+        bottom: "calc(1.25rem + var(--sticky-buy-bar-h, 0px) + env(safe-area-inset-bottom, 0px))",
       }}
       aria-hidden={!visible}
     >
-      <div className="pointer-events-auto mx-auto max-w-[92%] w-fit">
-        <div className="flex items-center gap-2 pl-3 pr-1 py-1.5 bg-western-green-deep text-western-cream shadow-[0_10px_30px_-12px_rgba(15,40,24,0.6)] border border-western-gold/25">
-          <ShoppingBag className="h-3.5 w-3.5 text-western-gold-soft" />
+      <div className="pointer-events-auto w-fit max-w-[calc(100vw-5.5rem)]">
+        <div className="flex items-center gap-2 pl-3 pr-1 py-1.5 bg-western-green-deep text-western-cream shadow-[0_10px_30px_-12px_rgba(15,40,24,0.6)] border border-western-gold/25 rounded-full">
+          <ShoppingBag className="h-3.5 w-3.5 text-western-gold-soft shrink-0" />
           <button
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent("western:open-cart"))}
-            className="font-mono text-[11px] uppercase tracking-[0.18em] py-1 pr-2"
+            className="font-mono text-[11px] uppercase tracking-[0.18em] py-1 pr-2 whitespace-nowrap"
           >
             {totalItems} no orçamento
             <span className="mx-2 text-western-gold-soft/60">·</span>
