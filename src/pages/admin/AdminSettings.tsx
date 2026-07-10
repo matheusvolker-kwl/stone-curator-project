@@ -93,7 +93,7 @@ function TierDefaultsTab() {
 
   return (
     <div>
-      <p className="text-western-stone-warm mb-6 text-sm">Esses valores se aplicam automaticamente a todos os parceiros do tier (a menos que haja override individual em /admin/parceiros).</p>
+      <p className="text-western-stone-warm mb-6 text-sm">Esses valores se aplicam automaticamente a todos os parceiros do nível (a menos que haja desconto personalizado individual em /admin/parceiros).</p>
       <div className="grid sm:grid-cols-2 gap-4">
         {ensured.map((t) => (
           <div key={t.tier} className="border border-western-stone-warm/20 bg-white p-5">
