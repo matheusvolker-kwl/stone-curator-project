@@ -12,8 +12,52 @@ import { groupAcabamentoBundles } from "./bundles";
 import { filterPublicCatalog } from "./filters";
 import type { WooCategory, WooProduct, WooVariation } from "./types";
 
-// ─── Cache (per page-load, short) ────────────────────────────────────────────
+// ─── Cache (memory + persistent localStorage SWR) ────────────────────────────
 const CATALOG_TTL_MS = 60_000;
+const PERSIST_TTL_MS = 10 * 60_000; // 10 min
+const PERSIST_KEY = "western-catalog-v1";
+const PERSIST_CATS_KEY = "western-categories-v1";
+
+function readPersist<T>(key: string, ttlMs: number): { data: T; fresh: boolean } | null {
+  try {
+    if (typeof localStorage === "undefined") return null;
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { t: number; d: T };
+    if (!parsed || typeof parsed.t !== "number") return null;
+    const age = Date.now() - parsed.t;
+    // Return even if stale — SWR pattern. Drop if extremely old (>24h).
+    if (age > 24 * 60 * 60_000) return null;
+    return { data: parsed.d, fresh: age < ttlMs };
+  } catch {
+    return null;
+  }
+}
+
+function writePersist<T>(key: string, data: T) {
+  try {
+    if (typeof localStorage === "undefined") return;
+    localStorage.setItem(key, JSON.stringify({ t: Date.now(), d: data }));
+  } catch {
+    /* quota / private mode — ignore */
+  }
+}
+
+export function clearCatalogCache() {
+  try {
+    localStorage.removeItem(PERSIST_KEY);
+    localStorage.removeItem(PERSIST_CATS_KEY);
+  } catch {
+    /* ignore */
+  }
+  catalogPromise = null;
+  catalogExpires = 0;
+  categoriesPromise = null;
+  categoriesExpires = 0;
+  listingCatalogMemory = null;
+  listingCatalogPromise = null;
+  listingCatalogExpires = 0;
+}
 
 let catalogPromise: Promise<WooProduct[]> | null = null;
 let catalogExpires = 0;
@@ -44,18 +88,25 @@ let categoriesExpires = 0;
 async function getAllCategories(): Promise<WooCategory[]> {
   const now = Date.now();
   if (categoriesPromise && categoriesExpires > now) return categoriesPromise;
-  categoriesPromise = wooFetch<WooCategory[]>({
-    path: "products/categories",
-    params: { per_page: 100, hide_empty: true },
-  });
+  const cached = readPersist<WooCategory[]>(PERSIST_CATS_KEY, PERSIST_TTL_MS);
+  categoriesPromise = (async () => {
+    const res = await wooFetch<WooCategory[]>({
+      path: "products/categories",
+      params: { per_page: 100, hide_empty: true },
+    });
+    writePersist(PERSIST_CATS_KEY, res);
+    return res;
+  })();
   categoriesExpires = now + CATALOG_TTL_MS;
-  try {
-    return await categoriesPromise;
-  } catch (e) {
+  categoriesPromise.catch(() => {
     categoriesPromise = null;
     categoriesExpires = 0;
-    throw e;
+  });
+  if (cached) {
+    // SWR: return cached immediately, revalidate in background.
+    return cached.data;
   }
+  return categoriesPromise;
 }
 
 async function getVariationsFor(p: WooProduct): Promise<WooVariation[]> {
@@ -75,6 +126,7 @@ async function getVariationsFor(p: WooProduct): Promise<WooVariation[]> {
 // ─── Listing catalog (NO variation fetches) ──────────────────────────────────
 // Used by every list/grid path. Cards don't need variation-level data.
 
+let listingCatalogMemory: ShopifyProductNode[] | null = null;
 let listingCatalogPromise: Promise<ShopifyProductNode[]> | null = null;
 let listingCatalogExpires = 0;
 
@@ -85,22 +137,47 @@ function buildListingCatalogSync(products: WooProduct[]): ShopifyProductNode[] {
   return [...adaptedGroups, ...adaptedOthers];
 }
 
-async function getListingCatalog(): Promise<ShopifyProductNode[]> {
-  const now = Date.now();
-  if (listingCatalogPromise && listingCatalogExpires > now) return listingCatalogPromise;
-  listingCatalogPromise = (async () => {
+function revalidateListingCatalog(): Promise<ShopifyProductNode[]> {
+  const p = (async () => {
     const raw = await getAllPublicProducts();
-    return buildListingCatalogSync(raw);
+    const adapted = buildListingCatalogSync(raw);
+    listingCatalogMemory = adapted;
+    writePersist(PERSIST_KEY, adapted);
+    return adapted;
   })();
-  listingCatalogExpires = now + CATALOG_TTL_MS;
-  try {
-    return await listingCatalogPromise;
-  } catch (e) {
+  listingCatalogPromise = p;
+  listingCatalogExpires = Date.now() + CATALOG_TTL_MS;
+  p.catch(() => {
     listingCatalogPromise = null;
     listingCatalogExpires = 0;
-    throw e;
-  }
+  });
+  return p;
 }
+
+async function getListingCatalog(): Promise<ShopifyProductNode[]> {
+  const now = Date.now();
+  if (listingCatalogMemory && listingCatalogExpires > now) return listingCatalogMemory;
+  if (listingCatalogPromise && listingCatalogExpires > now) return listingCatalogPromise;
+
+  // Try persistent cache first (SWR).
+  const cached = readPersist<ShopifyProductNode[]>(PERSIST_KEY, PERSIST_TTL_MS);
+  if (cached) {
+    listingCatalogMemory = cached.data;
+    listingCatalogExpires = now + CATALOG_TTL_MS;
+    // If stale, revalidate in background.
+    if (!cached.fresh) revalidateListingCatalog().catch(() => {});
+    return cached.data;
+  }
+  // No cache — must block on network.
+  return revalidateListingCatalog();
+}
+
+function hasCachedListing(): boolean {
+  if (listingCatalogMemory) return true;
+  const cached = readPersist<ShopifyProductNode[]>(PERSIST_KEY, PERSIST_TTL_MS);
+  return !!cached;
+}
+
 
 // ─── Public API (mirrors shopify/queries.ts) ─────────────────────────────────
 
