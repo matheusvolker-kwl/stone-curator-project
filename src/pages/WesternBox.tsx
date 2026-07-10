@@ -467,7 +467,7 @@ function MidBuyStrip() {
 // PAGE
 // ---------------------------------------------------------------------------
 export default function WesternBox() {
-  const [acabamentoAtivo, setAcabamentoAtivo] = useState<(typeof ACABAMENTOS)[number]["id"]>("quartzo");
+  const [acabamentoAtivo, setAcabamentoAtivo] = useState<(typeof ACABAMENTOS)[number]["id"]>("moledo");
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const ativo = ACABAMENTOS.find((a) => a.id === acabamentoAtivo)!;
   const topBuyRef = useRef<HTMLDivElement>(null);
