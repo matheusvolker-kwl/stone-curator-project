@@ -30,7 +30,7 @@ import {
   focusFirstInvalid,
 } from "@/lib/forms/br";
 import { submitContactLead } from "@/lib/leads";
-import TurnstileWidget from "@/components/security/TurnstileWidget";
+import InvisibleTurnstile, { type InvisibleTurnstileHandle } from "@/components/security/InvisibleTurnstile";
 
 const waUrl = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
   "Olá Western! Gostaria de conversar com a fábrica."
@@ -114,8 +114,9 @@ export default function Contact() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [honeypot, setHoneypot] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
+  const captchaRef = useRef<InvisibleTurnstileHandle>(null);
 
   const setField = <K extends keyof ContactForm>(k: K, v: ContactForm[K]) =>
     setF((p) => ({ ...p, [k]: v }));
@@ -135,11 +136,10 @@ export default function Contact() {
       return;
     }
     setErrors({});
-    if (!captchaToken) {
-      toast.error("Confirme que você não é um robô.");
-      return;
-    }
     setLoading(true);
+    // Best-effort captcha: get a token if possible, but never block on it.
+    // Honeypot + server validation are the real spam gates.
+    const token = (await captchaRef.current?.getToken(3500).catch(() => null)) ?? null;
     const res = await submitContactLead({
       nome: parsed.data.nome,
       email: parsed.data.email ?? "",
@@ -148,9 +148,8 @@ export default function Contact() {
       mensagem: parsed.data.mensagem,
       origem: "site/contato",
       payload: parsed.data.assunto ? { assunto: parsed.data.assunto } : {},
-    }, captchaToken);
+    }, token, { honeypot });
     setLoading(false);
-    setCaptchaToken(null);
     if (!res.ok) {
       toast.error("Não foi possível enviar sua mensagem.", { description: res.error });
       return;
@@ -158,6 +157,7 @@ export default function Contact() {
     setSuccess(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
 
   return (
     <div className="surface-ivory">
@@ -397,11 +397,23 @@ export default function Contact() {
                   </div>
                 </div>
 
-                <TurnstileWidget
-                  onToken={setCaptchaToken}
-                  onExpire={() => setCaptchaToken(null)}
-                  className="mt-6"
-                />
+                {/* Honeypot — invisível ao usuário, atrai bots. */}
+                <div aria-hidden="true" className="absolute -left-[9999px] top-auto w-px h-px overflow-hidden">
+                  <label>
+                    Não preencha este campo
+                    <input
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={honeypot}
+                      onChange={(e) => setHoneypot(e.target.value)}
+                      name="website"
+                    />
+                  </label>
+                </div>
+
+                <InvisibleTurnstile ref={captchaRef} />
+
 
                 <Button
                   type="submit"
