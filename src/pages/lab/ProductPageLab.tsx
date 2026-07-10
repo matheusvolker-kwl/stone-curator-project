@@ -10,10 +10,10 @@ import {
   ChevronRight,
   Loader2,
   ArrowRight,
-  Star,
   Box,
   Lock,
   MessageCircle,
+  MapPin,
 } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { toast } from "sonner";
@@ -246,17 +246,8 @@ export default function ProductPageLab() {
               onChange={setActiveImage}
               productTitle={product.title}
             />
-            {/* Link fino modelo 3D */}
-            <a
-              href={m3dUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-gold transition-colors"
-            >
-              <Box className="h-3 w-3" />
-              Modelo 3D SketchUp — {m3dIsProductSpecific ? "baixar .skp" : "3D Warehouse"}
-            </a>
           </div>
+
 
           {/* Details */}
           <div className="md:py-2 text-western-green-deep min-w-0">
@@ -410,17 +401,25 @@ export default function ProductPageLab() {
                     />
                   </div>
 
+                  {/* Modelo 3D — botão secundário */}
+                  <a
+                    href={m3dUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex w-full sm:w-auto items-center justify-center gap-2 h-11 px-5 border border-western-green-deep/30 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+                  >
+                    <Box className="h-4 w-4" />
+                    {m3dIsProductSpecific ? "Baixar modelo 3D (.skp)" : "Abrir no 3D Warehouse"}
+                  </a>
+
+
                   {/* Linha de confiança */}
                   <p className="mt-5 font-sans text-[12.5px] text-western-stone-warm leading-relaxed flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <span className="inline-flex items-center gap-1">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className="h-3 w-3 fill-western-gold text-western-gold" />
-                      ))}
-                    </span>
-                    <span>
-                      Especificada por <span className="text-western-green-deep">Faisal</span>,{" "}
-                      <span className="text-western-green-deep">Hayasaki</span> e{" "}
-                      <span className="text-western-green-deep">Luidi</span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin className="h-3.5 w-3.5 text-western-gold" />
+                      <span>
+                        <span className="text-western-green-deep">+1.000 peças</span> instaladas Brasil afora
+                      </span>
                     </span>
                     <span className="opacity-40">·</span>
                     <span>Garantia {BUSINESS.garantiaLabel}</span>
