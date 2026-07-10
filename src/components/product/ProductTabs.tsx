@@ -12,7 +12,9 @@ interface Props {
   dims: { c: string; l: string; a: string } | null;
   fichaRows: Array<{ label: string; value: string }>;
   modelo3dValue?: string;
+  hideModelo3d?: boolean;
 }
+
 
 const COMPOSICAO = [
   {
@@ -47,21 +49,24 @@ export default function ProductTabs({
   dims,
   fichaRows,
   modelo3dValue,
+  hideModelo3d = false,
 }: Props) {
   const url = modelo3dValue?.trim() || BUSINESS.sketchupWarehouse;
   const isProductSpecific = !!modelo3dValue?.trim();
+
+  const tabs = [
+    { v: "descricao", l: "Descrição" },
+    { v: "specs", l: "Especificações" },
+    ...(hideModelo3d ? [] : [{ v: "modelo3d", l: "Modelo 3D" }]),
+    { v: "entrega", l: "Entrega" },
+  ];
 
   return (
     <section className="surface-paper border-t border-western-stone-warm/15 py-12 md:py-16">
       <div className="container-western">
         <Tabs defaultValue="descricao" className="w-full">
           <TabsList className="h-auto bg-transparent rounded-none p-0 border-b border-western-stone-warm/20 w-full justify-start gap-0 mb-10 overflow-x-auto">
-            {[
-              { v: "descricao", l: "Descrição" },
-              { v: "specs", l: "Especificações" },
-              { v: "modelo3d", l: "Modelo 3D" },
-              { v: "entrega", l: "Entrega" },
-            ].map((t) => (
+            {tabs.map((t) => (
               <TabsTrigger
                 key={t.v}
                 value={t.v}
@@ -71,6 +76,7 @@ export default function ProductTabs({
               </TabsTrigger>
             ))}
           </TabsList>
+
 
           {/* DESCRIÇÃO */}
           <TabsContent value="descricao" className="mt-0">
