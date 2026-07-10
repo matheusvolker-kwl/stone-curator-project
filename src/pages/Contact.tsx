@@ -137,25 +137,38 @@ export default function Contact() {
     }
     setErrors({});
     setLoading(true);
-    // Best-effort captcha: get a token if possible, but never block on it.
-    // Honeypot + server validation are the real spam gates.
-    const token = (await captchaRef.current?.getToken(3500).catch(() => null)) ?? null;
-    const res = await submitContactLead({
-      nome: parsed.data.nome,
-      email: parsed.data.email ?? "",
-      telefone: parsed.data.telefone ?? "",
-      cidade: parsed.data.cidade || undefined,
-      mensagem: parsed.data.mensagem,
-      origem: "site/contato",
-      payload: parsed.data.assunto ? { assunto: parsed.data.assunto } : {},
-    }, token, { honeypot });
-    setLoading(false);
-    if (!res.ok) {
-      toast.error("Não foi possível enviar sua mensagem.", { description: res.error });
-      return;
+    // Fire-and-forget captcha: never block on it. Race against a short delay so
+    // slow/blocked Turnstile scripts can't hang the form. Honeypot + server
+    // validation are the real spam gates.
+    const tokenPromise = captchaRef.current?.getToken(700).catch(() => null) ?? Promise.resolve(null);
+    const token = await Promise.race<string | null>([
+      tokenPromise,
+      new Promise<null>((resolve) => window.setTimeout(() => resolve(null), 800)),
+    ]).catch(() => null);
+    try {
+      const res = await submitContactLead({
+        nome: parsed.data.nome,
+        email: parsed.data.email ?? "",
+        telefone: parsed.data.telefone ?? "",
+        cidade: parsed.data.cidade || undefined,
+        mensagem: parsed.data.mensagem,
+        origem: "site/contato",
+        payload: parsed.data.assunto ? { assunto: parsed.data.assunto } : {},
+      }, token, { honeypot });
+      if (!res.ok) {
+        toast.error("Não foi possível enviar sua mensagem.", { description: res.error });
+        return;
+      }
+      setSuccess(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      console.error("contact submit failed", err);
+      toast.error("Não foi possível enviar sua mensagem.", {
+        description: "Verifique sua conexão e tente novamente.",
+      });
+    } finally {
+      setLoading(false);
     }
-    setSuccess(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
 
