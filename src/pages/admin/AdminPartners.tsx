@@ -489,18 +489,18 @@ function PartnerDrawer({
             </div>
 
             <div>
-              <Label className="text-eyebrow mb-2 block">Tier</Label>
+              <Label className="text-eyebrow mb-2 block">Nível</Label>
               <Select value={tier} onValueChange={(v) => setTier(v as Tier)}>
                 <SelectTrigger className="h-11 rounded-none border-western-stone-warm/25"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {TIERS.map((t) => <SelectItem key={t} value={t}>{TIER_LABEL[t]}</SelectItem>)}
                 </SelectContent>
               </Select>
-              <p className="text-xs text-western-stone-warm mt-2">O tier define os defaults de desconto, boleto e parcelas (configuráveis em Configurações).</p>
+              <p className="text-xs text-western-stone-warm mt-2">O nível define os padrões de desconto, boleto e parcelas (configuráveis em Configurações).</p>
             </div>
 
             <div>
-              <Label className="text-eyebrow mb-2 block">Desconto override (%) — opcional</Label>
+              <Label className="text-eyebrow mb-2 block">Desconto personalizado (%) — opcional</Label>
               <Input
                 type="number" min={0} max={100} step="0.5"
                 value={discount}
