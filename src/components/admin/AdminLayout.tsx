@@ -170,8 +170,28 @@ export default function AdminLayout() {
         })}
       </div>
 
+      {/* Mobile: rodapé com e-mail + Sair (versão fixa embaixo) */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-western-green-deep border-t border-western-gold/15 px-4 py-2 flex items-center justify-between gap-3">
+        <p className="text-[10px] font-mono text-western-cream/50 truncate flex-1">
+          {user?.email}
+        </p>
+        <button
+          onClick={() => navigate("/")}
+          className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.18em] text-western-cream/70 hover:text-western-gold-soft"
+          aria-label="Ver site"
+        >
+          <ExternalLink className="h-3.5 w-3.5" /> Site
+        </button>
+        <button
+          onClick={async () => { await signOut(); navigate("/", { replace: true }); }}
+          className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.18em] text-western-cream/70 hover:text-red-300"
+        >
+          <LogOut className="h-3.5 w-3.5" /> Sair
+        </button>
+      </div>
+
       {/* Content */}
-      <main className="flex-1 bg-western-ivory text-western-green-deep min-w-0 mt-[52px] md:mt-0">
+      <main className="flex-1 bg-western-ivory text-western-green-deep min-w-0 mt-[52px] md:mt-0 pb-14 md:pb-0">
         <div className="p-6 md:p-10 max-w-7xl">
           <Outlet />
         </div>
