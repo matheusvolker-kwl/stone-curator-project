@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Mail, Phone, Search, Download, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, Mail, Phone, Search, Download, ChevronLeft, ChevronRight, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
 } from "@/components/ui/sheet";
 import { toCSV, downloadCSV, chipCls, KV, type Lead, LEAD_TYPE_LABEL, LEAD_TYPE_BADGE_CLS } from "@/components/admin/adminUtils";
 import { LoadError } from "@/components/admin/LoadError";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
+import { toast } from "sonner";
 
 const PAGE_SIZE = 50;
 const KNOWN_TYPES = ["partner_signup", "newsletter", "amostras", "visita", "contato", "pedido_novo", "b2c_orcamento", "pdf_pedido"];
@@ -24,6 +27,9 @@ export default function AdminLeads() {
   const [page, setPage] = useState(0);
   const [drawer, setDrawer] = useState<Lead | null>(null);
   const [exporting, setExporting] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Debounce da busca
   useEffect(() => {
@@ -33,6 +39,9 @@ export default function AdminLeads() {
 
   // Reset de página quando o filtro muda
   useEffect(() => { setPage(0); }, [typeFilter]);
+
+  // Limpa seleção quando filtro/busca/página/reload muda (contexto mudou)
+  useEffect(() => { setSelectedIds(new Set()); }, [typeFilter, q, page, reloadNonce]);
 
   useEffect(() => {
     let cancelled = false;
@@ -84,6 +93,28 @@ export default function AdminLeads() {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const types = useMemo(() => KNOWN_TYPES, []);
 
+  const allOnPageSelected = leads.length > 0 && leads.every((l) => selectedIds.has(l.id));
+  const someOnPageSelected = leads.some((l) => selectedIds.has(l.id));
+
+  const toggleOne = (id: string, checked: boolean) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(id); else next.delete(id);
+      return next;
+    });
+  };
+
+  const toggleAllOnPage = (checked: boolean) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (checked) leads.forEach((l) => next.add(l.id));
+      else leads.forEach((l) => next.delete(l.id));
+      return next;
+    });
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
+
   const handleExportCsv = async () => {
     setExporting(true);
     try {
@@ -117,8 +148,48 @@ export default function AdminLeads() {
     }
   };
 
+  const handleExportSelectedCsv = () => {
+    if (selectedIds.size === 0) return;
+    const rows = leads
+      .filter((l) => selectedIds.has(l.id))
+      .map((l) => l as unknown as Record<string, unknown>);
+    downloadCSV(`leads-selecionados-${new Date().toISOString().slice(0, 10)}.csv`, toCSV(rows));
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedIds.size === 0) return;
+    setDeleting(true);
+    const ids = Array.from(selectedIds);
+    try {
+      const results = await Promise.allSettled(
+        ids.map((id) => supabase.from("leads").delete().eq("id", id))
+      );
+      let ok = 0;
+      let fail = 0;
+      results.forEach((r) => {
+        if (r.status === "fulfilled" && !r.value.error) ok++;
+        else fail++;
+      });
+      if (fail === 0) {
+        toast.success(`${ok} lead(s) excluído(s).`);
+      } else if (ok === 0) {
+        toast.error(`Falha ao excluir ${fail} lead(s).`);
+      } else {
+        toast.warning(`${ok} excluído(s), ${fail} falharam.`);
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Erro ao excluir leads.");
+    } finally {
+      setDeleting(false);
+      setConfirmDeleteOpen(false);
+      clearSelection();
+      setReloadNonce((n) => n + 1);
+    }
+  };
+
   return (
-    <div>
+    <div className={selectedIds.size > 0 ? "pb-28 sm:pb-24" : undefined}>
       <p className="text-eyebrow mb-3">Leads</p>
       <div className="w-12 h-px bg-western-gold mb-6" />
       <h1 className="font-display text-3xl mb-2">Caixa de entrada</h1>
@@ -149,48 +220,81 @@ export default function AdminLeads() {
         <LoadError onRetry={() => setReloadNonce((n) => n + 1)} />
       ) : (
         <div className="space-y-2">
-          {leads.length === 0 && <p className="text-western-stone-warm py-10 text-center">Nenhum lead nesse filtro.</p>}
+          {leads.length === 0 ? (
+            <p className="text-western-stone-warm py-10 text-center">Nenhum lead nesse filtro.</p>
+          ) : (
+            <div className="flex items-center gap-3 px-2 pb-1 border-b border-western-stone-warm/15">
+              <Checkbox
+                checked={allOnPageSelected ? true : someOnPageSelected ? "indeterminate" : false}
+                onCheckedChange={(v) => toggleAllOnPage(v === true)}
+                aria-label="Selecionar todos nesta página"
+              />
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
+                {selectedIds.size > 0 ? `${selectedIds.size} selecionado(s)` : "Selecionar todos (página)"}
+              </span>
+            </div>
+          )}
           {leads.map((l) => {
             const badgeCls = LEAD_TYPE_BADGE_CLS[l.type] ?? "border-western-stone-warm/30 text-western-stone-warm bg-white";
             const label = LEAD_TYPE_LABEL[l.type] ?? l.type;
             const downloads = (l.payload as Record<string, unknown> | null)?.downloads as number | undefined;
             const activity = l.last_activity_at ?? l.created_at;
+            const checked = selectedIds.has(l.id);
             return (
-              <button key={l.id} onClick={() => setDrawer(l)} className="w-full text-left border border-western-stone-warm/20 bg-white p-4 flex flex-wrap gap-x-6 gap-y-1 items-start hover:border-western-gold/60 transition-colors">
-                <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] flex-shrink-0 ${badgeCls}`}>{label}</span>
-                <div className="flex-1 min-w-[200px]">
-                  <p className="text-western-green-deep font-medium">
-                    {l.nome || l.empresa || l.email || "(sem nome)"}
-                    {downloads && downloads > 1 && <span className="ml-2 text-[10px] font-mono text-western-gold">×{downloads} downloads</span>}
-                  </p>
-                  <p className="text-xs text-western-stone-warm mt-0.5 flex flex-wrap gap-x-4">
-                    {l.email && (
-                      <a
-                        href={`mailto:${l.email}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-1 hover:text-western-gold hover:underline"
-                      >
-                        <Mail className="h-3 w-3" /> {l.email}
-                      </a>
-                    )}
-                    {l.telefone && (
-                      <a
-                        href={`https://wa.me/${l.telefone.replace(/\D/g, "")}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-1 hover:text-western-gold hover:underline"
-                      >
-                        <Phone className="h-3 w-3" /> {l.telefone}
-                      </a>
-                    )}
-                    {(l.cidade || l.uf) && <span>{[l.cidade, l.uf].filter(Boolean).join("/")}</span>}
-                    {l.origem && <span className="text-western-stone-warm/60">{l.origem}</span>}
-                  </p>
-                  {l.mensagem && <p className="text-xs text-western-stone-warm mt-1 italic line-clamp-1">"{l.mensagem}"</p>}
+              <div
+                key={l.id}
+                className={`border bg-white flex items-start hover:border-western-gold/60 transition-colors ${checked ? "border-western-gold/60 bg-western-gold/5" : "border-western-stone-warm/20"}`}
+              >
+                <div
+                  className="pl-3 pr-1 py-4 flex items-center"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Checkbox
+                    checked={checked}
+                    onCheckedChange={(v) => toggleOne(l.id, v === true)}
+                    aria-label={`Selecionar lead de ${l.nome || l.email || "sem nome"}`}
+                  />
                 </div>
-                <span className="text-[10px] font-mono text-western-stone-warm/70 whitespace-nowrap">{new Date(activity).toLocaleString("pt-BR")}</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setDrawer(l)}
+                  className="flex-1 text-left p-4 pl-2 flex flex-wrap gap-x-6 gap-y-1 items-start"
+                >
+                  <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] flex-shrink-0 ${badgeCls}`}>{label}</span>
+                  <div className="flex-1 min-w-[200px]">
+                    <p className="text-western-green-deep font-medium">
+                      {l.nome || l.empresa || l.email || "(sem nome)"}
+                      {downloads && downloads > 1 && <span className="ml-2 text-[10px] font-mono text-western-gold">×{downloads} downloads</span>}
+                    </p>
+                    <p className="text-xs text-western-stone-warm mt-0.5 flex flex-wrap gap-x-4">
+                      {l.email && (
+                        <a
+                          href={`mailto:${l.email}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-1 hover:text-western-gold hover:underline"
+                        >
+                          <Mail className="h-3 w-3" /> {l.email}
+                        </a>
+                      )}
+                      {l.telefone && (
+                        <a
+                          href={`https://wa.me/${l.telefone.replace(/\D/g, "")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-1 hover:text-western-gold hover:underline"
+                        >
+                          <Phone className="h-3 w-3" /> {l.telefone}
+                        </a>
+                      )}
+                      {(l.cidade || l.uf) && <span>{[l.cidade, l.uf].filter(Boolean).join("/")}</span>}
+                      {l.origem && <span className="text-western-stone-warm/60">{l.origem}</span>}
+                    </p>
+                    {l.mensagem && <p className="text-xs text-western-stone-warm mt-1 italic line-clamp-1">"{l.mensagem}"</p>}
+                  </div>
+                  <span className="text-[10px] font-mono text-western-stone-warm/70 whitespace-nowrap">{new Date(activity).toLocaleString("pt-BR")}</span>
+                </button>
+              </div>
             );
           })}
         </div>
@@ -211,6 +315,48 @@ export default function AdminLeads() {
           </div>
         </div>
       )}
+
+      {selectedIds.size > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-western-stone-warm/30 bg-western-cream/98 backdrop-blur px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] sm:sticky sm:bottom-4 sm:mt-6 sm:border sm:shadow-md">
+          <div className="max-w-6xl mx-auto flex flex-wrap items-center gap-2 sm:gap-3">
+            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-western-green-deep">
+              {selectedIds.size} selecionado(s)
+            </span>
+            <div className="flex-1" />
+            <Button
+              onClick={handleExportSelectedCsv}
+              variant="outline"
+              className="h-9 rounded-none border-western-stone-warm/25 font-mono text-[11px] uppercase tracking-[0.18em]"
+            >
+              <Download className="h-3.5 w-3.5 mr-2" /> Exportar CSV
+            </Button>
+            <Button
+              onClick={() => setConfirmDeleteOpen(true)}
+              disabled={deleting}
+              className="h-9 rounded-none bg-red-700 hover:bg-red-800 text-white font-mono text-[11px] uppercase tracking-[0.18em]"
+            >
+              {deleting ? <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" /> : <Trash2 className="h-3.5 w-3.5 mr-2" />} Excluir
+            </Button>
+            <Button
+              onClick={clearSelection}
+              variant="ghost"
+              className="h-9 rounded-none font-mono text-[11px] uppercase tracking-[0.18em]"
+            >
+              <X className="h-3.5 w-3.5 mr-1" /> Limpar
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        title={`Excluir ${selectedIds.size} lead(s) permanentemente?`}
+        description="Não tem volta. Os leads selecionados e seu histórico serão apagados."
+        confirmLabel={deleting ? "Excluindo…" : "Excluir"}
+        danger
+        onConfirm={handleDeleteSelected}
+      />
 
       <Sheet open={!!drawer} onOpenChange={(o) => !o && setDrawer(null)}>
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
