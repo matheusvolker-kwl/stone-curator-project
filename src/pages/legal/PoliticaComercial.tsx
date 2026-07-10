@@ -5,10 +5,11 @@ export default function PoliticaComercial() {
   return (
     <LegalPage eyebrow="Política comercial" titulo="Como compramos e vendemos." atualizadoEm="maio de 2026" seoPath="/politica-comercial" seoTitle="Política comercial — Western" seoDescription="Regras B2B da Western: pedido mínimo, condições de pagamento, credenciamento e catálogo profissional.">
       <p>
-        A Western Pools opera exclusivamente no canal B2B, atendendo profissionais e empresas
-        do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a laguistas,
-        jardineiros, garden centers, lojas e construtoras. O acesso a tabela de preços, condições
-        e modelos 3D ocorre após credenciamento.
+        O catálogo Western Pools com preço de atacado opera no canal B2B, atendendo profissionais
+        e empresas do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a
+        laguistas, jardineiros, garden centers, lojas e construtoras. O acesso à tabela de preços,
+        condições e modelos 3D ocorre após credenciamento. A Western Box de amostras é a única
+        exceção: aberta também a clientes finais, sem cadastro B2B.
       </p>
 
       <h2>Pedido mínimo</h2>
