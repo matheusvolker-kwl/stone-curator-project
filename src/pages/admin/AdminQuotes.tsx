@@ -110,6 +110,16 @@ export default function AdminQuotes() {
       </div>
     );
 
+  if (loadError)
+    return (
+      <div>
+        <p className="text-eyebrow mb-3">Comercial</p>
+        <div className="w-12 h-px bg-western-gold mb-6" />
+        <h1 className="font-display text-3xl mb-6">Orçamentos</h1>
+        <LoadError onRetry={load} />
+      </div>
+    );
+
   return (
     <div>
       <p className="text-eyebrow mb-3">Comercial</p>
