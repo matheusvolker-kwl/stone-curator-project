@@ -207,6 +207,82 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
     await setStatus(p, status);
   };
 
+  // ── Multi-seleção (só parceiros APROVADOS) ─────────────────────────────
+  useEffect(() => { setSelectedIds(new Set()); }, [statusFilter, segmentFilter, ufFilter, q, layout]);
+
+  const selectableRows = useMemo(
+    () => filtered.filter((p) => p.status === "approved"),
+    [filtered]
+  );
+  const selectableIds = useMemo(() => selectableRows.map((p) => p.id), [selectableRows]);
+  const allSelected = selectableIds.length > 0 && selectableIds.every((id) => selectedIds.has(id));
+  const someSelected = selectableIds.some((id) => selectedIds.has(id));
+  const indeterminate = someSelected && !allSelected;
+
+  const toggleOne = (id: string) =>
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  const toggleAll = () =>
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (allSelected) selectableIds.forEach((id) => next.delete(id));
+      else selectableIds.forEach((id) => next.add(id));
+      return next;
+    });
+  const clearSelection = () => setSelectedIds(new Set());
+
+  const selectedRows = useMemo(
+    () => partners.filter((p) => selectedIds.has(p.id) && p.status === "approved"),
+    [partners, selectedIds]
+  );
+
+  const handleBulkExport = () => {
+    if (selectedRows.length === 0) return;
+    downloadCSV(
+      `parceiros-selecionados-${new Date().toISOString().slice(0, 10)}.csv`,
+      toCSV(selectedRows as unknown as Record<string, unknown>[])
+    );
+    toast.success(`${selectedRows.length} parceiro(s) exportados.`);
+  };
+
+  const handleBulkRevoke = async () => {
+    if (selectedRows.length === 0) { setConfirmRevokeOpen(false); return; }
+    setBulkBusy(true);
+    const results = await Promise.allSettled(
+      selectedRows.map((p) =>
+        supabase.from("partner_profiles").update({ status: "rejected", approved_at: null } as never).eq("id", p.id)
+      )
+    );
+    const ok = results.filter((x) => x.status === "fulfilled" && !(x as PromiseFulfilledResult<{ error: unknown }>).value.error).length;
+    const fail = results.length - ok;
+    setBulkBusy(false);
+    setConfirmRevokeOpen(false);
+    toast.success(`Acesso revogado de ${ok} parceiro(s).`, fail ? { description: `${fail} falharam.` } : undefined);
+    clearSelection();
+    await load();
+  };
+
+  const handleBulkTierChange = async () => {
+    if (selectedRows.length === 0) { setConfirmTierOpen(false); return; }
+    setBulkBusy(true);
+    const results = await Promise.allSettled(
+      selectedRows.map((p) =>
+        supabase.from("partner_profiles").update({ tier: bulkTier } as never).eq("id", p.id)
+      )
+    );
+    const ok = results.filter((x) => x.status === "fulfilled" && !(x as PromiseFulfilledResult<{ error: unknown }>).value.error).length;
+    const fail = results.length - ok;
+    setBulkBusy(false);
+    setConfirmTierOpen(false);
+    setTierChangeOpen(false);
+    toast.success(`${ok} parceiro(s) movidos para ${TIER_LABEL[bulkTier]}.`, fail ? { description: `${fail} falharam.` } : undefined);
+    clearSelection();
+    await load();
+  };
+
   if (loading) return <div className="py-20 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-western-gold" /></div>;
   if (loadError) {
     return (
