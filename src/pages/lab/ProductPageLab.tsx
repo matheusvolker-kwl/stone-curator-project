@@ -378,6 +378,7 @@ export default function ProductPageLab() {
                       </button>
                     </div>
                     <Button
+                      ref={addBtnRef}
                       onClick={handleAdd}
                       disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
                       className={`group flex-1 min-w-0 h-14 px-2 sm:px-4 font-mono font-bold text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] rounded-none transition-all motion-safe:active:translate-y-[1px] ${
