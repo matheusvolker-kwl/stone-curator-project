@@ -40,7 +40,7 @@ function matchAll(regex: RegExp, source: string): RegExpExecArray[] {
 }
 
 export function parseProductDescription(html?: string | null): ParsedDescription {
-  const empty: ParsedDescription = { aplicacoes: [], ficha: [], observacoes: [] };
+  const empty: ParsedDescription = { aplicacoes: [], ficha: [], embalado: [], observacoes: [] };
   if (!html) return empty;
 
   const result: ParsedDescription = { ...empty };
