@@ -412,15 +412,11 @@ export default function ProductPageLab() {
 
                   {/* Linha de confiança */}
                   <p className="mt-5 font-sans text-[12.5px] text-western-stone-warm leading-relaxed flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <span className="inline-flex items-center gap-1">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className="h-3 w-3 fill-western-gold text-western-gold" />
-                      ))}
-                    </span>
-                    <span>
-                      Especificada por <span className="text-western-green-deep">Faisal</span>,{" "}
-                      <span className="text-western-green-deep">Hayasaki</span> e{" "}
-                      <span className="text-western-green-deep">Luidi</span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin className="h-3.5 w-3.5 text-western-gold" />
+                      <span>
+                        <span className="text-western-green-deep">+1.000 peças</span> instaladas Brasil afora
+                      </span>
                     </span>
                     <span className="opacity-40">·</span>
                     <span>Garantia {BUSINESS.garantiaLabel}</span>
