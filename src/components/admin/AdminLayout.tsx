@@ -13,10 +13,24 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import logoBege from "@/assets/logo-horizontal-bege.png";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type BadgeKey = "orcamentos" | "credenciamentos" | "parceiros" | "leads";
 
+const BADGE_HINT: Record<BadgeKey, string> = {
+  orcamentos: "orçamentos em aberto",
+  credenciamentos: "cadastros aguardando análise",
+  parceiros: "parceiros aguardando aprovação",
+  leads: "novos nos últimos 7 dias",
+};
+
 const items: Array<{
+  to: string;
+  label: string;
+  icon: React.ElementType;
+  end?: boolean;
+  badgeKey?: BadgeKey;
+}> = [
   to: string;
   label: string;
   icon: React.ElementType;
