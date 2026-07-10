@@ -165,6 +165,30 @@ export default function AdminCnaeWhitelist() {
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        open={!!pendingTier}
+        onOpenChange={(o) => { if (!o) setPendingTier(null); }}
+        title="Mudar faixa deste CNAE?"
+        description={
+          pendingTier
+            ? `${formatCnae(pendingTier.codigo)} → ${pendingTier.tier.toUpperCase()}.\n\n${
+                pendingTier.tier === "verde"
+                  ? "VERDE aprova sozinho qualquer empresa com esse CNAE — principal OU secundário. Só libera, nunca reprova."
+                  : "Empresas com este CNAE passam a exigir análise manual (não aprovam sozinhas)."
+              }`
+            : ""
+        }
+        confirmLabel="Sim, aplicar"
+        danger={pendingTier?.tier === "verde"}
+        onConfirm={async () => {
+          if (!pendingTier) return;
+          const { codigo, tier } = pendingTier;
+          setPendingTier(null);
+          await updateTier(codigo, tier);
+          toast.success("Faixa atualizada.");
+        }}
+      />
     </div>
   );
 }
