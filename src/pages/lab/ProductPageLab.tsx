@@ -10,10 +10,10 @@ import {
   ChevronRight,
   Loader2,
   ArrowRight,
-  Star,
   Box,
   Lock,
   MessageCircle,
+  MapPin,
 } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { toast } from "sonner";
