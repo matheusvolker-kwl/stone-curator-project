@@ -49,6 +49,7 @@ const canais = [
     href: waUrl,
     cta: "Abrir conversa",
     destaque: true,
+    internal: false,
   },
   {
     eyebrow: "E-mail",
@@ -57,6 +58,7 @@ const canais = [
     icon: Mail,
     href: `mailto:${BUSINESS.emailComercial}`,
     cta: "Enviar e-mail",
+    internal: false,
   },
   {
     eyebrow: "Instagram",
@@ -65,6 +67,7 @@ const canais = [
     icon: Instagram,
     href: "https://instagram.com/westernpools",
     cta: "Seguir no Instagram",
+    internal: false,
   },
   {
     eyebrow: "Modelos 3D",
@@ -73,8 +76,18 @@ const canais = [
     icon: Box,
     href: BUSINESS.sketchupWarehouse,
     cta: "Abrir biblioteca",
+    internal: false,
   },
-];
+  {
+    eyebrow: "Ateliê",
+    titulo: "Visite o ateliê",
+    descricao: `${BUSINESS.cidadeAtelie}/${BUSINESS.ufAtelie} · Seg–Sex 9h–17h · Retirada até 16h`,
+    icon: MapPin,
+    href: "/visitar",
+    cta: "Agendar visita",
+    internal: true,
+  },
+] as const;
 
 // email OU telefone obrigatório — RLS exige ao menos um.
 const contactSchema = z
