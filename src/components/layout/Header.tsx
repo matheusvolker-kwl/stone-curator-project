@@ -456,7 +456,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 </NavLink>
               ))}
               <div className="h-px bg-western-gold/15 my-6" />
-              <div className="h-px bg-western-gold/15 my-6" />
+
               <p className="text-eyebrow mb-3 text-western-cream-muted">Parceiro</p>
               {session ? (
                 <>
