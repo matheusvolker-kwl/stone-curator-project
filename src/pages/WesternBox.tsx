@@ -579,10 +579,7 @@ export default function WesternBox() {
             </Reveal>
             <Reveal variant="fade-up" delay={100} duration={1000} distance={50}>
               <h2 className="font-display text-[clamp(2rem,5.5vw,4.75rem)] leading-[1] tracking-[-0.02em]">
-                A assinatura Western,<br />
-                <span className="italic font-light text-western-gold-soft">
-                  em quatro temperamentos.
-                </span>
+                A assinatura Western, <span className="italic font-light text-western-gold-soft">em quatro temperamentos.</span>
               </h2>
             </Reveal>
           </div>
