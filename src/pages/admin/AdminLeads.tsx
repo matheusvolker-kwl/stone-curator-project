@@ -139,7 +139,7 @@ export default function AdminLeads() {
           {exporting ? <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" /> : <Download className="h-3.5 w-3.5 mr-2" />} CSV
         </Button>
         <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-western-stone-warm">
-          {loading ? "…" : `${total} ${total === 1 ? "lead" : "leads"}`}
+          {loading ? "…" : loadError ? "—" : `${total} ${total === 1 ? "lead" : "leads"}`}
         </span>
       </div>
 
