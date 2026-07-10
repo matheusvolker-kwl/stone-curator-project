@@ -11,7 +11,7 @@ export default function DeliverySignals({ variant = "minimal" }: Props) {
     { Icon: Clock, label: `Pronto em ${BUSINESS.prazoProducaoDias} dias úteis` },
     {
       Icon: MapPin,
-      label: `Retirada em fábrica · ${BUSINESS.cidadeAtelie}/${BUSINESS.ufAtelie}`,
+      label: `Retirada no ateliê · ${BUSINESS.cidadeAtelie}/${BUSINESS.ufAtelie}`,
     },
   ];
   const extra = [

@@ -43,7 +43,7 @@ export function InstallationTrustStrip({
         <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
       </span>
       <span className="font-sans text-[13.5px] font-medium text-western-green-deep">
-        Fácil de instalar
+        Instalação assistida
       </span>
       <span className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-western-stone-warm">
         Nível {config.level} · {config.levelLabel}
@@ -100,7 +100,7 @@ export function InstallationSection({ config }: { config: InstallationConfig }) 
             id="instalacao-title"
             className="font-display text-3xl md:text-4xl leading-tight text-western-green-deep"
           >
-            Fácil de instalar
+            Instalação assistida
           </h2>
           <p className="mt-3 font-sans text-[15px] leading-relaxed text-western-stone-warm max-w-[62ch]">
             {subtitle}

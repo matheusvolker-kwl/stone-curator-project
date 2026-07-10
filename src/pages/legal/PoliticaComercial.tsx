@@ -13,8 +13,8 @@ export default function PoliticaComercial() {
 
       <h2>Pedido mínimo</h2>
       <p>
-        Pedido mínimo por nota: <strong>{BUSINESS.pedidoMinimoLabel}</strong>. Esse valor é
-        consistente em todo o site, em todo o catálogo e em todas as condições comerciais.
+        Pedido mínimo por nota: <strong>{BUSINESS.pedidoMinimoLabel}</strong>. Aplica-se a todo
+        o catálogo, independentemente da linha ou condição comercial.
       </p>
 
       <h2>Pagamento</h2>

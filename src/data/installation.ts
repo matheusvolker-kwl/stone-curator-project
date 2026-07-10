@@ -162,7 +162,7 @@ const CASCATA: InstallationConfig = {
   subtitle:
     "Recirculação em circuito fechado e registro para a queda. Elétrica por profissional.",
   facts: [
-    { label: "Tempo", value: "1 a 2 dias" },
+    { label: "Tempo", value: "Algumas horas · pronto em 1–2 dias" },
     { label: "Água", value: "Kit de recirculação" },
     { label: "Acompanha", value: "Bomba + manual + vídeo" },
   ],

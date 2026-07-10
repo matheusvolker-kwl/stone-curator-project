@@ -204,7 +204,7 @@ export const nivelMeta: Record<Nivel, NivelMeta> = {
   completa: {
     label: "Completo",
     tagline: "Alto impacto, leitura imersiva",
-    detalhe: "Composição mais robusta, pensada para projetos cenográficos e áreas amplas.",
+    detalhe: "Composição mais robusta, com densidade alta para valorizar áreas compactas.",
   },
 };
 
