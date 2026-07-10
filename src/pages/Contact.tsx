@@ -314,12 +314,12 @@ export default function Contact() {
                   Escreva pra gente
                 </h2>
                 <p className="mt-2 text-sm text-western-stone-warm">
-                  Retorno em até 1 dia útil. Preencha e-mail ou telefone — o que preferir.
+                  Retorno em até 1 dia útil (WhatsApp: até 1h útil).
                 </p>
 
                 <div className="mt-7 space-y-5">
                   <div>
-                    <FieldLabel htmlFor="nome">Nome</FieldLabel>
+                    <FieldLabel htmlFor="nome" required>Nome</FieldLabel>
                     <Input
                       id="nome"
                       name="nome"
@@ -338,7 +338,7 @@ export default function Contact() {
                   </div>
 
                   <div>
-                    <FieldLabel htmlFor="email">E-mail</FieldLabel>
+                    <FieldLabel htmlFor="email" hint="Informe pelo menos um: e-mail ou WhatsApp/telefone.">E-mail</FieldLabel>
                     <EmailInput
                       id="email"
                       name="email"
@@ -349,7 +349,7 @@ export default function Contact() {
                   </div>
 
                   <div>
-                    <FieldLabel htmlFor="telefone">WhatsApp / Telefone</FieldLabel>
+                    <FieldLabel htmlFor="telefone" hint="Ou informe o e-mail acima — basta um dos dois.">WhatsApp / Telefone</FieldLabel>
                     <PhoneInput
                       id="telefone"
                       name="telefone"
@@ -390,7 +390,7 @@ export default function Contact() {
                   </div>
 
                   <div>
-                    <FieldLabel htmlFor="mensagem">Mensagem</FieldLabel>
+                    <FieldLabel htmlFor="mensagem" required>Mensagem</FieldLabel>
                     <Textarea
                       id="mensagem"
                       name="mensagem"
@@ -445,8 +445,8 @@ export default function Contact() {
                 <p className="mt-4 flex items-start gap-2 font-mono text-[10px] leading-relaxed uppercase tracking-[0.16em] text-western-stone-warm/70">
                   <ShieldCheck className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" aria-hidden="true" />
                   <span>
-                    Ao enviar, você concorda em receber contato da Western. Seus dados ficam
-                    seguros e nunca são usados para spam.
+                    Ao enviar, você concorda em receber contato da Western e com a nossa{" "}
+                    <Link to="/privacidade" className="underline decoration-western-gold/50 underline-offset-2 hover:decoration-western-gold hover:text-western-green-deep">política de privacidade</Link>. Seus dados ficam seguros e nunca são usados para spam.
                   </span>
                 </p>
               </form>
