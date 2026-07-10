@@ -100,7 +100,14 @@ export const useCartStore = create<CartStore>()(
           }
         }
         set({ items: next });
-        notifyCartChanged();
+        const totalQty = newItems.reduce((s, i) => s + i.quantity, 0);
+        notifyCartChanged({
+          toastLabel:
+            newItems.length > 1
+              ? `${newItems.length} peças adicionadas ao orçamento`
+              : `${totalQty > 1 ? `${totalQty} ` : ""}Adicionada ao orçamento`,
+        });
+
       },
 
       updateQuantity: (variantId, quantity) => {
