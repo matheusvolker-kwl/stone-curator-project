@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Check, X, Phone, Search, Download, Eye, Save, ShieldCheck, LayoutGrid, Table as TableIcon, ExternalLink } from "lucide-react";
+import { Loader2, Check, X, Phone, Search, Download, Eye, Save, ShieldCheck, LayoutGrid, Table as TableIcon, ExternalLink, ShieldX, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
@@ -135,6 +136,12 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
   const [layout, setLayout] = useState<"cards" | "table">("cards");
   const [loadError, setLoadError] = useState(false);
   const [pendingStatus, setPendingStatus] = useState<{ p: Partner; status: Partner["status"] } | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [confirmRevokeOpen, setConfirmRevokeOpen] = useState(false);
+  const [tierChangeOpen, setTierChangeOpen] = useState(false);
+  const [bulkTier, setBulkTier] = useState<Tier>("light");
+  const [confirmTierOpen, setConfirmTierOpen] = useState(false);
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -200,6 +207,82 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
     await setStatus(p, status);
   };
 
+  // ── Multi-seleção (só parceiros APROVADOS) ─────────────────────────────
+  useEffect(() => { setSelectedIds(new Set()); }, [statusFilter, segmentFilter, ufFilter, q, layout]);
+
+  const selectableRows = useMemo(
+    () => filtered.filter((p) => p.status === "approved"),
+    [filtered]
+  );
+  const selectableIds = useMemo(() => selectableRows.map((p) => p.id), [selectableRows]);
+  const allSelected = selectableIds.length > 0 && selectableIds.every((id) => selectedIds.has(id));
+  const someSelected = selectableIds.some((id) => selectedIds.has(id));
+  const indeterminate = someSelected && !allSelected;
+
+  const toggleOne = (id: string) =>
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  const toggleAll = () =>
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (allSelected) selectableIds.forEach((id) => next.delete(id));
+      else selectableIds.forEach((id) => next.add(id));
+      return next;
+    });
+  const clearSelection = () => setSelectedIds(new Set());
+
+  const selectedRows = useMemo(
+    () => partners.filter((p) => selectedIds.has(p.id) && p.status === "approved"),
+    [partners, selectedIds]
+  );
+
+  const handleBulkExport = () => {
+    if (selectedRows.length === 0) return;
+    downloadCSV(
+      `parceiros-selecionados-${new Date().toISOString().slice(0, 10)}.csv`,
+      toCSV(selectedRows as unknown as Record<string, unknown>[])
+    );
+    toast.success(`${selectedRows.length} parceiro(s) exportados.`);
+  };
+
+  const handleBulkRevoke = async () => {
+    if (selectedRows.length === 0) { setConfirmRevokeOpen(false); return; }
+    setBulkBusy(true);
+    const results = await Promise.allSettled(
+      selectedRows.map((p) =>
+        supabase.from("partner_profiles").update({ status: "rejected", approved_at: null } as never).eq("id", p.id)
+      )
+    );
+    const ok = results.filter((x) => x.status === "fulfilled" && !(x as PromiseFulfilledResult<{ error: unknown }>).value.error).length;
+    const fail = results.length - ok;
+    setBulkBusy(false);
+    setConfirmRevokeOpen(false);
+    toast.success(`Acesso revogado de ${ok} parceiro(s).`, fail ? { description: `${fail} falharam.` } : undefined);
+    clearSelection();
+    await load();
+  };
+
+  const handleBulkTierChange = async () => {
+    if (selectedRows.length === 0) { setConfirmTierOpen(false); return; }
+    setBulkBusy(true);
+    const results = await Promise.allSettled(
+      selectedRows.map((p) =>
+        supabase.from("partner_profiles").update({ tier: bulkTier } as never).eq("id", p.id)
+      )
+    );
+    const ok = results.filter((x) => x.status === "fulfilled" && !(x as PromiseFulfilledResult<{ error: unknown }>).value.error).length;
+    const fail = results.length - ok;
+    setBulkBusy(false);
+    setConfirmTierOpen(false);
+    setTierChangeOpen(false);
+    toast.success(`${ok} parceiro(s) movidos para ${TIER_LABEL[bulkTier]}.`, fail ? { description: `${fail} falharam.` } : undefined);
+    clearSelection();
+    await load();
+  };
+
   if (loading) return <div className="py-20 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-western-gold" /></div>;
   if (loadError) {
     return (
@@ -210,7 +293,8 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
   }
 
   return (
-    <div>
+    <div className={selectedIds.size > 0 ? "pb-24 md:pb-0" : ""}>
+
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <div className="inline-flex border border-western-stone-warm/25">
           <button
@@ -273,6 +357,20 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
         </Button>
       </div>
 
+      {selectableRows.length > 0 && (
+        <div className="flex items-center gap-3 mb-3 px-3 py-2 border border-western-stone-warm/20 bg-western-paper/60">
+          <Checkbox
+            checked={allSelected ? true : indeterminate ? "indeterminate" : false}
+            onCheckedChange={toggleAll}
+            aria-label="Selecionar todos os aprovados"
+          />
+          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
+            Selecionar todos os aprovados no filtro ({selectableRows.length})
+            {selectedIds.size > 0 && ` · ${selectedIds.size} selecionado(s)`}
+          </span>
+        </div>
+      )}
+
       {layout === "cards" ? (
         <div className="space-y-3">
           {filtered.length === 0 && <p className="text-western-stone-warm py-10 text-center">Nenhum parceiro nesse filtro.</p>}
@@ -280,14 +378,27 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
             const pm = (p.payment_methods ?? {}) as { boleto?: boolean; kit_gratis?: boolean };
             const isAdminUser = adminIds.has(p.user_id);
             const hasCred = !!p.credenciamento_id;
+            const isApproved = p.status === "approved";
+            const selected = selectedIds.has(p.id);
             return (
-              <div key={p.id} className="border border-western-stone-warm/20 bg-white p-5">
+              <div key={p.id} className={`border bg-white p-5 ${selected ? "border-western-gold bg-western-gold/5" : "border-western-stone-warm/20"}`}>
                 <div className="flex flex-wrap items-start justify-between gap-4 mb-3">
-                  <div>
-                    <h3 className="font-display text-xl text-western-green-deep">{p.empresa || "—"}</h3>
-                    <p className="text-spec text-western-stone-warm mt-1">
-                      {[p.nome, p.cargo, p.segmento, [p.cidade, p.estado].filter(Boolean).join("/")].filter(Boolean).join(" · ")}
-                    </p>
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    {isApproved && (
+                      <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={selected}
+                          onCheckedChange={() => toggleOne(p.id)}
+                          aria-label={`Selecionar ${p.empresa ?? p.nome ?? ""}`}
+                        />
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <h3 className="font-display text-xl text-western-green-deep">{p.empresa || "—"}</h3>
+                      <p className="text-spec text-western-stone-warm mt-1">
+                        {[p.nome, p.cargo, p.segmento, [p.cidade, p.estado].filter(Boolean).join("/")].filter(Boolean).join(" · ")}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <StatusChip status={p.status} />
@@ -361,6 +472,14 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
           <table className="w-full text-sm">
             <thead className="bg-western-paper text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">
               <tr>
+                <th className="px-3 py-3 w-10">
+                  <Checkbox
+                    checked={allSelected ? true : indeterminate ? "indeterminate" : false}
+                    onCheckedChange={toggleAll}
+                    disabled={selectableIds.length === 0}
+                    aria-label="Selecionar todos"
+                  />
+                </th>
                 <th className="text-left px-4 py-3">Empresa</th>
                 <th className="text-left px-4 py-3">Tier</th>
                 <th className="text-left px-4 py-3">Desconto</th>
@@ -372,13 +491,21 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
             </thead>
             <tbody>
               {tableRows.length === 0 && (
-                <tr><td colSpan={7} className="px-4 py-10 text-center text-western-stone-warm">Nenhum parceiro aprovado.</td></tr>
+                <tr><td colSpan={8} className="px-4 py-10 text-center text-western-stone-warm">Nenhum parceiro aprovado.</td></tr>
               )}
               {tableRows.map((p) => {
                 const pm = (p.payment_methods ?? {}) as { boleto?: boolean; kit_gratis?: boolean };
                 const isAdminUser = adminIds.has(p.user_id);
+                const selected = selectedIds.has(p.id);
                 return (
-                  <tr key={p.id} className="border-t border-western-stone-warm/10 hover:bg-western-paper/50">
+                  <tr key={p.id} className={`border-t border-western-stone-warm/10 hover:bg-western-paper/50 ${selected ? "bg-western-gold/5" : ""}`}>
+                    <td className="px-3 py-3 align-top" onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={selected}
+                        onCheckedChange={() => toggleOne(p.id)}
+                        aria-label={`Selecionar ${p.empresa ?? ""}`}
+                      />
+                    </td>
                     <td className="px-4 py-3">
                       <p className="font-medium text-western-green-deep">{p.empresa || "—"}</p>
                       <p className="text-xs text-western-stone-warm">{[p.nome, p.cnpj].filter(Boolean).join(" · ")}</p>
@@ -405,6 +532,105 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
           <p className="px-4 py-2 text-[10px] text-western-stone-warm">* Desconto personalizado (sobrescreve o padrão do nível).</p>
         </div>
       )}
+
+      {selectedIds.size > 0 && (
+        <div className="fixed md:sticky bottom-0 md:bottom-4 left-0 right-0 md:left-auto md:right-auto z-30 md:mt-4 border-t md:border border-western-stone-warm/30 bg-western-cream md:bg-white shadow-lg md:shadow-md">
+          <div className="flex flex-wrap items-center gap-3 px-4 py-3">
+            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-western-green-deep">
+              {selectedIds.size} selecionado(s)
+            </span>
+            <div className="flex-1" />
+            <Button
+              onClick={handleBulkExport}
+              disabled={bulkBusy}
+              variant="outline"
+              className="h-9 rounded-none border-western-stone-warm/30 font-mono text-[11px] uppercase tracking-[0.18em]"
+            >
+              <Download className="h-3.5 w-3.5 mr-2" /> Exportar (CSV)
+            </Button>
+            <Button
+              onClick={() => setTierChangeOpen(true)}
+              disabled={bulkBusy}
+              variant="outline"
+              className="h-9 rounded-none border-western-stone-warm/30 font-mono text-[11px] uppercase tracking-[0.18em]"
+            >
+              <ChevronsUpDown className="h-3.5 w-3.5 mr-2" /> Mudar nível
+            </Button>
+            <Button
+              onClick={() => setConfirmRevokeOpen(true)}
+              disabled={bulkBusy}
+              className="h-9 rounded-none bg-red-700 text-white hover:bg-red-800 font-mono text-[11px] uppercase tracking-[0.18em]"
+            >
+              <ShieldX className="h-3.5 w-3.5 mr-2" /> Revogar acesso
+            </Button>
+            <Button
+              onClick={clearSelection}
+              disabled={bulkBusy}
+              variant="ghost"
+              className="h-9 rounded-none font-mono text-[11px] uppercase tracking-[0.18em] text-western-stone-warm"
+            >
+              <X className="h-3.5 w-3.5 mr-1" /> Limpar
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: escolher nível em lote */}
+      <Sheet open={tierChangeOpen} onOpenChange={(o) => { if (!o) setTierChangeOpen(false); }}>
+        <SheetContent className="w-full sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>Mudar nível de {selectedIds.size} parceiro(s)</SheetTitle>
+            <SheetDescription>Todos os parceiros selecionados passarão para o nível escolhido. Descontos personalizados individuais são mantidos.</SheetDescription>
+          </SheetHeader>
+          <div className="mt-6 space-y-4">
+            <div>
+              <Label className="text-eyebrow mb-2 block">Novo nível</Label>
+              <Select value={bulkTier} onValueChange={(v) => setBulkTier(v as Tier)}>
+                <SelectTrigger className="h-11 rounded-none border-western-stone-warm/25"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {TIERS.map((t) => <SelectItem key={t} value={t}>{TIER_LABEL[t]}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2 pt-4">
+              <Button
+                onClick={() => setTierChangeOpen(false)}
+                variant="outline"
+                className="flex-1 h-11 rounded-none font-mono text-[11px] uppercase tracking-[0.18em]"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={() => setConfirmTierOpen(true)}
+                className="flex-1 h-11 rounded-none bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-[11px] uppercase tracking-[0.18em]"
+              >
+                Aplicar
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <ConfirmDialog
+        open={confirmTierOpen}
+        onOpenChange={setConfirmTierOpen}
+        title={`Mudar ${selectedIds.size} parceiro(s) para ${TIER_LABEL[bulkTier]}?`}
+        description="Os padrões de desconto do novo nível passam a valer imediatamente para todos os selecionados."
+        confirmLabel={bulkBusy ? "Aplicando…" : "Aplicar"}
+        onConfirm={handleBulkTierChange}
+      />
+
+      <ConfirmDialog
+        open={confirmRevokeOpen}
+        onOpenChange={setConfirmRevokeOpen}
+        title={`Revogar o acesso de ${selectedIds.size} parceiro(s)?`}
+        description="Eles perdem imediatamente o acesso ao Programa Western Pro e ao catálogo de atacado. Você pode reverter individualmente depois."
+        confirmLabel={bulkBusy ? "Revogando…" : "Revogar acesso"}
+        danger
+        onConfirm={handleBulkRevoke}
+      />
+
+
 
       <PartnerDrawer
         partner={drawer}
