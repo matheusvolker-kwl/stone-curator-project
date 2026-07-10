@@ -91,7 +91,7 @@ export default function AdminLayout() {
         <div className="px-6 py-6 border-b border-western-gold/15">
           <img src={logoBege} alt="Western" className="h-10 w-auto mb-3" />
           <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-western-gold-soft">
-            Backoffice
+            Painel
           </p>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1">
