@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { clearCatalogCache } from "@/lib/woocommerce/queries";
+
 
 type PartnerStatus = "pending" | "approved" | "rejected" | null;
 
@@ -48,12 +50,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Listener FIRST (sync), then getSession
-    const { data: sub } = supabase.auth.onAuthStateChange((_evt, s) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((evt, s) => {
       setSession(s);
+      if (evt === "SIGNED_IN" || evt === "SIGNED_OUT") clearCatalogCache();
       if (s?.user?.id) setProfileLoading(true);
       // defer profile fetch to avoid deadlock
       setTimeout(() => loadProfile(s?.user?.id ?? null), 0);
     });
+
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       loadProfile(data.session?.user?.id ?? null).finally(() => setLoading(false));
