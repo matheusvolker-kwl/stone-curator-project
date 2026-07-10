@@ -293,7 +293,8 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
   }
 
   return (
-    <div>
+    <div className={selectedIds.size > 0 ? "pb-24 md:pb-0" : ""}>
+
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <div className="inline-flex border border-western-stone-warm/25">
           <button
