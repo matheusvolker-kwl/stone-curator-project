@@ -278,11 +278,19 @@ function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: 
                 className="h-12 border-red-700/30 text-red-800 hover:bg-red-50 rounded-none font-mono text-xs uppercase tracking-[0.22em]">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><ShieldX className="h-4 w-4 mr-2" /> Recusar</>}
               </Button>
-              <Button onClick={() => apply("aprovado")} disabled={saving}
-                className="h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid rounded-none font-mono text-xs uppercase tracking-[0.22em]">
+              <Button
+                onClick={() => apply("aprovado")}
+                disabled={saving || !cred.user_id}
+                className="h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid rounded-none font-mono text-xs uppercase tracking-[0.22em] disabled:opacity-50"
+              >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><ShieldCheck className="h-4 w-4 mr-2" /> Aprovar</>}
               </Button>
             </div>
+            {!cred.user_id && (
+              <p className="text-xs text-amber-800 bg-amber-50 border border-amber-300 p-2 -mt-2">
+                Cadastro sem conta vinculada — não é possível ativar acesso. O cliente precisa se cadastrar em /parceria primeiro.
+              </p>
+            )}
             <Button
               onClick={async () => {
                 setSaving(true);
