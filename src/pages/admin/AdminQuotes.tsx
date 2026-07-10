@@ -27,48 +27,57 @@ interface QuoteRow {
 export default function AdminQuotes() {
   const [rows, setRows] = useState<QuoteRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [statusFilter, setStatusFilter] = useState<"all" | QuoteStatus>("all");
   const [q, setQ] = useState("");
 
-  useEffect(() => {
-    (async () => {
-      const [{ data: leads }, { data: threads }] = await Promise.all([
-        supabase
-          .from("leads")
-          .select("*")
-          .eq("type", "orcamento")
-          .order("created_at", { ascending: false })
-          .limit(2000),
-        supabase.from("quote_threads").select("*"),
-      ]);
-      const threadByLead = new Map<string, QuoteThread>();
-      ((threads as QuoteThread[]) ?? []).forEach((t) => threadByLead.set(t.lead_id, t));
-      const built: QuoteRow[] = ((leads as Lead[]) ?? []).map((lead) => ({
-        lead,
-        thread:
-          threadByLead.get(lead.id) ??
-          ({
-            id: "",
-            lead_id: lead.id,
-            status: "novo",
-            notas: null,
-            pago_em: null,
-            forma_pagamento: null,
-            parcelas: null,
-            valor_final: null,
-            observacoes_venda: null,
-            archived_at: null,
-            created_at: lead.created_at,
-            updated_at: lead.created_at,
-          } as QuoteThread),
-        payload: (lead.payload as unknown as QuotePayload) ?? {
-          items: [], subtotal: 0, currency: "BRL",
-        },
-      }));
-      setRows(built);
+  const load = useCallback(async () => {
+    setLoading(true);
+    const [leadsRes, threadsRes] = await Promise.all([
+      supabase
+        .from("leads")
+        .select("*")
+        .eq("type", "orcamento")
+        .order("created_at", { ascending: false })
+        .limit(2000),
+      supabase.from("quote_threads").select("*"),
+    ]);
+    if (leadsRes.error || threadsRes.error) {
+      setLoadError(true);
+      setRows([]);
       setLoading(false);
-    })();
+      return;
+    }
+    const threadByLead = new Map<string, QuoteThread>();
+    ((threadsRes.data as QuoteThread[]) ?? []).forEach((t) => threadByLead.set(t.lead_id, t));
+    const built: QuoteRow[] = ((leadsRes.data as Lead[]) ?? []).map((lead) => ({
+      lead,
+      thread:
+        threadByLead.get(lead.id) ??
+        ({
+          id: "",
+          lead_id: lead.id,
+          status: "novo",
+          notas: null,
+          pago_em: null,
+          forma_pagamento: null,
+          parcelas: null,
+          valor_final: null,
+          observacoes_venda: null,
+          archived_at: null,
+          created_at: lead.created_at,
+          updated_at: lead.created_at,
+        } as QuoteThread),
+      payload: (lead.payload as unknown as QuotePayload) ?? {
+        items: [], subtotal: 0, currency: "BRL",
+      },
+    }));
+    setRows(built);
+    setLoadError(false);
+    setLoading(false);
   }, []);
+
+  useEffect(() => { load(); }, [load]);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: rows.length };
