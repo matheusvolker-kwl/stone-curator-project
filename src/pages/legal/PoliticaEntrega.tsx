@@ -5,7 +5,7 @@ export default function PoliticaEntrega() {
   return (
     <LegalPage eyebrow="Política de entrega" titulo="Como o pedido sai do ateliê." atualizadoEm="maio de 2026">
       <p>
-        A Western trabalha com retirada no ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}
+        A Western trabalha com retirada no ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}{" "}
         ou envio por transportadora contratada pelo parceiro. Não temos frota própria.
       </p>
 
@@ -27,7 +27,7 @@ export default function PoliticaEntrega() {
 
       <h2>Embalagem e proteção</h2>
       <p>
-        Cada peça é embalada individualmente em filme strech, papelão estruturado e cantoneiras
+        Cada peça é embalada individualmente em filme stretch, papelão estruturado e cantoneiras
         de proteção. Cascatas e peças grandes recebem pallet dedicado com cintas.
       </p>
 

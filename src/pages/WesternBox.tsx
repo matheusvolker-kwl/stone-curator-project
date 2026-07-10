@@ -764,8 +764,7 @@ export default function WesternBox() {
             </Reveal>
             <Reveal variant="fade-up" delay={100} duration={1000} distance={40}>
               <h2 className="font-display text-[clamp(1.85rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em] text-western-green-deep">
-                Inspiração e técnica,<br />
-                <span className="italic font-light text-western-gold">em um único material.</span>
+                Inspiração e técnica, <span className="italic font-light text-western-gold">em um único material.</span>
               </h2>
             </Reveal>
             <Reveal variant="fade-up" delay={200} duration={900}>

@@ -222,7 +222,7 @@ export default function ConjuntoPage() {
     }
     addBundle(items);
     toast.success(`Conjunto ${leaf.nome} adicionado ao orçamento`, {
-      description: `${items.length} peça(s) · ${faixa} · acabamento ${acabLabel}`,
+      description: `${items.length} ${items.length === 1 ? "peça" : "peças"} · ${faixa} · acabamento ${acabLabel}`,
     });
   };
 
@@ -414,7 +414,7 @@ export default function ConjuntoPage() {
                 <ul className="space-y-2 font-sans text-[12.5px] text-western-green-deep/85 leading-snug">
                   <li className="flex items-start gap-2">
                     <Check className="h-3.5 w-3.5 text-western-gold mt-0.5 flex-shrink-0" />
-                    {totalPecas || leaf.preco > 0 ? `${totalPecas} peça(s) na composição` : "Composição curada"}
+                    {totalPecas || leaf.preco > 0 ? `${totalPecas} ${totalPecas === 1 ? "peça" : "peças"} na composição` : "Composição curada"}
                   </li>
                   <li className="flex items-start gap-2">
                     <Truck className="h-3.5 w-3.5 text-western-gold mt-0.5 flex-shrink-0" />
@@ -513,7 +513,7 @@ export default function ConjuntoPage() {
             </p>
             <p className="mt-4 text-[15.5px] text-western-stone-warm leading-relaxed max-w-[62ch]">
               O conjunto {leaf.nome} nasceu de projetos reais especificados no ateliê
-              Western — os volumes conversam entre si e o acabamento {acabLabel.toLowerCase()}
+              Western — os volumes conversam entre si e o acabamento {acabLabel.toLowerCase()}{" "}
               amarra a leitura mineral do espaço.
             </p>
           </div>

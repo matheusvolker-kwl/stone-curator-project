@@ -116,7 +116,7 @@ export default function ProductCard({ product }: Props) {
             );
           })}
           <span className="ml-auto text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm/70">
-            {finishes.length} acabamentos
+            {finishes.length} {finishes.length === 1 ? "acabamento" : "acabamentos"}
           </span>
         </div>
 

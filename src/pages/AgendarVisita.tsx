@@ -159,7 +159,7 @@ export default function AgendarVisita() {
         <p className="text-eyebrow mb-5">Visita ao ateliê</p>
         <div className="w-12 h-px bg-western-gold mb-8" />
         <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05] mb-6">
-          Conheça onde<br />a pedra nasce.
+          Conheça onde a pedra nasce.
         </h1>
         <p className="text-western-stone-warm text-lg leading-relaxed mb-4">
           Recebemos arquitetos, paisagistas e clientes finais com hora marcada — para você
