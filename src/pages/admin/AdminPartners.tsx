@@ -106,6 +106,7 @@ export default function AdminPartners() {
 function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void }) {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [adminIds, setAdminIds] = useState<Set<string>>(new Set());
+  const [tierDefaults, setTierDefaults] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<"all" | Partner["status"]>("all");
   const [segmentFilter, setSegmentFilter] = useState<string>("all");
@@ -116,12 +117,16 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
 
   const load = async () => {
     setLoading(true);
-    const [{ data }, { data: roles }] = await Promise.all([
+    const [{ data }, { data: roles }, { data: tds }] = await Promise.all([
       supabase.from("partner_profiles").select("*").order("created_at", { ascending: false }),
       supabase.from("user_roles").select("user_id, role").eq("role", "admin"),
+      supabase.from("tier_defaults").select("tier, discount_pct"),
     ]);
     setPartners((data as Partner[]) ?? []);
     setAdminIds(new Set((roles ?? []).map((r) => r.user_id)));
+    const map: Record<string, number> = {};
+    ((tds ?? []) as Array<{ tier: string; discount_pct: number }>).forEach((t) => { map[t.tier] = t.discount_pct; });
+    setTierDefaults(map);
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
