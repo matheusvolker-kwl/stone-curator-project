@@ -301,7 +301,7 @@ export default function Contact() {
           {/* Formulário */}
           <div className="lg:sticky lg:top-24">
             {success ? (
-              <div className="bg-western-cream border border-western-gold/30 rounded-[2px] p-8 md:p-10 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.25)]">
+              <div className="bg-western-cream border border-western-gold/40 rounded-[2px] p-8 md:p-10 shadow-[0_20px_60px_-24px_rgba(30,40,25,0.35),0_2px_8px_-4px_rgba(30,40,25,0.15)]">
                 <div className="w-12 h-12 rounded-full bg-western-gold/15 flex items-center justify-center">
                   <CheckCircle2 className="w-6 h-6 text-western-gold" aria-hidden="true" />
                 </div>
@@ -334,7 +334,7 @@ export default function Contact() {
                 ref={formRef}
                 onSubmit={handleSubmit}
                 noValidate
-                className="bg-western-cream border border-western-stone-warm/20 rounded-[2px] p-7 md:p-9 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.2)]"
+                className="bg-western-cream border border-western-stone-warm/35 rounded-[2px] p-7 md:p-9 shadow-[0_20px_60px_-24px_rgba(30,40,25,0.35),0_2px_8px_-4px_rgba(30,40,25,0.15)]"
               >
                 <p className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-western-gold">
                   Enviar mensagem
