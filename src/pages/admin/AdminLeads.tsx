@@ -196,7 +196,7 @@ export default function AdminLeads() {
         </div>
       )}
 
-      {!loading && total > PAGE_SIZE && (
+      {!loading && !loadError && total > PAGE_SIZE && (
         <div className="flex items-center justify-between mt-6 pt-4 border-t border-western-stone-warm/15">
           <span className="text-[11px] font-mono text-western-stone-warm">
             Página {page + 1} de {totalPages}
