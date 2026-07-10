@@ -126,6 +126,27 @@ const App = () => (
                   <Route path="/guia-de-composicao/composicoes" element={<GuiaComposicoes />} />
                   <Route path="/guia-de-composicao/refinar/:handle" element={<GuiaRefinar />} />
                   <Route path="/guia-de-composicao/finalizar" element={<Navigate to="/guia-de-composicao" replace />} />
+                  {/* Admin fora do SiteLayout — sem header/footer/FAB/carrinho da loja */}
+                  <Route
+                    path="/admin"
+                    element={
+                      <RequireAuth adminOnly>
+                        <AdminLayout />
+                      </RequireAuth>
+                    }
+                  >
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="parceiros" element={<AdminPartners />} />
+                    <Route path="leads" element={<AdminLeads />} />
+                    <Route path="orcamentos" element={<AdminQuotes />} />
+                    <Route path="orcamentos/:leadId" element={<AdminQuoteDetail />} />
+                    <Route path="pedidos" element={<AdminPedidos />} />
+                    <Route path="configuracoes" element={<AdminSettings />} />
+                    <Route path="amostras" element={<Navigate to="/admin/leads" replace />} />
+                    <Route path="usuarios" element={<Navigate to="/admin/parceiros?tab=ativos" replace />} />
+                    <Route path="credenciamentos" element={<Navigate to="/admin/parceiros?tab=credenciamento" replace />} />
+                    <Route path="cnae-whitelist" element={<Navigate to="/admin/configuracoes?tab=cnae" replace />} />
+                  </Route>
                   <Route element={<SiteLayout />}>
                     {HOLDING_PAGE
                       ? <Route path="/inicio" element={<Index />} />
