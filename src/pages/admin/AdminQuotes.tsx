@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Search, Mail, Phone, Building2, ArrowRight } from "lucide-react";
+import { Loader2, Search, Mail, Phone, Building2, ArrowRight, Archive, Trash2, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { chipCls, type Lead } from "@/components/admin/adminUtils";
 import {
   QUOTE_STATUS_LABEL,
@@ -13,6 +15,8 @@ import {
 } from "@/components/admin/quoteTypes";
 import { formatBRL } from "@/lib/catalog/client";
 import { LoadError } from "@/components/admin/LoadError";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
+import { toast } from "sonner";
 
 const ALL_STATUS: ("all" | QuoteStatus)[] = [
   "all", "novo", "em_atendimento", "proposta_enviada", "fechado", "perdido", "arquivado",
