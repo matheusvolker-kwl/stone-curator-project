@@ -116,7 +116,7 @@ export function CredenciamentoTab() {
               <th className="text-left px-4 py-3">Empresa / CNPJ</th>
               <th className="text-left px-4 py-3">Decisão auto</th>
               <th className="text-left px-4 py-3">CNAE</th>
-              <th className="text-left px-4 py-3">Fonte</th>
+              <th className="text-left px-4 py-3">Confirmação</th>
               <th className="text-left px-4 py-3">Cartão</th>
               <th className="text-left px-4 py-3">Criado</th>
               <th />
@@ -134,9 +134,9 @@ export function CredenciamentoTab() {
                   {r.protocolo && <p className="text-[10px] font-mono text-western-stone-warm/80 mt-0.5">{r.protocolo}</p>}
                 </td>
                 <td className="px-4 py-3">
-                  <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] ${decisaoCls(r.decisao)}`}>{r.decisao}</span>
+                  <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] ${decisaoCls(r.decisao)}`}>{DECISAO_LABEL[r.decisao] ?? r.decisao}</span>
                   {r.status_manual !== "na" && r.status_manual !== "pendente" && (
-                    <p className="text-[10px] font-mono uppercase mt-1 text-western-stone-warm">manual: {r.status_manual}</p>
+                    <p className="text-[10px] font-mono uppercase mt-1 text-western-stone-warm">{STATUS_MANUAL_LABEL[r.status_manual] ?? r.status_manual}</p>
                   )}
                 </td>
                 <td className="px-4 py-3 font-mono text-xs">
