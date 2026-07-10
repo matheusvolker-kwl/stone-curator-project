@@ -7,7 +7,7 @@ export default function TrocasAvarias() {
     "Olá! Preciso abrir um chamado de trocas/avarias."
   )}`;
   return (
-    <LegalPage eyebrow="Trocas e avarias" titulo="O que cobre, e como acionar." atualizadoEm="maio de 2026">
+    <LegalPage eyebrow="Trocas e avarias" titulo="O que cobre, e como acionar." atualizadoEm="maio de 2026" seoPath="/trocas-e-avarias" seoTitle="Trocas e avarias — Western" seoDescription="Como abrir um chamado de trocas ou avarias com a Western: cobertura, prazos e passo a passo do pós-venda.">
       {/* Bloco de contato — pós-venda */}
       <div className="not-prose mb-12 border border-western-gold/30 bg-western-cream/40 p-6 md:p-8">
         <p className="text-eyebrow mb-4">Falar com pós-venda</p>

@@ -3,7 +3,7 @@ import { BUSINESS } from "@/config/business";
 
 export default function PoliticaPrivacidade() {
   return (
-    <LegalPage eyebrow="Privacidade" titulo="Como tratamos os seus dados." atualizadoEm="maio de 2026">
+    <LegalPage eyebrow="Privacidade" titulo="Como tratamos os seus dados." atualizadoEm="maio de 2026" seoPath="/privacidade" seoTitle="Política de privacidade — Western" seoDescription="LGPD na prática: dados coletados pela Western, finalidades, prazos de retenção e como exercer seus direitos.">
       <p>
         A Western Pools respeita a Lei Geral de Proteção de Dados (LGPD — Lei 13.709/2018) e
         coleta apenas os dados necessários para credenciar parceiros B2B, processar pedidos e

@@ -3,7 +3,7 @@ import { BUSINESS } from "@/config/business";
 
 export default function PoliticaEntrega() {
   return (
-    <LegalPage eyebrow="Política de entrega" titulo="Como o pedido sai do ateliê." atualizadoEm="maio de 2026">
+    <LegalPage eyebrow="Política de entrega" titulo="Como o pedido sai do ateliê." atualizadoEm="maio de 2026" seoPath="/politica-de-entrega" seoTitle="Política de entrega — Western" seoDescription="Retirada no ateliê ou envio por transportadora, embalagem, conferência e prazo de coleta da Western.">
       <p>
         A Western trabalha com retirada no ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}{" "}
         ou envio por transportadora contratada pelo parceiro. Não temos frota própria.

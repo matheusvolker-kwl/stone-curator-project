@@ -3,7 +3,7 @@ import { BUSINESS } from "@/config/business";
 
 export default function PoliticaComercial() {
   return (
-    <LegalPage eyebrow="Política comercial" titulo="Como compramos e vendemos." atualizadoEm="maio de 2026">
+    <LegalPage eyebrow="Política comercial" titulo="Como compramos e vendemos." atualizadoEm="maio de 2026" seoPath="/politica-comercial" seoTitle="Política comercial — Western" seoDescription="Regras B2B da Western: pedido mínimo, condições de pagamento, credenciamento e catálogo profissional.">
       <p>
         A Western Pools opera exclusivamente no canal B2B, atendendo profissionais e empresas
         do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a laguistas,

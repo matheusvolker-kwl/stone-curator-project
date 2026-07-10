@@ -1,18 +1,32 @@
 import { ReactNode } from "react";
+import Seo from "@/components/seo/Seo";
 
 export default function LegalPage({
   eyebrow,
   titulo,
   atualizadoEm,
+  seoPath,
+  seoTitle,
+  seoDescription,
   children,
 }: {
   eyebrow: string;
   titulo: string;
   atualizadoEm: string;
+  seoPath?: string;
+  seoTitle?: string;
+  seoDescription?: string;
   children: ReactNode;
 }) {
   return (
     <div className="surface-ivory">
+      {seoPath && (
+        <Seo
+          title={seoTitle ?? `${eyebrow} — Western`}
+          description={seoDescription ?? titulo}
+          path={seoPath}
+        />
+      )}
       <div className="container-western py-20 md:py-24 max-w-3xl">
         <p className="text-eyebrow mb-4">{eyebrow}</p>
         <div className="w-12 h-px bg-western-gold mb-6" />
