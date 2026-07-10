@@ -320,7 +320,13 @@ export default function AdminDashboard() {
         </section>
       </div>
 
-      {funnel.length > 0 && (
+      {errors.has("funnel") ? (
+        <div>
+          <p className="text-eyebrow mb-3 inline-flex items-center gap-2"><TrendingUp className="h-3.5 w-3.5" /> Funil de conversão</p>
+          <div className="w-12 h-px bg-western-gold mb-6" />
+          <LoadError message="Não foi possível carregar o funil de conversão." onRetry={load} />
+        </div>
+      ) : funnel.length > 0 && (
         <div>
           <p className="text-eyebrow mb-3 inline-flex items-center gap-2"><TrendingUp className="h-3.5 w-3.5" /> Funil de conversão</p>
           <div className="w-12 h-px bg-western-gold mb-6" />
