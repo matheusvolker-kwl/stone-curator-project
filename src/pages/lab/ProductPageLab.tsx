@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProduct } from "@/lib/datasource";
 import { parseProductDescription, extractDimensions } from "@/lib/catalog/parseDescription";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { formatBRL } from "@/lib/catalog/client";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,7 @@ import ProductInUse from "@/components/product/ProductInUse";
 import WishlistButton from "@/components/product/WishlistButton";
 import Reveal from "@/components/shared/Reveal";
 import { InstallationSection } from "@/components/product/InstallationModule";
+import StickyBuyBarLab from "@/components/product/lab/StickyBuyBarLab";
 import {
   getInstallationConfig,
   resolveInstallationType,
@@ -68,6 +69,7 @@ export default function ProductPageLab() {
   const [qty, setQty] = useState(1);
   const addItem = useCartStore((s) => s.addItem);
   const isLoadingCart = useCartStore((s) => s.isLoading);
+  const addBtnRef = useRef<HTMLElement>(null);
 
   const visibleOptions = useMemo(
     () =>
@@ -376,6 +378,7 @@ export default function ProductPageLab() {
                       </button>
                     </div>
                     <Button
+                      ref={addBtnRef as React.RefObject<HTMLButtonElement>}
                       onClick={handleAdd}
                       disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
                       className={`group flex-1 min-w-0 h-14 px-2 sm:px-4 font-mono font-bold text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] rounded-none transition-all motion-safe:active:translate-y-[1px] ${
@@ -487,6 +490,7 @@ export default function ProductPageLab() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-2">
                     <Link
+                      ref={addBtnRef as React.RefObject<HTMLAnchorElement>}
                       to="/orcamento"
                       className="inline-flex items-center justify-center h-11 px-5 border border-western-green-deep/30 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
                     >
@@ -551,6 +555,23 @@ export default function ProductPageLab() {
           productTitle={product.title}
         />
       </Reveal>
+
+      <StickyBuyBarLab
+        triggerRef={addBtnRef}
+        productImage={images[0]?.url ?? null}
+        productTitle={product.title}
+        selectedFinish={acabOption ? activeOptions[acabOption.name] ?? null : null}
+        priceAmount={variant ? priceAmount : undefined}
+        priceCurrency={variant ? priceCurrency : undefined}
+        fallbackPriceLabel={`a partir de ${formatBRL(priceAmount, priceCurrency)}`}
+        qty={qty}
+        onQtyChange={setQty}
+        onAdd={handleAdd}
+        isLoading={isLoadingCart}
+        canAdd={!!variant && !pendingOption}
+        pendingOptionLabel={pendingOption?.name.toLowerCase() ?? null}
+        available={!!variant?.availableForSale}
+      />
     </div>
   );
 }
