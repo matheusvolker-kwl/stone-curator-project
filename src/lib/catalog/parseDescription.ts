@@ -84,6 +84,15 @@ export function parseProductDescription(html?: string | null): ParsedDescription
           return { text: innerText(raw) };
         })
         .filter((o) => o.text);
+    } else if (title.includes("embalad") || title.includes("frete")) {
+      for (const row of matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi, body)) {
+        const cells = matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi, row[1]);
+        if (cells.length >= 2) {
+          const label = innerText(cells[0][1]);
+          const value = innerText(cells[1][1]);
+          if (label && value) result.embalado.push({ label, value });
+        }
+      }
     } else if (title.includes("3d") || title.startsWith("modelo")) {
       result.modelo3dHtml = body.trim();
     }
@@ -94,6 +103,7 @@ export function parseProductDescription(html?: string | null): ParsedDescription
     result.intro ||
     result.aplicacoes.length ||
     result.ficha.length ||
+    result.embalado.length ||
     result.observacoes.length;
   if (!hasContent) result.rawHtml = html;
 
