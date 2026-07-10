@@ -31,12 +31,6 @@ const items: Array<{
   end?: boolean;
   badgeKey?: BadgeKey;
 }> = [
-  to: string;
-  label: string;
-  icon: React.ElementType;
-  end?: boolean;
-  badgeKey?: BadgeKey;
-}> = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/admin/orcamentos", label: "Orçamentos", icon: FileSignature, badgeKey: "orcamentos" },
   { to: "/admin/leads", label: "Caixa de entrada", icon: Inbox, badgeKey: "leads" },
