@@ -154,6 +154,24 @@ export default function ProductTabs({
                   </div>
                 )}
 
+                {parsed.embalado.length > 0 && (
+                  <div>
+                    <p className="text-section-label mb-4">Dados de envio</p>
+                    <p className="text-meta mb-4">Medidas da embalagem — usadas para cálculo de frete</p>
+                    <dl>
+                      {parsed.embalado.map((f) => (
+                        <div
+                          key={f.label}
+                          className="flex justify-between gap-4 border-b border-western-stone-warm/15 py-3 text-spec"
+                        >
+                          <dt className="text-western-stone-warm">{f.label}</dt>
+                          <dd className="text-western-green-deep text-right break-words">{f.value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                )}
+
                 {fichaRows.length > 0 && (
                   <div>
                     <p className="text-section-label mb-4">Ficha técnica</p>
