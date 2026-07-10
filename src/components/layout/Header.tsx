@@ -359,6 +359,12 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 <DropdownMenuItem onClick={() => navigate("/minha-conta")}>
                   <User className="h-4 w-4 mr-2" /> Minha conta
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/minha-conta/favoritos")}>
+                  <Heart className="h-4 w-4 mr-2" /> Favoritos
+                  {wishCount > 0 && (
+                    <span className="ml-auto font-mono text-[10px] text-western-stone-warm">{wishCount}</span>
+                  )}
+                </DropdownMenuItem>
                 {isAdmin && (
                   <DropdownMenuItem onClick={() => navigate("/admin")}>
                     <ShieldCheck className="h-4 w-4 mr-2" /> Painel admin
