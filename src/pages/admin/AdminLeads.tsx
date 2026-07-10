@@ -7,6 +7,7 @@ import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
 } from "@/components/ui/sheet";
 import { toCSV, downloadCSV, chipCls, KV, type Lead, LEAD_TYPE_LABEL, LEAD_TYPE_BADGE_CLS } from "@/components/admin/adminUtils";
+import { LoadError } from "@/components/admin/LoadError";
 
 const PAGE_SIZE = 50;
 const KNOWN_TYPES = ["partner_signup", "newsletter", "amostras", "visita", "contato", "pedido_novo", "b2c_orcamento", "pdf_pedido"];
@@ -15,6 +16,8 @@ export default function AdminLeads() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadNonce, setReloadNonce] = useState(0);
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [qInput, setQInput] = useState("");
   const [q, setQ] = useState(""); // valor com debounce
@@ -67,14 +70,16 @@ export default function AdminLeads() {
       if (error) {
         console.error(error);
         setLeads([]); setTotal(0);
+        setLoadError(true);
       } else {
         setLeads((data as Lead[]) ?? []);
         setTotal(count ?? 0);
+        setLoadError(false);
       }
       setLoading(false);
     })();
     return () => { cancelled = true; };
-  }, [typeFilter, q, page]);
+  }, [typeFilter, q, page, reloadNonce]);
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const types = useMemo(() => KNOWN_TYPES, []);
@@ -134,12 +139,14 @@ export default function AdminLeads() {
           {exporting ? <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" /> : <Download className="h-3.5 w-3.5 mr-2" />} CSV
         </Button>
         <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-western-stone-warm">
-          {loading ? "…" : `${total} ${total === 1 ? "lead" : "leads"}`}
+          {loading ? "…" : loadError ? "—" : `${total} ${total === 1 ? "lead" : "leads"}`}
         </span>
       </div>
 
       {loading ? (
         <div className="py-20 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-western-gold" /></div>
+      ) : loadError ? (
+        <LoadError onRetry={() => setReloadNonce((n) => n + 1)} />
       ) : (
         <div className="space-y-2">
           {leads.length === 0 && <p className="text-western-stone-warm py-10 text-center">Nenhum lead nesse filtro.</p>}
@@ -189,7 +196,7 @@ export default function AdminLeads() {
         </div>
       )}
 
-      {!loading && total > PAGE_SIZE && (
+      {!loading && !loadError && total > PAGE_SIZE && (
         <div className="flex items-center justify-between mt-6 pt-4 border-t border-western-stone-warm/15">
           <span className="text-[11px] font-mono text-western-stone-warm">
             Página {page + 1} de {totalPages}

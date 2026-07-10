@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Search, Mail, Phone, Building2, ArrowRight } from "lucide-react";
@@ -12,6 +12,7 @@ import {
   type QuotePayload,
 } from "@/components/admin/quoteTypes";
 import { formatBRL } from "@/lib/catalog/client";
+import { LoadError } from "@/components/admin/LoadError";
 
 const ALL_STATUS: ("all" | QuoteStatus)[] = [
   "all", "novo", "em_atendimento", "proposta_enviada", "fechado", "perdido", "arquivado",
@@ -26,48 +27,57 @@ interface QuoteRow {
 export default function AdminQuotes() {
   const [rows, setRows] = useState<QuoteRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [statusFilter, setStatusFilter] = useState<"all" | QuoteStatus>("all");
   const [q, setQ] = useState("");
 
-  useEffect(() => {
-    (async () => {
-      const [{ data: leads }, { data: threads }] = await Promise.all([
-        supabase
-          .from("leads")
-          .select("*")
-          .eq("type", "orcamento")
-          .order("created_at", { ascending: false })
-          .limit(2000),
-        supabase.from("quote_threads").select("*"),
-      ]);
-      const threadByLead = new Map<string, QuoteThread>();
-      ((threads as QuoteThread[]) ?? []).forEach((t) => threadByLead.set(t.lead_id, t));
-      const built: QuoteRow[] = ((leads as Lead[]) ?? []).map((lead) => ({
-        lead,
-        thread:
-          threadByLead.get(lead.id) ??
-          ({
-            id: "",
-            lead_id: lead.id,
-            status: "novo",
-            notas: null,
-            pago_em: null,
-            forma_pagamento: null,
-            parcelas: null,
-            valor_final: null,
-            observacoes_venda: null,
-            archived_at: null,
-            created_at: lead.created_at,
-            updated_at: lead.created_at,
-          } as QuoteThread),
-        payload: (lead.payload as unknown as QuotePayload) ?? {
-          items: [], subtotal: 0, currency: "BRL",
-        },
-      }));
-      setRows(built);
+  const load = useCallback(async () => {
+    setLoading(true);
+    const [leadsRes, threadsRes] = await Promise.all([
+      supabase
+        .from("leads")
+        .select("*")
+        .eq("type", "orcamento")
+        .order("created_at", { ascending: false })
+        .limit(2000),
+      supabase.from("quote_threads").select("*"),
+    ]);
+    if (leadsRes.error || threadsRes.error) {
+      setLoadError(true);
+      setRows([]);
       setLoading(false);
-    })();
+      return;
+    }
+    const threadByLead = new Map<string, QuoteThread>();
+    ((threadsRes.data as QuoteThread[]) ?? []).forEach((t) => threadByLead.set(t.lead_id, t));
+    const built: QuoteRow[] = ((leadsRes.data as Lead[]) ?? []).map((lead) => ({
+      lead,
+      thread:
+        threadByLead.get(lead.id) ??
+        ({
+          id: "",
+          lead_id: lead.id,
+          status: "novo",
+          notas: null,
+          pago_em: null,
+          forma_pagamento: null,
+          parcelas: null,
+          valor_final: null,
+          observacoes_venda: null,
+          archived_at: null,
+          created_at: lead.created_at,
+          updated_at: lead.created_at,
+        } as QuoteThread),
+      payload: (lead.payload as unknown as QuotePayload) ?? {
+        items: [], subtotal: 0, currency: "BRL",
+      },
+    }));
+    setRows(built);
+    setLoadError(false);
+    setLoading(false);
   }, []);
+
+  useEffect(() => { load(); }, [load]);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: rows.length };
@@ -97,6 +107,16 @@ export default function AdminQuotes() {
     return (
       <div className="py-20 flex justify-center">
         <Loader2 className="h-6 w-6 animate-spin text-western-gold" />
+      </div>
+    );
+
+  if (loadError)
+    return (
+      <div>
+        <p className="text-eyebrow mb-3">Comercial</p>
+        <div className="w-12 h-px bg-western-gold mb-6" />
+        <h1 className="font-display text-3xl mb-6">Orçamentos</h1>
+        <LoadError onRetry={load} />
       </div>
     );
 
