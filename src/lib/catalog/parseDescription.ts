@@ -17,6 +17,7 @@ export interface ParsedDescription {
   intro?: string;
   aplicacoes: string[];
   ficha: Array<{ label: string; value: string }>;
+  embalado: Array<{ label: string; value: string }>;
   observacoes: ParsedObservation[];
   modelo3dHtml?: string;
   rawHtml?: string;
