@@ -397,11 +397,23 @@ export default function Contact() {
                   </div>
                 </div>
 
-                <TurnstileWidget
-                  onToken={setCaptchaToken}
-                  onExpire={() => setCaptchaToken(null)}
-                  className="mt-6"
-                />
+                {/* Honeypot — invisível ao usuário, atrai bots. */}
+                <div aria-hidden="true" className="absolute -left-[9999px] top-auto w-px h-px overflow-hidden">
+                  <label>
+                    Não preencha este campo
+                    <input
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={honeypot}
+                      onChange={(e) => setHoneypot(e.target.value)}
+                      name="website"
+                    />
+                  </label>
+                </div>
+
+                <InvisibleTurnstile ref={captchaRef} />
+
 
                 <Button
                   type="submit"
