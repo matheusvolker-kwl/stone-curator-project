@@ -214,25 +214,58 @@ export async function fetchCollection(
  * Bundle groups and simple products skip the extra request entirely.
  */
 export async function fetchProduct(handle: string): Promise<ShopifyProductNode | null> {
+  // Fast path: catalog already cached (memory or localStorage).
+  if (hasCachedListing()) {
+    const [raw, listing] = await Promise.all([getAllPublicProducts(), getListingCatalog()]);
+    const node = listing.find((p) => p.handle === handle);
+    if (!node) return null;
+    if (node.id.startsWith("gid://woo/bundle-group/")) return node;
+    const wooProduct = raw.find((p) => p.slug === handle);
+    if (!wooProduct) return node;
+    const isVariable =
+      wooProduct.type === "variable" ||
+      (Array.isArray(wooProduct.variations) && wooProduct.variations.length > 0);
+    if (!isVariable) return node;
+    const variations = await getVariationsFor(wooProduct);
+    return adaptProduct(wooProduct, variations);
+  }
+
+  // Cold path: skip 1.4MB catalog. Fetch just this product by slug.
+  try {
+    const bySlug = await wooFetch<WooProduct[]>({
+      path: "products",
+      params: { slug: handle, status: "publish", per_page: 1 },
+    });
+    const filtered = filterPublicCatalog(bySlug ?? []);
+    const wooProduct = filtered[0];
+    if (wooProduct) {
+      // Kick off full catalog warm in background so subsequent nav is instant.
+      getListingCatalog().catch(() => {});
+      const isVariable =
+        wooProduct.type === "variable" ||
+        (Array.isArray(wooProduct.variations) && wooProduct.variations.length > 0);
+      const variations = isVariable ? await getVariationsFor(wooProduct) : [];
+      return adaptProduct(wooProduct, variations);
+    }
+  } catch {
+    /* fall through to full catalog */
+  }
+
+  // Fallback: original behavior.
   const [raw, listing] = await Promise.all([getAllPublicProducts(), getListingCatalog()]);
   const node = listing.find((p) => p.handle === handle);
   if (!node) return null;
-
-  // Bundle groups have id "gid://woo/bundle-group/..." — no variations to fetch.
   if (node.id.startsWith("gid://woo/bundle-group/")) return node;
-
-  // Locate the underlying Woo product by slug to check if variable.
   const wooProduct = raw.find((p) => p.slug === handle);
   if (!wooProduct) return node;
-
   const isVariable =
     wooProduct.type === "variable" ||
     (Array.isArray(wooProduct.variations) && wooProduct.variations.length > 0);
   if (!isVariable) return node;
-
   const variations = await getVariationsFor(wooProduct);
   return adaptProduct(wooProduct, variations);
 }
+
 
 export async function fetchProducts(first = 50, query?: string): Promise<ShopifyProduct[]> {
   const adapted = await getListingCatalog();
