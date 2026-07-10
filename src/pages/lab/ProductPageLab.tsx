@@ -555,6 +555,23 @@ export default function ProductPageLab() {
           productTitle={product.title}
         />
       </Reveal>
+
+      <StickyBuyBarLab
+        triggerRef={addBtnRef}
+        productImage={images[0]?.url ?? null}
+        productTitle={product.title}
+        selectedFinish={acabOption ? activeOptions[acabOption.name] ?? null : null}
+        priceAmount={variant ? priceAmount : undefined}
+        priceCurrency={variant ? priceCurrency : undefined}
+        fallbackPriceLabel={`a partir de ${formatBRL(priceAmount, priceCurrency)}`}
+        qty={qty}
+        onQtyChange={setQty}
+        onAdd={handleAdd}
+        isLoading={isLoadingCart}
+        canAdd={!!variant && !pendingOption}
+        pendingOptionLabel={pendingOption?.name.toLowerCase() ?? null}
+        available={!!variant?.availableForSale}
+      />
     </div>
   );
 }
