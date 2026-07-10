@@ -27,26 +27,8 @@ function buildFotoMap(): Record<string, string> {
 }
 const FOTOS = buildFotoMap();
 
-const logoImages = import.meta.glob("../../assets/marcas/*.{svg,png,webp}", {
-  eager: true, query: "?url", import: "default",
-}) as Record<string, string>;
-const logoPointers = import.meta.glob("../../assets/marcas/*.{svg,png,webp}.asset.json", {
-  eager: true,
-}) as Record<string, { url?: string; default?: { url?: string } }>;
-function buildLogoMap(): Record<string, string> {
-  const map: Record<string, string> = {};
-  for (const [path, url] of Object.entries(logoImages)) {
-    const slug = (path.split("/").pop() ?? "").replace(/\.(svg|png|webp)$/i, "");
-    map[slug] = url as string;
-  }
-  for (const [path, mod] of Object.entries(logoPointers)) {
-    const slug = (path.split("/").pop() ?? "").replace(/\.(svg|png|webp)\.asset\.json$/i, "");
-    const url = mod?.url ?? mod?.default?.url;
-    if (url && !map[slug]) map[slug] = url;
-  }
-  return map;
-}
-const LOGOS = buildLogoMap();
+// (Logos de marcas descontinuados: renderizamos wordmark tipográfico padronizado.)
+
 
 function iniciais(nome: string): string {
   const limpo = nome.replace(/\(.*?\)/g, "").trim();
@@ -81,9 +63,6 @@ export default function SocialProof({
   const monogramText = isDark ? "text-western-gold-soft" : "text-western-green-deep";
   const captionColor = isDark ? "text-western-cream" : "text-western-green-deep";
   const wordmarkColor = isDark ? "text-western-cream" : "text-western-green-deep";
-  const logoFilter = isDark
-    ? "brightness(0) saturate(100%) invert(96%) sepia(10%) saturate(220%) hue-rotate(350deg) brightness(103%) contrast(96%)"
-    : "brightness(0) saturate(100%) invert(15%) sepia(28%) saturate(900%) hue-rotate(95deg) brightness(70%) contrast(92%)";
 
   const avatarGroups = groups.filter(
     (g) => g === "celebridades" || g === "profissionais",
@@ -92,10 +71,7 @@ export default function SocialProof({
 
   const tierMax = compact ? "max-w-md md:max-w-lg" : "max-w-md md:max-w-2xl";
   const tileGap = compact ? "gap-3 md:gap-4" : "gap-4 md:gap-6";
-  // Altura óptica base para logos (px). Wordmarks se alinham à mesma cap-height.
-  const logoBaseH = compact ? { mobile: 20, desktop: 26 } : { mobile: 22, desktop: 30 };
-  const logoMaxW = compact ? 130 : 150;
-  const logoGap = compact ? "gap-x-8 gap-y-5" : "gap-x-10 md:gap-x-14 gap-y-7";
+
 
   const renderTier = (pessoas: readonly PessoaComFoto[]) => (
     <ul className={`grid grid-cols-3 ${tileGap} ${tierMax} mx-auto`}>
@@ -127,47 +103,24 @@ export default function SocialProof({
     </ul>
   );
 
-  const renderMarca = (m: MarcaComLogo) => {
-    const logo = LOGOS[m.slug];
-    const scale = m.logoScale ?? 1;
-    const hMobile = Math.round(logoBaseH.mobile * scale);
-    const hDesktop = Math.round(logoBaseH.desktop * scale);
-    if (logo) {
-      return (
-        <img
-          src={logo}
-          alt={m.nome}
-          title={m.nome}
-          loading="lazy"
-          decoding="async"
-          style={{
-            filter: logoFilter,
-            height: `${hMobile}px`,
-            maxWidth: `${logoMaxW}px`,
-            ["--logo-h-md" as string]: `${hDesktop}px`,
-          }}
-          className="w-auto object-contain opacity-70 group-hover:opacity-100 transition-all duration-500 group-hover:scale-[1.04] md:h-[var(--logo-h-md)]"
-        />
-      );
-    }
-    // Wordmark — dimensionado para bater a cap-height aproximada (~0.72 * font-size).
-    const fontMobile = Math.round(hMobile / 0.72);
-    const fontDesktop = Math.round(hDesktop / 0.72);
-    return (
-      <span
-        title={m.nome}
-        style={{
-          fontSize: `${fontMobile}px`,
-          lineHeight: 1,
-          maxWidth: `${logoMaxW}px`,
-          ["--wm-fs-md" as string]: `${fontDesktop}px`,
-        }}
-        className={`text-center font-display leading-none ${wordmarkColor} opacity-70 group-hover:opacity-100 transition-all duration-500 md:text-[length:var(--wm-fs-md)]`}
-      >
-        {m.nome}
-      </span>
-    );
-  };
+  // Todas as marcas viram wordmark padronizado (sem variação de tamanho por marca).
+  const wordmarkFs = compact
+    ? { mobile: 15, desktop: 18 }
+    : { mobile: 16, desktop: 20 };
+  const renderMarca = (m: MarcaComLogo) => (
+    <span
+      title={m.nome}
+      style={{
+        fontSize: `${wordmarkFs.mobile}px`,
+        lineHeight: 1,
+        letterSpacing: "0.02em",
+        ["--wm-fs-md" as string]: `${wordmarkFs.desktop}px`,
+      }}
+      className={`whitespace-nowrap text-center font-display leading-none ${wordmarkColor} opacity-70 group-hover:opacity-100 transition-opacity duration-500 md:text-[length:var(--wm-fs-md)]`}
+    >
+      {m.nome}
+    </span>
+  );
 
   return (
     <div className={className}>
@@ -189,9 +142,9 @@ export default function SocialProof({
       {showMarcas && (
         <div className={avatarGroups.length ? "mt-1" : ""}>
           <p className={`text-center font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-6 md:mb-7`}>{SOCIAL_PROOF_LABELS.marcas}</p>
-          <ul className={`flex flex-wrap items-center justify-center max-w-full ${logoGap}`}>
+          <ul className="grid grid-cols-2 gap-x-6 gap-y-5 md:flex md:flex-wrap md:items-center md:justify-center md:gap-x-10 lg:gap-x-14 md:gap-y-6 max-w-full">
             {(SOCIAL_PROOF.marcas as readonly MarcaComLogo[]).map((m) => (
-              <li key={m.slug} className="group flex items-center justify-center shrink-0">
+              <li key={m.slug} className="group flex items-center justify-center">
                 {renderMarca(m)}
               </li>
             ))}
