@@ -16,6 +16,10 @@ export default function PoliticaComercial() {
         Pedido mínimo por nota: <strong>{BUSINESS.pedidoMinimoLabel}</strong>. Aplica-se a todo
         o catálogo, independentemente da linha ou condição comercial.
       </p>
+      <p>
+        <strong>Exceção:</strong> a Western Box de amostras é aberta a parceiros e clientes
+        finais e não está sujeita ao pedido mínimo nem ao cadastro B2B.
+      </p>
 
       <h2>Pagamento</h2>
       <p>
