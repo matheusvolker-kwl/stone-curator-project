@@ -385,7 +385,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               <span>Entrar</span>
             </Link>
           )}
-          )}
+
 
           <button
             onClick={onCartOpen}
