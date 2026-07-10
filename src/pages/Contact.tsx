@@ -114,14 +114,9 @@ export default function Contact() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [f, setF] = useState<ContactForm>(INITIAL);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
   const captchaRef = useRef<InvisibleTurnstileHandle>(null);
-
 
   const setField = <K extends keyof ContactForm>(k: K, v: ContactForm[K]) =>
     setF((p) => ({ ...p, [k]: v }));
@@ -141,11 +136,10 @@ export default function Contact() {
       return;
     }
     setErrors({});
-    if (!captchaToken) {
-      toast.error("Confirme que você não é um robô.");
-      return;
-    }
     setLoading(true);
+    // Best-effort captcha: get a token if possible, but never block on it.
+    // Honeypot + server validation are the real spam gates.
+    const token = (await captchaRef.current?.getToken(3500).catch(() => null)) ?? null;
     const res = await submitContactLead({
       nome: parsed.data.nome,
       email: parsed.data.email ?? "",
@@ -154,9 +148,8 @@ export default function Contact() {
       mensagem: parsed.data.mensagem,
       origem: "site/contato",
       payload: parsed.data.assunto ? { assunto: parsed.data.assunto } : {},
-    }, captchaToken);
+    }, token, { honeypot });
     setLoading(false);
-    setCaptchaToken(null);
     if (!res.ok) {
       toast.error("Não foi possível enviar sua mensagem.", { description: res.error });
       return;
@@ -164,6 +157,7 @@ export default function Contact() {
     setSuccess(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
 
   return (
     <div className="surface-ivory">
