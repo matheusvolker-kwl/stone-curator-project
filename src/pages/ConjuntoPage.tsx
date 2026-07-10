@@ -339,7 +339,7 @@ export default function ConjuntoPage() {
                 </p>
                 <div className="mt-6 flex flex-wrap gap-2">
                   <Tag>{tipoLbl}</Tag>
-                  <Tag>{tamanhoLabels[tamanho]} · {faixa}</Tag>
+                  <Tag>{sizeLabel} · {faixa}</Tag>
                   <Tag>{nivelLabels[nivel]}</Tag>
                   <Tag>Acabamento {acabLabel}</Tag>
                 </div>
@@ -350,7 +350,7 @@ export default function ConjuntoPage() {
           {/* Rail sticky à direita */}
           <aside className="lg:sticky lg:top-24">
             <div className="bg-white border border-western-stone-warm/15 p-6 md:p-7 shadow-[0_24px_44px_-30px_hsl(var(--western-stone-dark)/0.35)]">
-              <p className="eyebrow-bar mb-3">Para {faixa}</p>
+              <p className="eyebrow-bar mb-3">Para {faixa.toLowerCase()}</p>
               {isSugestao && (
                 <div className="mb-4 inline-flex items-center gap-2 bg-western-gold/15 text-western-gold px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.22em]">
                   <Sparkles className="h-3 w-3" /> Nossa sugestão para o seu espaço
