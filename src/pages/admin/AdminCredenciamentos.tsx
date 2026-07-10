@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Search, ShieldCheck, ShieldX, ExternalLink } from "lucide-react";
+import { Loader2, Search, ShieldCheck, ShieldX, ExternalLink, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { TIERS, TIER_LABEL, type Tier } from "@/components/admin/adminUtils";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 
 interface Cred {
   id: string;
@@ -66,6 +68,10 @@ export function CredenciamentoTab() {
   const [tab, setTab] = useState<"pendentes" | "decididos">("pendentes");
   const [q, setQ] = useState("");
   const [editing, setEditing] = useState<Cred | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [confirmApproveOpen, setConfirmApproveOpen] = useState(false);
+  const [confirmRejectOpen, setConfirmRejectOpen] = useState(false);
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -90,10 +96,112 @@ export function CredenciamentoTab() {
     return true;
   }), [rows, tab, q]);
 
+  // Reset selection on tab/search change
+  useEffect(() => { setSelectedIds(new Set()); }, [tab, q]);
+
+  const isPendentes = tab === "pendentes";
+  const selectableRows = useMemo(
+    () => (isPendentes ? filtered : []),
+    [filtered, isPendentes]
+  );
+  const selectableIds = useMemo(() => selectableRows.map((r) => r.id), [selectableRows]);
+  const allSelected = selectableIds.length > 0 && selectableIds.every((id) => selectedIds.has(id));
+  const someSelected = selectableIds.some((id) => selectedIds.has(id));
+  const indeterminate = someSelected && !allSelected;
+
+  const toggleOne = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+  const toggleAll = () => {
+    setSelectedIds((prev) => {
+      if (allSelected) {
+        const next = new Set(prev);
+        selectableIds.forEach((id) => next.delete(id));
+        return next;
+      }
+      const next = new Set(prev);
+      selectableIds.forEach((id) => next.add(id));
+      return next;
+    });
+  };
+  const clearSelection = () => setSelectedIds(new Set());
+
+  const selectedRows = useMemo(
+    () => rows.filter((r) => selectedIds.has(r.id) && r.status_manual === "pendente"),
+    [rows, selectedIds]
+  );
+  const approvableRows = selectedRows.filter((r) => !!r.user_id);
+  const skippedNoUser = selectedRows.length - approvableRows.length;
+
+  const applyOne = async (r: Cred, decision: "aprovado" | "recusado") => {
+    const patch = {
+      status_manual: decision,
+      reviewed_at: new Date().toISOString(),
+      ...(decision === "aprovado" ? { tier: (r.tier as Tier) ?? "light" } : {}),
+    };
+    const { error } = await supabase.from("credenciamentos").update(patch).eq("id", r.id);
+    if (error) throw error;
+    if (decision === "aprovado" && r.user_id) {
+      await supabase.from("partner_profiles").update({
+        status: "approved",
+        tier: (r.tier as Tier) ?? "light",
+        credenciamento_id: r.id,
+        credenciado_em: new Date().toISOString(),
+        credenciado_fonte: r.fonte ?? "manual",
+        approved_at: new Date().toISOString(),
+      }).eq("user_id", r.user_id);
+    } else if (decision === "recusado" && r.user_id) {
+      await supabase.from("partner_profiles").update({ status: "rejected" }).eq("user_id", r.user_id);
+    }
+  };
+
+  const handleBulkApprove = async () => {
+    if (approvableRows.length === 0) {
+      toast.error("Nenhum cadastro elegível.", { description: "Selecionados não têm conta vinculada." });
+      setConfirmApproveOpen(false);
+      return;
+    }
+    setBulkBusy(true);
+    const results = await Promise.allSettled(approvableRows.map((r) => applyOne(r, "aprovado")));
+    const ok = results.filter((x) => x.status === "fulfilled").length;
+    const fail = results.length - ok;
+    setBulkBusy(false);
+    setConfirmApproveOpen(false);
+    if (fail === 0 && skippedNoUser === 0) {
+      toast.success(`${ok} cadastro(s) aprovado(s).`);
+    } else {
+      toast.success(`${ok} aprovado(s).`, {
+        description: [
+          fail ? `${fail} falharam` : null,
+          skippedNoUser ? `${skippedNoUser} pulados (sem conta vinculada)` : null,
+        ].filter(Boolean).join(" · "),
+      });
+    }
+    clearSelection();
+    await load();
+  };
+
+  const handleBulkReject = async () => {
+    if (selectedRows.length === 0) { setConfirmRejectOpen(false); return; }
+    setBulkBusy(true);
+    const results = await Promise.allSettled(selectedRows.map((r) => applyOne(r, "recusado")));
+    const ok = results.filter((x) => x.status === "fulfilled").length;
+    const fail = results.length - ok;
+    setBulkBusy(false);
+    setConfirmRejectOpen(false);
+    toast.success(`${ok} reprovado(s).`, fail ? { description: `${fail} falharam` } : undefined);
+    clearSelection();
+    await load();
+  };
+
   if (loading) return <div className="py-20 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-western-gold" /></div>;
 
   return (
-    <div>
+    <div className={selectedIds.size > 0 ? "pb-24 md:pb-0" : ""}>
       <p className="text-western-stone-warm mb-6 text-sm">Cadastros que precisam de revisão humana — CNAE em faixa amarela/laranja, fora da whitelist, ou Cartão CNPJ enviado.</p>
 
 
@@ -113,6 +221,16 @@ export function CredenciamentoTab() {
         <table className="w-full text-sm">
           <thead className="bg-western-paper text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">
             <tr>
+              {isPendentes && (
+                <th className="px-3 py-3 w-10">
+                  <Checkbox
+                    checked={allSelected ? true : indeterminate ? "indeterminate" : false}
+                    onCheckedChange={toggleAll}
+                    disabled={selectableIds.length === 0}
+                    aria-label="Selecionar todos"
+                  />
+                </th>
+              )}
               <th className="text-left px-4 py-3">Empresa / CNPJ</th>
               <th className="text-left px-4 py-3">Decisão auto</th>
               <th className="text-left px-4 py-3">CNAE</th>
@@ -124,14 +242,28 @@ export function CredenciamentoTab() {
           </thead>
           <tbody>
             {filtered.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-10 text-center text-western-stone-warm">Nenhum cadastro.</td></tr>
+              <tr><td colSpan={isPendentes ? 8 : 7} className="px-4 py-10 text-center text-western-stone-warm">Nenhum cadastro.</td></tr>
             )}
-            {filtered.map((r) => (
-              <tr key={r.id} className="border-t border-western-stone-warm/10 hover:bg-western-paper/50">
+            {filtered.map((r) => {
+              const selected = selectedIds.has(r.id);
+              return (
+              <tr key={r.id} className={`border-t border-western-stone-warm/10 hover:bg-western-paper/50 ${selected ? "bg-western-gold/5" : ""}`}>
+                {isPendentes && (
+                  <td className="px-3 py-3 align-top">
+                    <Checkbox
+                      checked={selected}
+                      onCheckedChange={() => toggleOne(r.id)}
+                      aria-label={`Selecionar ${r.empresa ?? r.nome ?? r.cnpj}`}
+                    />
+                  </td>
+                )}
                 <td className="px-4 py-3">
                   <p className="font-medium text-western-green-deep">{r.empresa ?? r.nome ?? "—"}</p>
                   <p className="text-xs text-western-stone-warm">{formatCnpj(r.cnpj)} · {r.email}</p>
                   {r.protocolo && <p className="text-[10px] font-mono text-western-stone-warm/80 mt-0.5">{r.protocolo}</p>}
+                  {isPendentes && !r.user_id && (
+                    <p className="text-[10px] font-mono uppercase tracking-[0.16em] text-amber-800 mt-1">sem conta vinculada</p>
+                  )}
                 </td>
                 <td className="px-4 py-3">
                   <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] ${decisaoCls(r.decisao)}`}>{DECISAO_LABEL[r.decisao] ?? r.decisao}</span>
@@ -154,10 +286,80 @@ export function CredenciamentoTab() {
                   </button>
                 </td>
               </tr>
-            ))}
+            );
+            })}
           </tbody>
         </table>
       </div>
+
+      {selectedIds.size > 0 && (
+        <div className="fixed md:sticky bottom-0 md:bottom-4 left-0 right-0 md:left-auto md:right-auto z-30 md:mt-4 border-t md:border border-western-stone-warm/30 bg-western-cream md:bg-white shadow-lg md:shadow-md">
+          <div className="flex flex-wrap items-center gap-3 px-4 py-3">
+            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-western-green-deep">
+              {selectedIds.size} selecionado(s)
+              {skippedNoUser > 0 && (
+                <span className="text-amber-800 normal-case tracking-normal ml-2">
+                  · {skippedNoUser} sem conta (será pulado ao aprovar)
+                </span>
+              )}
+            </span>
+            <div className="flex-1" />
+            <Button
+              onClick={() => setConfirmRejectOpen(true)}
+              disabled={bulkBusy}
+              variant="outline"
+              className="h-9 border-red-700/30 text-red-800 hover:bg-red-50 rounded-none font-mono text-[11px] uppercase tracking-[0.18em]"
+            >
+              <ShieldX className="h-3.5 w-3.5 mr-2" /> Reprovar selecionados
+            </Button>
+            <Button
+              onClick={() => setConfirmApproveOpen(true)}
+              disabled={bulkBusy || approvableRows.length === 0}
+              className="h-9 bg-western-green-deep text-western-cream hover:bg-western-green-mid rounded-none font-mono text-[11px] uppercase tracking-[0.18em] disabled:opacity-50"
+            >
+              <ShieldCheck className="h-3.5 w-3.5 mr-2" /> Aprovar selecionados
+            </Button>
+            <Button
+              onClick={clearSelection}
+              disabled={bulkBusy}
+              variant="ghost"
+              className="h-9 rounded-none font-mono text-[11px] uppercase tracking-[0.18em] text-western-stone-warm"
+            >
+              <X className="h-3.5 w-3.5 mr-1" /> Limpar
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <ConfirmDialog
+        open={confirmApproveOpen}
+        onOpenChange={setConfirmApproveOpen}
+        title={`Aprovar ${approvableRows.length} cadastro(s)?`}
+        description={
+          <>
+            Eles ganham acesso ao catálogo de atacado <strong>na hora</strong>, com o tier atual de cada cadastro.
+            {skippedNoUser > 0 && (
+              <>
+                {"\n\n"}⚠ {skippedNoUser} selecionado(s) sem conta vinculada serão pulados.
+              </>
+            )}
+            {"\n\n"}Digite APROVAR para confirmar.
+          </>
+        }
+        confirmLabel={bulkBusy ? "Aprovando…" : `Aprovar ${approvableRows.length}`}
+        requireText="APROVAR"
+        onConfirm={handleBulkApprove}
+      />
+
+      <ConfirmDialog
+        open={confirmRejectOpen}
+        onOpenChange={setConfirmRejectOpen}
+        title={`Reprovar ${selectedRows.length} cadastro(s)?`}
+        description="Os cadastros ficam marcados como recusados e o parceiro não terá acesso ao atacado."
+        confirmLabel={bulkBusy ? "Reprovando…" : `Reprovar ${selectedRows.length}`}
+        danger
+        onConfirm={handleBulkReject}
+      />
 
       <ReviewDrawer cred={editing} onClose={() => setEditing(null)} onSaved={load} />
     </div>
