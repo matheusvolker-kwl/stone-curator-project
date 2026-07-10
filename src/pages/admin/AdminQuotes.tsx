@@ -83,6 +83,12 @@ export default function AdminQuotes() {
 
   useEffect(() => { load(); }, [load]);
 
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [confirmArchiveOpen, setConfirmArchiveOpen] = useState(false);
+  const [archiving, setArchiving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: rows.length };
     rows.forEach((r) => {
@@ -106,6 +112,105 @@ export default function AdminQuotes() {
       }),
     [rows, statusFilter, q],
   );
+
+  // Limpa seleção quando o contexto (filtro/busca) muda
+  useEffect(() => { setSelectedIds(new Set()); }, [statusFilter, q]);
+
+  const filteredIds = useMemo(() => filtered.map((r) => r.lead.id), [filtered]);
+  const allFilteredSelected = filteredIds.length > 0 && filteredIds.every((id) => selectedIds.has(id));
+  const someFilteredSelected = filteredIds.some((id) => selectedIds.has(id));
+
+  const toggleOne = (id: string, checked: boolean) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(id); else next.delete(id);
+      return next;
+    });
+  };
+  const toggleAllFiltered = (checked: boolean) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (checked) filteredIds.forEach((id) => next.add(id));
+      else filteredIds.forEach((id) => next.delete(id));
+      return next;
+    });
+  };
+  const clearSelection = () => setSelectedIds(new Set());
+
+  const selectedRows = useMemo(
+    () => rows.filter((r) => selectedIds.has(r.lead.id)),
+    [rows, selectedIds],
+  );
+
+  const handleArchiveSelected = async () => {
+    if (selectedIds.size === 0) return;
+    setArchiving(true);
+    const now = new Date().toISOString();
+    // Só arquiva os que ainda NÃO estão arquivados; os que não têm thread persistida precisam de upsert
+    const targets = selectedRows.filter((r) => r.thread.status !== "arquivado");
+    try {
+      const results = await Promise.allSettled(
+        targets.map((r) => {
+          if (r.thread.id) {
+            return supabase
+              .from("quote_threads")
+              .update({ status: "arquivado", archived_at: now })
+              .eq("id", r.thread.id);
+          }
+          return supabase
+            .from("quote_threads")
+            .upsert(
+              { lead_id: r.lead.id, status: "arquivado", archived_at: now },
+              { onConflict: "lead_id" },
+            );
+        }),
+      );
+      let ok = 0, fail = 0;
+      results.forEach((res) => {
+        if (res.status === "fulfilled" && !res.value.error) ok++;
+        else fail++;
+      });
+      if (fail === 0) toast.success(`${ok} orçamento(s) arquivado(s).`);
+      else if (ok === 0) toast.error(`Falha ao arquivar ${fail} orçamento(s).`);
+      else toast.warning(`${ok} arquivado(s), ${fail} falharam.`);
+    } catch (e) {
+      console.error(e);
+      toast.error("Erro ao arquivar orçamentos.");
+    } finally {
+      setArchiving(false);
+      setConfirmArchiveOpen(false);
+      clearSelection();
+      load();
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedIds.size === 0) return;
+    setDeleting(true);
+    const ids = Array.from(selectedIds);
+    try {
+      const results = await Promise.allSettled(
+        ids.map((id) => supabase.from("leads").delete().eq("id", id)),
+      );
+      let ok = 0, fail = 0;
+      results.forEach((res) => {
+        if (res.status === "fulfilled" && !res.value.error) ok++;
+        else fail++;
+      });
+      if (fail === 0) toast.success(`${ok} orçamento(s) excluído(s).`);
+      else if (ok === 0) toast.error(`Falha ao excluir ${fail} orçamento(s).`);
+      else toast.warning(`${ok} excluído(s), ${fail} falharam.`);
+    } catch (e) {
+      console.error(e);
+      toast.error("Erro ao excluir orçamentos.");
+    } finally {
+      setDeleting(false);
+      setConfirmDeleteOpen(false);
+      clearSelection();
+      load();
+    }
+  };
+
 
   if (loading)
     return (
