@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Plus, Trash2, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 
 type Tier = "verde" | "amarela" | "laranja";
 interface Row { codigo: string; tier: Tier; descricao: string | null }
@@ -25,6 +26,7 @@ export default function AdminCnaeWhitelist() {
   const [filter, setFilter] = useState<Tier | "todos">("todos");
   const [novo, setNovo] = useState({ codigo: "", tier: "verde" as Tier, descricao: "" });
   const [saving, setSaving] = useState(false);
+  const [pendingTier, setPendingTier] = useState<{ codigo: string; tier: Tier } | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -73,11 +75,15 @@ export default function AdminCnaeWhitelist() {
   return (
     <div>
       <h2 className="font-display text-2xl mb-2 text-western-green-deep">CNAEs que credenciam</h2>
-      <p className="text-western-stone-warm mb-8">
+      <p className="text-western-stone-warm mb-4">
         <strong className="text-emerald-700">Verde</strong>: aprovação automática.{" "}
         <strong className="text-amber-700">Amarela</strong> e <strong className="text-orange-700">Laranja</strong>: enviam para análise manual.
         Edições refletem instantaneamente no cadastro de novos parceiros.
       </p>
+      <div className="mb-8 border border-emerald-600/30 bg-emerald-50/60 p-3 text-xs text-emerald-900 inline-flex items-start gap-2 max-w-3xl">
+        <Info className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+        <span>Verde aprova sozinho qualquer empresa com esse CNAE — principal <em>ou</em> secundário. Isto nunca reprova ninguém, só libera.</span>
+      </div>
 
       <div className="border border-western-stone-warm/20 bg-western-paper/40 p-5 mb-8">
         <p className="text-eyebrow mb-3">Adicionar CNAE</p>

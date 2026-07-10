@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/select";
 import { toCSV, downloadCSV, KV, TIERS, TIER_LABEL, TIER_BADGE_CLS, type Partner, type Tier } from "@/components/admin/adminUtils";
 import { CredenciamentoTab } from "./AdminCredenciamentos";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
+import { LoadError } from "@/components/admin/LoadError";
 
 function StatusChip({ status }: { status: Partner["status"] }) {
   const map = {
@@ -38,17 +40,26 @@ export default function AdminPartners() {
   const tab: "credenciamento" | "ativos" = rawTab === "ativos" ? "ativos" : "credenciamento";
 
   const [counts, setCounts] = useState<{ cred: number; partners: number }>({ cred: 0, partners: 0 });
+  const [countsError, setCountsError] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
+  const loadCounts = async () => {
+    try {
       const [c, p] = await Promise.all([
         supabase.from("credenciamentos").select("id", { count: "exact", head: true }).eq("status_manual", "pendente"),
         supabase.from("partner_profiles").select("id", { count: "exact", head: true }).eq("status", "pending"),
       ]);
-      if (cancelled) return;
+      if (c.error) throw c.error;
+      if (p.error) throw p.error;
       setCounts({ cred: c.count ?? 0, partners: p.count ?? 0 });
-    })();
+      setCountsError(false);
+    } catch {
+      setCountsError(true);
+    }
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => { if (!cancelled) await loadCounts(); })();
     return () => { cancelled = true; };
   }, [tab]);
 
@@ -58,6 +69,14 @@ export default function AdminPartners() {
       <div className="w-12 h-px bg-western-gold mb-6" />
       <h1 className="font-display text-3xl mb-2">Programa Western Pro</h1>
       <p className="text-western-stone-warm mb-8">Analise credenciamentos, gerencie parceiros ativos e ajuste tier, descontos e permissões.</p>
+
+      {countsError && (
+        <div className="mb-6">
+          <LoadError message="Não foi possível carregar as contagens de pendências." onRetry={loadCounts} compact />
+        </div>
+      )}
+
+
 
       <Tabs
         value={tab}
@@ -114,19 +133,29 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
   const [q, setQ] = useState("");
   const [drawer, setDrawer] = useState<Partner | null>(null);
   const [layout, setLayout] = useState<"cards" | "table">("cards");
+  const [loadError, setLoadError] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<{ p: Partner; status: Partner["status"] } | null>(null);
 
   const load = async () => {
     setLoading(true);
-    const [{ data }, { data: roles }, { data: tds }] = await Promise.all([
-      supabase.from("partner_profiles").select("*").order("created_at", { ascending: false }),
-      supabase.from("user_roles").select("user_id, role").eq("role", "admin"),
-      supabase.from("tier_defaults").select("tier, discount_pct"),
-    ]);
-    setPartners((data as Partner[]) ?? []);
-    setAdminIds(new Set((roles ?? []).map((r) => r.user_id)));
-    const map: Record<string, number> = {};
-    ((tds ?? []) as Array<{ tier: string; discount_pct: number }>).forEach((t) => { map[t.tier] = t.discount_pct; });
-    setTierDefaults(map);
+    try {
+      const [pr, rr, tdr] = await Promise.all([
+        supabase.from("partner_profiles").select("*").order("created_at", { ascending: false }),
+        supabase.from("user_roles").select("user_id, role").eq("role", "admin"),
+        supabase.from("tier_defaults").select("tier, discount_pct"),
+      ]);
+      if (pr.error) throw pr.error;
+      if (rr.error) throw rr.error;
+      if (tdr.error) throw tdr.error;
+      setPartners((pr.data as Partner[]) ?? []);
+      setAdminIds(new Set(((rr.data ?? []) as Array<{ user_id: string }>).map((r) => r.user_id)));
+      const map: Record<string, number> = {};
+      ((tdr.data ?? []) as Array<{ tier: string; discount_pct: number }>).forEach((t) => { map[t.tier] = t.discount_pct; });
+      setTierDefaults(map);
+      setLoadError(false);
+    } catch {
+      setLoadError(true);
+    }
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
@@ -162,7 +191,23 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
     load();
   };
 
+  /** Wrapper que confirma quando a mudança REVOGA um parceiro já aprovado. */
+  const requestSetStatus = async (p: Partner, status: Partner["status"]) => {
+    if (p.status === "approved" && status !== "approved") {
+      setPendingStatus({ p, status });
+      return;
+    }
+    await setStatus(p, status);
+  };
+
   if (loading) return <div className="py-20 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-western-gold" /></div>;
+  if (loadError) {
+    return (
+      <div className="py-6">
+        <LoadError message="Não foi possível carregar a lista de parceiros." onRetry={load} />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -287,19 +332,19 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
                   ) : (
                     <>
                       {!hasCred && p.status !== "approved" && p.status !== "cancelled" && (
-                        <Button onClick={() => setStatus(p, "approved")} className="h-9 px-4 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-[11px] uppercase tracking-[0.2em] rounded-none">
+                        <Button onClick={() => requestSetStatus(p, "approved")} className="h-9 px-4 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-[11px] uppercase tracking-[0.2em] rounded-none">
                           <Check className="h-3.5 w-3.5 mr-1" /> Aprovar
                         </Button>
                       )}
                       {!hasCred && p.status !== "rejected" && p.status !== "cancelled" && (
-                        <Button onClick={() => setStatus(p, "rejected")} variant="outline" className="h-9 px-4 border-western-stone-warm/30 text-western-stone-warm hover:border-red-700 hover:text-red-700 font-mono text-[11px] uppercase tracking-[0.2em] rounded-none">
+                        <Button onClick={() => requestSetStatus(p, "rejected")} variant="outline" className="h-9 px-4 border-western-stone-warm/30 text-western-stone-warm hover:border-red-700 hover:text-red-700 font-mono text-[11px] uppercase tracking-[0.2em] rounded-none">
                           <X className="h-3.5 w-3.5 mr-1" /> Recusar
                         </Button>
                       )}
                     </>
                   )}
                   {p.status !== "pending" && (
-                    <Button onClick={() => setStatus(p, "pending")} variant="ghost" className="h-9 px-4 text-western-stone-warm hover:text-western-green-deep font-mono text-[11px] uppercase tracking-[0.2em] rounded-none">
+                    <Button onClick={() => requestSetStatus(p, "pending")} variant="ghost" className="h-9 px-4 text-western-stone-warm hover:text-western-green-deep font-mono text-[11px] uppercase tracking-[0.2em] rounded-none">
                       Reverter
                     </Button>
                   )}
@@ -366,7 +411,30 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
         isAdmin={drawer ? adminIds.has(drawer.user_id) : false}
         onClose={() => setDrawer(null)}
         onSaved={load}
-        onStatus={setStatus}
+        onStatus={requestSetStatus}
+      />
+
+      <ConfirmDialog
+        open={!!pendingStatus}
+        onOpenChange={(o) => { if (!o) setPendingStatus(null); }}
+        title={
+          pendingStatus?.status === "rejected"
+            ? "Revogar acesso do parceiro?"
+            : pendingStatus?.status === "cancelled"
+              ? "Cancelar parceiro?"
+              : "Reverter para em análise?"
+        }
+        description={`Isto revoga o acesso do parceiro ${
+          pendingStatus?.p.empresa || pendingStatus?.p.nome || ""
+        } ao Programa Western Pro. Confirmar?`}
+        confirmLabel={pendingStatus?.status === "rejected" ? "Revogar acesso" : "Confirmar"}
+        danger
+        onConfirm={async () => {
+          if (!pendingStatus) return;
+          const { p, status } = pendingStatus;
+          setPendingStatus(null);
+          await setStatus(p, status);
+        }}
       />
     </div>
   );
@@ -387,6 +455,7 @@ function PartnerDrawer({
   const [parcelas, setParcelas] = useState<string>("1");
   const [kit, setKit] = useState(false);
   const [admin, setAdmin] = useState(false);
+  const [confirmAdmin, setConfirmAdmin] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -536,13 +605,36 @@ function PartnerDrawer({
               <Switch checked={kit} onCheckedChange={setKit} />
             </div>
 
-            <div className="flex items-center justify-between border-t border-western-stone-warm/15 pt-4">
-              <div>
-                <Label className="text-sm inline-flex items-center gap-1"><ShieldCheck className="h-4 w-4 text-western-gold" /> Promover a admin</Label>
-                <p className="text-xs text-western-stone-warm">Acesso ao painel /admin.</p>
+            <div className="mt-2 border-2 border-red-300/70 bg-red-50/60 p-4">
+              <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-red-800 mb-3 inline-flex items-center gap-1.5">
+                <ShieldCheck className="h-3.5 w-3.5" /> Acesso ao sistema · ação sensível
+              </p>
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <Label className="text-sm text-western-green-deep">Promover a admin</Label>
+                  <p className="text-xs text-red-800/80 mt-1">
+                    Dá acesso <strong>TOTAL</strong> ao painel administrativo (/admin) — leads, orçamentos, pedidos, parceiros, configurações.
+                  </p>
+                </div>
+                <Switch
+                  checked={admin}
+                  onCheckedChange={(v) => {
+                    if (v && !admin) setConfirmAdmin(true);
+                    else setAdmin(v);
+                  }}
+                />
               </div>
-              <Switch checked={admin} onCheckedChange={setAdmin} />
             </div>
+
+            <ConfirmDialog
+              open={confirmAdmin}
+              onOpenChange={setConfirmAdmin}
+              title="Promover a administrador?"
+              description="Isto dá acesso TOTAL ao painel administrativo para esta pessoa. Confirmar?"
+              confirmLabel="Sim, promover"
+              danger
+              onConfirm={() => { setAdmin(true); setConfirmAdmin(false); }}
+            />
 
             <Button onClick={save} disabled={saving} className="w-full h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none">
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4 mr-2" /> Salvar configurações</>}

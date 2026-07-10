@@ -19,6 +19,7 @@ import {
   FileDown,
 } from "lucide-react";
 import { downloadPedidoPdf } from "@/lib/pdf/pedidoPdf";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 
 type Status =
   | "aguardando"
@@ -210,8 +211,8 @@ function OrderEditor({
     toast.success("Nota publicada para o cliente");
   };
 
+  const [removeOpen, setRemoveOpen] = useState(false);
   const remove = async () => {
-    if (!confirm(`Excluir pedido Nº ${order.numero}? Esta ação é irreversível.`)) return;
     const { error } = await supabase.from("production_orders").delete().eq("id", order.id);
     if (error) {
       toast.error("Erro: " + error.message);
@@ -364,11 +365,20 @@ function OrderEditor({
 
       <div className="flex items-center justify-between gap-3 flex-wrap pt-2 border-t border-western-stone-warm/15">
         <button
-          onClick={remove}
+          onClick={() => setRemoveOpen(true)}
           className="inline-flex items-center gap-2 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-red-700 border border-red-300 hover:bg-red-50"
         >
           <Trash2 className="h-3 w-3" /> Excluir pedido
         </button>
+        <ConfirmDialog
+          open={removeOpen}
+          onOpenChange={setRemoveOpen}
+          title={`Excluir pedido Nº ${order.numero}?`}
+          description="Esta ação é irreversível. Todo o histórico do pedido é apagado."
+          confirmLabel="Excluir definitivamente"
+          danger
+          onConfirm={() => { setRemoveOpen(false); remove(); }}
+        />
         <div className="flex items-center gap-2">
           <button
             onClick={async () => {
@@ -624,6 +634,7 @@ export default function AdminPedidos() {
   const [bulkModo, setBulkModo] = useState<Modo | "">("");
   const [bulkNote, setBulkNote] = useState("");
   const [bulkApplying, setBulkApplying] = useState(false);
+  const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -980,7 +991,13 @@ export default function AdminPedidos() {
               rows={1}
             />
             <button
-              onClick={applyBulk}
+              onClick={() => {
+                if (!bulkStatus && !bulkModo && !bulkNote.trim()) {
+                  toast.error("Escolha ao menos uma alteração");
+                  return;
+                }
+                setBulkConfirmOpen(true);
+              }}
               disabled={bulkApplying}
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.22em] bg-western-gold text-western-green-deep hover:bg-western-gold/90 disabled:opacity-50 whitespace-nowrap h-[42px]"
             >
@@ -989,6 +1006,19 @@ export default function AdminPedidos() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={bulkConfirmOpen}
+        onOpenChange={setBulkConfirmOpen}
+        title="Aplicar alterações em lote?"
+        description={`Você vai mudar ${checked.size} pedido(s)${
+          bulkStatus ? ` para ${STATUS_META[bulkStatus as Status].label}` : ""
+        }${bulkModo ? ` · modo ${bulkModo}` : ""}. O parceiro vê a mudança na hora. Confirmar?`}
+        confirmLabel="Aplicar"
+        danger
+        onConfirm={() => { setBulkConfirmOpen(false); applyBulk(); }}
+      />
+
 
       {creating && (
         <CreateOrderModal

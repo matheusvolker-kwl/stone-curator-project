@@ -5,8 +5,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import {
   Loader2, ArrowLeft, Trash2, Archive, Save, Plus, Minus, X, Send,
-  Download, FileText, CheckCircle2, ExternalLink, MessageCircle, Mail,
+  Download, FileText, CheckCircle2, ExternalLink, MessageCircle, Mail, MoreVertical,
 } from "lucide-react";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -234,9 +238,9 @@ export default function AdminQuoteDetail() {
     toast.success("Orçamento arquivado.");
   };
 
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const handleDelete = async () => {
     if (!lead) return;
-    if (!confirm("Apagar este orçamento de vez? Essa ação não pode ser desfeita.")) return;
     const { error } = await supabase.from("leads").delete().eq("id", lead.id);
     if (error) return toast.error(error.message);
     toast.success("Orçamento apagado.");
@@ -481,21 +485,43 @@ export default function AdminQuoteDetail() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             <Button
-              variant="outline"
               onClick={handleArchive}
-              className="rounded-none border-western-stone-warm/30 font-mono text-[11px] uppercase tracking-[0.18em] h-10"
+              className="rounded-none bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-[11px] uppercase tracking-[0.18em] h-10"
             >
               <Archive className="h-3.5 w-3.5 mr-2" /> Arquivar
             </Button>
-            <Button
-              variant="outline"
-              onClick={handleDelete}
-              className="rounded-none border-red-300 text-red-700 hover:bg-red-50 font-mono text-[11px] uppercase tracking-[0.18em] h-10"
-            >
-              <Trash2 className="h-3.5 w-3.5 mr-2" /> Apagar
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="rounded-none h-10 w-10 p-0 text-western-stone-warm hover:text-western-green-deep"
+                  aria-label="Mais ações"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="rounded-none">
+                <DropdownMenuItem
+                  onClick={() => setDeleteOpen(true)}
+                  className="text-red-700 focus:text-red-800 focus:bg-red-50 font-mono text-[11px] uppercase tracking-[0.18em]"
+                >
+                  <Trash2 className="h-3.5 w-3.5 mr-2" /> Apagar orçamento
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <ConfirmDialog
+              open={deleteOpen}
+              onOpenChange={setDeleteOpen}
+              title="Apagar orçamento definitivamente"
+              description={`Isto apaga o orçamento ${numero} e todo o histórico da proposta. Não tem volta.\n\nDigite ${numero} abaixo para confirmar.`}
+              requireText={numero}
+              requireTextPlaceholder={`Digite ${numero} para confirmar`}
+              confirmLabel="Apagar definitivamente"
+              danger
+              onConfirm={() => { handleDelete(); }}
+            />
           </div>
         </div>
       </div>
