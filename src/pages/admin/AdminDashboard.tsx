@@ -89,7 +89,7 @@ export default function AdminDashboard() {
     ] = await Promise.all([
       supabase.from("quote_threads").select("id", { count: "exact", head: true }).eq("status", "novo"),
       supabase.from("leads").select("id", { count: "exact", head: true }).eq("type", "pedido_novo").gte("created_at", sevenDays),
-      supabase.from("credenciamentos").select("id", { count: "exact", head: true }).eq("status_manual", "pendente"),
+      supabase.from("credenciamentos").select("id").eq("status_manual", "pendente"),
       supabase.from("leads").select("id", { count: "exact", head: true }).eq("type", "partner_signup").gte("created_at", sevenDays),
       supabase.from("leads").select("id", { count: "exact", head: true })
         .in("type", ["pedido_novo", "contato", "visita", "partner_signup", "newsletter"]),
@@ -126,7 +126,7 @@ export default function AdminDashboard() {
     setCounts({
       orcamentosNovos: orcNovosRes.count ?? 0,
       pedidoNovo7d: pedidoNovo7Res.count ?? 0,
-      credPendentes: credPendRes.count ?? 0,
+      credPendentes: credPendRes.error ? 0 : ((credPendRes.data as { id: string }[] | null)?.length ?? 0),
       partnerSignup7d: partnerSignup7Res.count ?? 0,
       inboxTotal: inboxTotalRes.count ?? 0,
       leadsMonth: leadsMonthRes.count ?? 0,
