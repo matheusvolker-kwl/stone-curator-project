@@ -493,7 +493,7 @@ export default function ProductPageLab() {
                       Peça um orçamento
                     </Link>
                     <a
-                      href={`https://wa.me/${BUSINESS.whatsappNumber ?? ""}`}
+                      href={`https://wa.me/${BUSINESS.whatsappFabrica}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-1.5 h-11 px-5 font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
