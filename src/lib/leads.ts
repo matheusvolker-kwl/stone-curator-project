@@ -6,10 +6,11 @@ import { reportError } from "@/lib/telemetry";
 
 export async function submitSecureLead(
   lead: Record<string, unknown>,
-  token: string,
+  token: string | null,
+  extras?: { honeypot?: string },
 ): Promise<{ ok: boolean; id?: string; error?: string }> {
   const { data, error } = await supabase.functions.invoke("lead-submit", {
-    body: { token, lead },
+    body: { token: token ?? "", lead, hp: extras?.honeypot ?? "" },
   });
   if (error) return { ok: false, error: error.message };
   return (data as { ok: boolean; id?: string; error?: string }) ?? { ok: false, error: "sem resposta" };
@@ -26,7 +27,8 @@ export async function submitContactLead(
     origem: string;
     payload?: Record<string, unknown>;
   },
-  token: string,
+  token: string | null,
+  extras?: { honeypot?: string },
 ): Promise<{ ok: boolean; error?: string }> {
   const res = await submitSecureLead(
     {
@@ -41,6 +43,7 @@ export async function submitContactLead(
       payload: input.payload ?? {},
     },
     token,
+    extras,
   );
   if (!res.ok) {
     void reportError({
@@ -53,6 +56,7 @@ export async function submitContactLead(
   }
   return { ok: true };
 }
+
 
 export interface QuoteContact {
   nome: string;
