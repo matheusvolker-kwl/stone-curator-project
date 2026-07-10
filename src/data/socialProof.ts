@@ -11,6 +11,8 @@ export interface MarcaComLogo {
   nome: string;
   /** slug kebab-case; logo em src/assets/marcas/{slug}.(svg|png|webp) — senão wordmark */
   slug: string;
+  /** Multiplicador óptico para normalizar tamanho aparente do logo (default 1). */
+  logoScale?: number;
 }
 
 export const SOCIAL_PROOF = {
@@ -25,14 +27,14 @@ export const SOCIAL_PROOF = {
     { nome: "Marcelo Faisal", slug: "marcelo-faisal" },
   ] as PessoaComFoto[],
   marcas: [
-    { nome: "Cobasi", slug: "cobasi" },
-    { nome: "Unique Garden", slug: "unique-garden" },
-    { nome: "Hotel Rosewood", slug: "hotel-rosewood" },
-    { nome: "All Resort Porto Belo", slug: "all-resort-porto-belo" },
-    { nome: "Cristal Pool", slug: "cristal-pool" },
-    { nome: "Genesis Ecossistemas", slug: "genesis-ecossistemas" },
-    { nome: "Biopet Lagos", slug: "biopet-lagos" },
-    { nome: "Mandaia Arquitetura", slug: "mandaia-arquitetura" },
+    { nome: "Cobasi", slug: "cobasi", logoScale: 0.6 },
+    { nome: "Unique Garden", slug: "unique-garden", logoScale: 1.0 },
+    { nome: "Hotel Rosewood", slug: "hotel-rosewood", logoScale: 1.0 },
+    { nome: "All Resort Porto Belo", slug: "all-resort-porto-belo", logoScale: 1.0 },
+    { nome: "Cristal Pool", slug: "cristal-pool", logoScale: 1.2 },
+    { nome: "Genesis Ecossistemas", slug: "genesis-ecossistemas", logoScale: 1.05 },
+    { nome: "Biopet Lagos", slug: "biopet-lagos", logoScale: 1.1 },
+    { nome: "Mandaia Arquitetura", slug: "mandaia-arquitetura", logoScale: 1.0 },
   ] as MarcaComLogo[],
 } as const;
 
