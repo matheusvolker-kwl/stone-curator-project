@@ -23,7 +23,7 @@ export const BUSINESS = {
   enderecoAtelieRua: "Rua Colina, 38 — Jardim Paraíso",
   enderecoAtelieCep: "07794-075",
   enderecoAtelieCompleto: "Rua Colina, 38 — Jardim Paraíso · Cajamar/SP · 07794-075",
-  horarioAtelie: "Seg–Sex · 9h às 17h",
+  horarioAtelie: "Seg–Sex · 9h–17h · Retirada até 16h",
 
   // Empresa
   fundadaEm: 1993,
