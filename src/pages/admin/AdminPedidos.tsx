@@ -345,7 +345,7 @@ function OrderEditor({
           />
         </Field>
 
-        <Field label="Observações do cliente (visível ao parceiro)" full>
+        <Field label="Recado para o parceiro (aparece na conta dele)" full>
           <textarea
             value={draft.observacoes_cliente ?? ""}
             onChange={(e) => set("observacoes_cliente", e.target.value || null)}
