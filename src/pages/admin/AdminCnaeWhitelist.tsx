@@ -138,7 +138,14 @@ export default function AdminCnaeWhitelist() {
               <tr key={r.codigo} className="border-t border-western-stone-warm/10">
                 <td className="px-4 py-2 font-mono">{formatCnae(r.codigo)}</td>
                 <td className="px-4 py-2">
-                  <Select value={r.tier} onValueChange={(v) => updateTier(r.codigo, v as Tier)}>
+                  <Select
+                    value={r.tier}
+                    onValueChange={(v) => {
+                      const next = v as Tier;
+                      if (next === r.tier) return;
+                      setPendingTier({ codigo: r.codigo, tier: next });
+                    }}
+                  >
                     <SelectTrigger className={`h-8 w-32 rounded-none font-mono text-[10px] uppercase tracking-[0.18em] ${TIER_CLS[r.tier]}`}><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="verde">verde</SelectItem>
@@ -158,6 +165,30 @@ export default function AdminCnaeWhitelist() {
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        open={!!pendingTier}
+        onOpenChange={(o) => { if (!o) setPendingTier(null); }}
+        title="Mudar faixa deste CNAE?"
+        description={
+          pendingTier
+            ? `${formatCnae(pendingTier.codigo)} → ${pendingTier.tier.toUpperCase()}.\n\n${
+                pendingTier.tier === "verde"
+                  ? "VERDE aprova sozinho qualquer empresa com esse CNAE — principal OU secundário. Só libera, nunca reprova."
+                  : "Empresas com este CNAE passam a exigir análise manual (não aprovam sozinhas)."
+              }`
+            : ""
+        }
+        confirmLabel="Sim, aplicar"
+        danger={pendingTier?.tier === "verde"}
+        onConfirm={async () => {
+          if (!pendingTier) return;
+          const { codigo, tier } = pendingTier;
+          setPendingTier(null);
+          await updateTier(codigo, tier);
+          toast.success("Faixa atualizada.");
+        }}
+      />
     </div>
   );
 }
