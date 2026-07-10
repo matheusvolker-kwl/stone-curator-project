@@ -221,66 +221,78 @@ export default function Contact() {
       <section className="container-western pb-20 md:pb-28 max-w-6xl">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.05fr] gap-10 lg:gap-14 items-start">
           {/* Canais rápidos */}
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-western-stone-warm/15 border border-western-stone-warm/15">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-px bg-western-stone-warm/15 border border-western-stone-warm/15 self-stretch">
             {canais.map((c) => {
               const Icon = c.icon;
-              return (
-                <li key={c.eyebrow} className="bg-western-paper">
-                  <a
-                    href={c.href}
-                    target={c.href.startsWith("http") ? "_blank" : undefined}
-                    rel="noopener noreferrer"
-                    className={`group relative block h-full p-7 md:p-8 transition-colors duration-500 ${
-                      c.destaque
-                        ? "bg-western-green-deep text-western-cream hover:bg-western-green-mid"
-                        : "hover:bg-western-cream/60"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-4 mb-8">
-                      <Icon
-                        className={`h-5 w-5 ${
-                          c.destaque ? "text-western-gold-soft" : "text-western-gold"
-                        }`}
-                        strokeWidth={1.4}
-                      />
-                      <ArrowUpRight
-                        className={`h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1 ${
-                          c.destaque ? "text-western-cream-muted" : "text-western-stone-warm/60"
-                        }`}
-                        strokeWidth={1.4}
-                      />
-                    </div>
-
-                    <p
-                      className={`font-mono text-[10px] uppercase tracking-[0.28em] mb-2 ${
+              const cardClass = `group relative block h-full p-6 md:p-7 lg:px-8 lg:py-6 transition-colors duration-500 ${
+                c.destaque
+                  ? "bg-western-green-deep text-western-cream hover:bg-western-green-mid"
+                  : "hover:bg-western-cream/60"
+              }`;
+              const inner = (
+                <>
+                  <div className="flex items-start justify-between gap-4 mb-6 lg:mb-4">
+                    <Icon
+                      className={`h-5 w-5 ${
                         c.destaque ? "text-western-gold-soft" : "text-western-gold"
                       }`}
-                    >
-                      {c.eyebrow}
-                    </p>
-                    <p
-                      className={`font-display text-lg md:text-xl leading-tight mb-2 ${
-                        c.destaque ? "text-western-cream" : "text-western-green-deep"
+                      strokeWidth={1.4}
+                    />
+                    <ArrowUpRight
+                      className={`h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1 ${
+                        c.destaque ? "text-western-cream-muted" : "text-western-stone-warm/60"
                       }`}
-                    >
-                      {c.titulo}
-                    </p>
-                    <p
-                      className={`text-[13px] leading-relaxed ${
-                        c.destaque ? "text-western-cream-muted" : "text-western-stone-warm"
-                      }`}
-                    >
-                      {c.descricao}
-                    </p>
+                      strokeWidth={1.4}
+                    />
+                  </div>
 
-                    <span
-                      className={`mt-6 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.24em] ${
-                        c.destaque ? "text-western-cream" : "text-western-green-deep"
-                      }`}
+                  <p
+                    className={`font-mono text-[10px] uppercase tracking-[0.28em] mb-2 ${
+                      c.destaque ? "text-western-gold-soft" : "text-western-gold"
+                    }`}
+                  >
+                    {c.eyebrow}
+                  </p>
+                  <p
+                    className={`font-display text-lg md:text-xl leading-tight mb-2 ${
+                      c.destaque ? "text-western-cream" : "text-western-green-deep"
+                    }`}
+                  >
+                    {c.titulo}
+                  </p>
+                  <p
+                    className={`text-[13px] leading-relaxed ${
+                      c.destaque ? "text-western-cream-muted" : "text-western-stone-warm"
+                    }`}
+                  >
+                    {c.descricao}
+                  </p>
+
+                  <span
+                    className={`mt-5 lg:mt-4 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.24em] ${
+                      c.destaque ? "text-western-cream" : "text-western-green-deep"
+                    }`}
+                  >
+                    <span className="link-underline">{c.cta}</span>
+                  </span>
+                </>
+              );
+              return (
+                <li key={c.eyebrow} className="bg-western-paper">
+                  {c.internal ? (
+                    <Link to={c.href} className={cardClass}>
+                      {inner}
+                    </Link>
+                  ) : (
+                    <a
+                      href={c.href}
+                      target={c.href.startsWith("http") ? "_blank" : undefined}
+                      rel="noopener noreferrer"
+                      className={cardClass}
                     >
-                      <span className="link-underline">{c.cta}</span>
-                    </span>
-                  </a>
+                      {inner}
+                    </a>
+                  )}
                 </li>
               );
             })}
