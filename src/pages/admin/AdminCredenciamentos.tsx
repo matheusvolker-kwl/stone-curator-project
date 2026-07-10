@@ -234,8 +234,8 @@ function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: 
           <div className="border border-western-stone-warm/20 p-4 bg-western-paper/40">
             <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm mb-2">Decisão automática</p>
             <div className="flex items-center gap-3 mb-2">
-              <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] ${decisaoCls(cred.decisao)}`}>{cred.decisao}</span>
-              <span className="text-xs text-western-stone-warm">fonte: {cred.fonte ?? "nenhuma"}</span>
+              <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] ${decisaoCls(cred.decisao)}`}>{DECISAO_LABEL[cred.decisao] ?? cred.decisao}</span>
+              <span className="text-xs text-western-stone-warm" title="Verde = liberado direto; amarela/laranja = precisa da sua avaliação.">Confirmação: {fonteLabel(cred.fonte)}</span>
             </div>
             <p className="text-xs text-western-stone-warm">{cred.motivo}</p>
           </div>
