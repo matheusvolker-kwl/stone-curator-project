@@ -41,7 +41,7 @@ let scriptPromise: Promise<void> | null = null;
 
 function loadTurnstileScript(): Promise<void> {
   if (typeof window === "undefined") return Promise.resolve();
-  if (window.turnstile) return Promise.resolve();
+  if (ts()) return Promise.resolve();
   if (scriptPromise) return scriptPromise;
   scriptPromise = new Promise<void>((resolve, reject) => {
     const existing = document.querySelector<HTMLScriptElement>(`script[src="${TURNSTILE_SRC}"]`);
@@ -76,9 +76,9 @@ const InvisibleTurnstile = forwardRef<InvisibleTurnstileHandle>((_props, ref) =>
     let cancelled = false;
     loadTurnstileScript()
       .then(() => {
-        if (cancelled || !hostRef.current || !window.turnstile) return;
+        if (cancelled || !hostRef.current || !ts()) return;
         try {
-          widgetIdRef.current = window.turnstile.render(hostRef.current, {
+          widgetIdRef.current = ts().render(hostRef.current, {
             sitekey: TURNSTILE_SITE_KEY,
             size: "invisible",
             appearance: "interaction-only",
@@ -112,8 +112,8 @@ const InvisibleTurnstile = forwardRef<InvisibleTurnstileHandle>((_props, ref) =>
 
     return () => {
       cancelled = true;
-      if (widgetIdRef.current && window.turnstile) {
-        try { window.turnstile.remove(widgetIdRef.current); } catch { /* noop */ }
+      if (widgetIdRef.current && ts()) {
+        try { ts().remove(widgetIdRef.current); } catch { /* noop */ }
         widgetIdRef.current = null;
       }
     };
@@ -123,10 +123,10 @@ const InvisibleTurnstile = forwardRef<InvisibleTurnstileHandle>((_props, ref) =>
     getToken: (timeoutMs = 3500) =>
       new Promise<string | null>((resolve) => {
         // If widget never mounted, fall back immediately after the timeout.
-        if (!readyRef.current || !widgetIdRef.current || !window.turnstile) {
+        if (!readyRef.current || !widgetIdRef.current || !ts()) {
           const start = Date.now();
           const poll = () => {
-            if (readyRef.current && widgetIdRef.current && window.turnstile) {
+            if (readyRef.current && widgetIdRef.current && ts()) {
               startExecute();
             } else if (Date.now() - start >= timeoutMs) {
               resolve(null);
@@ -142,11 +142,11 @@ const InvisibleTurnstile = forwardRef<InvisibleTurnstileHandle>((_props, ref) =>
         function startExecute() {
           const wid = widgetIdRef.current!;
           try {
-            window.turnstile!.reset(wid);
+            ts()!.reset(wid);
           } catch { /* noop */ }
           pendingRef.current = resolve;
           try {
-            window.turnstile!.execute(wid);
+            ts()!.execute(wid);
           } catch {
             pendingRef.current = null;
             resolve(null);
