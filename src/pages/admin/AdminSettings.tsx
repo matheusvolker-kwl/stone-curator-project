@@ -29,7 +29,7 @@ export default function AdminSettings() {
       <p className="text-eyebrow mb-3">Configurações</p>
       <div className="w-12 h-px bg-western-gold mb-6" />
       <h1 className="font-display text-3xl mb-2">Configurações</h1>
-      <p className="text-western-stone-warm mb-8">Defaults do programa Western Pro e whitelist de CNAEs que credenciam automaticamente.</p>
+      <p className="text-western-stone-warm mb-8">Padrões do programa Western Pro e CNAEs que aprovam automaticamente o credenciamento.</p>
 
       <Tabs
         value={tab}
@@ -41,10 +41,10 @@ export default function AdminSettings() {
       >
         <TabsList className="mb-6 rounded-none bg-western-paper border border-western-stone-warm/20 h-auto p-1">
           <TabsTrigger value="tiers" className="rounded-none font-mono text-[11px] uppercase tracking-[0.18em] data-[state=active]:bg-western-gold/15 data-[state=active]:text-western-green-deep">
-            Defaults dos tiers
+            Padrões por nível
           </TabsTrigger>
           <TabsTrigger value="cnae" className="rounded-none font-mono text-[11px] uppercase tracking-[0.18em] data-[state=active]:bg-western-gold/15 data-[state=active]:text-western-green-deep">
-            Whitelist CNAE
+            CNAEs que aprovam
           </TabsTrigger>
         </TabsList>
 
