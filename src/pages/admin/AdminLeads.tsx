@@ -70,14 +70,16 @@ export default function AdminLeads() {
       if (error) {
         console.error(error);
         setLeads([]); setTotal(0);
+        setLoadError(true);
       } else {
         setLeads((data as Lead[]) ?? []);
         setTotal(count ?? 0);
+        setLoadError(false);
       }
       setLoading(false);
     })();
     return () => { cancelled = true; };
-  }, [typeFilter, q, page]);
+  }, [typeFilter, q, page, reloadNonce]);
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const types = useMemo(() => KNOWN_TYPES, []);
