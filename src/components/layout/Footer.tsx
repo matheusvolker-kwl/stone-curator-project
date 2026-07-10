@@ -21,7 +21,7 @@ const COLECOES: { label: string; handle: string }[] = [
   { label: "Pedras Pequenas", handle: "pedras-pequenas" },
   { label: "Pedras de Borda", handle: "pedras-de-borda" },
   { label: "Revestimentos", handle: "revestimentos" },
-  { label: "Pisadas", handle: "pisantes" },
+  { label: "Pisadas", handle: "pisadas" },
   { label: "Acessórios", handle: "acessorios" },
   { label: "Fósseis Decorativos", handle: "fosseis-decorativos" },
 ];
