@@ -357,7 +357,7 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
               })}
             </tbody>
           </table>
-          <p className="px-4 py-2 text-[10px] text-western-stone-warm">* Override individual sobrescreve o desconto padrão do tier.</p>
+          <p className="px-4 py-2 text-[10px] text-western-stone-warm">* Desconto personalizado (sobrescreve o padrão do nível).</p>
         </div>
       )}
 
