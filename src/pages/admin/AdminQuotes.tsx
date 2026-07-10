@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Search, Mail, Phone, Building2, ArrowRight } from "lucide-react";
@@ -12,6 +12,7 @@ import {
   type QuotePayload,
 } from "@/components/admin/quoteTypes";
 import { formatBRL } from "@/lib/catalog/client";
+import { LoadError } from "@/components/admin/LoadError";
 
 const ALL_STATUS: ("all" | QuoteStatus)[] = [
   "all", "novo", "em_atendimento", "proposta_enviada", "fechado", "perdido", "arquivado",
