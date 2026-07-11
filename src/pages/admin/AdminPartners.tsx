@@ -394,10 +394,10 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
           <Checkbox
             checked={allSelected ? true : indeterminate ? "indeterminate" : false}
             onCheckedChange={toggleAll}
-            aria-label="Selecionar todos os aprovados"
+            aria-label="Selecionar todos no filtro"
           />
           <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
-            Selecionar todos os aprovados no filtro ({selectableRows.length})
+            Selecionar todos no filtro ({selectableRows.length})
             {selectedIds.size > 0 && ` · ${selectedIds.size} selecionado(s)`}
           </span>
         </div>
