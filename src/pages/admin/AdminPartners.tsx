@@ -664,14 +664,33 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
       <ConfirmDialog
         open={confirmRevokeOpen}
         onOpenChange={setConfirmRevokeOpen}
-        title={`Revogar o acesso de ${selectedIds.size} parceiro(s)?`}
+        title={`Revogar o acesso de ${selectedApprovedRows.length} parceiro(s)?`}
         description="Eles perdem imediatamente o acesso ao Programa Western Pro e ao catálogo de atacado. Você pode reverter individualmente depois."
         confirmLabel={bulkBusy ? "Revogando…" : "Revogar acesso"}
         danger
         onConfirm={handleBulkRevoke}
       />
 
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        title={`Excluir ${selectedIds.size} cadastro(s) de parceiro?`}
+        description={`Isto apaga permanentemente o perfil, as configurações de tier e o papel de admin (se houver) de ${selectedIds.size} parceiro(s). A ação NÃO pode ser desfeita. Digite EXCLUIR para confirmar.`}
+        confirmLabel={bulkBusy ? "Excluindo…" : "Excluir cadastros"}
+        danger
+        requireText="EXCLUIR"
+        onConfirm={handleBulkDelete}
+      />
 
+      <ConfirmDialog
+        open={!!pendingDelete}
+        onOpenChange={(o) => { if (!o) setPendingDelete(null); }}
+        title="Excluir cadastro deste parceiro?"
+        description={`Isto apaga permanentemente o perfil de ${pendingDelete?.empresa || pendingDelete?.nome || ""}. Não pode ser desfeito.`}
+        confirmLabel="Excluir"
+        danger
+        onConfirm={handleDeleteOne}
+      />
 
       <PartnerDrawer
         partner={drawer}
