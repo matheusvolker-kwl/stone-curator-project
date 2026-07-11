@@ -410,7 +410,6 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
             const pm = (p.payment_methods ?? {}) as { boleto?: boolean; kit_gratis?: boolean };
             const isAdminUser = adminIds.has(p.user_id);
             const hasCred = !!p.credenciamento_id;
-            const isApproved = p.status === "approved";
             const selected = selectedIds.has(p.id);
             return (
               <div key={p.id} className={`border bg-white p-5 ${selected ? "border-western-gold bg-western-gold/5" : "border-western-stone-warm/20"}`}>
