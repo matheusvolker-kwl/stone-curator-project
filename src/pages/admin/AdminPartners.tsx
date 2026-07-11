@@ -234,8 +234,12 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
   const clearSelection = () => setSelectedIds(new Set());
 
   const selectedRows = useMemo(
-    () => partners.filter((p) => selectedIds.has(p.id) && p.status === "approved"),
+    () => partners.filter((p) => selectedIds.has(p.id)),
     [partners, selectedIds]
+  );
+  const selectedApprovedRows = useMemo(
+    () => selectedRows.filter((p) => p.status === "approved"),
+    [selectedRows]
   );
 
   const handleBulkExport = () => {
