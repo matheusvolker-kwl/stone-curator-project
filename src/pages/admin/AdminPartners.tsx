@@ -209,13 +209,10 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
     await setStatus(p, status);
   };
 
-  // ── Multi-seleção (só parceiros APROVADOS) ─────────────────────────────
+  // ── Multi-seleção (qualquer status) ────────────────────────────────────
   useEffect(() => { setSelectedIds(new Set()); }, [statusFilter, segmentFilter, ufFilter, q, layout]);
 
-  const selectableRows = useMemo(
-    () => filtered.filter((p) => p.status === "approved"),
-    [filtered]
-  );
+  const selectableRows = useMemo(() => filtered, [filtered]);
   const selectableIds = useMemo(() => selectableRows.map((p) => p.id), [selectableRows]);
   const allSelected = selectableIds.length > 0 && selectableIds.every((id) => selectedIds.has(id));
   const someSelected = selectableIds.some((id) => selectedIds.has(id));
