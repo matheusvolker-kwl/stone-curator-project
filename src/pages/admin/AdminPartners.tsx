@@ -582,18 +582,27 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
             </Button>
             <Button
               onClick={() => setTierChangeOpen(true)}
-              disabled={bulkBusy}
+              disabled={bulkBusy || selectedApprovedRows.length === 0}
               variant="outline"
+              title={selectedApprovedRows.length === 0 ? "Selecione ao menos um parceiro aprovado" : undefined}
               className="h-9 rounded-none border-western-stone-warm/30 font-mono text-[11px] uppercase tracking-[0.18em]"
             >
-              <ChevronsUpDown className="h-3.5 w-3.5 mr-2" /> Mudar nível
+              <ChevronsUpDown className="h-3.5 w-3.5 mr-2" /> Mudar nível{selectedApprovedRows.length > 0 && selectedApprovedRows.length !== selectedIds.size ? ` (${selectedApprovedRows.length})` : ""}
             </Button>
             <Button
               onClick={() => setConfirmRevokeOpen(true)}
-              disabled={bulkBusy}
-              className="h-9 rounded-none bg-red-700 text-white hover:bg-red-800 font-mono text-[11px] uppercase tracking-[0.18em]"
+              disabled={bulkBusy || selectedApprovedRows.length === 0}
+              title={selectedApprovedRows.length === 0 ? "Selecione ao menos um parceiro aprovado" : undefined}
+              className="h-9 rounded-none bg-red-700 text-white hover:bg-red-800 font-mono text-[11px] uppercase tracking-[0.18em] disabled:opacity-50"
             >
-              <ShieldX className="h-3.5 w-3.5 mr-2" /> Revogar acesso
+              <ShieldX className="h-3.5 w-3.5 mr-2" /> Revogar acesso{selectedApprovedRows.length > 0 && selectedApprovedRows.length !== selectedIds.size ? ` (${selectedApprovedRows.length})` : ""}
+            </Button>
+            <Button
+              onClick={() => setConfirmDeleteOpen(true)}
+              disabled={bulkBusy}
+              className="h-9 rounded-none bg-red-800 text-white hover:bg-red-900 font-mono text-[11px] uppercase tracking-[0.18em]"
+            >
+              <Trash2 className="h-3.5 w-3.5 mr-2" /> Excluir cadastro
             </Button>
             <Button
               onClick={clearSelection}
