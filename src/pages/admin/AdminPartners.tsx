@@ -416,15 +416,13 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
               <div key={p.id} className={`border bg-white p-5 ${selected ? "border-western-gold bg-western-gold/5" : "border-western-stone-warm/20"}`}>
                 <div className="flex flex-wrap items-start justify-between gap-4 mb-3">
                   <div className="flex items-start gap-3 flex-1 min-w-0">
-                    {isApproved && (
-                      <div className="pt-1" onClick={(e) => e.stopPropagation()}>
-                        <Checkbox
-                          checked={selected}
-                          onCheckedChange={() => toggleOne(p.id)}
-                          aria-label={`Selecionar ${p.empresa ?? p.nome ?? ""}`}
-                        />
-                      </div>
-                    )}
+                    <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={selected}
+                        onCheckedChange={() => toggleOne(p.id)}
+                        aria-label={`Selecionar ${p.empresa ?? p.nome ?? ""}`}
+                      />
+                    </div>
                     <div className="min-w-0">
                       <h3 className="font-display text-xl text-western-green-deep">{p.empresa || "—"}</h3>
                       <p className="text-spec text-western-stone-warm mt-1">
