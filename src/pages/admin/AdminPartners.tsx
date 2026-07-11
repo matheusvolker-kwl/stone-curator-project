@@ -491,6 +491,9 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
                   <Button onClick={() => setDrawer(p)} variant="ghost" className="h-9 px-4 text-western-stone-warm hover:text-western-green-deep font-mono text-[11px] uppercase tracking-[0.2em] rounded-none ml-auto">
                     <Eye className="h-3.5 w-3.5 mr-1" /> {p.status === "approved" ? "Detalhes & Tier" : "Detalhes"}
                   </Button>
+                  <Button onClick={() => setPendingDelete(p)} variant="ghost" className="h-9 px-3 text-red-700 hover:bg-red-50 font-mono text-[11px] uppercase tracking-[0.2em] rounded-none">
+                    <Trash2 className="h-3.5 w-3.5 mr-1" /> Excluir
+                  </Button>
                 </div>
               </div>
             );
