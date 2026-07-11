@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Check, X, Phone, Search, Download, Eye, Save, ShieldCheck, LayoutGrid, Table as TableIcon, ExternalLink, ShieldX, ChevronsUpDown } from "lucide-react";
+import { Loader2, Check, X, Phone, Search, Download, Eye, Save, ShieldCheck, LayoutGrid, Table as TableIcon, ExternalLink, ShieldX, ChevronsUpDown, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -138,6 +138,8 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
   const [pendingStatus, setPendingStatus] = useState<{ p: Partner; status: Partner["status"] } | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [confirmRevokeOpen, setConfirmRevokeOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<Partner | null>(null);
   const [tierChangeOpen, setTierChangeOpen] = useState(false);
   const [bulkTier, setBulkTier] = useState<Tier>("light");
   const [confirmTierOpen, setConfirmTierOpen] = useState(false);
@@ -207,13 +209,10 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
     await setStatus(p, status);
   };
 
-  // ── Multi-seleção (só parceiros APROVADOS) ─────────────────────────────
+  // ── Multi-seleção (qualquer status) ────────────────────────────────────
   useEffect(() => { setSelectedIds(new Set()); }, [statusFilter, segmentFilter, ufFilter, q, layout]);
 
-  const selectableRows = useMemo(
-    () => filtered.filter((p) => p.status === "approved"),
-    [filtered]
-  );
+  const selectableRows = useMemo(() => filtered, [filtered]);
   const selectableIds = useMemo(() => selectableRows.map((p) => p.id), [selectableRows]);
   const allSelected = selectableIds.length > 0 && selectableIds.every((id) => selectedIds.has(id));
   const someSelected = selectableIds.some((id) => selectedIds.has(id));
@@ -235,8 +234,12 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
   const clearSelection = () => setSelectedIds(new Set());
 
   const selectedRows = useMemo(
-    () => partners.filter((p) => selectedIds.has(p.id) && p.status === "approved"),
+    () => partners.filter((p) => selectedIds.has(p.id)),
     [partners, selectedIds]
+  );
+  const selectedApprovedRows = useMemo(
+    () => selectedRows.filter((p) => p.status === "approved"),
+    [selectedRows]
   );
 
   const handleBulkExport = () => {
@@ -249,10 +252,10 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
   };
 
   const handleBulkRevoke = async () => {
-    if (selectedRows.length === 0) { setConfirmRevokeOpen(false); return; }
+    if (selectedApprovedRows.length === 0) { setConfirmRevokeOpen(false); return; }
     setBulkBusy(true);
     const results = await Promise.allSettled(
-      selectedRows.map((p) =>
+      selectedApprovedRows.map((p) =>
         supabase.from("partner_profiles").update({ status: "rejected", approved_at: null } as never).eq("id", p.id)
       )
     );
@@ -266,10 +269,10 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
   };
 
   const handleBulkTierChange = async () => {
-    if (selectedRows.length === 0) { setConfirmTierOpen(false); return; }
+    if (selectedApprovedRows.length === 0) { setConfirmTierOpen(false); return; }
     setBulkBusy(true);
     const results = await Promise.allSettled(
-      selectedRows.map((p) =>
+      selectedApprovedRows.map((p) =>
         supabase.from("partner_profiles").update({ tier: bulkTier } as never).eq("id", p.id)
       )
     );
@@ -280,6 +283,35 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
     setTierChangeOpen(false);
     toast.success(`${ok} parceiro(s) movidos para ${TIER_LABEL[bulkTier]}.`, fail ? { description: `${fail} falharam.` } : undefined);
     clearSelection();
+    await load();
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedRows.length === 0) { setConfirmDeleteOpen(false); return; }
+    setBulkBusy(true);
+    // Remove user_roles primeiro (evita órfãos) e depois partner_profiles
+    const userIds = selectedRows.map((p) => p.user_id);
+    await supabase.from("user_roles").delete().in("user_id", userIds);
+    const results = await Promise.allSettled(
+      selectedRows.map((p) => supabase.from("partner_profiles").delete().eq("id", p.id))
+    );
+    const ok = results.filter((x) => x.status === "fulfilled" && !(x as PromiseFulfilledResult<{ error: unknown }>).value.error).length;
+    const fail = results.length - ok;
+    setBulkBusy(false);
+    setConfirmDeleteOpen(false);
+    toast.success(`${ok} cadastro(s) excluído(s).`, fail ? { description: `${fail} falharam.` } : undefined);
+    clearSelection();
+    await load();
+  };
+
+  const handleDeleteOne = async () => {
+    if (!pendingDelete) return;
+    const p = pendingDelete;
+    setPendingDelete(null);
+    await supabase.from("user_roles").delete().eq("user_id", p.user_id);
+    const { error } = await supabase.from("partner_profiles").delete().eq("id", p.id);
+    if (error) { toast.error("Erro ao excluir.", { description: error.message }); return; }
+    toast.success("Cadastro excluído.");
     await load();
   };
 
@@ -362,10 +394,10 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
           <Checkbox
             checked={allSelected ? true : indeterminate ? "indeterminate" : false}
             onCheckedChange={toggleAll}
-            aria-label="Selecionar todos os aprovados"
+            aria-label="Selecionar todos no filtro"
           />
           <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
-            Selecionar todos os aprovados no filtro ({selectableRows.length})
+            Selecionar todos no filtro ({selectableRows.length})
             {selectedIds.size > 0 && ` · ${selectedIds.size} selecionado(s)`}
           </span>
         </div>
@@ -378,21 +410,18 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
             const pm = (p.payment_methods ?? {}) as { boleto?: boolean; kit_gratis?: boolean };
             const isAdminUser = adminIds.has(p.user_id);
             const hasCred = !!p.credenciamento_id;
-            const isApproved = p.status === "approved";
             const selected = selectedIds.has(p.id);
             return (
               <div key={p.id} className={`border bg-white p-5 ${selected ? "border-western-gold bg-western-gold/5" : "border-western-stone-warm/20"}`}>
                 <div className="flex flex-wrap items-start justify-between gap-4 mb-3">
                   <div className="flex items-start gap-3 flex-1 min-w-0">
-                    {isApproved && (
-                      <div className="pt-1" onClick={(e) => e.stopPropagation()}>
-                        <Checkbox
-                          checked={selected}
-                          onCheckedChange={() => toggleOne(p.id)}
-                          aria-label={`Selecionar ${p.empresa ?? p.nome ?? ""}`}
-                        />
-                      </div>
-                    )}
+                    <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={selected}
+                        onCheckedChange={() => toggleOne(p.id)}
+                        aria-label={`Selecionar ${p.empresa ?? p.nome ?? ""}`}
+                      />
+                    </div>
                     <div className="min-w-0">
                       <h3 className="font-display text-xl text-western-green-deep">{p.empresa || "—"}</h3>
                       <p className="text-spec text-western-stone-warm mt-1">
@@ -461,6 +490,9 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
                   )}
                   <Button onClick={() => setDrawer(p)} variant="ghost" className="h-9 px-4 text-western-stone-warm hover:text-western-green-deep font-mono text-[11px] uppercase tracking-[0.2em] rounded-none ml-auto">
                     <Eye className="h-3.5 w-3.5 mr-1" /> {p.status === "approved" ? "Detalhes & Tier" : "Detalhes"}
+                  </Button>
+                  <Button onClick={() => setPendingDelete(p)} variant="ghost" className="h-9 px-3 text-red-700 hover:bg-red-50 font-mono text-[11px] uppercase tracking-[0.2em] rounded-none">
+                    <Trash2 className="h-3.5 w-3.5 mr-1" /> Excluir
                   </Button>
                 </div>
               </div>
@@ -550,18 +582,27 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
             </Button>
             <Button
               onClick={() => setTierChangeOpen(true)}
-              disabled={bulkBusy}
+              disabled={bulkBusy || selectedApprovedRows.length === 0}
               variant="outline"
+              title={selectedApprovedRows.length === 0 ? "Selecione ao menos um parceiro aprovado" : undefined}
               className="h-9 rounded-none border-western-stone-warm/30 font-mono text-[11px] uppercase tracking-[0.18em]"
             >
-              <ChevronsUpDown className="h-3.5 w-3.5 mr-2" /> Mudar nível
+              <ChevronsUpDown className="h-3.5 w-3.5 mr-2" /> Mudar nível{selectedApprovedRows.length > 0 && selectedApprovedRows.length !== selectedIds.size ? ` (${selectedApprovedRows.length})` : ""}
             </Button>
             <Button
               onClick={() => setConfirmRevokeOpen(true)}
-              disabled={bulkBusy}
-              className="h-9 rounded-none bg-red-700 text-white hover:bg-red-800 font-mono text-[11px] uppercase tracking-[0.18em]"
+              disabled={bulkBusy || selectedApprovedRows.length === 0}
+              title={selectedApprovedRows.length === 0 ? "Selecione ao menos um parceiro aprovado" : undefined}
+              className="h-9 rounded-none bg-red-700 text-white hover:bg-red-800 font-mono text-[11px] uppercase tracking-[0.18em] disabled:opacity-50"
             >
-              <ShieldX className="h-3.5 w-3.5 mr-2" /> Revogar acesso
+              <ShieldX className="h-3.5 w-3.5 mr-2" /> Revogar acesso{selectedApprovedRows.length > 0 && selectedApprovedRows.length !== selectedIds.size ? ` (${selectedApprovedRows.length})` : ""}
+            </Button>
+            <Button
+              onClick={() => setConfirmDeleteOpen(true)}
+              disabled={bulkBusy}
+              className="h-9 rounded-none bg-red-800 text-white hover:bg-red-900 font-mono text-[11px] uppercase tracking-[0.18em]"
+            >
+              <Trash2 className="h-3.5 w-3.5 mr-2" /> Excluir cadastro
             </Button>
             <Button
               onClick={clearSelection}
@@ -623,14 +664,33 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
       <ConfirmDialog
         open={confirmRevokeOpen}
         onOpenChange={setConfirmRevokeOpen}
-        title={`Revogar o acesso de ${selectedIds.size} parceiro(s)?`}
+        title={`Revogar o acesso de ${selectedApprovedRows.length} parceiro(s)?`}
         description="Eles perdem imediatamente o acesso ao Programa Western Pro e ao catálogo de atacado. Você pode reverter individualmente depois."
         confirmLabel={bulkBusy ? "Revogando…" : "Revogar acesso"}
         danger
         onConfirm={handleBulkRevoke}
       />
 
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        title={`Excluir ${selectedIds.size} cadastro(s) de parceiro?`}
+        description={`Isto apaga permanentemente o perfil, as configurações de tier e o papel de admin (se houver) de ${selectedIds.size} parceiro(s). A ação NÃO pode ser desfeita. Digite EXCLUIR para confirmar.`}
+        confirmLabel={bulkBusy ? "Excluindo…" : "Excluir cadastros"}
+        danger
+        requireText="EXCLUIR"
+        onConfirm={handleBulkDelete}
+      />
 
+      <ConfirmDialog
+        open={!!pendingDelete}
+        onOpenChange={(o) => { if (!o) setPendingDelete(null); }}
+        title="Excluir cadastro deste parceiro?"
+        description={`Isto apaga permanentemente o perfil de ${pendingDelete?.empresa || pendingDelete?.nome || ""}. Não pode ser desfeito.`}
+        confirmLabel="Excluir"
+        danger
+        onConfirm={handleDeleteOne}
+      />
 
       <PartnerDrawer
         partner={drawer}
