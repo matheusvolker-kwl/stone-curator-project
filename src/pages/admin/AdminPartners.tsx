@@ -252,10 +252,10 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
   };
 
   const handleBulkRevoke = async () => {
-    if (selectedRows.length === 0) { setConfirmRevokeOpen(false); return; }
+    if (selectedApprovedRows.length === 0) { setConfirmRevokeOpen(false); return; }
     setBulkBusy(true);
     const results = await Promise.allSettled(
-      selectedRows.map((p) =>
+      selectedApprovedRows.map((p) =>
         supabase.from("partner_profiles").update({ status: "rejected", approved_at: null } as never).eq("id", p.id)
       )
     );
@@ -269,10 +269,10 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
   };
 
   const handleBulkTierChange = async () => {
-    if (selectedRows.length === 0) { setConfirmTierOpen(false); return; }
+    if (selectedApprovedRows.length === 0) { setConfirmTierOpen(false); return; }
     setBulkBusy(true);
     const results = await Promise.allSettled(
-      selectedRows.map((p) =>
+      selectedApprovedRows.map((p) =>
         supabase.from("partner_profiles").update({ tier: bulkTier } as never).eq("id", p.id)
       )
     );
@@ -283,6 +283,35 @@ function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void 
     setTierChangeOpen(false);
     toast.success(`${ok} parceiro(s) movidos para ${TIER_LABEL[bulkTier]}.`, fail ? { description: `${fail} falharam.` } : undefined);
     clearSelection();
+    await load();
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedRows.length === 0) { setConfirmDeleteOpen(false); return; }
+    setBulkBusy(true);
+    // Remove user_roles primeiro (evita órfãos) e depois partner_profiles
+    const userIds = selectedRows.map((p) => p.user_id);
+    await supabase.from("user_roles").delete().in("user_id", userIds);
+    const results = await Promise.allSettled(
+      selectedRows.map((p) => supabase.from("partner_profiles").delete().eq("id", p.id))
+    );
+    const ok = results.filter((x) => x.status === "fulfilled" && !(x as PromiseFulfilledResult<{ error: unknown }>).value.error).length;
+    const fail = results.length - ok;
+    setBulkBusy(false);
+    setConfirmDeleteOpen(false);
+    toast.success(`${ok} cadastro(s) excluído(s).`, fail ? { description: `${fail} falharam.` } : undefined);
+    clearSelection();
+    await load();
+  };
+
+  const handleDeleteOne = async () => {
+    if (!pendingDelete) return;
+    const p = pendingDelete;
+    setPendingDelete(null);
+    await supabase.from("user_roles").delete().eq("user_id", p.user_id);
+    const { error } = await supabase.from("partner_profiles").delete().eq("id", p.id);
+    if (error) { toast.error("Erro ao excluir.", { description: error.message }); return; }
+    toast.success("Cadastro excluído.");
     await load();
   };
 
