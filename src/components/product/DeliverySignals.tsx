@@ -1,8 +1,8 @@
-import { Clock, MapPin, ShieldCheck, Package } from "lucide-react";
+import { Clock, MapPin, ShieldCheck } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 
 interface Props {
-  /** "minimal" = só os dois sinais principais. "full" = adiciona pedido mínimo + garantia. */
+  /** "minimal" = só os dois sinais principais. "full" = adiciona garantia. */
   variant?: "minimal" | "full";
 }
 
@@ -16,12 +16,11 @@ export default function DeliverySignals({ variant = "minimal" }: Props) {
   ];
   const extra = [
     { Icon: ShieldCheck, label: `Garantia ${BUSINESS.garantiaLabel}` },
-    { Icon: Package, label: `Pedido mínimo ${BUSINESS.pedidoMinimoLabel}` },
   ];
   const items = variant === "full" ? [...base, ...extra] : base;
   const gridCols =
     variant === "full"
-      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+      ? "grid-cols-1 sm:grid-cols-3"
       : "grid-cols-1 sm:grid-cols-2";
   return (
     <ul className={`grid ${gridCols} gap-x-4 gap-y-2`}>

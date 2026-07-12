@@ -64,10 +64,10 @@ const GRUPOS: Grupo[] = [
       },
       {
         q: "Posso comprar uma peça só ou uma amostra antes?",
-        text: `O pedido mínimo é ${BUSINESS.pedidoMinimoLabel}. Para conhecer o material antes, temos a Western Box (amostras com cashback). Clientes com serviço contratado ou pedidos maiores podem negociar um kit de amostras diretamente com o nosso time.`,
+        text: "Sim — não há pedido mínimo. Para conhecer o material antes, temos a Western Box (amostras com cashback). Clientes com serviço contratado ou pedidos maiores podem negociar um kit de amostras diretamente com o nosso time.",
         a: (
           <>
-            O pedido mínimo é <strong>{BUSINESS.pedidoMinimoLabel}</strong>. Para conhecer o material antes,
+            Sim — não há pedido mínimo. Para conhecer o material antes,
             temos a <Link to="/western-box" className="underline decoration-western-gold/40 underline-offset-2 hover:decoration-western-gold">Western Box</Link> (amostras com cashback).
             Clientes com serviço contratado ou pedidos maiores podem negociar um kit de amostras diretamente com o nosso time.
           </>

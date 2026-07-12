@@ -438,7 +438,7 @@ export async function gerarOrcamentoPdf({
     doc.setFontSize(8);
     doc.setTextColor(...STONE);
     doc.text(
-      `Pedido mínimo ${formatBRL(BUSINESS.pedidoMinimoBRL, currency)} · valores sujeitos a confirmação`,
+      "Valores sujeitos a confirmação",
       pageWidth - margin,
       cursorY,
       { align: "right" },

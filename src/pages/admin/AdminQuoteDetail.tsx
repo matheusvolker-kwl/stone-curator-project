@@ -946,9 +946,6 @@ export default function AdminQuoteDetail() {
                 </li>
               ))}
             </ul>
-            <p className="text-[10px] font-mono text-western-stone-warm/60 mt-3 pt-3 border-t border-western-stone-warm/15">
-              Pedido mínimo {BUSINESS.pedidoMinimoLabel}
-            </p>
           </section>
         </aside>
       </div>

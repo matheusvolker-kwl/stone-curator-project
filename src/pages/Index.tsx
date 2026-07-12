@@ -120,7 +120,7 @@ export default function Index() {
       <section className="bg-white border-b border-western-stone-warm/10">
         <div className="container-western py-5 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
           {[
-            { Icon: ShieldCheck, t: `Pedido mínimo ${BUSINESS.pedidoMinimoLabel}`, d: "Exclusivo para profissionais com CNPJ." },
+            { Icon: ShieldCheck, t: "Canal B2B", d: "Exclusivo para profissionais com CNPJ." },
             { Icon: Truck, t: "Produção em 15 dias úteis", d: "Após confirmação do pedido." },
             { Icon: Box, t: "Modelos 3D em SketchUp", d: "+300 mil downloads por profissionais no Warehouse." },
           ].map(({ Icon, t, d }, i) => (
@@ -294,10 +294,10 @@ export default function Index() {
             <Reveal variant="fade-left" delay={120} duration={750}>
               <div className="grid grid-cols-2 gap-px bg-western-gold/15">
                 {[
-                  { eyebrow: "Pedido mínimo", t: BUSINESS.pedidoMinimoLabel },
                   { eyebrow: "Prazo", t: "15 dias úteis" },
                   { eyebrow: "Garantia", t: BUSINESS.garantiaLabel },
                   { eyebrow: "Frete", t: "Transportadora ou retirada" },
+                  { eyebrow: "Cadastro", t: "Automático por CNPJ" },
                 ].map((s) => (
                   <div key={s.t} className="bg-western-green-deep p-6 md:p-8">
                     <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold/80 mb-3 font-medium">{s.eyebrow}</p>

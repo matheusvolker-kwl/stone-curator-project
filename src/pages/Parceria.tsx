@@ -136,7 +136,7 @@ const PASSOS = [
   { n: "01", t: "Cadastro com CNPJ", d: "Formulário curto." },
   { n: "02", t: "Acesso liberado", d: "Validação automática pelo ramo." },
   { n: "03", t: "Preço e 3D", d: "Tabela de atacado e arquivos SketchUp." },
-  { n: "04", t: "Compre no atacado", d: `Mínimo ${BUSINESS.pedidoMinimoLabel} · produção ${BUSINESS.prazoProducaoDias} dias úteis.` },
+  { n: "04", t: "Compre no atacado", d: `Sem pedido mínimo · produção ${BUSINESS.prazoProducaoDias} dias úteis.` },
 ];
 
 /** Placeholder visual — cliente preenche depois com foto real. */

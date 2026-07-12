@@ -848,7 +848,7 @@ export default function WesternBox() {
           </div>
         </div>
         <p className="mt-10 md:mt-12 text-center text-xs md:text-sm text-western-stone-warm/70 max-w-2xl mx-auto px-6">
-          A Western Box de amostras é aberta a parceiros e clientes finais — não está sujeita ao pedido mínimo do catálogo nem exige cadastro B2B.
+          A Western Box de amostras é aberta a parceiros e clientes finais — não exige cadastro B2B.
         </p>
       </section>
 
