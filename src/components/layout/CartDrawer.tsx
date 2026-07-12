@@ -10,14 +10,14 @@ import { useAuth } from "@/hooks/useAuth";
 import CartCrossSell from "@/components/cart/CartCrossSell";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import EmptyCartHints from "@/components/cart/EmptyCartHints";
-import FreeShippingProgress from "@/components/cart/FreeShippingProgress";
+
 
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { registerPedidoNovoLead } from "@/lib/leads/pedidoNovo";
 
 
-const MIN_ORDER = BUSINESS.pedidoMinimoBRL;
+
 
 export default function CartDrawer({
   open,
@@ -32,7 +32,7 @@ export default function CartDrawer({
   const totalQty = items.reduce((s, i) => s + i.quantity, 0);
   const subtotal = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
   const currency = items[0]?.price.currencyCode ?? "BRL";
-  const meetsMinimum = subtotal >= MIN_ORDER;
+  
 
   const { user, isApproved, empresa } = useAuth();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
@@ -141,9 +141,6 @@ export default function CartDrawer({
                 : `${totalQty} ${totalQty === 1 ? "peça" : "peças"}`}
             </SheetDescription>
           </div>
-          {items.length > 0 && isApproved && (
-            <FreeShippingProgress subtotal={subtotal} minimum={MIN_ORDER} />
-          )}
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 md:px-8 py-5">
@@ -280,7 +277,7 @@ export default function CartDrawer({
             {isApproved ? (
               <Button
                 onClick={handleCheckout}
-                disabled={isLoading || checkoutLoading || !meetsMinimum}
+                disabled={isLoading || checkoutLoading}
                 className="group w-full h-14 bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-xs uppercase tracking-[0.25em] rounded-none shadow-[0_18px_40px_-20px_rgba(27,38,33,0.6)] disabled:opacity-50 transition-all"
               >
                 {isLoading || checkoutLoading ? (
@@ -338,11 +335,6 @@ export default function CartDrawer({
               </Link>
             )}
 
-            {isApproved && !meetsMinimum && (
-              <p className="text-spec text-western-cream-muted text-center">
-                Faltam {formatBRL(MIN_ORDER - subtotal)} para checkout. Você pode solicitar orçamento sem mínimo.
-              </p>
-            )}
           </div>
         )}
       </SheetContent>
