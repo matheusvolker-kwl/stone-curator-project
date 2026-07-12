@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Info } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
-import { formatPreco, nivelMeta, PEDIDO_MINIMO, type ConjuntoLeaf, type Nivel } from "@/data/guideMap";
+import { formatPreco, nivelMeta, type ConjuntoLeaf, type Nivel } from "@/data/guideMap";
 import { fetchProduct } from "@/lib/datasource";
 import { useAuth } from "@/hooks/useAuth";
 import { nivelLabelMap } from "./types";
@@ -40,7 +40,7 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
     ? parseFloat(produto.priceRange.minVariantPrice.amount)
     : NaN;
   const preco = Number.isFinite(precoShopify) ? precoShopify : conjunto.preco;
-  const abaixoDoMinimo = preco < PEDIDO_MINIMO;
+  
 
   return (
     <article
@@ -113,17 +113,12 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
           <div className="font-display text-[34px] font-medium text-western-green-deep leading-none mb-2">
             {formatPreco(preco)}
           </div>
-          {isApproved && !abaixoDoMinimo && (
+          {isApproved && (
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-6">
               Preço de parceiro aplicado
             </p>
           )}
-          {abaixoDoMinimo && (
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm mb-6 inline-flex items-start gap-1.5 leading-snug">
-              <Info className="h-3 w-3 mt-0.5 flex-shrink-0 text-western-gold" />
-              Pedido mínimo {formatPreco(PEDIDO_MINIMO)} · some itens autorais para atingir.
-            </p>
-          )}
+
 
           <Link to={`/conjuntos/${conjunto.handle}`} className="btn-dark w-full">
             Ver esta composição <ArrowRight className="h-4 w-4" />
