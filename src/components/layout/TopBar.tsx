@@ -1,9 +1,9 @@
 import { ShieldCheck, Truck, Box, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { BUSINESS } from "@/config/business";
+
 
 const items = [
-  { Icon: ShieldCheck, text: `Pedido mínimo ${BUSINESS.pedidoMinimoLabel} — exclusivo B2B` },
+  { Icon: ShieldCheck, text: "Canal B2B — exclusivo para profissionais com CNPJ" },
   { Icon: Truck, text: "Produção em 15 dias úteis após confirmação" },
   { Icon: Box, text: "Modelos 3D · +300 mil downloads no SketchUp Warehouse" },
 ];
