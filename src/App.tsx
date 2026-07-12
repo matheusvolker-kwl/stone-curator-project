@@ -1,7 +1,12 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import RouteTransition from "@/components/RouteTransition";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
+
+function LabProductRedirect() {
+  const { handle = "" } = useParams();
+  return <Navigate to={`/produtos/${handle}`} replace />;
+}
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
@@ -52,7 +57,7 @@ const Produtos = lazy(() => import("./pages/Produtos.tsx"));
 const Conjuntos = lazy(() => import("./pages/Conjuntos.tsx"));
 const ConjuntoPage = lazy(() => import("./pages/ConjuntoPage.tsx"));
 const ProductPage = lazy(() => import("./pages/ProductPage.tsx"));
-const ProductPageLab = lazy(() => import("./pages/lab/ProductPageLab.tsx"));
+
 const About = lazy(() => import("./pages/About.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
 const WesternBoxPage = lazy(() => import("./pages/WesternBox.tsx"));
@@ -161,7 +166,7 @@ const App = () => (
                     <Route path="/conjuntos/:handle" element={<ConjuntoPage />} />
                     <Route path="/produtos" element={<Produtos />} />
                     <Route path="/produtos/:handle" element={<ProductPage />} />
-                    <Route path="/lab/produtos/:handle" element={<ProductPageLab />} />
+                    <Route path="/lab/produtos/:handle" element={<LabProductRedirect />} />
                     <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
                     <Route path="/sobre" element={<About />} />
                     <Route path="/contato" element={<Contact />} />
