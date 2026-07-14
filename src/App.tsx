@@ -162,6 +162,8 @@ const App = () => (
                     <Route path="/parceria-direto" element={<ParceriaDireto />} />
                     {/* Orçamento (página pública) removido por decisão do dono — B2C vai pro atendimento */}
                     <Route path="/orcamento" element={<Navigate to="/contato" replace />} />
+                    {/* v1 usava /linhas/pisantes — preservar SEO/links externos no cutover */}
+                    <Route path="/linhas/pisantes" element={<Navigate to="/linhas/pisadas" replace />} />
                     <Route path="/linhas/:handle" element={<LinhaPage />} />
                     <Route path="/inspiracoes" element={<Inspiracoes />} />
                     <Route path="/inspiracao" element={<Navigate to="/inspiracoes" replace />} />

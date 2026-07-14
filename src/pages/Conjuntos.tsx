@@ -65,6 +65,9 @@ const ALL_LEAVES: LeafMeta[] = TIPOS_ORDER.flatMap((tipo) =>
 
 const ALL_HANDLES = ALL_LEAVES.map((l) => l.handle);
 
+/** Conjuntos mostrados por local antes do "ver todos" (1 linha no desktop). */
+const PREVIEW_POR_TIPO = 3;
+
 const PRECO_MIN_GLOBAL = Math.min(...ALL_LEAVES.map((l) => l.precoFallback));
 const PRECO_MAX_GLOBAL = Math.max(...ALL_LEAVES.map((l) => l.precoFallback));
 
@@ -80,6 +83,12 @@ export default function Conjuntos() {
   const [tamanhosSel, setTamanhosSel] = useState<Set<Tamanho>>(new Set());
   const [precoMax, setPrecoMax] = useState<number>(PRECO_MAX_GLOBAL);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  /**
+   * Cada local de aplicação mostra PREVIEW_POR_TIPO conjuntos; o resto abre sob
+   * demanda. Sem isso a página despeja 45 cards de uma vez (>26.000px no
+   * mobile) — o oposto de "uma decisão por vez".
+   */
+  const [expandidos, setExpandidos] = useState<Set<Tipo>>(new Set());
 
   // Mescla shopify + meta
   const enriched = useMemo(() => {
@@ -133,6 +142,14 @@ export default function Conjuntos() {
     setPrecoMax(PRECO_MAX_GLOBAL);
   };
 
+  const toggleExpandido = (t: Tipo) => {
+    setExpandidos((prev) => {
+      const next = new Set(prev);
+      next.has(t) ? next.delete(t) : next.add(t);
+      return next;
+    });
+  };
+
   const activeCount =
     tiposSel.size +
     tamanhosSel.size +
@@ -143,17 +160,37 @@ export default function Conjuntos() {
       {/* HERO */}
       <header className="border-b border-western-stone-warm/15">
         <div className="container-western py-16 md:py-24">
-          <div className="max-w-3xl">
-            <p className="text-eyebrow mb-5">Curadoria · Conjuntos</p>
-            <div className="w-12 h-px bg-western-gold mb-8" />
-            <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05]">
-              Conjuntos curados, prontos para projetar.
-            </h1>
-            <p className="mt-8 text-western-stone-warm text-lg leading-relaxed">
-              45 composições organizadas pelo local de aplicação — piscinas,
-              lagos, lagos híbridos e jardins. Cada conjunto reúne pedras,
-              volumes e acabamentos já equilibrados pela curadoria Western.
-            </p>
+          <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-10 lg:gap-16 items-end">
+            <div className="max-w-3xl">
+              <p className="text-eyebrow mb-5">Curadoria · Conjuntos</p>
+              <div className="w-12 h-px bg-western-gold mb-8" />
+              <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05]">
+                Conjuntos curados, prontos para projetar.
+              </h1>
+              <p className="mt-8 text-western-stone-warm text-lg leading-relaxed">
+                {ALL_LEAVES.length} composições organizadas pelo local de aplicação —
+                piscinas, lagos, lagos híbridos e jardins. Cada conjunto reúne
+                pedras, volumes e acabamentos já equilibrados pela curadoria
+                Western.
+              </p>
+            </div>
+
+            {/* Atalho guiado — o caminho de maior conversão para quem chega sem rumo */}
+            <aside className="surface-forest p-7 md:p-8">
+              <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-western-gold-soft mb-3">
+                Não sabe por onde começar?
+              </p>
+              <p className="font-display text-xl md:text-2xl text-western-cream leading-snug">
+                Responda 3 perguntas e veja os conjuntos certos para o seu
+                projeto.
+              </p>
+              <Link
+                to="/guia-de-composicao"
+                className="mt-6 inline-flex items-center justify-center gap-2 h-11 px-6 bg-western-gold text-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] hover:bg-western-gold/90 transition-colors"
+              >
+                Abrir o guia <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </aside>
           </div>
         </div>
       </header>
@@ -220,6 +257,13 @@ export default function Conjuntos() {
                 {TIPOS_ORDER.map((tipo) => {
                   const items = grouped.get(tipo) ?? [];
                   if (items.length === 0) return null;
+                  // Filtrou por este local? Então já pediu para ver tudo dele.
+                  const filtrouEsteTipo = tiposSel.has(tipo);
+                  const aberto = expandidos.has(tipo) || filtrouEsteTipo;
+                  const visiveis = aberto
+                    ? items
+                    : items.slice(0, PREVIEW_POR_TIPO);
+                  const ocultos = items.length - visiveis.length;
                   return (
                     <section key={tipo}>
                       <div className="flex items-end justify-between gap-6 mb-8 pb-5 border-b border-western-stone-warm/15">
@@ -241,7 +285,7 @@ export default function Conjuntos() {
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {items.map(({ leaf, shopify, preco, img }) => (
+                        {visiveis.map(({ leaf, shopify, preco, img }) => (
                           <ConjuntoCard
                             key={leaf.handle}
                             leaf={leaf}
@@ -251,6 +295,25 @@ export default function Conjuntos() {
                           />
                         ))}
                       </div>
+
+                      {(ocultos > 0 || (aberto && !filtrouEsteTipo)) && (
+                        <button
+                          type="button"
+                          onClick={() => toggleExpandido(tipo)}
+                          aria-expanded={aberto}
+                          className="mt-8 w-full sm:w-auto inline-flex items-center justify-center gap-2 h-12 px-7 border border-western-green-deep/30 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+                        >
+                          {aberto ? (
+                            <>Mostrar menos</>
+                          ) : (
+                            <>
+                              Ver os {items.length} conjuntos de{" "}
+                              {tipoLabels[tipo].toLowerCase()}
+                              <ArrowRight className="h-3.5 w-3.5" />
+                            </>
+                          )}
+                        </button>
+                      )}
                     </section>
                   );
                 })}
@@ -516,6 +579,7 @@ function ConjuntoCard({ leaf, shopify, preco, img }: CardProps) {
             amount={String(preco)}
             currency="BRL"
             className="font-sans text-lg font-semibold text-western-green-deep"
+            linked={false}
           />
           <span className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/70 group-hover:text-western-gold transition-colors">
             Ver conjunto <ArrowRight className="h-3 w-3" />
