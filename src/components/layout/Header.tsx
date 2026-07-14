@@ -21,6 +21,7 @@ import {
 const nav = [
   { to: "/linhas", label: "Linhas" },
   { to: "/conjuntos", label: "Conjuntos" },
+  { to: "/inspiracoes", label: "Inspirações" },
   { to: "/guia-de-composicao", label: "Guia de composição" },
   { to: "/western-box", label: "Amostras" },
   { to: "/contrate-a-western", label: "Contrate" },

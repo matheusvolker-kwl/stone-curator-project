@@ -51,6 +51,7 @@ const AccountPreferences = lazy(() => import("./pages/account/AccountPreferences
 const AccountTracking = lazy(() => import("./pages/account/AccountTracking"));
 const AccountCompositions = lazy(() => import("./pages/account/AccountCompositions"));
 
+const Inspiracoes = lazy(() => import("./pages/Inspiracoes.tsx"));
 const Linhas = lazy(() => import("./pages/Linhas.tsx"));
 const LinhaPage = lazy(() => import("./pages/LinhaPage.tsx"));
 const Produtos = lazy(() => import("./pages/Produtos.tsx"));
@@ -162,6 +163,8 @@ const App = () => (
                     {/* Orçamento (página pública) removido por decisão do dono — B2C vai pro atendimento */}
                     <Route path="/orcamento" element={<Navigate to="/contato" replace />} />
                     <Route path="/linhas/:handle" element={<LinhaPage />} />
+                    <Route path="/inspiracoes" element={<Inspiracoes />} />
+                    <Route path="/inspiracao" element={<Navigate to="/inspiracoes" replace />} />
                     <Route path="/conjuntos" element={<Conjuntos />} />
                     <Route path="/conjuntos/:handle" element={<ConjuntoPage />} />
                     <Route path="/produtos" element={<Produtos />} />
