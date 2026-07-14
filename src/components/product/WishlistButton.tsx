@@ -37,6 +37,12 @@ export default function WishlistButton({ handle, title, image, variant = "icon",
     const r = await toggle({ handle, title, image: image ? cdnImg(image, 800) : image });
     if (r === "added") toast.success("Adicionado aos favoritos.");
     if (r === "removed") toast("Removido dos favoritos.");
+    // Nunca cantar sucesso pelo que não aconteceu no banco.
+    if (r === "erro") {
+      toast.error("Não consegui salvar agora.", {
+        description: "Verifique a conexão e tente de novo.",
+      });
+    }
   };
 
   if (variant === "pill") {

@@ -1,24 +1,24 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import {
-  ShoppingBag,
-  Package,
-  Truck,
-  Factory,
-  CheckCircle2,
-  Clock,
-  XCircle,
-  ChevronRight,
-  ArrowLeft,
-  Copy,
-  ExternalLink,
-  FileDown,
-} from "lucide-react";
+import { Check, Copy, ExternalLink, FileDown, Loader2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { formatBRL } from "@/lib/catalog/client";
 import { downloadPedidoPdf } from "@/lib/pdf/pedidoPdf";
 import { useCartStore, type CartItem } from "@/stores/cartStore";
+import {
+  CelulaData,
+  DataTable,
+  EstadoCarregando,
+  EstadoErro,
+  PageHeader,
+  StatusBadge,
+  Tabs,
+  dataCurta,
+  rotuloStatus,
+  type Coluna,
+} from "@/components/backoffice";
 
 function mapOrderItensToCart(itens: unknown): CartItem[] {
   if (!Array.isArray(itens)) return [];
@@ -93,7 +93,6 @@ function mapOrderItensToCart(itens: unknown): CartItem[] {
   return out;
 }
 
-
 type Status =
   | "aguardando"
   | "em_producao"
@@ -125,7 +124,6 @@ interface ProductionOrder {
   updated_at: string;
 }
 
-
 interface OrderEvent {
   id: string;
   status: Status | null;
@@ -133,106 +131,285 @@ interface OrderEvent {
   created_at: string;
 }
 
-const STATUS_META: Record<Status, { label: string; tone: string; icon: typeof Clock }> = {
-  aguardando: { label: "Aguardando início", tone: "text-western-stone-warm border-western-stone-warm/30 bg-western-stone-warm/5", icon: Clock },
-  em_producao: { label: "Em produção", tone: "text-western-gold border-western-gold/40 bg-western-gold/10", icon: Factory },
-  controle_qualidade: { label: "Controle de qualidade", tone: "text-western-gold border-western-gold/40 bg-western-gold/10", icon: CheckCircle2 },
-  pronto: { label: "Pronto para envio/retirada", tone: "text-emerald-700 border-emerald-600/40 bg-emerald-50", icon: Package },
-  em_transporte: { label: "Em transporte", tone: "text-blue-700 border-blue-600/40 bg-blue-50", icon: Truck },
-  entregue: { label: "Entregue", tone: "text-emerald-700 border-emerald-600/40 bg-emerald-50", icon: CheckCircle2 },
-  retirado: { label: "Retirado na fábrica", tone: "text-emerald-700 border-emerald-600/40 bg-emerald-50", icon: CheckCircle2 },
-  cancelado: { label: "Cancelado", tone: "text-red-700 border-red-600/40 bg-red-50", icon: XCircle },
-};
+const CONCLUIDOS: Status[] = ["entregue", "retirado", "cancelado"];
 
-const TIMELINE_STEPS_FRETE: Status[] = ["aguardando", "em_producao", "controle_qualidade", "pronto", "em_transporte", "entregue"];
-const TIMELINE_STEPS_RETIRADA: Status[] = ["aguardando", "em_producao", "controle_qualidade", "pronto", "retirado"];
+const TIMELINE_FRETE: Status[] = [
+  "aguardando",
+  "em_producao",
+  "controle_qualidade",
+  "pronto",
+  "em_transporte",
+  "entregue",
+];
+const TIMELINE_RETIRADA: Status[] = [
+  "aguardando",
+  "em_producao",
+  "controle_qualidade",
+  "pronto",
+  "retirado",
+];
 
-function fmtDate(iso: string | null): string {
-  if (!iso) return "—";
-  return new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
+/** O próximo passo em português — o parceiro lê o que ACONTECE, não o código do status. */
+function proximoPasso(order: ProductionOrder): string {
+  switch (order.status) {
+    case "aguardando":
+      return `Seu pedido entrou na fila do ateliê. A produção leva ${order.prazo_dias_uteis} dias úteis a partir do início.`;
+    case "em_producao":
+      return "As peças estão sendo produzidas à mão no ateliê. Avisamos aqui quando forem para a conferência.";
+    case "controle_qualidade":
+      return "As peças estão na conferência final. É a última etapa antes da liberação.";
+    case "pronto":
+      return order.modo_entrega === "retirada"
+        ? "Pronto para retirada na fábrica. Combine o horário com o time antes de ir."
+        : "Pronto e embalado. Aguardando a coleta da transportadora.";
+    case "em_transporte":
+      return "A caminho. Acompanhe pelo código de rastreio abaixo.";
+    case "entregue":
+      return "Entregue. Se algo chegou avariado, fale com o time em até 7 dias.";
+    case "retirado":
+      return "Retirado na fábrica. Pedido concluído.";
+    case "cancelado":
+      return "Pedido cancelado. Fale com o time se isso não estiver certo.";
+    default:
+      return "Acompanhe as atualizações abaixo.";
+  }
 }
 
-function fmtDateTime(iso: string): string {
-  return new Date(iso).toLocaleString("pt-BR", {
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+async function copiar(texto: string) {
+  try {
+    await navigator.clipboard.writeText(texto);
+    toast.success("Código copiado");
+  } catch {
+    // Contexto não-seguro ou permissão negada: antes isso falhava calado.
+    toast.error("Não consegui copiar. Selecione o código e copie manualmente.");
+  }
 }
 
-function StatusBadge({ status }: { status: Status }) {
-  const meta = STATUS_META[status];
-  const Icon = meta.icon;
+/* ─────────────────────────────────────────────────────────────
+ * Detalhe
+ * ───────────────────────────────────────────────────────────── */
+
+function LinhaDeProducao({ order }: { order: ProductionOrder }) {
+  const etapas = order.modo_entrega === "retirada" ? TIMELINE_RETIRADA : TIMELINE_FRETE;
+  const atual = etapas.indexOf(order.status);
+
+  if (order.status === "cancelado") {
+    return (
+      <div className="rounded-[16px] border border-[#B3372E]/35 bg-[#B3372E]/[0.06] p-5">
+        <p className="text-eyebrow mb-2">Linha de produção</p>
+        <p className="text-[17px] font-semibold text-[#B3372E]">Pedido cancelado</p>
+      </div>
+    );
+  }
+
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 border font-mono text-[10px] uppercase tracking-[0.2em] ${meta.tone}`}>
-      <Icon className="h-3 w-3" /> {meta.label}
-    </span>
-  );
-}
-
-function ProgressTimeline({ order }: { order: ProductionOrder }) {
-  const steps = order.modo_entrega === "retirada" ? TIMELINE_STEPS_RETIRADA : TIMELINE_STEPS_FRETE;
-  const currentIdx = steps.indexOf(order.status);
-  const isCancelled = order.status === "cancelado";
-
-  return (
-    <div className="border border-western-stone-warm/15 bg-white p-5 md:p-6">
-      <p className="text-eyebrow mb-4">Linha de produção</p>
-      {isCancelled ? (
-        <p className="text-red-700 font-mono text-xs uppercase tracking-[0.2em]">Pedido cancelado</p>
-      ) : (
-        <ol className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-          {steps.map((s, i) => {
-            const meta = STATUS_META[s];
-            const reached = i <= currentIdx;
-            const active = i === currentIdx;
-            return (
-              <li
-                key={s}
-                className={`relative border-l-2 pl-3 py-1 ${
-                  reached ? "border-western-gold" : "border-western-stone-warm/20"
-                }`}
-              >
-                <p
-                  className={`font-mono text-[9px] uppercase tracking-[0.2em] ${
-                    active ? "text-western-gold" : reached ? "text-western-green-deep" : "text-western-stone-warm/60"
-                  }`}
+    <div className="rounded-[16px] border border-western-border-soft bg-white p-5 md:p-6">
+      <p className="text-eyebrow mb-5">Linha de produção</p>
+      <ol className="space-y-0">
+        {etapas.map((etapa, i) => {
+          const alcancada = i <= atual;
+          const ativa = i === atual;
+          const ultima = i === etapas.length - 1;
+          return (
+            <li key={etapa} className="flex gap-4">
+              <div className="flex flex-col items-center">
+                <span
+                  className={
+                    alcancada
+                      ? "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-western-cta text-western-cream"
+                      : "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border-2 border-western-border-strong bg-white"
+                  }
                 >
-                  Etapa {i + 1}
-                </p>
+                  {alcancada && <Check className="h-3.5 w-3.5" aria-hidden="true" />}
+                </span>
+                {!ultima && (
+                  <span
+                    className={
+                      i < atual
+                        ? "w-0.5 flex-1 bg-western-cta"
+                        : "w-0.5 flex-1 bg-western-border-soft"
+                    }
+                    style={{ minHeight: "28px" }}
+                  />
+                )}
+              </div>
+
+              <div className={ultima ? "pb-0 pt-0.5" : "pb-5 pt-0.5"}>
                 <p
-                  className={`text-xs leading-tight mt-0.5 ${
-                    reached ? "text-western-green-deep font-medium" : "text-western-stone-warm/60"
-                  }`}
+                  className={
+                    ativa
+                      ? "text-[17px] font-semibold text-western-green-deep"
+                      : alcancada
+                      ? "text-[16px] font-semibold text-western-green-deep/75"
+                      : "text-[16px] text-western-stone-warm"
+                  }
                 >
-                  {meta.label}
+                  {rotuloStatus(etapa)}
                 </p>
-              </li>
-            );
-          })}
-        </ol>
-      )}
+                {ativa && <p className="text-meta mt-1">Etapa atual</p>}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 }
 
-function OrderDetail({ order, onBack, onRepetir }: { order: ProductionOrder; onBack: () => void; onRepetir?: (order: ProductionOrder) => void }) {
+function CardAcao({
+  order,
+  onRepetir,
+  onBaixarPdf,
+  baixando,
+}: {
+  order: ProductionOrder;
+  onRepetir: () => void;
+  onBaixarPdf: () => void;
+  baixando: boolean;
+}) {
+  const podeRepetir = Array.isArray(order.itens) && order.itens.length > 0;
+  const rastreavel =
+    order.modo_entrega === "frete" && Boolean(order.tracking_code || order.transportadora);
+
+  return (
+    <div className="rounded-[16px] border border-western-border-soft bg-western-paper p-5 md:sticky md:top-6">
+      <p className="text-eyebrow mb-3">Situação</p>
+      <StatusBadge status={order.status} />
+      <p className="text-body mt-3">{proximoPasso(order)}</p>
+
+      <dl className="mt-5 space-y-2 border-t border-western-border-soft pt-5">
+        <div className="flex items-baseline justify-between gap-4">
+          <dt className="text-meta">Entrega</dt>
+          <dd className="text-[16px] font-semibold text-western-green-deep">
+            {order.modo_entrega === "retirada" ? "Retirada na fábrica" : "Frete"}
+          </dd>
+        </div>
+        <div className="flex items-baseline justify-between gap-4">
+          <dt className="text-meta">
+            {order.modo_entrega === "retirada" ? "Disponível em" : "Previsão"}
+          </dt>
+          <dd className="text-[16px] font-semibold tabular-nums text-western-green-deep">
+            {dataCurta(order.previsao_entrega)}
+          </dd>
+        </div>
+        {order.valor_total != null && (
+          <div className="flex items-baseline justify-between gap-4">
+            <dt className="text-meta">Total</dt>
+            <dd className="text-[17px] font-semibold tabular-nums text-western-green-deep">
+              {formatBRL(order.valor_total, "BRL")}
+            </dd>
+          </div>
+        )}
+      </dl>
+
+      {rastreavel && (
+        <div className="mt-5 border-t border-western-border-soft pt-5">
+          <p className="text-eyebrow mb-2">Rastreio</p>
+          {order.transportadora && (
+            <p className="text-[16px] font-semibold text-western-green-deep">{order.transportadora}</p>
+          )}
+          {order.tracking_code ? (
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span className="rounded-[6px] bg-white px-2.5 py-1.5 text-[16px] font-semibold tabular-nums text-western-green-deep">
+                {order.tracking_code}
+              </span>
+              <button
+                type="button"
+                onClick={() => void copiar(order.tracking_code as string)}
+                className="tap-target inline-flex items-center gap-1.5 rounded-[10px] px-2 text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
+              >
+                <Copy className="h-4 w-4" aria-hidden="true" />
+                Copiar
+              </button>
+              {order.transportadora?.toLowerCase().includes("correios") && (
+                <a
+                  href={`https://rastreamento.correios.com.br/app/index.php?objeto=${order.tracking_code}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tap-target inline-flex items-center gap-1.5 rounded-[10px] px-2 text-[16px] font-semibold text-western-bronze transition-colors hover:text-western-green-deep"
+                >
+                  Acompanhar
+                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                </a>
+              )}
+            </div>
+          ) : (
+            <p className="text-meta mt-1">Aguardando o código da transportadora.</p>
+          )}
+        </div>
+      )}
+
+      <div className="mt-6 space-y-3 border-t border-western-border-soft pt-5">
+        {podeRepetir && (
+          <button type="button" onClick={onRepetir} className="btn-primary tap-target w-full">
+            <RotateCcw className="mr-2 inline h-4 w-4" aria-hidden="true" />
+            Pedir de novo
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={onBaixarPdf}
+          disabled={baixando}
+          className="btn-outline-forest tap-target w-full disabled:opacity-50"
+        >
+          {baixando ? (
+            <Loader2 className="mr-2 inline h-4 w-4 animate-spin" aria-hidden="true" />
+          ) : (
+            <FileDown className="mr-2 inline h-4 w-4" aria-hidden="true" />
+          )}
+          Baixar PDF do pedido
+        </button>
+        {podeRepetir && (
+          <p className="text-meta">
+            "Pedir de novo" recoloca as mesmas peças no carrinho — você ajusta quantidades antes de
+            fechar.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function OrderDetail({
+  order,
+  onRepetir,
+}: {
+  order: ProductionOrder;
+  onRepetir: (order: ProductionOrder) => void;
+}) {
   const [events, setEvents] = useState<OrderEvent[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<unknown>(null);
+  const [baixando, setBaixando] = useState(false);
+
+  /**
+   * Guarda de corrida: trocar de pedido dispara uma nova busca, e a resposta
+   * lenta do pedido ANTERIOR não pode sobrescrever a do atual (o parceiro veria
+   * o histórico do pedido errado). Só a última requisição pode escrever no estado.
+   */
+  const reqRef = useRef(0);
+
+  const carregarEventos = useCallback(async () => {
+    const req = ++reqRef.current;
+    setCarregando(true);
+    setErro(null);
+
+    const { data, error } = await supabase
+      .from("production_order_events")
+      .select("id,status,note,created_at")
+      .eq("order_id", order.id)
+      .order("created_at", { ascending: false });
+
+    if (req !== reqRef.current) return; // resposta obsoleta — descarta.
+
+    if (error) setErro(error);
+    else setEvents((data as OrderEvent[]) ?? []);
+    setCarregando(false);
+  }, [order.id]);
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      const { data } = await supabase
-        .from("production_order_events")
-        .select("id,status,note,created_at")
-        .eq("order_id", order.id)
-        .order("created_at", { ascending: false });
-      if (!mounted) return;
-      setEvents((data as OrderEvent[]) ?? []);
-      setLoading(false);
-    })();
+    setEvents([]); // não mostrar o histórico do pedido anterior enquanto carrega.
+    void carregarEventos();
 
     const channel = supabase
       .channel(`order-events-${order.id}`)
@@ -245,33 +422,22 @@ function OrderDetail({ order, onBack, onRepetir }: { order: ProductionOrder; onB
           filter: `order_id=eq.${order.id}`,
         },
         (payload) => {
-          if (payload.eventType === "INSERT") {
-            setEvents((prev) => [payload.new as OrderEvent, ...prev]);
-          }
+          if (payload.eventType !== "INSERT") return;
+          const novo = payload.new as OrderEvent;
+          setEvents((prev) => (prev.some((e) => e.id === novo.id) ? prev : [novo, ...prev]));
         },
       )
       .subscribe();
 
     return () => {
-      mounted = false;
       supabase.removeChannel(channel);
     };
-  }, [order.id]);
+  }, [order.id, carregarEventos]);
 
-  const copyTracking = () => {
-    if (!order.tracking_code) return;
-    navigator.clipboard.writeText(order.tracking_code);
-    toast.success("Código copiado");
-  };
-
-  const handleDownloadPdf = async () => {
+  const baixarPdf = async () => {
+    setBaixando(true);
     try {
-      const filename = await downloadPedidoPdf({
-        order,
-        events,
-        scenario: "cliente",
-      });
-      // Registra no perfil do cliente + evento + lead admin (best-effort).
+      const filename = await downloadPedidoPdf({ order, events, scenario: "cliente" });
       const { error: regError } = await supabase.rpc("register_pedido_pdf_download", {
         _order_id: order.id,
         _filename: filename,
@@ -282,228 +448,194 @@ function OrderDetail({ order, onBack, onRepetir }: { order: ProductionOrder; onB
       toast.success(`PDF baixado: ${filename}`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "erro desconhecido";
-      toast.error("Falha ao gerar PDF: " + msg);
+      toast.error("Falha ao gerar o PDF: " + msg);
+    } finally {
+      setBaixando(false);
     }
   };
 
   return (
-    <div className="space-y-6">
-      <button
-        type="button"
-        onClick={onBack}
-        className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep transition-colors"
-      >
-        <ArrowLeft className="h-3 w-3" /> Voltar para pedidos
-      </button>
+    <div>
+      <PageHeader
+        voltar={{ to: "/minha-conta/pedidos", label: "Pedidos" }}
+        eyebrow={`Pedido nº ${order.numero} · atualizado ${dataCurta(order.updated_at)}`}
+        titulo={order.titulo}
+      />
 
-      <div>
-        <p className="text-eyebrow mb-2">
-          Pedido Nº {order.numero} · atualizado {fmtDateTime(order.updated_at)}
-        </p>
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <h2 className="font-display text-3xl text-western-green-deep leading-tight">{order.titulo}</h2>
-          <div className="flex items-center gap-2 flex-wrap">
-            <StatusBadge status={order.status} />
-            <button
-              type="button"
-              onClick={handleDownloadPdf}
-              disabled={loading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep border border-western-green-deep/30 hover:bg-western-cream disabled:opacity-50"
-            >
-              <FileDown className="h-3 w-3" /> Baixar PDF
-            </button>
-            {onRepetir && Array.isArray(order.itens) && order.itens.length > 0 && (
-              <button
-                type="button"
-                onClick={() => onRepetir(order)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep border border-western-green-deep/30 hover:bg-western-cream"
-              >
-                <Copy className="h-3 w-3" /> Repetir pedido
-              </button>
-            )}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_340px]">
+        {/* Coluna de dados */}
+        <div className="order-2 space-y-5 lg:order-1">
+          <LinhaDeProducao order={order} />
 
-          </div>
-        </div>
-      </div>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div className="rounded-[16px] border border-western-border-soft bg-white p-5">
+              <p className="text-eyebrow mb-3">Prazos</p>
+              <dl className="space-y-2">
+                <div className="flex items-baseline justify-between gap-4">
+                  <dt className="text-meta">Produção</dt>
+                  <dd className="text-[16px] font-semibold tabular-nums text-western-green-deep">
+                    {order.prazo_dias_uteis} dias úteis
+                  </dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-4">
+                  <dt className="text-meta">Pronto até</dt>
+                  <dd className="text-[16px] font-semibold tabular-nums text-western-green-deep">
+                    {dataCurta(order.produzir_ate)}
+                  </dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-4">
+                  <dt className="text-meta">Pedido feito</dt>
+                  <dd className="text-[16px] font-semibold text-western-green-deep">
+                    <CelulaData valor={order.created_at} />
+                  </dd>
+                </div>
+              </dl>
+            </div>
 
-      <ProgressTimeline order={order} />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="border border-western-stone-warm/15 bg-white p-5">
-          <p className="text-eyebrow mb-2">Modo de entrega</p>
-          <p className="font-display text-lg text-western-green-deep">
-            {order.modo_entrega === "retirada" ? "Retirada na fábrica" : "Frete"}
-          </p>
-          {order.modo_entrega === "frete" && order.endereco_entrega && (
-            <p className="text-sm text-western-stone-warm leading-relaxed mt-2">{order.endereco_entrega}</p>
-          )}
-        </div>
-
-        <div className="border border-western-stone-warm/15 bg-white p-5">
-          <p className="text-eyebrow mb-2">Prazos</p>
-          <div className="space-y-1 text-sm">
-            <p>
-              <span className="text-western-stone-warm">Produção:</span>{" "}
-              <span className="text-western-green-deep font-medium">{order.prazo_dias_uteis} dias úteis</span>
-            </p>
-            <p>
-              <span className="text-western-stone-warm">Pronto até:</span>{" "}
-              <span className="text-western-green-deep font-medium">{fmtDate(order.produzir_ate)}</span>
-            </p>
-            <p>
-              <span className="text-western-stone-warm">
-                {order.modo_entrega === "retirada" ? "Disponível em:" : "Previsão de entrega:"}
-              </span>{" "}
-              <span className="text-western-green-deep font-medium">{fmtDate(order.previsao_entrega)}</span>
-            </p>
-          </div>
-        </div>
-
-        {order.modo_entrega === "frete" && (order.tracking_code || order.transportadora) && (
-          <div className="border border-western-stone-warm/15 bg-white p-5 md:col-span-2">
-            <p className="text-eyebrow mb-2">Rastreio</p>
-            <div className="flex items-center gap-3 flex-wrap">
-              {order.transportadora && (
-                <span className="font-display text-base text-western-green-deep">{order.transportadora}</span>
-              )}
-              {order.tracking_code && (
-                <>
-                  <code className="font-mono text-sm bg-western-stone-warm/10 px-2 py-1 text-western-green-deep">
-                    {order.tracking_code}
-                  </code>
-                  <button
-                    onClick={copyTracking}
-                    className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep"
-                  >
-                    <Copy className="h-3 w-3" /> Copiar
-                  </button>
-                  {order.transportadora?.toLowerCase().includes("correios") && (
-                    <a
-                      href={`https://rastreamento.correios.com.br/app/index.php?objeto=${order.tracking_code}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-western-gold hover:underline"
-                    >
-                      Acompanhar <ExternalLink className="h-3 w-3" />
-                    </a>
-                  )}
-                </>
+            <div className="rounded-[16px] border border-western-border-soft bg-white p-5">
+              <p className="text-eyebrow mb-3">
+                {order.modo_entrega === "retirada" ? "Retirada" : "Endereço de entrega"}
+              </p>
+              {order.modo_entrega === "retirada" ? (
+                <p className="text-body">
+                  Retirada na fábrica. Combine o horário com o time antes de ir.
+                </p>
+              ) : order.endereco_entrega ? (
+                <p className="text-body whitespace-pre-line">{order.endereco_entrega}</p>
+              ) : (
+                <p className="text-meta">Endereço ainda não informado.</p>
               )}
             </div>
           </div>
-        )}
 
-        {order.observacoes_cliente && (
-          <div className="border border-western-stone-warm/15 bg-white p-5 md:col-span-2">
-            <p className="text-eyebrow mb-2">Observações</p>
-            <p className="text-sm text-western-stone-warm leading-relaxed whitespace-pre-line">
-              {order.observacoes_cliente}
-            </p>
+          {order.observacoes_cliente && (
+            <div className="rounded-[16px] border border-western-border-soft bg-white p-5">
+              <p className="text-eyebrow mb-3">Observações</p>
+              <p className="text-body whitespace-pre-line">{order.observacoes_cliente}</p>
+            </div>
+          )}
+
+          <div className="rounded-[16px] border border-western-border-soft bg-white p-5 md:p-6">
+            <p className="text-eyebrow mb-4">Histórico (tempo real)</p>
+
+            {erro ? (
+              <EstadoErro
+                erro={erro}
+                onRetry={() => void carregarEventos()}
+                titulo="Não consegui carregar o histórico"
+                compacto
+              />
+            ) : carregando ? (
+              <EstadoCarregando linhas={3} />
+            ) : events.length === 0 ? (
+              <p className="text-body">
+                Nenhuma atualização registrada ainda. Assim que o ateliê mexer no pedido, aparece
+                aqui na hora.
+              </p>
+            ) : (
+              <ul className="space-y-4">
+                {events.map((ev) => (
+                  <li key={ev.id} className="flex gap-3">
+                    <span
+                      className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-western-gold"
+                      aria-hidden="true"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {ev.status && <StatusBadge status={ev.status} />}
+                        <CelulaData valor={ev.created_at} className="text-meta" />
+                      </div>
+                      {ev.note && <p className="text-body mt-1.5">{ev.note}</p>}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-        )}
-      </div>
+        </div>
 
-      <div className="border border-western-stone-warm/15 bg-white p-5 md:p-6">
-        <p className="text-eyebrow mb-4">Histórico (tempo real)</p>
-        {loading ? (
-          <p className="text-sm text-western-stone-warm">Carregando…</p>
-        ) : events.length === 0 ? (
-          <p className="text-sm text-western-stone-warm">Nenhuma atualização ainda.</p>
-        ) : (
-          <ul className="space-y-3">
-            {events.map((ev) => (
-              <li key={ev.id} className="flex gap-3 text-sm">
-                <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-western-gold mt-2" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {ev.status && <StatusBadge status={ev.status} />}
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
-                      {fmtDateTime(ev.created_at)}
-                    </span>
-                  </div>
-                  {ev.note && <p className="text-western-green-deep mt-1.5 leading-relaxed">{ev.note}</p>}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+        {/* Card de ação */}
+        <div className="order-1 lg:order-2">
+          <CardAcao
+            order={order}
+            onRepetir={() => onRepetir(order)}
+            onBaixarPdf={() => void baixarPdf()}
+            baixando={baixando}
+          />
+        </div>
       </div>
     </div>
   );
 }
 
-function OrderCard({ order, onSelect }: { order: ProductionOrder; onSelect: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onSelect}
-      className="w-full text-left border border-western-stone-warm/15 bg-white p-5 hover:border-western-gold/40 transition-colors group"
-    >
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
-            Nº {order.numero} · {fmtDate(order.created_at)}
-          </p>
-          <h3 className="font-display text-lg text-western-green-deep mt-1 truncate">{order.titulo}</h3>
-          <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <StatusBadge status={order.status} />
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
-              {order.modo_entrega === "retirada" ? "Retirada" : "Frete"}
-            </span>
-          </div>
-        </div>
-        <ChevronRight className="h-5 w-5 text-western-stone-warm/40 group-hover:text-western-gold flex-shrink-0 mt-1" />
-      </div>
-      <div className="flex items-center justify-between mt-4 pt-4 border-t border-western-stone-warm/10">
-        <span className="text-xs text-western-stone-warm">
-          {order.modo_entrega === "retirada" ? "Disponível em" : "Previsão"}:{" "}
-          <span className="text-western-green-deep font-medium">{fmtDate(order.previsao_entrega)}</span>
-        </span>
-        {order.valor_total != null && (
-          <span className="font-display text-base text-western-green-deep">
-            {formatBRL(order.valor_total, "BRL")}
-          </span>
-        )}
-      </div>
-    </button>
-  );
-}
+/* ─────────────────────────────────────────────────────────────
+ * Lista
+ * ───────────────────────────────────────────────────────────── */
+
+type Aba = "ativos" | "concluidos" | "todos";
 
 export default function AccountOrders() {
   const { user } = useAuth();
   const { addBundle } = useCartStore();
+  const [params, setParams] = useSearchParams();
   const [orders, setOrders] = useState<ProductionOrder[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [filter, setFilter] = useState<"ativos" | "concluidos" | "todos">("ativos");
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<unknown>(null);
+  const [aba, setAba] = useState<Aba>("ativos");
 
-  const handleRepetir = (order: ProductionOrder) => {
-    const cartItems = mapOrderItensToCart(order.itens);
-    if (cartItems.length === 0) {
-      toast.error("Este pedido não tem itens para repetir.");
-      return;
-    }
-    addBundle(cartItems);
-    toast.success(`${cartItems.length} item(ns) adicionados ao carrinho.`);
+  const selectedId = params.get("pedido");
+
+  const abrirPedido = (id: string) => {
+    setParams(
+      (atual) => {
+        const proximo = new URLSearchParams(atual);
+        proximo.set("pedido", id);
+        return proximo;
+      },
+      { preventScrollReset: false },
+    );
   };
 
+  const handleRepetir = (order: ProductionOrder) => {
+    const brutos = Array.isArray(order.itens) ? order.itens.length : 0;
+    const cartItems = mapOrderItensToCart(order.itens);
+
+    if (cartItems.length === 0) {
+      toast.error("Este pedido não tem peças que possam ser recolocadas no carrinho.");
+      return;
+    }
+
+    // addBundle já dispara o toast de sucesso — não duplicamos.
+    addBundle(cartItems);
+
+    // Item que não mapeou é item que some. Antes isso passava calado.
+    if (cartItems.length < brutos) {
+      toast.warning(
+        `${brutos - cartItems.length} peça(s) deste pedido não puderam ser recriadas. Confira o carrinho antes de fechar.`,
+      );
+    }
+  };
+
+  const carregar = useCallback(async () => {
+    if (!user) return;
+    setCarregando(true);
+    setErro(null);
+
+    const { data, error } = await supabase
+      .from("production_orders")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) setErro(error);
+    else setOrders((data as ProductionOrder[]) ?? []);
+    setCarregando(false);
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
-    let mounted = true;
+    void carregar();
 
-    (async () => {
-      const { data } = await supabase
-        .from("production_orders")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
-      if (!mounted) return;
-      setOrders((data as ProductionOrder[]) ?? []);
-      setLoading(false);
-    })();
-
-    // Realtime: atualizações nos pedidos do usuário
     const channel = supabase
       .channel(`partner-orders-${user.id}`)
       .on(
@@ -518,16 +650,17 @@ export default function AccountOrders() {
           setOrders((prev) => {
             if (payload.eventType === "INSERT") {
               const next = payload.new as ProductionOrder;
-              toast.success(`Novo pedido Nº ${next.numero}`);
+              toast.success(`Novo pedido nº ${next.numero}`);
               return [next, ...prev.filter((o) => o.id !== next.id)];
             }
             if (payload.eventType === "UPDATE") {
               const next = payload.new as ProductionOrder;
               const old = prev.find((o) => o.id === next.id);
               if (old && old.status !== next.status) {
-                toast.success(`Pedido Nº ${next.numero}: ${STATUS_META[next.status].label}`);
+                // rotuloStatus não quebra em status desconhecido (STATUS_META[x].label quebrava).
+                toast.success(`Pedido nº ${next.numero}: ${rotuloStatus(next.status)}`);
               }
-              return prev.map((o) => (o.id === next.id ? next : o));
+              return old ? prev.map((o) => (o.id === next.id ? next : o)) : [next, ...prev];
             }
             if (payload.eventType === "DELETE") {
               return prev.filter((o) => o.id !== (payload.old as { id: string }).id);
@@ -539,73 +672,182 @@ export default function AccountOrders() {
       .subscribe();
 
     return () => {
-      mounted = false;
       supabase.removeChannel(channel);
     };
-  }, [user]);
+  }, [user, carregar]);
 
-  const selected = useMemo(() => orders.find((o) => o.id === selectedId) ?? null, [orders, selectedId]);
+  const selected = useMemo(
+    () => orders.find((o) => o.id === selectedId) ?? null,
+    [orders, selectedId],
+  );
 
-  const visible = useMemo(() => {
-    if (filter === "todos") return orders;
-    const concluidos: Status[] = ["entregue", "retirado", "cancelado"];
-    return orders.filter((o) =>
-      filter === "concluidos" ? concluidos.includes(o.status) : !concluidos.includes(o.status),
+  const ativos = useMemo(() => orders.filter((o) => !CONCLUIDOS.includes(o.status)), [orders]);
+  const concluidos = useMemo(() => orders.filter((o) => CONCLUIDOS.includes(o.status)), [orders]);
+
+  const visiveis = aba === "todos" ? orders : aba === "ativos" ? ativos : concluidos;
+
+  const colunas: ReadonlyArray<Coluna<ProductionOrder>> = [
+    {
+      key: "titulo",
+      header: "Pedido",
+      principalNoMobile: true,
+      sortable: true,
+      render: (o) => (
+        <div className="min-w-0">
+          <p className="truncate font-semibold text-western-green-deep">{o.titulo}</p>
+          <p className="text-meta tabular-nums">nº {o.numero}</p>
+        </div>
+      ),
+    },
+    {
+      key: "status",
+      header: "Situação",
+      sortable: true,
+      render: (o) => <StatusBadge status={o.status} />,
+    },
+    {
+      key: "modo_entrega",
+      header: "Entrega",
+      sortable: true,
+      ocultarNoMobile: true,
+      render: (o) => (
+        <span className="text-western-stone-warm">
+          {o.modo_entrega === "retirada" ? "Retirada" : "Frete"}
+        </span>
+      ),
+    },
+    {
+      key: "previsao_entrega",
+      header: "Previsão",
+      align: "right",
+      sortable: true,
+      sortValue: (o) => o.previsao_entrega,
+      render: (o) => (
+        <span className="text-western-green-deep">{dataCurta(o.previsao_entrega)}</span>
+      ),
+    },
+    {
+      key: "valor_total",
+      header: "Total",
+      align: "right",
+      numerica: true,
+      sortable: true,
+      sortValue: (o) => o.valor_total,
+      render: (o) =>
+        o.valor_total != null ? (
+          <span className="font-semibold">{formatBRL(o.valor_total, "BRL")}</span>
+        ) : (
+          <span className="text-western-stone-warm">—</span>
+        ),
+    },
+    {
+      key: "acao",
+      header: "Recompra",
+      align: "right",
+      width: "150px",
+      render: (o) =>
+        Array.isArray(o.itens) && o.itens.length > 0 ? (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation(); // a linha inteira é clicável — não abrir o detalhe aqui.
+              handleRepetir(o);
+            }}
+            className="tap-target inline-flex items-center justify-center gap-2 rounded-[10px] border border-western-green-deep/25 px-3 text-[16px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
+          >
+            <RotateCcw className="h-4 w-4" aria-hidden="true" />
+            Pedir de novo
+          </button>
+        ) : (
+          <span className="text-meta">—</span>
+        ),
+    },
+  ];
+
+  /* Detalhe. Enquanto a lista carrega não dá para saber se o id existe — segura o skeleton. */
+  if (selectedId && selected) {
+    return <OrderDetail order={selected} onRepetir={handleRepetir} />;
+  }
+  if (selectedId && carregando) {
+    return (
+      <div>
+        <PageHeader voltar={{ to: "/minha-conta/pedidos", label: "Pedidos" }} titulo="Carregando pedido…" />
+        <EstadoCarregando linhas={4} />
+      </div>
     );
-  }, [orders, filter]);
-
-  if (selected) return <OrderDetail order={selected} onBack={() => setSelectedId(null)} onRepetir={handleRepetir} />;
+  }
+  if (selectedId && erro) {
+    return (
+      <div>
+        <PageHeader voltar={{ to: "/minha-conta/pedidos", label: "Pedidos" }} titulo="Pedido" />
+        <EstadoErro erro={erro} onRetry={() => void carregar()} />
+      </div>
+    );
+  }
+  if (selectedId && !selected) {
+    return (
+      <div>
+        <PageHeader voltar={{ to: "/minha-conta/pedidos", label: "Pedidos" }} titulo="Pedido não encontrado" />
+        <p className="text-body">
+          Este pedido não existe ou não está na sua conta.{" "}
+          <Link
+            to="/minha-conta/pedidos"
+            className="font-semibold text-western-green-deep underline underline-offset-2"
+          >
+            Ver todos os pedidos
+          </Link>
+          .
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <p className="text-eyebrow mb-3">Pedidos</p>
-      <h2 className="font-display text-3xl text-western-green-deep mb-2">Status de produção e logística</h2>
-      <p className="text-western-stone-warm mb-8 max-w-2xl">
-        Acompanhe em tempo real cada pedido — produção (15 dias úteis padrão), controle de qualidade,
-        liberação para retirada na fábrica ou envio com transportadora.
-      </p>
+      <PageHeader
+        eyebrow="Pedidos"
+        titulo="Produção e entrega"
+        subtitulo="Acompanhe cada pedido em tempo real — fila do ateliê, produção, conferência e liberação para retirada ou envio."
+      />
 
-      <div className="flex items-center gap-2 mb-6 border-b border-western-stone-warm/15">
-        {(["ativos", "concluidos", "todos"] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] border-b-2 -mb-px transition-colors ${
-              filter === f
-                ? "border-western-gold text-western-green-deep"
-                : "border-transparent text-western-stone-warm hover:text-western-green-deep"
-            }`}
-          >
-            {f === "ativos" ? "Ativos" : f === "concluidos" ? "Concluídos" : "Todos"}
-            {f === "ativos" && (
-              <span className="ml-1.5 text-western-stone-warm">
-                ({orders.filter((o) => !["entregue", "retirado", "cancelado"].includes(o.status)).length})
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        className="mb-6"
+        abas={[
+          { key: "ativos", label: "Em andamento", count: carregando ? undefined : ativos.length },
+          { key: "concluidos", label: "Concluídos", count: carregando ? undefined : concluidos.length },
+          { key: "todos", label: "Todos", count: carregando ? undefined : orders.length },
+        ]}
+        ativa={aba}
+        onChange={setAba}
+      />
 
-      {loading ? (
-        <p className="text-sm text-western-stone-warm">Carregando pedidos…</p>
-      ) : visible.length === 0 ? (
-        <div className="border border-dashed border-western-stone-warm/30 p-10 text-center bg-white">
-          <ShoppingBag className="h-8 w-8 text-western-stone-warm/40 mx-auto mb-4" />
-          <p className="text-western-stone-warm max-w-md mx-auto">
-            {filter === "ativos"
-              ? "Nenhum pedido em produção no momento. Quando seu próximo pedido for confirmado, ele aparece aqui com atualizações em tempo real."
-              : "Nada por aqui ainda."}
-          </p>
-        </div>
-      ) : (
-        <ul className="space-y-3">
-          {visible.map((o) => (
-            <li key={o.id}>
-              <OrderCard order={o} onSelect={() => setSelectedId(o.id)} />
-            </li>
-          ))}
-        </ul>
-      )}
+      <DataTable
+        linhas={visiveis}
+        colunas={colunas}
+        getId={(o) => o.id}
+        isLoading={carregando}
+        error={erro}
+        onRetry={() => void carregar()}
+        onRowClick={(o) => abrirPedido(o.id)}
+        vazio={{
+          titulo:
+            aba === "ativos"
+              ? "Nenhum pedido em produção"
+              : aba === "concluidos"
+              ? "Nenhum pedido concluído ainda"
+              : "Nenhum pedido ainda",
+          mensagem:
+            aba === "ativos"
+              ? "Quando seu próximo pedido for confirmado, ele aparece aqui com atualizações em tempo real."
+              : "Assim que um pedido for entregue ou retirado, ele fica guardado aqui.",
+          acao:
+            aba !== "concluidos" ? (
+              <Link to="/produtos" className="btn-primary tap-target inline-flex items-center px-6">
+                Montar uma composição
+              </Link>
+            ) : undefined,
+        }}
+      />
     </div>
   );
 }

@@ -35,7 +35,7 @@ export default function DateBRInput({
         required={required}
         aria-invalid={!!finalError}
         aria-describedby={describedBy}
-        className={`h-12 w-full bg-transparent border px-3 rounded-none text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none transition-colors ${
+        className={`h-[52px] w-full bg-transparent border px-3.5 rounded-[6px] text-[16px] text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none transition-colors ${
           finalError
             ? "border-red-700/60"
             : "border-western-stone-warm/30 focus:border-western-gold"

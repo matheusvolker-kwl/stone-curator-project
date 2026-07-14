@@ -1,27 +1,31 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import {
-  Loader2, ArrowLeft, Trash2, Archive, Save, Plus, Minus, X, Send,
-  Download, FileText, CheckCircle2, ExternalLink, MessageCircle, Mail, MoreVertical,
+  Archive, CheckCircle2, Download, ExternalLink, FileText, Info, Loader2, Mail,
+  MessageCircle, Minus, MoreVertical, Plus, RotateCcw, Save, Send, Trash2, X,
+  type LucideIcon,
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import {
+  EstadoCarregando, EstadoErro, EstadoVazio,
+  StatusBadge, PageHeader, CelulaData, dataAbsoluta, rotuloStatus,
+} from "@/components/backoffice";
 import { formatBRL, parseBRL } from "@/lib/catalog/client";
 import { type Lead } from "@/components/admin/adminUtils";
 import {
-  QUOTE_STATUS_LABEL, QUOTE_STATUS_CLS,
+  QUOTE_STATUS_LABEL,
   type QuoteStatus, type QuoteThread, type QuotePayload,
   type QuotePayloadItem, type QuoteProposal,
 } from "@/components/admin/quoteTypes";
@@ -36,11 +40,29 @@ const FORMAS_PAGAMENTO = [
   "PIX", "Boleto", "Cartão de crédito", "Transferência", "Dinheiro", "Outro",
 ];
 
+const INPUT_CLS =
+  "h-[52px] rounded-[6px] border-western-border-strong bg-white text-[16px] text-western-green-deep";
+
 interface EditableItem extends QuotePayloadItem {
   /** key local pra render */
   _key: string;
   /** acabamento/cor editável pelo admin (sobrescreve options no PDF) */
   acabamento?: string;
+}
+
+/**
+ * O "próximo passo" que o card de ação mostra. `cta` é a ÚNICA ação primária
+ * (verde) da tela — tudo o mais na página é secundário (outline), de propósito.
+ */
+interface Passo {
+  titulo: string;
+  descricao: string;
+  cta: {
+    label: string;
+    onClick: () => void;
+    carregando: boolean;
+    Icone: LucideIcon;
+  } | null;
 }
 
 /** Input monetário em formato BR: aceita "1.500,00", "R$ 1.500,00", "1500.5" etc. */
@@ -99,10 +121,17 @@ export default function AdminQuoteDetail() {
   const [lead, setLead] = useState<Lead | null>(null);
   const [thread, setThread] = useState<QuoteThread | null>(null);
   const [proposals, setProposals] = useState<QuoteProposal[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  /* Os 4 estados. `erro` é fatal (a tela não pode mentir "não encontrado" num 403);
+   * `erroPropostas` é parcial — só derruba o bloco de histórico. */
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<unknown>(null);
+  const [erroPropostas, setErroPropostas] = useState<unknown>(null);
+
   const [savingThread, setSavingThread] = useState(false);
   const [sendingProposal, setSendingProposal] = useState(false);
   const [closingSale, setClosingSale] = useState(false);
+  const [reopening, setReopening] = useState(false);
 
   // Editor de proposta
   const [items, setItems] = useState<EditableItem[]>([]);
@@ -113,7 +142,7 @@ export default function AdminQuoteDetail() {
   const [observacoes, setObservacoes] = useState("");
   const [jurosLabel, setJurosLabel] = useState<"nao_informar" | "sem_juros" | "com_juros">("nao_informar");
 
-  // Mini-form "incluir item"
+  // Mini-form "incluir peça"
   const [newItemTitle, setNewItemTitle] = useState("");
   const [newItemAcabamento, setNewItemAcabamento] = useState("");
   const [newItemQty, setNewItemQty] = useState<string>("1");
@@ -129,29 +158,63 @@ export default function AdminQuoteDetail() {
   const [notas, setNotas] = useState("");
   const [statusLocal, setStatusLocal] = useState<QuoteStatus>("novo");
 
-  const load = async () => {
+  // Confirmações
+  const [confirmarArquivo, setConfirmarArquivo] = useState(false);
+  const [confirmarRegravar, setConfirmarRegravar] = useState(false);
+  const [confirmarExclusao, setConfirmarExclusao] = useState(false);
+
+  /* ─────────────────────────── CARGA ─────────────────────────── */
+
+  const load = useCallback(async () => {
     if (!leadId) return;
-    setLoading(true);
-    const [{ data: leadData }, { data: threadData }, { data: propData }] = await Promise.all([
+    setCarregando(true);
+    setErro(null);
+    setErroPropostas(null);
+
+    const [leadRes, threadRes, propRes] = await Promise.all([
       supabase.from("leads").select("*").eq("id", leadId).maybeSingle(),
       supabase.from("quote_threads").select("*").eq("lead_id", leadId).maybeSingle(),
       supabase.from("quote_proposals").select("*").eq("lead_id", leadId).order("created_at", { ascending: false }),
     ]);
 
-    const l = leadData as Lead | null;
-    let t = threadData as QuoteThread | null;
+    // ANTES: os erros eram engolidos e um 403 aparecia como "Orçamento não encontrado".
+    const falha = leadRes.error ?? threadRes.error;
+    if (falha) {
+      console.error(falha);
+      setErro(falha);
+      setCarregando(false);
+      return;
+    }
+
+    const l = leadRes.data as Lead | null;
+    let t = threadRes.data as QuoteThread | null;
+
     if (l && !t) {
-      // Garantia caso o trigger não tenha rodado (lead antigo)
-      const { data: created } = await supabase
+      // Garantia caso o trigger não tenha rodado (lead antigo).
+      const { data: criada, error: erroInsert } = await supabase
         .from("quote_threads")
         .insert({ lead_id: l.id })
         .select()
         .single();
-      t = created as QuoteThread;
+      if (erroInsert) {
+        console.error(erroInsert);
+        setErro(erroInsert);
+        setCarregando(false);
+        return;
+      }
+      t = criada as QuoteThread;
     }
+
+    if (propRes.error) {
+      console.error(propRes.error);
+      setErroPropostas(propRes.error);
+      setProposals([]);
+    } else {
+      setProposals((propRes.data as unknown as QuoteProposal[]) ?? []);
+    }
+
     setLead(l);
     setThread(t);
-    setProposals((propData as unknown as QuoteProposal[]) ?? []);
 
     if (t) {
       setStatusLocal(t.status);
@@ -162,15 +225,16 @@ export default function AdminQuoteDetail() {
       setSaleObs(t.observacoes_venda ?? "");
     }
 
-    // Inicializa editor com itens originais (ou última proposta se houver)
-    const seed = (propData as unknown as QuoteProposal[] | null)?.[0];
+    // Inicializa o editor com os itens originais (ou a última proposta, se houver).
+    const seed = propRes.error ? undefined : (propRes.data as unknown as QuoteProposal[] | null)?.[0];
     const rawSourceItems: QuotePayloadItem[] = seed
       ? seed.items
       : ((l?.payload as unknown as QuotePayload)?.items ?? []);
 
-    // Extrai marker de juros (sentinel embutido em items) e filtra
+    // Marker de juros (sentinel embutido em items) — extrai e filtra.
     const jurosSentinel = rawSourceItems.find((i) => i.handle === "__meta_juros__");
-    const restoredJuros = (jurosSentinel?.title as "nao_informar" | "sem_juros" | "com_juros" | undefined) ?? "nao_informar";
+    const restoredJuros =
+      (jurosSentinel?.title as "nao_informar" | "sem_juros" | "com_juros" | undefined) ?? "nao_informar";
     const sourceItems = rawSourceItems.filter((i) => !i.handle?.startsWith("__meta_"));
 
     setItems(
@@ -192,10 +256,12 @@ export default function AdminQuoteDetail() {
       setValidadeDias(seed.validade_dias || 15);
       setObservacoes(seed.observacoes ?? "");
     }
-    setLoading(false);
-  };
+    setCarregando(false);
+  }, [leadId]);
 
-  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [leadId]);
+  useEffect(() => { load(); }, [load]);
+
+  /* ─────────────────────────── DERIVADOS ─────────────────────────── */
 
   const subtotal = useMemo(
     () => items.reduce((acc, i) => acc + i.unitPrice * i.quantity, 0),
@@ -208,52 +274,84 @@ export default function AdminQuoteDetail() {
   const total = useMemo(() => +(subtotal - discountValue).toFixed(2), [subtotal, discountValue]);
   const payload = (lead?.payload as unknown as QuotePayload) ?? null;
   const numero = payload?.numero ?? lead?.id.slice(0, 5).toUpperCase() ?? "—";
+  const jaVendida = !!(thread?.pago_em && thread?.valor_final);
 
-  // ----- Actions -----
+  const telefoneDigitos = (lead?.telefone || "").replace(/\D/g, "");
+  const linkWhatsApp = telefoneDigitos
+    ? `https://wa.me/${telefoneDigitos.startsWith("55") ? telefoneDigitos : `55${telefoneDigitos}`}`
+    : null;
 
-  const updateThread = async (patch: Partial<QuoteThread>) => {
-    if (!thread) return;
+  const timeline = useMemo(() => {
+    const eventos: { rotulo: string; data: string }[] = [];
+    if (lead) eventos.push({ rotulo: "Orçamento recebido", data: lead.created_at });
+    proposals.forEach((p) =>
+      eventos.push({ rotulo: `Proposta Nº ${p.numero} gerada`, data: p.sent_at ?? p.created_at }),
+    );
+    if (thread?.pago_em) eventos.push({ rotulo: "Venda fechada", data: thread.pago_em });
+    if (thread?.archived_at) eventos.push({ rotulo: "Arquivado", data: thread.archived_at });
+    return eventos.sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());
+  }, [lead, proposals, thread]);
+
+  /* ─────────────────────────── AÇÕES ─────────────────────────── */
+
+  /** Devolve `true` só quando gravou de verdade — quem chama NÃO pode cantar vitória sozinho. */
+  const updateThread = async (patch: Partial<QuoteThread>): Promise<boolean> => {
+    if (!thread) return false;
     setSavingThread(true);
     const { error } = await supabase.from("quote_threads").update(patch).eq("id", thread.id);
     setSavingThread(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      console.error(error);
+      toast.error(error.message);
+      return false;
+    }
     setThread({ ...thread, ...patch });
+    return true;
   };
 
   const handleSaveNotes = async () => {
     if (savingThread) return;
-    try {
-      await updateThread({ status: statusLocal, notas });
-      toast.success("Atualizações salvas.");
-    } finally {
-      // updateThread já reseta savingThread; garantia extra
-      setSavingThread(false);
-    }
+    // Antes: dava "Atualizações salvas." mesmo quando o update falhava.
+    const ok = await updateThread({ status: statusLocal, notas });
+    if (ok) toast.success("Atualizações salvas.");
   };
 
   const handleArchive = async () => {
-    if (!confirm("Arquivar este orçamento? Ele continua acessível pelo filtro Arquivado.")) return;
-    await updateThread({ status: "arquivado", archived_at: new Date().toISOString() });
+    setConfirmarArquivo(false);
+    const ok = await updateThread({ status: "arquivado", archived_at: new Date().toISOString() });
+    if (!ok) return;
     setStatusLocal("arquivado");
     toast.success("Orçamento arquivado.");
   };
 
-  const [deleteOpen, setDeleteOpen] = useState(false);
+  const handleReopen = async () => {
+    if (reopening) return;
+    setReopening(true);
+    try {
+      const ok = await updateThread({ status: "em_atendimento", archived_at: null });
+      if (!ok) return;
+      setStatusLocal("em_atendimento");
+      toast.success("Atendimento reaberto.");
+    } finally {
+      setReopening(false);
+    }
+  };
+
   const handleDelete = async () => {
     if (!lead) return;
     const { error } = await supabase.from("leads").delete().eq("id", lead.id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      console.error(error);
+      return toast.error(error.message);
+    }
     toast.success("Orçamento apagado.");
     navigate("/admin/orcamentos");
   };
 
-  const jaVendida = !!(thread?.pago_em && thread?.valor_final);
-
-  const handleCloseSale = async () => {
+  const gravarVenda = async () => {
     if (!thread || !lead) return;
     if (closingSale) return;
 
-    // Validação de valor / parcelas
     const valorNum = saleValor != null && Number.isFinite(saleValor) ? saleValor : total;
     if (!Number.isFinite(valorNum) || valorNum <= 0) {
       return toast.error("Valor final da venda precisa ser maior que zero.");
@@ -262,14 +360,11 @@ export default function AdminQuoteDetail() {
       return toast.error("Número de parcelas inválido.");
     }
 
-    // Idempotência: se já vendida, exigir confirmação
-    if (jaVendida) {
-      if (!confirm("Esta venda já foi fechada. Regravar os dados de fechamento?")) return;
-    }
+    const eraVendida = jaVendida;
 
     setClosingSale(true);
     try {
-      await updateThread({
+      const ok = await updateThread({
         status: "fechado",
         pago_em: new Date().toISOString(),
         forma_pagamento: saleForma,
@@ -277,13 +372,21 @@ export default function AdminQuoteDetail() {
         valor_final: valorNum,
         observacoes_venda: saleObs || null,
       });
-      // Só promove se ainda não foi promovido antes
-      if (!jaVendida) {
+      // Antes: mesmo com o update falhando, a tela dizia "Venda registrada".
+      if (!ok) return;
+
+      // Só promove se ainda não tinha sido promovida.
+      if (!eraVendida) {
         const { error: promoteErr } = await supabase.rpc("promote_quote_lead_to_order", {
           _lead_id: lead.id,
           _order_id: null,
         });
-        if (promoteErr) console.warn("promote_quote_lead_to_order falhou", promoteErr);
+        if (promoteErr) {
+          console.warn("promote_quote_lead_to_order falhou", promoteErr);
+          toast.warning("Venda registrada, mas não consegui abrir o pedido automaticamente.");
+          setStatusLocal("fechado");
+          return;
+        }
       }
       setStatusLocal("fechado");
       toast.success("Venda registrada.");
@@ -292,7 +395,16 @@ export default function AdminQuoteDetail() {
     }
   };
 
-  // ----- Proposta -----
+  /** Idempotência: regravar uma venda já fechada exige confirmação explícita. */
+  const handleCloseSale = () => {
+    if (jaVendida) {
+      setConfirmarRegravar(true);
+      return;
+    }
+    void gravarVenda();
+  };
+
+  /* ── Proposta ── */
 
   const updateItem = (key: string, patch: Partial<EditableItem>) =>
     setItems((prev) => prev.map((i) => (i._key === key ? { ...i, ...patch } : i)));
@@ -303,8 +415,8 @@ export default function AdminQuoteDetail() {
     const title = newItemTitle.trim();
     const qty = Number(newItemQty);
     const price = Number.isFinite(newItemPrice) ? newItemPrice : 0;
-    if (!title) return toast.error("Informe o nome do item.");
-    if (!Number.isInteger(qty) || qty < 1) return toast.error("Quantidade deve ser inteiro ≥ 1.");
+    if (!title) return toast.error("Informe o nome da peça.");
+    if (!Number.isInteger(qty) || qty < 1) return toast.error("Quantidade deve ser um inteiro ≥ 1.");
     if (!Number.isFinite(price) || price < 0) return toast.error("Preço deve ser ≥ 0.");
     const key = "manual-" + crypto.randomUUID();
     setItems((prev) => [
@@ -323,25 +435,26 @@ export default function AdminQuoteDetail() {
     setNewItemPrice(0);
   };
 
-  const handleGeneratePdf = async (download: boolean) => {
+  const handleGeneratePdf = async (apenasBaixar: boolean) => {
     if (!lead) return;
     if (sendingProposal) return;
-    if (items.length === 0) return toast.error("Adicione itens à proposta.");
+    if (items.length === 0) return toast.error("Adicione peças à proposta.");
     if (total <= 0) {
-      return toast.error("Total da proposta é R$ 0 — revise itens/desconto antes de gerar.");
+      return toast.error("Total da proposta é R$ 0 — revise as peças e o desconto antes de gerar.");
     }
 
     setSendingProposal(true);
     try {
-      // Numeração sequencial por lead, contando no banco (count exato)
+      // Numeração sequencial por lead, contando no banco (count exato).
       const baseNumero = payload?.numero ?? lead.id.slice(0, 5).toUpperCase();
       let seq = proposals.length + 1;
-      if (!download) {
-        const { count } = await supabase
+      if (!apenasBaixar) {
+        const { count, error: erroCount } = await supabase
           .from("quote_proposals")
           .select("id", { count: "exact", head: true })
           .eq("lead_id", lead.id);
-        if (typeof count === "number") seq = count + 1;
+        if (erroCount) console.warn("Contagem de propostas falhou; usando sequência local", erroCount);
+        else if (typeof count === "number") seq = count + 1;
       }
       const propNumero = `${baseNumero}-P${seq.toString().padStart(2, "0")}`;
       const opts = {
@@ -356,9 +469,9 @@ export default function AdminQuoteDetail() {
         items: items.map((i) => ({
           productTitle: i.title,
           acabamento:
-            (i.acabamento && i.acabamento.trim())
+            i.acabamento && i.acabamento.trim()
               ? i.acabamento.trim()
-              : (i.options?.map((o) => o.value).join(" · ") || i.variantTitle || undefined),
+              : i.options?.map((o) => o.value).join(" · ") || i.variantTitle || undefined,
           quantity: i.quantity,
           unitPrice: i.unitPrice,
           productImage: i.image,
@@ -368,12 +481,12 @@ export default function AdminQuoteDetail() {
         jurosLabel,
       };
 
-      if (download) {
+      if (apenasBaixar) {
         await downloadPropostaPdf(opts);
         return;
       }
 
-      // Salva proposta + sobe PDF
+      // Salva a proposta + sobe o PDF.
       const blob = await propostaPdfBlob(opts);
       const path = `propostas/${lead.id}/${propNumero}.pdf`;
       const { error: upErr } = await supabase.storage
@@ -381,7 +494,7 @@ export default function AdminQuoteDetail() {
         .upload(path, blob, { contentType: "application/pdf", upsert: true });
       if (upErr) throw upErr;
 
-      // Persiste jurosLabel como sentinel dentro de items (sem criar coluna)
+      // Persiste jurosLabel como sentinel dentro de items (sem criar coluna).
       const itemsToSave: QuotePayloadItem[] = [
         ...items.map(({ _key, ...rest }) => rest),
         { handle: "__meta_juros__", title: jurosLabel, quantity: 0, unitPrice: 0 },
@@ -407,6 +520,7 @@ export default function AdminQuoteDetail() {
       await updateThread({ status: "proposta_enviada" });
       setStatusLocal("proposta_enviada");
       setProposals((prev) => [created as unknown as QuoteProposal, ...prev]);
+      setErroPropostas(null);
       toast.success(`Proposta ${propNumero} salva.`);
     } catch (e) {
       console.error(e);
@@ -436,114 +550,326 @@ export default function AdminQuoteDetail() {
 
   const shareProposal = async (p: QuoteProposal, channel: "whatsapp" | "email") => {
     if (!p.pdf_path) return;
-    const { data } = await supabase.storage.from("orcamentos").createSignedUrl(p.pdf_path, 60 * 60 * 24 * 7);
-    if (!data) return toast.error("Falha ao gerar link.");
-    window.open(buildShareLink(channel, data.signedUrl, p.numero), "_blank");
+    const { data, error } = await supabase.storage
+      .from("orcamentos")
+      .createSignedUrl(p.pdf_path, 60 * 60 * 24 * 7);
+    if (error || !data) return toast.error("Falha ao gerar o link do PDF.");
+    window.open(buildShareLink(channel, data.signedUrl, p.numero), "_blank", "noopener,noreferrer");
   };
 
-  // ----- UI -----
+  /* ─────────────────────────── OS 4 ESTADOS ─────────────────────────── */
 
-  if (loading) {
+  if (carregando) {
     return (
-      <div className="py-20 flex justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-western-gold" />
+      <div>
+        <PageHeader voltar={{ to: "/admin/orcamentos", label: "Orçamentos" }} titulo="Carregando…" />
+        <EstadoCarregando linhas={6} />
       </div>
     );
   }
+
+  // ERRO ≠ "não encontrado". Um 403 nunca mais vai se disfarçar de orçamento inexistente.
+  if (erro) {
+    return (
+      <div>
+        <PageHeader voltar={{ to: "/admin/orcamentos", label: "Orçamentos" }} titulo="Orçamento" />
+        <EstadoErro erro={erro} onRetry={load} />
+      </div>
+    );
+  }
+
   if (!lead || !thread) {
     return (
-      <div className="py-20 text-center text-western-stone-warm">
-        Orçamento não encontrado.
-        <div className="mt-4">
-          <Link to="/admin/orcamentos" className="text-western-gold underline">
-            Voltar
-          </Link>
-        </div>
+      <div>
+        <PageHeader voltar={{ to: "/admin/orcamentos", label: "Orçamentos" }} titulo="Orçamento" />
+        <EstadoVazio
+          titulo="Orçamento não encontrado"
+          mensagem="Ele pode ter sido apagado. Volte para a lista e confira."
+          acao={
+            <Link to="/admin/orcamentos" className="btn-primary tap-target">
+              Voltar para orçamentos
+            </Link>
+          }
+        />
       </div>
     );
   }
 
+  /* ── O PRÓXIMO PASSO: o card de ação decide, o resto da tela obedece. ── */
+  const passo: Passo = (() => {
+    if (jaVendida || thread.status === "fechado") {
+      return {
+        titulo: "Venda fechada",
+        descricao: thread.pago_em
+          ? `Registrada em ${dataAbsoluta(thread.pago_em)}.`
+          : "Este orçamento já está marcado como fechado.",
+        cta: null,
+      };
+    }
+    if (thread.status === "perdido" || thread.status === "arquivado") {
+      return {
+        titulo: thread.status === "perdido" ? "Marcado como perdido" : "Arquivado",
+        descricao: "Se o cliente voltou a responder, reabra o atendimento e retome a proposta.",
+        cta: {
+          label: "Reabrir atendimento",
+          onClick: handleReopen,
+          carregando: reopening || savingThread,
+          Icone: RotateCcw,
+        },
+      };
+    }
+    if (thread.status === "proposta_enviada") {
+      return {
+        titulo: "Proposta enviada — falta a resposta",
+        descricao: "Cobre um retorno pelo WhatsApp. Quando o cliente pagar, registre a venda.",
+        cta: {
+          label: "Marcar como vendido",
+          onClick: handleCloseSale,
+          carregando: closingSale,
+          Icone: CheckCircle2,
+        },
+      };
+    }
+    return {
+      titulo: "Monte a proposta",
+      descricao:
+        "Revise as peças, o preço e o desconto ao lado. Depois gere o PDF e mande para o cliente.",
+      cta: {
+        label: "Salvar e gerar proposta",
+        onClick: () => handleGeneratePdf(false),
+        carregando: sendingProposal,
+        Icone: Send,
+      },
+    };
+  })();
+
+  const cta = passo.cta;
+  const CtaIcone = cta?.Icone ?? Send;
+  const ultimaProposta = proposals[0];
+
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <Link
-          to="/admin/orcamentos"
-          className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-gold mb-4"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" /> Orçamentos
-        </Link>
-
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-eyebrow mb-2">Orçamento Nº {numero}</p>
-            <h1 className="font-display text-3xl text-western-green-deep">
-              {lead.nome || lead.empresa || lead.email || "(sem nome)"}
-            </h1>
-            <p className="text-sm text-western-stone-warm mt-1">
-              Recebido em {new Date(lead.created_at).toLocaleString("pt-BR")}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2 items-center">
-            <Button
-              onClick={handleArchive}
-              className="rounded-none bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-[11px] uppercase tracking-[0.18em] h-10"
+    <div>
+      <PageHeader
+        voltar={{ to: "/admin/orcamentos", label: "Orçamentos" }}
+        eyebrow={`Orçamento Nº ${numero}`}
+        titulo={lead.nome || lead.empresa || lead.email || "(sem nome)"}
+        subtitulo={`Recebido em ${dataAbsoluta(lead.created_at)}`}
+        acoesSecundarias={
+          <>
+            <button
+              type="button"
+              onClick={() => setConfirmarArquivo(true)}
+              disabled={savingThread || thread.status === "arquivado"}
+              className="btn-outline-forest tap-target px-4"
             >
-              <Archive className="h-3.5 w-3.5 mr-2" /> Arquivar
-            </Button>
+              <Archive className="h-4 w-4" aria-hidden="true" />
+              Arquivar
+            </button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="rounded-none h-10 w-10 p-0 text-western-stone-warm hover:text-western-green-deep"
+                <button
+                  type="button"
                   aria-label="Mais ações"
+                  className="tap-target inline-flex items-center justify-center rounded-[10px] border border-western-border-strong text-western-stone-warm transition-colors hover:text-western-green-deep"
                 >
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
+                  <MoreVertical className="h-4 w-4" aria-hidden="true" />
+                </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="rounded-none">
+              <DropdownMenuContent align="end" className="rounded-[10px]">
                 <DropdownMenuItem
-                  onClick={() => setDeleteOpen(true)}
-                  className="text-red-700 focus:text-red-800 focus:bg-red-50 font-mono text-[11px] uppercase tracking-[0.18em]"
+                  onClick={() => setConfirmarExclusao(true)}
+                  className="text-[16px] font-semibold text-[#B3372E] focus:bg-[#B3372E]/10 focus:text-[#B3372E]"
                 >
-                  <Trash2 className="h-3.5 w-3.5 mr-2" /> Apagar orçamento
+                  <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" />
+                  Apagar orçamento
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <ConfirmDialog
-              open={deleteOpen}
-              onOpenChange={setDeleteOpen}
-              title="Apagar orçamento definitivamente"
-              description={`Isto apaga o orçamento ${numero} e todo o histórico da proposta. Não tem volta.\n\nDigite ${numero} abaixo para confirmar.`}
-              requireText={numero}
-              requireTextPlaceholder={`Digite ${numero} para confirmar`}
-              confirmLabel="Apagar definitivamente"
-              danger
-              onConfirm={() => { handleDelete(); }}
-            />
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
-      <div className="grid lg:grid-cols-[1fr_320px] gap-8 items-start">
-        {/* Coluna esquerda — proposta + venda */}
-        <div className="space-y-8 min-w-0">
-          {/* Cliente card */}
-          <section className="bg-white border border-western-stone-warm/15 p-5">
-            <p className="text-eyebrow mb-3">Cliente</p>
-            <div className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
-              <Field label="Nome" value={lead.nome} />
-              <Field label="Empresa" value={lead.empresa} />
-              <Field label="E-mail" value={lead.email} />
-              <Field label="Telefone" value={lead.telefone} />
-              <Field label="Cidade" value={lead.cidade} />
-              <Field label="Origem" value={lead.origem} />
+      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+        {/* ══════════ COLUNA DIREITA (no mobile vem primeiro): CARD DE AÇÃO ══════════ */}
+        <aside className="order-1 space-y-6 lg:order-2 lg:sticky lg:top-6">
+          <section className="rounded-[16px] border border-western-cta/30 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <p className="text-eyebrow">Próximo passo</p>
+              <StatusBadge status={thread.status} />
             </div>
+
+            <h2 className="display-md text-western-green-deep">{passo.titulo}</h2>
+            <p className="text-body mt-2 text-[16px]">{passo.descricao}</p>
+
+            {/* O número que importa ao lado do botão */}
+            <div className="mt-5 rounded-[10px] bg-western-paper px-4 py-3">
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="text-sublabel">
+                  {jaVendida ? "Valor da venda" : "Total da proposta"}
+                </span>
+                <span className="text-[22px] font-bold tabular-nums text-western-green-deep">
+                  {jaVendida && thread.valor_final != null
+                    ? formatBRL(Number(thread.valor_final), "BRL")
+                    : formatBRL(total, "BRL")}
+                </span>
+              </div>
+              {!jaVendida && discountPct > 0 && (
+                <p className="text-meta mt-1 text-right tabular-nums">
+                  já com {discountPct}% de desconto
+                </p>
+              )}
+              {jaVendida && thread.forma_pagamento && (
+                <p className="text-meta mt-1 text-right">
+                  {thread.forma_pagamento}
+                  {thread.parcelas && thread.parcelas > 1 ? ` · ${thread.parcelas}×` : ""}
+                </p>
+              )}
+            </div>
+
+            {/* A ÚNICA ação primária da tela. Verde. */}
+            {cta && (
+              <button
+                type="button"
+                onClick={cta.onClick}
+                disabled={cta.carregando}
+                className="btn-primary mt-5 w-full"
+              >
+                {cta.carregando ? (
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <CtaIcone className="h-4 w-4" aria-hidden="true" />
+                )}
+                {cta.label}
+              </button>
+            )}
+
+            {/* Contatos */}
+            {(linkWhatsApp || lead.email) && (
+              <div className="mt-5 border-t border-western-border-soft pt-5">
+                <p className="text-eyebrow mb-3">Falar com o cliente</p>
+                <div className="flex flex-col gap-2">
+                  {linkWhatsApp && (
+                    <a
+                      href={linkWhatsApp}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-outline-forest tap-target w-full justify-start px-4"
+                    >
+                      <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                      <span className="tabular-nums">{lead.telefone}</span>
+                    </a>
+                  )}
+                  {lead.email && (
+                    <a
+                      href={`mailto:${lead.email}`}
+                      className="btn-outline-forest tap-target w-full justify-start px-4"
+                    >
+                      <Mail className="h-4 w-4" aria-hidden="true" />
+                      <span className="truncate">{lead.email}</span>
+                    </a>
+                  )}
+                </div>
+                {ultimaProposta?.pdf_path && (
+                  <div className="mt-2 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => shareProposal(ultimaProposta, "whatsapp")}
+                      className="btn-outline-forest tap-target flex-1 px-3 text-[14px]"
+                    >
+                      <Send className="h-4 w-4" aria-hidden="true" />
+                      Enviar Nº {ultimaProposta.numero}
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Linha do tempo */}
+            <div className="mt-5 border-t border-western-border-soft pt-5">
+              <p className="text-eyebrow mb-3">Linha do tempo</p>
+              <ol className="space-y-3">
+                {timeline.map((e, i) => (
+                  <li key={`${e.rotulo}-${i}`} className="flex items-start gap-3">
+                    <span
+                      className={`mt-1.5 h-2 w-2 flex-shrink-0 rounded-full ${
+                        i === timeline.length - 1 ? "bg-western-cta" : "bg-western-border-strong"
+                      }`}
+                      aria-hidden="true"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[16px] text-western-green-deep">{e.rotulo}</p>
+                      <CelulaData valor={e.data} className="text-meta" />
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </section>
+
+          {/* Notas internas + status */}
+          <section className="rounded-[16px] border border-western-border-soft bg-white p-5">
+            <p className="text-eyebrow mb-3">Acompanhamento</p>
+
+            <Label htmlFor="status-orcamento" className="text-sublabel mb-1.5 block">
+              Status
+            </Label>
+            <Select value={statusLocal} onValueChange={(v) => setStatusLocal(v as QuoteStatus)}>
+              <SelectTrigger id="status-orcamento" className={INPUT_CLS}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((s) => (
+                  <SelectItem key={s} value={s} className="text-[16px]">
+                    {QUOTE_STATUS_LABEL[s]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Label htmlFor="notas-internas" className="text-sublabel mb-1.5 mt-5 block">
+              Notas internas
+            </Label>
+            <Textarea
+              id="notas-internas"
+              value={notas}
+              onChange={(e) => setNotas(e.target.value)}
+              rows={5}
+              className="rounded-[6px] border-western-border-strong bg-white text-[16px]"
+              placeholder="Ligações, contexto, próximos passos…"
+            />
+            <button
+              type="button"
+              onClick={handleSaveNotes}
+              disabled={savingThread}
+              className="btn-outline-forest tap-target mt-3 w-full"
+            >
+              {savingThread ? (
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              ) : (
+                <Save className="h-4 w-4" aria-hidden="true" />
+              )}
+              Salvar status e notas
+            </button>
+          </section>
+        </aside>
+
+        {/* ══════════ COLUNA ESQUERDA: o trabalho ══════════ */}
+        <div className="order-2 min-w-0 space-y-8 lg:order-1">
+          {/* Cliente */}
+          <section className="rounded-[16px] border border-western-border-soft bg-white p-5">
+            <p className="text-eyebrow mb-4">Cliente</p>
+            <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
+              <Campo rotulo="Nome" valor={lead.nome} />
+              <Campo rotulo="Empresa" valor={lead.empresa} />
+              <Campo rotulo="E-mail" valor={lead.email} />
+              <Campo rotulo="Telefone" valor={lead.telefone} numerica />
+              <Campo rotulo="Cidade" valor={lead.cidade} />
+              <Campo rotulo="Origem" valor={lead.origem} />
+            </dl>
             {lead.mensagem && (
-              <div className="mt-4 pt-4 border-t border-western-stone-warm/15">
+              <div className="mt-5 rounded-[10px] bg-western-paper p-4">
                 <p className="text-eyebrow mb-2">Mensagem do cliente</p>
-                <p className="text-western-green-deep whitespace-pre-wrap text-sm">
+                <p className="whitespace-pre-wrap text-[17px] leading-[1.6] text-western-green-deep">
                   {lead.mensagem}
                 </p>
               </div>
@@ -551,415 +877,494 @@ export default function AdminQuoteDetail() {
           </section>
 
           {/* Editor da proposta */}
-          <section className="bg-white border border-western-stone-warm/15 p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <p className="text-eyebrow">Proposta editável</p>
-                <h2 className="font-display text-xl text-western-green-deep mt-1">
-                  Edite, aplique desconto e envie
-                </h2>
-              </div>
-            </div>
+          <section className="rounded-[16px] border border-western-border-soft bg-white p-5">
+            <p className="text-eyebrow mb-1">Proposta</p>
+            <h2 className="display-md text-western-green-deep mb-5">
+              Edite as peças, aplique desconto e gere o PDF
+            </h2>
 
-            {/* Itens */}
-            <div className="space-y-2 mb-4">
+            {/* Peças */}
+            <div className="mb-5 space-y-3">
               {items.length === 0 && (
-                <div className="border border-dashed border-western-stone-warm/30 p-6 text-center text-sm text-western-stone-warm">
-                  Sem itens. Use “+ Incluir item” abaixo para adicionar.
+                <div className="rounded-[10px] border border-dashed border-western-border-strong bg-western-paper p-6 text-center">
+                  <p className="text-body text-[16px]">
+                    Nenhuma peça na proposta. Inclua abaixo.
+                  </p>
                 </div>
               )}
+
               {items.map((it) => (
                 <div
                   key={it._key}
-                  className="grid grid-cols-[1fr_auto_auto_auto] gap-3 items-center border border-western-stone-warm/15 p-3"
+                  className="rounded-[10px] border border-western-border-soft p-3 md:grid md:grid-cols-[1fr_auto_150px_auto] md:items-center md:gap-3"
                 >
-                  <div className="min-w-0 space-y-1">
-                    <p className="font-display text-western-green-deep truncate">{it.title}</p>
+                  <div className="min-w-0 space-y-2">
+                    <p className="text-[17px] font-semibold text-western-green-deep">{it.title}</p>
                     <Input
                       value={it.acabamento ?? ""}
                       onChange={(e) => updateItem(it._key, { acabamento: e.target.value })}
                       placeholder="Acabamento / cor"
-                      className="h-7 rounded-none text-xs font-mono uppercase tracking-wider"
+                      aria-label={`Acabamento de ${it.title}`}
+                      className="h-[48px] rounded-[6px] border-western-border-strong text-[16px]"
                     />
                   </div>
-                  <div className="flex items-center gap-1">
+
+                  <div className="mt-3 flex items-center justify-between gap-3 md:mt-0 md:justify-start">
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => updateItem(it._key, { quantity: Math.max(1, it.quantity - 1) })}
+                        aria-label={`Diminuir quantidade de ${it.title}`}
+                        className="tap-target inline-flex items-center justify-center rounded-[6px] border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
+                      >
+                        <Minus className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                      <span className="w-12 text-center text-[17px] font-semibold tabular-nums text-western-green-deep">
+                        {it.quantity}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => updateItem(it._key, { quantity: it.quantity + 1 })}
+                        aria-label={`Aumentar quantidade de ${it.title}`}
+                        className="tap-target inline-flex items-center justify-center rounded-[6px] border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
+                      >
+                        <Plus className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                    </div>
+
                     <button
-                      onClick={() =>
-                        updateItem(it._key, { quantity: Math.max(1, it.quantity - 1) })
-                      }
-                      className="h-8 w-8 border border-western-stone-warm/30 hover:border-western-gold flex items-center justify-center"
+                      type="button"
+                      onClick={() => removeItem(it._key)}
+                      aria-label={`Remover ${it.title}`}
+                      title="Remover"
+                      className="tap-target inline-flex items-center justify-center rounded-[6px] text-western-stone-warm transition-colors hover:text-[#B3372E] md:order-last"
                     >
-                      <Minus className="h-3 w-3" />
-                    </button>
-                    <span className="w-10 text-center font-mono text-sm">{it.quantity}</span>
-                    <button
-                      onClick={() => updateItem(it._key, { quantity: it.quantity + 1 })}
-                      className="h-8 w-8 border border-western-stone-warm/30 hover:border-western-gold flex items-center justify-center"
-                    >
-                      <Plus className="h-3 w-3" />
+                      <X className="h-4 w-4" aria-hidden="true" />
                     </button>
                   </div>
-                  <BRLInput
-                    value={it.unitPrice}
-                    onChange={(n) => updateItem(it._key, { unitPrice: n })}
-                    className="h-8 w-32 rounded-none text-right font-mono text-sm"
-                    placeholder="R$ 0,00"
-                  />
-                  <button
-                    onClick={() => removeItem(it._key)}
-                    className="text-western-stone-warm hover:text-red-700"
-                    title="Remover"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
+
+                  <div className="mt-3 md:mt-0">
+                    <BRLInput
+                      value={it.unitPrice}
+                      onChange={(n) => updateItem(it._key, { unitPrice: n })}
+                      className="h-[48px] w-full rounded-[6px] border-western-border-strong text-right text-[16px] tabular-nums"
+                      placeholder="R$ 0,00"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
 
-            {/* Mini-form: incluir item livre */}
-            <div className="border border-western-stone-warm/15 bg-western-cream/40 p-3 mb-5">
-              <p className="text-eyebrow mb-2">Incluir item</p>
-              <div className="grid grid-cols-[1fr_1fr_70px_130px_auto] gap-2 items-end">
+            {/* Incluir peça */}
+            <div className="mb-6 rounded-[10px] border border-western-border-soft bg-western-paper p-4">
+              <p className="text-eyebrow mb-3">Incluir peça</p>
+              <div className="grid gap-3 md:grid-cols-[1fr_1fr_90px_150px_auto] md:items-end">
                 <Input
                   value={newItemTitle}
                   onChange={(e) => setNewItemTitle(e.target.value)}
-                  placeholder="Nome do item"
-                  className="h-9 rounded-none"
+                  placeholder="Nome da peça"
+                  aria-label="Nome da peça"
+                  className="h-[48px] rounded-[6px] border-western-border-strong bg-white text-[16px]"
                 />
                 <Input
                   value={newItemAcabamento}
                   onChange={(e) => setNewItemAcabamento(e.target.value)}
                   placeholder="Acabamento (cor)"
-                  className="h-9 rounded-none"
+                  aria-label="Acabamento da peça"
+                  className="h-[48px] rounded-[6px] border-western-border-strong bg-white text-[16px]"
                 />
                 <Input
-                  type="number" min={1} value={newItemQty}
+                  type="number"
+                  min={1}
+                  value={newItemQty}
                   onChange={(e) => setNewItemQty(e.target.value)}
                   placeholder="Qtd"
-                  className="h-9 rounded-none text-right font-mono"
+                  aria-label="Quantidade"
+                  className="h-[48px] rounded-[6px] border-western-border-strong bg-white text-right text-[16px] tabular-nums"
                 />
                 <BRLInput
                   value={newItemPrice}
                   onChange={(n) => setNewItemPrice(n)}
                   placeholder="R$ 0,00"
-                  className="h-9 rounded-none text-right font-mono"
+                  className="h-[48px] rounded-[6px] border-western-border-strong bg-white text-right text-[16px] tabular-nums"
                 />
-                <Button
-                  variant="outline"
-                  onClick={addItem}
-                  className="rounded-none border-western-stone-warm/30 font-mono text-[11px] uppercase tracking-[0.18em] h-9"
-                >
-                  <Plus className="h-3.5 w-3.5 mr-1" /> Incluir item
-                </Button>
+                <button type="button" onClick={addItem} className="btn-outline-forest tap-target px-4">
+                  <Plus className="h-4 w-4" aria-hidden="true" />
+                  Incluir
+                </button>
               </div>
             </div>
-
-
 
             {/* Condições */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+            <div className="mb-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <div>
-                <Label className="text-eyebrow mb-1 block">Desconto (%)</Label>
+                <Label htmlFor="desconto" className="text-sublabel mb-1.5 block">Desconto (%)</Label>
                 <Input
+                  id="desconto"
                   type="number" min={0} max={100} value={discountPct}
                   onChange={(e) => setDiscountPct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))}
-                  className="h-10 rounded-none"
+                  className={`${INPUT_CLS} tabular-nums`}
                 />
               </div>
               <div>
-                <Label className="text-eyebrow mb-1 block">Forma de pagamento</Label>
+                <Label htmlFor="forma-pgto" className="text-sublabel mb-1.5 block">Forma de pagamento</Label>
                 <Select value={formaPagamento} onValueChange={setFormaPagamento}>
-                  <SelectTrigger className="h-10 rounded-none"><SelectValue /></SelectTrigger>
+                  <SelectTrigger id="forma-pgto" className={INPUT_CLS}><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {FORMAS_PAGAMENTO.map((f) => <SelectItem key={f} value={f}>{f}</SelectItem>)}
+                    {FORMAS_PAGAMENTO.map((f) => (
+                      <SelectItem key={f} value={f} className="text-[16px]">{f}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label className="text-eyebrow mb-1 block">Parcelas</Label>
+                <Label htmlFor="parcelas" className="text-sublabel mb-1.5 block">Parcelas</Label>
                 <Input
+                  id="parcelas"
                   type="number" min={1} max={24} value={parcelas}
                   onChange={(e) => setParcelas(Math.max(1, Math.min(24, Number(e.target.value) || 1)))}
-                  className="h-10 rounded-none"
+                  className={`${INPUT_CLS} tabular-nums`}
                 />
               </div>
               <div>
-                <Label className="text-eyebrow mb-1 block">Parcelamento</Label>
-                <Select
-                  value={jurosLabel}
-                  onValueChange={(v) => setJurosLabel(v as typeof jurosLabel)}
-                >
-                  <SelectTrigger className="h-10 rounded-none"><SelectValue /></SelectTrigger>
+                <Label htmlFor="juros" className="text-sublabel mb-1.5 block">Parcelamento</Label>
+                <Select value={jurosLabel} onValueChange={(v) => setJurosLabel(v as typeof jurosLabel)}>
+                  <SelectTrigger id="juros" className={INPUT_CLS}><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="nao_informar">Não informar</SelectItem>
-                    <SelectItem value="sem_juros">Sem juros</SelectItem>
-                    <SelectItem value="com_juros">Com juros</SelectItem>
+                    <SelectItem value="nao_informar" className="text-[16px]">Não informar</SelectItem>
+                    <SelectItem value="sem_juros" className="text-[16px]">Sem juros</SelectItem>
+                    <SelectItem value="com_juros" className="text-[16px]">Com juros</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label className="text-eyebrow mb-1 block">Validade (dias)</Label>
+                <Label htmlFor="validade" className="text-sublabel mb-1.5 block">Validade (dias)</Label>
                 <Input
+                  id="validade"
                   type="number" min={1} value={validadeDias}
                   onChange={(e) => setValidadeDias(Math.max(1, Number(e.target.value) || 15))}
-                  className="h-10 rounded-none"
+                  className={`${INPUT_CLS} tabular-nums`}
                 />
               </div>
             </div>
 
-            <div className="mb-3">
-              <Label className="text-eyebrow mb-1 block">Observações (vão no PDF)</Label>
+            <div className="mb-4">
+              <Label htmlFor="observacoes" className="text-sublabel mb-1.5 block">
+                Observações (vão no PDF)
+              </Label>
               <Textarea
-                value={observacoes} onChange={(e) => setObservacoes(e.target.value)}
-                rows={2} className="rounded-none"
+                id="observacoes"
+                value={observacoes}
+                onChange={(e) => setObservacoes(e.target.value)}
+                rows={2}
+                className="rounded-[6px] border-western-border-strong bg-white text-[16px]"
                 placeholder="Ex.: Frete por conta da Western até Cajamar/SP."
               />
             </div>
 
-            <p className="text-[11px] font-mono text-western-stone-warm/80 mb-5">
-              ⓘ O PDF já inclui automaticamente: produção em {BUSINESS.prazoProducaoLabel} · garantia de {BUSINESS.garantiaLabel}.
+            <p className="text-meta mb-6 flex items-start gap-2">
+              <Info className="mt-0.5 h-4 w-4 flex-shrink-0" aria-hidden="true" />
+              O PDF já inclui automaticamente: produção em {BUSINESS.prazoProducaoLabel} · garantia de{" "}
+              {BUSINESS.garantiaLabel}.
             </p>
 
-
             {/* Totais */}
-            <div className="border-t border-western-stone-warm/15 pt-4 mb-5">
-              <div className="grid grid-cols-2 gap-y-1 max-w-sm ml-auto text-sm">
-                <span className="text-western-stone-warm">Subtotal</span>
-                <span className="text-right font-mono">{formatBRL(subtotal, "BRL")}</span>
+            <div className="mb-5 border-t border-western-border-soft pt-5">
+              <dl className="ml-auto grid max-w-sm grid-cols-2 gap-y-2">
+                <dt className="text-[16px] text-western-stone-warm">Subtotal</dt>
+                <dd className="text-right text-[16px] tabular-nums text-western-green-deep">
+                  {formatBRL(subtotal, "BRL")}
+                </dd>
+
                 {discountValue > 0 && (
                   <>
-                    <span className="text-western-stone-warm">Desconto ({discountPct}%)</span>
-                    <span className="text-right font-mono text-western-gold">
+                    <dt className="text-[16px] text-western-stone-warm tabular-nums">
+                      Desconto ({discountPct}%)
+                    </dt>
+                    <dd className="text-right text-[16px] font-semibold tabular-nums text-western-bronze">
                       − {formatBRL(discountValue, "BRL")}
-                    </span>
+                    </dd>
                   </>
                 )}
-                <span className="text-eyebrow pt-2 border-t border-western-stone-warm/15 mt-2">Total</span>
-                <span className="text-right font-display text-2xl text-western-green-deep pt-2 border-t border-western-stone-warm/15 mt-2">
+
+                <dt className="text-sublabel mt-2 border-t border-western-border-soft pt-3">Total</dt>
+                <dd className="mt-2 border-t border-western-border-soft pt-3 text-right text-[26px] font-bold leading-none tabular-nums text-western-green-deep">
                   {formatBRL(total, "BRL")}
-                </span>
+                </dd>
+
                 {parcelas > 1 && (
                   <>
-                    <span />
-                    <span className="text-right text-xs text-western-stone-warm font-mono">
+                    <dt className="sr-only">Parcelamento</dt>
+                    <dd className="col-span-2 text-right text-meta tabular-nums">
                       ou {parcelas}× de {formatBRL(total / parcelas, "BRL")}
-                    </span>
+                    </dd>
                   </>
                 )}
-              </div>
+              </dl>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              <Button
+            {/* Ações do editor — secundárias de propósito: a primária (verde) é a do card. */}
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
                 onClick={() => handleGeneratePdf(false)}
                 disabled={sendingProposal}
-                className="rounded-none bg-western-green-deep hover:bg-western-green-mid text-western-cream font-mono text-[11px] uppercase tracking-[0.22em] h-11"
+                className="btn-outline-forest tap-target"
               >
-                {sendingProposal ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
-                Salvar e gerar PDF
-              </Button>
-              <Button
-                variant="outline"
+                {sendingProposal ? (
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <Send className="h-4 w-4" aria-hidden="true" />
+                )}
+                Salvar e gerar proposta
+              </button>
+              <button
+                type="button"
                 onClick={() => handleGeneratePdf(true)}
                 disabled={sendingProposal}
-                className="rounded-none border-western-stone-warm/30 font-mono text-[11px] uppercase tracking-[0.22em] h-11"
+                className="btn-outline-forest tap-target"
               >
-                <Download className="h-4 w-4 mr-2" /> Apenas baixar
-              </Button>
+                <Download className="h-4 w-4" aria-hidden="true" />
+                Apenas baixar PDF
+              </button>
             </div>
           </section>
 
-          {/* Histórico de propostas */}
-          {proposals.length > 0 && (
-            <section className="bg-white border border-western-stone-warm/15 p-5">
+          {/* Histórico de propostas — erro aqui NÃO vira "nenhuma proposta". */}
+          {(erroPropostas || proposals.length > 0) && (
+            <section className="rounded-[16px] border border-western-border-soft bg-white p-5">
               <p className="text-eyebrow mb-4">Propostas enviadas</p>
-              <ul className="space-y-2">
-                {proposals.map((p) => (
-                  <li
-                    key={p.id}
-                    className="border border-western-stone-warm/15 p-3 flex flex-wrap items-center gap-3 justify-between"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <FileText className="h-4 w-4 text-western-gold flex-shrink-0" />
-                      <div className="min-w-0">
-                        <p className="font-display text-western-green-deep">
-                          Nº {p.numero} ·{" "}
-                          <span className="font-mono text-sm">{formatBRL(Number(p.total), "BRL")}</span>
-                          {Number(p.discount_pct) > 0 && (
-                            <span className="text-xs text-western-gold ml-2">
-                              −{p.discount_pct}%
-                            </span>
-                          )}
-                        </p>
-                        <p className="text-xs text-western-stone-warm font-mono">
-                          {new Date(p.created_at).toLocaleString("pt-BR")}
-                          {p.parcelas && p.parcelas > 1 && ` · ${p.parcelas}×`}
-                          {p.forma_pagamento && ` · ${p.forma_pagamento}`}
-                        </p>
+
+              {erroPropostas ? (
+                <EstadoErro
+                  erro={erroPropostas}
+                  onRetry={load}
+                  titulo="Não consegui carregar o histórico de propostas"
+                  compacto
+                />
+              ) : (
+                <ul className="space-y-3">
+                  {proposals.map((p) => (
+                    <li
+                      key={p.id}
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-western-border-soft p-3"
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <FileText className="h-5 w-5 flex-shrink-0 text-western-bronze" aria-hidden="true" />
+                        <div className="min-w-0">
+                          <p className="text-[17px] font-semibold text-western-green-deep">
+                            Nº {p.numero}
+                            <span className="ml-2 tabular-nums">{formatBRL(Number(p.total), "BRL")}</span>
+                            {Number(p.discount_pct) > 0 && (
+                              <span className="ml-2 text-[14px] font-semibold tabular-nums text-western-bronze">
+                                −{p.discount_pct}%
+                              </span>
+                            )}
+                          </p>
+                          <p className="text-meta tabular-nums">
+                            {dataAbsoluta(p.sent_at ?? p.created_at)}
+                            {p.parcelas && p.parcelas > 1 ? ` · ${p.parcelas}×` : ""}
+                            {p.forma_pagamento ? ` · ${p.forma_pagamento}` : ""}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    {p.pdf_path && (
-                      <div className="flex gap-1 flex-shrink-0">
-                        <button
-                          onClick={() => openProposalPdf(p.pdf_path!)}
-                          className="h-9 w-9 border border-western-stone-warm/30 hover:border-western-gold flex items-center justify-center"
-                          title="Abrir PDF"
-                        >
-                          <ExternalLink className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          onClick={() => shareProposal(p, "whatsapp")}
-                          className="h-9 w-9 border border-western-stone-warm/30 hover:border-western-gold flex items-center justify-center"
-                          title="Enviar por WhatsApp"
-                        >
-                          <MessageCircle className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          onClick={() => shareProposal(p, "email")}
-                          className="h-9 w-9 border border-western-stone-warm/30 hover:border-western-gold flex items-center justify-center"
-                          title="Enviar por e-mail"
-                        >
-                          <Mail className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
+
+                      {p.pdf_path && (
+                        <div className="flex flex-shrink-0 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => openProposalPdf(p.pdf_path!)}
+                            title="Abrir PDF"
+                            aria-label={`Abrir PDF da proposta ${p.numero}`}
+                            className="tap-target inline-flex items-center justify-center rounded-[6px] border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
+                          >
+                            <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => shareProposal(p, "whatsapp")}
+                            title="Enviar por WhatsApp"
+                            aria-label={`Enviar a proposta ${p.numero} por WhatsApp`}
+                            className="tap-target inline-flex items-center justify-center rounded-[6px] border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
+                          >
+                            <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => shareProposal(p, "email")}
+                            title="Enviar por e-mail"
+                            aria-label={`Enviar a proposta ${p.numero} por e-mail`}
+                            className="tap-target inline-flex items-center justify-center rounded-[6px] border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
+                          >
+                            <Mail className="h-4 w-4" aria-hidden="true" />
+                          </button>
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </section>
           )}
 
           {/* Fechar venda */}
-          <section className="bg-emerald-50/40 border border-emerald-600/20 p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <CheckCircle2 className="h-4 w-4 text-emerald-700" />
-              <p className="text-eyebrow text-emerald-800">Fechar venda</p>
+          <section className="rounded-[16px] border border-[#2E7D4F]/25 bg-[#2E7D4F]/[0.04] p-5">
+            <div className="mb-1 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-[#2E7D4F]" aria-hidden="true" />
+              <p className="text-eyebrow text-[#2E7D4F]">Fechar venda</p>
             </div>
-            <p className="text-sm text-western-stone-warm mb-4">
+            <p className="text-body mb-5 text-[16px]">
               Marca este orçamento como pago e registra como a venda foi fechada.
             </p>
-            <div className="grid sm:grid-cols-3 gap-3 mb-3">
+
+            <div className="mb-4 grid gap-4 sm:grid-cols-3">
               <div>
-                <Label className="text-eyebrow mb-1 block">Forma de pagamento</Label>
+                <Label htmlFor="venda-forma" className="text-sublabel mb-1.5 block">Forma de pagamento</Label>
                 <Select value={saleForma} onValueChange={setSaleForma}>
-                  <SelectTrigger className="h-10 rounded-none bg-white"><SelectValue /></SelectTrigger>
+                  <SelectTrigger id="venda-forma" className={INPUT_CLS}><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {FORMAS_PAGAMENTO.map((f) => <SelectItem key={f} value={f}>{f}</SelectItem>)}
+                    {FORMAS_PAGAMENTO.map((f) => (
+                      <SelectItem key={f} value={f} className="text-[16px]">{f}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label className="text-eyebrow mb-1 block">Parcelas</Label>
+                <Label htmlFor="venda-parcelas" className="text-sublabel mb-1.5 block">Parcelas</Label>
                 <Input
+                  id="venda-parcelas"
                   type="number" min={1} value={saleParcelas}
                   onChange={(e) => setSaleParcelas(Math.max(1, Number(e.target.value) || 1))}
-                  className="h-10 rounded-none bg-white"
+                  className={`${INPUT_CLS} tabular-nums`}
                 />
               </div>
               <div>
-                <Label className="text-eyebrow mb-1 block">Valor final (R$)</Label>
+                <Label htmlFor="venda-valor" className="text-sublabel mb-1.5 block">Valor final (R$)</Label>
                 <BRLInput
                   value={saleValor ?? 0}
                   onChange={(n) => setSaleValor(Number.isFinite(n) ? n : null)}
                   placeholder={formatBRL(total, "BRL")}
-                  className="h-10 rounded-none bg-white"
+                  className={`${INPUT_CLS} w-full text-right tabular-nums`}
                 />
               </div>
             </div>
+
             <Textarea
-              value={saleObs} onChange={(e) => setSaleObs(e.target.value)}
-              rows={2} className="rounded-none bg-white mb-3"
+              value={saleObs}
+              onChange={(e) => setSaleObs(e.target.value)}
+              rows={2}
+              aria-label="Observações da venda"
+              className="mb-4 rounded-[6px] border-western-border-strong bg-white text-[16px]"
               placeholder="Observações da venda (opcional)"
             />
-            <Button
+
+            <button
+              type="button"
               onClick={handleCloseSale}
               disabled={closingSale}
-              className="rounded-none bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-[11px] uppercase tracking-[0.22em] h-11 disabled:opacity-60"
+              className="btn-outline-forest tap-target"
             >
-              {closingSale ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
-              {jaVendida ? "Venda já fechada — regravar" : "Marcar como vendido"}
-            </Button>
+              {closingSale ? (
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              ) : (
+                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+              )}
+              {jaVendida ? "Regravar dados da venda" : "Marcar como vendido"}
+            </button>
+
             {thread.pago_em && (
-              <p className="text-xs text-emerald-800 font-mono mt-3">
-                ✓ Vendido em {new Date(thread.pago_em).toLocaleString("pt-BR")}
-                {thread.valor_final && ` · ${formatBRL(Number(thread.valor_final), "BRL")}`}
+              <p className="mt-4 flex flex-wrap items-center gap-1.5 text-[16px] font-semibold tabular-nums text-[#2E7D4F]">
+                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                Vendido em {dataAbsoluta(thread.pago_em)}
+                {thread.valor_final != null && ` · ${formatBRL(Number(thread.valor_final), "BRL")}`}
                 {thread.forma_pagamento && ` · ${thread.forma_pagamento}`}
-                {thread.parcelas && thread.parcelas > 1 && ` · ${thread.parcelas}×`}
+                {thread.parcelas && thread.parcelas > 1 ? ` · ${thread.parcelas}×` : ""}
               </p>
             )}
           </section>
-        </div>
 
-        {/* Coluna direita — status + notas */}
-        <aside className="space-y-6 lg:sticky lg:top-6">
-          <section className="bg-white border border-western-stone-warm/15 p-5">
-            <p className="text-eyebrow mb-3">Status</p>
-            <span
-              className={`inline-flex px-2 py-1 border font-mono text-[10px] uppercase tracking-[0.18em] mb-4 ${QUOTE_STATUS_CLS[thread.status]}`}
-            >
-              {QUOTE_STATUS_LABEL[thread.status]}
-            </span>
-            <Select value={statusLocal} onValueChange={(v) => setStatusLocal(v as QuoteStatus)}>
-              <SelectTrigger className="h-10 rounded-none"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {STATUS_OPTIONS.map((s) => (
-                  <SelectItem key={s} value={s}>{QUOTE_STATUS_LABEL[s]}</SelectItem>
+          {/* Pedido original (o que o cliente pediu, antes de qualquer edição) */}
+          <section className="rounded-[16px] border border-western-border-soft bg-white p-5">
+            <p className="text-eyebrow mb-4">Pedido original do cliente</p>
+            <div className="mb-3 flex items-baseline justify-between gap-3">
+              <span className="text-[16px] tabular-nums text-western-stone-warm">
+                {payload?.items?.length ?? 0}{" "}
+                {payload?.items?.length === 1 ? "peça" : "peças"}
+              </span>
+              <span className="text-[17px] font-semibold tabular-nums text-western-green-deep">
+                {payload?.subtotal
+                  ? formatBRL(payload.subtotal, payload.currency || "BRL")
+                  : "—"}
+              </span>
+            </div>
+            {payload?.items?.length ? (
+              <ul className="divide-y divide-western-border-soft">
+                {payload.items.map((i, idx) => (
+                  <li key={idx} className="flex justify-between gap-4 py-2">
+                    <span className="min-w-0 break-words text-[16px] text-western-green-deep">
+                      <span className="tabular-nums">{i.quantity}×</span> {i.title}
+                    </span>
+                    <span className="flex-shrink-0 text-[16px] tabular-nums text-western-stone-warm">
+                      {formatBRL(i.unitPrice * i.quantity, "BRL")}
+                    </span>
+                  </li>
                 ))}
-              </SelectContent>
-            </Select>
-
-            <Label className="text-eyebrow mt-5 mb-1 block">Notas internas</Label>
-            <Textarea
-              value={notas} onChange={(e) => setNotas(e.target.value)}
-              rows={5} className="rounded-none"
-              placeholder="Ligações, contexto, próximos passos…"
-            />
-            <Button
-              onClick={handleSaveNotes} disabled={savingThread}
-              className="w-full mt-3 rounded-none bg-western-green-deep hover:bg-western-green-mid text-western-cream font-mono text-[11px] uppercase tracking-[0.22em] h-10"
-            >
-              {savingThread ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-              Salvar
-            </Button>
+              </ul>
+            ) : (
+              <p className="text-meta">O cliente não anexou peças a este pedido.</p>
+            )}
           </section>
-
-          {/* Pedido original */}
-          <section className="bg-white border border-western-stone-warm/15 p-5">
-            <p className="text-eyebrow mb-3">Pedido original</p>
-            <p className="text-sm text-western-green-deep mb-2">
-              {payload?.items?.length ?? 0} {payload?.items?.length === 1 ? "item" : "itens"}
-            </p>
-            <p className="font-mono text-sm text-western-green-deep mb-3">
-              {payload?.subtotal
-                ? formatBRL(payload.subtotal, payload.currency || "BRL")
-                : "—"}
-            </p>
-            <ul className="space-y-1 text-xs text-western-stone-warm">
-              {payload?.items?.map((i, idx) => (
-                <li key={idx} className="flex justify-between gap-2">
-                  <span className="truncate">
-                    {i.quantity}× {i.title}
-                  </span>
-                  <span className="font-mono flex-shrink-0">
-                    {formatBRL(i.unitPrice * i.quantity, "BRL")}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        </aside>
+        </div>
       </div>
+
+      {/* ── Confirmações ── */}
+      <ConfirmDialog
+        open={confirmarArquivo}
+        onOpenChange={setConfirmarArquivo}
+        title="Arquivar este orçamento?"
+        description="Ele sai do fluxo de atendimento e passa a viver na aba Arquivado. Nada é apagado — dá para reabrir quando quiser."
+        confirmLabel="Arquivar"
+        onConfirm={handleArchive}
+      />
+
+      <ConfirmDialog
+        open={confirmarRegravar}
+        onOpenChange={setConfirmarRegravar}
+        title="Esta venda já foi fechada. Regravar os dados?"
+        description={`O fechamento atual (${
+          thread.valor_final != null ? formatBRL(Number(thread.valor_final), "BRL") : "sem valor"
+        }, status ${rotuloStatus(thread.status)}) será substituído pelos valores do formulário. O pedido não é duplicado.`}
+        confirmLabel={closingSale ? "Regravando…" : "Regravar"}
+        onConfirm={() => {
+          setConfirmarRegravar(false);
+          void gravarVenda();
+        }}
+      />
+
+      <ConfirmDialog
+        open={confirmarExclusao}
+        onOpenChange={setConfirmarExclusao}
+        title="Apagar orçamento definitivamente"
+        description={`Isto apaga o orçamento ${numero} e todo o histórico da proposta. Não tem volta.\n\nDigite ${numero} abaixo para confirmar.`}
+        requireText={numero}
+        requireTextPlaceholder={`Digite ${numero} para confirmar`}
+        confirmLabel="Apagar definitivamente"
+        danger
+        onConfirm={() => { void handleDelete(); }}
+      />
     </div>
   );
 }
 
-function Field({ label, value }: { label: string; value: string | null }) {
+function Campo({ rotulo, valor, numerica }: { rotulo: string; valor?: string | null; numerica?: boolean }) {
   return (
-    <div>
-      <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">
-        {label}
-      </p>
-      <p className="text-western-green-deep">{value || "—"}</p>
+    <div className="min-w-0">
+      <dt className="text-sublabel">{rotulo}</dt>
+      <dd
+        className={`mt-0.5 break-words text-[16px] text-western-green-deep ${numerica ? "tabular-nums" : ""}`}
+      >
+        {valor || "—"}
+      </dd>
     </div>
   );
 }

@@ -1,17 +1,38 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Search, ShieldCheck, ShieldX, ExternalLink, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Loader2, Search, ShieldCheck, ShieldX, ExternalLink, ChevronRight, FileText } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import {
+  DataTable, type Coluna,
+  EstadoErro,
+  StatusBadge, type TomStatus,
+  Tabs,
+  CelulaData,
+} from "@/components/backoffice";
 import { TIERS, TIER_LABEL, type Tier } from "@/components/admin/adminUtils";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
+
+/**
+ * Credenciamentos — a fila de revisão humana.
+ *
+ * Esta tela é embutida em /admin/parceiros (aba "Credenciamento"), por isso NÃO
+ * tem PageHeader próprio: quem dá o título é a página que a hospeda.
+ *
+ * O que era bug e foi consertado:
+ *  1. `load()` fazia toast do erro e mesmo assim `setRows(data ?? [])` — um 403
+ *     virava "Nenhum cadastro" e o dono ficava CEGO. Agora o erro vira estado e
+ *     a tabela mostra EstadoErro (tela diferente do vazio) com "Tentar de novo".
+ *  2. Aprovar gravava `credenciamentos.status_manual = aprovado` e depois fazia
+ *     `await supabase.from("partner_profiles").update(...)` SEM olhar o erro. Se
+ *     essa segunda escrita falhasse, o painel dizia "Aprovado" e o parceiro
+ *     continuava sem acesso ao atacado. Agora o erro é propagado.
+ */
 
 interface Cred {
   id: string;
@@ -48,11 +69,12 @@ const DECISAO_LABEL: Record<string, string> = {
   solicitar_cartao: "Aguardando Cartão CNPJ",
 };
 
-const STATUS_MANUAL_LABEL: Record<string, string> = {
-  pendente: "Pendente",
-  aprovado: "Aprovado manualmente",
-  recusado: "Recusado manualmente",
-  na: "Sem ação necessária",
+/** Tom da decisão automática — dessaturado, na paleta semântica do DS. */
+const DECISAO_TOM: Record<string, TomStatus> = {
+  aprovado: "positivo",
+  analise: "aviso",
+  reprovado: "negativo",
+  solicitar_cartao: "info",
 };
 
 function fonteLabel(f: string | null | undefined): string {
@@ -62,291 +84,364 @@ function fonteLabel(f: string | null | undefined): string {
   return f;
 }
 
+/**
+ * Grava a decisão. Regra de negócio inalterada — o que mudou é que agora o erro
+ * da SEGUNDA escrita (partner_profiles) também sobe. Sem isto, "aprovado" podia
+ * ser mentira: o cadastro virava aprovado e o acesso ao atacado, não.
+ */
+async function aplicarDecisao(
+  r: Cred,
+  decisao: "aprovado" | "recusado",
+  opts?: { tier?: Tier; note?: string },
+) {
+  const tier: Tier = opts?.tier ?? ((r.tier as Tier) || "light");
+
+  const patch: Record<string, unknown> = {
+    status_manual: decisao,
+    reviewed_at: new Date().toISOString(),
+  };
+  if (opts?.note !== undefined) patch.review_note = opts.note || null;
+  if (decisao === "aprovado") patch.tier = tier;
+
+  const { error } = await supabase.from("credenciamentos").update(patch as never).eq("id", r.id);
+  if (error) throw error;
+
+  if (!r.user_id) return;
+
+  if (decisao === "aprovado") {
+    const { error: perfilErro } = await supabase.from("partner_profiles").update({
+      status: "approved",
+      tier,
+      credenciamento_id: r.id,
+      credenciado_em: new Date().toISOString(),
+      credenciado_fonte: r.fonte ?? "manual",
+      approved_at: new Date().toISOString(),
+    } as never).eq("user_id", r.user_id);
+    if (perfilErro) throw perfilErro;
+  } else {
+    const { error: perfilErro } = await supabase
+      .from("partner_profiles")
+      .update({ status: "rejected" } as never)
+      .eq("user_id", r.user_id);
+    if (perfilErro) throw perfilErro;
+  }
+}
+
 export function CredenciamentoTab() {
   const [rows, setRows] = useState<Cred[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<unknown>(null);
   const [tab, setTab] = useState<"pendentes" | "decididos">("pendentes");
   const [q, setQ] = useState("");
   const [editing, setEditing] = useState<Cred | null>(null);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
   const [confirmApproveOpen, setConfirmApproveOpen] = useState(false);
   const [confirmRejectOpen, setConfirmRejectOpen] = useState(false);
   const [bulkBusy, setBulkBusy] = useState(false);
 
-  const load = async () => {
-    setLoading(true);
+  const load = useCallback(async () => {
+    setCarregando(true);
+    setErro(null);
     const { data, error } = await supabase
       .from("credenciamentos")
       .select("*")
       .order("created_at", { ascending: false })
       .limit(500);
-    if (error) toast.error("Erro ao carregar.", { description: error.message });
-    setRows((data as Cred[]) ?? []);
-    setLoading(false);
-  };
-  useEffect(() => { load(); }, []);
+    // Sem isto, um 403 vira "nenhum cadastro" e o dono não vê o parceiro esperando.
+    if (error) setErro(error);
+    else setRows((data as Cred[]) ?? []);
+    setCarregando(false);
+  }, []);
 
-  const filtered = useMemo(() => rows.filter((r) => {
-    if (tab === "pendentes" && r.status_manual !== "pendente") return false;
-    if (tab === "decididos" && r.status_manual === "pendente") return false;
-    if (q) {
-      const hay = [r.empresa, r.nome, r.cnpj, r.email, r.protocolo].filter(Boolean).join(" ").toLowerCase();
-      if (!hay.includes(q.toLowerCase())) return false;
-    }
-    return true;
-  }), [rows, tab, q]);
+  useEffect(() => { void load(); }, [load]);
 
-  // Reset selection on tab/search change
-  useEffect(() => { setSelectedIds(new Set()); }, [tab, q]);
+  const porStatus = useMemo(() => {
+    const pendentes = rows.filter((r) => r.status_manual === "pendente");
+    return { pendentes, decididos: rows.filter((r) => r.status_manual !== "pendente") };
+  }, [rows]);
+
+  const filtered = useMemo(() => {
+    const base = tab === "pendentes" ? porStatus.pendentes : porStatus.decididos;
+    const termo = q.trim().toLowerCase();
+    if (!termo) return base;
+    return base.filter((r) =>
+      [r.empresa, r.nome, r.cnpj, r.email, r.protocolo]
+        .filter(Boolean).join(" ").toLowerCase().includes(termo),
+    );
+  }, [porStatus, tab, q]);
+
+  // Trocar de aba ou buscar zera a seleção — senão o dono aprova o que não vê.
+  useEffect(() => { setSelecionados(new Set()); }, [tab, q]);
 
   const isPendentes = tab === "pendentes";
-  const selectableRows = useMemo(
-    () => (isPendentes ? filtered : []),
-    [filtered, isPendentes]
+
+  const linhasSelecionadas = useMemo(
+    () => rows.filter((r) => selecionados.has(r.id) && r.status_manual === "pendente"),
+    [rows, selecionados],
   );
-  const selectableIds = useMemo(() => selectableRows.map((r) => r.id), [selectableRows]);
-  const allSelected = selectableIds.length > 0 && selectableIds.every((id) => selectedIds.has(id));
-  const someSelected = selectableIds.some((id) => selectedIds.has(id));
-  const indeterminate = someSelected && !allSelected;
+  const aprovaveis = useMemo(() => linhasSelecionadas.filter((r) => !!r.user_id), [linhasSelecionadas]);
+  const semConta = linhasSelecionadas.length - aprovaveis.length;
 
-  const toggleOne = (id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
-      return next;
-    });
-  };
-  const toggleAll = () => {
-    setSelectedIds((prev) => {
-      if (allSelected) {
-        const next = new Set(prev);
-        selectableIds.forEach((id) => next.delete(id));
-        return next;
-      }
-      const next = new Set(prev);
-      selectableIds.forEach((id) => next.add(id));
-      return next;
-    });
-  };
-  const clearSelection = () => setSelectedIds(new Set());
-
-  const selectedRows = useMemo(
-    () => rows.filter((r) => selectedIds.has(r.id) && r.status_manual === "pendente"),
-    [rows, selectedIds]
-  );
-  const approvableRows = selectedRows.filter((r) => !!r.user_id);
-  const skippedNoUser = selectedRows.length - approvableRows.length;
-
-  const applyOne = async (r: Cred, decision: "aprovado" | "recusado") => {
-    const patch = {
-      status_manual: decision,
-      reviewed_at: new Date().toISOString(),
-      ...(decision === "aprovado" ? { tier: (r.tier as Tier) ?? "light" } : {}),
-    };
-    const { error } = await supabase.from("credenciamentos").update(patch).eq("id", r.id);
-    if (error) throw error;
-    if (decision === "aprovado" && r.user_id) {
-      await supabase.from("partner_profiles").update({
-        status: "approved",
-        tier: (r.tier as Tier) ?? "light",
-        credenciamento_id: r.id,
-        credenciado_em: new Date().toISOString(),
-        credenciado_fonte: r.fonte ?? "manual",
-        approved_at: new Date().toISOString(),
-      }).eq("user_id", r.user_id);
-    } else if (decision === "recusado" && r.user_id) {
-      await supabase.from("partner_profiles").update({ status: "rejected" }).eq("user_id", r.user_id);
-    }
-  };
+  const limparSelecao = () => setSelecionados(new Set());
 
   const handleBulkApprove = async () => {
-    if (approvableRows.length === 0) {
-      toast.error("Nenhum cadastro elegível.", { description: "Selecionados não têm conta vinculada." });
+    if (aprovaveis.length === 0) {
+      toast.error("Nenhum cadastro elegível.", { description: "Os selecionados não têm conta vinculada." });
       setConfirmApproveOpen(false);
       return;
     }
     setBulkBusy(true);
-    const results = await Promise.allSettled(approvableRows.map((r) => applyOne(r, "aprovado")));
+    const results = await Promise.allSettled(aprovaveis.map((r) => aplicarDecisao(r, "aprovado")));
     const ok = results.filter((x) => x.status === "fulfilled").length;
-    const fail = results.length - ok;
+    const falhas = results.length - ok;
     setBulkBusy(false);
     setConfirmApproveOpen(false);
-    if (fail === 0 && skippedNoUser === 0) {
+
+    if (falhas === 0 && semConta === 0) {
       toast.success(`${ok} cadastro(s) aprovado(s).`);
+    } else if (ok === 0) {
+      toast.error("Nenhum cadastro foi aprovado.", {
+        description: falhas ? `${falhas} falharam. Tente de novo.` : undefined,
+      });
     } else {
       toast.success(`${ok} aprovado(s).`, {
         description: [
-          fail ? `${fail} falharam` : null,
-          skippedNoUser ? `${skippedNoUser} pulados (sem conta vinculada)` : null,
+          falhas ? `${falhas} falharam` : null,
+          semConta ? `${semConta} pulados (sem conta vinculada)` : null,
         ].filter(Boolean).join(" · "),
       });
     }
-    clearSelection();
+    limparSelecao();
     await load();
   };
 
   const handleBulkReject = async () => {
-    if (selectedRows.length === 0) { setConfirmRejectOpen(false); return; }
+    if (linhasSelecionadas.length === 0) { setConfirmRejectOpen(false); return; }
     setBulkBusy(true);
-    const results = await Promise.allSettled(selectedRows.map((r) => applyOne(r, "recusado")));
+    const results = await Promise.allSettled(linhasSelecionadas.map((r) => aplicarDecisao(r, "recusado")));
     const ok = results.filter((x) => x.status === "fulfilled").length;
-    const fail = results.length - ok;
+    const falhas = results.length - ok;
     setBulkBusy(false);
     setConfirmRejectOpen(false);
-    toast.success(`${ok} reprovado(s).`, fail ? { description: `${fail} falharam` } : undefined);
-    clearSelection();
+
+    if (ok === 0) toast.error("Nenhum cadastro foi recusado.", { description: `${falhas} falharam.` });
+    else toast.success(`${ok} recusado(s).`, falhas ? { description: `${falhas} falharam` } : undefined);
+
+    limparSelecao();
     await load();
   };
 
-  if (loading) return <div className="py-20 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-western-gold" /></div>;
+  const colunas: ReadonlyArray<Coluna<Cred>> = useMemo(() => {
+    const base: Coluna<Cred>[] = [
+      {
+        key: "empresa",
+        header: "Empresa / CNPJ",
+        principalNoMobile: true,
+        sortable: true,
+        sortValue: (r) => r.empresa ?? r.nome ?? r.cnpj,
+        render: (r) => (
+          <div className="min-w-0">
+            <p className="font-semibold text-western-green-deep truncate">{r.empresa ?? r.nome ?? "—"}</p>
+            <p className="text-[14px] text-western-stone-warm tabular-nums truncate">
+              {formatCnpj(r.cnpj)}
+              {r.email ? ` · ${r.email}` : ""}
+            </p>
+            {isPendentes && !r.user_id && (
+              <span className="mt-1 inline-flex items-center rounded-[6px] border border-[#9C6812]/30 bg-[#9C6812]/[0.07] px-2 py-0.5 text-[14px] font-semibold leading-none text-[#9C6812]">
+                Sem conta vinculada
+              </span>
+            )}
+          </div>
+        ),
+      },
+      {
+        key: "decisao",
+        header: "Decisão automática",
+        sortable: true,
+        render: (r) => (
+          <StatusBadge
+            status={r.decisao}
+            label={DECISAO_LABEL[r.decisao] ?? r.decisao}
+            tom={DECISAO_TOM[r.decisao] ?? "neutro"}
+          />
+        ),
+      },
+      {
+        key: "cnae_principal",
+        header: "CNAE",
+        numerica: true,
+        ocultarNoMobile: true,
+        render: (r) => (
+          <div className="whitespace-nowrap">
+            <p className="text-[16px] text-western-green-deep">{formatCnae(r.cnae_principal)}</p>
+            {r.cnae_match && r.cnae_match !== r.cnae_principal && (
+              <p className="text-[14px] text-western-stone-warm">
+                match {formatCnae(r.cnae_match)} · {r.cnae_match_tier}
+              </p>
+            )}
+          </div>
+        ),
+      },
+      {
+        key: "fonte",
+        header: "Confirmação",
+        ocultarNoMobile: true,
+        sortable: true,
+        sortValue: (r) => fonteLabel(r.fonte),
+        render: (r) => <span className="text-[16px] text-western-stone-warm">{fonteLabel(r.fonte)}</span>,
+      },
+      {
+        key: "card_path",
+        header: "Cartão",
+        ocultarNoMobile: true,
+        render: (r) =>
+          r.card_path ? (
+            <span className="inline-flex items-center gap-1.5 text-[16px] font-semibold text-western-bronze">
+              <FileText className="h-4 w-4" aria-hidden="true" /> Enviado
+            </span>
+          ) : (
+            <span className="text-meta">—</span>
+          ),
+      },
+      {
+        key: "created_at",
+        header: "Recebido",
+        align: "right",
+        sortable: true,
+        sortValue: (r) => r.created_at,
+        render: (r) => <CelulaData valor={r.created_at} className="text-western-stone-warm" />,
+      },
+    ];
+
+    // Na aba "Decididos", o que importa é o veredito humano — não o automático.
+    if (!isPendentes) {
+      base.splice(2, 0, {
+        key: "status_manual",
+        header: "Revisão",
+        sortable: true,
+        render: (r) => <StatusBadge status={r.status_manual} />,
+      });
+    }
+
+    base.push({
+      key: "acao",
+      header: "",
+      align: "right",
+      width: "56px",
+      ocultarNoMobile: true,
+      render: () => (
+        <ChevronRight className="ml-auto h-4 w-4 text-western-stone-warm/45" aria-hidden="true" />
+      ),
+    });
+
+    return base;
+  }, [isPendentes]);
 
   return (
-    <div className={selectedIds.size > 0 ? "pb-24 md:pb-0" : ""}>
-      <p className="text-western-stone-warm mb-6 text-sm">Cadastros que precisam de revisão humana — CNAE em faixa amarela/laranja, fora da whitelist, ou Cartão CNPJ enviado.</p>
+    <div>
+      <p className="text-body mb-6 max-w-3xl">
+        Cadastros que precisam de revisão humana — CNAE em faixa amarela/laranja, fora da whitelist,
+        ou Cartão CNPJ enviado.
+      </p>
 
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <Tabs
+          abas={[
+            { key: "pendentes", label: "Pendentes", count: carregando || erro ? undefined : porStatus.pendentes.length },
+            { key: "decididos", label: "Decididos", count: carregando || erro ? undefined : porStatus.decididos.length },
+          ]}
+          ativa={tab}
+          onChange={setTab}
+        />
 
-      <div className="flex flex-wrap gap-2 mb-6">
-        {(["pendentes", "decididos"] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)} className={`h-9 px-4 font-mono text-[11px] uppercase tracking-[0.18em] border ${
-            tab === t ? "border-western-gold text-western-green-deep bg-western-gold/10" : "border-western-stone-warm/25 text-western-stone-warm hover:border-western-gold/60"
-          }`}>{t === "pendentes" ? "Pendentes" : "Decididos"}</button>
-        ))}
-        <div className="relative flex-1 min-w-[220px] max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-western-stone-warm" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Empresa, CNPJ, e-mail, protocolo…" className="h-9 pl-9 rounded-none border-western-stone-warm/25" />
+        <div className="relative ml-auto min-w-[240px] flex-1 md:max-w-sm">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-western-stone-warm" aria-hidden="true" />
+          <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Empresa, CNPJ, e-mail, protocolo…"
+            aria-label="Buscar credenciamento"
+            className="h-[48px] rounded-[6px] border-western-border-strong bg-white pl-10 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/70"
+          />
         </div>
       </div>
 
-      <div className="overflow-x-auto border border-western-stone-warm/20 bg-white">
-        <table className="w-full text-sm">
-          <thead className="bg-western-paper text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">
-            <tr>
-              {isPendentes && (
-                <th className="px-3 py-3 w-10">
-                  <Checkbox
-                    checked={allSelected ? true : indeterminate ? "indeterminate" : false}
-                    onCheckedChange={toggleAll}
-                    disabled={selectableIds.length === 0}
-                    aria-label="Selecionar todos"
-                  />
-                </th>
-              )}
-              <th className="text-left px-4 py-3">Empresa / CNPJ</th>
-              <th className="text-left px-4 py-3">Decisão auto</th>
-              <th className="text-left px-4 py-3">CNAE</th>
-              <th className="text-left px-4 py-3">Confirmação</th>
-              <th className="text-left px-4 py-3">Cartão</th>
-              <th className="text-left px-4 py-3">Criado</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.length === 0 && (
-              <tr><td colSpan={isPendentes ? 8 : 7} className="px-4 py-10 text-center text-western-stone-warm">Nenhum cadastro.</td></tr>
-            )}
-            {filtered.map((r) => {
-              const selected = selectedIds.has(r.id);
-              return (
-              <tr key={r.id} className={`border-t border-western-stone-warm/10 hover:bg-western-paper/50 ${selected ? "bg-western-gold/5" : ""}`}>
-                {isPendentes && (
-                  <td className="px-3 py-3 align-top">
-                    <Checkbox
-                      checked={selected}
-                      onCheckedChange={() => toggleOne(r.id)}
-                      aria-label={`Selecionar ${r.empresa ?? r.nome ?? r.cnpj}`}
-                    />
-                  </td>
-                )}
-                <td className="px-4 py-3">
-                  <p className="font-medium text-western-green-deep">{r.empresa ?? r.nome ?? "—"}</p>
-                  <p className="text-xs text-western-stone-warm">{formatCnpj(r.cnpj)} · {r.email}</p>
-                  {r.protocolo && <p className="text-[10px] font-mono text-western-stone-warm/80 mt-0.5">{r.protocolo}</p>}
-                  {isPendentes && !r.user_id && (
-                    <p className="text-[10px] font-mono uppercase tracking-[0.16em] text-amber-800 mt-1">sem conta vinculada</p>
-                  )}
-                </td>
-                <td className="px-4 py-3">
-                  <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] ${decisaoCls(r.decisao)}`}>{DECISAO_LABEL[r.decisao] ?? r.decisao}</span>
-                  {r.status_manual !== "na" && r.status_manual !== "pendente" && (
-                    <p className="text-[10px] font-mono uppercase mt-1 text-western-stone-warm">{STATUS_MANUAL_LABEL[r.status_manual] ?? r.status_manual}</p>
-                  )}
-                </td>
-                <td className="px-4 py-3 font-mono text-xs">
-                  <p>{formatCnae(r.cnae_principal)}</p>
-                  {r.cnae_match && r.cnae_match !== r.cnae_principal && (
-                    <p className="text-western-stone-warm" title="Verde = liberado direto; amarela/laranja = precisa da sua avaliação.">match: {formatCnae(r.cnae_match)} ({r.cnae_match_tier})</p>
-                  )}
-                </td>
-                <td className="px-4 py-3 text-xs">{fonteLabel(r.fonte)}</td>
-                <td className="px-4 py-3">{r.card_path ? <span className="text-xs text-western-gold">enviado</span> : <span className="text-xs text-western-stone-warm/60">—</span>}</td>
-                <td className="px-4 py-3 text-xs text-western-stone-warm">{new Date(r.created_at).toLocaleString("pt-BR")}</td>
-                <td className="px-4 py-3 text-right">
-                  <button onClick={() => setEditing(r)} className="text-xs font-mono uppercase tracking-[0.18em] text-western-stone-warm hover:text-western-gold">
-                    Revisar
-                  </button>
-                </td>
-              </tr>
-            );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      {selectedIds.size > 0 && (
-        <div className="fixed md:sticky bottom-0 md:bottom-4 left-0 right-0 md:left-auto md:right-auto z-30 md:mt-4 border-t md:border border-western-stone-warm/30 bg-western-cream md:bg-white shadow-lg md:shadow-md">
-          <div className="flex flex-wrap items-center gap-3 px-4 py-3">
-            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-western-green-deep">
-              {selectedIds.size} selecionado(s)
-              {skippedNoUser > 0 && (
-                <span className="text-amber-800 normal-case tracking-normal ml-2">
-                  · {skippedNoUser} sem conta (será pulado ao aprovar)
-                </span>
-              )}
-            </span>
-            <div className="flex-1" />
-            <Button
-              onClick={() => setConfirmRejectOpen(true)}
-              disabled={bulkBusy}
-              variant="outline"
-              className="h-9 border-red-700/30 text-red-800 hover:bg-red-50 rounded-none font-mono text-[11px] uppercase tracking-[0.18em]"
-            >
-              <ShieldX className="h-3.5 w-3.5 mr-2" /> Reprovar selecionados
-            </Button>
-            <Button
-              onClick={() => setConfirmApproveOpen(true)}
-              disabled={bulkBusy || approvableRows.length === 0}
-              className="h-9 bg-western-green-deep text-western-cream hover:bg-western-green-mid rounded-none font-mono text-[11px] uppercase tracking-[0.18em] disabled:opacity-50"
-            >
-              <ShieldCheck className="h-3.5 w-3.5 mr-2" /> Aprovar selecionados
-            </Button>
-            <Button
-              onClick={clearSelection}
-              disabled={bulkBusy}
-              variant="ghost"
-              className="h-9 rounded-none font-mono text-[11px] uppercase tracking-[0.18em] text-western-stone-warm"
-            >
-              <X className="h-3.5 w-3.5 mr-1" /> Limpar
-            </Button>
-          </div>
-        </div>
-      )}
+      <DataTable
+        linhas={filtered}
+        colunas={colunas}
+        getId={(r) => r.id}
+        isLoading={carregando}
+        error={erro}
+        onRetry={load}
+        onRowClick={(r) => setEditing(r)}
+        vazio={
+          isPendentes
+            ? {
+                titulo: q ? "Nenhum cadastro encontrado" : "Nenhum credenciamento pendente",
+                mensagem: q
+                  ? "Nada bate com essa busca. Limpe o campo para ver a fila inteira."
+                  : "Quando um cadastro cair em análise manual, ele aparece aqui.",
+              }
+            : {
+                titulo: q ? "Nenhum cadastro encontrado" : "Nada decidido ainda",
+                mensagem: q
+                  ? "Nada bate com essa busca."
+                  : "Cadastros aprovados ou recusados por você ficam registrados aqui.",
+              }
+        }
+        selecao={
+          isPendentes
+            ? {
+                selecionados,
+                onChange: setSelecionados,
+                barra: () => (
+                  <>
+                    {semConta > 0 && (
+                      <span className="text-[14px] font-semibold text-[#9C6812]">
+                        {semConta} sem conta — será pulado
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setConfirmRejectOpen(true)}
+                      disabled={bulkBusy}
+                      className="tap-target inline-flex items-center gap-2 rounded-[10px] border border-[#B3372E]/45 px-4 text-[16px] font-semibold text-[#B3372E] transition-colors hover:bg-[#B3372E]/10 disabled:opacity-45"
+                    >
+                      <ShieldX className="h-4 w-4" aria-hidden="true" />
+                      Recusar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmApproveOpen(true)}
+                      disabled={bulkBusy || aprovaveis.length === 0}
+                      className="btn-primary"
+                    >
+                      <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                      Aprovar {aprovaveis.length > 0 ? aprovaveis.length : ""}
+                    </button>
+                  </>
+                ),
+              }
+            : undefined
+        }
+      />
 
       <ConfirmDialog
         open={confirmApproveOpen}
         onOpenChange={setConfirmApproveOpen}
-        title={`Aprovar ${approvableRows.length} cadastro(s)?`}
+        title={`Aprovar ${aprovaveis.length} cadastro(s)?`}
         description={
           <>
-            Eles ganham acesso ao catálogo de atacado <strong>na hora</strong>, com o tier atual de cada cadastro.
-            {skippedNoUser > 0 && (
+            Eles ganham acesso ao catálogo de atacado <strong>na hora</strong>, com o nível atual de cada cadastro.
+            {semConta > 0 && (
               <>
-                {"\n\n"}⚠ {skippedNoUser} selecionado(s) sem conta vinculada serão pulados.
+                {"\n\n"}Atenção: {semConta} selecionado(s) sem conta vinculada serão pulados.
               </>
             )}
             {"\n\n"}Digite APROVAR para confirmar.
           </>
         }
-        confirmLabel={bulkBusy ? "Aprovando…" : `Aprovar ${approvableRows.length}`}
+        confirmLabel={bulkBusy ? "Aprovando…" : `Aprovar ${aprovaveis.length}`}
         requireText="APROVAR"
         onConfirm={handleBulkApprove}
       />
@@ -354,9 +449,9 @@ export function CredenciamentoTab() {
       <ConfirmDialog
         open={confirmRejectOpen}
         onOpenChange={setConfirmRejectOpen}
-        title={`Reprovar ${selectedRows.length} cadastro(s)?`}
+        title={`Recusar ${linhasSelecionadas.length} cadastro(s)?`}
         description="Os cadastros ficam marcados como recusados e o parceiro não terá acesso ao atacado."
-        confirmLabel={bulkBusy ? "Reprovando…" : `Reprovar ${selectedRows.length}`}
+        confirmLabel={bulkBusy ? "Recusando…" : `Recusar ${linhasSelecionadas.length}`}
         danger
         onConfirm={handleBulkReject}
       />
@@ -368,17 +463,15 @@ export function CredenciamentoTab() {
 
 export default CredenciamentoTab;
 
-function decisaoCls(d: string) {
-  if (d === "aprovado") return "border-emerald-600/60 text-emerald-800 bg-emerald-50";
-  if (d === "analise") return "border-amber-500/60 text-amber-800 bg-amber-50";
-  if (d === "reprovado") return "border-red-600/60 text-red-800 bg-red-50";
-  return "border-sky-500/50 text-sky-700 bg-sky-50";
-}
+/* ─────────────────────────────────────────────────────────────
+ * Detalhe / decisão
+ * ───────────────────────────────────────────────────────────── */
 
 function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: () => void; onSaved: () => void }) {
   const [tier, setTier] = useState<Tier>("light");
   const [note, setNote] = useState("");
   const [cardUrl, setCardUrl] = useState<string | null>(null);
+  const [cardErro, setCardErro] = useState<unknown>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -386,144 +479,196 @@ function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: 
     setTier((cred.tier as Tier) ?? "light");
     setNote("");
     setCardUrl(null);
+    setCardErro(null);
     if (cred.card_path) {
-      supabase.storage.from("cartoes-cnpj").createSignedUrl(cred.card_path, 300).then(({ data }) => {
-        setCardUrl(data?.signedUrl ?? null);
+      supabase.storage.from("cartoes-cnpj").createSignedUrl(cred.card_path, 300).then(({ data, error }) => {
+        // O documento é a prova. Se o link falhar, o dono precisa SABER — não
+        // pode simplesmente sumir da tela como se não houvesse cartão.
+        if (error) setCardErro(error);
+        else setCardUrl(data?.signedUrl ?? null);
       });
     }
   }, [cred]);
 
   if (!cred) return null;
 
-  const apply = async (decision: "aprovado" | "recusado") => {
+  const apply = async (decisao: "aprovado" | "recusado") => {
     setSaving(true);
-    const patch = {
-      status_manual: decision,
-      reviewed_at: new Date().toISOString(),
-      review_note: note || null,
-      ...(decision === "aprovado" ? { tier } : {}),
-    };
-    const { error } = await supabase.from("credenciamentos").update(patch).eq("id", cred.id);
-    if (error) { toast.error("Falha ao salvar.", { description: error.message }); setSaving(false); return; }
-
-    if (decision === "aprovado" && cred.user_id) {
-      await supabase.from("partner_profiles").update({
-        status: "approved", tier,
-        credenciamento_id: cred.id,
-        credenciado_em: new Date().toISOString(),
-        credenciado_fonte: cred.fonte ?? "manual",
-        approved_at: new Date().toISOString(),
-      }).eq("user_id", cred.user_id);
-    } else if (decision === "recusado" && cred.user_id) {
-      await supabase.from("partner_profiles").update({ status: "rejected" }).eq("user_id", cred.user_id);
+    try {
+      await aplicarDecisao(cred, decisao, { tier, note });
+      toast.success(decisao === "aprovado" ? "Cadastro aprovado." : "Cadastro recusado.");
+      onSaved();
+      onClose();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      toast.error("Falha ao salvar a decisão.", { description: msg });
+    } finally {
+      setSaving(false);
     }
+  };
 
-    toast.success(decision === "aprovado" ? "Cadastro aprovado." : "Cadastro recusado.");
+  const reavaliar = async () => {
+    setSaving(true);
+    const { data, error } = await supabase.functions.invoke("credenciar", {
+      body: {
+        cnpj: cred.cnpj,
+        nome: cred.nome ?? undefined,
+        email: cred.email ?? undefined,
+        mode: "reavaliar",
+        credenciamento_id: cred.id,
+      },
+    });
     setSaving(false);
+    if (error) { toast.error("Falha ao reavaliar.", { description: error.message }); return; }
+    const decisao = (data as { decisao?: string } | null)?.decisao ?? "?";
+    toast.success(`Reavaliado: ${DECISAO_LABEL[decisao] ?? decisao}.`);
     onSaved();
     onClose();
   };
 
   return (
     <Sheet open={!!cred} onOpenChange={(o) => !o && onClose()}>
-      <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
-        <SheetHeader>
-          <SheetTitle>{cred.empresa ?? cred.nome ?? "Sem nome"}</SheetTitle>
-          <SheetDescription>{formatCnpj(cred.cnpj)} · {cred.protocolo}</SheetDescription>
+      <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
+        <SheetHeader className="text-left">
+          <SheetTitle className="display-md text-western-green-deep">
+            {cred.empresa ?? cred.nome ?? "Sem nome"}
+          </SheetTitle>
+          <SheetDescription className="text-[16px] tabular-nums text-western-stone-warm">
+            {formatCnpj(cred.cnpj)}{cred.protocolo ? ` · ${cred.protocolo}` : ""}
+          </SheetDescription>
         </SheetHeader>
 
-        <div className="mt-6 space-y-5 text-sm">
-          <div className="border border-western-stone-warm/20 p-4 bg-western-paper/40">
-            <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm mb-2">Decisão automática</p>
-            <div className="flex items-center gap-3 mb-2">
-              <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] ${decisaoCls(cred.decisao)}`}>{DECISAO_LABEL[cred.decisao] ?? cred.decisao}</span>
-              <span className="text-xs text-western-stone-warm" title="Verde = liberado direto; amarela/laranja = precisa da sua avaliação.">Confirmação: {fonteLabel(cred.fonte)}</span>
+        <div className="mt-6 space-y-6">
+          {/* O veredito da máquina, e por quê. */}
+          <section className="rounded-[16px] border border-western-border-soft bg-western-paper p-4">
+            <p className="text-eyebrow mb-3">Decisão automática</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <StatusBadge
+                status={cred.decisao}
+                label={DECISAO_LABEL[cred.decisao] ?? cred.decisao}
+                tom={DECISAO_TOM[cred.decisao] ?? "neutro"}
+              />
+              <span className="text-[16px] text-western-stone-warm">
+                Confirmação: {fonteLabel(cred.fonte)}
+              </span>
             </div>
-            <p className="text-xs text-western-stone-warm">{cred.motivo}</p>
-          </div>
+            {cred.motivo && <p className="text-body mt-3 text-[16px]">{cred.motivo}</p>}
+          </section>
 
-          <dl className="space-y-2">
-            <Row k="Situação" v={cred.situacao} />
-            <Row k="E-mail" v={cred.email} />
-            <Row k="CNAE principal" v={formatCnae(cred.cnae_principal)} />
-            <Row k="CNAE match" v={cred.cnae_match ? `${formatCnae(cred.cnae_match)} (${cred.cnae_match_tier})` : "—"} />
-            <Row k="Secundários" v={cred.cnaes_secundarios?.length ? cred.cnaes_secundarios.map(formatCnae).join(", ") : "—"} />
+          <dl className="space-y-3">
+            <Linha k="Situação" v={cred.situacao} />
+            <Linha k="Nome" v={cred.nome} />
+            <Linha k="E-mail" v={cred.email} />
+            <Linha k="CNAE principal" v={formatCnae(cred.cnae_principal)} />
+            <Linha
+              k="CNAE que deu match"
+              v={cred.cnae_match ? `${formatCnae(cred.cnae_match)} (faixa ${cred.cnae_match_tier})` : "—"}
+            />
+            <Linha
+              k="Secundários"
+              v={cred.cnaes_secundarios?.length ? cred.cnaes_secundarios.map(formatCnae).join(", ") : "—"}
+            />
+            {cred.status_manual !== "pendente" && cred.status_manual !== "na" && (
+              <Linha k="Revisão" v={`${cred.status_manual === "aprovado" ? "Aprovado" : "Recusado"}${cred.review_note ? ` — ${cred.review_note}` : ""}`} />
+            )}
           </dl>
 
           {cred.card_path && (
-            <div className="border border-western-stone-warm/20 p-4">
-              <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm mb-2">Cartão CNPJ</p>
-              {cardUrl ? (
-                <a href={cardUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-western-gold link-underline font-mono text-xs uppercase tracking-[0.18em]">
-                  Abrir documento <ExternalLink className="h-3.5 w-3.5" />
+            <section className="rounded-[16px] border border-western-border-soft p-4">
+              <p className="text-eyebrow mb-3">Cartão CNPJ</p>
+              {cardErro ? (
+                <EstadoErro erro={cardErro} titulo="Não consegui abrir o documento" compacto />
+              ) : cardUrl ? (
+                <a
+                  href={cardUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tap-target inline-flex items-center gap-2 text-[16px] font-semibold text-western-bronze hover:text-western-green-deep"
+                >
+                  Abrir documento
+                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
                 </a>
-              ) : <Loader2 className="h-4 w-4 animate-spin" />}
-            </div>
+              ) : (
+                <Loader2 className="h-4 w-4 animate-spin text-western-stone-warm" aria-label="Carregando documento" />
+              )}
+            </section>
           )}
 
-          <div className="border-t border-western-stone-warm/15 pt-5 space-y-4">
+          {/* Card de ação — o próximo passo, sempre no fim e sempre igual. */}
+          <section className="space-y-4 border-t border-western-border-soft pt-6">
             <div>
-              <Label className="text-eyebrow mb-2 block">Tier ao aprovar</Label>
+              <Label className="text-eyebrow mb-2 block">Nível ao aprovar</Label>
               <Select value={tier} onValueChange={(v) => setTier(v as Tier)}>
-                <SelectTrigger className="h-11 rounded-none border-western-stone-warm/25"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-[52px] rounded-[6px] border-western-border-strong text-[16px]">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {TIERS.map((t) => <SelectItem key={t} value={t}>{TIER_LABEL[t]}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
+
             <div>
               <Label className="text-eyebrow mb-2 block">Nota interna (opcional)</Label>
-              <Input value={note} onChange={(e) => setNote(e.target.value)} className="h-11 rounded-none border-western-stone-warm/25" />
+              <Input
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Fica registrada no cadastro."
+                className="h-[52px] rounded-[6px] border-western-border-strong text-[16px]"
+              />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <Button onClick={() => apply("recusado")} disabled={saving} variant="outline"
-                className="h-12 border-red-700/30 text-red-800 hover:bg-red-50 rounded-none font-mono text-xs uppercase tracking-[0.22em]">
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><ShieldX className="h-4 w-4 mr-2" /> Recusar</>}
-              </Button>
-              <Button
-                onClick={() => apply("aprovado")}
-                disabled={saving || !cred.user_id}
-                className="h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid rounded-none font-mono text-xs uppercase tracking-[0.22em] disabled:opacity-50"
-              >
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><ShieldCheck className="h-4 w-4 mr-2" /> Aprovar</>}
-              </Button>
-            </div>
+
             {!cred.user_id && (
-              <p className="text-xs text-amber-800 bg-amber-50 border border-amber-300 p-2 -mt-2">
-                Cadastro sem conta vinculada — não é possível ativar acesso. O cliente precisa se cadastrar em /parceria primeiro.
+              <p className="rounded-[10px] border border-[#9C6812]/35 bg-[#9C6812]/[0.07] p-3 text-[16px] leading-[1.5] text-[#9C6812]">
+                Cadastro sem conta vinculada — não é possível liberar o acesso. O cliente precisa se
+                cadastrar em /parceria primeiro.
               </p>
             )}
-            <Button
-              onClick={async () => {
-                setSaving(true);
-                const { data, error } = await supabase.functions.invoke("credenciar", {
-                  body: { cnpj: cred.cnpj, nome: cred.nome ?? undefined, email: cred.email ?? undefined, mode: "reavaliar", credenciamento_id: cred.id },
-                });
-                setSaving(false);
-                if (error) { toast.error("Falha ao reavaliar.", { description: error.message }); return; }
-                const decisao = (data as { decisao?: string } | null)?.decisao ?? "?";
-                toast.success(`Reavaliado: ${decisao}.`);
-                onSaved();
-                onClose();
-              }}
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => apply("recusado")}
+                disabled={saving}
+                className="tap-target inline-flex h-[52px] items-center justify-center gap-2 rounded-[10px] border border-[#B3372E]/45 px-5 text-[16px] font-semibold text-[#B3372E] transition-colors hover:bg-[#B3372E]/10 disabled:opacity-45"
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <ShieldX className="h-4 w-4" aria-hidden="true" />}
+                Recusar
+              </button>
+
+              <button
+                type="button"
+                onClick={() => apply("aprovado")}
+                disabled={saving || !cred.user_id}
+                className="btn-primary"
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <ShieldCheck className="h-4 w-4" aria-hidden="true" />}
+                Aprovar
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={reavaliar}
               disabled={saving}
-              variant="outline"
-              className="w-full h-11 rounded-none border-western-stone-warm/30 text-western-stone-warm hover:text-western-green-deep hover:border-western-gold font-mono text-[11px] uppercase tracking-[0.22em]"
+              className="tap-target w-full rounded-[10px] border border-western-border-strong px-5 text-[16px] font-semibold text-western-stone-warm transition-colors hover:border-western-green-deep hover:text-western-green-deep disabled:opacity-45"
             >
-              Reavaliar nas fontes (Receita/BrasilAPI/CNPJá)
-            </Button>
-          </div>
+              Reavaliar nas fontes (Receita / BrasilAPI / CNPJá)
+            </button>
+          </section>
         </div>
       </SheetContent>
     </Sheet>
   );
 }
 
-function Row({ k, v }: { k: string; v: string | null | undefined }) {
+function Linha({ k, v }: { k: string; v: string | null | undefined }) {
   return (
-    <div className="flex gap-3">
-      <dt className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm w-32 flex-shrink-0 pt-0.5">{k}</dt>
-      <dd className="text-western-green-deep flex-1 break-words text-xs">{v || "—"}</dd>
+    <div className="flex gap-4">
+      <dt className="w-[150px] flex-shrink-0 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">
+        {k}
+      </dt>
+      <dd className="min-w-0 flex-1 break-words text-[16px] text-western-green-deep">{v || "—"}</dd>
     </div>
   );
 }

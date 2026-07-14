@@ -1,11 +1,26 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  Loader2, ArrowRight, ShieldCheck, ShoppingBag, MessageSquare,
-  Inbox, TrendingUp, UserPlus, AlertTriangle, RefreshCw,
+  AlertTriangle, ArrowRight, Factory, MessageSquare, RefreshCw,
+  ShieldCheck, ShoppingBag, UserPlus,
 } from "lucide-react";
-import { LoadError } from "@/components/admin/LoadError";
+import {
+  DataTable, type Coluna, EstadoErro, StatusBadge, PageHeader, CelulaData,
+  mensagemDeErro, dataCurta,
+} from "@/components/backoffice";
+import { cn } from "@/lib/utils";
+
+/**
+ * COCKPIT — não é um painel de KPIs decorativos.
+ *
+ * A tela responde UMA pergunta: "o que precisa de mim agora?". Por isso o topo
+ * são FILAS DE TRABALHO clicáveis (cada tile leva à lista já filtrada), e os
+ * números do mês ficam embaixo, subordinados.
+ *
+ * A invariante: se a query de um tile falhar, o tile mostra ERRO com a mensagem
+ * real — NUNCA "0". Um 403 virando "0 pendências" já cegou o dono uma vez.
+ */
 
 interface FunnelRow {
   semana: string;
@@ -25,10 +40,6 @@ interface RecentOrder {
   created_at: string;
 }
 
-function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
-}
-
 function fmtBRL(v: number) {
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 }
@@ -42,333 +53,510 @@ function sevenDaysAgoISO() {
   return new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 }
 
-interface Counts {
+/** Cada chave é uma query independente — o erro de uma nunca contamina as outras. */
+type ChaveErro =
+  | "orcamentosNovos" | "credPendentes" | "pedidosAbertos" | "checkout7d" | "cadastros7d"
+  | "inboxTotal" | "leadsMes" | "orcamentosAbertos" | "orcamentosMes" | "vendasMes"
+  | "pedidosRecentes" | "funil";
+
+type MapaErros = Partial<Record<ChaveErro, unknown>>;
+
+interface Numeros {
   orcamentosNovos: number;
-  pedidoNovo7d: number;
   credPendentes: number;
-  partnerSignup7d: number;
+  pedidosAbertos: number;
+  checkout7d: number;
+  cadastros7d: number;
   inboxTotal: number;
-  leadsMonth: number;
+  leadsMes: number;
   orcamentosAbertos: number;
-  vendasMes: number | null;
-  fechadosMes: number;
   orcamentosMes: number;
-  productionOrders: number;
+  vendasMes: number;
+  fechadosMes: number;
 }
 
-type ErrKey =
-  | "orcamentosNovos" | "pedidoNovo7d" | "credPendentes" | "partnerSignup7d"
-  | "inboxTotal" | "leadsMonth" | "orcamentosAbertos" | "orcamentosMes"
-  | "vendasMes" | "recentOrders" | "funnel" | "productionOrders";
+const ZERO: Numeros = {
+  orcamentosNovos: 0, credPendentes: 0, pedidosAbertos: 0, checkout7d: 0, cadastros7d: 0,
+  inboxTotal: 0, leadsMes: 0, orcamentosAbertos: 0, orcamentosMes: 0, vendasMes: 0, fechadosMes: 0,
+};
 
 export default function AdminDashboard() {
-  const [counts, setCounts] = useState<Counts | null>(null);
-  const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
-  const [funnel, setFunnel] = useState<FunnelRow[]>([]);
-  const [errors, setErrors] = useState<Set<ErrKey>>(new Set());
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [n, setNumeros] = useState<Numeros>(ZERO);
+  const [pedidosRecentes, setPedidosRecentes] = useState<RecentOrder[]>([]);
+  const [funil, setFunil] = useState<FunnelRow[]>([]);
+  const [erros, setErros] = useState<MapaErros>({});
+  const [carregando, setCarregando] = useState(true);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    const monthStart = startOfMonthISO();
-    const sevenDays = sevenDaysAgoISO();
+  const carregar = useCallback(async () => {
+    setCarregando(true);
+    const inicioMes = startOfMonthISO();
+    const seteDias = sevenDaysAgoISO();
 
     const [
       orcNovosRes,
-      pedidoNovo7Res,
       credPendRes,
-      partnerSignup7Res,
-      inboxTotalRes,
-      leadsMonthRes,
+      pedidosAbertosRes,
+      checkout7Res,
+      cadastros7Res,
+      inboxRes,
+      leadsMesRes,
       orcAbertosRes,
       orcMesRes,
       vendasMesRes,
-      recentOrdersRes,
-      funnelRes,
-      prodOrdersRes,
+      recentesRes,
+      funilRes,
     ] = await Promise.all([
       supabase.from("quote_threads").select("id", { count: "exact", head: true }).eq("status", "novo"),
-      supabase.from("leads").select("id", { count: "exact", head: true }).eq("type", "pedido_novo").gte("created_at", sevenDays),
-      supabase.from("credenciamentos").select("id").eq("status_manual", "pendente"),
-      supabase.from("leads").select("id", { count: "exact", head: true }).eq("type", "partner_signup").gte("created_at", sevenDays),
+      supabase.from("credenciamentos").select("id", { count: "exact", head: true }).eq("status_manual", "pendente"),
+      supabase.from("production_orders").select("id", { count: "exact", head: true })
+        .not("status", "in", "(entregue,retirado,cancelado)"),
+      supabase.from("leads").select("id", { count: "exact", head: true }).eq("type", "pedido_novo").gte("created_at", seteDias),
+      supabase.from("leads").select("id", { count: "exact", head: true }).eq("type", "partner_signup").gte("created_at", seteDias),
       supabase.from("leads").select("id", { count: "exact", head: true })
         .in("type", ["pedido_novo", "contato", "visita", "partner_signup", "newsletter"]),
-      supabase.from("leads").select("id", { count: "exact", head: true }).gte("created_at", monthStart),
+      supabase.from("leads").select("id", { count: "exact", head: true }).gte("created_at", inicioMes),
       supabase.from("quote_threads").select("id", { count: "exact", head: true })
         .not("status", "in", "(fechado,perdido,arquivado)"),
-      supabase.from("quote_threads").select("id", { count: "exact", head: true }).gte("created_at", monthStart),
-      supabase.from("quote_threads").select("valor_final").eq("status", "fechado").gte("updated_at", monthStart),
+      supabase.from("quote_threads").select("id", { count: "exact", head: true }).gte("created_at", inicioMes),
+      supabase.from("quote_threads").select("valor_final").eq("status", "fechado").gte("updated_at", inicioMes),
       supabase.from("production_orders").select("id, numero, titulo, status, created_at")
         .order("created_at", { ascending: false }).limit(5),
       supabase.from("lead_conversion_funnel" as never).select("*").limit(8),
-      supabase.from("production_orders").select("id", { count: "exact", head: true }),
     ]);
 
-    const errs = new Set<ErrKey>();
-    if (orcNovosRes.error) errs.add("orcamentosNovos");
-    if (pedidoNovo7Res.error) errs.add("pedidoNovo7d");
-    if (credPendRes.error) errs.add("credPendentes");
-    if (partnerSignup7Res.error) errs.add("partnerSignup7d");
-    if (inboxTotalRes.error) errs.add("inboxTotal");
-    if (leadsMonthRes.error) errs.add("leadsMonth");
-    if (orcAbertosRes.error) errs.add("orcamentosAbertos");
-    if (orcMesRes.error) errs.add("orcamentosMes");
-    if (vendasMesRes.error) errs.add("vendasMes");
-    if (recentOrdersRes.error) errs.add("recentOrders");
-    if (funnelRes.error) errs.add("funnel");
-    if (prodOrdersRes.error) errs.add("productionOrders");
+    /* Guardamos o ERRO CRU de cada query. Sem isto a tela mente. */
+    const e: MapaErros = {};
+    if (orcNovosRes.error) e.orcamentosNovos = orcNovosRes.error;
+    if (credPendRes.error) e.credPendentes = credPendRes.error;
+    if (pedidosAbertosRes.error) e.pedidosAbertos = pedidosAbertosRes.error;
+    if (checkout7Res.error) e.checkout7d = checkout7Res.error;
+    if (cadastros7Res.error) e.cadastros7d = cadastros7Res.error;
+    if (inboxRes.error) e.inboxTotal = inboxRes.error;
+    if (leadsMesRes.error) e.leadsMes = leadsMesRes.error;
+    if (orcAbertosRes.error) e.orcamentosAbertos = orcAbertosRes.error;
+    if (orcMesRes.error) e.orcamentosMes = orcMesRes.error;
+    if (vendasMesRes.error) e.vendasMes = vendasMesRes.error;
+    if (recentesRes.error) e.pedidosRecentes = recentesRes.error;
+    if (funilRes.error) e.funil = funilRes.error;
 
-    const vendas = vendasMesRes.error ? null : (vendasMesRes.data as { valor_final: number | null }[] | null);
-    const vendasMes = vendas && vendas.length
-      ? vendas.reduce((sum, r) => sum + (Number(r.valor_final) || 0), 0)
-      : (vendas === null ? null : 0);
+    const vendas = vendasMesRes.error ? [] : ((vendasMesRes.data as { valor_final: number | null }[] | null) ?? []);
 
-    setCounts({
+    setNumeros({
       orcamentosNovos: orcNovosRes.count ?? 0,
-      pedidoNovo7d: pedidoNovo7Res.count ?? 0,
-      credPendentes: credPendRes.error ? 0 : ((credPendRes.data as { id: string }[] | null)?.length ?? 0),
-      partnerSignup7d: partnerSignup7Res.count ?? 0,
-      inboxTotal: inboxTotalRes.count ?? 0,
-      leadsMonth: leadsMonthRes.count ?? 0,
+      credPendentes: credPendRes.count ?? 0,
+      pedidosAbertos: pedidosAbertosRes.count ?? 0,
+      checkout7d: checkout7Res.count ?? 0,
+      cadastros7d: cadastros7Res.count ?? 0,
+      inboxTotal: inboxRes.count ?? 0,
+      leadsMes: leadsMesRes.count ?? 0,
       orcamentosAbertos: orcAbertosRes.count ?? 0,
-      vendasMes,
-      fechadosMes: vendas?.length ?? 0,
       orcamentosMes: orcMesRes.count ?? 0,
-      productionOrders: prodOrdersRes.count ?? 0,
+      vendasMes: vendas.reduce((s, r) => s + (Number(r.valor_final) || 0), 0),
+      fechadosMes: vendas.length,
     });
-    setRecentOrders(recentOrdersRes.error ? [] : ((recentOrdersRes.data as RecentOrder[]) ?? []));
-    setFunnel(funnelRes.error ? [] : ((funnelRes.data as unknown as FunnelRow[]) ?? []));
-    setErrors(errs);
-    setLoading(false);
+    setPedidosRecentes(recentesRes.error ? [] : ((recentesRes.data as RecentOrder[]) ?? []));
+    setFunil(funilRes.error ? [] : ((funilRes.data as unknown as FunnelRow[]) ?? []));
+    setErros(e);
+    setCarregando(false);
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { carregar(); }, [carregar]);
 
-  if (loading || !counts) {
-    return <div className="py-20 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-western-gold" /></div>;
+  /* ── As filas de trabalho. Cada uma leva à lista JÁ FILTRADA. ── */
+  const filas: Fila[] = [
+    {
+      chave: "orcamentosNovos",
+      rotulo: "Orçamentos a responder",
+      valor: n.orcamentosNovos,
+      unidade: (v) => (v === 1 ? "orçamento sem resposta" : "orçamentos sem resposta"),
+      to: "/admin/orcamentos?status=novo",
+      icone: MessageSquare,
+    },
+    {
+      chave: "credPendentes",
+      rotulo: "Credenciamentos",
+      valor: n.credPendentes,
+      unidade: () => "aguardando análise",
+      to: "/admin/parceiros?tab=credenciamento",
+      icone: ShieldCheck,
+    },
+    {
+      chave: "pedidosAbertos",
+      rotulo: "Pedidos em aberto",
+      valor: n.pedidosAbertos,
+      unidade: () => "em produção ou a caminho",
+      to: "/admin/pedidos",
+      icone: Factory,
+    },
+    {
+      chave: "checkout7d",
+      rotulo: "Pedidos do site (7 dias)",
+      valor: n.checkout7d,
+      unidade: (v) => (v === 1 ? "lead de checkout" : "leads de checkout"),
+      to: "/admin/leads?type=pedido_novo",
+      icone: ShoppingBag,
+    },
+    {
+      chave: "cadastros7d",
+      rotulo: "Cadastros de parceiro (7 dias)",
+      valor: n.cadastros7d,
+      unidade: (v) => (v === 1 ? "novo cadastro" : "novos cadastros"),
+      to: "/admin/leads?type=partner_signup",
+      icone: UserPlus,
+    },
+  ];
+
+  const filasOk = filas.filter((f) => !erros[f.chave]);
+  const totalPendente = filasOk.reduce((s, f) => s + f.valor, 0);
+  const algumaFilaFalhou = filas.some((f) => erros[f.chave]);
+
+  const ticketMedio = n.fechadosMes > 0 ? n.vendasMes / n.fechadosMes : null;
+  const conversaoPct = n.orcamentosMes > 0 ? Math.round((n.fechadosMes / n.orcamentosMes) * 100) : null;
+
+  const subtitulo = carregando
+    ? "Carregando as filas…"
+    : totalPendente > 0
+      ? `${totalPendente} ${totalPendente === 1 ? "pendência espera" : "pendências esperam"} por você${algumaFilaFalhou ? " — e algumas filas não carregaram." : "."}`
+      : algumaFilaFalhou
+        ? "Algumas filas não carregaram — o número real pode ser maior."
+        : "Nenhuma pendência nas filas agora.";
+
+  return (
+    <div className="space-y-12">
+      <PageHeader
+        eyebrow="Painel"
+        titulo="Central de ação"
+        subtitulo={subtitulo}
+        acoesSecundarias={
+          <button type="button" onClick={carregar} disabled={carregando} className="btn-outline-forest">
+            <RefreshCw className={cn("h-4 w-4", carregando && "animate-spin")} aria-hidden="true" />
+            Atualizar
+          </button>
+        }
+      />
+
+      {/* ── FILAS DE TRABALHO ───────────────────────────────────────────── */}
+      <section aria-label="Filas de trabalho">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          {filas.map((f) => (
+            <TileFila
+              key={f.chave}
+              fila={f}
+              erro={erros[f.chave]}
+              carregando={carregando}
+              onRetry={carregar}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* ── NÚMEROS (subordinados às filas) ─────────────────────────────── */}
+      <section aria-label="Números">
+        <h2 className="text-eyebrow mb-4">Resumo</h2>
+
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[16px] border border-western-border-soft bg-western-border-soft md:grid-cols-3 xl:grid-cols-6">
+          <Numero
+            rotulo="Caixa de entrada"
+            valor={String(n.inboxTotal)}
+            nota="leads acionáveis"
+            erro={erros.inboxTotal}
+            carregando={carregando}
+            to="/admin/leads"
+          />
+          <Numero rotulo="Leads no mês" valor={String(n.leadsMes)} erro={erros.leadsMes} carregando={carregando} />
+          <Numero
+            rotulo="Orçamentos em aberto"
+            valor={String(n.orcamentosAbertos)}
+            erro={erros.orcamentosAbertos}
+            carregando={carregando}
+            to="/admin/orcamentos"
+          />
+          <Numero
+            rotulo="Vendas fechadas (mês)"
+            valor={fmtBRL(n.vendasMes)}
+            nota={`${n.fechadosMes} ${n.fechadosMes === 1 ? "orçamento" : "orçamentos"}`}
+            erro={erros.vendasMes}
+            carregando={carregando}
+          />
+          <Numero
+            rotulo="Ticket médio"
+            valor={ticketMedio === null ? "—" : fmtBRL(ticketMedio)}
+            nota="por venda fechada"
+            erro={erros.vendasMes}
+            carregando={carregando}
+          />
+          <Numero
+            rotulo="Conversão"
+            valor={conversaoPct === null ? "—" : `${conversaoPct}%`}
+            nota="fechados ÷ abertos no mês"
+            erro={erros.vendasMes ?? erros.orcamentosMes}
+            carregando={carregando}
+          />
+        </div>
+
+        {/* O erro do resumo aparece por extenso — a célula sozinha não conta a história. */}
+        {!carregando && (erros.inboxTotal || erros.leadsMes || erros.orcamentosAbertos || erros.vendasMes || erros.orcamentosMes) && (
+          <EstadoErro
+            compacto
+            className="mt-4"
+            titulo="Parte do resumo não carregou"
+            erro={erros.inboxTotal ?? erros.leadsMes ?? erros.orcamentosAbertos ?? erros.vendasMes ?? erros.orcamentosMes}
+            onRetry={carregar}
+          />
+        )}
+      </section>
+
+      {/* ── PEDIDOS RECENTES ────────────────────────────────────────────── */}
+      <section aria-label="Pedidos recentes">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <h2 className="text-eyebrow">Pedidos recentes</h2>
+          <Link
+            to="/admin/pedidos"
+            className="inline-flex items-center gap-1 text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
+          >
+            Ver todos <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </div>
+
+        <DataTable
+          linhas={pedidosRecentes}
+          getId={(o) => o.id}
+          colunas={COLUNAS_PEDIDOS}
+          isLoading={carregando}
+          error={erros.pedidosRecentes}
+          onRetry={carregar}
+          onRowClick={() => navigate("/admin/pedidos")}
+          vazio={{
+            titulo: "Nenhum pedido de produção ainda",
+            mensagem: "Quando um orçamento virar pedido, ele aparece aqui.",
+          }}
+        />
+      </section>
+
+      {/* ── FUNIL ───────────────────────────────────────────────────────── */}
+      <section aria-label="Funil de conversão">
+        <h2 className="text-eyebrow mb-4">Funil de conversão (por semana)</h2>
+        <DataTable
+          linhas={funil}
+          getId={(r) => r.semana}
+          colunas={COLUNAS_FUNIL}
+          isLoading={carregando}
+          error={erros.funil}
+          onRetry={carregar}
+          vazio={{
+            titulo: "Sem dados de funil",
+            mensagem: "Ainda não há semanas com orçamentos e pedidos para comparar.",
+          }}
+        />
+      </section>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Tile de fila — clicável, leva à lista filtrada. Erro NUNCA vira "0".
+ * ───────────────────────────────────────────────────────────────────────── */
+
+interface Fila {
+  chave: ChaveErro;
+  rotulo: string;
+  valor: number;
+  unidade: (v: number) => string;
+  to: string;
+  icone: React.ElementType;
+}
+
+function TileFila({
+  fila, erro, carregando, onRetry,
+}: {
+  fila: Fila;
+  erro: unknown;
+  carregando: boolean;
+  onRetry: () => void;
+}) {
+  const Icone = fila.icone;
+
+  if (carregando) {
+    return (
+      <div className="rounded-[16px] border border-western-border-soft bg-white p-5" aria-busy="true">
+        <div className="h-4 w-2/3 animate-pulse rounded-[6px] bg-western-border-soft" />
+        <div className="mt-5 h-9 w-16 animate-pulse rounded-[6px] bg-western-border-soft" />
+        <div className="mt-4 h-3 w-1/2 animate-pulse rounded-[6px] bg-western-border-soft/60" />
+      </div>
+    );
   }
 
-  const ticketMedio = counts.fechadosMes > 0 && counts.vendasMes !== null
-    ? counts.vendasMes / counts.fechadosMes
-    : null;
-  const conversaoPct = counts.orcamentosMes > 0
-    ? Math.round((counts.fechadosMes / counts.orcamentosMes) * 100)
-    : null;
+  /* ERRO — parece um erro, mostra o que houve, e oferece o retry. */
+  if (erro) {
+    return (
+      <div
+        role="alert"
+        className="flex flex-col rounded-[16px] border border-[#B3372E]/35 bg-[#B3372E]/[0.06] p-5"
+      >
+        <div className="flex items-center gap-2 text-[#B3372E]">
+          <AlertTriangle className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+          <span className="text-[14px] font-semibold uppercase tracking-[0.06em]">{fila.rotulo}</span>
+        </div>
 
-  const hotQueues: Array<{ label: string; value: number; to: string; icon: typeof MessageSquare; errKey: ErrKey }> = [
-    { label: "Orçamentos a responder", value: counts.orcamentosNovos, to: "/admin/orcamentos", icon: MessageSquare, errKey: "orcamentosNovos" },
-    { label: "Leads de checkout (7d)", value: counts.pedidoNovo7d, to: "/admin/leads", icon: ShoppingBag, errKey: "pedidoNovo7d" },
-    { label: "Credenciamentos pendentes", value: counts.credPendentes, to: "/admin/parceiros?tab=credenciamento", icon: ShieldCheck, errKey: "credPendentes" },
-    { label: "Cadastros de parceiro (7d)", value: counts.partnerSignup7d, to: "/admin/leads", icon: UserPlus, errKey: "partnerSignup7d" },
-  ];
-  const validHot = hotQueues.filter((q) => !errors.has(q.errKey));
-  const totalHot = validHot.reduce((s, q) => s + q.value, 0);
-  const anyHotError = hotQueues.some((q) => errors.has(q.errKey));
+        <p className="mt-3 text-[17px] font-semibold text-[#B3372E]">Não consegui carregar</p>
+        <p className="mt-1 line-clamp-3 break-words text-[14px] leading-[1.5] text-western-stone-dark/85">
+          {mensagemDeErro(erro)}
+        </p>
+        <p className="text-meta mt-2">Isto não quer dizer que a fila esteja vazia.</p>
+
+        <button
+          type="button"
+          onClick={onRetry}
+          className="tap-target mt-4 inline-flex items-center justify-center gap-2 self-start rounded-[10px] border border-[#B3372E]/50 px-4 text-[16px] font-semibold text-[#B3372E] transition-colors hover:bg-[#B3372E]/10"
+        >
+          <RefreshCw className="h-4 w-4" aria-hidden="true" />
+          Tentar de novo
+        </button>
+      </div>
+    );
+  }
+
+  const pendente = fila.valor > 0;
 
   return (
-    <div className="space-y-10">
-      <header>
-        <p className="text-eyebrow mb-3">Central de ação</p>
-        <div className="w-12 h-px bg-western-gold mb-6" />
-        <h1 className="font-display text-3xl md:text-4xl mb-2">Bom trabalho hoje.</h1>
-        <p className="text-western-stone-warm">
-          {anyHotError
-            ? `${totalHot} ${totalHot === 1 ? "item precisa" : "itens precisam"} da sua atenção (alguns blocos não carregaram).`
-            : totalHot > 0
-              ? `${totalHot} ${totalHot === 1 ? "item precisa" : "itens precisam"} da sua atenção.`
-              : "Nenhuma pendência urgente no momento."}
-        </p>
-      </header>
-
-      {/* Precisa de você hoje */}
-      <section className={`border-2 ${totalHot > 0 ? "border-western-gold bg-western-gold/5" : "border-western-stone-warm/20 bg-white"}`}>
-        <header className="px-6 py-4 border-b border-western-stone-warm/15 flex items-center justify-between">
-          <h2 className="font-display text-xl text-western-green-deep">Precisa de você hoje</h2>
-          {totalHot > 0 && (
-            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold">Urgente</span>
-          )}
-        </header>
-        <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-western-stone-warm/15">
-          {hotQueues.map((q) => {
-            const hasErr = errors.has(q.errKey);
-            if (hasErr) {
-              return (
-                <div key={q.label} className="p-5 flex flex-col gap-2 bg-red-50/40">
-                  <div className="flex items-center gap-2 text-red-800">
-                    <q.icon className="h-4 w-4" />
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em]">{q.label}</span>
-                  </div>
-                  <p className="font-display text-2xl text-red-800 inline-flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5" /> falhou
-                  </p>
-                  <button
-                    type="button"
-                    onClick={load}
-                    className="mt-1 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-red-800 hover:text-red-900 self-start"
-                  >
-                    <RefreshCw className="h-3 w-3" /> Tentar de novo
-                  </button>
-                </div>
-              );
-            }
-            const isHot = q.value > 0;
-            return (
-              <Link
-                key={q.label}
-                to={q.to}
-                className={`p-5 flex flex-col gap-2 hover:bg-white transition-colors ${!isHot ? "opacity-50" : ""}`}
-              >
-                <div className="flex items-center gap-2 text-western-stone-warm">
-                  <q.icon className="h-4 w-4" />
-                  <span className="font-mono text-[10px] uppercase tracking-[0.2em]">{q.label}</span>
-                </div>
-                <p className={`font-display text-4xl tabular-nums ${isHot ? "text-western-green-deep" : "text-western-stone-warm/60"}`}>
-                  {q.value}
-                </p>
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-gold inline-flex items-center gap-1">
-                  Abrir <ArrowRight className="h-3 w-3" />
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* KPIs */}
-      <section>
-        <p className="text-eyebrow mb-3">Números do mês</p>
-        <div className="w-12 h-px bg-western-gold mb-6" />
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <Kpi label="Leads no mês" value={counts.leadsMonth.toString()} error={errors.has("leadsMonth")} />
-          <Kpi label="Orçamentos em aberto" value={counts.orcamentosAbertos.toString()} error={errors.has("orcamentosAbertos")} />
-          <Kpi
-            label="Vendas fechadas (R$)"
-            value={counts.vendasMes === null ? "—" : fmtBRL(counts.vendasMes)}
-            error={errors.has("vendasMes")}
-          />
-          <Kpi
-            label="Ticket médio"
-            value={ticketMedio === null ? "—" : fmtBRL(ticketMedio)}
-            error={errors.has("vendasMes") || errors.has("orcamentosMes")}
-          />
-          <Kpi
-            label="Conversão"
-            value={conversaoPct === null ? "—" : `${conversaoPct}%`}
-            error={errors.has("vendasMes") || errors.has("orcamentosMes")}
-          />
-        </div>
-      </section>
-
-      {/* Caixa de entrada + Pedidos recentes */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        {errors.has("inboxTotal") ? (
-          <div className="border border-red-400/60 bg-red-50 p-6">
-            <div className="flex items-center gap-2 text-red-800 mb-2">
-              <Inbox className="h-4 w-4" />
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em]">Caixa de entrada</span>
-            </div>
-            <LoadError compact onRetry={load} />
-          </div>
-        ) : (
-          <Link
-            to="/admin/leads"
-            className="border border-western-stone-warm/20 bg-white p-6 hover:border-western-gold transition-colors flex items-start justify-between gap-4"
-          >
-            <div>
-              <div className="flex items-center gap-2 text-western-stone-warm mb-2">
-                <Inbox className="h-4 w-4" />
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em]">Caixa de entrada</span>
-              </div>
-              <p className="font-display text-3xl tabular-nums text-western-green-deep mb-1">{counts.inboxTotal}</p>
-              <p className="text-sm text-western-stone-warm">leads acionáveis · pedidos, contatos, visitas, cadastros, newsletter</p>
-            </div>
-            <ArrowRight className="h-5 w-5 text-western-stone-warm flex-shrink-0" />
-          </Link>
-        )}
-
-        <section className="border border-western-stone-warm/20 bg-white">
-          <header className="flex items-center justify-between px-5 py-4 border-b border-western-stone-warm/15">
-            <div className="flex items-center gap-2">
-              <ShoppingBag className="h-4 w-4 text-western-stone-warm" />
-              <h3 className="font-display text-base text-western-green-deep">Pedidos recentes</h3>
-            </div>
-            <Link to="/admin/pedidos" className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold inline-flex items-center gap-1">
-              Ver tudo <ArrowRight className="h-3 w-3" />
-            </Link>
-          </header>
-          <div className="py-1">
-            {errors.has("recentOrders") || errors.has("productionOrders") ? (
-              <div className="px-5 py-4">
-                <LoadError compact onRetry={load} />
-              </div>
-            ) : counts.productionOrders === 0 ? (
-              <p className="px-5 py-6 text-sm text-western-stone-warm text-center">Nenhum pedido de produção ainda.</p>
-            ) : (
-              recentOrders.map((o) => (
-                <Link key={o.id} to="/admin/pedidos" className="flex items-center justify-between gap-3 py-2.5 px-5 hover:bg-western-cream/40 border-l-2 border-emerald-600/40">
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-western-green-deep truncate">Nº {o.numero} · {o.titulo}</p>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
-                      {o.status} · {fmtDate(o.created_at)}
-                    </p>
-                  </div>
-                  <ArrowRight className="h-4 w-4 text-western-stone-warm flex-shrink-0" />
-                </Link>
-              ))
-            )}
-          </div>
-        </section>
+    <Link
+      to={fila.to}
+      className={cn(
+        "group flex flex-col rounded-[16px] border bg-white p-5 transition-colors",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-western-gold",
+        pendente
+          ? "border-western-cta/30 hover:border-western-cta"
+          : "border-western-border-soft hover:border-western-border-strong",
+      )}
+    >
+      <div className="flex items-center gap-2 text-western-bronze">
+        <Icone className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+        <span className="text-[14px] font-semibold uppercase tracking-[0.06em]">{fila.rotulo}</span>
       </div>
 
-      {errors.has("funnel") ? (
-        <div>
-          <p className="text-eyebrow mb-3 inline-flex items-center gap-2"><TrendingUp className="h-3.5 w-3.5" /> Funil de conversão</p>
-          <div className="w-12 h-px bg-western-gold mb-6" />
-          <LoadError message="Não foi possível carregar o funil de conversão." onRetry={load} />
-        </div>
-      ) : funnel.length > 0 && (
-        <div>
-          <p className="text-eyebrow mb-3 inline-flex items-center gap-2"><TrendingUp className="h-3.5 w-3.5" /> Funil de conversão</p>
-          <div className="w-12 h-px bg-western-gold mb-6" />
-          <div className="border border-western-stone-warm/20 bg-white overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-western-cream/40">
-                <tr className="text-left">
-                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Semana</th>
-                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Orçamentos</th>
-                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Pedidos</th>
-                  <th className="px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">Conversão</th>
-                </tr>
-              </thead>
-              <tbody>
-                {funnel.map((r) => (
-                  <tr key={r.semana} className="border-t border-western-stone-warm/15">
-                    <td className="px-4 py-2 text-western-green-deep font-mono text-xs">{new Date(r.semana).toLocaleDateString("pt-BR")}</td>
-                    <td className="px-4 py-2 text-western-green-deep tabular-nums">{r.orcamentos}</td>
-                    <td className="px-4 py-2 text-western-green-deep tabular-nums">{r.pedidos}</td>
-                    <td className="px-4 py-2 font-mono text-xs text-western-gold tabular-nums">{r.taxa_conversao_pct ?? 0}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-    </div>
+      <p
+        className={cn(
+          "mt-3 font-display text-[34px] font-[650] leading-none tabular-nums",
+          pendente ? "text-western-green-deep" : "text-western-stone-warm/60",
+        )}
+      >
+        {fila.valor}
+      </p>
+      <p className="text-meta mt-2">{pendente ? fila.unidade(fila.valor) : "nada na fila"}</p>
+
+      <span
+        className={cn(
+          "mt-4 inline-flex items-center gap-1 text-[16px] font-semibold transition-colors",
+          pendente ? "text-western-cta" : "text-western-stone-warm",
+        )}
+      >
+        {pendente ? "Abrir a fila" : "Ver lista"}
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+      </span>
+    </Link>
   );
 }
 
-function Kpi({ label, value, error }: { label: string; value: string; error?: boolean }) {
-  return (
-    <div className={`border p-5 ${error ? "border-red-400/60 bg-red-50" : "border-western-stone-warm/20 bg-white"}`}>
-      <p className={`font-mono text-[10px] uppercase tracking-[0.2em] mb-2 ${error ? "text-red-800" : "text-western-stone-warm"}`}>{label}</p>
-      {error ? (
-        <p className="font-display text-xl text-red-800 inline-flex items-center gap-2">
-          <AlertTriangle className="h-4 w-4" /> falhou
+/* ─────────────────────────────────────────────────────────────────────────
+ * Célula de número — subordinada. Erro aqui também não vira "0".
+ * ───────────────────────────────────────────────────────────────────────── */
+
+function Numero({
+  rotulo, valor, nota, erro, carregando, to,
+}: {
+  rotulo: string;
+  valor: string;
+  nota?: string;
+  erro?: unknown;
+  carregando: boolean;
+  to?: string;
+}) {
+  const conteudo = (
+    <>
+      <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">{rotulo}</p>
+
+      {carregando ? (
+        <div className="mt-3 h-6 w-20 animate-pulse rounded-[6px] bg-western-border-soft" />
+      ) : erro ? (
+        <p className="mt-2 inline-flex items-center gap-1.5 text-[17px] font-semibold text-[#B3372E]">
+          <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+          não carregou
         </p>
       ) : (
-        <p className="font-display text-3xl tabular-nums text-western-green-deep">{value}</p>
+        <p className="mt-2 text-[24px] font-semibold leading-tight tabular-nums text-western-green-deep">{valor}</p>
       )}
-    </div>
+
+      {!carregando && !erro && nota && <p className="text-meta mt-1">{nota}</p>}
+    </>
   );
+
+  const base = "bg-white p-5 min-h-[112px]";
+
+  if (to && !erro && !carregando) {
+    return (
+      <Link
+        to={to}
+        className={cn(base, "block transition-colors hover:bg-western-paper focus:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-inset")}
+      >
+        {conteudo}
+      </Link>
+    );
+  }
+
+  return <div className={base}>{conteudo}</div>;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Colunas
+ * ───────────────────────────────────────────────────────────────────────── */
+
+const COLUNAS_PEDIDOS: ReadonlyArray<Coluna<RecentOrder>> = [
+  {
+    key: "titulo",
+    header: "Pedido",
+    principalNoMobile: true,
+    sortable: true,
+    render: (o) => (
+      <span className="font-semibold text-western-green-deep">
+        Nº {o.numero} · {o.titulo}
+      </span>
+    ),
+  },
+  {
+    key: "status",
+    header: "Status",
+    width: "200px",
+    sortable: true,
+    render: (o) => <StatusBadge status={o.status} />,
+  },
+  {
+    key: "created_at",
+    header: "Criado",
+    align: "right",
+    width: "160px",
+    sortable: true,
+    render: (o) => <CelulaData valor={o.created_at} />,
+  },
+];
+
+const COLUNAS_FUNIL: ReadonlyArray<Coluna<FunnelRow>> = [
+  {
+    key: "semana",
+    header: "Semana",
+    principalNoMobile: true,
+    sortable: true,
+    render: (r) => <span className="font-semibold">{dataCurta(r.semana)}</span>,
+  },
+  { key: "orcamentos", header: "Orçamentos", align: "right", sortable: true, render: (r) => r.orcamentos },
+  { key: "pedidos", header: "Pedidos", align: "right", sortable: true, render: (r) => r.pedidos },
+  {
+    key: "taxa_conversao_pct",
+    header: "Conversão",
+    align: "right",
+    sortable: true,
+    render: (r) => (
+      <span className="font-semibold text-western-green-deep">{r.taxa_conversao_pct ?? 0}%</span>
+    ),
+  },
+];

@@ -27,7 +27,7 @@ export default function SegmentoSelect({ value, onChange, id, required, error }:
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
-        className={`h-12 w-full bg-transparent border px-3 rounded-none text-western-green-deep focus:outline-none transition-colors ${
+        className={`h-[52px] w-full bg-transparent border px-3.5 rounded-[6px] text-[16px] text-western-green-deep focus:outline-none transition-colors ${
           error
             ? "border-red-700/60"
             : "border-western-stone-warm/30 focus:border-western-gold"
