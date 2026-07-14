@@ -493,7 +493,8 @@ export default function ConjuntoPage() {
                         {p.title}
                       </h3>
                       <div className="mt-2 font-sans text-[13px] font-medium text-western-green-deep">
-                        <GatedPrice amount={p.unitPrice} suffix="/ un." />
+                        {/* dentro do <Link> do card — sem <a> aninhado */}
+                        <GatedPrice amount={p.unitPrice} suffix="/ un." linked={false} />
                       </div>
                     </div>
                   </Link>

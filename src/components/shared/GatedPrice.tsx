@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Lock, Unlock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -38,6 +39,23 @@ export default function GatedPrice({
 }: Props) {
   const { isApproved, session } = useAuth();
   const { discountPct } = usePartnerPricing();
+  const guardRef = useRef<HTMLAnchorElement>(null);
+
+  // Guarda de dev: o fallback do gate é um <a>. Se o componente vive dentro de
+  // um card clicável (ProductCard, ConjuntoCard...), quem chama TEM que passar
+  // linked={false} — senão vira <a> dentro de <a> (HTML inválido; o React
+  // reclama e o clique fica ambíguo). Já aconteceu 3×; a trava avisa na hora.
+  useEffect(() => {
+    if (!import.meta.env.DEV || !linked || isApproved) return;
+    const anchor = guardRef.current?.parentElement?.closest("a");
+    if (anchor) {
+      // eslint-disable-next-line no-console
+      console.error(
+        "[GatedPrice] está dentro de um <a> (%s) e vai aninhar links. Passe linked={false}.",
+        anchor.getAttribute("href") ?? "sem href",
+      );
+    }
+  }, [linked, isApproved]);
 
   if (isApproved) {
     const base = typeof amount === "number" ? amount : parseFloat(amount);
@@ -88,7 +106,7 @@ export default function GatedPrice({
   }
 
   return (
-    <Link to={to} className={lockedClass}>
+    <Link to={to} className={lockedClass} ref={guardRef}>
       <Icon className={iconClass} /> {label}
     </Link>
   );
