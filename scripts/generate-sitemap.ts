@@ -27,6 +27,12 @@ const staticEntries: Entry[] = [
   { path: "/produtos", changefreq: "weekly", priority: "0.9" },
   { path: "/conjuntos", changefreq: "monthly", priority: "0.8" },
   { path: "/guia-de-composicao", changefreq: "monthly", priority: "0.8" },
+  // Páginas do V3 que não existiam quando este gerador foi escrito
+  { path: "/inspiracoes", changefreq: "monthly", priority: "0.8" },
+  { path: "/como-comprar", changefreq: "monthly", priority: "0.8" },
+  { path: "/para-sua-casa", changefreq: "monthly", priority: "0.8" },
+  { path: "/western-box", changefreq: "monthly", priority: "0.8" },
+  { path: "/parceria", changefreq: "monthly", priority: "0.7" },
   { path: "/sobre", changefreq: "yearly", priority: "0.6" },
   { path: "/por-que-western", changefreq: "yearly", priority: "0.6" },
   { path: "/contrate-a-western", changefreq: "monthly", priority: "0.8" },

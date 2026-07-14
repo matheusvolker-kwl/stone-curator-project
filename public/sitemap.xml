@@ -76,6 +76,31 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://westernstore.com.br/inspiracoes</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://westernstore.com.br/como-comprar</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://westernstore.com.br/para-sua-casa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://westernstore.com.br/western-box</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://westernstore.com.br/parceria</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://westernstore.com.br/sobre</loc>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
@@ -129,12 +154,6 @@
     <loc>https://westernstore.com.br/privacidade</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://westernstore.com.br/produtos/fossil-coelphisys-teste-int</loc>
-    <lastmod>2026-07-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://westernstore.com.br/produtos/fonte-sabino-com-lago</loc>
