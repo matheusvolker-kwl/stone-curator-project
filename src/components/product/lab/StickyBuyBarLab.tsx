@@ -86,7 +86,9 @@ export default function StickyBuyBarLab({
       role="region"
       aria-label="Barra de compra"
       aria-hidden={!visible}
-      className={`fixed inset-x-0 bottom-0 z-40 bg-western-cream/97 backdrop-blur border-t border-western-stone-warm/25 shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.18)] transition-all duration-200 motion-reduce:transition-none ${
+      /* Fundo SÓLIDO: o creme a 97% deixava o rodapé verde escuro atravessar e
+         o texto (escuro) ficava ilegível sobre ele. */
+      className={`fixed inset-x-0 bottom-0 z-40 bg-western-ivory border-t border-western-border-soft shadow-[0_-4px_20px_rgba(23,32,24,0.10)] transition-all duration-200 motion-reduce:transition-none ${
         visible
           ? "translate-y-0 opacity-100 pointer-events-auto"
           : "translate-y-full opacity-0 pointer-events-none"
@@ -107,13 +109,11 @@ export default function StickyBuyBarLab({
               </div>
             )}
             <div className="min-w-0">
-              <p className="font-display text-base text-western-green-deep truncate leading-tight">
+              <p className="font-sans text-[17px] font-semibold text-western-green-deep truncate leading-tight">
                 {productTitle}
               </p>
               {selectedFinish && (
-                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/80 mt-0.5">
-                  {selectedFinish}
-                </p>
+                <p className="text-meta mt-0.5">{selectedFinish}</p>
               )}
             </div>
           </div>
@@ -121,58 +121,57 @@ export default function StickyBuyBarLab({
           {isApproved ? (
             <>
               {priceLabel && (
-                <span className="font-display text-xl text-western-green-deep flex-shrink-0 tabular-nums">
+                <span className="font-sans text-[20px] font-bold text-western-green-deep flex-shrink-0 tabular-nums">
                   {priceLabel}
                 </span>
               )}
-              <div className="flex items-center border border-western-stone-warm/30 h-11 flex-shrink-0">
+              <div className="flex items-center rounded-[10px] border border-western-border-strong h-[52px] flex-shrink-0 overflow-hidden">
                 <button
                   onClick={() => onQtyChange(Math.max(1, qty - 1))}
-                  className="h-11 w-10 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep"
+                  className="h-[52px] w-12 flex items-center justify-center hover:bg-western-paper transition-colors text-western-green-deep"
                   aria-label="Diminuir"
                 >
-                  <Minus className="h-3.5 w-3.5" />
+                  <Minus className="h-4 w-4" />
                 </button>
-                <span className="px-3 text-spec min-w-[2ch] text-center tabular-nums">
+                <span className="px-3 font-sans text-[16px] font-semibold min-w-[2ch] text-center tabular-nums text-western-green-deep">
                   {qty}
                 </span>
                 <button
                   onClick={() => onQtyChange(qty + 1)}
-                  className="h-11 w-10 flex items-center justify-center hover:bg-western-gold/10 transition-colors text-western-green-deep"
+                  className="h-[52px] w-12 flex items-center justify-center hover:bg-western-paper transition-colors text-western-green-deep"
                   aria-label="Aumentar"
                 >
-                  <Plus className="h-3.5 w-3.5" />
+                  <Plus className="h-4 w-4" />
                 </button>
               </div>
+              {/* CTA primário = VERDE (V3). Fundo da barra é claro, então o verde tem contraste. */}
               <Button
                 onClick={onAdd}
                 disabled={!canAdd || !available || isLoading}
-                className="h-11 px-7 bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60 flex-shrink-0"
+                className="flex-shrink-0 px-8"
               >
                 {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-5 w-5 animate-spin" />
                 ) : pendingOptionLabel ? (
                   `Selecione ${pendingOptionLabel}`
                 ) : !available ? (
                   "Indisponível"
                 ) : (
-                  "Adicionar ao pedido"
+                  "Adicionar ao orçamento"
                 )}
               </Button>
             </>
           ) : (
             <>
-              <Link
-                to={orcamentoTo}
-                className="h-11 px-6 inline-flex items-center justify-center bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono font-bold text-xs uppercase tracking-[0.22em] flex-shrink-0"
-              >
-                Peça um orçamento
+              {/* Visitante: a ação primária é virar parceiro (é o que libera o preço). */}
+              <Link to="/parceiro/cadastro" className="btn-primary flex-shrink-0">
+                <Unlock className="h-5 w-5" /> Ver preço de parceiro
               </Link>
               <Link
-                to="/parceiro/cadastro"
-                className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors flex-shrink-0"
+                to={orcamentoTo}
+                className="btn-outline-forest flex-shrink-0"
               >
-                <Unlock className="h-3 w-3" /> Sou parceiro · Ver preço
+                Peça um orçamento
               </Link>
             </>
           )}
@@ -180,9 +179,9 @@ export default function StickyBuyBarLab({
 
         {/* MOBILE */}
         <div className="md:hidden">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-3 mb-2.5">
             {productImage && (
-              <div className="w-10 h-10 flex-shrink-0 bg-western-paper border border-western-stone-warm/15">
+              <div className="w-11 h-11 flex-shrink-0 rounded-[6px] overflow-hidden bg-western-paper border border-western-border-soft">
                 <img
                   src={cdnImg(productImage, 160)}
                   alt=""
@@ -192,39 +191,33 @@ export default function StickyBuyBarLab({
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="font-display text-sm text-western-green-deep truncate leading-tight">
+              <p className="font-sans text-[16px] font-semibold text-western-green-deep truncate leading-tight">
                 {productTitle}
               </p>
-              {isApproved ? (
-                priceLabel && (
-                  <p className="font-display text-base text-western-green-deep tabular-nums leading-tight">
-                    {priceLabel}
-                  </p>
-                )
-              ) : (
-                <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-western-stone-warm flex items-center gap-1 mt-0.5">
-                  <Unlock className="h-2.5 w-2.5" /> Ver preço de parceiro
+              {isApproved && priceLabel && (
+                <p className="font-sans text-[17px] font-bold text-western-green-deep tabular-nums leading-tight mt-0.5">
+                  {priceLabel}
                 </p>
               )}
             </div>
             {isApproved && (
-              <div className="flex items-center border border-western-stone-warm/30 h-11 flex-shrink-0">
+              <div className="flex items-center rounded-[10px] border border-western-border-strong h-12 flex-shrink-0 overflow-hidden">
                 <button
                   onClick={() => onQtyChange(Math.max(1, qty - 1))}
-                  className="h-11 w-11 flex items-center justify-center text-western-green-deep"
+                  className="h-12 w-11 flex items-center justify-center text-western-green-deep"
                   aria-label="Diminuir"
                 >
-                  <Minus className="h-3 w-3" />
+                  <Minus className="h-4 w-4" />
                 </button>
-                <span className="px-2 text-xs min-w-[2ch] text-center tabular-nums">
+                <span className="px-1.5 font-sans text-[16px] font-semibold min-w-[2ch] text-center tabular-nums text-western-green-deep">
                   {qty}
                 </span>
                 <button
                   onClick={() => onQtyChange(qty + 1)}
-                  className="h-11 w-11 flex items-center justify-center text-western-green-deep"
+                  className="h-12 w-11 flex items-center justify-center text-western-green-deep"
                   aria-label="Aumentar"
                 >
-                  <Plus className="h-3 w-3" />
+                  <Plus className="h-4 w-4" />
                 </button>
               </div>
             )}
@@ -233,31 +226,26 @@ export default function StickyBuyBarLab({
             <Button
               onClick={onAdd}
               disabled={!canAdd || !available || isLoading}
-              className="w-full h-11 bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-[11px] uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
+              className="w-full"
             >
               {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-5 w-5 animate-spin" />
               ) : pendingOptionLabel ? (
                 `Selecione ${pendingOptionLabel}`
               ) : !available ? (
                 "Indisponível"
               ) : (
-                "Adicionar ao pedido"
+                "Adicionar ao orçamento"
               )}
             </Button>
           ) : (
+            /* Visitante: uma decisão por vez — virar parceiro é o que libera o preço. */
             <div className="flex flex-col gap-2">
-              <Link
-                to={orcamentoTo}
-                className="w-full h-11 inline-flex items-center justify-center bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono font-bold text-[11px] uppercase tracking-[0.22em]"
-              >
-                Peça um orçamento
+              <Link to="/parceiro/cadastro" className="btn-primary w-full">
+                <Unlock className="h-5 w-5" /> Ver preço de parceiro
               </Link>
-              <Link
-                to="/parceiro/cadastro"
-                className="w-full inline-flex items-center justify-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors"
-              >
-                <Unlock className="h-3 w-3" /> Sou parceiro · Ver preço
+              <Link to={orcamentoTo} className="btn-outline-forest w-full">
+                Peça um orçamento
               </Link>
             </div>
           )}

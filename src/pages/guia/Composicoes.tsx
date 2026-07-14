@@ -45,107 +45,99 @@ export default function GuiaComposicoes() {
   const backQs = buildContextQuery(ctx);
 
   return (
-    <div className="min-h-screen surface-paper relative">
+    <div className="min-h-screen surface-ivory relative">
       <GuideHeader step={2} breadcrumb={{ label: "Voltar · Contexto", to: `/guia-de-composicao?${backQs}` }} />
       <ContextoChips tipo={ctx.tipoVisual} area={ctx.area} acabamento={ctx.acabamento} />
 
-      <main className="container-western pt-14 md:pt-20 pb-32 relative">
-        <Reveal variant="fade-up" duration={800}>
-          <p className="font-display italic text-xl md:text-2xl text-western-green-deep mb-5">
-            Três pontos de partida. Uma cena, três densidades.
-          </p>
-        </Reveal>
+      {/* Header (80px) + barra de contexto (44px) são sticky: reserva o espaço. */}
+      <main className="container-western pt-12 md:pt-16 pb-24 relative">
         <Reveal variant="fade-up" duration={700} delay={120}>
-          <p className="eyebrow-bar mb-5">Guia de composição · Etapa 02</p>
-          <h1 className="font-display text-3xl md:text-[48px] text-western-green-deep leading-[1.08] mb-6 max-w-4xl">
-            Para os {ctx.area} m² do seu projeto ({copy}, {acabLabel.toLowerCase()}), três pontos de partida.
+          <p className="text-eyebrow mb-5">Guia de composição · Etapa 02</p>
+          <h1 className="display-xl text-western-green-deep mb-6 max-w-[20ch] md:max-w-[24ch]">
+            Três pontos de partida para os {ctx.area} m² do seu projeto.
           </h1>
           <div className="w-12 h-px bg-western-gold mb-6" />
-          <p className="font-display italic text-lg text-western-stone-warm max-w-2xl leading-relaxed">
-            A mesma cena em três densidades. Escolha a base mais próxima — no próximo passo você ajusta tudo peça por peça.
+          <p className="text-body max-w-[62ch]">
+            Uma cena — {copy}, acabamento {acabLabel.toLowerCase()} — em três densidades. Escolha a
+            base mais próxima; no próximo passo você ajusta tudo peça por peça.
           </p>
         </Reveal>
 
         {isHibrido && (
           <Reveal variant="fade-up" duration={700} delay={180}>
-            <div className="mt-10 border-l-2 border-western-gold pl-5 py-4 bg-western-gold/[0.06] max-w-3xl">
-              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-2">
-                ◆ Sobre o Lago Híbrido
-              </p>
-              <p className="font-display italic text-[15px] text-western-stone-warm leading-relaxed">
-                Este conjunto fornece a estrutura principal em pedras Western. Você complementa
-                a margem do lago com pedras naturais que já possua ou adquira localmente.
+            <div className="mt-10 max-w-3xl rounded-[10px] border border-western-gold/40 bg-western-gold/[0.08] p-5 md:p-6">
+              <p className="text-eyebrow mb-2">◆ Sobre o Lago Híbrido</p>
+              <p className="text-body">
+                Este conjunto fornece a estrutura principal em pedras Western. Você complementa a
+                margem do lago com pedras naturais que já possua ou adquira localmente.
               </p>
             </div>
           </Reveal>
         )}
 
-
-
         {isConsultor ? (
-          <div className="mt-20 max-w-xl">
-            <h2 className="font-display text-2xl md:text-3xl text-western-green-deep mb-6 leading-tight">
+          <div className="mt-16 max-w-2xl">
+            <h2 className="display-lg text-western-green-deep mb-6">
               Para projetos {label.toLowerCase()} de {ctx.area} m², trabalhamos sob consulta.
             </h2>
-            <a href={whatsappConsultor(tipo, "Sob consulta")} target="_blank" rel="noreferrer" className="btn-dark">
-              Falar com consultor →
+            <p className="text-body mb-8 max-w-[54ch]">
+              Um consultor do ateliê monta a composição com você, peça por peça.
+            </p>
+            <a
+              href={whatsappConsultor(tipo, "Sob consulta")}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-primary w-full md:w-auto"
+            >
+              Falar com consultor
             </a>
           </div>
         ) : (
           <>
-            {/* Banda forest atrás do destaque equilibrada */}
-            <div className="relative mt-20">
-              {/* faixa verde decorativa que enquadra o card central */}
-              <div
-                aria-hidden
-                className="hidden lg:block absolute top-[18%] bottom-[8%] left-1/2 -translate-x-1/2 w-[36%] surface-forest"
-                style={{ zIndex: 0 }}
-              />
-              <div className="relative grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 z-10 px-0 lg:px-3 pt-0 lg:pt-10 pb-0 lg:pb-10">
-                {NIVEIS.map((n, i) => {
-                  const c = conjuntos[n];
-                  if (!c) return null;
-                  const refinarParams = new URLSearchParams();
-                  refinarParams.set("acabamento", ctx.acabamento!);
-                  refinarParams.set("tipo", ctx.tipoVisual!);
-                  refinarParams.set("area", String(ctx.area));
-                  refinarParams.set("nivel", n);
-                  return (
-                    <Reveal key={n} variant="fade-up" delay={i * 140} duration={750}>
-                      <ComposicaoCard
-                        conjunto={c}
-                        nivel={n}
-                        image={conjuntoRenders[c.handle] ?? nivelImage[n]}
-                        highlight={n === "equilibrada"}
-                        refinarHref={`/guia-de-composicao/refinar/${c.handle}?${refinarParams.toString()}`}
-                        conjuntoHref={`/conjuntos/${c.handle}?${refinarParams.toString()}`}
-                      />
-                    </Reveal>
-                  );
-                })}
-              </div>
+            <div className="mt-14 md:mt-16 grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 items-stretch">
+              {NIVEIS.map((n, i) => {
+                const c = conjuntos[n];
+                if (!c) return null;
+                const refinarParams = new URLSearchParams();
+                refinarParams.set("acabamento", ctx.acabamento!);
+                refinarParams.set("tipo", ctx.tipoVisual!);
+                refinarParams.set("area", String(ctx.area));
+                refinarParams.set("nivel", n);
+                return (
+                  <Reveal key={n} variant="fade-up" delay={i * 140} duration={750} className="h-full">
+                    <ComposicaoCard
+                      conjunto={c}
+                      nivel={n}
+                      image={conjuntoRenders[c.handle] ?? nivelImage[n]}
+                      highlight={n === "equilibrada"}
+                      refinarHref={`/guia-de-composicao/refinar/${c.handle}?${refinarParams.toString()}`}
+                      conjuntoHref={`/conjuntos/${c.handle}?${refinarParams.toString()}`}
+                    />
+                  </Reveal>
+                );
+              })}
             </div>
 
-            <div className="mt-24">
+            <div className="mt-20">
               <SectionDivider />
             </div>
 
-            <div className="mt-12 text-center max-w-xl mx-auto">
-              <p className="eyebrow-bar justify-center mb-4">Não encontrou o que procura?</p>
-              <p className="font-display text-lg text-western-green-deep leading-relaxed">
-                Os 3 caminhos acima são pré-montados, mas você pode{" "}
-                <Link to="/conjuntos" className="link-underline text-western-gold">
+            <div className="mt-12 max-w-2xl mx-auto text-center">
+              <p className="text-eyebrow text-center mb-4">Não encontrou o que procura?</p>
+              <p className="text-body text-western-green-deep">
+                Os três caminhos acima são pré-montados, mas você pode{" "}
+                <Link to="/conjuntos" className="link-underline font-semibold text-western-green-deep">
                   começar do zero
                 </Link>{" "}
                 e montar peça por peça.
               </p>
-              <p className="text-sm text-western-stone-warm mt-6">
+              <p className="text-meta mt-5">
                 Ou{" "}
                 <a
                   href={whatsappConsultor(tipo, "Variada")}
                   target="_blank"
                   rel="noreferrer"
-                  className="link-underline text-western-green-deep"
+                  className="link-underline font-semibold text-western-green-deep"
                 >
                   falar com um consultor
                 </a>{" "}

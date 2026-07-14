@@ -13,27 +13,45 @@ const STEPS = [
   { n: 3, label: "Refinar" },
 ];
 
+/**
+ * Cabeçalho do wizard.
+ *
+ * ALTURA FIXA de 80px (h-20) em TODOS os breakpoints — não-negociável:
+ * `ContextoChips` gruda em `top-20` (80px). Enquanto o mobile tinha uma
+ * segunda linha (stepper + breadcrumb), o header media ~110px, cobria a barra
+ * de contexto (z-30 sobre z-20) e engolia o input de metragem / a 1ª peça.
+ * Tudo cabe numa linha só; a seta de "voltar" vira botão-ícone no mobile
+ * (setas e X são os únicos ícones que o DS permite sem rótulo).
+ */
 export default function GuideHeader({ breadcrumb, step }: Props) {
-  return (
-    <header className="border-b border-western-gold/30 bg-western-ivory/95 backdrop-blur-sm sticky top-0 z-30 relative">
-      <div className="container-western h-20 flex items-center justify-between gap-4 relative">
-        <div className="flex items-center gap-6 min-w-0">
-          <Link to="/" className="flex-shrink-0" aria-label="Western Pools">
-            <img
-              src={logoWestern}
-              alt="Western Pools"
-              className="h-10 md:h-12 w-auto object-contain"
-            />
-          </Link>
-          <span aria-hidden className="hidden md:block w-px h-9 bg-western-gold/40" />
-          <span className="hidden md:inline-block font-display italic text-[20px] text-western-green-deep leading-none truncate">
-            Guia de Composição
-          </span>
-        </div>
+  const pct = step ? (step / STEPS.length) * 100 : 0;
 
-        {/* Stepper desktop */}
+  return (
+    <header className="sticky top-0 z-30 h-20 bg-western-ivory/95 backdrop-blur-sm border-b border-western-border-soft">
+      <div className="container-western h-20 flex items-center gap-3 md:gap-6">
+        {/* Voltar — ícone puro no mobile, rótulo a partir de md */}
+        {breadcrumb && (
+          <Link
+            to={breadcrumb.to}
+            aria-label={breadcrumb.label}
+            className="md:hidden tap-target -ml-3 inline-flex items-center justify-center rounded-[10px] text-western-green-deep hover:bg-western-paper transition-colors"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+        )}
+
+        <Link to="/" className="flex-shrink-0" aria-label="Western">
+          <img src={logoWestern} alt="Western" className="h-9 md:h-11 w-auto object-contain" />
+        </Link>
+
+        <span aria-hidden className="hidden md:block w-px h-8 bg-western-border-strong" />
+        <span className="hidden md:inline lg:hidden font-sans text-[17px] font-semibold text-western-green-deep truncate">
+          Monte seu projeto
+        </span>
+
+        {/* Stepper completo — desktop */}
         {step && (
-          <ol className="hidden lg:flex items-center gap-3" aria-label="Etapas do guia">
+          <ol className="hidden lg:flex items-center gap-3 mx-auto" aria-label="Etapas do guia">
             {STEPS.map((s, i) => {
               const active = s.n === step;
               const done = s.n < step;
@@ -41,21 +59,21 @@ export default function GuideHeader({ breadcrumb, step }: Props) {
                 <li key={s.n} className="flex items-center gap-3">
                   <span
                     aria-current={active ? "step" : undefined}
-                    className={`inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] ${
+                    className={`inline-flex items-center gap-2 font-sans text-[14px] font-semibold tracking-[0.06em] ${
                       active
                         ? "text-western-green-deep"
                         : done
-                        ? "text-western-gold"
-                        : "text-western-stone-warm/60"
+                          ? "text-western-bronze"
+                          : "text-western-stone-warm"
                     }`}
                   >
                     <span
-                      className={`inline-flex items-center justify-center w-5 h-5 border text-[10px] ${
+                      className={`inline-flex items-center justify-center w-7 h-7 rounded-full border text-[14px] tabular-nums ${
                         active
-                          ? "border-western-green-deep bg-western-green-deep text-western-cream"
+                          ? "border-western-cta bg-western-cta text-western-cream"
                           : done
-                          ? "border-western-gold bg-western-gold/10 text-western-gold"
-                          : "border-western-stone-warm/30 text-western-stone-warm/60"
+                            ? "border-western-bronze bg-western-gold/15 text-western-bronze"
+                            : "border-western-border-strong text-western-stone-warm"
                       }`}
                     >
                       {s.n}
@@ -63,7 +81,7 @@ export default function GuideHeader({ breadcrumb, step }: Props) {
                     {s.label}
                   </span>
                   {i < STEPS.length - 1 && (
-                    <span aria-hidden className="w-6 h-px bg-western-stone-warm/25" />
+                    <span aria-hidden className="w-6 h-px bg-western-border-strong" />
                   )}
                 </li>
               );
@@ -71,40 +89,41 @@ export default function GuideHeader({ breadcrumb, step }: Props) {
           </ol>
         )}
 
-        <div className="flex items-center gap-6 ml-auto">
+        <div className="flex items-center gap-2 md:gap-5 ml-auto">
           {breadcrumb && (
             <Link
               to={breadcrumb.to}
-              className="hidden md:inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep transition-colors"
+              className="hidden md:inline-flex tap-target items-center gap-2 px-2 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-stone-warm hover:text-western-green-deep transition-colors"
             >
-              <ArrowLeft className="h-3 w-3" /> {breadcrumb.label}
+              <ArrowLeft className="h-4 w-4" /> {breadcrumb.label}
             </Link>
           )}
+
+          {/* Passo compacto — mobile/tablet, substitui a 2ª linha que quebrava o sticky */}
+          {step && (
+            <span className="lg:hidden font-sans text-[14px] font-semibold tracking-[0.06em] text-western-bronze whitespace-nowrap">
+              Etapa {step} de {STEPS.length}
+            </span>
+          )}
+
           <Link
             to="/"
-            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep transition-colors"
+            aria-label="Sair do guia"
+            className="tap-target -mr-3 md:mr-0 inline-flex items-center justify-center gap-2 rounded-[10px] px-2 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-stone-warm hover:text-western-green-deep hover:bg-western-paper transition-colors"
           >
-            Sair do guia <X className="h-3 w-3" />
+            <span className="hidden md:inline">Sair do guia</span>
+            <X className="h-5 w-5 md:h-4 md:w-4" />
           </Link>
         </div>
       </div>
 
-      {/* Stepper mobile + breadcrumb */}
-      {(step || breadcrumb) && (
-        <div className="lg:hidden container-western pb-3 flex items-center justify-between gap-3 relative">
-          {breadcrumb ? (
-            <Link
-              to={breadcrumb.to}
-              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm"
-            >
-              <ArrowLeft className="h-3 w-3" /> {breadcrumb.label}
-            </Link>
-          ) : <span />}
-          {step && (
-            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
-              Etapa {step}/3 · {STEPS[step - 1].label}
-            </span>
-          )}
+      {/* Progresso do wizard — filete no rodapé do header */}
+      {step && (
+        <div aria-hidden className="absolute bottom-0 left-0 right-0 h-[3px] bg-western-border-soft">
+          <div
+            className="h-full bg-western-gold transition-[width] duration-500 ease-out"
+            style={{ width: `${pct}%` }}
+          />
         </div>
       )}
     </header>

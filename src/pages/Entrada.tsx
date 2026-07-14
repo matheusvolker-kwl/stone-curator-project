@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, ArrowLeft, Check, Loader2 } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, Loader2, MessageCircle } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import Seo from "@/components/seo/Seo";
@@ -10,9 +10,16 @@ import FieldLabel from "@/components/forms/FieldLabel";
 import { supabase } from "@/integrations/supabase/client";
 import { phoneBRSchema, normalizeText, formatPhoneBR } from "@/lib/forms/br";
 import { BUSINESS } from "@/config/business";
-import logo from "@/assets/logo-vertical-bege.png";
+import logo from "@/assets/logo-vertical-verde.png";
 import proImage from "@/assets/projetos-western/05_cascata-escalonada.webp";
 import residencialImage from "@/assets/projetos-western/08_piscina-paisagismo.webp";
+
+/* DS V3 — bifurcação de público.
+ * A tela é de decisão, não de compra: fundo claro e quente (ivory), uma pergunta,
+ * dois cards grandes de toque. O verde/foto só aparece DENTRO dos cards (overlay
+ * de foto é o único escuro permitido aqui), e é lá — e só lá — que o dourado é
+ * usado como acento. Nos fundos claros o CTA primário é verde (.btn-primary).
+ * Nada de mono, nada abaixo de 14px, nada de cantos vivos. */
 
 type TipoProjeto = "Cascata" | "Lago / piscina natural" | "Área de lazer completa" | "Outro";
 
@@ -26,6 +33,25 @@ const formSchema = z.object({
     "Outro",
   ]),
 });
+
+/* Eyebrow sobre foto: bronze não teria contraste — usa-se gold-soft, mantendo
+ * a regra tipográfica (sans semibold 14px, tracking 0.06em). */
+const EYEBROW_ON_PHOTO =
+  "font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft";
+
+/* Campo de 52px, cantos 10px, texto 16px, borda visível (público 40+). */
+const CONTROL =
+  "h-[52px] w-full rounded-[10px] border-[1.5px] bg-western-paper px-4 font-sans text-[16px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 outline-none transition-colors";
+const CONTROL_OK = "border-western-border-strong focus:border-western-green-deep";
+const CONTROL_ERR = "border-[#B3372E]";
+
+function FieldError({ id, children }: { id: string; children: React.ReactNode }) {
+  return (
+    <p id={id} className="mt-2 font-sans text-[14px] font-semibold leading-snug text-[#B3372E]">
+      {children}
+    </p>
+  );
+}
 
 type OptionCardProps = {
   eyebrow: string;
@@ -42,7 +68,7 @@ function OptionCard({ eyebrow, title, description, ariaLabel, imageUrl, onActiva
       type="button"
       onClick={onActivate}
       aria-label={ariaLabel}
-      className="group relative flex h-[420px] md:h-[520px] flex-col justify-end overflow-hidden rounded-[2px] border border-western-gold/25 text-left transition-all duration-300 ease-out hover:-translate-y-1 hover:border-western-gold hover:shadow-[0_24px_50px_-24px_rgba(0,0,0,0.7)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2 focus-visible:ring-offset-western-green-deep motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+      className="group tap-target relative flex min-h-[340px] md:min-h-[440px] flex-col justify-end overflow-hidden rounded-[16px] border border-western-border-soft text-left shadow-[0_24px_60px_-32px_rgba(30,40,25,0.28)] transition-shadow duration-200 hover:shadow-[0_30px_70px_-30px_rgba(30,40,25,0.42)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-bronze focus-visible:ring-offset-2 focus-visible:ring-offset-western-ivory"
     >
       <img
         src={imageUrl}
@@ -50,25 +76,26 @@ function OptionCard({ eyebrow, title, description, ariaLabel, imageUrl, onActiva
         aria-hidden="true"
         loading="lazy"
         decoding="async"
-        className="absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.06] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+        className="absolute inset-0 h-full w-full object-cover"
       />
+      {/* Overlay verde de proteção — texto sobre foto nunca sem overlay. */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-t from-western-green-deep via-western-green-deep/70 to-western-green-deep/10"
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, hsl(var(--western-green-deep) / 0.20) 0%, hsl(var(--western-green-deep) / 0.72) 55%, hsl(var(--western-green-deep) / 0.94) 100%)",
+        }}
       />
-      <div className="relative z-10 p-7 md:p-9">
-        <p className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-western-gold-soft">
-          {eyebrow}
-        </p>
-        <h2 className="mt-3 font-display text-2xl md:text-[26px] leading-[1.15] text-western-cream">
-          {title}
-        </h2>
-        <p className="mt-2 text-sm leading-relaxed text-western-cream-muted max-w-[36ch]">
+      <div className="relative z-10 p-6 md:p-8">
+        <p className={EYEBROW_ON_PHOTO}>{eyebrow}</p>
+        <h2 className="display-md mt-3 text-western-cream">{title}</h2>
+        <p className="mt-2 max-w-[36ch] text-[17px] leading-[1.6] text-western-cream-muted">
           {description}
         </p>
-        <span className="mt-5 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.24em] text-western-gold transition-all duration-300 group-hover:gap-3">
+        <span className="mt-6 inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-gold-soft transition-colors group-hover:text-western-gold">
           Continuar
-          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          <ArrowRight className="h-5 w-5" aria-hidden="true" />
         </span>
       </div>
     </button>
@@ -150,32 +177,26 @@ export default function Entrada() {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      <section className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-western-green-deep">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-[0.35] mix-blend-overlay"
-          style={{
-            backgroundImage:
-              "radial-gradient(1200px 600px at 50% -10%, rgba(212,175,110,0.18), transparent 60%), radial-gradient(900px 500px at 50% 110%, rgba(0,0,0,0.55), transparent 60%)",
-          }}
-        />
-
-        <div className="container-western relative z-10 flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center py-14 md:py-20">
-          <img src={logo} alt="Western" className="h-12 md:h-14 w-auto opacity-95" decoding="async" />
+      <section className="surface-ivory relative min-h-[calc(100vh-4rem)] overflow-hidden">
+        <div className="container-western relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center py-14 md:py-20">
+          <img
+            src={logo}
+            alt="Western"
+            className="h-12 w-auto md:h-14"
+            decoding="async"
+          />
 
           {view === "choose" && (
-            <div className="w-full flex flex-col items-center animate-in fade-in duration-500">
+            <div className="flex w-full flex-col items-center animate-in fade-in duration-500">
               <div className="mt-8 max-w-2xl text-center">
-                <p className="font-mono text-[11px] font-medium uppercase tracking-[0.28em] text-western-gold-soft">
-                  Bem-vindo à Western
-                </p>
-                <div className="mx-auto mt-4 h-px w-10 bg-western-gold" />
-                <h1 className="mt-5 font-display text-2xl md:text-4xl lg:text-[42px] leading-[1.1] text-western-cream text-balance">
+                <p className="text-eyebrow">Bem-vindo à Western</p>
+                <div className="mx-auto mt-4 h-px w-12 bg-western-gold" />
+                <h1 className="display-xl mt-5 text-western-green-deep">
                   Por onde você prefere começar?
                 </h1>
               </div>
 
-              <div className="mt-10 md:mt-14 grid w-full max-w-4xl grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+              <div className="mt-10 grid w-full max-w-4xl grid-cols-1 gap-5 md:mt-14 md:grid-cols-2 md:gap-6">
                 <OptionCard
                   eyebrow="Opção 01"
                   title="Sou profissional do ramo"
@@ -196,169 +217,150 @@ export default function Entrada() {
 
               <Link
                 to="/linhas"
-                className="mt-10 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-western-cream-muted transition-colors hover:text-western-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2 focus-visible:ring-offset-western-green-deep"
+                className="tap-target mt-10 inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep underline decoration-western-gold underline-offset-4 transition-colors hover:text-western-cta"
               >
                 Só quero ver o catálogo
-                <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                <ArrowRight className="h-5 w-5" aria-hidden="true" />
               </Link>
             </div>
           )}
 
           {view === "form" && (
-            <div className="w-full max-w-lg mt-10 animate-in fade-in slide-in-from-bottom-3 duration-500">
+            <div className="mt-10 w-full max-w-lg animate-in fade-in slide-in-from-bottom-3 duration-500">
               <button
                 type="button"
                 onClick={() => setView("choose")}
-                className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.24em] text-western-cream-muted hover:text-western-gold transition-colors"
+                className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep transition-colors hover:text-western-cta"
               >
-                <ArrowLeft className="h-3 w-3" aria-hidden="true" /> Voltar
+                <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+                Voltar
               </button>
 
-              <div className="mt-6 text-center">
-                <p className="font-mono text-[11px] font-medium uppercase tracking-[0.28em] text-western-gold-soft">
-                  Solicitar orçamento
-                </p>
-                <div className="mx-auto mt-4 h-px w-10 bg-western-gold" />
-                <h1 className="mt-5 font-display text-2xl md:text-3xl leading-[1.15] text-western-cream text-balance">
-                  Conta pra gente sobre seu projeto
-                </h1>
-                <p className="mt-3 text-sm text-western-cream-muted">
-                  Três campos rápidos. Nosso time retorna pelo WhatsApp.
-                </p>
-              </div>
-
-              <form onSubmit={onSubmit} noValidate className="mt-8 space-y-5">
-                <div>
-                  <FieldLabel htmlFor="nome">Nome</FieldLabel>
-                  <input
-                    ref={nameRef}
-                    id="nome"
-                    name="nome"
-                    type="text"
-                    autoComplete="name"
-                    value={nome}
-                    onChange={(e) => setNome(e.target.value)}
-                    aria-invalid={!!errors.nome}
-                    aria-describedby={errors.nome ? "nome-error" : undefined}
-                    className={`h-12 w-full border bg-transparent px-3 outline-none transition-colors text-western-cream placeholder:text-western-cream-muted/40 ${
-                      errors.nome
-                        ? "border-red-500/60"
-                        : "border-western-gold/25 focus:border-western-gold"
-                    }`}
-                    placeholder="Seu nome"
-                  />
-                  {errors.nome && (
-                    <p id="nome-error" className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-400/90">
-                      {errors.nome}
-                    </p>
-                  )}
+              <div className="mt-4 rounded-[16px] border border-western-border-soft bg-white p-6 shadow-[0_24px_60px_-32px_rgba(30,40,25,0.28)] md:p-9">
+                <div className="text-center">
+                  <p className="text-eyebrow">Solicitar orçamento</p>
+                  <div className="mx-auto mt-4 h-px w-12 bg-western-gold" />
+                  <h1 className="display-lg mt-5 text-western-green-deep">
+                    Conta pra gente sobre seu projeto
+                  </h1>
+                  <p className="mt-3 text-[17px] leading-[1.6] text-western-stone-warm">
+                    Três campos rápidos. Nosso time retorna pelo WhatsApp.
+                  </p>
                 </div>
 
-                <div>
-                  <FieldLabel htmlFor="telefone">WhatsApp</FieldLabel>
-                  <PhoneInput
-                    id="telefone"
-                    name="telefone"
-                    value={telefone}
-                    onChange={setTelefone}
-                    error={errors.telefone}
-                    required
-                  />
-                </div>
+                <form onSubmit={onSubmit} noValidate className="mt-8 space-y-6">
+                  <div>
+                    <FieldLabel htmlFor="nome" required>Nome</FieldLabel>
+                    <input
+                      ref={nameRef}
+                      id="nome"
+                      name="nome"
+                      type="text"
+                      autoComplete="name"
+                      value={nome}
+                      onChange={(e) => setNome(e.target.value)}
+                      aria-invalid={!!errors.nome}
+                      aria-describedby={errors.nome ? "nome-error" : undefined}
+                      className={`${CONTROL} ${errors.nome ? CONTROL_ERR : CONTROL_OK}`}
+                      placeholder="Seu nome"
+                    />
+                    {errors.nome && <FieldError id="nome-error">{errors.nome}</FieldError>}
+                  </div>
 
-                <div>
-                  <FieldLabel htmlFor="tipo_projeto">Tipo de projeto</FieldLabel>
-                  <select
-                    id="tipo_projeto"
-                    name="tipo_projeto"
-                    value={tipo}
-                    onChange={(e) => setTipo(e.target.value as TipoProjeto)}
-                    aria-invalid={!!errors.tipo_projeto}
-                    aria-describedby={errors.tipo_projeto ? "tipo-error" : undefined}
-                    className={`h-12 w-full border bg-transparent px-3 outline-none transition-colors text-western-cream ${
-                      errors.tipo_projeto
-                        ? "border-red-500/60"
-                        : "border-western-gold/25 focus:border-western-gold"
-                    }`}
+                  <div>
+                    <FieldLabel htmlFor="telefone" required>WhatsApp</FieldLabel>
+                    <PhoneInput
+                      id="telefone"
+                      name="telefone"
+                      value={telefone}
+                      onChange={setTelefone}
+                      error={errors.telefone}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <FieldLabel htmlFor="tipo_projeto" required>Tipo de projeto</FieldLabel>
+                    <select
+                      id="tipo_projeto"
+                      name="tipo_projeto"
+                      value={tipo}
+                      onChange={(e) => setTipo(e.target.value as TipoProjeto)}
+                      aria-invalid={!!errors.tipo_projeto}
+                      aria-describedby={errors.tipo_projeto ? "tipo-error" : undefined}
+                      className={`${CONTROL} ${errors.tipo_projeto ? CONTROL_ERR : CONTROL_OK}`}
+                    >
+                      <option value="">Selecione…</option>
+                      <option value="Cascata">Cascata</option>
+                      <option value="Lago / piscina natural">Lago / piscina natural</option>
+                      <option value="Área de lazer completa">Área de lazer completa</option>
+                      <option value="Outro">Outro</option>
+                    </select>
+                    {errors.tipo_projeto && <FieldError id="tipo-error">{errors.tipo_projeto}</FieldError>}
+                  </div>
+
+                  {/* CTA primário = verde, full-width no mobile. */}
+                  <button type="submit" disabled={submitting} className="btn-primary w-full">
+                    {submitting ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+                        Enviando…
+                      </>
+                    ) : (
+                      <>
+                        Solicitar orçamento
+                        <ArrowRight className="h-5 w-5" aria-hidden="true" />
+                      </>
+                    )}
+                  </button>
+                </form>
+
+                <div className="mt-8 border-t border-western-border-soft pt-6 text-center">
+                  <a
+                    href={waHrefDirect}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-outline-forest w-full"
                   >
-                    <option value="" className="bg-western-green-deep">Selecione…</option>
-                    <option value="Cascata" className="bg-western-green-deep">Cascata</option>
-                    <option value="Lago / piscina natural" className="bg-western-green-deep">Lago / piscina natural</option>
-                    <option value="Área de lazer completa" className="bg-western-green-deep">Área de lazer completa</option>
-                    <option value="Outro" className="bg-western-green-deep">Outro</option>
-                  </select>
-                  {errors.tipo_projeto && (
-                    <p id="tipo-error" className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-400/90">
-                      {errors.tipo_projeto}
-                    </p>
-                  )}
+                    <MessageCircle className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                    Prefere falar agora? Chamar no WhatsApp
+                  </a>
                 </div>
-
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="mt-2 inline-flex w-full h-12 items-center justify-center gap-2 border border-western-gold bg-western-gold/10 font-mono text-[11px] uppercase tracking-[0.24em] text-western-cream hover:bg-western-gold/20 transition-colors disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2 focus-visible:ring-offset-western-green-deep"
-                >
-                  {submitting ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Enviando…
-                    </>
-                  ) : (
-                    <>
-                      Solicitar orçamento
-                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                    </>
-                  )}
-                </button>
-              </form>
-
-              <div className="mt-8 pt-6 border-t border-western-gold/15 text-center">
-                <a
-                  href={waHrefDirect}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-western-cream-muted hover:text-western-gold transition-colors"
-                >
-                  Prefere falar agora? Chamar no WhatsApp
-                  <ArrowRight className="h-3 w-3" aria-hidden="true" />
-                </a>
               </div>
             </div>
           )}
 
           {view === "done" && (
-            <div className="w-full max-w-lg mt-10 text-center animate-in fade-in zoom-in-95 duration-500">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-western-gold text-western-gold">
-                <Check className="h-7 w-7" aria-hidden="true" />
+            <div className="mt-10 w-full max-w-lg animate-in fade-in zoom-in-95 duration-500">
+              <div className="rounded-[16px] border border-western-border-soft bg-white p-6 text-center shadow-[0_24px_60px_-32px_rgba(30,40,25,0.28)] md:p-9">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#2E7D4F]/10">
+                  <Check className="h-7 w-7 text-[#2E7D4F]" strokeWidth={1.75} aria-hidden="true" />
+                </div>
+                <p className="text-eyebrow mt-6">Pedido recebido</p>
+                <div className="mx-auto mt-4 h-px w-12 bg-western-gold" />
+                <h1 className="display-lg mt-5 text-western-green-deep">
+                  Obrigado, {nome.split(" ")[0] || "tudo certo"}.
+                </h1>
+                <p className="mt-3 text-[17px] leading-[1.6] text-western-stone-warm">
+                  Nosso time entra em contato no WhatsApp {telefone ? formatPhoneBR(telefone) : ""} em breve.
+                </p>
+
+                <div className="mt-8 flex flex-col gap-3">
+                  <a
+                    href={waHrefAfter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary w-full"
+                  >
+                    <MessageCircle className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                    Falar agora no WhatsApp
+                  </a>
+                  <Link to="/linhas" className="btn-outline-forest w-full">
+                    Enquanto isso, veja o catálogo
+                    <ArrowRight className="h-5 w-5" aria-hidden="true" />
+                  </Link>
+                </div>
               </div>
-              <p className="mt-6 font-mono text-[11px] font-medium uppercase tracking-[0.28em] text-western-gold-soft">
-                Pedido recebido
-              </p>
-              <div className="mx-auto mt-4 h-px w-10 bg-western-gold" />
-              <h1 className="mt-5 font-display text-2xl md:text-3xl leading-[1.15] text-western-cream text-balance">
-                Obrigado, {nome.split(" ")[0] || "tudo certo"}.
-              </h1>
-              <p className="mt-3 text-sm text-western-cream-muted">
-                Nosso time entra em contato no WhatsApp {telefone ? formatPhoneBR(telefone) : ""} em breve.
-              </p>
-
-              <a
-                href={waHrefAfter}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-8 inline-flex w-full h-12 items-center justify-center gap-2 border border-western-gold bg-western-gold/10 font-mono text-[11px] uppercase tracking-[0.24em] text-western-cream hover:bg-western-gold/20 transition-colors"
-              >
-                Falar agora no WhatsApp
-                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-              </a>
-
-              <Link
-                to="/linhas"
-                className="mt-6 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-western-cream-muted hover:text-western-gold transition-colors"
-              >
-                Enquanto isso, veja o catálogo
-                <ArrowRight className="h-3 w-3" aria-hidden="true" />
-              </Link>
             </div>
           )}
         </div>

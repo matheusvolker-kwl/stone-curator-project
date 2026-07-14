@@ -3,6 +3,15 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, X, Play } from "lucide-react";
 import { CASOS_WESTERN, type CasoWestern } from "@/data/casosWestern";
 
+/* Eyebrow sobre fundo escuro: sans semibold 14px, tracking 0.06em, dourado claro
+ * (o bronze do .text-eyebrow não teria contraste sobre o verde profundo). */
+const EYEBROW_DARK =
+  "font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft";
+
+/* Overlay verde de proteção — texto sobre foto nunca sem overlay. */
+const PHOTO_SCRIM =
+  "bg-gradient-to-t from-western-green-deep/95 via-western-green-deep/70 to-transparent";
+
 function isEmbed(url: string) {
   return /youtube\.com|youtu\.be|vimeo\.com/i.test(url);
 }
@@ -16,13 +25,12 @@ function toEmbedUrl(url: string) {
   return url;
 }
 
+/* Legenda SEMPRE visível (não depende de hover — no celular não existe hover). */
 function Caption({ caso }: { caso: CasoWestern }) {
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/65 to-transparent px-4 pt-20 pb-4">
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-        {caso.credito}
-      </p>
-      <p className="font-display text-base md:text-lg text-western-cream mt-1.5 leading-snug drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+    <div className={`pointer-events-none absolute inset-x-0 bottom-0 ${PHOTO_SCRIM} px-4 pt-16 pb-4`}>
+      <p className={EYEBROW_DARK}>{caso.credito}</p>
+      <p className="font-sans text-[20px] font-semibold text-western-cream mt-1.5 leading-snug">
         {caso.titulo}
       </p>
     </div>
@@ -31,8 +39,8 @@ function Caption({ caso }: { caso: CasoWestern }) {
 
 function PlayBadge() {
   return (
-    <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-1 bg-western-cream/90 border border-western-stone-warm/20 font-mono text-[9px] uppercase tracking-[0.22em] text-western-green-deep">
-      <Play className="h-3 w-3 fill-current" /> Vídeo
+    <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] bg-western-cream/95 border border-western-border-soft font-sans text-[14px] font-semibold text-western-green-deep">
+      <Play className="h-4 w-4 fill-current" /> Vídeo
     </span>
   );
 }
@@ -40,8 +48,8 @@ function PlayBadge() {
 function PlayOverlay() {
   return (
     <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
-      <span className="h-14 w-14 md:h-16 md:w-16 rounded-full bg-western-cream/95 border border-western-gold/40 flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110">
-        <Play className="h-6 w-6 md:h-7 md:w-7 text-western-green-deep fill-current translate-x-[2px]" />
+      <span className="h-16 w-16 md:h-[72px] md:w-[72px] rounded-full bg-western-cream/95 border border-western-gold/40 flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110">
+        <Play className="h-7 w-7 md:h-8 md:w-8 text-western-green-deep fill-current translate-x-[2px]" />
       </span>
     </span>
   );
@@ -83,12 +91,12 @@ export default function ProjetosWesternBand() {
     <section className="surface-forest border-y border-western-gold/15 py-14 md:py-20">
       <div className="container-western">
         <header className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
-          <p className="text-eyebrow text-western-gold-soft">Depoimentos & obras</p>
+          <p className={EYEBROW_DARK}>Depoimentos e obras</p>
           <div className="w-12 h-px bg-western-gold mx-auto my-5" />
-          <h2 className="font-display text-3xl md:text-4xl text-western-cream">
+          <h2 className="display-lg text-western-cream">
             Projetos que a Western tornou possível
           </h2>
-          <p className="text-spec italic text-western-cream-muted mt-4">
+          <p className="font-sans text-[17px] leading-[1.6] text-western-cream/85 mt-4">
             Arquitetos, empresários e destinos icônicos contam por que escolheram Western.
           </p>
         </header>
@@ -98,7 +106,7 @@ export default function ProjetosWesternBand() {
           <button
             type="button"
             onClick={() => setOpenIndex(items.indexOf(destaque))}
-            className="group relative block w-full overflow-hidden rounded-[2px] bg-western-stone-warm/10 ring-1 ring-western-gold/10 shadow-[0_20px_50px_-25px_rgba(0,0,0,0.7)] mb-4 md:mb-5 aspect-[16/9] md:aspect-[21/9]"
+            className="group relative block w-full overflow-hidden rounded-[16px] bg-western-green-mid/30 ring-1 ring-western-gold/15 shadow-[0_20px_50px_-25px_rgba(0,0,0,0.7)] mb-4 md:mb-5 aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] text-left"
           >
             <img
               src={destaque.posterUrl}
@@ -113,14 +121,13 @@ export default function ProjetosWesternBand() {
                 <PlayOverlay />
               </>
             )}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent px-6 md:px-10 pt-20 pb-6 md:pb-8">
-              <p className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-western-gold drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                {destaque.credito}
-              </p>
-              <p className="font-display text-xl md:text-3xl text-western-cream mt-2 leading-snug max-w-2xl drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+            <div className={`pointer-events-none absolute inset-x-0 bottom-0 ${PHOTO_SCRIM} px-5 md:px-10 pt-20 pb-5 md:pb-8`}>
+              <p className={EYEBROW_DARK}>{destaque.credito}</p>
+              {/* display-md nunca desce abaixo de 22px, nem no celular. */}
+              <h3 className="display-md text-western-cream mt-2 max-w-2xl">
                 {destaque.titulo}
-              </p>
-              <p className="hidden md:block text-western-cream/85 mt-3 max-w-2xl text-sm leading-relaxed drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+              </h3>
+              <p className="hidden md:block font-sans text-[17px] leading-[1.6] text-western-cream/85 mt-3 max-w-2xl">
                 {destaque.story}
               </p>
             </div>
@@ -134,7 +141,7 @@ export default function ProjetosWesternBand() {
               type="button"
               key={caso.id}
               onClick={() => setOpenIndex(items.indexOf(caso))}
-              className="group relative block overflow-hidden rounded-[2px] bg-western-stone-warm/10 ring-1 ring-western-gold/10 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.7)] aspect-[4/5] text-left"
+              className="group relative block overflow-hidden rounded-[16px] bg-western-green-mid/30 ring-1 ring-western-gold/15 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.7)] aspect-[4/5] text-left"
             >
               <img
                 src={caso.posterUrl}
@@ -159,7 +166,7 @@ export default function ProjetosWesternBand() {
       {/* Lightbox */}
       <Dialog open={openIndex !== null} onOpenChange={(o) => !o && close()}>
         <DialogContent
-          className="max-w-6xl w-[95vw] max-h-[90dvh] overflow-y-auto p-0 bg-western-green-deep border-western-gold/20 [&>button]:hidden"
+          className="max-w-6xl w-[95vw] max-h-[90dvh] overflow-y-auto p-0 bg-western-green-deep border-western-gold/20 rounded-[16px] [&>button]:hidden"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           {current && (
@@ -196,43 +203,40 @@ export default function ProjetosWesternBand() {
                 )}
               </div>
 
-              <div className="px-6 md:px-8 pt-5 pb-6 bg-western-green-deep">
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold">
-                  {current.credito}
-                </p>
-                <p className="font-display text-lg md:text-xl text-western-cream mt-2">
-                  {current.titulo}
-                </p>
-                <p className="text-western-cream/80 text-sm mt-2 leading-relaxed max-w-3xl">
+              <div className="px-5 md:px-8 pt-5 pb-6 bg-western-green-deep">
+                <p className={EYEBROW_DARK}>{current.credito}</p>
+                <h3 className="display-md text-western-cream mt-2">{current.titulo}</h3>
+                <p className="font-sans text-[17px] leading-[1.6] text-western-cream/85 mt-3 max-w-3xl">
                   {current.story}
                 </p>
                 {current.tipo === "video" && !current.mediaUrl && (
-                  <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold/70">
-                    Vídeo em breve
+                  <p className="mt-4 font-sans text-[14px] text-western-cream/75">
+                    Vídeo em breve.
                   </p>
                 )}
               </div>
 
+              {/* Ícone sozinho só em X/fechar e setas — alvo de toque ≥48px. */}
               <button
                 onClick={close}
                 aria-label="Fechar"
-                className="absolute top-[max(0.75rem,env(safe-area-inset-top))] right-3 h-11 w-11 flex items-center justify-center bg-black/75 text-western-cream hover:bg-black/90 transition-colors rounded-full z-10"
+                className="tap-target absolute top-[max(0.75rem,env(safe-area-inset-top))] right-3 flex items-center justify-center bg-western-green-deep/85 text-western-cream hover:bg-western-green-deep transition-colors rounded-full z-10"
               >
-                <X className="h-5 w-5" />
+                <X className="h-6 w-6" strokeWidth={1.75} />
               </button>
               <button
                 onClick={prev}
                 aria-label="Anterior"
-                className="absolute top-1/2 -translate-y-1/2 left-3 h-11 w-11 flex items-center justify-center bg-black/60 text-western-cream hover:bg-black/85 transition-colors rounded-full"
+                className="tap-target absolute top-1/2 -translate-y-1/2 left-3 flex items-center justify-center bg-western-green-deep/75 text-western-cream hover:bg-western-green-deep transition-colors rounded-full"
               >
-                <ChevronLeft className="h-6 w-6" />
+                <ChevronLeft className="h-6 w-6" strokeWidth={1.75} />
               </button>
               <button
                 onClick={next}
                 aria-label="Próxima"
-                className="absolute top-1/2 -translate-y-1/2 right-3 h-11 w-11 flex items-center justify-center bg-black/60 text-western-cream hover:bg-black/85 transition-colors rounded-full"
+                className="tap-target absolute top-1/2 -translate-y-1/2 right-3 flex items-center justify-center bg-western-green-deep/75 text-western-cream hover:bg-western-green-deep transition-colors rounded-full"
               >
-                <ChevronRight className="h-6 w-6" />
+                <ChevronRight className="h-6 w-6" strokeWidth={1.75} />
               </button>
             </div>
           )}

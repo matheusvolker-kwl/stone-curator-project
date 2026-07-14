@@ -14,6 +14,9 @@ interface Props {
   readOnly?: boolean;
 }
 
+/* DS V3: campo de 52px, cantos 10px, texto 16px (mínimo de UI), fundo claro e
+ * quente. Mensagens de erro e sugestão em sans 14px — nunca mono, nunca 10px. */
+
 export default function EmailInput({
   value, onChange, onBlur, id, name, placeholder, required, error, autoComplete, readOnly,
 }: Props) {
@@ -47,12 +50,12 @@ export default function EmailInput({
         spellCheck={false}
         aria-invalid={!!error}
         aria-describedby={describedBy}
-        className={`h-12 w-full bg-transparent border px-3 rounded-none text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none transition-colors ${
+        className={`h-[52px] w-full rounded-[10px] border-[1.5px] bg-western-paper px-4 font-sans text-[16px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 focus:outline-none transition-colors ${
           readOnly ? "opacity-70 cursor-not-allowed " : ""
         }${
           error
-            ? "border-red-700/60"
-            : "border-western-stone-warm/30 focus:border-western-gold"
+            ? "border-[#B3372E]"
+            : "border-western-border-strong focus:border-western-green-deep"
         }`}
       />
       {suggestion && (
@@ -62,13 +65,17 @@ export default function EmailInput({
             onChange(suggestion);
             setSuggestion(null);
           }}
-          className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-western-gold hover:text-western-green-deep transition-colors"
+          className="mt-2 inline-flex min-h-[48px] items-center font-sans text-[14px] font-semibold normal-case tracking-normal text-western-green-deep hover:text-western-cta transition-colors"
         >
-          Você quis dizer <span className="underline">{suggestion}</span>?
+          Você quis dizer&nbsp;
+          <span className="underline underline-offset-4 decoration-western-bronze">{suggestion}</span>?
         </button>
       )}
       {error && (
-        <p id={describedBy} className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">
+        <p
+          id={describedBy}
+          className="mt-2 font-sans text-[14px] font-semibold normal-case tracking-normal leading-snug text-[#B3372E]"
+        >
           {error}
         </p>
       )}

@@ -1,15 +1,26 @@
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
-import { ShoppingBag, User, Menu, X, Search, ShieldCheck, LogOut, Heart } from "lucide-react";
+import {
+  ShoppingBag,
+  User,
+  Menu,
+  X,
+  Search,
+  ShieldCheck,
+  LogOut,
+  Heart,
+  ChevronRight,
+  MessageCircle,
+} from "lucide-react";
 import { useWishlist } from "@/hooks/useWishlist";
 import logoVerde from "@/assets/logo-horizontal-verde.png";
-import logoBege from "@/assets/logo-horizontal-bege.png";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/datasource";
 import { cdnImg, formatBRL } from "@/lib/catalog/client";
+import { BUSINESS } from "@/config/business";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,18 +30,28 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 /**
- * Nav = "menu enxuto de entradas de intenção" do kit de design aprovado.
- * O nav antigo (8 itens, um deles "Guia de composição") somava ~1.330px e
- * estourava o container de 1.200px em 1280 — a busca sangrava pra fora da tela.
- * Sobre/Contato/FAQ vivem no rodapé e no menu lateral (como no kit).
+ * DS V3 — SHELL.
+ * Header de duas fileiras (como o kit `loja-a-vitrine/shell.jsx`):
+ *   fileira 1 = marca + ações (buscar / conta / orçamento)
+ *   fileira 2 = "menu enxuto de 6 entradas de intenção" (só ≥lg)
+ *
+ * Foi assim que o estouro de 1280px morreu: nav, busca e ícones não disputam
+ * mais a mesma linha de 1.200px. Nav = 16px, peso 500, sentence case
+ * (o mono 12px caixa-alta com tracking largo era do design antigo).
+ * Tudo o que não é intenção de compra (Conjuntos, Western Box, institucional)
+ * vive no drawer "Menu" — disponível no desktop e no mobile.
  */
-const nav = [
+const NAV_INTENTS = [
   { to: "/linhas", label: "Linhas" },
-  { to: "/conjuntos", label: "Conjuntos" },
+  { to: "/produtos", label: "Catálogo" },
   { to: "/guia-de-composicao", label: "Guia" },
   { to: "/inspiracoes", label: "Inspirações" },
-  { to: "/western-box", label: "Amostras" },
+  { to: "/contrate-a-western", label: "Para sua casa" },
 ];
+
+/* Ação de intenção primária. Bronze (não dourado chapado): sobre marfim o
+ * dourado não bate AA. O verde fica reservado ao CTA de compra. */
+const PARTNER_INTENT = { to: "/parceiro/cadastro", label: "Seja parceiro" };
 
 export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   const items = useCartStore((s) => s.items);
@@ -174,12 +195,10 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
       <ul
         id={`${idPrefix}search-suggestions`}
         role="listbox"
-        className="bg-white border border-western-stone-warm/25 shadow-lg max-h-[70vh] overflow-y-auto"
+        className="bg-white border border-western-border-soft rounded-[10px] shadow-lg max-h-[60vh] overflow-y-auto overflow-hidden"
       >
         {suggestions.linhas.length > 0 && (
-          <li className="px-3 pt-3 pb-1 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70">
-            Linhas
-          </li>
+          <li className="text-eyebrow px-4 pt-4 pb-2">Linhas</li>
         )}
         {suggestions.linhas.map((c) => {
           idx += 1;
@@ -196,11 +215,11 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 goToItem({ kind: "linha", handle: c.handle });
               }}
               onMouseEnter={() => setActiveIndex(i)}
-              className={`flex items-center gap-3 px-3 py-2 cursor-pointer ${
-                active ? "bg-western-gold/10" : "hover:bg-western-gold/10"
+              className={`flex items-center gap-3 px-4 min-h-[56px] py-2 cursor-pointer transition-colors ${
+                active ? "bg-western-paper" : "hover:bg-western-paper"
               }`}
             >
-              <div className="h-10 w-10 flex-shrink-0 bg-western-paper overflow-hidden">
+              <div className="h-11 w-11 flex-shrink-0 bg-western-paper rounded-[6px] overflow-hidden">
                 {c.image?.url && (
                   <img
                     src={cdnImg(c.image.url, 80)}
@@ -210,14 +229,14 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                   />
                 )}
               </div>
-              <span className="text-sm text-western-green-deep truncate">{c.title}</span>
+              <span className="text-[16px] font-medium text-western-green-deep truncate">
+                {c.title}
+              </span>
             </li>
           );
         })}
         {suggestions.produtos.length > 0 && (
-          <li className="px-3 pt-3 pb-1 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70">
-            Produtos
-          </li>
+          <li className="text-eyebrow px-4 pt-4 pb-2">Peças</li>
         )}
         {suggestions.produtos.map((p) => {
           idx += 1;
@@ -237,11 +256,11 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 goToItem({ kind: "produto", handle: node.handle });
               }}
               onMouseEnter={() => setActiveIndex(i)}
-              className={`flex items-center gap-3 px-3 py-2 cursor-pointer ${
-                active ? "bg-western-gold/10" : "hover:bg-western-gold/10"
+              className={`flex items-center gap-3 px-4 min-h-[56px] py-2 cursor-pointer transition-colors ${
+                active ? "bg-western-paper" : "hover:bg-western-paper"
               }`}
             >
-              <div className="h-10 w-10 flex-shrink-0 bg-western-paper overflow-hidden">
+              <div className="h-11 w-11 flex-shrink-0 bg-western-paper rounded-[6px] overflow-hidden">
                 {img?.url && (
                   <img
                     src={cdnImg(img.url, 80)}
@@ -252,9 +271,11 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-western-green-deep truncate">{node.title}</p>
+                <p className="text-[16px] font-medium text-western-green-deep truncate">
+                  {node.title}
+                </p>
                 {price && isApproved && (
-                  <p className="text-[11px] font-mono text-western-stone-warm">
+                  <p className="text-[14px] tabular-nums text-western-stone-warm">
                     {formatBRL(price.amount, price.currencyCode)}
                   </p>
                 )}
@@ -266,87 +287,116 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
     );
   };
 
+  /* Ação do header: ícone + rótulo (público 40+ não decifra ícone mudo).
+     56x48 mínimo — alvo de toque do DS. */
+  const actionCls =
+    "relative inline-flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 rounded-[6px] text-[14px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors";
+
+  const navLinkCls = ({ isActive }: { isActive: boolean }) =>
+    `inline-flex items-center min-h-[48px] px-3 xl:px-3.5 text-[16px] font-medium whitespace-nowrap border-b-2 transition-colors ${
+      isActive
+        ? "border-western-gold text-western-green-deep font-semibold"
+        : "border-transparent text-western-green-deep hover:border-western-gold"
+    }`;
+
+  /* Linha do drawer — 56px de alvo, hairline, chevron. */
+  const rowCls =
+    "flex items-center justify-between gap-3 w-full min-h-[56px] py-2 text-left border-b border-western-border-soft text-[17px] font-medium text-western-green-deep hover:text-western-cta transition-colors";
+
+  const drawerLink = (to: string, label: string, sub?: string) => (
+    <Link key={`${to}-${label}`} to={to} className={rowCls} onClick={() => setMenuOpen(false)}>
+      <span>
+        {label}
+        {sub && (
+          <span className="block text-[14px] font-normal text-western-stone-warm">{sub}</span>
+        )}
+      </span>
+      <ChevronRight className="h-5 w-5 shrink-0 text-western-border-strong" />
+    </Link>
+  );
+
+  const drawerButton = (label: string, onClick: () => void, sub?: string) => (
+    <button
+      type="button"
+      className={rowCls}
+      onClick={() => {
+        setMenuOpen(false);
+        onClick();
+      }}
+    >
+      <span>
+        {label}
+        {sub && (
+          <span className="block text-[14px] font-normal text-western-stone-warm">{sub}</span>
+        )}
+      </span>
+      <ChevronRight className="h-5 w-5 shrink-0 text-western-border-strong" />
+    </button>
+  );
+
   return (
     <header
-      className={`sticky top-0 z-40 transition-shadow duration-300 bg-western-ivory border-b border-western-stone-warm/15 ${
-        scrolled ? "shadow-[0_4px_20px_-12px_rgba(15,40,24,0.18)]" : ""
+      className={`sticky top-0 z-40 transition-shadow duration-300 bg-western-ivory border-b border-western-border-soft ${
+        scrolled ? "shadow-[0_6px_24px_-16px_rgba(15,41,24,0.28)]" : ""
       }`}
     >
-      <div className="container-western flex items-center gap-4 lg:gap-8 py-3 lg:py-4">
-        {/* Hamburger mobile */}
+      {/* Fileira 1 — marca + ações */}
+      <div className="container-western flex items-center gap-2 lg:gap-4 h-16 lg:h-20">
         <button
           onClick={() => setMenuOpen(true)}
           aria-label="Abrir menu"
-          className="lg:hidden -ml-2 p-2 text-western-green-deep hover:text-western-gold transition-colors"
+          className={`lg:hidden -ml-2 ${actionCls}`}
         >
-          <Menu className="h-5 w-5" />
+          <Menu className="h-6 w-6" strokeWidth={1.75} />
+          Menu
         </button>
 
         <Link to="/" aria-label="Western — Início" className="flex-shrink-0">
-          <img src={logoVerde} alt="Western" className="h-12 lg:h-14 w-auto" />
+          <img src={logoVerde} alt="Western" className="h-9 lg:h-12 w-auto" />
         </Link>
 
-        {/* Nav desktop */}
-        <nav className="hidden lg:flex items-center gap-7 xl:gap-9">
-          {nav.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `link-underline font-mono text-xs uppercase tracking-[0.22em] whitespace-nowrap transition-colors ${
-                  isActive
-                    ? "text-western-gold"
-                    : "text-western-green-deep hover:text-western-gold"
-                }`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
+        <div className="ml-auto flex items-center gap-1 lg:gap-2">
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            aria-label="Buscar no catálogo"
+            className={actionCls}
+          >
+            <Search className="h-6 w-6" strokeWidth={1.75} />
+            Buscar
+          </button>
 
-        {/* Busca — ícone em qualquer largura; abre o painel de busca (mesma UX
-            do mobile). O input inline não cabia junto do nav em 1280px. */}
-        <button
-          type="button"
-          onClick={() => setSearchOpen(true)}
-          aria-label="Buscar"
-          className="ml-auto p-2 text-western-green-deep hover:text-western-gold transition-colors"
-        >
-          <Search className="h-5 w-5" />
-        </button>
-
-        <div className="flex items-center gap-1 lg:gap-3">
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button
-                  aria-label="Minha conta"
-                  className="hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors"
-                >
-                  <User className="h-4 w-4" />
-                  <span className="max-w-[140px] truncate normal-case tracking-normal">
-                    {empresa || user?.email?.split("@")[0] || "Conta"}
-                  </span>
+                <button aria-label="Minha conta" className={`hidden lg:inline-flex ${actionCls}`}>
+                  <User className="h-6 w-6" strokeWidth={1.75} />
+                  <span className="max-w-[130px] truncate">{empresa || user?.email?.split("@")[0] || "Conta"}</span>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem onClick={() => navigate("/minha-conta")}>
+              <DropdownMenuContent align="end" className="w-60">
+                <DropdownMenuItem className="text-[16px] py-2.5" onClick={() => navigate("/minha-conta")}>
                   <User className="h-4 w-4 mr-2" /> Minha conta
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/minha-conta/favoritos")}>
+                <DropdownMenuItem
+                  className="text-[16px] py-2.5"
+                  onClick={() => navigate("/minha-conta/favoritos")}
+                >
                   <Heart className="h-4 w-4 mr-2" /> Favoritos
                   {wishCount > 0 && (
-                    <span className="ml-auto font-mono text-[10px] text-western-stone-warm">{wishCount}</span>
+                    <span className="ml-auto text-[14px] tabular-nums text-western-cream-muted">
+                      {wishCount}
+                    </span>
                   )}
                 </DropdownMenuItem>
                 {isAdmin && (
-                  <DropdownMenuItem onClick={() => navigate("/admin")}>
+                  <DropdownMenuItem className="text-[16px] py-2.5" onClick={() => navigate("/admin")}>
                     <ShieldCheck className="h-4 w-4 mr-2" /> Painel admin
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
+                  className="text-[16px] py-2.5"
                   onClick={async () => {
                     await signOut();
                     navigate("/", { replace: true });
@@ -357,43 +407,22 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <>
-              <Link
-                to="/parceiro/login"
-                aria-label="Entrar"
-                className="hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors whitespace-nowrap"
-              >
-                <User className="h-4 w-4" />
-                <span>Entrar</span>
-              </Link>
-              {/* Ação primária do site (única em dourado no header): virar parceiro
-                  = é o que libera o preço de atacado. */}
-              <Link
-                to="/parceiro/cadastro"
-                className="hidden lg:inline-flex items-center h-9 px-4 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.18em] whitespace-nowrap transition-colors"
-              >
-                Seja parceiro
-              </Link>
-            </>
+            <Link to="/parceiro/login" aria-label="Entrar" className={`hidden lg:inline-flex ${actionCls}`}>
+              <User className="h-6 w-6" strokeWidth={1.75} />
+              Entrar
+            </Link>
           )}
-
 
           <button
             onClick={onCartOpen}
             aria-label="Abrir orçamento"
-            className={`relative inline-flex items-center gap-2 -mr-2 p-2 text-western-green-deep hover:text-western-gold transition-all duration-300 ${
-              pulse ? "scale-[1.04]" : "scale-100"
-            }`}
+            className={`${actionCls} -mr-2 ${pulse ? "anim-settle" : ""}`}
           >
-            <ShoppingBag className={`h-5 w-5 transition-transform ${pulse ? "animate-pulse" : ""}`} />
-            {totalItems > 0 && (
-              <span className="hidden lg:inline font-mono text-[11px] uppercase tracking-[0.22em] whitespace-nowrap">
-                Orçamento ({totalItems})
-              </span>
-            )}
+            <ShoppingBag className="h-6 w-6" strokeWidth={1.75} />
+            Orçamento
             {totalItems > 0 && (
               <span
-                className={`lg:hidden absolute top-0 right-0 bg-western-gold text-western-green-deep font-mono text-[10px] tracking-wider px-1.5 py-0.5 leading-none transition-shadow ${
+                className={`absolute top-0 right-0 min-w-[22px] h-[22px] px-1 inline-flex items-center justify-center rounded-full bg-western-cta text-western-cream text-[14px] font-bold leading-none tabular-nums transition-shadow ${
                   pulse ? "ring-2 ring-western-gold/60 ring-offset-1 ring-offset-western-ivory" : ""
                 }`}
               >
@@ -401,130 +430,185 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               </span>
             )}
           </button>
-
         </div>
       </div>
 
-      {/* Mobile drawer */}
+      {/* Fileira 2 — menu enxuto de intenções (desktop).
+          Nav em linha própria = nada disputa largura com a busca e os ícones. */}
+      <nav
+        aria-label="Navegação principal"
+        className="hidden lg:block border-t border-western-border-soft"
+      >
+        <div className="container-western flex items-center gap-1 xl:gap-2">
+          {NAV_INTENTS.map((item) => (
+            <NavLink key={item.to} to={item.to} className={navLinkCls}>
+              {item.label}
+            </NavLink>
+          ))}
+          {!session && (
+            <NavLink
+              to={PARTNER_INTENT.to}
+              className={({ isActive }) =>
+                `inline-flex items-center min-h-[48px] px-3 xl:px-3.5 text-[16px] font-semibold whitespace-nowrap text-western-bronze border-b-2 transition-colors ${
+                  isActive ? "border-western-gold" : "border-transparent hover:border-western-gold"
+                }`
+              }
+            >
+              {PARTNER_INTENT.label}
+            </NavLink>
+          )}
+          <button
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            className="ml-auto inline-flex items-center gap-2 min-h-[48px] px-3 text-[16px] font-medium text-western-green-deep border-b-2 border-transparent hover:border-western-gold transition-colors"
+          >
+            <Menu className="h-5 w-5" strokeWidth={1.75} />
+            Menu
+          </button>
+        </div>
+      </nav>
+
+      {/* Drawer — tudo que não é intenção de compra mora aqui (mobile e desktop) */}
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
         <SheetContent
           side="left"
-          className="w-[85%] max-w-sm p-0 bg-western-green-deep border-r border-western-gold/20 text-western-cream [&>button]:hidden"
+          className="w-full max-w-[440px] sm:max-w-[440px] p-0 bg-western-ivory border-r border-western-border-soft [&>button]:hidden"
         >
           <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
           <div className="flex flex-col h-full">
-            <div className="flex items-center justify-between px-6 py-5 border-b border-western-gold/15">
-              <img src={logoBege} alt="Western" className="h-12 w-auto" />
+            <div className="flex items-center justify-between px-6 py-3 border-b border-western-border-soft">
+              <img src={logoVerde} alt="Western" className="h-9 w-auto" />
               <button
                 onClick={() => setMenuOpen(false)}
                 aria-label="Fechar menu"
-                className="-mr-2 p-2 text-western-cream hover:text-western-gold-soft transition-colors"
+                className="-mr-2 inline-flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] rounded-[6px] text-[14px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors"
               >
-                <X className="h-5 w-5" />
+                <X className="h-6 w-6" strokeWidth={1.75} />
+                Fechar
               </button>
             </div>
-            <nav className="flex-1 min-h-0 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] px-6 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] flex flex-col gap-1">
-              <p className="text-eyebrow mb-5 text-western-cream-muted">Catálogo</p>
-              {nav.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={({ isActive }) =>
-                    `font-display text-2xl py-3 transition-colors ${
-                      isActive
-                        ? "text-western-gold-soft"
-                        : "text-western-cream hover:text-western-gold-soft"
-                    }`
-                  }
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-              <div className="h-px bg-western-gold/15 my-6" />
 
-              <p className="text-eyebrow mb-3 text-western-cream-muted">Parceiro</p>
+            <nav className="flex-1 min-h-0 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] px-6 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
+              <p className="text-eyebrow mt-6 mb-1">Comprar</p>
+              {drawerLink("/linhas", "Todas as linhas", "O catálogo por coleção")}
+              {drawerLink("/produtos", "Catálogo completo", "Todas as peças, com filtros")}
+              {drawerLink("/conjuntos", "Conjuntos", "Kits prontos por tipo de projeto")}
+              {drawerLink("/western-box", "Western Box", "Amostras dos acabamentos")}
+              {drawerButton("Meu orçamento", onCartOpen, totalItems > 0 ? `${totalItems} ${totalItems === 1 ? "peça" : "peças"}` : undefined)}
+
+              <p className="text-eyebrow mt-7 mb-1">Descobrir</p>
+              {drawerLink("/guia-de-composicao", "Guia de composição", "Monte seu projeto em 3 passos")}
+              {drawerLink("/inspiracoes", "Inspirações", "Obras e projetos reais")}
+              {drawerLink("/contrate-a-western", "Para sua casa", "Projeto e execução com a Western")}
+              {drawerLink("/por-que-western", "Por que Western", "A pedra com ~10% do peso")}
+              {drawerLink("/sobre", "Sobre o ateliê", `Cajamar/SP · desde ${BUSINESS.fundadaEm}`)}
+
+              <p className="text-eyebrow mt-7 mb-1">Parceria</p>
               {session ? (
                 <>
-                  <Link
-                    to="/minha-conta"
-                    className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
-                  >
-                    <User className="h-4 w-4" /> Minha conta
-                  </Link>
-                  <Link
-                    to="/minha-conta/favoritos"
-                    className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
-                  >
-                    <Heart className="h-4 w-4" /> Favoritos {wishCount > 0 && <span className="text-western-gold-soft">({wishCount})</span>}
-                  </Link>
-                  {isAdmin && (
-                    <Link
-                      to="/admin"
-                      className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
-                    >
-                      <ShieldCheck className="h-4 w-4" /> Painel admin
-                    </Link>
+                  {drawerLink("/minha-conta", "Minha conta")}
+                  {drawerLink(
+                    "/minha-conta/favoritos",
+                    "Favoritos",
+                    wishCount > 0 ? `${wishCount} ${wishCount === 1 ? "peça salva" : "peças salvas"}` : undefined,
                   )}
+                  {isAdmin && drawerLink("/admin", "Painel admin")}
                   <button
+                    type="button"
                     onClick={async () => {
+                      setMenuOpen(false);
                       await signOut();
                       navigate("/", { replace: true });
                     }}
-                    className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors text-left"
+                    className={rowCls}
                   >
-                    <LogOut className="h-4 w-4" /> Sair
+                    <span>Sair</span>
+                    <LogOut className="h-5 w-5 shrink-0 text-western-border-strong" />
                   </button>
                 </>
               ) : (
                 <>
-                  <Link
-                    to="/parceiro/login"
-                    className="flex items-center gap-3 py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
-                  >
-                    <User className="h-4 w-4" /> Acessar conta
-                  </Link>
-                  <Link
-                    to="/parceiro/cadastro"
-                    className="py-3 font-mono text-xs uppercase tracking-[0.22em] text-western-cream hover:text-western-gold-soft transition-colors"
-                  >
-                    · Solicitar acesso B2B
-                  </Link>
+                  {drawerLink("/parceiro/login", "Acessar conta", "Já sou parceiro")}
+                  {drawerLink("/parceiro/cadastro", "Seja parceiro", "Cadastro com CNPJ · libera o preço de parceiro")}
                 </>
+              )}
+              {drawerLink("/contrate-a-western", "Contrate a Western", "Produção, execução e projeto 3D")}
+
+              <p className="text-eyebrow mt-7 mb-1">Ajuda</p>
+              <a
+                href={`https://wa.me/${BUSINESS.whatsappFabrica}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={rowCls}
+                onClick={() => setMenuOpen(false)}
+              >
+                <span>
+                  Falar com o ateliê
+                  <span className="block text-[14px] font-normal text-western-stone-warm">
+                    WhatsApp {BUSINESS.whatsappLabel}
+                  </span>
+                </span>
+                <MessageCircle className="h-5 w-5 shrink-0 text-western-cta" strokeWidth={1.75} />
+              </a>
+              {drawerLink("/faq", "Perguntas frequentes")}
+              {drawerLink("/contato", "Contato")}
+              {drawerLink("/politica-comercial", "Política comercial")}
+
+              {!session && (
+                <Link
+                  to="/parceiro/cadastro"
+                  onClick={() => setMenuOpen(false)}
+                  className="btn-primary w-full mt-8"
+                >
+                  Solicitar acesso de parceiro
+                </Link>
               )}
             </nav>
           </div>
         </SheetContent>
       </Sheet>
-      {/* Sheet de busca mobile */}
+
+      {/* Busca — painel superior (mesma UX em qualquer largura) */}
       <Sheet open={searchOpen} onOpenChange={setSearchOpen}>
-        <SheetContent side="top" className="bg-western-ivory border-b border-western-stone-warm/15 pt-8 pb-6">
+        <SheetContent
+          side="top"
+          className="bg-western-ivory border-b border-western-border-soft pt-8 pb-7"
+        >
           <SheetTitle className="text-eyebrow mb-3">Buscar no catálogo</SheetTitle>
-          <form onSubmit={handleSearch} className="flex items-center gap-2 px-3 h-12 border border-western-stone-warm/30 bg-white focus-within:border-western-gold transition-colors">
-            <Search className="h-4 w-4 text-western-stone-warm flex-shrink-0" />
+          <form
+            onSubmit={handleSearch}
+            className="flex items-center gap-3 px-4 h-[52px] rounded-[10px] border-[1.5px] border-western-border-strong bg-white focus-within:border-western-cta transition-colors"
+          >
+            <Search className="h-5 w-5 text-western-stone-warm flex-shrink-0" strokeWidth={1.75} />
             <input
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onFocus={handleSuggestFocus}
+              onBlur={handleSuggestBlur}
               onKeyDown={handleSearchKeyDown}
               type="search"
               placeholder="Buscar linha, peça, código…"
-              className="flex-1 bg-transparent outline-none text-base text-western-green-deep placeholder:text-western-stone-warm/60"
+              className="flex-1 min-w-0 bg-transparent outline-none text-[16px] text-western-green-deep placeholder:text-western-stone-warm/70"
               role="combobox"
               aria-expanded={suggestOpen}
               aria-controls="m-search-suggestions"
               aria-autocomplete="list"
-              aria-activedescendant={
-                activeIndex >= 0 ? `m-search-opt-${activeIndex}` : undefined
-              }
+              aria-activedescendant={activeIndex >= 0 ? `m-search-opt-${activeIndex}` : undefined}
             />
             {query && (
-              <button type="button" onClick={() => setQuery("")} aria-label="Limpar" className="text-western-stone-warm hover:text-western-green-deep">
-                <X className="h-4 w-4" />
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                aria-label="Limpar busca"
+                className="tap-target -mr-2 inline-flex items-center justify-center text-western-stone-warm hover:text-western-green-deep transition-colors"
+              >
+                <X className="h-5 w-5" strokeWidth={1.75} />
               </button>
             )}
           </form>
           <div className="mt-3">{renderSuggestions("m-")}</div>
-          <p className="text-spec text-western-stone-warm mt-3">Pressione Enter para buscar.</p>
+          <p className="text-meta mt-3">Pressione Enter para buscar em todo o catálogo.</p>
         </SheetContent>
       </Sheet>
     </header>

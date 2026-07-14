@@ -31,7 +31,6 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
     : pecas.slice(0, 4).map((p) => ({ nome: p.nome, qty: p.qty }));
   const extras = Math.max(0, distintas - 4);
 
-
   // Preço: soma REAL do manifesto (peça × qty, catálogo Woo) para parceiro
   // aprovado; fallbacks: produto do conjunto no Woo → preço do brief.
   // Visitante nunca vê número — GatedPrice mostra o chip do gate B2B.
@@ -72,68 +71,58 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
         ? precoShopify
         : conjunto.preco;
 
+  const totalPecas = real ? real.reduce((s, r) => s + r.qty, 0) : getPecaCount(nivel);
 
   return (
     <article
       className={cn(
-        "relative bg-white flex flex-col transition-all duration-500 group",
+        "relative h-full bg-white rounded-[16px] flex flex-col overflow-hidden transition-shadow duration-300",
         highlight
-          ? "shadow-[0_44px_64px_-32px_hsl(var(--western-stone-dark)/0.5)] -translate-y-2"
-          : "shadow-[0_24px_44px_-30px_hsl(var(--western-stone-dark)/0.35)] hover:shadow-[0_36px_56px_-32px_hsl(var(--western-stone-dark)/0.45)] hover:-translate-y-1"
+          ? "border-2 border-western-gold shadow-[0_28px_48px_-30px_hsl(var(--western-stone-dark)/0.35)]"
+          : "border border-western-border-soft shadow-[0_18px_36px_-30px_hsl(var(--western-stone-dark)/0.3)] hover:shadow-[0_26px_44px_-30px_hsl(var(--western-stone-dark)/0.38)]"
       )}
     >
       {highlight && (
-        <div
-          aria-hidden
-          className="absolute -top-3 left-7 z-10 px-3 py-2 bg-western-gold text-western-green-deep font-mono text-[10px] uppercase tracking-[0.22em] shadow-[0_10px_18px_-10px_hsl(var(--western-stone-dark)/0.45)]"
-        >
+        <p className="absolute top-4 left-4 z-10 inline-flex items-center rounded-[6px] bg-western-gold px-3 py-1.5 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-green-deep">
           Mais especificado
-        </div>
+        </p>
       )}
 
-      <div className="aspect-[4/3] w-full relative overflow-hidden bg-western-paper">
+      <div className="aspect-[4/3] w-full overflow-hidden bg-western-paper">
         <img
           src={image}
           alt=""
           aria-hidden
           loading="lazy"
           decoding="async"
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(180deg, transparent 50%, hsl(var(--western-green-deep) / 0.45) 100%)",
-          }}
+          className="w-full h-full object-cover"
         />
       </div>
 
-      <div className="p-7 md:p-8 flex flex-col flex-1 border-t border-western-stone-warm/10 relative">
-        <div className="eyebrow-bar mb-3">
-          {nivelLabelMap[nivel]} · {real ? real.reduce((s, r) => s + r.qty, 0) : getPecaCount(nivel)} peças
-        </div>
-        <h3 className="font-display text-[26px] md:text-[28px] text-western-green-deep leading-[1.1] mb-3">
-          {conjunto.nome}
-        </h3>
-        <p className="font-display italic text-[15px] text-western-stone-warm leading-relaxed mb-6">
-          {nivelMeta[nivel].detalhe}
+      <div className="p-6 md:p-7 flex flex-col flex-1 border-t border-western-border-soft">
+        <p className="text-eyebrow mb-3">
+          {nivelLabelMap[nivel]} · {totalPecas} peças
         </p>
 
-        <div className="border-t border-western-stone-warm/15 pt-5 mb-6">
+        <h3 className="display-md text-western-green-deep mb-3">{conjunto.nome}</h3>
+
+        <p className="text-body mb-6">{nivelMeta[nivel].detalhe}</p>
+
+        <div className="border-t border-western-border-soft pt-5 mb-6">
           <ul className="space-y-2">
             {resumo.map((r, i) => (
               <li
                 key={i}
-                className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-western-stone-warm"
+                className="flex items-baseline justify-between gap-3 font-sans text-[16px] text-western-stone-warm"
               >
-                <span className="truncate pr-2">{r.nome}</span>
-                <span className="text-western-green-deep">{r.qty}×</span>
+                <span className="truncate">{r.nome}</span>
+                <span className="font-semibold tabular-nums text-western-green-deep flex-shrink-0">
+                  {r.qty}×
+                </span>
               </li>
             ))}
             {extras > 0 && (
-              <li className="pt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80 italic">
+              <li className="pt-1 font-sans text-[16px] text-western-stone-warm">
                 + {extras} outra{extras > 1 ? "s" : ""} peça{extras > 1 ? "s" : ""}
               </li>
             )}
@@ -142,15 +131,11 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
 
         <div className="mt-auto">
           <div className="mb-5">
-            <GatedPrice
-              amount={preco}
-              variant="block"
-              className="font-display text-[34px] font-medium text-western-green-deep leading-none"
-            />
+            <GatedPrice amount={preco} variant="block" className="text-price" />
           </div>
 
-          <Link to={conjuntoHref ?? `/conjuntos/${conjunto.handle}`} className="btn-dark w-full">
-            Ver esta composição <ArrowRight className="h-4 w-4" />
+          <Link to={conjuntoHref ?? `/conjuntos/${conjunto.handle}`} className="btn-primary w-full">
+            Ver esta composição <ArrowRight className="h-5 w-5" aria-hidden />
           </Link>
         </div>
       </div>

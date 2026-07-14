@@ -46,8 +46,17 @@ const SKETCHUP_INCLUI = [
   "Compatível com SketchUp Pro e Free, versões 2020+",
 ];
 
+/* DS V3: gatilho do acordeão é UI, não display — sans semibold 20px, alvo 56px.
+ * O mono 12px caixa-alta era do design antigo. */
 const TRIGGER =
-  "font-mono text-[12px] md:text-[13px] uppercase tracking-[0.22em] text-western-green-deep py-5 hover:no-underline";
+  "font-sans text-[18px] md:text-[20px] font-semibold text-western-green-deep " +
+  "py-5 min-h-[56px] hover:no-underline";
+
+const ITEM = "border-western-border-soft";
+
+/* Linha de ficha (dt/dd) — 16px mínimo de UI, hairline suave. */
+const ROW =
+  "flex justify-between gap-6 border-b border-western-border-soft py-3.5 font-sans text-[16px]";
 
 export default function ProductTabs({
   parsed,
@@ -62,34 +71,26 @@ export default function ProductTabs({
   const isProductSpecific = !!modelo3dValue?.trim();
 
   return (
-    <section className="surface-paper border-t border-western-stone-warm/15 py-12 md:py-16">
+    <section className="surface-paper border-t border-western-border-soft py-14 md:py-20">
       <div className="container-western">
         <Accordion
           type="multiple"
           defaultValue={["descricao", "specs", "entrega"]}
-          className="w-full max-w-5xl border-t border-western-stone-warm/20"
+          className="w-full max-w-5xl border-t border-western-border-soft"
         >
           {/* DESCRIÇÃO */}
-          <AccordionItem value="descricao" className="border-western-stone-warm/20">
+          <AccordionItem value="descricao" className={ITEM}>
             <AccordionTrigger className={TRIGGER}>Descrição</AccordionTrigger>
-            <AccordionContent className="pt-2 pb-8">
+            <AccordionContent className="pt-2 pb-10">
               <div className="grid md:grid-cols-12 gap-10 lg:gap-16">
-                <div className="md:col-span-7 space-y-6">
+                <div className="md:col-span-7 space-y-5">
                   <p className="text-section-label mb-2">Sobre a peça</p>
-                  {parsed.lead && (
-                    <p className="font-sans text-[16px] leading-relaxed text-western-stone-warm">
-                      {parsed.lead}
-                    </p>
-                  )}
-                  {parsed.intro && (
-                    <p className="font-sans text-[15px] leading-relaxed text-western-stone-warm">
-                      {parsed.intro}
-                    </p>
-                  )}
+                  {parsed.lead && <p className="text-body">{parsed.lead}</p>}
+                  {parsed.intro && <p className="text-body">{parsed.intro}</p>}
                   {parsed.aplicacoes.length > 0 && (
                     <div className="pt-4">
                       <p className="text-sublabel mb-3">Aplicações</p>
-                      <p className="font-sans text-[15px] text-western-green-deep">
+                      <p className="font-sans text-[16px] text-western-green-deep">
                         {parsed.aplicacoes.map((a, i) => (
                           <span key={a}>
                             {a}
@@ -108,10 +109,10 @@ export default function ProductTabs({
                   <ul className="space-y-5">
                     {COMPOSICAO.map((item) => (
                       <li key={item.label}>
-                        <p className="font-sans font-medium text-[14px] text-western-green-deep mb-1">
+                        <p className="font-sans font-semibold text-[16px] text-western-green-deep mb-1">
                           {item.label}
                         </p>
-                        <p className="font-sans text-[13.5px] leading-relaxed text-western-stone-warm">
+                        <p className="font-sans text-[16px] leading-relaxed text-western-stone-warm">
                           {item.text}
                         </p>
                       </li>
@@ -123,9 +124,9 @@ export default function ProductTabs({
           </AccordionItem>
 
           {/* ESPECIFICAÇÕES */}
-          <AccordionItem value="specs" className="border-western-stone-warm/20">
+          <AccordionItem value="specs" className={ITEM}>
             <AccordionTrigger className={TRIGGER}>Especificações</AccordionTrigger>
-            <AccordionContent className="pt-2 pb-8">
+            <AccordionContent className="pt-2 pb-10">
               <div className="grid md:grid-cols-12 gap-10 lg:gap-16">
                 <div className="md:col-span-5">
                   <HardFactsCard pesoKg={pesoKg} dimensoes={dimsStr} variant="card" />
@@ -135,19 +136,19 @@ export default function ProductTabs({
                   {dims && (
                     <div>
                       <p className="text-section-label mb-4">Dimensões</p>
-                      <div className="grid grid-cols-3 gap-px bg-western-stone-warm/15 border border-western-stone-warm/15">
+                      <div className="grid grid-cols-3 gap-px overflow-hidden rounded-[10px] border border-western-border-soft bg-western-border-soft">
                         {[
                           { rotulo: "Comprimento", sigla: "C", valor: dims.c },
                           { rotulo: "Largura", sigla: "L", valor: dims.l },
                           { rotulo: "Altura", sigla: "A", valor: dims.a },
                         ].map((d) => (
-                          <div key={d.sigla} className="bg-western-cream p-4 text-center">
+                          <div key={d.sigla} className="bg-western-cream p-5 text-center">
                             <p className="text-sublabel mb-2">
                               {d.sigla} · {d.rotulo}
                             </p>
-                            <p className="font-sans font-semibold text-xl text-western-green-deep tabular-nums">
+                            <p className="font-sans font-bold text-[26px] text-western-green-deep tabular-nums leading-none">
                               {d.valor || "—"}
-                              <span className="font-sans font-normal text-[11px] text-western-stone-warm/70 ml-1">
+                              <span className="font-sans font-normal text-[14px] text-western-stone-warm ml-1">
                                 cm
                               </span>
                             </p>
@@ -168,12 +169,9 @@ export default function ProductTabs({
                       </p>
                       <dl>
                         {parsed.embalado.map((f) => (
-                          <div
-                            key={f.label}
-                            className="flex justify-between gap-4 border-b border-western-stone-warm/15 py-3 text-spec"
-                          >
+                          <div key={f.label} className={ROW}>
                             <dt className="text-western-stone-warm">{f.label}</dt>
-                            <dd className="text-western-green-deep text-right break-words">
+                            <dd className="font-semibold text-western-green-deep text-right break-words">
                               {f.value}
                             </dd>
                           </div>
@@ -187,12 +185,9 @@ export default function ProductTabs({
                       <p className="text-section-label mb-4">Ficha técnica</p>
                       <dl>
                         {fichaRows.map((f) => (
-                          <div
-                            key={f.label}
-                            className="flex justify-between gap-4 border-b border-western-stone-warm/15 py-3 text-spec"
-                          >
+                          <div key={f.label} className={ROW}>
                             <dt className="text-western-stone-warm">{f.label}</dt>
-                            <dd className="text-western-green-deep text-right break-words">
+                            <dd className="font-semibold text-western-green-deep text-right break-words">
                               {f.value}
                             </dd>
                           </div>
@@ -208,13 +203,11 @@ export default function ProductTabs({
                         {parsed.observacoes.map((o, i) => (
                           <li key={i}>
                             {o.label && (
-                              <p className="font-sans font-medium text-[13px] text-western-green-deep mb-1">
+                              <p className="font-sans font-semibold text-[16px] text-western-green-deep mb-1">
                                 {o.label}
                               </p>
                             )}
-                            <p className="font-sans text-[14px] leading-relaxed text-western-stone-warm">
-                              {o.text}
-                            </p>
+                            <p className="text-body">{o.text}</p>
                           </li>
                         ))}
                       </ul>
@@ -227,15 +220,15 @@ export default function ProductTabs({
 
           {/* MODELO 3D · SKETCHUP */}
           {!hideModelo3d && (
-            <AccordionItem value="modelo3d" className="border-western-stone-warm/20">
+            <AccordionItem value="modelo3d" className={ITEM}>
               <AccordionTrigger className={TRIGGER}>Modelo 3D</AccordionTrigger>
-              <AccordionContent className="pt-2 pb-8">
+              <AccordionContent className="pt-2 pb-10">
                 <div className="grid md:grid-cols-12 gap-10 lg:gap-16">
                   <div className="md:col-span-7 space-y-5">
-                    <h3 className="font-display text-2xl md:text-3xl text-western-green-deep leading-tight">
+                    <h3 className="display-md text-western-green-deep">
                       Modele a composição inteira antes de comprar.
                     </h3>
-                    <p className="font-sans text-[15px] leading-relaxed text-western-stone-warm max-w-[58ch]">
+                    <p className="text-body max-w-[58ch]">
                       Visualize proporções, escala e enquadramento exatos no projeto.
                       Aprove a peça com o cliente antes da produção — sem surpresa de obra,
                       sem especificação no escuro.
@@ -245,9 +238,9 @@ export default function ProductTabs({
                         href={url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 h-12 px-6 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.22em] font-semibold transition-colors"
+                        className="inline-flex w-full sm:w-auto items-center justify-center gap-2 min-h-[52px] px-6 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors"
                       >
-                        <Download className="h-4 w-4" />
+                        <Download className="h-5 w-5" aria-hidden />
                         {isProductSpecific ? "Baixar modelo 3D (.skp)" : "Abrir no 3D Warehouse"}
                       </a>
                     </div>
@@ -258,8 +251,11 @@ export default function ProductTabs({
                     <ul className="space-y-3">
                       {SKETCHUP_INCLUI.map((it) => (
                         <li key={it} className="flex gap-3 items-start">
-                          <Check className="h-4 w-4 text-western-gold mt-0.5 shrink-0" />
-                          <span className="font-sans text-[14px] leading-relaxed text-western-stone-warm">
+                          <Check
+                            className="h-5 w-5 text-western-bronze mt-0.5 shrink-0"
+                            aria-hidden
+                          />
+                          <span className="font-sans text-[16px] leading-relaxed text-western-stone-warm">
                             {it}
                           </span>
                         </li>
@@ -272,14 +268,14 @@ export default function ProductTabs({
           )}
 
           {/* ENTREGA & INSTALAÇÃO */}
-          <AccordionItem value="entrega" className="border-western-stone-warm/20">
+          <AccordionItem value="entrega" className={ITEM}>
             <AccordionTrigger className={TRIGGER}>Entrega</AccordionTrigger>
-            <AccordionContent className="pt-2 pb-8">
+            <AccordionContent className="pt-2 pb-10">
               <div className="grid md:grid-cols-12 gap-10 lg:gap-16">
                 <div className="md:col-span-7 space-y-10">
                   <div>
                     <p className="text-section-label mb-4">Produção & entrega</p>
-                    <dl className="space-y-4">
+                    <dl className="space-y-5">
                       {[
                         {
                           k: "Produção",
@@ -291,12 +287,10 @@ export default function ProductTabs({
                         },
                       ].map((row) => (
                         <div key={row.k}>
-                          <dt className="font-sans font-medium text-[13px] text-western-green-deep mb-1">
+                          <dt className="font-sans font-semibold text-[16px] text-western-green-deep mb-1">
                             {row.k}
                           </dt>
-                          <dd className="font-sans text-[14px] leading-relaxed text-western-stone-warm">
-                            {row.v}
-                          </dd>
+                          <dd className="text-body">{row.v}</dd>
                         </div>
                       ))}
                     </dl>
@@ -304,7 +298,7 @@ export default function ProductTabs({
 
                   <div>
                     <p className="text-section-label mb-4">Cuidados</p>
-                    <p className="font-sans text-[14px] leading-relaxed text-western-stone-warm max-w-[60ch]">
+                    <p className="text-body max-w-[60ch]">
                       Manutenção zero. Limpeza com pano macio levemente úmido ou jato de água.
                       Evite produtos abrasivos ou ácidos. A pintura mineral resiste a cloro de
                       piscina, intempéries e raios UV — não escama, não desbota.

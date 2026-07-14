@@ -29,7 +29,6 @@ const FOTOS = buildFotoMap();
 
 // (Logos de marcas descontinuados: renderizamos wordmark tipográfico padronizado.)
 
-
 function iniciais(nome: string): string {
   const limpo = nome.replace(/\(.*?\)/g, "").trim();
   const parts = limpo.split(/\s+/).filter(Boolean);
@@ -56,13 +55,21 @@ export default function SocialProof({
   className = "",
 }: Props) {
   const isDark = variant === "dark";
-  const eyebrowColor = isDark ? "text-western-gold-soft/85" : "text-western-gold";
+
+  /* V3: eyebrow = sans semibold 14px, tracking 0.06em. Nunca mono, nunca 10px.
+   * Sobre fundo claro a cor é bronze (.text-eyebrow); sobre o verde profundo o
+   * bronze não teria contraste, então trocamos por dourado claro. */
+  const eyebrowCls = isDark
+    ? "font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft"
+    : "text-eyebrow";
+
   const nameColor = isDark ? "text-western-cream" : "text-western-green-deep";
   const goldLine = isDark ? "bg-western-gold/50" : "bg-western-gold";
   const tileBg = isDark ? "bg-western-green-mid/40" : "bg-western-cream-muted";
   const monogramText = isDark ? "text-western-gold-soft" : "text-western-green-deep";
   const captionColor = isDark ? "text-western-cream" : "text-western-green-deep";
   const wordmarkColor = isDark ? "text-western-cream" : "text-western-green-deep";
+  const tileRing = isDark ? "ring-western-gold/25" : "ring-western-border-soft";
 
   const avatarGroups = groups.filter(
     (g) => g === "celebridades" || g === "profissionais",
@@ -72,15 +79,19 @@ export default function SocialProof({
   const tierMax = compact ? "max-w-md md:max-w-lg" : "max-w-md md:max-w-2xl";
   const tileGap = compact ? "gap-3 md:gap-4" : "gap-4 md:gap-6";
 
-
   const renderTier = (pessoas: readonly PessoaComFoto[]) => (
     <ul className={`grid grid-cols-3 ${tileGap} ${tierMax} mx-auto`}>
       {pessoas.map((c) => {
         const foto = FOTOS[c.slug];
         return (
           <li key={c.slug} className="group flex flex-col items-center">
-            <div className={`relative w-full aspect-[4/5] overflow-hidden rounded-[3px] ${tileBg} ring-1 ring-western-gold/20 group-hover:ring-western-gold/50 shadow-[0_16px_34px_-20px_rgba(0,0,0,0.65)] transition-all duration-500`}>
+            {/* Raio 10px (md do V3) — sem cantos vivos. */}
+            <div
+              className={`relative w-full aspect-[4/5] overflow-hidden rounded-[10px] ${tileBg} ring-1 ${tileRing} shadow-[0_14px_30px_-20px_rgba(15,41,24,0.45)] transition-shadow duration-300`}
+            >
               {foto ? (
+                /* Foto sempre em cor cheia: a prova é o rosto, e no celular não
+                 * existe hover para "revelar" a imagem. */
                 <img
                   src={foto}
                   alt={`Retrato de ${c.nome}`}
@@ -88,35 +99,41 @@ export default function SocialProof({
                   decoding="async"
                   width={320}
                   height={400}
-                  className="w-full h-full object-cover object-center grayscale-[35%] brightness-[0.97] group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700 ease-out motion-safe:group-hover:scale-[1.03]"
+                  className="w-full h-full object-cover object-center transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.03]"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <span className={`font-display text-3xl md:text-4xl ${monogramText}`} aria-hidden="true">{iniciais(c.nome)}</span>
+                  {/* Monograma ≥22px — único lugar onde a display cabe aqui. */}
+                  <span className={`font-display text-3xl md:text-4xl ${monogramText}`} aria-hidden="true">
+                    {iniciais(c.nome)}
+                  </span>
                 </div>
               )}
             </div>
-            <p className={`mt-3 text-center font-display text-sm md:text-base leading-tight ${captionColor}`}>{c.nome}</p>
+            {/* Nome: sans semibold 16px (UI). Nunca abaixo de 14px. */}
+            <p className={`mt-3 text-center font-sans text-[16px] font-semibold leading-snug ${captionColor}`}>
+              {c.nome}
+            </p>
           </li>
         );
       })}
     </ul>
   );
 
-  // Todas as marcas viram wordmark padronizado (sem variação de tamanho por marca).
+  /* Marcas = WORDMARK tipográfico (decisão de marca: nunca logotipo).
+   * Sans semibold, ≥16px, opacidade cheia — legibilidade não depende de hover. */
   const wordmarkFs = compact
-    ? { mobile: 15, desktop: 18 }
-    : { mobile: 16, desktop: 20 };
+    ? { mobile: 16, desktop: 18 }
+    : { mobile: 17, desktop: 20 };
   const renderMarca = (m: MarcaComLogo) => (
     <span
-      title={m.nome}
       style={{
         fontSize: `${wordmarkFs.mobile}px`,
-        lineHeight: 1,
+        lineHeight: 1.2,
         letterSpacing: "0.02em",
         ["--wm-fs-md" as string]: `${wordmarkFs.desktop}px`,
       }}
-      className={`whitespace-nowrap text-center font-display leading-none ${wordmarkColor} opacity-70 group-hover:opacity-100 transition-opacity duration-500 md:text-[length:var(--wm-fs-md)]`}
+      className={`whitespace-nowrap text-center font-sans font-semibold ${wordmarkColor} md:text-[length:var(--wm-fs-md)]`}
     >
       {m.nome}
     </span>
@@ -126,25 +143,25 @@ export default function SocialProof({
     <div className={className}>
       {(eyebrow || titulo) && (
         <div className="text-center mb-9 md:mb-12">
-          {eyebrow && <p className={`font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-4`}>{eyebrow}</p>}
-          <div className={`w-10 h-px ${goldLine} mx-auto mb-5`} />
-          {titulo && <h2 className={`font-display text-2xl md:text-[2rem] ${nameColor} leading-[1.2] max-w-2xl mx-auto`}>{titulo}</h2>}
+          {eyebrow && <p className={`${eyebrowCls} mb-4`}>{eyebrow}</p>}
+          <div className={`w-12 h-px ${goldLine} mx-auto mb-5`} />
+          {titulo && <h2 className={`display-lg ${nameColor} max-w-2xl mx-auto`}>{titulo}</h2>}
         </div>
       )}
 
       {avatarGroups.map((g) => (
         <div key={g} className={compact ? "mb-8 md:mb-9" : "mb-10 md:mb-12"}>
-          <p className={`text-center font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-5 md:mb-6`}>{SOCIAL_PROOF_LABELS[g]}</p>
+          <p className={`text-center ${eyebrowCls} mb-5 md:mb-6`}>{SOCIAL_PROOF_LABELS[g]}</p>
           {renderTier(SOCIAL_PROOF[g] as readonly PessoaComFoto[])}
         </div>
       ))}
 
       {showMarcas && (
         <div className={avatarGroups.length ? "mt-1" : ""}>
-          <p className={`text-center font-mono text-[10px] uppercase tracking-[0.28em] ${eyebrowColor} mb-6 md:mb-7`}>{SOCIAL_PROOF_LABELS.marcas}</p>
+          <p className={`text-center ${eyebrowCls} mb-6 md:mb-7`}>{SOCIAL_PROOF_LABELS.marcas}</p>
           <ul className="grid grid-cols-2 gap-x-6 gap-y-5 md:flex md:flex-wrap md:items-center md:justify-center md:gap-x-10 lg:gap-x-14 md:gap-y-6 max-w-full">
             {(SOCIAL_PROOF.marcas as readonly MarcaComLogo[]).map((m) => (
-              <li key={m.slug} className="group flex items-center justify-center">
+              <li key={m.slug} className="flex items-center justify-center">
                 {renderMarca(m)}
               </li>
             ))}

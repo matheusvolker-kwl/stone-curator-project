@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
 import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/datasource";
-import { cdnImg, cdnSrcSet, formatBRL } from "@/lib/catalog/client";
+import { cdnImg, cdnSrcSet } from "@/lib/catalog/client";
 import iconePedra from "@/assets/icone-pedra-verde.png";
 import { useMemo } from "react";
 import { ArrowRight, X } from "lucide-react";
+import ProductCard from "@/components/product/ProductCard";
 import { LINHA_COVER_OVERRIDES } from "@/lib/lineCovers";
 import { LINHA_DESCRIPTIONS } from "@/lib/lineDescriptions";
 import { linhaRank } from "@/lib/lineOrder";
@@ -56,158 +57,136 @@ export default function Linhas() {
 
   return (
     <div className="surface-ivory">
-      <div className="container-western py-20 md:py-28">
-        <div className="max-w-3xl mb-14 md:mb-20">
-          <p className="text-eyebrow mb-5">{q ? "Resultados da busca" : "Linhas de produtos"}</p>
-          <div className="w-12 h-px bg-western-gold mb-8" />
+      <div className="container-western py-12 md:py-20">
+        {/* Cabeçalho — hierarquia contida: eyebrow, display, apoio, ação */}
+        <header className="max-w-2xl mb-10 md:mb-16">
           {q ? (
             <>
-              <h1 className="font-display text-4xl md:text-5xl text-western-green-deep leading-[1.05]">
-                Resultados para <span className="italic">"{q}"</span>
+              <p className="text-eyebrow mb-4">Resultados da busca</p>
+              <h1 className="display-lg text-western-green-deep">
+                Resultados para “{q}”.
               </h1>
-              <p className="mt-6 text-western-stone-warm leading-relaxed">
+              <p className="text-body mt-5 max-w-[46ch]">
                 {isSearching
                   ? "Buscando…"
                   : totalResults === 0
                     ? "Nada encontrado. Refine o termo ou explore o catálogo completo abaixo."
-                    : `${linhas.length} ${linhas.length === 1 ? "linha" : "linhas"} · ${products.length} ${products.length === 1 ? "produto" : "produtos"}.`}
+                    : `${linhas.length} ${linhas.length === 1 ? "linha" : "linhas"} · ${products.length} ${products.length === 1 ? "peça" : "peças"}.`}
               </p>
               <button
+                type="button"
                 onClick={() => setParams(new URLSearchParams(), { replace: true })}
-                className="mt-5 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-western-gold hover:underline"
+                className="tap-target mt-4 -ml-1 inline-flex items-center gap-2 px-1 font-sans text-[16px] font-semibold text-western-green-deep transition-colors hover:text-western-bronze"
               >
-                <X className="h-3 w-3" /> Limpar busca
+                <X className="h-5 w-5" aria-hidden="true" /> Limpar busca
               </button>
             </>
           ) : (
             <>
-              <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05]">
-                Nosso catálogo completo, organizado por linhas.
+              <p className="text-eyebrow mb-4">Catálogo</p>
+              <h1 className="display-lg text-western-green-deep">
+                Todas as linhas.
               </h1>
-              <p className="mt-8 text-western-stone-warm text-lg leading-relaxed">
-                As linhas são nossas categorias permanentes do catálogo — cascatas,
-                pedras grandes, fósseis decorativos, pisadas, bordas, fontes.
-                Todas são complementares e a maioria das peças está disponível em até
-                4 acabamentos: Quartzo, Arenito, Moledo e Granito.
+              <p className="text-body mt-5 max-w-[46ch]">
+                Cada peça tem um papel na cena. Navegue por linha — ou veja o
+                catálogo inteiro.
               </p>
+              <p className="text-meta mt-3 max-w-[52ch]">
+                A maioria das peças está disponível em até 4 acabamentos:
+                Quartzo, Arenito, Moledo e Granito.
+              </p>
+
+              {/* CTA primário verde, full-width no mobile */}
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Link to="/produtos" className="btn-primary w-full sm:w-auto">
+                  Ver o catálogo inteiro
+                  <ArrowRight className="h-5 w-5" aria-hidden="true" />
+                </Link>
+                <Link to="/guia-de-composicao" className="btn-outline-forest w-full sm:w-auto">
+                  Montar no guia
+                </Link>
+              </div>
             </>
           )}
-        </div>
+        </header>
 
+        {/* Peças encontradas na busca — ProductCard mantém o preço gated */}
         {q && products.length > 0 && (
-          <div className="mb-16">
-            <p className="text-eyebrow mb-5">Produtos</p>
-            <div className="w-8 h-px bg-western-gold/50 mb-6" />
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
-              {products.map(({ node: p }) => {
-                const img = p.images?.edges?.[0]?.node;
-                const minPrice = p.priceRange?.minVariantPrice;
-                return (
-                  <Link key={p.handle} to={`/produtos/${p.handle}`} className="group block">
-                    <div className="frame-product aspect-square overflow-hidden mb-3 bg-western-stone-warm/5">
-                      {img ? (
-                        <img
-                          src={cdnImg(img.url, 600)}
-                          srcSet={cdnSrcSet(img.url, [300, 600, 900])}
-                          sizes="(min-width: 1024px) 280px, (min-width: 640px) 30vw, 45vw"
-                          alt={img.altText ?? p.title}
-                          loading="lazy"
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <img src={iconePedra} alt="" className="h-10 opacity-30" />
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="font-display text-base text-western-green-deep group-hover:text-western-gold transition-colors line-clamp-2">
-                      {p.title}
-                    </h3>
-                    {minPrice && (
-                      <p className="text-spec text-western-stone-warm mt-1">
-                        a partir de {formatBRL(parseFloat(minPrice.amount), minPrice.currencyCode)}
-                      </p>
-                    )}
-                  </Link>
-                );
-              })}
+          <section className="mb-14 md:mb-20">
+            <h2 className="text-eyebrow mb-6">Peças</h2>
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+              {products.map(({ node: p }) => (
+                <ProductCard key={p.handle} product={p} />
+              ))}
             </div>
-          </div>
+          </section>
         )}
 
-        {q && linhas.length > 0 && (
-          <p className="text-eyebrow mb-5">Linhas</p>
-        )}
-        {q && linhas.length > 0 && <div className="w-8 h-px bg-western-gold/50 mb-6" />}
+        {q && linhas.length > 0 && <h2 className="text-eyebrow mb-6">Linhas</h2>}
 
+        {/* Grid de linhas — 2 colunas já no mobile (cards compactos, foto primeiro) */}
         {loadingCollections ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="aspect-[4/3] bg-western-stone-warm/10 animate-pulse" />
+              <div
+                key={i}
+                className="aspect-[4/3] animate-pulse rounded-2xl bg-western-stone-warm/10"
+              />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
-            {!q && (
-              <Link
-                to="/produtos"
-                className="group block frame-product aspect-[4/3] overflow-hidden bg-western-green-deep text-western-paper p-8 flex flex-col justify-between transition-colors hover:bg-western-green-deep/90"
-              >
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold/90">
-                  Catálogo completo
-                </p>
-                <div>
-                  <h3 className="font-display text-3xl leading-tight text-western-paper group-hover:text-western-gold transition-colors">
-                    Ver todos os produtos
-                  </h3>
-                  <p className="text-spec text-western-paper/70 mt-3 leading-relaxed">
-                    Filtre por tamanho e peso, ordene por preço.
-                  </p>
-                  <span className="inline-flex items-center gap-1.5 mt-5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold">
-                    Abrir catálogo <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-                  </span>
-                </div>
-              </Link>
-            )}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3">
             {linhasList.map((c) => {
               const cover = LINHA_COVER_OVERRIDES[c.handle];
               const desc = LINHA_DESCRIPTIONS[c.handle] ?? c.description;
+              const count = c.productsCount ?? 0;
 
               return (
-                <Link key={c.handle} to={c.handle === "amostras" ? "/western-box" : `/linhas/${c.handle}`} className="group block">
-                  <div className="frame-product aspect-[4/3] overflow-hidden mb-5">
+                <Link
+                  key={c.handle}
+                  to={c.handle === "amostras" ? "/western-box" : `/linhas/${c.handle}`}
+                  className="group block"
+                >
+                  <div className="frame-product mb-3 aspect-[4/3] overflow-hidden rounded-2xl sm:mb-4">
                     {cover ? (
                       <img
                         src={cover.url}
-                        sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 90vw"
+                        sizes="(min-width: 1024px) 380px, 45vw"
                         alt={cover.alt}
                         loading="lazy"
                         decoding="async"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     ) : c.image ? (
                       <img
                         src={cdnImg(c.image.url, 800)}
                         srcSet={cdnSrcSet(c.image.url, [400, 800, 1200])}
-                        sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 90vw"
+                        sizes="(min-width: 1024px) 380px, 45vw"
                         alt={c.image.altText ?? c.title}
                         loading="lazy"
                         decoding="async"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-western-stone-warm/5">
-                        <img src={iconePedra} alt="" className="h-16 opacity-30" />
+                      <div className="flex h-full w-full items-center justify-center bg-western-cream">
+                        <img src={iconePedra} alt="" className="h-12 opacity-30" />
                       </div>
                     )}
                   </div>
-                  <h3 className="font-display text-2xl text-western-green-deep group-hover:text-western-gold transition-colors">
+
+                  <h2 className="font-sans text-[20px] font-semibold leading-snug text-western-green-deep transition-colors group-hover:text-western-bronze">
                     {c.title}
-                  </h3>
-                  {desc && (
-                    <p className="text-spec text-western-stone-warm mt-2 line-clamp-2">
-                      {desc}
+                  </h2>
+                  {count > 0 && (
+                    <p className="text-meta mt-1">
+                      {count} {count === 1 ? "peça" : "peças"}
                     </p>
+                  )}
+                  {/* Descrição some no mobile: mantém o card compacto (2 colunas) */}
+                  {desc && (
+                    <div className="mt-2 hidden sm:block">
+                      <p className="text-meta line-clamp-2">{desc}</p>
+                    </div>
                   )}
                 </Link>
               );
@@ -215,15 +194,27 @@ export default function Linhas() {
           </div>
         )}
 
-        <Link to="/contrate-a-western" className="group mt-14 md:mt-20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border border-western-gold/30 bg-western-green-deep px-6 py-6 md:px-10 md:py-8 text-western-cream transition-colors hover:bg-western-green-deep/90">
-          <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold-soft mb-2">Projeto residencial? Sem CNPJ?</p>
-            <p className="font-display text-xl md:text-2xl leading-tight">Conte sobre o seu projeto e receba um orçamento sob medida.</p>
+        {/* Faixa institucional — verde escuro pontual; aqui o dourado é o acento certo */}
+        <section className="surface-forest mt-14 rounded-2xl px-6 py-8 md:mt-20 md:px-10 md:py-10">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-xl">
+              <p className="mb-3 font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft">
+                Projeto residencial? Sem CNPJ?
+              </p>
+              <p className="display-md text-western-cream">
+                Conte sobre o seu projeto e receba um orçamento sob medida.
+              </p>
+            </div>
+            <Link
+              to="/contrate-a-western"
+              className="btn-gold w-full shrink-0 md:w-auto"
+            >
+              Pedir orçamento
+              <ArrowRight className="h-5 w-5" aria-hidden="true" />
+            </Link>
           </div>
-          <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-gold whitespace-nowrap">Pedir orçamento <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
-        </Link>
+        </section>
       </div>
     </div>
   );
 }
-

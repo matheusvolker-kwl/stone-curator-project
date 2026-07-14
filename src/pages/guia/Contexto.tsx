@@ -30,6 +30,13 @@ const TIPOS: Array<{ value: TipoVisual }> = [
 const STORAGE_KEY = "western-guia-contexto";
 const VALID_TIPOS: TipoVisual[] = ["piscina", "lago", "lago-hibrido", "jardim-fonte", "jardim-seco"];
 
+/**
+ * O header do guia é sticky com 80px. Ancorar uma seção no topo sem reservar
+ * espaço fazia a barra cobrir a pergunta (o input de metragem, no mobile).
+ * scroll-mt = altura do header + respiro.
+ */
+const SCROLL_ANCHOR = "scroll-mt-[104px]";
+
 function readStored(): { tipo?: TipoVisual; area?: string; acabamento?: Acabamento } {
   try {
     const raw = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
@@ -76,20 +83,19 @@ export default function GuiaContexto() {
     return () => clearTimeout(t);
   }, [highlight]);
 
-
   const handleSubmit = () => {
     if (!tipo) {
-      refTipo.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      refTipo.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       setHighlight("tipo");
       return;
     }
     if (!area || areaNum < 1 || areaNum > 200) {
-      refArea.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      refArea.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       setHighlight("area");
       return;
     }
     if (!acabamento) {
-      refAcab.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      refAcab.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       setHighlight("acabamento");
       return;
     }
@@ -102,79 +108,90 @@ export default function GuiaContexto() {
       <GuideHeader step={1} />
 
       {/* Hero — Ricardo no ateliê */}
-      <section className="relative bg-western-ivory border-b border-western-gold/20">
-        <div className="container-western grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-0 md:gap-10 items-stretch">
-          <div className="py-12 md:py-20 pr-0 md:pr-6 flex flex-col justify-center">
-            <p className="font-display italic text-lg md:text-xl text-western-stone-warm mb-3">
-              O ponto de partida do seu projeto.
-            </p>
-            <p className="eyebrow-bar mb-5">Guia de composição · Etapa 01</p>
-            <h1 className="font-display text-[34px] md:text-[52px] text-western-green-deep leading-[1.05] mb-6">
+      <section className="relative bg-western-ivory border-b border-western-border-soft">
+        <div className="container-western grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-8 md:gap-12 items-center py-10 md:py-16">
+          <div className="flex flex-col justify-center">
+            <p className="text-eyebrow mb-4">Guia de composição · Etapa 01</p>
+            <h1 className="display-xl text-western-green-deep mb-6">
               Conte sobre o projeto que você está atendendo.
             </h1>
-            <div className="w-12 h-px bg-western-gold mb-5" />
-            <p className="font-display italic text-[15px] md:text-[17px] text-western-stone-warm max-w-md leading-relaxed">
-              Em três perguntas, mostramos três caminhos de composição com peças, preço e visualização da composição.
+            <div className="w-12 h-px bg-western-gold mb-6" />
+            <p className="text-body max-w-[46ch]">
+              O ponto de partida do seu projeto. Em três perguntas, mostramos três caminhos de
+              composição com peças, preço e visualização da composição.
             </p>
           </div>
-          <div className="relative h-[280px] md:h-[460px] overflow-hidden">
-            {/* divisor vertical hairline gold à esquerda */}
-            <div aria-hidden className="hidden md:block absolute left-0 top-8 bottom-8 w-px bg-western-gold/30 z-10" />
+
+          <figure className="relative m-0 h-[260px] md:h-[440px] overflow-hidden rounded-[16px]">
             <img
               src={ricardoAtelie}
               alt="Ricardo Western, fundador, no ateliê de Cajamar"
               className="absolute inset-0 w-full h-full object-cover"
             />
-            <p className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-[0.22em] text-western-cream/80 z-10">
+            <div
+              aria-hidden
+              className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
+              style={{
+                background:
+                  "linear-gradient(180deg, transparent, hsl(var(--western-green-deep) / 0.72))",
+              }}
+            />
+            <figcaption className="absolute bottom-4 left-5 right-5 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-cream">
               Ricardo Western · ateliê Cajamar
-            </p>
-          </div>
+            </figcaption>
+          </figure>
         </div>
       </section>
 
-      {/* Como funciona — orientação editorial */}
-      <section className="border-b border-western-stone-warm/15">
-        <div className="container-western py-10 md:py-12">
-          <p className="eyebrow-bar mb-6 text-center md:text-left">Como funciona o guia</p>
-          <ol className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
+      {/* Como funciona */}
+      <section className="border-b border-western-border-soft surface-paper">
+        <div className="container-western py-12 md:py-16">
+          <p className="text-eyebrow mb-8">Como funciona o guia</p>
+          <ol className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
             {[
               { n: "01", t: "Conte sobre o ambiente", d: "Tipo, área aproximada e o tom de acabamento." },
               { n: "02", t: "Veja três caminhos", d: "Composições essencial, equilibrada e completa." },
               { n: "03", t: "Refine e finalize", d: "Ajuste peças, adicione autorais (exclusivas) e feche o pedido." },
             ].map((s) => (
               <li key={s.n} className="flex gap-4">
-                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold pt-1.5">{s.n}</span>
+                <span className="font-sans text-[14px] font-semibold tracking-[0.06em] text-western-bronze pt-1">
+                  {s.n}
+                </span>
                 <div>
-                  <h3 className="font-display text-[20px] text-western-green-deep leading-tight">{s.t}</h3>
-                  <p className="font-display italic text-[14px] text-western-stone-warm mt-1.5 leading-relaxed">{s.d}</p>
+                  <h3 className="font-sans text-[20px] font-semibold text-western-green-deep leading-snug">
+                    {s.t}
+                  </h3>
+                  <p className="text-body mt-2">{s.d}</p>
                 </div>
               </li>
             ))}
           </ol>
-          <div className="flex flex-col items-center mt-10">
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm mb-3">
-              Comece pela primeira pergunta
-            </p>
-            <ChevronDown className="h-5 w-5 text-western-gold animate-bounce" />
+          <div className="flex flex-col items-center mt-12">
+            <p className="text-meta mb-3">Comece pela primeira pergunta</p>
+            <ChevronDown className="h-6 w-6 text-western-gold animate-bounce" aria-hidden />
           </div>
         </div>
       </section>
 
-      <main className="container-western max-w-[920px] pt-16 pb-32 relative">
+      <main className="container-western max-w-[920px] pt-16 pb-28 relative">
         {/* 01 */}
-        <section ref={refTipo}>
+        <section ref={refTipo} className={SCROLL_ANCHOR}>
           <Reveal variant="fade-up" duration={700} delay={140}>
-            <div className="flex items-center justify-between gap-4 mb-3">
-              <p className={`eyebrow-bar transition-colors ${highlight === "tipo" ? "!text-western-green-deep" : ""}`}>
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <p
+                className={`text-eyebrow transition-colors ${
+                  highlight === "tipo" ? "!text-western-green-deep" : ""
+                }`}
+              >
                 01 · Tipo de ambiente
               </p>
               {tipo && (
-                <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep">
-                  <Check className="h-3 w-3 text-western-gold" /> {tipoVisualMap[tipo].label}
+                <span className="inline-flex items-center gap-2 font-sans text-[14px] font-semibold text-western-green-deep">
+                  <Check className="h-4 w-4 text-western-gold" aria-hidden /> {tipoVisualMap[tipo].label}
                 </span>
               )}
             </div>
-            <p className="font-display italic text-[15px] text-western-stone-warm mb-7 max-w-[560px]">
+            <p className="text-body mb-8 max-w-[56ch]">
               Selecione o tipo que mais se aproxima do projeto que você está atendendo.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
@@ -193,45 +210,59 @@ export default function GuiaContexto() {
           </Reveal>
         </section>
 
-        <SectionDivider />
+        <div className="mt-14">
+          <SectionDivider />
+        </div>
 
         {/* 02 */}
-        <section ref={refArea} className="mt-12">
+        <section ref={refArea} className={`mt-14 ${SCROLL_ANCHOR}`}>
           <Reveal variant="fade-up" duration={700} delay={140}>
-            <div className="flex items-center justify-between gap-4 mb-3">
-              <p className={`eyebrow-bar transition-colors ${highlight === "area" ? "!text-western-green-deep" : ""}`}>
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <p
+                className={`text-eyebrow transition-colors ${
+                  highlight === "area" ? "!text-western-green-deep" : ""
+                }`}
+              >
                 02 · Área aproximada
               </p>
               {areaNum >= 1 && areaNum <= 200 && (
-                <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep">
-                  <Check className="h-3 w-3 text-western-gold" /> {areaNum} m²
+                <span className="inline-flex items-center gap-2 font-sans text-[14px] font-semibold text-western-green-deep tabular-nums">
+                  <Check className="h-4 w-4 text-western-gold" aria-hidden /> {areaNum} m²
                 </span>
               )}
             </div>
-            <p className="font-display italic text-[15px] text-western-stone-warm mb-7 max-w-[560px]">
+            <p className="text-body mb-8 max-w-[56ch]">
               Digite a metragem aproximada (entre 1 e 200 m²). Pode ser estimativa.
             </p>
             <AreaInput value={area} onChange={setArea} id="area-input" />
           </Reveal>
         </section>
 
-        <SectionDivider />
+        <div className="mt-14">
+          <SectionDivider />
+        </div>
 
         {/* 03 */}
-        <section ref={refAcab} className="mt-12">
+        <section ref={refAcab} className={`mt-14 ${SCROLL_ANCHOR}`}>
           <Reveal variant="fade-up" duration={700} delay={140}>
-            <div className="flex items-center justify-between gap-4 mb-3">
-              <p className={`eyebrow-bar transition-colors ${highlight === "acabamento" ? "!text-western-green-deep" : ""}`}>
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <p
+                className={`text-eyebrow transition-colors ${
+                  highlight === "acabamento" ? "!text-western-green-deep" : ""
+                }`}
+              >
                 03 · Acabamento dominante
               </p>
               {acabamento && (
-                <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep">
-                  <Check className="h-3 w-3 text-western-gold" /> {acabamentoMeta[acabamento].label}
+                <span className="inline-flex items-center gap-2 font-sans text-[14px] font-semibold text-western-green-deep">
+                  <Check className="h-4 w-4 text-western-gold" aria-hidden />{" "}
+                  {acabamentoMeta[acabamento].label}
                 </span>
               )}
             </div>
-            <p className="font-display italic text-[15px] text-western-stone-warm mb-7 max-w-[560px]">
-              Escolha o tom dominante das pedras. Único para todas as peças do conjunto — você troca no próximo passo se quiser.
+            <p className="text-body mb-8 max-w-[56ch]">
+              Escolha o tom dominante das pedras. Único para todas as peças do conjunto — você troca
+              no próximo passo se quiser.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
               {(Object.keys(acabamentoMeta) as Acabamento[]).map((a, i) => (
@@ -247,22 +278,29 @@ export default function GuiaContexto() {
           </Reveal>
         </section>
 
-        <SectionDivider />
+        <div className="mt-14">
+          <SectionDivider />
+        </div>
 
         {/* CTA */}
-        <div className="mt-10">
-          <button type="button" onClick={handleSubmit} disabled={!valid} className="btn-dark">
-            Ver composições <ArrowRight className="h-4 w-4" />
+        <div className="mt-12">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={!valid}
+            className="btn-primary w-full md:w-auto"
+          >
+            Ver composições <ArrowRight className="h-5 w-5" aria-hidden />
           </button>
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm/80 mt-6">
+          <p className="text-meta mt-6">
             Está sem tempo?{" "}
             <a
               href={whatsappConsultor("piscina", "Variada")}
               target="_blank"
               rel="noreferrer"
-              className="link-underline text-western-green-deep"
+              className="link-underline font-semibold text-western-green-deep"
             >
-              Falar com consultor diretamente →
+              Falar com consultor diretamente
             </a>
           </p>
         </div>

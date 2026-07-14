@@ -2,7 +2,20 @@ import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
 import { formatBRL, cdnImg } from "@/lib/catalog/client";
-import { Minus, Plus, X, ExternalLink, Loader2, MessageCircle, Lock, ArrowLeft, ArrowRight, Download, Truck } from "lucide-react";
+import {
+  Minus,
+  Plus,
+  Trash2,
+  Loader2,
+  MessageCircle,
+  Lock,
+  ArrowLeft,
+  ArrowRight,
+  Download,
+  Truck,
+  ShieldCheck,
+  FileText,
+} from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { BUSINESS } from "@/config/business";
@@ -32,10 +45,17 @@ export default function CartDrawer({
   const totalQty = items.reduce((s, i) => s + i.quantity, 0);
   const subtotal = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
   const currency = items[0]?.price.currencyCode ?? "BRL";
-  
+
 
   const { user, isApproved, empresa } = useAuth();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  // Pedido mínimo B2B — informativo (progresso no orçamento), nunca bloqueia o
+  // checkout: a Western Box é vendida sem mínimo e sem cadastro.
+  const minOrder = BUSINESS.pedidoMinimoBRL;
+  const belowMin = isApproved && subtotal > 0 && subtotal < minOrder;
+  const minPct = Math.min(100, Math.round((subtotal / minOrder) * 100));
+
   const handleCheckout = async () => {
     if (checkoutLoading) return;
     setCheckoutLoading(true);
@@ -120,95 +140,139 @@ export default function CartDrawer({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-full sm:max-w-lg h-[100dvh] flex flex-col min-h-0 p-0 bg-western-green-mid border-l border-western-gold/20 text-western-cream"
+        className="w-full sm:max-w-lg h-[100dvh] flex flex-col min-h-0 p-0 surface-ivory border-l border-western-border-soft"
       >
-        <div className="px-5 md:px-8 pt-5 md:pt-6 pb-4 border-b border-western-gold/15 space-y-3">
+        {/* Cabeçalho — claro e quente (tela de compra). */}
+        <div className="px-5 md:px-8 pt-5 md:pt-6 pb-4 surface-paper border-b border-western-border-soft">
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-cream/80 hover:text-western-gold-soft transition-colors -ml-1"
+            className="tap-target inline-flex items-center gap-2 -ml-1 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
           >
-            <ArrowLeft className="h-3 w-3" /> Continuar comprando
+            <ArrowLeft className="h-5 w-5" /> Continuar comprando
           </button>
-          <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] font-medium text-western-gold-soft/90">Seu orçamento</p>
-            <SheetTitle className="font-display text-2xl md:text-3xl tracking-wide text-western-cream">
+          <div className="mt-1">
+            <p className="text-eyebrow">Seu orçamento</p>
+            <SheetTitle className="display-md text-western-green-deep mt-1.5">
               Composição atual
             </SheetTitle>
-            <SheetDescription className="text-western-cream-muted">
+            <SheetDescription className="text-meta mt-1.5">
               {totalQty === 0
                 ? "Nenhuma peça selecionada."
-                : `${totalQty} ${totalQty === 1 ? "peça" : "peças"}`}
+                : `${totalQty} ${totalQty === 1 ? "peça" : "peças"} · garantia de ${BUSINESS.garantiaLabel} e reposição garantida`}
             </SheetDescription>
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 md:px-8 py-5">
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 md:px-8 py-6">
           {items.length === 0 ? (
             <div className="space-y-6">
               <div className="text-center py-6">
-                <p className="text-western-cream-muted max-w-xs mx-auto leading-relaxed">
+                <p className="text-body max-w-xs mx-auto">
                   Quando você adicionar uma peça, ela aparece aqui.
                 </p>
               </div>
               <EmptyCartHints onNavigate={() => onOpenChange(false)} />
             </div>
           ) : (
-            <ul className="space-y-5">
-              {items.map((item) => (
-                <li key={item.variantId} className="relative flex gap-3 md:gap-4 pr-7">
-                  <div className="frame-gallery w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
+            <ul>
+              {items.map((item, idx) => (
+                <li
+                  key={item.variantId}
+                  className={`flex gap-4 py-5 ${
+                    idx === items.length - 1 ? "" : "border-b border-western-border-soft"
+                  }`}
+                >
+                  <div className="w-[84px] h-[84px] flex-shrink-0 overflow-hidden rounded-[10px] bg-western-paper border border-western-border-soft">
                     {item.productImage && (
                       <img
                         src={cdnImg(item.productImage, 200)}
                         alt={item.productTitle}
-                        className="w-full h-full object-contain p-1"
+                        className="w-full h-full object-contain p-1.5"
                       />
                     )}
                   </div>
-                  <div className="flex-1 min-w-0 flex flex-col gap-1">
-                    <h4 className="font-display text-base md:text-lg leading-tight">
-                      {item.productTitle}
-                    </h4>
-                    <p className="font-sans text-[12.5px] text-western-cream/70">
-                      {item.selectedOptions.map((o) => o.value).join(" · ")}
-                    </p>
-                    <div className="flex items-center justify-between mt-2 gap-3 flex-wrap">
-                      <p className="font-sans text-[15px] font-medium tabular-nums text-western-cream">
-                        {isApproved ? formatBRL(item.price.amount, item.price.currencyCode) : "—"}
-                      </p>
-                      <div className="flex items-center border border-western-cream/25">
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h4 className="font-sans text-[17px] font-semibold leading-snug text-western-green-deep">
+                          {item.productTitle}
+                        </h4>
+                        {item.selectedOptions.length > 0 && (
+                          <p className="font-sans text-[15px] text-western-stone-warm mt-0.5">
+                            {item.selectedOptions.map((o) => o.value).join(" · ")}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="text-right flex-shrink-0">
+                        {isApproved ? (
+                          <>
+                            <p className="font-sans text-[18px] font-bold tabular-nums text-western-green-deep leading-tight">
+                              {formatBRL(
+                                parseFloat(item.price.amount) * item.quantity,
+                                item.price.currencyCode,
+                              )}
+                            </p>
+                            {item.quantity > 1 && (
+                              <p className="font-sans text-[14px] text-western-stone-warm mt-0.5">
+                                {formatBRL(item.price.amount, item.price.currencyCode)} / peça
+                              </p>
+                            )}
+                          </>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 font-sans text-[15px] font-semibold text-western-bronze">
+                            <Lock className="h-4 w-4" /> Parceiro
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 mt-3 flex-wrap">
+                      <div className="inline-flex items-center rounded-[10px] border border-western-border-strong bg-white overflow-hidden">
                         <button
                           onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
-                          className="h-11 w-11 flex items-center justify-center hover:bg-western-gold/10 transition-colors"
-                          aria-label="Diminuir"
+                          className="h-12 w-12 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+                          aria-label="Diminuir quantidade"
                         >
-                          <Minus className="h-3 w-3" />
+                          <Minus className="h-4 w-4" />
                         </button>
-                        <span className="px-2 text-xs min-w-[2ch] text-center tabular-nums">
+                        <span className="px-2 font-sans text-[16px] font-semibold min-w-[2.5ch] text-center tabular-nums text-western-green-deep">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                          className="h-11 w-11 flex items-center justify-center hover:bg-western-gold/10 transition-colors"
-                          aria-label="Aumentar"
+                          className="h-12 w-12 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+                          aria-label="Aumentar quantidade"
                         >
-                          <Plus className="h-3 w-3" />
+                          <Plus className="h-4 w-4" />
                         </button>
                       </div>
+
+                      <button
+                        onClick={() => removeItem(item.variantId)}
+                        className="tap-target inline-flex items-center gap-2 px-1 font-sans text-[15px] font-semibold text-[#B3372E] hover:underline"
+                        aria-label={`Remover ${item.productTitle}`}
+                      >
+                        <Trash2 className="h-4 w-4" /> Remover
+                      </button>
                     </div>
                   </div>
-                  <button
-                    onClick={() => removeItem(item.variantId)}
-                    className="absolute top-0 right-0 h-11 w-11 flex items-center justify-center -m-1.5 text-western-cream-muted hover:text-western-gold-soft transition-colors"
-                    aria-label="Remover peça"
-
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
                 </li>
               ))}
             </ul>
+          )}
+
+          {items.length > 0 && (
+            <a
+              href={`https://wa.me/${BUSINESS.whatsappFabrica}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="tap-target inline-flex items-center gap-2 mt-4 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+            >
+              <MessageCircle className="h-5 w-5 text-western-bronze" /> Dúvidas? Falar com o ateliê
+            </a>
           )}
 
           {items.length > 0 && (() => {
@@ -227,83 +291,139 @@ export default function CartDrawer({
         </div>
 
         {items.length > 0 && (
-          <div className="px-5 md:px-8 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-western-gold/15 space-y-4">
-            {/* Bloco 1: Subtotal — protagonista */}
-            <div className="space-y-1.5">
-              <div className="flex justify-between items-baseline">
-                <span className="font-mono text-[11px] uppercase tracking-[0.22em] font-medium text-western-gold-soft/90">Subtotal</span>
-                <span className="font-display text-3xl md:text-[2rem] tracking-wide tabular-nums text-western-gold-soft leading-none">
-                  {isApproved ? formatBRL(subtotal, currency) : "—"}
+          <div className="px-5 md:px-8 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] surface-paper border-t border-western-border-soft shadow-[0_-12px_32px_-24px_rgba(30,26,22,0.35)] space-y-4">
+            {/* Subtotal — protagonista da barra fixa */}
+            <div className="flex justify-between items-baseline gap-3">
+              <span className="font-sans text-[16px] font-semibold text-western-green-deep">
+                Subtotal
+                <span className="font-normal text-western-stone-warm">
+                  {" "}· {totalQty} {totalQty === 1 ? "peça" : "peças"}
                 </span>
-              </div>
-              {isApproved && (
-                <div className="border border-western-gold/15 bg-western-green-deep/30 px-3 py-2.5 space-y-1.5">
-                  <div className="flex items-start gap-2">
-                    <Truck className="h-4 w-4 text-western-gold-soft flex-shrink-0 mt-0.5" />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold-soft/90">
-                        Frete calculado no checkout
-                      </p>
-                      <p className="text-[11px] text-western-cream/70 mt-1 leading-snug">
-                        Cotamos por CEP, incluindo pedidos multivolume, na etapa de pagamento.
-                        Retirada grátis em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
-                      </p>
-                      <a
-                        href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
-                          "Olá, Western. Estou montando um pedido grande / de obra e gostaria de uma cotação logística dedicada.",
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block mt-1.5 text-[11px] text-western-cream/70 hover:text-western-gold-soft transition-colors"
-                      >
-                        Pedido grande ou obra? Falar no WhatsApp →
-                      </a>
-                    </div>
-                  </div>
-                </div>
+              </span>
+              {isApproved ? (
+                <span className="font-sans text-[26px] font-bold tabular-nums text-western-green-deep leading-none">
+                  {formatBRL(subtotal, currency)}
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 font-sans text-[16px] font-semibold text-western-bronze">
+                  <Lock className="h-4 w-4" /> Parceiro
+                </span>
               )}
             </div>
 
+            {/* Pedido mínimo — progresso, nunca bloqueio (Western Box não tem mínimo) */}
+            {isApproved && (
+              <div>
+                <div className="h-2 rounded-full bg-western-border-soft overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-[width] duration-300 ease-out ${
+                      belowMin ? "bg-[#9C6812]" : "bg-[#2E7D4F]"
+                    }`}
+                    style={{ width: `${minPct}%` }}
+                  />
+                </div>
+                <p
+                  className={`font-sans text-[14px] font-semibold mt-1.5 ${
+                    belowMin ? "text-[#9C6812]" : "text-[#2E7D4F]"
+                  }`}
+                >
+                  {belowMin
+                    ? `Faltam ${formatBRL(minOrder - subtotal, currency)} para o pedido mínimo de ${BUSINESS.pedidoMinimoLabel}`
+                    : `Pedido mínimo de ${BUSINESS.pedidoMinimoLabel} atingido`}
+                </p>
+              </div>
+            )}
+
+            {/* Frete — cotado por CEP no checkout */}
+            {isApproved && (
+              <div className="rounded-[10px] border border-western-border-soft bg-western-ivory px-3.5 py-3">
+                <div className="flex items-start gap-2.5">
+                  <Truck className="h-5 w-5 text-western-bronze flex-shrink-0 mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-eyebrow">Frete calculado no checkout</p>
+                    <p className="font-sans text-[15px] leading-normal text-western-stone-warm mt-1">
+                      Cotamos por CEP, incluindo pedidos multivolume, na etapa de pagamento.
+                      Retirada grátis em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
+                    </p>
+                    <a
+                      href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
+                        "Olá, Western. Estou montando um pedido grande / de obra e gostaria de uma cotação logística dedicada.",
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center mt-2 font-sans text-[15px] font-semibold text-western-green-deep hover:underline"
+                    >
+                      Pedido grande ou obra? Falar no WhatsApp
+                      <ArrowRight className="h-4 w-4 ml-1.5" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Preço gated — política comercial B2B */}
             {!isApproved && (
-              <div className="flex items-start gap-3 p-3 border border-western-gold/30 bg-western-gold/5">
-                <Lock className="h-3.5 w-3.5 text-western-gold-soft mt-0.5 flex-shrink-0" />
-                <p className="text-spec text-western-cream-muted leading-relaxed text-xs">
+              <div className="flex items-start gap-2.5 rounded-[10px] border border-western-border-soft bg-western-ivory px-3.5 py-3">
+                <Lock className="h-5 w-5 text-western-bronze flex-shrink-0 mt-0.5" />
+                <p className="font-sans text-[15px] leading-normal text-western-stone-warm">
                   Preços B2B liberados após aprovação do cadastro. Você pode solicitar orçamento agora mesmo.
                 </p>
               </div>
             )}
 
-            {/* CTA primário: Finalizar compra (aprovado) ou Baixar composição (não aprovado) */}
+            {/* CTA primário — VERDE, full-width, 52px+ */}
             {isApproved ? (
               <Button
                 onClick={handleCheckout}
                 disabled={isLoading || checkoutLoading}
-                className="group w-full h-14 bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-xs uppercase tracking-[0.25em] rounded-none shadow-[0_18px_40px_-20px_rgba(27,38,33,0.6)] disabled:opacity-50 transition-all"
+                className="group w-full h-14 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold normal-case tracking-normal [&_svg]:size-5 disabled:opacity-45"
               >
                 {isLoading || checkoutLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="animate-spin" />
                 ) : (
                   <>
-                    Finalizar compra <ArrowRight className="h-4 w-4 ml-2 transition-transform motion-safe:group-hover:translate-x-0.5" />
+                    Finalizar compra
+                    <ArrowRight className="transition-transform motion-safe:group-hover:translate-x-0.5" />
                   </>
                 )}
               </Button>
             ) : (
               <Button
                 onClick={() => setQuoteOpen(true)}
-                className="w-full h-14 bg-gradient-to-b from-western-gold to-western-gold/90 text-western-green-deep hover:from-western-gold-soft hover:to-western-gold font-sans font-medium text-[15px] tracking-[0.02em] rounded-none shadow-[0_18px_40px_-20px_rgba(184,146,79,0.7)]"
+                className="w-full h-14 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold normal-case tracking-normal [&_svg]:size-5"
               >
-                <Download className="h-4 w-4 mr-2" /> Baixar composição (PDF)
+                <Download /> Baixar composição (PDF)
               </Button>
             )}
 
-            {/* Selo de pagamento */}
+            {/* CTA secundário */}
             {isApproved && (
-              <div className="flex items-center justify-center gap-5 pt-1">
+              <button
+                type="button"
+                onClick={() => setQuoteOpen(true)}
+                className="btn-outline-forest w-full"
+              >
+                <Download className="h-5 w-5" /> Baixar composição (PDF)
+              </button>
+            )}
+
+            {!isApproved && (
+              <Link
+                to="/parceiro/login"
+                onClick={() => onOpenChange(false)}
+                className="tap-target flex items-center justify-center font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+              >
+                Já é parceiro? Entre para ver preços
+              </Link>
+            )}
+
+            {/* Formas de pagamento */}
+            {isApproved && (
+              <div className="flex items-center justify-center gap-3 flex-wrap">
                 {["Pix", "Boleto", "Cartão até 12×"].map((label, i) => (
-                  <div key={label} className="flex items-center gap-2">
-                    {i > 0 && <span className="text-western-gold-soft/40 text-[8px]">◆</span>}
-                    <span className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-western-cream/70">
+                  <div key={label} className="flex items-center gap-3">
+                    {i > 0 && <span className="text-western-gold text-[9px]">◆</span>}
+                    <span className="font-sans text-[14px] font-semibold text-western-stone-warm">
                       {label}
                     </span>
                   </div>
@@ -311,30 +431,21 @@ export default function CartDrawer({
               </div>
             )}
 
-            {/* CTA secundário: Baixar composição (quando aprovado) */}
-            {isApproved && (
-              <button
-                type="button"
-                onClick={() => setQuoteOpen(true)}
-                className="w-full h-10 border border-western-gold/40 text-western-cream hover:border-western-gold font-sans text-[12px] inline-flex items-center justify-center gap-2 transition-colors"
-              >
-                <Download className="h-3.5 w-3.5" /> Baixar composição (PDF)
-              </button>
-            )}
-
-
-            {/* PDF apenas após formulário (Solicitar orçamento) */}
-
-            {!isApproved && (
-              <Link
-                to="/parceiro/login"
-                onClick={() => onOpenChange(false)}
-                className="block text-center text-western-cream/75 hover:text-western-gold-soft font-sans text-[12px] pt-1 transition-colors"
-              >
-                Já é parceiro? Entre para ver preços
-              </Link>
-            )}
-
+            {/* Sinais de confiança perto da decisão */}
+            <div className="pt-1 space-y-1.5">
+              <p className="flex items-start gap-2 font-sans text-[14px] leading-snug text-western-stone-warm">
+                <FileText className="h-4 w-4 text-western-bronze flex-shrink-0 mt-0.5" />
+                Empresa brasileira · NF-e em todo pedido · CNPJ {BUSINESS.cnpj}
+              </p>
+              <p className="flex items-start gap-2 font-sans text-[14px] leading-snug text-western-stone-warm">
+                <ShieldCheck className="h-4 w-4 text-western-bronze flex-shrink-0 mt-0.5" />
+                Garantia de {BUSINESS.garantiaLabel} · reposição garantida · entrega rastreada
+              </p>
+              <p className="flex items-start gap-2 font-sans text-[14px] leading-snug text-western-stone-warm">
+                <Lock className="h-4 w-4 text-western-bronze flex-shrink-0 mt-0.5" />
+                Você conclui o pagamento em ambiente seguro, fora do site. Produção em {BUSINESS.prazoProducaoLabel}.
+              </p>
+            </div>
           </div>
         )}
       </SheetContent>

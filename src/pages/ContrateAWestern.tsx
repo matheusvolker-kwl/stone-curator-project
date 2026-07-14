@@ -12,6 +12,11 @@ import {
   Eye,
   Leaf,
   Loader2,
+  Check,
+  MapPin,
+  ShieldCheck,
+  FileText,
+  Lock,
 } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
@@ -33,6 +38,9 @@ import serraImg from "@/assets/projetos-western/06_piscina-cascata-serra.webp";
 
 const WHATSAPP_MSG_DEFAULT =
   "Olá, Western! Quero agendar a consultoria gratuita para o meu projeto.";
+
+const WHATSAPP_MSG_CONSULTOR =
+  "Olá, vim pelo site da Western e gostaria de falar com um consultor.";
 
 const waLink = (msg: string) =>
   `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`;
@@ -96,26 +104,31 @@ const PASSOS = [
     n: "1",
     titulo: "Contato e apresentação",
     desc: "Você fala com a gente por WhatsApp ou pelo formulário. Rápido, direto, sem burocracia.",
+    gratis: true,
   },
   {
     n: "2",
     titulo: "Consultoria inicial gratuita",
     desc: "Nosso time entende o projeto e a compatibilidade com nossos produtos e serviços. Sem custo, sem compromisso.",
+    gratis: true,
   },
   {
     n: "3",
     titulo: "Visita ao local (se necessário)",
     desc: "Contratados os serviços, agendamos visita técnica para leitura precisa do terreno e das condições da obra.",
+    gratis: false,
   },
   {
     n: "4",
     titulo: "Projeto e render 3D",
     desc: "Montamos a composição, apresentamos o render fotorrealista e ajustamos até a aprovação final.",
+    gratis: false,
   },
   {
     n: "5",
     titulo: "Execução e instalação",
     desc: "Nossa equipe executa e entrega — do transporte à peça posicionada, integrada ao paisagismo.",
+    gratis: false,
   },
 ];
 
@@ -137,6 +150,33 @@ const FAQ_ITEMS = [
     a: "Os dois. Podemos apenas fornecer os produtos com manuais e instruções de instalação, ou executar a instalação com nossa equipe — profissionais que trabalham na Western há mais de 20 anos.",
   },
 ];
+
+const CONFIANCA = [
+  { icon: MapPin, label: "Atendemos todo o Brasil" },
+  { icon: MessageCircle, label: "Consultoria gratuita" },
+  { icon: ShieldCheck, label: `Ateliê desde ${BUSINESS.fundadaEm}` },
+  { icon: Check, label: `Garantia de ${BUSINESS.garantiaLabel}` },
+];
+
+const BENEFICIOS_CONSULTORIA = [
+  "Diagnóstico técnico do seu projeto",
+  "Compatibilidade com pedras e cascatas Western",
+  "Estimativa de escopo, prazo e viabilidade",
+];
+
+// Classes compartilhadas — DS V3 (cantos suaves, 16px mínimo em UI, alvo 52px)
+const CARD =
+  "h-full bg-white border border-western-border-soft rounded-[10px] p-6 md:p-7 shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] hover:border-western-gold/50 transition-colors";
+const CARD_ICON =
+  "inline-flex h-12 w-12 items-center justify-center rounded-[10px] bg-western-paper border border-western-border-soft text-western-bronze mb-5";
+const CARD_TITLE =
+  "font-sans font-semibold text-[20px] leading-snug text-western-green-deep mb-2";
+const CARD_DESC = "text-spec leading-relaxed";
+const FIELD_LABEL =
+  "block font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-bronze mb-2";
+const FIELD_INPUT =
+  "w-full rounded-[10px] bg-white border-[1.5px] border-western-border-strong px-4 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-cta focus:ring-2 focus:ring-western-cta/20 outline-none transition-colors";
+const FIELD_H = "h-[52px]";
 
 function maskPhone(v: string): string {
   const d = v.replace(/\D/g, "").slice(0, 11);
@@ -227,8 +267,8 @@ export default function ContrateAWestern() {
         path="/contrate-a-western"
       />
 
-      {/* 1) HERO CINEMATOGRÁFICO */}
-      <section className="relative isolate overflow-hidden min-h-[80vh] flex items-center">
+      {/* 1) HERO — foto real + overlay verde. CTA dourado porque o verde não teria contraste sobre a foto. */}
+      <section className="relative isolate overflow-hidden flex items-center min-h-[540px] md:min-h-[600px]">
         <img
           src={heroImg}
           alt="Piscina com cascata Western em projeto residencial"
@@ -238,66 +278,82 @@ export default function ContrateAWestern() {
           decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-western-green-deep/85 via-western-green-deep/70 to-western-green-deep/90" />
-        <div className="absolute inset-0 bg-black/25" />
+        <div className="absolute inset-0 bg-gradient-to-b from-western-green-deep/85 via-western-green-deep/72 to-western-green-deep/92" />
 
-        <div className="relative container-western py-24 md:py-36 text-center max-w-3xl mx-auto">
+        <div className="relative container-western py-16 md:py-28 max-w-3xl mx-auto text-center">
           <Reveal variant="fade-up" duration={700}>
-            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft/90 mb-5">
+            <p className="font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-gold-soft mb-4">
               Serviços Western
             </p>
-            <div className="w-10 h-px bg-western-gold/70 mx-auto mb-7" />
-            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-western-cream leading-[1.02]">
-              Do projeto à obra,<br className="hidden md:block" />{" "}
+            <h1 className="display-xl text-western-cream">
+              Do projeto à obra,{" "}
               <span className="text-western-gold-soft">a Western executa com você.</span>
             </h1>
-            <p className="mt-7 text-western-cream-muted text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
+            <p className="mt-5 text-[17px] md:text-[18px] leading-[1.6] text-western-cream/90 max-w-xl mx-auto">
               Consultoria, projeto, render 3D e instalação com quem fabrica a pedra.
               Viabilizamos cascatas, piscinas e paisagens que a pedra natural não permite
               — mais leves, mais rápidas, com menos impacto.
             </p>
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
+
+            <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
               <button
                 type="button"
                 onClick={scrollToForm}
-                className="inline-flex items-center gap-2 px-7 py-4 bg-western-gold text-western-green-deep font-mono text-xs uppercase tracking-[0.24em] font-semibold hover:bg-western-gold-soft transition-colors shadow-lg shadow-black/20"
+                className="btn-gold w-full sm:w-auto"
               >
-                <ArrowDown className="h-4 w-4" /> Agendar consultoria gratuita
+                <ArrowDown className="h-5 w-5" />
+                Agendar consultoria gratuita
               </button>
               <a
                 href={waLink(WHATSAPP_MSG_DEFAULT)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-7 py-4 border border-western-cream/30 text-western-cream font-mono text-xs uppercase tracking-[0.24em] hover:border-western-gold-soft hover:text-western-gold-soft transition-colors backdrop-blur-sm"
+                className="btn-outline-cream w-full sm:w-auto"
               >
-                <MessageCircle className="h-4 w-4" /> Falar no WhatsApp
+                <MessageCircle className="h-5 w-5" />
+                Falar no WhatsApp
               </a>
             </div>
 
-            <p className="mt-12 text-[11px] md:text-xs font-mono uppercase tracking-[0.22em] text-western-cream/70">
+            <p className="mt-8 text-[15px] leading-relaxed text-western-cream/80 max-w-lg mx-auto">
               Especificada nas obras de Neymar Jr. · Alex Hanazaki · Rosewood · Unique Garden
             </p>
           </Reveal>
         </div>
       </section>
 
-      {/* 2) POR QUE A WESTERN */}
-      <section className="bg-western-ivory py-20 md:py-28">
+      {/* 2) BARRA DE CONFIANÇA */}
+      <section className="surface-paper border-b border-western-border-soft">
+        <div className="container-western py-6">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            {CONFIANCA.map((c) => (
+              <li key={c.label} className="flex items-center gap-3">
+                <c.icon className="h-5 w-5 shrink-0 text-western-bronze" aria-hidden="true" />
+                <span className="font-sans text-[16px] font-medium text-western-green-deep">
+                  {c.label}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* 3) POR QUE A WESTERN */}
+      <section className="surface-ivory py-16 md:py-24">
         <div className="container-western max-w-6xl">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
             <Reveal variant="fade-up" duration={700} className="md:col-span-5">
               <div>
                 <p className="text-eyebrow">Por que a Western</p>
-                <div className="w-12 h-px bg-western-gold my-5" />
-                <h2 className="font-display text-3xl md:text-4xl text-western-green-deep leading-[1.15]">
+                <h2 className="display-lg text-western-green-deep mt-3">
                   Um único parceiro que já resolveu o que ninguém tinha resolvido.
                 </h2>
-                <p className="mt-5 text-western-stone-warm leading-relaxed">
+                <p className="mt-5 text-body">
                   A Western é a fábrica e a executora. Isso significa custo, prazo,
                   técnica e responsabilidade concentrados em um só time —
                   do render 3D à peça posicionada em obra.
                 </p>
-                <div className="mt-8 aspect-[4/3] overflow-hidden">
+                <div className="mt-8 aspect-[4/3] overflow-hidden rounded-[16px]">
                   <img
                     src={serraImg}
                     alt="Piscina com cascata Western em meio à serra"
@@ -314,16 +370,12 @@ export default function ContrateAWestern() {
             <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
               {DIFERENCIAIS.map((d, i) => (
                 <Reveal key={d.titulo} variant="fade-up" delay={i * 70} duration={650}>
-                  <div className="h-full bg-western-cream border border-western-stone-warm/15 p-6 md:p-7 hover:border-western-gold/40 transition-colors">
-                    <span className="inline-flex h-11 w-11 items-center justify-center border border-western-gold/40 text-western-gold mb-5">
-                      <d.icon className="h-5 w-5" />
+                  <div className={CARD}>
+                    <span className={CARD_ICON}>
+                      <d.icon className="h-6 w-6" />
                     </span>
-                    <h3 className="font-display text-lg text-western-green-deep mb-2.5 leading-tight">
-                      {d.titulo}
-                    </h3>
-                    <p className="text-sm text-western-stone-warm leading-relaxed">
-                      {d.desc}
-                    </p>
+                    <h3 className={CARD_TITLE}>{d.titulo}</h3>
+                    <p className={CARD_DESC}>{d.desc}</p>
                   </div>
                 </Reveal>
               ))}
@@ -332,32 +384,27 @@ export default function ContrateAWestern() {
         </div>
       </section>
 
-      {/* 3) SERVIÇOS */}
-      <section className="bg-western-cream-muted py-20 md:py-28 border-y border-western-stone-warm/15">
+      {/* 4) SERVIÇOS */}
+      <section className="surface-paper py-16 md:py-24 border-y border-western-border-soft">
         <div className="container-western max-w-6xl">
           <Reveal variant="fade-up" duration={700}>
-            <header className="text-center max-w-2xl mx-auto mb-14">
+            <header className="text-center max-w-2xl mx-auto mb-12">
               <p className="text-eyebrow">O que fazemos por você</p>
-              <div className="w-12 h-px bg-western-gold mx-auto my-5" />
-              <h2 className="font-display text-3xl md:text-4xl text-western-green-deep">
+              <h2 className="display-lg text-western-green-deep mt-3">
                 Um único parceiro do conceito à entrega
               </h2>
             </header>
           </Reveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
             {SERVICOS.map((s, i) => (
               <Reveal key={s.titulo} variant="fade-up" delay={i * 80} duration={650}>
-                <div className="h-full bg-western-cream border border-western-stone-warm/15 hover:border-western-gold/40 transition-colors p-7 md:p-8 flex flex-col">
-                  <span className="inline-flex h-12 w-12 items-center justify-center border border-western-gold/40 text-western-gold mb-6">
-                    <s.icon className="h-5 w-5" />
+                <div className={CARD}>
+                  <span className={CARD_ICON}>
+                    <s.icon className="h-6 w-6" />
                   </span>
-                  <h3 className="font-display text-xl text-western-green-deep mb-3 leading-tight">
-                    {s.titulo}
-                  </h3>
-                  <p className="text-sm text-western-stone-warm leading-relaxed">
-                    {s.desc}
-                  </p>
+                  <h3 className={CARD_TITLE}>{s.titulo}</h3>
+                  <p className={CARD_DESC}>{s.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -365,19 +412,21 @@ export default function ContrateAWestern() {
         </div>
       </section>
 
-      {/* 4) COMO FUNCIONA */}
-      <section className="bg-western-ivory py-20 md:py-28">
+      {/* 5) COMO FUNCIONA */}
+      <section className="surface-ivory py-16 md:py-24">
         <div className="container-western max-w-6xl">
           <Reveal variant="fade-up" duration={700}>
-            <header className="text-center max-w-2xl mx-auto mb-14">
+            <header className="text-center max-w-2xl mx-auto mb-12">
               <p className="text-eyebrow">Como funciona</p>
-              <div className="w-12 h-px bg-western-gold mx-auto my-5" />
-              <h2 className="font-display text-3xl md:text-4xl text-western-green-deep">
+              <h2 className="display-lg text-western-green-deep mt-3">
                 Cinco passos até a sua obra pronta
               </h2>
-              <p className="mt-5 text-western-stone-warm leading-relaxed max-w-xl mx-auto">
+              <p className="mt-4 text-body max-w-xl mx-auto">
                 Os dois primeiros passos são{" "}
-                <span className="text-western-green-deep font-medium">rápidos, gratuitos e sem compromisso</span>. Você só decide seguir depois de conhecer.
+                <span className="font-semibold text-western-green-deep">
+                  rápidos, gratuitos e sem compromisso
+                </span>
+                . Você só decide seguir depois de conhecer.
               </p>
             </header>
           </Reveal>
@@ -386,26 +435,22 @@ export default function ContrateAWestern() {
             {PASSOS.map((p, i) => (
               <Reveal key={p.n} variant="fade-up" delay={i * 70} duration={650}>
                 <li
-                  className={`relative bg-western-cream border p-6 h-full ${
-                    i < 2
-                      ? "border-western-gold/40 shadow-sm"
-                      : "border-western-stone-warm/15"
+                  className={`relative h-full bg-white rounded-[10px] p-6 border shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] ${
+                    p.gratis
+                      ? "border-western-gold/50"
+                      : "border-western-border-soft"
                   }`}
                 >
-                  {i < 2 && (
-                    <span className="absolute -top-2 left-6 bg-western-gold text-western-green-deep font-mono text-[9px] uppercase tracking-[0.2em] font-semibold px-2 py-0.5">
+                  {p.gratis && (
+                    <span className="absolute -top-3 left-6 rounded-[6px] bg-western-gold px-2.5 py-1 font-sans text-[14px] font-semibold leading-none text-western-green-deep">
                       Grátis
                     </span>
                   )}
-                  <span className="font-display text-4xl text-western-gold leading-none block mb-3">
+                  <span className="font-display text-[32px] leading-none text-western-bronze block mb-3">
                     {p.n}
                   </span>
-                  <h3 className="font-display text-lg text-western-green-deep mb-2 leading-tight">
-                    {p.titulo}
-                  </h3>
-                  <p className="text-sm text-western-stone-warm leading-relaxed">
-                    {p.desc}
-                  </p>
+                  <h3 className={CARD_TITLE}>{p.titulo}</h3>
+                  <p className={CARD_DESC}>{p.desc}</p>
                 </li>
               </Reveal>
             ))}
@@ -413,8 +458,8 @@ export default function ContrateAWestern() {
         </div>
       </section>
 
-      {/* 5) PROVA SOCIAL — rostos + mural de logos */}
-      <section className="surface-ivory py-16 md:py-24 border-t border-western-stone-warm/10">
+      {/* 6) PROVA SOCIAL — rostos + mural de marcas */}
+      <section className="surface-paper py-14 md:py-20 border-t border-western-border-soft">
         <div className="container-western max-w-5xl">
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
@@ -426,14 +471,13 @@ export default function ContrateAWestern() {
         </div>
       </section>
 
-      {/* 6) FAQ */}
-      <section className="bg-western-cream-muted py-20 md:py-28 border-b border-western-stone-warm/15">
+      {/* 7) FAQ */}
+      <section className="surface-ivory py-16 md:py-24 border-y border-western-border-soft">
         <div className="container-western max-w-3xl">
           <Reveal variant="fade-up" duration={700}>
-            <header className="text-center mb-12">
+            <header className="text-center mb-10">
               <p className="text-eyebrow">Perguntas frequentes</p>
-              <div className="w-12 h-px bg-western-gold mx-auto my-5" />
-              <h2 className="font-display text-3xl md:text-4xl text-western-green-deep">
+              <h2 className="display-lg text-western-green-deep mt-3">
                 Tirando as dúvidas antes da consultoria
               </h2>
             </header>
@@ -443,18 +487,18 @@ export default function ContrateAWestern() {
             <Accordion
               type="single"
               collapsible
-              className="bg-western-cream border border-western-stone-warm/15"
+              className="bg-white border border-western-border-soft rounded-[16px] overflow-hidden"
             >
               {FAQ_ITEMS.map((item, i) => (
                 <AccordionItem
                   key={item.q}
                   value={`item-${i}`}
-                  className="border-b border-western-stone-warm/15 last:border-b-0 px-5 md:px-7"
+                  className="border-b border-western-border-soft last:border-b-0 px-5 md:px-7"
                 >
-                  <AccordionTrigger className="text-left font-display text-base md:text-lg text-western-green-deep hover:no-underline py-5">
+                  <AccordionTrigger className="text-left font-sans font-semibold text-[17px] md:text-[18px] text-western-green-deep hover:no-underline py-5 min-h-[var(--tap-min)]">
                     {item.q}
                   </AccordionTrigger>
-                  <AccordionContent className="text-western-stone-warm text-[15px] leading-relaxed pb-5">
+                  <AccordionContent className="text-western-stone-warm text-[17px] leading-[1.6] pb-6">
                     {item.a}
                   </AccordionContent>
                 </AccordionItem>
@@ -464,66 +508,81 @@ export default function ContrateAWestern() {
         </div>
       </section>
 
-      {/* 7) FORMULÁRIO / OFERTA */}
-      <section
-        ref={formRef}
-        id="contato"
-        className="surface-forest border-t border-western-gold/15"
-      >
-        <div className="container-western max-w-5xl py-20 md:py-28">
+      {/* 8) FORMULÁRIO / RAMPA — faixa verde institucional, formulário em carta clara */}
+      <section ref={formRef} id="contato" className="surface-forest">
+        <div className="container-western max-w-5xl py-16 md:py-24">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
             <Reveal variant="fade-up" duration={700} className="md:col-span-5">
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft/90 mb-5">
+                <p className="font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-gold-soft mb-3">
                   Consultoria inicial gratuita
                 </p>
-                <div className="w-10 h-px bg-western-gold/70 mb-7" />
-                <h2 className="font-display text-3xl md:text-4xl text-western-cream leading-[1.1]">
+                <h2 className="display-lg text-western-cream">
                   Comece com uma conversa{" "}
                   <span className="text-western-gold-soft">grátis e sem compromisso.</span>
                 </h2>
-                <p className="mt-5 text-western-cream-muted leading-relaxed">
-                  Preencha o essencial — <strong className="text-western-cream">só nome e WhatsApp</strong> são obrigatórios.
-                  Ao enviar, gravamos seu contato e abrimos o WhatsApp com sua mensagem pronta.
+                <p className="mt-5 text-[17px] leading-[1.6] text-western-cream/85">
+                  Preencha o essencial —{" "}
+                  <strong className="font-semibold text-western-cream">
+                    só nome e WhatsApp
+                  </strong>{" "}
+                  são obrigatórios. Ao enviar, gravamos seu contato e abrimos o WhatsApp
+                  com a sua mensagem já pronta.
                 </p>
-                <ul className="mt-8 space-y-3 text-western-cream-muted text-sm">
-                  {[
-                    "Diagnóstico técnico do seu projeto",
-                    "Compatibilidade com pedras e cascatas Western",
-                    "Estimativa de escopo, prazo e viabilidade",
-                  ].map((b) => (
-                    <li key={b} className="flex gap-3">
-                      <span className="mt-1.5 h-1.5 w-1.5 bg-western-gold shrink-0" />
+
+                <ul className="mt-7 space-y-3">
+                  {BENEFICIOS_CONSULTORIA.map((b) => (
+                    <li
+                      key={b}
+                      className="flex gap-3 text-[16px] leading-relaxed text-western-cream/85"
+                    >
+                      <Check
+                        className="h-5 w-5 shrink-0 mt-0.5 text-western-gold-soft"
+                        aria-hidden="true"
+                      />
                       <span>{b}</span>
                     </li>
                   ))}
                 </ul>
+
+                <a
+                  href={waLink(WHATSAPP_MSG_CONSULTOR)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tap-target mt-7 inline-flex items-center gap-2 text-[16px] font-semibold text-western-gold-soft underline underline-offset-4 decoration-western-gold/50 hover:decoration-western-gold-soft"
+                >
+                  <MessageCircle className="h-5 w-5" />
+                  Prefere WhatsApp? Falar com consultor
+                </a>
               </div>
             </Reveal>
 
             <Reveal variant="fade-up" delay={100} duration={700} className="md:col-span-7">
               <form
                 onSubmit={handleSubmit}
-                className="bg-western-cream border border-western-gold/20 p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
+                className="bg-western-paper border border-western-border-soft rounded-[16px] p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
                 noValidate
               >
-                <label className="block md:col-span-1">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
+                <div className="md:col-span-1">
+                  <label htmlFor="ct-nome" className={FIELD_LABEL}>
                     Nome <span className="text-western-gold">*</span>
-                  </span>
+                  </label>
                   <input
+                    id="ct-nome"
                     required
                     value={nome}
                     onChange={(e) => setNome(e.target.value)}
                     autoComplete="name"
-                    className="mt-1.5 w-full px-3 py-2.5 bg-white border border-western-stone-warm/25 focus:border-western-gold focus:ring-2 focus:ring-western-gold/20 outline-none text-western-green-deep transition-all"
+                    className={`${FIELD_INPUT} ${FIELD_H}`}
                   />
-                </label>
-                <label className="block md:col-span-1">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
+                </div>
+
+                <div className="md:col-span-1">
+                  <label htmlFor="ct-tel" className={FIELD_LABEL}>
                     WhatsApp <span className="text-western-gold">*</span>
-                  </span>
+                  </label>
                   <input
+                    id="ct-tel"
                     required
                     type="tel"
                     inputMode="tel"
@@ -531,29 +590,39 @@ export default function ContrateAWestern() {
                     onChange={(e) => setTelefone(maskPhone(e.target.value))}
                     autoComplete="tel"
                     placeholder="(11) 90000-0000"
-                    className="mt-1.5 w-full px-3 py-2.5 bg-white border border-western-stone-warm/25 focus:border-western-gold focus:ring-2 focus:ring-western-gold/20 outline-none text-western-green-deep transition-all tabular-nums"
+                    className={`${FIELD_INPUT} ${FIELD_H} tabular-nums`}
                   />
-                </label>
-                <label className="block md:col-span-1">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
-                    E-mail <span className="text-western-stone-warm/50">(opcional)</span>
-                  </span>
+                </div>
+
+                <div className="md:col-span-1">
+                  <label htmlFor="ct-email" className={FIELD_LABEL}>
+                    E-mail{" "}
+                    <span className="font-normal normal-case tracking-normal text-western-stone-warm">
+                      (opcional)
+                    </span>
+                  </label>
                   <input
+                    id="ct-email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
-                    className="mt-1.5 w-full px-3 py-2.5 bg-white border border-western-stone-warm/25 focus:border-western-gold focus:ring-2 focus:ring-western-gold/20 outline-none text-western-green-deep transition-all"
+                    className={`${FIELD_INPUT} ${FIELD_H}`}
                   />
-                </label>
-                <label className="block md:col-span-1">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
-                    Perfil <span className="text-western-stone-warm/50">(opcional)</span>
-                  </span>
+                </div>
+
+                <div className="md:col-span-1">
+                  <label htmlFor="ct-perfil" className={FIELD_LABEL}>
+                    Perfil{" "}
+                    <span className="font-normal normal-case tracking-normal text-western-stone-warm">
+                      (opcional)
+                    </span>
+                  </label>
                   <select
+                    id="ct-perfil"
                     value={perfil}
                     onChange={(e) => setPerfil(e.target.value)}
-                    className="mt-1.5 w-full px-3 py-2.5 bg-white border border-western-stone-warm/25 focus:border-western-gold focus:ring-2 focus:ring-western-gold/20 outline-none text-western-green-deep transition-all"
+                    className={`${FIELD_INPUT} ${FIELD_H}`}
                   >
                     {PERFIS.map((p) => (
                       <option key={p.value} value={p.value}>
@@ -561,47 +630,67 @@ export default function ContrateAWestern() {
                       </option>
                     ))}
                   </select>
-                </label>
-                <label className="block md:col-span-2">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
-                    Sobre o projeto <span className="text-western-stone-warm/50">(opcional)</span>
-                  </span>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label htmlFor="ct-msg" className={FIELD_LABEL}>
+                    Sobre o projeto{" "}
+                    <span className="font-normal normal-case tracking-normal text-western-stone-warm">
+                      (opcional)
+                    </span>
+                  </label>
                   <textarea
+                    id="ct-msg"
                     rows={4}
                     value={mensagem}
                     onChange={(e) => setMensagem(e.target.value)}
                     placeholder="Local, escopo, prazo — o que quiser adiantar."
-                    className="mt-1.5 w-full px-3 py-2.5 bg-white border border-western-stone-warm/25 focus:border-western-gold focus:ring-2 focus:ring-western-gold/20 outline-none text-western-green-deep resize-none transition-all"
+                    className={`${FIELD_INPUT} py-3 resize-none`}
                   />
-                </label>
+                </div>
 
                 <div className="md:col-span-2">
                   <TurnstileWidget
                     onToken={setCaptchaToken}
                     onExpire={() => setCaptchaToken(null)}
-                    className="mb-4"
                   />
                 </div>
 
-                <div className="md:col-span-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+                <div className="md:col-span-2 flex flex-col sm:flex-row sm:items-center gap-3">
                   <button
                     type="submit"
                     disabled={enviando}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-western-green-deep text-western-cream font-mono text-xs uppercase tracking-[0.24em] font-semibold hover:bg-western-green-deep/90 transition-colors w-full sm:w-auto disabled:opacity-70"
+                    className="btn-primary w-full sm:w-auto"
                   >
                     {enviando ? (
                       <>
-                        <Loader2 className="h-4 w-4 animate-spin" /> Enviando…
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Enviando…
                       </>
                     ) : (
                       <>
-                        <Send className="h-4 w-4" /> Agendar consultoria grátis
+                        <Send className="h-5 w-5" />
+                        Agendar consultoria grátis
                       </>
                     )}
                   </button>
-                  <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-western-stone-warm/70">
+                  <span className="text-meta text-center sm:text-left">
                     Sem compromisso · Resposta rápida
                   </span>
+                </div>
+
+                <div className="md:col-span-2 pt-5 border-t border-western-border-soft grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {[
+                    { icon: FileText, label: "NF-e em todo pedido" },
+                    { icon: ShieldCheck, label: `Garantia de ${BUSINESS.garantiaLabel}` },
+                    { icon: Check, label: `Ateliê brasileiro desde ${BUSINESS.fundadaEm}` },
+                    { icon: Lock, label: `CNPJ ${BUSINESS.cnpj}` },
+                  ].map((t) => (
+                    <span key={t.label} className="flex items-center gap-2 text-meta">
+                      <t.icon className="h-4 w-4 shrink-0 text-western-bronze" aria-hidden="true" />
+                      {t.label}
+                    </span>
+                  ))}
                 </div>
               </form>
             </Reveal>

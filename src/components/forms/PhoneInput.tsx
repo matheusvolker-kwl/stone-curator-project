@@ -18,6 +18,9 @@ interface Props {
  * Telefone BR com prefixo +55. Máscara alterna automaticamente entre fixo
  * `(00) 0000-0000` (10 dígitos) e celular `(00) 00000-0000` (11 dígitos).
  * Retorna apenas os dígitos do DDD+número.
+ *
+ * DS V3: controle de 52px, cantos 10px, texto 16px, prefixo em sans (nunca mono)
+ * e erro em sans 14px. Fundo claro e quente (paper), borda visível.
  */
 const PhoneInput = forwardRef<HTMLInputElement, Props>(function PhoneInput(
   { value, onChange, onBlur, id, name, placeholder, required, error, className, readOnly },
@@ -27,13 +30,13 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(function PhoneInput(
   return (
     <div>
       <div
-        className={`flex items-stretch h-12 border bg-transparent transition-colors ${
+        className={`flex items-stretch h-[52px] overflow-hidden rounded-[10px] border-[1.5px] bg-western-paper transition-colors ${
           error
-            ? "border-red-700/60"
-            : "border-western-stone-warm/30 focus-within:border-western-gold"
+            ? "border-[#B3372E]"
+            : "border-western-border-strong focus-within:border-western-green-deep"
         } ${className ?? ""}`}
       >
-        <span className="px-3 flex items-center font-mono text-sm text-western-stone-warm border-r border-western-stone-warm/20 select-none">
+        <span className="px-4 flex items-center font-sans text-[16px] font-medium text-western-stone-warm border-r border-western-border-soft select-none">
           +55
         </span>
         <IMaskInput
@@ -59,11 +62,14 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(function PhoneInput(
           readOnly={readOnly}
           aria-invalid={!!error}
           aria-describedby={describedBy}
-          className={`flex-1 bg-transparent px-3 outline-none text-western-green-deep placeholder:text-western-stone-warm/50 ${readOnly ? "opacity-70 cursor-not-allowed" : ""}`}
+          className={`flex-1 min-w-0 bg-transparent px-4 outline-none font-sans text-[16px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 ${readOnly ? "opacity-70 cursor-not-allowed" : ""}`}
         />
       </div>
       {error && (
-        <p id={describedBy} className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">
+        <p
+          id={describedBy}
+          className="mt-2 font-sans text-[14px] font-semibold normal-case tracking-normal leading-snug text-[#B3372E]"
+        >
           {error}
         </p>
       )}

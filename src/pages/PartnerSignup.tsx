@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, ChevronLeft, ChevronRight, MessageCircle, ArrowRight, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, MessageCircle, CheckCircle2, AlertTriangle, XCircle, Check } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import PhoneInput from "@/components/forms/PhoneInput";
 import CnpjInput from "@/components/forms/CnpjInput";
@@ -51,6 +51,32 @@ const INITIAL: Form = {
   nome: "", cargo: "", cargoOutro: "",
   telefone: "", email: "", senha: "", senha2: "", aceite: false,
 };
+
+/* ——— DS V3 (apresentação) ———
+ * Controles de 52px, cantos 10px, texto de UI 16px (nunca menos), borda visível
+ * de 1.5px — o público 40+ precisa VER o campo. Erro em sans 14px semibold,
+ * nunca mono/caixa-alta de 10px. CTA primário é VERDE e full-width no mobile. */
+const CONTROL =
+  "h-[52px] w-full rounded-[10px] border-[1.5px] bg-western-paper px-4 font-sans text-[16px] md:text-[16px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 transition-colors focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0";
+const CONTROL_OK = "border-western-border-strong focus:border-western-green-deep";
+const CONTROL_ERR = "border-[#B3372E] focus:border-[#B3372E]";
+
+const control = (hasError?: boolean) => `${CONTROL} ${hasError ? CONTROL_ERR : CONTROL_OK}`;
+
+function FieldError({ id, children }: { id?: string; children: React.ReactNode }) {
+  return (
+    <p id={id} role="alert" className="mt-2 font-sans text-[14px] font-semibold leading-snug text-[#B3372E]">
+      {children}
+    </p>
+  );
+}
+
+/* Sinais de legitimidade perto da decisão (§12) — todos vindos de BUSINESS. */
+const CONFIANCA = [
+  "Cadastro gratuito, com aprovação automática para profissionais do ramo",
+  `NF-e em todo pedido · garantia de ${BUSINESS.garantiaLabel}`,
+  `Ateliê brasileiro desde ${BUSINESS.fundadaEm} · CNPJ ${BUSINESS.cnpj}`,
+];
 
 const empresaSchema = z.object({
   empresa: z.string().trim().min(2, "Informe a razão social").max(160),
@@ -221,11 +247,11 @@ export default function PartnerSignup() {
     const d = credResult.decisao;
     return (
       <div className="surface-ivory">
-        <div className="container-western py-24 max-w-2xl text-center">
-          {d === "aprovado" && <CheckCircle2 className="h-12 w-12 text-western-gold mx-auto mb-6" strokeWidth={1.4} />}
-          {(d === "analise") && <AlertTriangle className="h-12 w-12 text-amber-600 mx-auto mb-6" strokeWidth={1.4} />}
-          {d === "reprovado" && <XCircle className="h-12 w-12 text-red-700/80 mx-auto mb-6" strokeWidth={1.4} />}
-          {d === "solicitar_cartao" && <AlertTriangle className="h-12 w-12 text-amber-600 mx-auto mb-6" strokeWidth={1.4} />}
+        <div className="container-western py-16 md:py-24 max-w-2xl text-center">
+          {d === "aprovado" && <CheckCircle2 className="h-12 w-12 text-[#2E7D4F] mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
+          {d === "analise" && <AlertTriangle className="h-12 w-12 text-[#9C6812] mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
+          {d === "reprovado" && <XCircle className="h-12 w-12 text-[#B3372E] mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
+          {d === "solicitar_cartao" && <AlertTriangle className="h-12 w-12 text-[#9C6812] mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
 
           <p className="text-eyebrow mb-4">
             {d === "aprovado" && "Cadastro aprovado"}
@@ -237,58 +263,58 @@ export default function PartnerSignup() {
 
           {d === "aprovado" && (
             <>
-              <h1 className="font-display text-4xl md:text-5xl text-western-green-deep leading-tight mb-6">
-                Bem-vindo à Western Pro.
-              </h1>
-              <p className="text-western-stone-warm leading-relaxed mb-10">
+              <h1 className="display-xl mb-6">Bem-vindo à Western Pro.</h1>
+              <p className="text-body mb-10 mx-auto max-w-[46ch]">
                 Sua condição B2B já está liberada. Confirme seu e-mail e faça login para ver tabela, modelos 3D e composições.
               </p>
-              <Link to="/parceiro/login" className="inline-block h-12 px-6 leading-[3rem] bg-western-gold text-western-green-deep font-mono text-xs uppercase tracking-[0.25em]">Acessar minha conta</Link>
+              <Button asChild className="w-full sm:w-auto">
+                <Link to="/parceiro/login">Acessar minha conta</Link>
+              </Button>
             </>
           )}
 
           {d === "analise" && (
             <>
-              <h1 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight mb-6">
-                Recebemos sua solicitação.
-              </h1>
-              <p className="text-western-stone-warm leading-relaxed mb-4">
+              <h1 className="display-lg mb-6">Recebemos sua solicitação.</h1>
+              <p className="text-body mb-4 mx-auto max-w-[46ch]">
                 Estamos concluindo a validação do seu cadastro e liberamos seu acesso por e-mail em breve.
               </p>
               {credResult.protocolo && (
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm mb-10">
-                  Protocolo: <span className="text-western-green-deep">{credResult.protocolo}</span>
+                <p className="text-meta mb-10">
+                  Protocolo:{" "}
+                  <span className="font-semibold tabular-nums text-western-green-deep">{credResult.protocolo}</span>
                 </p>
               )}
-              <Link to="/" className="link-underline text-western-gold font-mono text-xs uppercase tracking-[0.22em]">Voltar ao catálogo</Link>
+              <Button asChild variant="outline" className="w-full sm:w-auto">
+                <Link to="/">Voltar ao catálogo</Link>
+              </Button>
             </>
           )}
 
           {d === "reprovado" && (
             <>
-              <h1 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight mb-6">
-                Não foi possível aprovar agora.
-              </h1>
-              <p className="text-western-stone-warm leading-relaxed mb-4">
+              <h1 className="display-lg mb-6">Não foi possível aprovar agora.</h1>
+              <p className="text-body mb-4 mx-auto max-w-[46ch]">
                 {credResult.motivo ?? "Sua empresa não atende aos critérios B2B no momento."}
               </p>
-              <p className="text-western-stone-warm leading-relaxed mb-10">
+              <p className="text-body mb-10 mx-auto max-w-[46ch]">
                 Se acredita que houve engano, fale com o comercial pelo WhatsApp.
               </p>
-              <a
-                href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent("Olá, gostaria de revisar meu credenciamento B2B.")}`}
-                target="_blank" rel="noopener noreferrer"
-                className="inline-block h-12 px-6 leading-[3rem] bg-western-green-deep text-western-cream font-mono text-xs uppercase tracking-[0.25em]"
-              >Falar com o comercial</a>
+              <Button asChild className="w-full sm:w-auto">
+                <a
+                  href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent("Olá, gostaria de revisar meu credenciamento B2B.")}`}
+                  target="_blank" rel="noopener noreferrer"
+                >
+                  <MessageCircle aria-hidden="true" /> Falar com o comercial
+                </a>
+              </Button>
             </>
           )}
 
           {d === "solicitar_cartao" && (
             <>
-              <h1 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight mb-6">
-                Envie seu Cartão CNPJ.
-              </h1>
-              <p className="text-western-stone-warm leading-relaxed mb-8">
+              <h1 className="display-lg mb-6">Envie seu Cartão CNPJ.</h1>
+              <p className="text-body mb-8 mx-auto max-w-[48ch]">
                 As bases públicas não responderam agora. Envie o Cartão CNPJ ou siga para análise manual e concluímos a validação em seguida.
               </p>
               <div className="max-w-md mx-auto text-left space-y-4">
@@ -299,21 +325,27 @@ export default function PartnerSignup() {
                     onUploaded={(p) => setCardPath(p)}
                   />
                 )}
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button
-                    onClick={() => reenviarComCartao(cardPath, false)}
-                    disabled={!cardPath || cardLoading}
-                    className="flex-1 h-12 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.22em] rounded-none disabled:opacity-50"
-                  >
-                    {cardLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar para análise"}
-                  </Button>
+                <div className="flex flex-col-reverse sm:flex-row gap-3">
                   <Button
                     variant="outline"
                     onClick={() => reenviarComCartao(null, true)}
                     disabled={cardLoading}
-                    className="h-12 border-western-stone-warm/30 text-western-green-deep hover:border-western-gold rounded-none font-mono text-xs uppercase tracking-[0.22em]"
+                    className="w-full sm:w-auto"
                   >
                     Seguir sem enviar agora
+                  </Button>
+                  <Button
+                    onClick={() => reenviarComCartao(cardPath, false)}
+                    disabled={!cardPath || cardLoading}
+                    className="w-full sm:flex-1"
+                  >
+                    {cardLoading ? (
+                      <>
+                        <Loader2 className="animate-spin" aria-hidden="true" /> Enviando…
+                      </>
+                    ) : (
+                      "Enviar para análise"
+                    )}
                   </Button>
                 </div>
               </div>
@@ -328,15 +360,14 @@ export default function PartnerSignup() {
 
   return (
     <div className="surface-ivory">
-      <div className="container-western py-20 md:py-28 max-w-2xl">
-        <p className="text-eyebrow mb-5">Cadastro B2B</p>
+      <div className="container-western py-16 md:py-24 max-w-2xl">
+        <p className="text-eyebrow mb-5">Cadastro B2B · Aprovação imediata</p>
         <div className="w-12 h-px bg-western-gold mb-8" />
-        <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05] mb-6">
-          Solicite acesso de parceiro comercial.
-        </h1>
-        <p className="text-western-stone-warm text-lg leading-relaxed mb-8">
+        <h1 className="display-xl mb-6">Solicite acesso de parceiro comercial.</h1>
+        <p className="text-body mb-3 max-w-[56ch]">
           A Western atende profissionais e empresas do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a laguistas, jardineiros, garden centers, lojas e construtoras. O acesso à tabela comercial, modelos 3D e composições é liberado automaticamente para profissionais do ramo, na hora do cadastro.
         </p>
+        <p className="text-meta mb-8">Grátis · leva menos de 2 minutos · precisa de CNPJ</p>
 
         {/* Saída para cliente final — WhatsApp */}
         <a
@@ -345,42 +376,32 @@ export default function PartnerSignup() {
           )}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center gap-4 border border-western-stone-warm/25 bg-western-paper/60 p-5 md:p-6 mb-10 transition-colors duration-500 hover:border-western-gold/60 hover:bg-western-paper"
+          className="group tap-target flex items-center gap-4 rounded-[16px] border border-western-border-soft bg-western-paper p-5 md:p-6 mb-10 transition-colors duration-200 hover:border-western-border-strong hover:bg-western-cream/40"
         >
-          <MessageCircle className="h-5 w-5 text-western-gold flex-shrink-0" strokeWidth={1.4} />
-          <div className="flex-1 min-w-0">
-            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold mb-1">
+          <MessageCircle className="h-6 w-6 flex-shrink-0 text-western-bronze" strokeWidth={1.75} aria-hidden="true" />
+          <span className="flex-1 min-w-0">
+            <span className="block font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">
               Sou cliente final
-            </p>
-            <p className="text-[14px] md:text-[15px] text-western-green-deep leading-snug">
+            </span>
+            <span className="mt-1 block font-sans text-[16px] leading-snug text-western-green-deep">
               Quero fazer um projeto residencial — atendimento direto pelo WhatsApp.
-            </p>
-          </div>
-          <span className="hidden sm:inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep link-underline flex-shrink-0">
-            Falar no WhatsApp <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+            </span>
           </span>
-          <ArrowRight className="sm:hidden h-4 w-4 text-western-green-deep flex-shrink-0 transition-transform group-hover:translate-x-1" />
+          <ChevronRight
+            className="h-5 w-5 flex-shrink-0 text-western-stone-warm transition-transform group-hover:translate-x-1"
+            aria-hidden="true"
+          />
         </a>
 
-        {/* Stepper */}
-        <div className="flex items-center gap-3 mb-10">
-          {[1, 2].map((n) => (
-            <div key={n} className="flex items-center gap-3 flex-1">
-              <span
-                className={`w-8 h-8 flex items-center justify-center font-mono text-xs border ${
-                  step >= n
-                    ? "bg-western-gold text-western-green-deep border-western-gold"
-                    : "border-western-stone-warm/30 text-western-stone-warm"
-                }`}
-              >
-                {n}
-              </span>
-              <span className={`font-mono text-[11px] uppercase tracking-[0.2em] ${step >= n ? "text-western-green-deep" : "text-western-stone-warm/70"}`}>
-                {n === 1 ? "Empresa" : "Responsável & acesso"}
-              </span>
-              {n === 1 && <div className="flex-1 h-px bg-western-stone-warm/20" />}
-            </div>
-          ))}
+        {/* Progresso — uma decisão por vez */}
+        <div className="mb-10">
+          <p className="text-eyebrow mb-3">
+            Etapa {step} de 2 · {step === 1 ? "Empresa" : "Responsável e acesso"}
+          </p>
+          <div className="flex gap-2" aria-hidden="true">
+            <span className="h-1.5 flex-1 rounded-[6px] bg-western-cta" />
+            <span className={`h-1.5 flex-1 rounded-[6px] ${step >= 2 ? "bg-western-cta" : "bg-western-border-soft"}`} />
+          </div>
         </div>
 
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
@@ -388,13 +409,18 @@ export default function PartnerSignup() {
             <>
               <div>
                 <FieldLabel htmlFor="empresa">Razão social</FieldLabel>
-                <Input id="empresa" value={f.empresa} onChange={(e) => set("empresa", e.target.value)} required
-                  className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-                {errors.empresa && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.empresa}</p>}
+                <Input
+                  id="empresa" value={f.empresa} onChange={(e) => set("empresa", e.target.value)} required
+                  autoComplete="organization"
+                  aria-invalid={!!errors.empresa}
+                  aria-describedby={errors.empresa ? "empresa-error" : undefined}
+                  className={control(!!errors.empresa)}
+                />
+                {errors.empresa && <FieldError id="empresa-error">{errors.empresa}</FieldError>}
               </div>
 
               <div>
-                <FieldLabel htmlFor="cnpj">CNPJ</FieldLabel>
+                <FieldLabel htmlFor="cnpj" hint="Usamos o CNPJ para liberar o preço de parceiro na hora.">CNPJ</FieldLabel>
                 <CnpjInput id="cnpj" value={f.cnpj} onChange={(v) => set("cnpj", v)} required error={errors.cnpj} />
               </div>
 
@@ -403,38 +429,47 @@ export default function PartnerSignup() {
                 <SegmentoSelect id="segmento" value={f.segmento} onChange={(v) => set("segmento", v)} required error={errors.segmento} />
                 {f.segmento === "Outro" && (
                   <Input
+                    id="segmentoOutro"
                     placeholder="Especifique seu segmento"
                     value={f.segmentoOutro}
                     onChange={(e) => set("segmentoOutro", e.target.value)}
-                    className="mt-3 h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold"
+                    aria-invalid={!!errors.segmentoOutro}
+                    aria-describedby={errors.segmentoOutro ? "segmentoOutro-error" : undefined}
+                    className={`mt-3 ${control(!!errors.segmentoOutro)}`}
                   />
                 )}
-                {errors.segmentoOutro && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.segmentoOutro}</p>}
+                {errors.segmentoOutro && <FieldError id="segmentoOutro-error">{errors.segmentoOutro}</FieldError>}
               </div>
 
               <div className="grid sm:grid-cols-2 gap-5">
                 <div>
                   <FieldLabel htmlFor="site" optional>Site</FieldLabel>
-                  <Input id="site" placeholder="https://" value={f.site} onChange={(e) => set("site", e.target.value)}
-                    className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                  <Input
+                    id="site" placeholder="https://" value={f.site} onChange={(e) => set("site", e.target.value)}
+                    inputMode="url" autoComplete="url"
+                    className={control()}
+                  />
                 </div>
                 <div>
                   <FieldLabel htmlFor="instagram" optional>Instagram</FieldLabel>
-                  <div className="flex items-stretch h-12 border border-western-stone-warm/30 focus-within:border-western-gold transition-colors">
-                    <span className="px-3 flex items-center font-mono text-sm text-western-stone-warm border-r border-western-stone-warm/20">@</span>
+                  <div className="flex items-stretch h-[52px] overflow-hidden rounded-[10px] border-[1.5px] border-western-border-strong bg-western-paper transition-colors focus-within:border-western-green-deep">
+                    <span className="px-4 flex items-center font-sans text-[16px] font-medium text-western-stone-warm border-r border-western-border-soft select-none">
+                      @
+                    </span>
                     <input
                       id="instagram"
                       value={f.instagram.replace(/^@/, "")}
                       onChange={(e) => set("instagram", e.target.value.replace(/^@/, ""))}
                       placeholder="seuestudio"
-                      className="flex-1 bg-transparent px-3 outline-none text-western-green-deep placeholder:text-western-stone-warm/50"
+                      autoComplete="off"
+                      className="flex-1 min-w-0 bg-transparent px-4 outline-none font-sans text-[16px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-western-stone-warm/15">
-                <p className="text-eyebrow mb-4">Endereço comercial</p>
+              <div className="pt-6 border-t border-western-border-soft">
+                <p className="text-eyebrow mb-5">Endereço comercial</p>
 
                 <div className="grid sm:grid-cols-3 gap-5">
                   <div className="sm:col-span-1">
@@ -459,38 +494,61 @@ export default function PartnerSignup() {
                   </div>
                   <div className="sm:col-span-2">
                     <FieldLabel htmlFor="endereco">Logradouro</FieldLabel>
-                    <Input id="endereco" value={f.endereco} onChange={(e) => set("endereco", e.target.value)} required
-                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-                    {errors.endereco && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.endereco}</p>}
+                    <Input
+                      id="endereco" value={f.endereco} onChange={(e) => set("endereco", e.target.value)} required
+                      autoComplete="address-line1"
+                      aria-invalid={!!errors.endereco}
+                      aria-describedby={errors.endereco ? "endereco-error" : undefined}
+                      className={control(!!errors.endereco)}
+                    />
+                    {errors.endereco && <FieldError id="endereco-error">{errors.endereco}</FieldError>}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-5">
                   <div>
                     <FieldLabel htmlFor="numero">Número</FieldLabel>
-                    <Input id="numero" value={f.numero} onChange={(e) => set("numero", e.target.value)} required
-                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-                    {errors.numero && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.numero}</p>}
+                    <Input
+                      id="numero" value={f.numero} onChange={(e) => set("numero", e.target.value)} required
+                      inputMode="numeric"
+                      aria-invalid={!!errors.numero}
+                      aria-describedby={errors.numero ? "numero-error" : undefined}
+                      className={control(!!errors.numero)}
+                    />
+                    {errors.numero && <FieldError id="numero-error">{errors.numero}</FieldError>}
                   </div>
                   <div className="sm:col-span-2">
                     <FieldLabel htmlFor="complemento" optional>Complemento</FieldLabel>
-                    <Input id="complemento" value={f.complemento} onChange={(e) => set("complemento", e.target.value)}
-                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                    <Input
+                      id="complemento" value={f.complemento} onChange={(e) => set("complemento", e.target.value)}
+                      autoComplete="address-line2"
+                      className={control()}
+                    />
                   </div>
                 </div>
 
                 <div className="grid sm:grid-cols-3 gap-5 mt-5">
                   <div>
                     <FieldLabel htmlFor="bairro">Bairro</FieldLabel>
-                    <Input id="bairro" value={f.bairro} onChange={(e) => set("bairro", e.target.value)} required
-                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-                    {errors.bairro && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.bairro}</p>}
+                    <Input
+                      id="bairro" value={f.bairro} onChange={(e) => set("bairro", e.target.value)} required
+                      autoComplete="address-level3"
+                      aria-invalid={!!errors.bairro}
+                      aria-describedby={errors.bairro ? "bairro-error" : undefined}
+                      className={control(!!errors.bairro)}
+                    />
+                    {errors.bairro && <FieldError id="bairro-error">{errors.bairro}</FieldError>}
                   </div>
                   <div>
                     <FieldLabel htmlFor="cidade">Cidade</FieldLabel>
-                    <Input id="cidade" value={f.cidade} onChange={(e) => set("cidade", e.target.value)} required
-                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-                    {errors.cidade && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.cidade}</p>}
+                    <Input
+                      id="cidade" value={f.cidade} onChange={(e) => set("cidade", e.target.value)} required
+                      autoComplete="address-level2"
+                      aria-invalid={!!errors.cidade}
+                      aria-describedby={errors.cidade ? "cidade-error" : undefined}
+                      className={control(!!errors.cidade)}
+                    />
+                    {errors.cidade && <FieldError id="cidade-error">{errors.cidade}</FieldError>}
                   </div>
                   <div>
                     <FieldLabel htmlFor="estado">UF</FieldLabel>
@@ -499,22 +557,21 @@ export default function PartnerSignup() {
                       value={f.estado}
                       onChange={(e) => set("estado", e.target.value)}
                       required
-                      className="h-12 w-full bg-transparent border border-western-stone-warm/30 px-3 rounded-none text-western-green-deep focus:outline-none focus:border-western-gold"
+                      autoComplete="address-level1"
+                      aria-invalid={!!errors.estado}
+                      aria-describedby={errors.estado ? "estado-error" : undefined}
+                      className={control(!!errors.estado)}
                     >
                       <option value="" disabled>—</option>
                       {UF_LIST.map((uf) => <option key={uf} value={uf}>{uf}</option>)}
                     </select>
-                    {errors.estado && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.estado}</p>}
+                    {errors.estado && <FieldError id="estado-error">{errors.estado}</FieldError>}
                   </div>
                 </div>
               </div>
 
-              <Button
-                type="button"
-                onClick={goNext}
-                className="w-full h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none mt-4"
-              >
-                Avançar <ChevronRight className="h-4 w-4 ml-1" />
+              <Button type="button" onClick={goNext} size="lg" className="w-full mt-4">
+                Avançar <ChevronRight aria-hidden="true" />
               </Button>
             </>
           )}
@@ -523,9 +580,14 @@ export default function PartnerSignup() {
             <>
               <div>
                 <FieldLabel htmlFor="nome">Nome do responsável</FieldLabel>
-                <Input id="nome" value={f.nome} onChange={(e) => set("nome", e.target.value)} required
-                  className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-                {errors.nome && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.nome}</p>}
+                <Input
+                  id="nome" value={f.nome} onChange={(e) => set("nome", e.target.value)} required
+                  autoComplete="name"
+                  aria-invalid={!!errors.nome}
+                  aria-describedby={errors.nome ? "nome-error" : undefined}
+                  className={control(!!errors.nome)}
+                />
+                {errors.nome && <FieldError id="nome-error">{errors.nome}</FieldError>}
               </div>
 
               <div>
@@ -535,17 +597,25 @@ export default function PartnerSignup() {
                   value={f.cargo}
                   onChange={(e) => set("cargo", e.target.value)}
                   required
-                  className="h-12 w-full bg-transparent border border-western-stone-warm/30 px-3 rounded-none text-western-green-deep focus:outline-none focus:border-western-gold"
+                  aria-invalid={!!errors.cargo}
+                  aria-describedby={errors.cargo || errors.cargoOutro ? "cargo-error" : undefined}
+                  className={control(!!errors.cargo)}
                 >
                   <option value="" disabled>Selecione…</option>
                   {CARGOS.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
                 {f.cargo === "Outro" && (
-                  <Input placeholder="Especifique o cargo" value={f.cargoOutro} onChange={(e) => set("cargoOutro", e.target.value)}
-                    className="mt-3 h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                  <Input
+                    id="cargoOutro"
+                    placeholder="Especifique o cargo"
+                    value={f.cargoOutro}
+                    onChange={(e) => set("cargoOutro", e.target.value)}
+                    aria-invalid={!!errors.cargoOutro}
+                    className={`mt-3 ${control(!!errors.cargoOutro)}`}
+                  />
                 )}
                 {(errors.cargo || errors.cargoOutro) && (
-                  <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.cargo || errors.cargoOutro}</p>
+                  <FieldError id="cargo-error">{errors.cargo || errors.cargoOutro}</FieldError>
                 )}
               </div>
 
@@ -569,45 +639,77 @@ export default function PartnerSignup() {
                 <PasswordField id="senha2" value={f.senha2} onChange={(v) => set("senha2", v)} required error={errors.senha2} showStrength={false} />
               </div>
 
-              <label className="flex items-start gap-3 pt-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={f.aceite}
-                  onChange={(e) => set("aceite", e.target.checked)}
-                  className="mt-1 h-4 w-4 accent-western-gold flex-shrink-0"
-                />
-                <span className="text-spec text-western-stone-warm leading-relaxed">
-                  Li e concordo com a{" "}
-                  <Link to="/politica-comercial" className="link-underline text-western-gold">política comercial</Link>{" "}
-                  e a{" "}
-                  <Link to="/privacidade" className="link-underline text-western-gold">política de privacidade</Link>.
-                </span>
-              </label>
-              {errors.aceite && <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.aceite}</p>}
+              <div>
+                <label htmlFor="aceite" className="flex items-start gap-3 py-2 cursor-pointer">
+                  <input
+                    id="aceite"
+                    type="checkbox"
+                    checked={f.aceite}
+                    onChange={(e) => set("aceite", e.target.checked)}
+                    aria-invalid={!!errors.aceite}
+                    aria-describedby={errors.aceite ? "aceite-error" : undefined}
+                    className="mt-0.5 h-6 w-6 flex-shrink-0 rounded-[6px] accent-western-cta"
+                  />
+                  <span className="font-sans text-[16px] leading-relaxed text-western-stone-warm">
+                    Li e concordo com a{" "}
+                    <Link
+                      to="/politica-comercial"
+                      className="font-semibold text-western-green-deep underline underline-offset-4 decoration-western-bronze"
+                    >
+                      política comercial
+                    </Link>{" "}
+                    e a{" "}
+                    <Link
+                      to="/privacidade"
+                      className="font-semibold text-western-green-deep underline underline-offset-4 decoration-western-bronze"
+                    >
+                      política de privacidade
+                    </Link>.
+                  </span>
+                </label>
+                {errors.aceite && <FieldError id="aceite-error">{errors.aceite}</FieldError>}
+              </div>
 
-              <div className="flex gap-3 pt-2">
+              {/* CTA primário verde, full-width no mobile; "Voltar" fica abaixo no celular. */}
+              <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
                 <Button
                   type="button"
                   onClick={() => setStep(1)}
                   variant="outline"
-                  className="h-12 px-5 border-western-stone-warm/30 text-western-green-deep hover:border-western-gold rounded-none font-mono text-xs uppercase tracking-[0.22em]"
+                  size="lg"
+                  className="w-full sm:w-auto"
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Voltar
+                  <ChevronLeft aria-hidden="true" /> Voltar
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 h-12 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
-                >
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar solicitação"}
+                <Button type="submit" disabled={loading} size="lg" className="w-full sm:flex-1">
+                  {loading ? (
+                    <>
+                      <Loader2 className="animate-spin" aria-hidden="true" /> Enviando…
+                    </>
+                  ) : (
+                    "Enviar solicitação"
+                  )}
                 </Button>
               </div>
+
+              {/* Sinais de confiança perto da decisão */}
+              <ul className="space-y-2 pt-2">
+                {CONFIANCA.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-meta leading-snug">
+                    <Check className="h-5 w-5 flex-shrink-0 text-western-bronze" strokeWidth={1.75} aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
             </>
           )}
 
-          <p className="text-spec text-western-stone-warm text-center pt-4">
+          <p className="font-sans text-[16px] text-western-stone-warm text-center pt-4">
             Já é parceiro?{" "}
-            <Link to="/parceiro/login" className="link-underline text-western-gold">
+            <Link
+              to="/parceiro/login"
+              className="font-semibold text-western-green-deep underline underline-offset-4 decoration-western-bronze"
+            >
               Entrar
             </Link>
           </p>

@@ -137,16 +137,16 @@ export default function Inspiracoes() {
         description="Lookbook de composições reais: piscina, jardim e lago com pedras artesanais Western. Veja a ideia por trás de cada cena e as peças usadas."
         path="/inspiracoes"
       />
-      <div className="container-western py-16 md:py-24">
+      <div className="container-western py-12 md:py-20">
         {/* Cabeçalho + seletor de tipo */}
         <Reveal variant="fade-up">
           <div className="max-w-3xl">
-            <p className="text-eyebrow mb-5">Inspiração · Cenas reais</p>
+            <p className="text-eyebrow mb-4">Inspiração · Cenas reais</p>
             <div className="w-12 h-px bg-western-gold mb-8" />
             <div
               role="group"
               aria-label="Tipo de projeto"
-              className="flex flex-wrap gap-2 mb-8"
+              className="flex flex-wrap gap-3 mb-8"
             >
               {TIPOS.map(([id, label]) => {
                 const on = cur === id;
@@ -156,10 +156,10 @@ export default function Inspiracoes() {
                     type="button"
                     aria-pressed={on}
                     onClick={() => setTipo(id)}
-                    className={`px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] border transition-all duration-300 ${
+                    className={`tap-target inline-flex items-center justify-center px-6 rounded-full border text-[16px] font-semibold transition-colors ${
                       on
-                        ? "bg-western-green-deep text-western-cream border-western-green-deep"
-                        : "border-western-stone-warm/25 text-western-green-deep hover:border-western-gold hover:text-western-gold"
+                        ? "bg-western-cta text-western-cream border-western-cta"
+                        : "bg-white border-western-border-strong text-western-green-deep hover:bg-western-paper hover:border-western-green-deep"
                     }`}
                   >
                     {label}
@@ -167,17 +167,13 @@ export default function Inspiracoes() {
                 );
               })}
             </div>
-            <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05]">
-              {data.titulo}
-            </h1>
-            <p className="mt-6 text-western-stone-warm text-lg leading-relaxed max-w-2xl">
-              {data.intro}
-            </p>
+            <h1 className="display-xl text-western-green-deep">{data.titulo}</h1>
+            <p className="text-body mt-5 max-w-[60ch]">{data.intro}</p>
           </div>
         </Reveal>
 
         {/* Looks — editorial alternado */}
-        <div className="mt-16 md:mt-24 space-y-16 md:space-y-28">
+        <div className="mt-14 md:mt-20 space-y-16 md:space-y-24">
           {data.looks.map((lk, i) => (
             <Reveal key={`${cur}-${i}`} variant="fade-up">
               <article
@@ -185,8 +181,8 @@ export default function Inspiracoes() {
                   i % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""
                 }`}
               >
-                <div className="relative frame-product overflow-hidden aspect-[4/3]">
-                  <span className="absolute top-4 left-4 z-10 w-10 h-10 flex items-center justify-center bg-western-green-deep text-western-gold font-display text-lg">
+                <div className="relative frame-product rounded-[16px] overflow-hidden aspect-[4/3]">
+                  <span className="absolute top-4 left-4 z-10 w-11 h-11 flex items-center justify-center rounded-[10px] bg-western-green-deep text-western-gold font-sans font-bold text-[18px] tabular-nums">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <img
@@ -198,33 +194,29 @@ export default function Inspiracoes() {
                   />
                 </div>
                 <div>
-                  <h2 className="font-display text-2xl md:text-[34px] text-western-green-deep leading-[1.12] flex flex-wrap items-center gap-3">
-                    {lk.t}
-                    {lk.tag && (
-                      <span className="px-2.5 py-1 bg-western-gold/15 border border-western-gold/50 text-western-gold font-mono text-[9px] uppercase tracking-[0.22em]">
-                        ◆ {lk.tag}
-                      </span>
-                    )}
-                  </h2>
-                  <p className="text-eyebrow mt-6 mb-3">A ideia por trás</p>
-                  <p className="text-western-stone-warm leading-relaxed max-w-[56ch]">
-                    {lk.idea}
-                  </p>
-                  <p className="text-eyebrow mt-7 mb-3">
-                    Peças usadas <span className="text-western-stone-warm/70">— toque para ver</span>
-                  </p>
-                  <div className="flex flex-wrap gap-2">
+                  <h2 className="display-md text-western-green-deep">{lk.t}</h2>
+                  {lk.tag && (
+                    <span className="mt-3 inline-flex items-center gap-1.5 rounded-[6px] border border-western-gold/50 bg-western-gold/15 px-3 py-1 text-[14px] font-semibold text-western-bronze">
+                      <span aria-hidden>◆</span>
+                      {lk.tag}
+                    </span>
+                  )}
+                  <p className="text-eyebrow mt-6 mb-2">A ideia por trás</p>
+                  <p className="text-body max-w-[56ch]">{lk.idea}</p>
+                  <p className="text-eyebrow mt-8 mb-1">Peças usadas</p>
+                  <p className="text-meta mb-3">Toque para ver a linha</p>
+                  <div className="flex flex-wrap gap-3">
                     {lk.pecas.map((nome) => (
                       <Link
                         key={nome}
                         to={CHIP_DEST[nome] ?? "/guia-de-composicao"}
-                        className="group/chip inline-flex items-center gap-2 px-4 py-2 bg-white border border-western-stone-warm/20 text-western-green-deep font-mono text-[11px] uppercase tracking-[0.16em] hover:border-western-gold hover:text-western-gold transition-colors"
+                        className="group/chip tap-target inline-flex items-center gap-2 rounded-full border border-western-border-strong bg-white px-5 text-[16px] font-semibold text-western-green-deep transition-colors hover:border-western-green-deep hover:bg-western-paper"
                       >
-                        <span className="w-1.5 h-1.5 bg-western-gold" aria-hidden />
+                        <span className="h-2 w-2 rounded-full bg-western-gold" aria-hidden />
                         {nome}
                         {/* seta = signifier de navegação (o chip é link, precisa parecer link) */}
                         <ArrowRight
-                          className="h-3 w-3 text-western-gold transition-transform motion-safe:group-hover/chip:translate-x-0.5"
+                          className="h-4 w-4 text-western-bronze transition-transform motion-safe:group-hover/chip:translate-x-0.5"
                           aria-hidden
                         />
                       </Link>
@@ -236,23 +228,26 @@ export default function Inspiracoes() {
           ))}
         </div>
 
-        {/* CTA — guia */}
+        {/* CTA — guia (faixa verde pontual; o dourado é o acento que dá contraste) */}
         <Reveal variant="fade-up">
-          <section className="mt-20 md:mt-28 surface-forest text-center px-6 py-14 md:py-20">
-            <h2 className="font-display text-3xl md:text-4xl text-western-cream leading-tight max-w-xl mx-auto">
+          <section className="mt-16 md:mt-24 surface-forest rounded-[16px] text-center px-6 py-12 md:py-16">
+            <h2 className="display-md text-western-cream max-w-xl mx-auto">
               Monte a sua composição no guia
             </h2>
-            <p className="text-western-cream-muted max-w-md mx-auto mt-4 mb-8 leading-relaxed">
+            <p className="text-[17px] leading-[1.6] text-western-cream-muted max-w-[44ch] mx-auto mt-4 mb-8">
               Combine as peças de cada cena, no seu acabamento, com preço de
               parceiro após o cadastro (CNPJ).
             </p>
-            <Link
-              to="/guia-de-composicao"
-              className="inline-flex items-center justify-center gap-2 h-12 px-8 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.22em] transition-colors"
-            >
-              Começar no guia <ArrowRight className="h-4 w-4" />
-            </Link>
-            <p className="mt-7 font-mono text-[10px] uppercase tracking-[0.2em] text-western-cream-muted">
+            <div className="max-w-sm mx-auto">
+              <Link
+                to="/guia-de-composicao"
+                className="btn-gold w-full"
+              >
+                Começar no guia
+                <ArrowRight className="h-5 w-5" aria-hidden />
+              </Link>
+            </div>
+            <p className="mt-7 text-[14px] text-western-cream-muted">
               Ateliê desde 1993 · NF-e em todo pedido · Garantia de 1 ano
             </p>
           </section>

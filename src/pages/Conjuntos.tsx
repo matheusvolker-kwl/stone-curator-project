@@ -71,6 +71,12 @@ const PREVIEW_POR_TIPO = 3;
 const PRECO_MIN_GLOBAL = Math.min(...ALL_LEAVES.map((l) => l.precoFallback));
 const PRECO_MAX_GLOBAL = Math.max(...ALL_LEAVES.map((l) => l.precoFallback));
 
+const NIVEL_ADJETIVO: Record<Nivel, string> = {
+  essencial: "essencial",
+  equilibrada: "equilibrada",
+  completa: "completa",
+};
+
 export default function Conjuntos() {
   const { data: products, isLoading } = useQuery({
     queryKey: ["conjuntos", "all-handles"],
@@ -158,16 +164,16 @@ export default function Conjuntos() {
   return (
     <div className="surface-ivory min-h-screen">
       {/* HERO */}
-      <header className="border-b border-western-stone-warm/15">
-        <div className="container-western py-16 md:py-24">
+      <header className="border-b border-western-border-soft">
+        <div className="container-western py-14 md:py-20">
           <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-10 lg:gap-16 items-end">
             <div className="max-w-3xl">
-              <p className="text-eyebrow mb-5">Curadoria · Conjuntos</p>
-              <div className="w-12 h-px bg-western-gold mb-8" />
-              <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05]">
+              <p className="text-eyebrow mb-4">Curadoria · Conjuntos</p>
+              <div className="w-12 h-px bg-western-gold mb-7" />
+              <h1 className="display-xl text-western-green-deep">
                 Conjuntos curados, prontos para projetar.
               </h1>
-              <p className="mt-8 text-western-stone-warm text-lg leading-relaxed">
+              <p className="mt-6 text-body max-w-[60ch]">
                 {ALL_LEAVES.length} composições organizadas pelo local de aplicação —
                 piscinas, lagos, lagos híbridos e jardins. Cada conjunto reúne
                 pedras, volumes e acabamentos já equilibrados pela curadoria
@@ -176,19 +182,19 @@ export default function Conjuntos() {
             </div>
 
             {/* Atalho guiado — o caminho de maior conversão para quem chega sem rumo */}
-            <aside className="surface-forest p-7 md:p-8">
-              <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-western-gold-soft mb-3">
+            <aside className="surface-forest rounded-2xl p-7 md:p-8">
+              <p className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft mb-3">
                 Não sabe por onde começar?
               </p>
-              <p className="font-display text-xl md:text-2xl text-western-cream leading-snug">
+              <p className="display-md text-western-cream">
                 Responda 3 perguntas e veja os conjuntos certos para o seu
                 projeto.
               </p>
               <Link
                 to="/guia-de-composicao"
-                className="mt-6 inline-flex items-center justify-center gap-2 h-11 px-6 bg-western-gold text-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] hover:bg-western-gold/90 transition-colors"
+                className="btn-gold mt-7 w-full sm:w-auto"
               >
-                Abrir o guia <ArrowRight className="h-3.5 w-3.5" />
+                Abrir o guia <ArrowRight className="h-5 w-5" />
               </Link>
             </aside>
           </div>
@@ -196,7 +202,7 @@ export default function Conjuntos() {
       </header>
 
       <div className="container-western py-12 md:py-16">
-        <div className="lg:grid lg:grid-cols-[260px_1fr] lg:gap-12">
+        <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-12">
           {/* SIDEBAR — desktop */}
           <aside className="hidden lg:block">
             <FilterPanel
@@ -213,15 +219,17 @@ export default function Conjuntos() {
           </aside>
 
           {/* MOBILE — botão de abrir filtros */}
-          <div className="lg:hidden mb-6 flex items-center justify-between">
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm">
-              {filtered.length} conjuntos
+          <div className="lg:hidden mb-6 flex items-center justify-between gap-4">
+            <p className="font-sans text-[16px] text-western-stone-warm">
+              {filtered.length}{" "}
+              {filtered.length === 1 ? "conjunto" : "conjuntos"}
             </p>
             <button
+              type="button"
               onClick={() => setFiltersOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-western-green-deep text-western-green-deep font-mono text-xs uppercase tracking-[0.2em]"
+              className="btn-outline-forest px-5"
             >
-              <SlidersHorizontal className="h-3.5 w-3.5" />
+              <SlidersHorizontal className="h-5 w-5" />
               Filtros {activeCount > 0 && `(${activeCount})`}
             </button>
           </div>
@@ -233,27 +241,28 @@ export default function Conjuntos() {
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div
                     key={i}
-                    className="aspect-[4/5] bg-western-stone-warm/10 animate-pulse"
+                    className="aspect-[4/5] rounded-lg bg-western-stone-warm/10 animate-pulse"
                   />
                 ))}
               </div>
             ) : filtered.length === 0 ? (
-              <div className="border border-western-stone-warm/20 bg-white p-12 text-center">
-                <p className="font-display text-2xl text-western-green-deep mb-3">
+              <div className="rounded-2xl border border-western-border-soft bg-white p-10 md:p-12 text-center">
+                <p className="display-md text-western-green-deep mb-3">
                   Nenhum conjunto nessa combinação.
                 </p>
-                <p className="text-western-stone-warm mb-6">
+                <p className="text-body mb-7">
                   Tente relaxar algum filtro.
                 </p>
                 <button
+                  type="button"
                   onClick={clearAll}
-                  className="font-mono text-xs uppercase tracking-[0.2em] text-western-gold hover:text-western-green-deep"
+                  className="btn-outline-forest w-full sm:w-auto"
                 >
                   Limpar filtros
                 </button>
               </div>
             ) : (
-              <div className="space-y-20">
+              <div className="space-y-16 md:space-y-20">
                 {TIPOS_ORDER.map((tipo) => {
                   const items = grouped.get(tipo) ?? [];
                   if (items.length === 0) return null;
@@ -266,19 +275,19 @@ export default function Conjuntos() {
                   const ocultos = items.length - visiveis.length;
                   return (
                     <section key={tipo}>
-                      <div className="flex items-end justify-between gap-6 mb-8 pb-5 border-b border-western-stone-warm/15">
+                      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 mb-8 pb-5 border-b border-western-border-soft">
                         <div>
                           <p className="text-eyebrow mb-2">
                             Local de aplicação
                           </p>
-                          <h2 className="font-display text-3xl md:text-4xl text-western-green-deep">
+                          <h2 className="display-lg text-western-green-deep">
                             {tipoLabels[tipo]}
                           </h2>
-                          <p className="mt-2 text-western-stone-warm text-sm max-w-xl">
+                          <p className="mt-3 text-body max-w-xl">
                             {TIPO_DESCRICAO[tipo]}
                           </p>
                         </div>
-                        <p className="hidden md:block font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm/70 shrink-0">
+                        <p className="text-meta shrink-0">
                           {items.length}{" "}
                           {items.length === 1 ? "conjunto" : "conjuntos"}
                         </p>
@@ -301,7 +310,7 @@ export default function Conjuntos() {
                           type="button"
                           onClick={() => toggleExpandido(tipo)}
                           aria-expanded={aberto}
-                          className="mt-8 w-full sm:w-auto inline-flex items-center justify-center gap-2 h-12 px-7 border border-western-green-deep/30 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+                          className="btn-outline-forest mt-8 w-full sm:w-auto"
                         >
                           {aberto ? (
                             <>Mostrar menos</>
@@ -309,7 +318,7 @@ export default function Conjuntos() {
                             <>
                               Ver os {items.length} conjuntos de{" "}
                               {tipoLabels[tipo].toLowerCase()}
-                              <ArrowRight className="h-3.5 w-3.5" />
+                              <ArrowRight className="h-5 w-5" />
                             </>
                           )}
                         </button>
@@ -329,20 +338,21 @@ export default function Conjuntos() {
       {filtersOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div
-            className="absolute inset-0 bg-western-green-deep/50"
+            className="absolute inset-0 bg-western-green-deep/50 backdrop-blur-[2px]"
             onClick={() => setFiltersOpen(false)}
           />
-          <div className="relative ml-auto w-full max-w-sm bg-western-cream h-full overflow-y-auto p-6">
-            <div className="flex items-center justify-between mb-6">
-              <p className="font-display text-2xl text-western-green-deep">
+          <div className="relative ml-auto w-full max-w-sm bg-western-ivory h-full overflow-y-auto rounded-l-2xl p-6 pb-10">
+            <div className="flex items-center justify-between mb-7">
+              <p className="display-md text-western-green-deep">
                 Filtros
               </p>
               <button
+                type="button"
                 onClick={() => setFiltersOpen(false)}
-                className="p-2 text-western-stone-warm hover:text-western-green-deep"
+                className="tap-target inline-flex items-center justify-center rounded-md text-western-stone-warm hover:text-western-green-deep hover:bg-western-paper transition-colors"
                 aria-label="Fechar filtros"
               >
-                <X className="h-5 w-5" />
+                <X className="h-6 w-6" />
               </button>
             </div>
             <FilterPanel
@@ -357,10 +367,12 @@ export default function Conjuntos() {
               totalResults={filtered.length}
             />
             <button
+              type="button"
               onClick={() => setFiltersOpen(false)}
-              className="mt-8 w-full py-3 bg-western-green-deep text-western-cream font-mono text-xs uppercase tracking-[0.25em]"
+              className="btn-primary mt-8 w-full"
             >
-              Ver {filtered.length} conjuntos
+              Ver {filtered.length}{" "}
+              {filtered.length === 1 ? "conjunto" : "conjuntos"}
             </button>
           </div>
         </div>
@@ -395,14 +407,16 @@ function FilterPanel({
 }: FilterPanelProps) {
   return (
     <div className="lg:sticky lg:top-24 space-y-8">
-      <div className="hidden lg:flex items-center justify-between pb-4 border-b border-western-stone-warm/15">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-western-stone-warm">
-          {totalResults} resultados
+      <div className="hidden lg:flex items-center justify-between gap-3 pb-4 border-b border-western-border-soft">
+        <p className="font-sans text-[16px] text-western-stone-warm">
+          {totalResults}{" "}
+          {totalResults === 1 ? "resultado" : "resultados"}
         </p>
         {activeCount > 0 && (
           <button
+            type="button"
             onClick={onClear}
-            className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-gold hover:text-western-green-deep"
+            className="font-sans text-[14px] font-semibold text-western-bronze underline underline-offset-4 hover:text-western-green-deep transition-colors"
           >
             Limpar ({activeCount})
           </button>
@@ -411,26 +425,24 @@ function FilterPanel({
 
       {/* Local de aplicação */}
       <div>
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep mb-4">
-          Local de aplicação
-        </p>
-        <ul className="space-y-2.5">
+        <p className="text-eyebrow mb-3">Local de aplicação</p>
+        <ul>
           {TIPOS_ORDER.map((t) => {
             const active = tiposSel.has(t);
             return (
               <li key={t}>
-                <label className="flex items-center gap-3 cursor-pointer group">
+                <label className="tap-target flex items-center gap-3 cursor-pointer group">
                   <span
-                    className={`relative w-4 h-4 border transition-colors ${
+                    className={`relative w-6 h-6 shrink-0 rounded-sm border-[1.5px] transition-colors ${
                       active
                         ? "bg-western-green-deep border-western-green-deep"
-                        : "border-western-stone-warm/40 group-hover:border-western-green-deep"
+                        : "border-western-border-strong bg-white group-hover:border-western-green-deep"
                     }`}
                   >
                     {active && (
                       <svg
                         viewBox="0 0 16 16"
-                        className="absolute inset-0 text-western-cream"
+                        className="absolute inset-0.5 text-western-cream"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2.5"
@@ -445,7 +457,7 @@ function FilterPanel({
                     onChange={() => onToggleTipo(t)}
                     className="sr-only"
                   />
-                  <span className="text-sm text-western-green-deep">
+                  <span className="font-sans text-[16px] text-western-green-deep">
                     {tipoLabels[t]}
                   </span>
                 </label>
@@ -457,20 +469,20 @@ function FilterPanel({
 
       {/* Tamanho */}
       <div>
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep mb-4">
-          Porte do projeto
-        </p>
+        <p className="text-eyebrow mb-3">Porte do projeto</p>
         <div className="flex flex-wrap gap-2">
           {(["pequeno", "medio", "grande"] as Tamanho[]).map((t) => {
             const active = tamanhosSel.has(t);
             return (
               <button
                 key={t}
+                type="button"
+                aria-pressed={active}
                 onClick={() => onToggleTamanho(t)}
-                className={`px-3 py-1.5 text-xs font-mono uppercase tracking-[0.15em] border transition-colors ${
+                className={`tap-target inline-flex items-center justify-center rounded-full border px-5 font-sans text-[16px] font-semibold transition-colors ${
                   active
                     ? "bg-western-green-deep text-western-cream border-western-green-deep"
-                    : "border-western-stone-warm/30 text-western-green-deep hover:border-western-green-deep"
+                    : "bg-white border-western-border-strong text-western-green-deep hover:border-western-green-deep"
                 }`}
               >
                 {tamanhoLabels[t]}
@@ -482,9 +494,7 @@ function FilterPanel({
 
       {/* Preço */}
       <div>
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep mb-4">
-          Investimento até
-        </p>
+        <p className="text-eyebrow mb-3">Investimento até</p>
         <div className="space-y-3">
           <input
             type="range"
@@ -493,11 +503,12 @@ function FilterPanel({
             step={500}
             value={precoMax}
             onChange={(e) => onPrecoMax(Number(e.target.value))}
-            className="w-full accent-western-green-deep"
+            aria-label="Investimento máximo"
+            className="w-full h-6 accent-western-green-deep cursor-pointer"
           />
-          <div className="flex items-center justify-between text-xs font-mono text-western-stone-warm">
+          <div className="flex items-center justify-between gap-3 font-sans text-[14px] tabular-nums text-western-stone-warm">
             <span>{formatPreco(PRECO_MIN_GLOBAL)}</span>
-            <span className="text-western-green-deep font-semibold">
+            <span className="text-[16px] font-semibold text-western-green-deep">
               {formatPreco(precoMax)}
             </span>
           </div>
@@ -520,7 +531,7 @@ function ConjuntoCard({ leaf, shopify, preco, img }: CardProps) {
   return (
     <Link
       to={`/conjuntos/${leaf.handle}`}
-      className="group flex flex-col bg-white border border-western-stone-warm/10 hover:border-western-gold/60 transition-all duration-300"
+      className="group flex flex-col overflow-hidden rounded-lg bg-white border border-western-border-soft hover:border-western-gold/60 shadow-[0_16px_32px_-26px_hsl(var(--western-stone-dark)/0.3)] hover:shadow-[0_26px_44px_-26px_hsl(var(--western-stone-dark)/0.34)] transition-all duration-300"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-western-paper">
         {(() => {
@@ -547,42 +558,37 @@ function ConjuntoCard({ leaf, shopify, preco, img }: CardProps) {
           }
           return (
             <div className="w-full h-full flex items-center justify-center">
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/50">
+              <span className="font-sans text-[14px] text-western-stone-warm/70">
                 Imagem em breve
               </span>
             </div>
           );
         })()}
-        <span className="absolute top-3 left-3 font-mono text-[10px] uppercase tracking-[0.18em] text-western-cream bg-western-green-deep/80 px-2 py-1">
+        <span className="absolute top-3 left-3 rounded-md bg-western-green-deep/90 px-3 py-1.5 font-sans text-[14px] font-semibold text-western-cream">
           {tamanhoLabels[leaf.tamanho]} · {faixaArea[leaf.tipo][leaf.tamanho]}
         </span>
       </div>
 
-      <div className="flex flex-col gap-2 p-5">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-gold">
-          Composição{" "}
-          {leaf.nivel === "essencial"
-            ? "essencial"
-            : leaf.nivel === "equilibrada"
-              ? "equilibrada"
-              : "completa"}
+      <div className="flex flex-1 flex-col gap-2 p-5 md:p-6">
+        <p className="text-eyebrow">
+          Composição {NIVEL_ADJETIVO[leaf.nivel]}
         </p>
-        <h3 className="font-display text-2xl text-western-green-deep">
+        <h3 className="font-sans text-[20px] font-semibold tracking-normal leading-snug text-western-green-deep">
           {leaf.nome}
         </h3>
-        <p className="text-xs text-western-stone-warm/80 line-clamp-2">
+        <p className="text-meta line-clamp-2">
           {nivelMeta[leaf.nivel].tagline} · {pecasPorTipoNivel[leaf.nivel]}
         </p>
 
-        <div className="mt-3 pt-3 border-t border-western-stone-warm/10 flex items-end justify-between">
+        <div className="mt-auto pt-4 border-t border-western-border-soft flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <GatedPrice
             amount={String(preco)}
             currency="BRL"
-            className="font-sans text-lg font-semibold text-western-green-deep"
+            className="font-sans text-[20px] font-semibold tabular-nums text-western-green-deep"
             linked={false}
           />
-          <span className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/70 group-hover:text-western-gold transition-colors">
-            Ver conjunto <ArrowRight className="h-3 w-3" />
+          <span className="inline-flex items-center gap-1.5 font-sans text-[14px] font-semibold text-western-bronze group-hover:text-western-green-deep transition-colors">
+            Ver conjunto <ArrowRight className="h-4 w-4" />
           </span>
         </div>
       </div>

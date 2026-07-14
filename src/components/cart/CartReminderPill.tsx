@@ -9,6 +9,8 @@ import { useCartStore } from "@/stores/cartStore";
  * - Botão X descarta a sessão; reaparece quando o total de itens sobe.
  * - Empilha acima da StickyBuyBarLab usando --sticky-buy-bar-h.
  * - Escondida em ≥ md (desktop tem "Orçamento (N)" no header).
+ * - V3: age como CTA flutuante — verde sólido sobre a página clara, texto areia,
+ *   dourado só como acento sobre o verde. Toque ≥ 48px nos dois botões.
  */
 export default function CartReminderPill({ cartOpen }: { cartOpen: boolean }) {
   const items = useCartStore((s) => s.items);
@@ -51,24 +53,26 @@ export default function CartReminderPill({ cartOpen }: { cartOpen: boolean }) {
       aria-hidden={!visible}
     >
       <div className="pointer-events-auto w-fit max-w-[calc(100vw-5.5rem)]">
-        <div className="flex items-center gap-2 pl-3 pr-1 py-1.5 bg-western-green-deep text-western-cream shadow-[0_10px_30px_-12px_rgba(15,40,24,0.6)] border border-western-gold/25 rounded-full">
-          <ShoppingBag className="h-3.5 w-3.5 text-western-gold-soft shrink-0" />
+        <div className="flex items-center gap-1 pl-4 pr-1 rounded-full bg-western-cta text-western-cream border border-western-green-deep/20 shadow-[0_12px_32px_-14px_rgba(15,40,24,0.55)]">
+          <ShoppingBag className="h-5 w-5 text-western-gold-soft shrink-0" />
           <button
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent("western:open-cart"))}
-            className="font-mono text-[11px] uppercase tracking-[0.18em] py-1 pr-2 whitespace-nowrap"
+            className="min-h-[48px] pl-2 pr-2 inline-flex items-center font-sans text-[16px] font-semibold whitespace-nowrap"
           >
             {totalItems} no orçamento
-            <span className="mx-2 text-western-gold-soft/60">·</span>
+            <span className="mx-2 text-western-cream/50" aria-hidden="true">
+              ·
+            </span>
             <span className="text-western-gold-soft">Ver</span>
           </button>
           <button
             type="button"
             onClick={() => setDismissedAt(totalItems)}
             aria-label="Dispensar lembrete"
-            className="p-1.5 text-western-cream/60 hover:text-western-cream transition-colors"
+            className="min-h-[48px] min-w-[48px] inline-flex items-center justify-center rounded-full text-western-cream/80 hover:text-western-cream hover:bg-western-green-deep/40 transition-colors"
           >
-            <X className="h-3.5 w-3.5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
       </div>

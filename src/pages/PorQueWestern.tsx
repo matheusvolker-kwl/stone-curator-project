@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { Plus, Minus, ArrowRight } from "lucide-react";
+import { ChevronDown, ArrowRight, MessageCircle, FileText, ShieldCheck, Check } from "lucide-react";
 import Seo from "@/components/seo/Seo";
+import { BUSINESS } from "@/config/business";
+import heroParceria from "@/assets/hero-parceria.webp";
+import heroParceriaSm from "@/assets/hero-parceria-sm.webp";
 
 const OBJEÇÕES: { q: string; a: string }[] = [
   {
@@ -54,6 +57,8 @@ const OBJEÇÕES: { q: string; a: string }[] = [
   },
 ];
 
+const whatsappHref = `https://wa.me/${BUSINESS.whatsappFabrica}`;
+
 export default function PorQueWestern() {
   const [open, setOpen] = useState<number | null>(0);
   return (
@@ -63,46 +68,78 @@ export default function PorQueWestern() {
         description="As objeções mais comuns sobre pedra artesanal, respondidas com dados e casos reais de 33 anos de obras Western: peso, durabilidade, custo instalado, garantia e mais."
         path="/por-que-western"
       />
-      <section className="surface-forest">
-        <div className="container-western py-20 md:py-28 max-w-4xl">
-          <p className="text-eyebrow text-western-gold-soft mb-5">Por que Western</p>
-          <div className="w-12 h-px bg-western-gold mb-8" />
-          <h1 className="font-display text-4xl md:text-6xl text-western-cream leading-[1.05] mb-6">
-            12 perguntas que todo<br />arquiteto faz antes de especificar.
+
+      {/* HERO — foto com scrim verde. O scrim é o que garante contraste AA do
+          eyebrow e do corpo sobre a foto clara (o texto nunca encosta na foto crua). */}
+      <section className="relative overflow-hidden bg-western-green-deep">
+        <img
+          src={heroParceria}
+          srcSet={`${heroParceriaSm} 900w, ${heroParceria} 1800w`}
+          sizes="100vw"
+          alt="Ateliê Western — pedra artesanal em obra executada."
+          loading="eager"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        {/* Scrim: denso onde o texto vive, aliviando para a foto respirar. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-western-green-deep/85 md:bg-gradient-to-r md:from-western-green-deep/95 md:via-western-green-deep/88 md:to-western-green-deep/60"
+        />
+        <div className="container-western relative py-16 md:py-24 max-w-4xl">
+          <p className="text-eyebrow text-western-gold-soft mb-4">Por que Western</p>
+          <div className="w-10 h-[2px] bg-western-gold mb-6" />
+          <h1 className="display-xl text-western-cream mb-5">
+            12 perguntas que todo arquiteto faz antes de especificar.
           </h1>
-          <p className="text-lg text-western-cream-muted leading-relaxed max-w-2xl">
+          <p className="text-[17px] leading-[1.6] text-western-cream-muted max-w-[48ch]">
             Argumentário direto, baseado em 33 anos de obras executadas. Sem rodeio comercial —
             cada resposta com o número e o caso real por trás.
           </p>
         </div>
       </section>
 
-      <section className="surface-ivory py-16 md:py-20">
+      {/* ACORDEÃO — quebra de objeções */}
+      <section className="surface-ivory py-14 md:py-20">
         <div className="container-western max-w-3xl">
-          <ul className="border-t border-western-stone-warm/15">
+          <p className="text-eyebrow mb-4">As objeções mais comuns · respostas de quem produz</p>
+
+          <ul className="border-t border-western-border-soft">
             {OBJEÇÕES.map((o, i) => {
               const aberto = open === i;
+              const painelId = `porque-a-${i}`;
+              const botaoId = `porque-q-${i}`;
               return (
-                <li key={i} className="border-b border-western-stone-warm/15">
+                <li key={i} className="border-b border-western-border-soft">
                   <button
+                    id={botaoId}
                     onClick={() => setOpen(aberto ? null : i)}
-                    className="w-full flex items-start justify-between gap-4 text-left py-5 group"
+                    className="tap-target w-full flex items-start justify-between gap-4 text-left py-4 group"
                     aria-expanded={aberto}
+                    aria-controls={painelId}
                   >
-                    <span className="flex items-start gap-4">
-                      <span className="font-mono text-[11px] text-western-gold mt-1 tabular-nums">
+                    <span className="flex items-start gap-4 min-w-0">
+                      <span className="text-[14px] font-semibold tabular-nums text-western-bronze mt-[5px] shrink-0">
                         {String(i + 1).padStart(2, "0")}
                       </span>
-                      <span className="font-display text-lg md:text-xl text-western-green-deep group-hover:text-western-gold transition-colors leading-snug">
+                      <span className="text-[18px] md:text-[20px] font-semibold leading-snug text-western-green-deep group-hover:text-western-bronze transition-colors">
                         {o.q}
                       </span>
                     </span>
-                    <span className="text-western-gold mt-1 flex-shrink-0">
-                      {aberto ? <Minus className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
-                    </span>
+                    <ChevronDown
+                      className={`h-[22px] w-[22px] shrink-0 mt-1 text-western-gold transition-transform duration-200 ${
+                        aberto ? "rotate-180" : ""
+                      }`}
+                      aria-hidden
+                    />
                   </button>
                   {aberto && (
-                    <div className="pb-6 pl-10 pr-2 text-western-stone-warm leading-relaxed text-[15px]">
+                    <div
+                      id={painelId}
+                      role="region"
+                      aria-labelledby={botaoId}
+                      className="text-body pb-6 pl-9 pr-1"
+                    >
                       {o.a}
                     </div>
                   )}
@@ -111,17 +148,56 @@ export default function PorQueWestern() {
             })}
           </ul>
 
-          <div className="mt-14 text-center">
-            <p className="text-western-stone-warm mb-5">Tem outra pergunta?</p>
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Link to="/western-box" className="inline-flex items-center gap-2 h-12 px-7 bg-western-green-deep text-western-cream hover:bg-western-green-deep/90 font-mono text-xs uppercase tracking-[0.22em] transition-colors">
-                Receber amostras grátis <ArrowRight className="h-4 w-4" />
+          {/* CTA — amostra na mão. Primário verde, full-width no mobile. */}
+          <section className="mt-12 md:mt-16 rounded-2xl border border-western-border-soft surface-paper px-6 py-9 md:px-10 md:py-12 text-center">
+            <p className="text-eyebrow mb-2">Ainda com dúvida?</p>
+            <h2 className="display-md text-western-green-deep mb-3">
+              Veja e sinta a pedra na sua mão
+            </h2>
+            <p className="text-body mx-auto max-w-[44ch] mb-7">
+              Amostra dos 4 acabamentos — Moledo, Arenito, Granito e Quartzo — grátis pelo correio.
+              Ou fale direto com quem produz, sem intermediário.
+            </p>
+
+            <div className="flex flex-col sm:flex-row sm:justify-center gap-3 mx-auto max-w-[380px] sm:max-w-none">
+              <Link to="/western-box" className="btn-primary w-full sm:w-auto">
+                Receber amostras grátis
+                <ArrowRight className="h-5 w-5" aria-hidden />
               </Link>
-              <Link to="/contato" className="inline-flex items-center gap-2 h-12 px-7 border border-western-green-deep/40 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-xs uppercase tracking-[0.22em] transition-colors">
+              <Link to="/contato" className="btn-outline-forest w-full sm:w-auto">
                 Falar com a fábrica
               </Link>
             </div>
-          </div>
+
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noreferrer"
+              className="tap-target mt-4 inline-flex items-center justify-center gap-2 text-[16px] font-semibold text-western-green-deep hover:underline underline-offset-4"
+            >
+              <MessageCircle className="h-5 w-5" aria-hidden />
+              Falar no WhatsApp · {BUSINESS.whatsappLabel}
+            </a>
+
+            <div className="mt-6 pt-5 border-t border-western-border-soft flex flex-wrap justify-center gap-x-6 gap-y-3">
+              <span className="text-spec inline-flex items-center gap-2">
+                <FileText className="h-[18px] w-[18px] text-western-bronze shrink-0" aria-hidden />
+                NF-e em todo pedido
+              </span>
+              <span className="text-spec inline-flex items-center gap-2">
+                <ShieldCheck className="h-[18px] w-[18px] text-western-bronze shrink-0" aria-hidden />
+                Garantia de {BUSINESS.garantiaLabel}
+              </span>
+              <span className="text-spec inline-flex items-center gap-2">
+                <Check className="h-[18px] w-[18px] text-western-bronze shrink-0" aria-hidden />
+                Ateliê desde {BUSINESS.fundadaEm} · {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}
+              </span>
+            </div>
+
+            <p className="text-meta mt-4">
+              {BUSINESS.razaoSocial} · CNPJ {BUSINESS.cnpj} · empresa brasileira
+            </p>
+          </section>
         </div>
       </section>
     </>

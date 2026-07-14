@@ -72,6 +72,11 @@ export default {
           paper: "hsl(var(--western-paper))",
           "stone-dark": "hsl(var(--western-stone-dark))",
           "stone-warm": "hsl(var(--western-stone-warm))",
+          /* DS V3 — já existiam como CSS vars em index.css, faltavam no Tailwind */
+          bronze: "hsl(var(--western-bronze))",
+          cta: "hsl(var(--western-cta))",
+          "border-soft": "hsl(var(--western-border-soft))",
+          "border-strong": "hsl(var(--western-border-strong))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
