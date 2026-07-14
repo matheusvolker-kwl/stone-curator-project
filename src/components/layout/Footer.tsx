@@ -39,10 +39,19 @@ const COLECOES: { label: string; handle: string }[] = [
 /* DS V3: rodapé é uma das faixas onde o verde escuro é permitido.
  * Títulos de coluna = label 14px semibold tracking .06em (dourado claro, que
  * é o único acento com contraste sobre o verde). Links 16px — 14px é o piso
- * absoluto e link de rodapé merece mais que o piso. */
+ * absoluto e link de rodapé merece mais que o piso.
+ *
+ * MOBILE: o rodapé é COLUNA ÚNICA (<640px). Em 2 colunas sobravam ~145px úteis
+ * e o texto quebrava DENTRO da palavra (e-mail partido no domínio, CEP partido).
+ * Coluna cheia + break-normal = nenhuma palavra é cortada no meio. Não usar
+ * break-all/anywhere aqui. */
 const colTitle = "text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft mb-4";
 const colLink =
-  "inline-flex items-center min-h-[36px] text-[16px] text-western-cream hover:text-western-gold-soft hover:underline underline-offset-4 transition-colors";
+  "inline-flex items-center min-h-[48px] md:min-h-[36px] max-w-full break-normal text-[16px] text-western-cream hover:text-western-gold-soft hover:underline underline-offset-4 transition-colors";
+
+/* Quebra saudável do e-mail: única oportunidade de quebra é DEPOIS do "@"
+ * (comercial@ / westernpools.com.br). O domínio nunca é partido no meio. */
+const [emailLocal, emailDominio] = BUSINESS.emailComercial.split("@");
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -86,9 +95,10 @@ export default function Footer() {
   return (
     <footer className="surface-forest border-t border-western-gold/15 pt-16 pb-10">
       <div className="container-western">
-        {/* Marca + colunas de navegação */}
-        <div className="grid grid-cols-2 md:grid-cols-12 gap-x-8 gap-y-12 pb-14">
-          <div className="col-span-2 md:col-span-3">
+        {/* Marca + colunas de navegação.
+            Mobile: 1 coluna (nada de 145px úteis). sm: 2 colunas. md: 12 colunas. */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-x-8 gap-y-10 md:gap-y-12 pb-14">
+          <div className="min-w-0 sm:col-span-2 md:col-span-3">
             <img src={logo} alt="Western" className="h-14 w-auto mb-5" />
             <p className="text-[17px] leading-[1.6] text-western-cream-muted max-w-[320px]">
               Ateliê de pedra artesanal desde {BUSINESS.fundadaEm}. Peças com cerca de 10% do peso
@@ -105,7 +115,7 @@ export default function Footer() {
             </a>
           </div>
 
-          <div className="col-span-1 md:col-span-2">
+          <div className="min-w-0 md:col-span-2">
             <h4 className={colTitle}>Linhas</h4>
             <ul className="flex flex-col">
               {COLECOES.map((c) => (
@@ -123,7 +133,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="col-span-1 md:col-span-2">
+          <div className="min-w-0 md:col-span-2">
             <h4 className={colTitle}>Para parceiros</h4>
             <ul className="flex flex-col">
               <li><Link to="/parceiro/cadastro" className={colLink}>Seja parceiro</Link></li>
@@ -138,7 +148,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="col-span-1 md:col-span-2">
+          <div className="min-w-0 md:col-span-2">
             <h4 className={colTitle}>Western</h4>
             <ul className="flex flex-col">
               <li><Link to="/sobre" className={colLink}>Sobre o ateliê</Link></li>
@@ -152,7 +162,9 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="col-span-1 md:col-span-3">
+          {/* Largura total no mobile e no sm: é o bloco com e-mail, telefone e
+              endereço — os textos que não podem ser partidos no meio. */}
+          <div className="min-w-0 sm:col-span-2 md:col-span-3">
             <h4 className={colTitle}>Atendimento</h4>
             <ul className="flex flex-col">
               <li>
@@ -162,12 +174,17 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className={colLink}
                 >
-                  WhatsApp · {BUSINESS.whatsappLabel}
+                  {/* um único span: dentro do inline-flex, texto + elemento virariam
+                      flex items separados e a quebra/espaço se perderiam */}
+                  <span>
+                    WhatsApp ·{" "}
+                    <span className="whitespace-nowrap">{BUSINESS.whatsappLabel}</span>
+                  </span>
                 </a>
               </li>
               <li>
-                <a href={`mailto:${BUSINESS.emailComercial}`} className={`${colLink} break-all`}>
-                  {BUSINESS.emailComercial}
+                <a href={`mailto:${BUSINESS.emailComercial}`} className={colLink}>
+                  <span className="break-normal">{emailLocal}@<wbr />{emailDominio}</span>
                 </a>
               </li>
               <li>
@@ -177,14 +194,18 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className={colLink}
                 >
-                  Instagram @westernpools
+                  <span>Instagram @westernpools</span>
                 </a>
               </li>
               <li className="text-[16px] text-western-cream-muted mt-2 leading-[1.6]">
                 {BUSINESS.horarioAtelie}
               </li>
-              <li className="text-[16px] text-western-cream-muted leading-[1.6]">
-                Ateliê em {BUSINESS.enderecoAtelieCompleto}
+              <li className="text-[16px] text-western-cream-muted leading-[1.6] break-normal">
+                Ateliê em {BUSINESS.enderecoAtelieRua} ·{" "}
+                <span className="whitespace-nowrap">
+                  {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}
+                </span>{" "}
+                · <span className="whitespace-nowrap">{BUSINESS.enderecoAtelieCep}</span>
               </li>
             </ul>
           </div>

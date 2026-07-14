@@ -11,6 +11,13 @@ export interface Projeto {
   cover: string;
   /** Imagem alternativa usada apenas no card da seção "Obras assinadas". Se ausente, usa `cover`. */
   cardCover?: string;
+  /**
+   * true quando o `cover` NÃO é foto da obra, e sim um still do depoimento em vídeo.
+   * O card então se anuncia como depoimento (badge + play) em vez de passar um retrato
+   * por obra executada. Assim que houver foto da obra, preencha `cardCover` — o badge
+   * vira só o play sobre a foto e esta flag pode cair.
+   */
+  coverEhDepoimento?: boolean;
   /** Vídeo opcional — se ausente, o modal exibe apenas a imagem cover. */
   video?: string;
   /** Quando true, sinaliza projeto sob acordo de confidencialidade. */
@@ -34,7 +41,11 @@ export const PROJETOS: Projeto[] = [
       "Piscina 60 m²",
       "Lago 20 m²",
     ],
+    // PENDÊNCIA DE ACERVO: não existe foto desta obra no repositório — `coverCasaPraia`
+    // é um still do vídeo (o Tato falando). Enquanto não chegar a foto da obra executada,
+    // o card se anuncia como depoimento. Ao receber a foto: importe-a em `cardCover`.
     cover: coverCasaPraia,
+    coverEhDepoimento: true,
     video: "/videos/projetos/casa-praia.mp4",
   },
   {

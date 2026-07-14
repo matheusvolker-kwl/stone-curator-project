@@ -31,7 +31,6 @@ import { toast } from "sonner";
 
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
-import GatedPrice from "@/components/shared/GatedPrice";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import { useCartStore, type CartItem } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
@@ -226,7 +225,16 @@ export default function Carrinho() {
   /* ======================================================================
    * ORÇAMENTO COM PEÇAS
    * ==================================================================== */
-  const ctaLabel = showValues ? "Finalizar compra" : "Entrar para finalizar";
+  /* UMA porta para o passo "autenticar". Antes eram quatro (o CTA do resumo, os
+   * dois botões do card do gate e o chip "Ver preço de parceiro" de cada peça).
+   * Sobram: este CTA + o link discreto "Já sou parceiro" logo abaixo dele.
+   * O rótulo também deixa de mentir: visitante não "finaliza" nada. */
+  const ctaLabel = showValues
+    ? "Finalizar compra"
+    : session
+      ? "Acompanhar meu cadastro"
+      : "Criar cadastro para ver preços";
+  const ctaTo = session ? "/minha-conta" : "/parceiro/cadastro";
 
   const TrustRow = () => (
     <div className="space-y-2">
@@ -282,7 +290,9 @@ export default function Carrinho() {
           <div className="mt-8 md:mt-10 grid gap-10 lg:gap-14 lg:grid-cols-[minmax(0,1fr)_380px] items-start">
             {/* ============ COLUNA ESQUERDA — linhas ============ */}
             <div>
-              {/* Gate do preço — visitante (a Box sozinha nunca é gated) */}
+              {/* Gate do preço — visitante (a Box sozinha nunca é gated).
+               * Explica a regra; NÃO oferece botões. A ação vive uma única vez,
+               * no resumo (e na barra fixa do mobile, que é o mesmo CTA). */}
               {!showValues && (
                 <div className="mb-6 rounded-[10px] border border-western-border-soft bg-western-paper p-5 md:p-6">
                   <div className="flex items-start gap-3">
@@ -292,28 +302,13 @@ export default function Carrinho() {
                     />
                     <div className="min-w-0">
                       <p className="font-sans text-[17px] font-semibold leading-snug text-western-green-deep">
-                        Preços de parceiro
+                        {session ? "Cadastro em análise" : "Preços de parceiro"}
                       </p>
                       <p className="text-body mt-1.5">
-                        Vendemos para profissionais com CNPJ. Os valores aparecem aqui assim que
-                        seu cadastro for aprovado — sua composição fica guardada.
+                        {session
+                          ? "Assim que seu cadastro for aprovado, os valores aparecem aqui — sua composição fica guardada."
+                          : `Vendemos no atacado para profissionais com CNPJ, com pedido mínimo de ${BUSINESS.pedidoMinimoLabel} por composição. Os valores aparecem aqui assim que seu cadastro for aprovado — sua composição fica guardada.`}
                       </p>
-                      <div className="mt-4 flex flex-col sm:flex-row gap-3">
-                        <Link
-                          to={session ? "/minha-conta" : "/parceiro/cadastro"}
-                          className="inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors"
-                        >
-                          {session ? "Acompanhar meu cadastro" : "Criar cadastro de parceiro"}
-                        </Link>
-                        {!session && (
-                          <Link
-                            to="/parceiro/login"
-                            className="inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] border border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper font-sans text-[16px] font-semibold transition-colors"
-                          >
-                            Já sou parceiro
-                          </Link>
-                        )}
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -343,7 +338,10 @@ export default function Carrinho() {
                     </Link>
 
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-3 md:gap-5">
+                      {/* No mobile a linha EMPILHA (nome em cima, preço embaixo). Lado a
+                       * lado, o chip do gate era flex-shrink-0 e espremia a coluna do
+                       * nome até ~2ch — "Pedra Média 5" quebrava uma letra por linha. */}
+                      <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between md:gap-5">
                         <div className="min-w-0">
                           <h2 className="font-sans text-[20px] font-semibold leading-snug text-western-green-deep">
                             <Link
@@ -359,28 +357,30 @@ export default function Carrinho() {
                             </p>
                           )}
                           {item.sku && (
-                            <p className="text-meta mt-0.5">Ref. {item.sku}</p>
+                            <p className="text-meta mt-0.5 break-words">Ref. {item.sku}</p>
                           )}
                         </div>
 
-                        <div className="text-right flex-shrink-0">
+                        <div className="md:flex-shrink-0 md:text-right">
                           {showValues ? (
                             <>
-                              <p className="font-sans text-[20px] font-bold tabular-nums leading-tight text-western-green-deep">
+                              <p className="font-sans text-[20px] font-bold tabular-nums leading-tight text-western-green-deep whitespace-nowrap">
                                 {formatBRL(lineTotal(item), item.price.currencyCode)}
                               </p>
                               {item.quantity > 1 && (
-                                <p className="font-sans text-[14px] text-western-stone-warm mt-1">
+                                <p className="font-sans text-[14px] text-western-stone-warm mt-1 whitespace-nowrap">
                                   {formatBRL(unitPrice(item), item.price.currencyCode)} / peça
                                 </p>
                               )}
                             </>
                           ) : (
-                            <GatedPrice
-                              amount={item.price.amount}
-                              currency={item.price.currencyCode}
-                              variant="badge"
-                            />
+                            /* O gate aqui é INFORMAÇÃO, não porta: a única porta da
+                             * página é o CTA do resumo. Antes eram 3 chips-link
+                             * "Ver preço de parceiro" competindo com ele. */
+                            <p className="inline-flex items-center gap-1.5 font-sans text-[14px] font-semibold text-western-bronze whitespace-nowrap">
+                              <Lock className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                              Preço de parceiro
+                            </p>
                           )}
                         </div>
                       </div>
@@ -423,30 +423,6 @@ export default function Carrinho() {
                 ))}
               </ul>
 
-              {/* Saídas laterais — continuar ou falar com o ateliê */}
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-                <Link
-                  to="/produtos"
-                  className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
-                >
-                  <ArrowLeft className="h-5 w-5" aria-hidden="true" />
-                  Continuar comprando
-                </Link>
-                <a
-                  href={WHATS_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
-                >
-                  <MessageCircle className="h-5 w-5 text-western-bronze" aria-hidden="true" />
-                  Dúvidas? Falar com o ateliê
-                </a>
-              </div>
-
-              {/* Confiança perto da decisão (no mobile o resumo fica abaixo) */}
-              <div className="mt-8 lg:hidden">
-                <TrustRow />
-              </div>
             </div>
 
             {/* ============ COLUNA DIREITA — resumo ============ */}
@@ -473,6 +449,17 @@ export default function Carrinho() {
                       </span>
                     )}
                   </div>
+
+                  {/* Pedido mínimo — o visitante precisa saber da barreira ANTES de
+                   * se cadastrar, não depois. Para o parceiro aprovado, a barra de
+                   * progresso abaixo já diz o mesmo (e diz quanto falta). */}
+                  {!showValues && !boxOnly && (
+                    <p className="mt-3 font-sans text-[17px] leading-snug text-western-green-deep">
+                      Pedido mínimo de{" "}
+                      <span className="font-semibold">{BUSINESS.pedidoMinimoLabel}</span> por
+                      composição.
+                    </p>
+                  )}
 
                   <p className="text-meta mt-2">
                     Frete e prazo são calculados por CEP na próxima etapa.
@@ -533,7 +520,7 @@ export default function Carrinho() {
                       </button>
                     ) : (
                       <Link
-                        to="/parceiro/login"
+                        to={ctaTo}
                         className="group w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors"
                       >
                         {ctaLabel}
@@ -541,6 +528,16 @@ export default function Carrinho() {
                           className="h-5 w-5 transition-transform motion-safe:group-hover:translate-x-0.5"
                           aria-hidden="true"
                         />
+                      </Link>
+                    )}
+
+                    {/* Mesma porta, outra chave — rebaixada a link de texto. */}
+                    {!showValues && !session && (
+                      <Link
+                        to="/parceiro/login"
+                        className="tap-target w-full inline-flex items-center justify-center font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta underline underline-offset-4 decoration-western-border-strong transition-colors"
+                      >
+                        Já sou parceiro · entrar
                       </Link>
                     )}
 
@@ -584,10 +581,32 @@ export default function Carrinho() {
                 </div>
               </div>
 
-              <div className="mt-6 hidden lg:block">
+              {/* Selos DEPOIS do resumo — no mobile eles vinham antes do CTA. */}
+              <div className="mt-6">
                 <TrustRow />
               </div>
             </aside>
+          </div>
+
+          {/* Saídas — por último, sempre. Dois links de SAÍDA nunca podem aparecer
+           * antes da ação de AVANÇO (era a ordem do mobile). */}
+          <div className="mt-10 lg:mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-western-border-soft pt-6">
+            <Link
+              to="/produtos"
+              className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+              Continuar comprando
+            </Link>
+            <a
+              href={WHATS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+            >
+              <MessageCircle className="h-5 w-5 text-western-bronze" aria-hidden="true" />
+              Dúvidas? Falar com o ateliê
+            </a>
           </div>
         </div>
       </main>
@@ -628,7 +647,7 @@ export default function Carrinho() {
           </button>
         ) : (
           <Link
-            to="/parceiro/login"
+            to={ctaTo}
             className="w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors"
           >
             {ctaLabel}

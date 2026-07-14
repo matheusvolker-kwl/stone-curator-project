@@ -1,15 +1,5 @@
 import { Link } from "react-router-dom";
-import {
-  UserPlus,
-  BadgeCheck,
-  Tag,
-  ShoppingCart,
-  ArrowRight,
-  FileText,
-  ShieldCheck,
-  MessageCircle,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { ArrowRight, FileText, ShieldCheck, MessageCircle } from "lucide-react";
 import type { ReactNode } from "react";
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
@@ -18,11 +8,14 @@ import { useAuth } from "@/hooks/useAuth";
 
 /* Página "Como comprar" — destino do CTA secundário do hero.
  * Uma decisão por vez: entender os 4 passos → criar o cadastro.
- * Nada de preço, nada de catálogo aqui: a página existe para destravar o gate. */
+ * Nada de preço, nada de catálogo aqui: a página existe para destravar o gate.
+ *
+ * A MESMA ação aparece duas vezes (herói e fim): quem já chegou convencido
+ * age na primeira dobra; quem lê os 4 passos age no fim. Uma ação repetida,
+ * nunca duas ações concorrentes. */
 
 type Passo = {
   n: string;
-  icone: LucideIcon;
   titulo: string;
   texto: ReactNode;
 };
@@ -30,7 +23,6 @@ type Passo = {
 const PASSOS: Passo[] = [
   {
     n: "1",
-    icone: UserPlus,
     titulo: "Cadastre-se grátis",
     texto: (
       <>
@@ -41,7 +33,6 @@ const PASSOS: Passo[] = [
   },
   {
     n: "2",
-    icone: BadgeCheck,
     titulo: "Acesso liberado na hora",
     texto: (
       <>
@@ -53,7 +44,6 @@ const PASSOS: Passo[] = [
   },
   {
     n: "3",
-    icone: Tag,
     titulo: "Veja o preço de parceiro",
     texto: (
       <>
@@ -65,7 +55,6 @@ const PASSOS: Passo[] = [
   },
   {
     n: "4",
-    icone: ShoppingCart,
     titulo: "Monte e finalize",
     texto: (
       <>
@@ -110,6 +99,49 @@ const faqJsonLd = {
   })),
 };
 
+/* Bloco de ação — o mesmo no herói e no fim da página.
+ * Verde, full-width no mobile, 52px (btn-primary). O "Entrar" é apoio, não ação. */
+function BlocoCta({
+  isPartner,
+  align,
+}: {
+  isPartner: boolean;
+  align: "left" | "center";
+}) {
+  const alinhamento = align === "center" ? "text-center" : "text-left";
+
+  if (isPartner) {
+    return (
+      <div className={alinhamento}>
+        <Link to="/produtos" className="btn-primary w-full sm:w-auto sm:min-w-[280px]">
+          Ver o catálogo com preço de parceiro
+          <ArrowRight className="h-5 w-5" aria-hidden />
+        </Link>
+        <p className="text-meta mt-3">Você já é parceiro — o preço aparece direto no catálogo.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={alinhamento}>
+      <Link to="/parceiro/cadastro" className="btn-primary w-full sm:w-auto sm:min-w-[280px]">
+        Criar cadastro grátis
+        <ArrowRight className="h-5 w-5" aria-hidden />
+      </Link>
+      <p className="text-meta mt-3">Leva menos de 2 minutos · precisa de CNPJ</p>
+      <p className="text-[16px] mt-4 text-western-stone-warm">
+        Já é parceiro?{" "}
+        <Link
+          to="/parceiro/login"
+          className="font-semibold text-western-green-deep underline underline-offset-4 hover:text-western-bronze transition-colors"
+        >
+          Entrar
+        </Link>
+      </p>
+    </div>
+  );
+}
+
 export default function ComoComprar() {
   const { isPartner } = useAuth();
 
@@ -122,8 +154,10 @@ export default function ComoComprar() {
         jsonLd={faqJsonLd}
       />
 
-      {/* CABEÇALHO — fundo claro e quente (tela de compra). Uma promessa, uma frase. */}
-      <section className="surface-ivory pt-12 pb-10 md:pt-20 md:pb-14">
+      {/* CABEÇALHO — fundo claro e quente (tela de compra). Uma promessa, uma frase.
+          O CTA vive aqui também: a página existe para gerar cadastro, então a ação
+          não pode ficar a duas rolagens de distância. */}
+      <section className="surface-ivory pt-12 pb-10 md:pt-20 md:pb-12">
         <div className="container-western max-w-3xl">
           <Reveal>
             <p className="text-eyebrow mb-3">Loja para profissionais</p>
@@ -136,46 +170,42 @@ export default function ComoComprar() {
               </strong>
               .
             </p>
+
+            <div className="mt-7">
+              <BlocoCta isPartner={isPartner} align="left" />
+            </div>
           </Reveal>
         </div>
       </section>
 
-      {/* 4 PASSOS — cards brancos, número em verde, ícone bronze.
-          Grade mais larga que a coluna de leitura: com 3 colunas internas
-          (número + ícone + texto), 768px espremia o texto em 3 linhas. */}
+      {/* 4 PASSOS — cards brancos, um único marcador: o numeral.
+          A lista é uma escada; o ícone decorativo não acrescentava informação e
+          roubava ~100px de largura útil do texto em cada card. */}
       <section className="surface-ivory pb-12 md:pb-16">
         <div className="container-western max-w-5xl">
           <ol className="grid gap-4 md:grid-cols-2">
-            {PASSOS.map((p, i) => {
-              const Icone = p.icone;
-              return (
-                <Reveal
-                  as="li"
-                  key={p.n}
-                  delay={i * 70}
-                  className="flex items-start gap-4 rounded-2xl border border-western-border-soft bg-white p-5 md:p-6 shadow-[0_2px_10px_rgba(126,98,64,0.06)]"
+            {PASSOS.map((p, i) => (
+              <Reveal
+                as="li"
+                key={p.n}
+                delay={i * 70}
+                className="flex items-start gap-4 rounded-2xl border border-western-border-soft bg-white p-5 md:p-6 shadow-[0_2px_10px_rgba(126,98,64,0.06)]"
+              >
+                <span
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-western-green-deep font-sans text-[16px] font-bold tabular-nums text-western-cream"
+                  aria-hidden
                 >
-                  <span
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-western-green-deep font-display text-[16px] font-bold text-western-cream"
-                    aria-hidden
-                  >
-                    {p.n}
-                  </span>
-                  <Icone
-                    className="h-6 w-6 shrink-0 mt-1 text-western-bronze"
-                    strokeWidth={1.8}
-                    aria-hidden
-                  />
-                  <div className="min-w-0">
-                    <h2 className="text-[20px] font-semibold leading-snug text-western-green-deep mb-1">
-                      <span className="sr-only">Passo {p.n}: </span>
-                      {p.titulo}
-                    </h2>
-                    <p className="text-[16px] leading-[1.55] text-western-stone-warm">{p.texto}</p>
-                  </div>
-                </Reveal>
-              );
-            })}
+                  {p.n}
+                </span>
+                <div className="min-w-0">
+                  <h2 className="text-[20px] font-semibold leading-snug text-western-green-deep mb-1">
+                    <span className="sr-only">Passo {p.n}: </span>
+                    {p.titulo}
+                  </h2>
+                  <p className="text-[16px] leading-[1.55] text-western-stone-warm">{p.texto}</p>
+                </div>
+              </Reveal>
+            ))}
           </ol>
         </div>
       </section>
@@ -190,9 +220,7 @@ export default function ComoComprar() {
                 <div
                   key={d.q}
                   className={
-                    i === 0
-                      ? "pb-4"
-                      : "border-t border-western-border-soft pt-4 pb-4 last:pb-0"
+                    i === 0 ? "pb-4" : "border-t border-western-border-soft pt-4 pb-4 last:pb-0"
                   }
                 >
                   <dt className="text-[18px] font-semibold leading-snug text-western-green-deep mb-1">
@@ -206,67 +234,39 @@ export default function ComoComprar() {
         </div>
       </section>
 
-      {/* CTA — a única decisão da página. Verde, full-width no mobile. */}
+      {/* CTA — a mesma decisão do herói, repetida para quem leu tudo. */}
       <section className="surface-ivory pb-16 md:pb-24">
         <div className="container-western max-w-3xl">
-          <Reveal className="text-center">
-            {isPartner ? (
-              <>
-                <Link
-                  to="/produtos"
-                  className="btn-primary w-full sm:w-auto sm:min-w-[280px] mx-auto"
-                >
-                  Ver o catálogo com preço de parceiro
-                  <ArrowRight className="h-5 w-5" aria-hidden />
-                </Link>
-                <p className="text-meta mt-3">
-                  Você já é parceiro — o preço aparece direto no catálogo.
-                </p>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/parceiro/cadastro"
-                  className="btn-primary w-full sm:w-auto sm:min-w-[280px] mx-auto"
-                >
-                  Criar cadastro grátis
-                  <ArrowRight className="h-5 w-5" aria-hidden />
-                </Link>
-                <p className="text-meta mt-3">Leva menos de 2 minutos · precisa de CNPJ</p>
-                <p className="text-[16px] mt-4 text-western-stone-warm">
-                  Já é parceiro?{" "}
-                  <Link
-                    to="/parceiro/login"
-                    className="font-semibold text-western-green-deep underline underline-offset-4 hover:text-western-bronze transition-colors"
-                  >
-                    Entrar
-                  </Link>
-                </p>
-              </>
-            )}
+          <Reveal>
+            <BlocoCta isPartner={isPartner} align="center" />
 
-            {/* FAIXA DE CONFIANÇA */}
-            <div className="mt-9 pt-6 border-t border-western-border-soft flex flex-wrap justify-center gap-x-7 gap-y-3">
-              <span className="text-spec inline-flex items-center gap-2">
+            {/* FAIXA DE CONFIANÇA — só provas. No mobile, uma linha por selo
+                (o wrap 1+2 parecia defeito); no desktop, lado a lado. */}
+            <ul className="mt-9 pt-6 border-t border-western-border-soft flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8">
+              <li className="text-spec inline-flex items-center gap-2">
                 <FileText className="h-[18px] w-[18px] shrink-0 text-western-bronze" aria-hidden />
                 NF-e em todo pedido
-              </span>
-              <span className="text-spec inline-flex items-center gap-2">
+              </li>
+              <li className="text-spec inline-flex items-center gap-2">
                 <ShieldCheck className="h-[18px] w-[18px] shrink-0 text-western-bronze" aria-hidden />
                 Garantia de {BUSINESS.garantiaLabel}
-              </span>
+              </li>
+            </ul>
+
+            {/* Conversa — apoio, fora da faixa de provas, para não competir com o CTA. */}
+            <p className="mt-5 text-center">
               <a
                 href={whatsappHref}
                 target="_blank"
                 rel="noreferrer"
-                className="tap-target inline-flex items-center gap-2 text-[16px] font-semibold text-western-green-deep hover:underline underline-offset-4"
+                className="tap-target inline-flex items-center justify-center gap-2 text-[16px] text-western-stone-warm hover:text-western-green-deep transition-colors"
               >
                 <MessageCircle className="h-[18px] w-[18px] shrink-0" aria-hidden />
-                Falar no WhatsApp
+                Prefere conversar antes? Falar no WhatsApp
               </a>
-            </div>
+            </p>
 
-            <p className="text-meta mt-5">
+            <p className="text-meta mt-3 text-center">
               Ateliê próprio em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} desde{" "}
               {BUSINESS.fundadaEm} · {BUSINESS.razaoSocial} · CNPJ {BUSINESS.cnpj}
             </p>

@@ -53,6 +53,16 @@ const PROJETOS = [
   { img: imgPiscina, nome: "Piscina de praia", tipo: "Borda e prainha" },
 ];
 
+/* "Mais especificados" — a 375px a grade de 2 colunas deixava ~163px por card:
+ * o nome da peça truncava ("Cascata Santa…") e o coração/código colidiam com a
+ * foto. No mobile vira carrossel com peek (card ~76vw, ~285px); de sm pra cima
+ * volta a ser grade. Mesmas classes no esqueleto pra não haver salto de layout. */
+const featuredTrack =
+  "flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-px-6 scrollbar-hide -mx-6 px-6 pb-1 " +
+  "sm:mx-0 sm:px-0 sm:scroll-px-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible " +
+  "md:grid-cols-3 lg:grid-cols-4";
+const featuredItem = "snap-start shrink-0 w-[76vw] max-w-[300px] sm:w-auto sm:max-w-none";
+
 function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -227,12 +237,12 @@ export default function Index() {
             </div>
           </Reveal>
           {loadingFeatured && featured.length === 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className={featuredTrack}>
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="space-y-3">
+                <div key={i} className={`${featuredItem} space-y-3`}>
                   <div className="aspect-square rounded-[16px] bg-western-stone-warm/10 animate-pulse" />
-                  <div className="h-5 w-3/4 rounded-sm bg-western-stone-warm/10 animate-pulse" />
-                  <div className="h-4 w-1/3 rounded-sm bg-western-stone-warm/10 animate-pulse" />
+                  <div className="h-5 w-3/4 rounded-[6px] bg-western-stone-warm/10 animate-pulse" />
+                  <div className="h-4 w-1/3 rounded-[6px] bg-western-stone-warm/10 animate-pulse" />
                 </div>
               ))}
             </div>
@@ -241,9 +251,16 @@ export default function Index() {
               Catálogo indisponível no momento. Tente recarregar em instantes.
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className={featuredTrack}>
               {featured.slice(0, 8).map((p, i) => (
-                <Reveal key={p.node.id} variant="fade-up" delay={(i % 4) * 90} duration={650} distance={20}>
+                <Reveal
+                  key={p.node.id}
+                  className={featuredItem}
+                  variant="fade-up"
+                  delay={(i % 4) * 90}
+                  duration={650}
+                  distance={20}
+                >
                   <ProductCard product={p.node} />
                 </Reveal>
               ))}
@@ -305,21 +322,26 @@ export default function Index() {
               Projetos reais, pedra Western.
             </h2>
           </Reveal>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-7 md:gap-x-6 md:gap-y-10">
             {PROJETOS.map((p, i) => (
               <Reveal key={p.nome} variant="fade-up" delay={(i % 3) * 80} duration={620} distance={18}>
-                {/* Legenda sempre visível: no celular não existe hover. */}
-                <figure className="group relative overflow-hidden rounded-[16px] aspect-[4/3] bg-western-cream-muted">
-                  <img
-                    src={p.img}
-                    alt={p.nome}
-                    loading="lazy"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-western-green-deep/88 via-western-green-deep/15 to-transparent" />
-                  <figcaption className="absolute inset-x-0 bottom-0 p-4">
-                    <p className="font-sans text-[16px] font-semibold text-western-cream leading-snug">{p.nome}</p>
-                    <p className="text-[14px] text-western-cream/80 mt-0.5">{p.tipo}</p>
+                {/* A legenda vivia POR CIMA da foto: nas fotos claras (água turquesa,
+                    areia) o texto creme sumia (~1,1:1). Agora ela vive FORA da imagem,
+                    sobre o fundo claro da seção — contraste não depende da foto. */}
+                <figure className="group">
+                  <div className="relative overflow-hidden rounded-[16px] aspect-[4/3] bg-western-cream-muted">
+                    <img
+                      src={p.img}
+                      alt={p.nome}
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  <figcaption className="mt-3">
+                    <p className="font-sans text-[17px] font-semibold text-western-green-deep leading-snug">
+                      {p.nome}
+                    </p>
+                    <p className="text-[14px] leading-snug text-western-stone-warm mt-1">{p.tipo}</p>
                   </figcaption>
                 </figure>
               </Reveal>

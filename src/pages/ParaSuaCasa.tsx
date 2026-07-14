@@ -4,6 +4,9 @@ import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
 import { BUSINESS } from "@/config/business";
 
+// Foto real de obra entregue — o herói de uma página que vende sonho não pode
+// ser um retângulo de cor chapada.
+import heroImg from "@/assets/projetos-western/01_hero-tapirai.webp";
 // Foto real do ateliê — prova de "mão na massa", não render.
 import atelieImg from "@/assets/irmaos-botelho-gruta.webp";
 
@@ -21,10 +24,12 @@ type Caminho = {
   desc: string;
   cta: string;
   msg: string;
-  /** Card em destaque — a maior objeção de quem chega sem CNPJ. */
+  /**
+   * Card em destaque — a maior objeção de quem chega sem CNPJ.
+   * Destaque é de REALCE (borda dourada), nunca de LARGURA: o card ocupava duas
+   * colunas e dominava os três caminhos principais (piscina / lago / 3D).
+   */
   destaque?: boolean;
-  /** Ocupa a coluna restante da última linha. */
-  span?: string;
 };
 
 const CAMINHOS: Caminho[] = [
@@ -53,10 +58,11 @@ const CAMINHOS: Caminho[] = [
     icon: HardHat,
     titulo: "Quer a pedra, mas não tem CNPJ?",
     desc: "A nossa pedra artesanal é vendida no atacado só para profissionais. Sem empresa? Sem problema: a gente faz a obra completa para você — a pedra vai instalada, com garantia e sem dor de cabeça.",
-    cta: "Fazer pela Western",
+    // Rótulo explícito, no padrão em 1ª pessoa dos vizinhos ("Quero a minha
+    // piscina", "Quero um lago"). "Fazer pela Western" não dizia o que acontece.
+    cta: "Quero a obra completa",
     msg: "Olá! Vi a pedra de vocês e queria para a minha casa.",
     destaque: true,
-    span: "lg:col-span-2",
   },
   {
     icon: MessageCircle,
@@ -64,7 +70,6 @@ const CAMINHOS: Caminho[] = [
     desc: "Tem uma ideia diferente — uma cascata, um muro de pedra, uma dúvida? Fale direto com quem faz. Atendimento humano, sem robô, no seu ritmo.",
     cta: "Conversar agora",
     msg: "Olá! Tenho uma ideia para a minha casa e queria conversar.",
-    span: "sm:col-span-2 lg:col-span-1",
   },
 ];
 
@@ -83,9 +88,41 @@ export default function ParaSuaCasa() {
         path="/para-sua-casa"
       />
 
-      {/* 1) HERO — faixa verde institucional. Sobre verde, o CTA é dourado. */}
-      <section className="surface-forest">
-        <div className="container-western py-16 md:py-24">
+      {/* 1) HERO — foto real de obra + scrim. Sobre foto/verde, o CTA é dourado.
+       * O scrim é direcional: no desktop a tinta cheia cobre a coluna do texto
+       * (AA garantido) e abre para a foto à direita; no mobile a foto é fundo
+       * inteiro sob uma tinta uniforme. Nunca depender do brilho da foto. */}
+      <section className="relative isolate overflow-hidden flex items-center bg-western-green-deep min-h-[520px] md:min-h-[600px]">
+        <img
+          src={heroImg}
+          alt="Piscina natural com borda de pedra artesanal Western em residência"
+          width={1600}
+          height={1000}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        {/* Mobile: tinta uniforme sobre a foto inteira. */}
+        <div
+          className="absolute inset-0 md:hidden"
+          style={{
+            background:
+              "linear-gradient(to bottom, hsl(var(--western-green-deep) / 0.92), hsl(var(--western-green-deep) / 0.82) 45%, hsl(var(--western-green-deep) / 0.94))",
+          }}
+          aria-hidden="true"
+        />
+        {/* Desktop: tinta cheia até ~46% (onde vive o texto), abrindo para a foto. */}
+        <div
+          className="absolute inset-0 hidden md:block"
+          style={{
+            background:
+              "linear-gradient(to right, hsl(var(--western-green-deep)) 0%, hsl(var(--western-green-deep) / 0.94) 46%, hsl(var(--western-green-deep) / 0.60) 66%, hsl(var(--western-green-deep) / 0.15) 100%)",
+          }}
+          aria-hidden="true"
+        />
+
+        <div className="relative container-western py-16 md:py-24">
           <Reveal variant="fade-up" duration={700}>
             <div className="max-w-2xl">
               <p className="font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-gold-soft mb-4">
@@ -95,7 +132,7 @@ export default function ParaSuaCasa() {
                 A sua casa merece a natureza{" "}
                 <span className="text-western-gold-soft">feita à mão.</span>
               </h1>
-              <p className="mt-5 text-[17px] md:text-[18px] leading-[1.6] text-western-cream/85">
+              <p className="mt-5 text-[17px] md:text-[18px] leading-[1.6] text-western-cream/90">
                 Piscinas naturais, lagos e paisagens em pedra artesanal — do sonho ao
                 mergulho, com o ateliê ao seu lado do começo ao fim. Você conta o que
                 imagina; a gente cuida do resto.
@@ -131,19 +168,15 @@ export default function ParaSuaCasa() {
             </header>
           </Reveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+          {/* Todos os 5 cards com a MESMA largura (1 coluna). O destaque do card
+           * do CNPJ é de borda, não de área. */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 items-stretch">
             {CAMINHOS.map((c, i) => (
-              <Reveal
-                key={c.titulo}
-                variant="fade-up"
-                delay={i * 70}
-                duration={650}
-                className={c.span}
-              >
+              <Reveal key={c.titulo} variant="fade-up" delay={i * 70} duration={650}>
                 <article
                   className={`flex h-full flex-col bg-white rounded-[16px] p-6 md:p-7 border shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] transition-colors ${
                     c.destaque
-                      ? "border-western-gold/60 hover:border-western-gold"
+                      ? "border-western-gold ring-1 ring-western-gold/25 hover:border-western-gold"
                       : "border-western-border-soft hover:border-western-gold/50"
                   }`}
                 >

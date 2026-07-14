@@ -3,7 +3,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { ShopifyProductNode } from "@/lib/catalog/types";
 import { cdnImg, cdnSrcSet } from "@/lib/catalog/client";
 import { fetchProduct } from "@/lib/datasource";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Lock } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import WishlistButton from "./WishlistButton";
 import GatedPrice from "@/components/shared/GatedPrice";
 
@@ -27,12 +28,33 @@ function dimensionFromTitle(t: string): string | null {
   return m[3] ? `${m[1]}×${m[2]}×${m[3]} cm` : `${m[1]}×${m[2]} cm`;
 }
 
+/* === Card de peça (V3) =====================================================
+ * Hierarquia: o card INTEIRO é o link para a PDP e a única ação explícita é o
+ * CTA VERDE "Ver a peça". O gate de preço é INFORMAÇÃO (linha com cadeado),
+ * nunca um botão — o destaque visual não pode ir para a porta fechada.
+ *
+ * Regras que este arquivo tem que respeitar:
+ *  - Um alvo por card. O coração some no mobile (favoritos é fase 2 e rouba
+ *    área de toque); no desktop ele aparece no hover, ancorado no CARD.
+ *  - O nome da peça NUNCA pode ser truncado a ponto de duas peças diferentes
+ *    virarem o mesmo rótulo ("Cascata Lajedo…" Boreal vs. Yporanga). Título em
+ *    17px no mobile com até 3 linhas, altura reservada para alinhar a fileira.
+ *  - Nada abaixo de 14px: o código da peça saiu de cima da foto e vive na área
+ *    de texto, a 14px, junto da linha.
+ *  - Mídia = uma superfície só (branco, igual ao card): a foto é um retângulo
+ *    branco e sobre fundo bege ela flutuava, deixando faixa morta embaixo.
+ *  - Nada de <a>/<button> aninhado: o card já é um <Link>. O CTA é um <span>
+ *    estilizado (o clique é o do card) e o GatedPrice vai com linked={false}.
+ * ========================================================================== */
 export default function ProductCard({ product }: Props) {
   const img = product.images.edges[0]?.node;
   const sku = product.variants.edges[0]?.node?.sku ?? "";
   const code = sku.split("-")[1] ?? sku.slice(0, 4).toUpperCase();
   const linha = product.collections?.edges?.[0]?.node?.title ?? null;
   const queryClient = useQueryClient();
+  // Mesma fonte de verdade do GatedPrice: o preço só existe para o parceiro
+  // aprovado. Aqui isso decide apenas QUAL bloco ocupa o slot (preço x aviso).
+  const { isApproved, session } = useAuth();
 
   // Detecta acabamentos disponíveis a partir das opções
   const finishOption = product.options.find((o) => /acabament|cor|finish/i.test(o.name));
@@ -60,25 +82,23 @@ export default function ProductCard({ product }: Props) {
       onMouseEnter={prefetch}
       onFocus={prefetch}
       onTouchStart={prefetch}
-      className="group relative flex flex-col overflow-hidden rounded-lg border border-western-border-soft bg-white shadow-[0_2px_10px_-6px_hsl(var(--western-stone-dark)/0.25)] transition-shadow duration-200 hover:shadow-[0_14px_30px_-16px_hsl(var(--western-stone-dark)/0.35)]"
+      className="group relative flex h-full flex-col overflow-hidden rounded-[16px] border border-western-border-soft bg-white shadow-[0_2px_10px_-6px_hsl(var(--western-stone-dark)/0.25)] transition-shadow duration-200 hover:shadow-[0_14px_30px_-16px_hsl(var(--western-stone-dark)/0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-cta focus-visible:ring-offset-2"
     >
-      {code && (
-        <span className="absolute top-3 right-3 z-10 rounded-sm bg-white/90 px-2 py-0.5 font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">
-          {code}
-        </span>
-      )}
-
-      {/* Favoritar: sempre visível no toque (não há hover no celular) */}
-      <div className="absolute top-3 left-3 z-10 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100">
+      {/* Favoritar: só no desktop, no hover, ancorado no canto do CARD.
+          No mobile ele encavalava a foto (duas caixas brancas se fundindo) e
+          concorria com o CTA — um alvo por card. */}
+      <div className="absolute top-3 right-3 z-10 hidden transition-opacity md:block md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100">
         <WishlistButton
           handle={product.handle}
           title={product.title}
           image={img ? cdnImg(img.url, 400) : null}
-          className="h-12 w-12 rounded-lg"
+          className="h-12 w-12 rounded-[10px] border-western-border-strong shadow-sm"
         />
       </div>
 
-      <div className="aspect-square overflow-hidden bg-western-paper">
+      {/* Mídia: superfície única (branca, igual à do card) + proporção fixa.
+          Antes o fundo era bege e a foto (retângulo branco) flutuava dentro. */}
+      <div className="aspect-[4/3] overflow-hidden border-b border-western-border-soft bg-white">
         {img ? (
           <img
             src={cdnImg(img.url, 700)}
@@ -89,7 +109,7 @@ export default function ProductCard({ product }: Props) {
             alt={img.altText || product.title}
             loading="lazy"
             decoding="async"
-            className="h-full w-full object-contain p-4 transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+            className="h-full w-full object-contain p-3 transition-transform duration-500 ease-out group-hover:scale-[1.03] md:p-4"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-western-cream/60 text-[14px] font-semibold text-western-stone-warm">
@@ -98,10 +118,21 @@ export default function ProductCard({ product }: Props) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-4 md:p-5">
-        {linha && <p className="text-meta">{linha}</p>}
+      <div className="flex flex-1 flex-col gap-2 p-3 md:p-5">
+        {/* Linha + código da peça: 14px (o badge de 12px sobre a foto morreu). */}
+        {(linha || code) && (
+          <p className="text-meta flex flex-wrap items-center gap-x-1.5">
+            {linha && <span>{linha}</span>}
+            {linha && code && <span aria-hidden="true">·</span>}
+            {code && (
+              <span className="font-semibold tracking-[0.04em] text-western-bronze">{code}</span>
+            )}
+          </p>
+        )}
 
-        <h3 className="font-sans text-[20px] font-semibold leading-[1.25] text-western-green-deep line-clamp-2 group-hover:underline group-hover:decoration-western-gold group-hover:underline-offset-4">
+        {/* Nome: 2–3 linhas, altura reservada. "Cascata Lajedo Boreal" e
+            "Cascata Lajedo Yporanga" TÊM que sair diferentes na grade. */}
+        <h3 className="font-sans text-[17px] font-semibold leading-[1.3] text-western-green-deep line-clamp-3 min-h-[44px] break-words group-hover:underline group-hover:decoration-western-gold group-hover:underline-offset-4 md:text-[20px] md:leading-[1.25] md:line-clamp-2 md:min-h-[50px]">
           {product.title}
         </h3>
 
@@ -130,16 +161,34 @@ export default function ProductCard({ product }: Props) {
           </span>
         </div>
 
-        <div className="mt-auto flex flex-col gap-2 border-t border-western-border-soft pt-3">
-          <GatedPrice
-            amount={product.priceRange.minVariantPrice.amount}
-            currency={product.priceRange.minVariantPrice.currencyCode}
-            className="font-sans text-[20px] font-bold tabular-nums text-western-green-deep"
-            linked={false}
-          />
-          <span className="inline-flex items-center gap-1.5 font-sans text-[16px] font-semibold text-western-cta transition-colors group-hover:text-western-green-deep">
+        <div className="mt-auto flex flex-col gap-2.5 border-t border-western-border-soft pt-3">
+          {isApproved ? (
+            <GatedPrice
+              amount={product.priceRange.minVariantPrice.amount}
+              currency={product.priceRange.minVariantPrice.currencyCode}
+              className="font-sans text-[20px] font-bold tabular-nums text-western-green-deep"
+              linked={false}
+            />
+          ) : (
+            /* O gate é INFORMAÇÃO, não botão: sem borda, sem cara de CTA, sem
+               roubar o clique do card. O caminho de credenciamento continua na
+               PDP (é para lá que o card leva). */
+            <p className="flex items-start gap-1.5 font-sans text-[14px] font-semibold leading-snug text-western-stone-warm">
+              <Lock className="mt-[3px] h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>
+                {session ? "Preço após a aprovação" : "Preço exclusivo para parceiros"}
+              </span>
+            </p>
+          )}
+
+          {/* CTA primário do card: VERDE, 52px, raio 10px, largura total, uma
+              linha. É um <span> de propósito — quem clica é o <Link> do card. */}
+          <span className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 whitespace-nowrap rounded-[10px] bg-western-cta px-3 font-sans text-[16px] font-semibold text-western-cream transition-colors group-hover:bg-western-green-deep md:px-5">
             Ver a peça
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            <ArrowRight
+              className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5"
+              aria-hidden="true"
+            />
           </span>
         </div>
       </div>

@@ -100,7 +100,7 @@ const GANHOS: GanhoItem[] = [
   {
     Icon: LineChart,
     numero: "2×",
-    t: "Produto que mais cresce",
+    t: "A linha que mais cresce",
     d: (
       <>
         A linha de pedras <strong className="text-western-cream font-semibold">dobrou de vendas</strong> nos últimos ciclos.
@@ -597,7 +597,7 @@ export default function Parceria() {
                 {PUBLICO.map((p) => (
                   <li
                     key={p}
-                    className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white border border-western-border-soft text-[16px] text-western-green-deep"
+                    className="inline-flex items-center gap-2 h-10 px-4 rounded-[6px] bg-white border border-western-border-soft text-[16px] text-western-green-deep"
                   >
                     <span className="h-1.5 w-1.5 rounded-full bg-western-gold flex-shrink-0" aria-hidden />
                     {p}
