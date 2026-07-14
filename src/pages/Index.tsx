@@ -94,8 +94,18 @@ export default function Index() {
           className="absolute inset-0 w-full h-full object-cover object-center will-change-transform"
           style={{ transform: heroParallax }}
         />
+        {/* Scrim mobile: vertical e mais denso — o texto ocupa a largura toda */}
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0 pointer-events-none md:hidden"
+          aria-hidden
+          style={{
+            background:
+              "linear-gradient(180deg, hsl(var(--western-green-deep) / 0.88) 0%, hsl(var(--western-green-deep) / 0.62) 55%, hsl(var(--western-green-deep) / 0.8) 100%)",
+          }}
+        />
+        {/* Scrim desktop: horizontal — texto vive na metade esquerda */}
+        <div
+          className="absolute inset-0 pointer-events-none hidden md:block"
           aria-hidden
           style={{
             background:

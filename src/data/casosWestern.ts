@@ -1,14 +1,14 @@
-// Casos reais / prova social — Western
-// Mídia real conectada. Imagens e vídeos hospedados como assets do projeto.
+// Casos reais / prova social â€” Western
+// MÃ­dia real conectada. Imagens e vÃ­deos hospedados como assets do projeto.
 import caitoMaia from "@/assets/casos-western/caito-maia.webp";
 import uniqueGarden from "@/assets/casos-western/unique-garden.webp";
 import fazzendaPark from "@/assets/casos-western/fazzenda-park.webp";
-import nicolePoster from "@/assets/casos-western/nicole-sigaud-poster.webp.asset.json";
-import clientePoster from "@/assets/casos-western/cliente-western-poster.webp.asset.json";
-import rosewoodPoster from "@/assets/casos-western/rosewood-poster.webp.asset.json";
-import nicoleVideo from "@/assets/casos-western/nicole-sigaud.mp4.asset.json";
-import clienteVideo from "@/assets/casos-western/cliente-western.mp4.asset.json";
-import rosewoodVideo from "@/assets/casos-western/rosewood.mp4.asset.json";
+import nicolePoster from "@/assets/casos-western/nicole-sigaud-poster.webp";
+import clientePoster from "@/assets/casos-western/cliente-western-poster.webp";
+import rosewoodPoster from "@/assets/casos-western/rosewood-poster.webp";
+import nicoleVideo from "@/assets/casos-western/nicole-sigaud.mp4";
+import clienteVideo from "@/assets/casos-western/cliente-western.mp4";
+import rosewoodVideo from "@/assets/casos-western/rosewood.mp4";
 import projetoResidencial from "@/assets/casos-western/projeto-residencial.webp";
 
 export type CasoTipo = "video" | "image";
@@ -16,9 +16,9 @@ export type CasoTipo = "video" | "image";
 export interface CasoWestern {
   id: string;
   tipo: CasoTipo;
-  /** URL do vídeo (mp4/embed) OU URL da imagem em alta. */
+  /** URL do vÃ­deo (mp4/embed) OU URL da imagem em alta. */
   mediaUrl: string;
-  /** Poster / thumb (usado sempre no card e para itens de vídeo no lightbox antes do play). */
+  /** Poster / thumb (usado sempre no card e para itens de vÃ­deo no lightbox antes do play). */
   posterUrl: string;
   credito: string; // Nome + papel
   titulo: string;
@@ -30,22 +30,22 @@ export const CASOS_WESTERN: CasoWestern[] = [
   {
     id: "nicole-sigaud",
     tipo: "video",
-    mediaUrl: nicoleVideo.url,
-    posterUrl: nicolePoster.url,
-    credito: "Nicole Sigaud · Arquiteta",
-    titulo: "Piscina e cascata em terreno íngreme",
+    mediaUrl: nicoleVideo,
+    posterUrl: nicolePoster,
+    credito: "Nicole Sigaud Â· Arquiteta",
+    titulo: "Piscina e cascata em terreno Ã­ngreme",
     story:
-      "Um projeto complexo numa casa em declive acentuado que só se tornou viável com a leveza, o baixo impacto ambiental e a facilidade de instalação das peças — respeitando a natureza do morro.",
+      "Um projeto complexo numa casa em declive acentuado que sÃ³ se tornou viÃ¡vel com a leveza, o baixo impacto ambiental e a facilidade de instalaÃ§Ã£o das peÃ§as â€” respeitando a natureza do morro.",
     destaque: true,
   },
   {
     id: "cliente-western",
     tipo: "video",
-    mediaUrl: clienteVideo.url,
-    posterUrl: clientePoster.url,
-    credito: "Conrado · Cliente",
+    mediaUrl: clienteVideo,
+    posterUrl: clientePoster,
+    credito: "Conrado Â· Cliente",
     titulo: "Como a Western transformou o ambiente",
-    story: "Depoimento de cliente sobre o resultado no seu espaço.",
+    story: "Depoimento de cliente sobre o resultado no seu espaÃ§o.",
   },
   {
     id: "unique-garden",
@@ -53,45 +53,45 @@ export const CASOS_WESTERN: CasoWestern[] = [
     mediaUrl: uniqueGarden,
     posterUrl: uniqueGarden,
     credito: "Unique Garden",
-    titulo: "Chalé simbionte com o morro",
+    titulo: "ChalÃ© simbionte com o morro",
     story:
-      "As pedras copiaram a textura e o relevo já existentes e se integraram à natureza, com pintura personalizada.",
+      "As pedras copiaram a textura e o relevo jÃ¡ existentes e se integraram Ã  natureza, com pintura personalizada.",
   },
   {
     id: "caito-maia",
     tipo: "image",
     mediaUrl: caitoMaia,
     posterUrl: caitoMaia,
-    credito: "Caito Maia · Empresário",
+    credito: "Caito Maia Â· EmpresÃ¡rio",
     titulo: "Base de mesa em pedra Western",
-    story: "Peça sob medida para o escritório, feita com pedra Western.",
+    story: "PeÃ§a sob medida para o escritÃ³rio, feita com pedra Western.",
   },
   {
     id: "rosewood",
     tipo: "video",
-    mediaUrl: rosewoodVideo.url,
-    posterUrl: rosewoodPoster.url,
-    credito: "Rosewood · Ed. Matarazzo",
+    mediaUrl: rosewoodVideo,
+    posterUrl: rosewoodPoster,
+    credito: "Rosewood Â· Ed. Matarazzo",
     titulo: "Revestimentos e pedras Western",
-    story: "Aplicação em um dos endereços mais icônicos de São Paulo.",
+    story: "AplicaÃ§Ã£o em um dos endereÃ§os mais icÃ´nicos de SÃ£o Paulo.",
   },
   {
     id: "fazzenda-park",
     tipo: "image",
     mediaUrl: fazzendaPark,
     posterUrl: fazzendaPark,
-    credito: "Fazzenda Park Resort · Gaspar/SC",
+    credito: "Fazzenda Park Resort Â· Gaspar/SC",
     titulo: "Cascata em pedras Western",
-    story: "Cascata de grande porte executada com peças Western.",
+    story: "Cascata de grande porte executada com peÃ§as Western.",
   },
   {
     id: "projeto-residencial",
     tipo: "image",
     mediaUrl: projetoResidencial,
     posterUrl: projetoResidencial,
-    credito: "Cascata Santa Bárbara",
+    credito: "Cascata Santa BÃ¡rbara",
     titulo: "Projeto residencial",
     story:
-      "Cascata Santa Bárbara e outras peças Western distribuídas pelo espaço da residência, compondo um ambiente orgânico e integrado à natureza.",
+      "Cascata Santa BÃ¡rbara e outras peÃ§as Western distribuÃ­das pelo espaÃ§o da residÃªncia, compondo um ambiente orgÃ¢nico e integrado Ã  natureza.",
   },
 ];

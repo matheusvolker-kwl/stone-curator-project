@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import proImage from "@/assets/projetos-western/05_cascata-escalonada.webp.asset.json";
+import proImage from "@/assets/projetos-western/05_cascata-escalonada.webp";
 import residencialImage from "@/assets/projetos-western/08_piscina-paisagismo.webp";
 
 const STORAGE_KEY = "western:entry-choice-v1";
@@ -114,7 +114,7 @@ export default function AudienceOverlay() {
 
   const handleOpenChange = (next: boolean) => {
     if (!next) {
-      // X ou ESC ou click-outside → considera "só quero ver"
+      // X ou ESC ou click-outside â†’ considera "sÃ³ quero ver"
       writeChoice("browse");
     }
     setOpen(next);
@@ -125,31 +125,31 @@ export default function AudienceOverlay() {
       <DialogContent className="max-w-2xl max-h-[90dvh] overflow-y-auto border-western-gold/30 bg-western-green-deep text-western-cream rounded-[2px] p-5 sm:p-8 md:p-10 gap-6">
         <DialogHeader className="text-left space-y-3">
           <p className="font-mono text-[10px] font-medium uppercase tracking-[0.28em] text-western-gold-soft">
-            Bem-vindo à Western
+            Bem-vindo Ã  Western
           </p>
           <div className="h-px w-10 bg-western-gold" />
           <DialogTitle className="font-display text-2xl md:text-[28px] leading-[1.1] text-western-cream font-normal tracking-tight">
-            Por onde você prefere começar?
+            Por onde vocÃª prefere comeÃ§ar?
           </DialogTitle>
           <DialogDescription className="text-western-cream-muted text-sm leading-relaxed">
-            Ateliê de pedra artesanal desde 1993. Escolha o caminho mais rápido pro seu momento.
+            AteliÃª de pedra artesanal desde 1993. Escolha o caminho mais rÃ¡pido pro seu momento.
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <OptionCard
-            eyebrow="Opção 01"
+            eyebrow="OpÃ§Ã£o 01"
             title="Sou profissional do ramo"
             description="Arquiteto, paisagista, laguista ou revenda."
-            ariaLabel="Sou profissional — continuar na loja"
-            imageUrl={proImage.url}
+            ariaLabel="Sou profissional â€” continuar na loja"
+            imageUrl={proImage}
             onActivate={choosePro}
           />
           <OptionCard
-            eyebrow="Opção 02"
-            title="É para o meu projeto"
-            description="Cliente final: cascata, lago ou área de lazer em casa."
-            ariaLabel="É para o meu projeto — solicitar orçamento"
+            eyebrow="OpÃ§Ã£o 02"
+            title="Ã‰ para o meu projeto"
+            description="Cliente final: cascata, lago ou Ã¡rea de lazer em casa."
+            ariaLabel="Ã‰ para o meu projeto â€” solicitar orÃ§amento"
             imageUrl={residencialImage}
             onActivate={chooseB2c}
           />
@@ -160,7 +160,7 @@ export default function AudienceOverlay() {
           onClick={chooseBrowse}
           className="mx-auto inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.24em] text-western-cream-muted transition-colors hover:text-western-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2 focus-visible:ring-offset-western-green-deep"
         >
-          Só quero ver o catálogo
+          SÃ³ quero ver o catÃ¡logo
           <ArrowRight className="h-3 w-3" aria-hidden="true" />
         </button>
       </DialogContent>

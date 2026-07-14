@@ -125,6 +125,7 @@ export default function ProductCard({ product }: Props) {
             amount={product.priceRange.minVariantPrice.amount}
             currency={product.priceRange.minVariantPrice.currencyCode}
             className="font-sans text-base font-semibold text-western-green-deep"
+            linked={false}
           />
           <span className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm/70 group-hover:text-western-gold transition-colors">
             Ver produto <ArrowRight className="h-3 w-3" />
