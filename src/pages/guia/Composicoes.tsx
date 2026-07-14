@@ -118,6 +118,7 @@ export default function GuiaComposicoes() {
                         image={conjuntoRenders[c.handle] ?? nivelImage[n]}
                         highlight={n === "equilibrada"}
                         refinarHref={`/guia-de-composicao/refinar/${c.handle}?${refinarParams.toString()}`}
+                        conjuntoHref={`/conjuntos/${c.handle}?${refinarParams.toString()}`}
                       />
                     </Reveal>
                   );

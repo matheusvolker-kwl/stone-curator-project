@@ -32,7 +32,7 @@ import heroImg from "@/assets/projetos-western/03_piscina-cascata.webp";
 import serraImg from "@/assets/projetos-western/06_piscina-cascata-serra.webp";
 
 const WHATSAPP_MSG_DEFAULT =
-  "OlÃ¡, Western! Quero agendar a consultoria gratuita para o meu projeto.";
+  "Olá, Western! Quero agendar a consultoria gratuita para o meu projeto.";
 
 const waLink = (msg: string) =>
   `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`;
@@ -49,22 +49,22 @@ const DIFERENCIAIS = [
   {
     icon: Factory,
     titulo: "Quem fabrica, executa",
-    desc: "Do molde Ã  instalaÃ§Ã£o â€” ninguÃ©m conhece a peÃ§a como a fÃ¡brica que a inventou.",
+    desc: "Do molde à instalação — ninguém conhece a peça como a fábrica que a inventou.",
   },
   {
     icon: Feather,
-    titulo: "Viabiliza o inviÃ¡vel",
-    desc: "Pedra atÃ© 10Ã— mais leve permite cascatas e piscinas onde a pedra natural nÃ£o aguenta: declives, lajes, estruturas crÃ­ticas.",
+    titulo: "Viabiliza o inviável",
+    desc: "Pedra até 10× mais leve permite cascatas e piscinas onde a pedra natural não aguenta: declives, lajes, estruturas críticas.",
   },
   {
     icon: Eye,
     titulo: "Render antes da obra",
-    desc: "VocÃª e seu cliente aprovam o resultado em 3D antes de a primeira peÃ§a sair da fÃ¡brica.",
+    desc: "Você e seu cliente aprovam o resultado em 3D antes de a primeira peça sair da fábrica.",
   },
   {
     icon: Leaf,
-    titulo: "Equipe prÃ³pria + baixo impacto",
-    desc: "InstalaÃ§Ã£o por profissionais com 20+ anos de casa. Molde tirado da pedra real, com PET reciclado â€” zero extraÃ§Ã£o.",
+    titulo: "Equipe própria + baixo impacto",
+    desc: "Instalação por profissionais com 20+ anos de casa. Molde tirado da pedra real, com PET reciclado — zero extração.",
   },
 ];
 
@@ -72,69 +72,69 @@ const SERVICOS = [
   {
     icon: Sparkles,
     titulo: "Consultoria",
-    desc: "EspecificaÃ§Ã£o, viabilidade tÃ©cnica e orientaÃ§Ã£o sobre acabamentos, quantidades e integraÃ§Ã£o ao projeto.",
+    desc: "Especificação, viabilidade técnica e orientação sobre acabamentos, quantidades e integração ao projeto.",
   },
   {
     icon: PencilRuler,
     titulo: "Projeto & Render",
-    desc: "VisualizaÃ§Ã£o 3D fotorrealista antes da obra â€” decida com seguranÃ§a e alinhe expectativas com o cliente.",
+    desc: "Visualização 3D fotorrealista antes da obra — decida com segurança e alinhe expectativas com o cliente.",
   },
   {
     icon: HardHat,
-    titulo: "InstalaÃ§Ã£o",
-    desc: "ExecuÃ§Ã£o pela equipe Western, com tÃ©cnica apurada, fixaÃ§Ã£o correta e acabamento integrado ao paisagismo.",
+    titulo: "Instalação",
+    desc: "Execução pela equipe Western, com técnica apurada, fixação correta e acabamento integrado ao paisagismo.",
   },
   {
     icon: LifeBuoy,
     titulo: "Acompanhamento",
-    desc: "Suporte contÃ­nuo do conceito Ã  entrega â€” logÃ­stica, cronograma e ajustes finos no local da obra.",
+    desc: "Suporte contínuo do conceito à entrega — logística, cronograma e ajustes finos no local da obra.",
   },
 ];
 
 const PASSOS = [
   {
     n: "1",
-    titulo: "Contato e apresentaÃ§Ã£o",
-    desc: "VocÃª fala com a gente por WhatsApp ou pelo formulÃ¡rio. RÃ¡pido, direto, sem burocracia.",
+    titulo: "Contato e apresentação",
+    desc: "Você fala com a gente por WhatsApp ou pelo formulário. Rápido, direto, sem burocracia.",
   },
   {
     n: "2",
     titulo: "Consultoria inicial gratuita",
-    desc: "Nosso time entende o projeto e a compatibilidade com nossos produtos e serviÃ§os. Sem custo, sem compromisso.",
+    desc: "Nosso time entende o projeto e a compatibilidade com nossos produtos e serviços. Sem custo, sem compromisso.",
   },
   {
     n: "3",
-    titulo: "Visita ao local (se necessÃ¡rio)",
-    desc: "Contratados os serviÃ§os, agendamos visita tÃ©cnica para leitura precisa do terreno e das condiÃ§Ãµes da obra.",
+    titulo: "Visita ao local (se necessário)",
+    desc: "Contratados os serviços, agendamos visita técnica para leitura precisa do terreno e das condições da obra.",
   },
   {
     n: "4",
     titulo: "Projeto e render 3D",
-    desc: "Montamos a composiÃ§Ã£o, apresentamos o render fotorrealista e ajustamos atÃ© a aprovaÃ§Ã£o final.",
+    desc: "Montamos a composição, apresentamos o render fotorrealista e ajustamos até a aprovação final.",
   },
   {
     n: "5",
-    titulo: "ExecuÃ§Ã£o e instalaÃ§Ã£o",
-    desc: "Nossa equipe executa e entrega â€” do transporte Ã  peÃ§a posicionada, integrada ao paisagismo.",
+    titulo: "Execução e instalação",
+    desc: "Nossa equipe executa e entrega — do transporte à peça posicionada, integrada ao paisagismo.",
   },
 ];
 
 const FAQ_ITEMS = [
   {
-    q: "VocÃªs atendem em todo o Brasil?",
+    q: "Vocês atendem em todo o Brasil?",
     a: "Sim, atendemos todo o Brasil.",
   },
   {
-    q: "Como funciona o orÃ§amento?",
-    a: "Marcamos uma consultoria inicial gratuita com nosso time para entender as necessidades do projeto e a compatibilidade com nossos produtos e serviÃ§os â€” e a partir daÃ­ montamos o orÃ§amento.",
+    q: "Como funciona o orçamento?",
+    a: "Marcamos uma consultoria inicial gratuita com nosso time para entender as necessidades do projeto e a compatibilidade com nossos produtos e serviços — e a partir daí montamos o orçamento.",
   },
   {
-    q: "Preciso jÃ¡ ter o projeto pronto?",
-    a: "NÃ£o. Na consultoria inicial entendemos o que vocÃª quer e ajudamos a viabilizar; se for o caso, fazemos o projeto e o render 3D.",
+    q: "Preciso já ter o projeto pronto?",
+    a: "Não. Na consultoria inicial entendemos o que você quer e ajudamos a viabilizar; se for o caso, fazemos o projeto e o render 3D.",
   },
   {
-    q: "VocÃªs instalam ou sÃ³ fornecem?",
-    a: "Os dois. Podemos apenas fornecer os produtos com manuais e instruÃ§Ãµes de instalaÃ§Ã£o, ou executar a instalaÃ§Ã£o com nossa equipe â€” profissionais que trabalham na Western hÃ¡ mais de 20 anos.",
+    q: "Vocês instalam ou só fornecem?",
+    a: "Os dois. Podemos apenas fornecer os produtos com manuais e instruções de instalação, ou executar a instalação com nossa equipe — profissionais que trabalham na Western há mais de 20 anos.",
   },
 ];
 
@@ -163,10 +163,10 @@ export default function ContrateAWestern() {
   const buildWhatsMsg = () => {
     const perfilLabel = PERFIS.find((p) => p.value === perfil)?.label;
     return [
-      "OlÃ¡, Western! Vim pelo site e quero agendar a consultoria inicial gratuita.",
+      "Olá, Western! Vim pelo site e quero agendar a consultoria inicial gratuita.",
       "",
-      `Nome: ${nome || "â€”"}`,
-      `WhatsApp: ${telefone || "â€”"}`,
+      `Nome: ${nome || "—"}`,
+      `WhatsApp: ${telefone || "—"}`,
       email ? `E-mail: ${email}` : null,
       perfil ? `Perfil: ${perfilLabel}` : null,
       mensagem ? "" : null,
@@ -182,17 +182,17 @@ export default function ContrateAWestern() {
     if (enviando) return;
 
     if (!nome.trim() || telefone.replace(/\D/g, "").length < 10) {
-      toast.error("Preencha nome e WhatsApp (mÃ­nimo 10 dÃ­gitos).");
+      toast.error("Preencha nome e WhatsApp (mínimo 10 dígitos).");
       return;
     }
     if (!captchaToken) {
-      toast.error("Confirme que vocÃª nÃ£o Ã© um robÃ´.");
+      toast.error("Confirme que você não é um robô.");
       return;
     }
 
     setEnviando(true);
 
-    // 1) grava lead â€” nÃ£o bloqueia o fluxo se falhar
+    // 1) grava lead — não bloqueia o fluxo se falhar
     try {
       const res = await submitSecureLead({
         type: "contato",
@@ -209,7 +209,7 @@ export default function ContrateAWestern() {
       if (!res.ok) throw new Error(res.error ?? "erro");
     } catch (err) {
       console.warn("[contrate-a-western] falha ao gravar lead:", err);
-      // silencioso â€” nÃ£o bloqueia o WhatsApp
+      // silencioso — não bloqueia o WhatsApp
     }
 
     // 2) abre WhatsApp com mensagem pronta
@@ -222,12 +222,12 @@ export default function ContrateAWestern() {
   return (
     <>
       <Seo
-        title="Contrate a Western â€” Consultoria, Projeto 3D e InstalaÃ§Ã£o"
-        description="Do projeto Ã  obra, a Western executa com vocÃª. Consultoria gratuita, render 3D e instalaÃ§Ã£o por quem fabrica a pedra. Cascatas, piscinas e paisagens em todo o Brasil."
+        title="Contrate a Western — Consultoria, Projeto 3D e Instalação"
+        description="Do projeto à obra, a Western executa com você. Consultoria gratuita, render 3D e instalação por quem fabrica a pedra. Cascatas, piscinas e paisagens em todo o Brasil."
         path="/contrate-a-western"
       />
 
-      {/* 1) HERO CINEMATOGRÃFICO */}
+      {/* 1) HERO CINEMATOGRÁFICO */}
       <section className="relative isolate overflow-hidden min-h-[80vh] flex items-center">
         <img
           src={heroImg}
@@ -244,17 +244,17 @@ export default function ContrateAWestern() {
         <div className="relative container-western py-24 md:py-36 text-center max-w-3xl mx-auto">
           <Reveal variant="fade-up" duration={700}>
             <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft/90 mb-5">
-              ServiÃ§os Western
+              Serviços Western
             </p>
             <div className="w-10 h-px bg-western-gold/70 mx-auto mb-7" />
             <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-western-cream leading-[1.02]">
-              Do projeto Ã  obra,<br className="hidden md:block" />{" "}
-              <span className="text-western-gold-soft">a Western executa com vocÃª.</span>
+              Do projeto à obra,<br className="hidden md:block" />{" "}
+              <span className="text-western-gold-soft">a Western executa com você.</span>
             </h1>
             <p className="mt-7 text-western-cream-muted text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
-              Consultoria, projeto, render 3D e instalaÃ§Ã£o com quem fabrica a pedra.
-              Viabilizamos cascatas, piscinas e paisagens que a pedra natural nÃ£o permite
-              â€” mais leves, mais rÃ¡pidas, com menos impacto.
+              Consultoria, projeto, render 3D e instalação com quem fabrica a pedra.
+              Viabilizamos cascatas, piscinas e paisagens que a pedra natural não permite
+              — mais leves, mais rápidas, com menos impacto.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
               <button
@@ -275,7 +275,7 @@ export default function ContrateAWestern() {
             </div>
 
             <p className="mt-12 text-[11px] md:text-xs font-mono uppercase tracking-[0.22em] text-western-cream/70">
-              Especificada nas obras de Neymar Jr. Â· Alex Hanazaki Â· Rosewood Â· Unique Garden
+              Especificada nas obras de Neymar Jr. · Alex Hanazaki · Rosewood · Unique Garden
             </p>
           </Reveal>
         </div>
@@ -290,17 +290,17 @@ export default function ContrateAWestern() {
                 <p className="text-eyebrow">Por que a Western</p>
                 <div className="w-12 h-px bg-western-gold my-5" />
                 <h2 className="font-display text-3xl md:text-4xl text-western-green-deep leading-[1.15]">
-                  Um Ãºnico parceiro que jÃ¡ resolveu o que ninguÃ©m tinha resolvido.
+                  Um único parceiro que já resolveu o que ninguém tinha resolvido.
                 </h2>
                 <p className="mt-5 text-western-stone-warm leading-relaxed">
-                  A Western Ã© a fÃ¡brica e a executora. Isso significa custo, prazo,
-                  tÃ©cnica e responsabilidade concentrados em um sÃ³ time â€”
-                  do render 3D Ã  peÃ§a posicionada em obra.
+                  A Western é a fábrica e a executora. Isso significa custo, prazo,
+                  técnica e responsabilidade concentrados em um só time —
+                  do render 3D à peça posicionada em obra.
                 </p>
                 <div className="mt-8 aspect-[4/3] overflow-hidden">
                   <img
                     src={serraImg}
-                    alt="Piscina com cascata Western em meio Ã  serra"
+                    alt="Piscina com cascata Western em meio à serra"
                     width={800}
                     height={600}
                     loading="lazy"
@@ -332,15 +332,15 @@ export default function ContrateAWestern() {
         </div>
       </section>
 
-      {/* 3) SERVIÃ‡OS */}
+      {/* 3) SERVIÇOS */}
       <section className="bg-western-cream-muted py-20 md:py-28 border-y border-western-stone-warm/15">
         <div className="container-western max-w-6xl">
           <Reveal variant="fade-up" duration={700}>
             <header className="text-center max-w-2xl mx-auto mb-14">
-              <p className="text-eyebrow">O que fazemos por vocÃª</p>
+              <p className="text-eyebrow">O que fazemos por você</p>
               <div className="w-12 h-px bg-western-gold mx-auto my-5" />
               <h2 className="font-display text-3xl md:text-4xl text-western-green-deep">
-                Um Ãºnico parceiro do conceito Ã  entrega
+                Um único parceiro do conceito à entrega
               </h2>
             </header>
           </Reveal>
@@ -373,11 +373,11 @@ export default function ContrateAWestern() {
               <p className="text-eyebrow">Como funciona</p>
               <div className="w-12 h-px bg-western-gold mx-auto my-5" />
               <h2 className="font-display text-3xl md:text-4xl text-western-green-deep">
-                Cinco passos atÃ© a sua obra pronta
+                Cinco passos até a sua obra pronta
               </h2>
               <p className="mt-5 text-western-stone-warm leading-relaxed max-w-xl mx-auto">
-                Os dois primeiros passos sÃ£o{" "}
-                <span className="text-western-green-deep font-medium">rÃ¡pidos, gratuitos e sem compromisso</span>. VocÃª sÃ³ decide seguir depois de conhecer.
+                Os dois primeiros passos são{" "}
+                <span className="text-western-green-deep font-medium">rápidos, gratuitos e sem compromisso</span>. Você só decide seguir depois de conhecer.
               </p>
             </header>
           </Reveal>
@@ -394,7 +394,7 @@ export default function ContrateAWestern() {
                 >
                   {i < 2 && (
                     <span className="absolute -top-2 left-6 bg-western-gold text-western-green-deep font-mono text-[9px] uppercase tracking-[0.2em] font-semibold px-2 py-0.5">
-                      GrÃ¡tis
+                      Grátis
                     </span>
                   )}
                   <span className="font-display text-4xl text-western-gold leading-none block mb-3">
@@ -413,7 +413,7 @@ export default function ContrateAWestern() {
         </div>
       </section>
 
-      {/* 5) PROVA SOCIAL â€” rostos + mural de logos */}
+      {/* 5) PROVA SOCIAL — rostos + mural de logos */}
       <section className="surface-ivory py-16 md:py-24 border-t border-western-stone-warm/10">
         <div className="container-western max-w-5xl">
           <Reveal variant="fade-up" duration={750}>
@@ -434,7 +434,7 @@ export default function ContrateAWestern() {
               <p className="text-eyebrow">Perguntas frequentes</p>
               <div className="w-12 h-px bg-western-gold mx-auto my-5" />
               <h2 className="font-display text-3xl md:text-4xl text-western-green-deep">
-                Tirando as dÃºvidas antes da consultoria
+                Tirando as dúvidas antes da consultoria
               </h2>
             </header>
           </Reveal>
@@ -464,7 +464,7 @@ export default function ContrateAWestern() {
         </div>
       </section>
 
-      {/* 7) FORMULÃRIO / OFERTA */}
+      {/* 7) FORMULÁRIO / OFERTA */}
       <section
         ref={formRef}
         id="contato"
@@ -480,15 +480,15 @@ export default function ContrateAWestern() {
                 <div className="w-10 h-px bg-western-gold/70 mb-7" />
                 <h2 className="font-display text-3xl md:text-4xl text-western-cream leading-[1.1]">
                   Comece com uma conversa{" "}
-                  <span className="text-western-gold-soft">grÃ¡tis e sem compromisso.</span>
+                  <span className="text-western-gold-soft">grátis e sem compromisso.</span>
                 </h2>
                 <p className="mt-5 text-western-cream-muted leading-relaxed">
-                  Preencha o essencial â€” <strong className="text-western-cream">sÃ³ nome e WhatsApp</strong> sÃ£o obrigatÃ³rios.
+                  Preencha o essencial — <strong className="text-western-cream">só nome e WhatsApp</strong> são obrigatórios.
                   Ao enviar, gravamos seu contato e abrimos o WhatsApp com sua mensagem pronta.
                 </p>
                 <ul className="mt-8 space-y-3 text-western-cream-muted text-sm">
                   {[
-                    "DiagnÃ³stico tÃ©cnico do seu projeto",
+                    "Diagnóstico técnico do seu projeto",
                     "Compatibilidade com pedras e cascatas Western",
                     "Estimativa de escopo, prazo e viabilidade",
                   ].map((b) => (
@@ -570,7 +570,7 @@ export default function ContrateAWestern() {
                     rows={4}
                     value={mensagem}
                     onChange={(e) => setMensagem(e.target.value)}
-                    placeholder="Local, escopo, prazo â€” o que quiser adiantar."
+                    placeholder="Local, escopo, prazo — o que quiser adiantar."
                     className="mt-1.5 w-full px-3 py-2.5 bg-white border border-western-stone-warm/25 focus:border-western-gold focus:ring-2 focus:ring-western-gold/20 outline-none text-western-green-deep resize-none transition-all"
                   />
                 </label>
@@ -591,16 +591,16 @@ export default function ContrateAWestern() {
                   >
                     {enviando ? (
                       <>
-                        <Loader2 className="h-4 w-4 animate-spin" /> Enviandoâ€¦
+                        <Loader2 className="h-4 w-4 animate-spin" /> Enviando…
                       </>
                     ) : (
                       <>
-                        <Send className="h-4 w-4" /> Agendar consultoria grÃ¡tis
+                        <Send className="h-4 w-4" /> Agendar consultoria grátis
                       </>
                     )}
                   </button>
                   <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-western-stone-warm/70">
-                    Sem compromisso Â· Resposta rÃ¡pida
+                    Sem compromisso · Resposta rápida
                   </span>
                 </div>
               </form>

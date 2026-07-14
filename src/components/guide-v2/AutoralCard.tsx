@@ -1,5 +1,5 @@
 import { Minus, Plus } from "lucide-react";
-import { formatPreco } from "@/data/guideMap";
+import GatedPrice from "@/components/shared/GatedPrice";
 import type { AutoralItem } from "./autoraisCatalog";
 import { cn } from "@/lib/utils";
 
@@ -73,9 +73,11 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
           <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-western-stone-warm/80 truncate">
             {item.codigo}
           </p>
-          <p className="font-sans text-[15px] font-semibold tabular-nums text-western-green-deep flex-shrink-0">
-            {formatPreco(item.preco)}
-          </p>
+          <GatedPrice
+            amount={item.preco}
+            variant="hidden"
+            className="font-sans text-[15px] font-semibold tabular-nums text-western-green-deep flex-shrink-0"
+          />
         </div>
         {selected && onSetQty && (
           <div

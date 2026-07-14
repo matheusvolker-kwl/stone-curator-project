@@ -1,5 +1,5 @@
-// Casos reais / prova social â€” Western
-// MÃ­dia real conectada. Imagens e vÃ­deos hospedados como assets do projeto.
+// Casos reais / prova social — Western
+// Mídia real conectada. Imagens e vídeos hospedados como assets do projeto.
 import caitoMaia from "@/assets/casos-western/caito-maia.webp";
 import uniqueGarden from "@/assets/casos-western/unique-garden.webp";
 import fazzendaPark from "@/assets/casos-western/fazzenda-park.webp";
@@ -16,9 +16,9 @@ export type CasoTipo = "video" | "image";
 export interface CasoWestern {
   id: string;
   tipo: CasoTipo;
-  /** URL do vÃ­deo (mp4/embed) OU URL da imagem em alta. */
+  /** URL do vídeo (mp4/embed) OU URL da imagem em alta. */
   mediaUrl: string;
-  /** Poster / thumb (usado sempre no card e para itens de vÃ­deo no lightbox antes do play). */
+  /** Poster / thumb (usado sempre no card e para itens de vídeo no lightbox antes do play). */
   posterUrl: string;
   credito: string; // Nome + papel
   titulo: string;
@@ -32,10 +32,10 @@ export const CASOS_WESTERN: CasoWestern[] = [
     tipo: "video",
     mediaUrl: nicoleVideo,
     posterUrl: nicolePoster,
-    credito: "Nicole Sigaud Â· Arquiteta",
-    titulo: "Piscina e cascata em terreno Ã­ngreme",
+    credito: "Nicole Sigaud · Arquiteta",
+    titulo: "Piscina e cascata em terreno íngreme",
     story:
-      "Um projeto complexo numa casa em declive acentuado que sÃ³ se tornou viÃ¡vel com a leveza, o baixo impacto ambiental e a facilidade de instalaÃ§Ã£o das peÃ§as â€” respeitando a natureza do morro.",
+      "Um projeto complexo numa casa em declive acentuado que só se tornou viável com a leveza, o baixo impacto ambiental e a facilidade de instalação das peças — respeitando a natureza do morro.",
     destaque: true,
   },
   {
@@ -43,9 +43,9 @@ export const CASOS_WESTERN: CasoWestern[] = [
     tipo: "video",
     mediaUrl: clienteVideo,
     posterUrl: clientePoster,
-    credito: "Conrado Â· Cliente",
+    credito: "Conrado · Cliente",
     titulo: "Como a Western transformou o ambiente",
-    story: "Depoimento de cliente sobre o resultado no seu espaÃ§o.",
+    story: "Depoimento de cliente sobre o resultado no seu espaço.",
   },
   {
     id: "unique-garden",
@@ -53,45 +53,45 @@ export const CASOS_WESTERN: CasoWestern[] = [
     mediaUrl: uniqueGarden,
     posterUrl: uniqueGarden,
     credito: "Unique Garden",
-    titulo: "ChalÃ© simbionte com o morro",
+    titulo: "Chalé simbionte com o morro",
     story:
-      "As pedras copiaram a textura e o relevo jÃ¡ existentes e se integraram Ã  natureza, com pintura personalizada.",
+      "As pedras copiaram a textura e o relevo já existentes e se integraram à natureza, com pintura personalizada.",
   },
   {
     id: "caito-maia",
     tipo: "image",
     mediaUrl: caitoMaia,
     posterUrl: caitoMaia,
-    credito: "Caito Maia Â· EmpresÃ¡rio",
+    credito: "Caito Maia · Empresário",
     titulo: "Base de mesa em pedra Western",
-    story: "PeÃ§a sob medida para o escritÃ³rio, feita com pedra Western.",
+    story: "Peça sob medida para o escritório, feita com pedra Western.",
   },
   {
     id: "rosewood",
     tipo: "video",
     mediaUrl: rosewoodVideo,
     posterUrl: rosewoodPoster,
-    credito: "Rosewood Â· Ed. Matarazzo",
+    credito: "Rosewood · Ed. Matarazzo",
     titulo: "Revestimentos e pedras Western",
-    story: "AplicaÃ§Ã£o em um dos endereÃ§os mais icÃ´nicos de SÃ£o Paulo.",
+    story: "Aplicação em um dos endereços mais icônicos de São Paulo.",
   },
   {
     id: "fazzenda-park",
     tipo: "image",
     mediaUrl: fazzendaPark,
     posterUrl: fazzendaPark,
-    credito: "Fazzenda Park Resort Â· Gaspar/SC",
+    credito: "Fazzenda Park Resort · Gaspar/SC",
     titulo: "Cascata em pedras Western",
-    story: "Cascata de grande porte executada com peÃ§as Western.",
+    story: "Cascata de grande porte executada com peças Western.",
   },
   {
     id: "projeto-residencial",
     tipo: "image",
     mediaUrl: projetoResidencial,
     posterUrl: projetoResidencial,
-    credito: "Cascata Santa BÃ¡rbara",
+    credito: "Cascata Santa Bárbara",
     titulo: "Projeto residencial",
     story:
-      "Cascata Santa BÃ¡rbara e outras peÃ§as Western distribuÃ­das pelo espaÃ§o da residÃªncia, compondo um ambiente orgÃ¢nico e integrado Ã  natureza.",
+      "Cascata Santa Bárbara e outras peças Western distribuídas pelo espaço da residência, compondo um ambiente orgânico e integrado à natureza.",
   },
 ];

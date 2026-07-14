@@ -3,10 +3,10 @@ import DustCanvas from "@/components/DustCanvas";
 import logoAsset from "@/assets/coming-soon-logo.png";
 
 /**
- * PÃ¡gina de prÃ©-lanÃ§amento â€” tela cheia, fora do SiteLayout.
- * Coreografia: fundo â†’ bloom do glow â†’ reveal do logo â†’ tagline.
+ * Página de pré-lançamento — tela cheia, fora do SiteLayout.
+ * Coreografia: fundo → bloom do glow → reveal do logo → tagline.
  * Atmosfera viva: poeira ambiente + reativa, scene breathing,
- * logo backlit, sheen, parallax, recompensa de interaÃ§Ã£o.
+ * logo backlit, sheen, parallax, recompensa de interação.
  */
 export default function ComingSoon() {
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -20,7 +20,7 @@ export default function ComingSoon() {
     setReduced(mq.matches);
   }, []);
 
-  // Parallax + recompensa de interaÃ§Ã£o (proximidade do centro)
+  // Parallax + recompensa de interação (proximidade do centro)
   useEffect(() => {
     if (reduced) return;
     let cx = 0, cy = 0;
@@ -31,9 +31,9 @@ export default function ComingSoon() {
 
     const onMove = (e: MouseEvent) => {
       const w = window.innerWidth, h = window.innerHeight;
-      mx = (e.clientX / w - 0.5) * -1; // contrÃ¡rio
+      mx = (e.clientX / w - 0.5) * -1; // contrário
       my = (e.clientY / h - 0.5) * -1;
-      // distÃ¢ncia normalizada atÃ© o centro (0 = no centro, 1 = canto)
+      // distância normalizada até o centro (0 = no centro, 1 = canto)
       const dx = (e.clientX - w / 2) / (w / 2);
       const dy = (e.clientY - h / 2) / (h / 2);
       const d = Math.min(1, Math.hypot(dx, dy));
@@ -50,7 +50,7 @@ export default function ComingSoon() {
         logoRef.current.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
       }
       if (glowRef.current) {
-        const reward = 1 + proximity * 0.18; // atÃ© +18% de escala
+        const reward = 1 + proximity * 0.18; // até +18% de escala
         glowRef.current.style.transform =
           `translate3d(${cx * 24}px, ${cy * 24}px, 0) scale(${2.2 * reward})`;
         glowRef.current.style.setProperty("--cs-reward", String(1 + proximity * 0.35));
@@ -64,7 +64,7 @@ export default function ComingSoon() {
     };
   }, [reduced]);
 
-  // Sem context-menu na pÃ¡gina
+  // Sem context-menu na página
   useEffect(() => {
     const node = wrapRef.current;
     if (!node) return;
@@ -94,7 +94,7 @@ export default function ComingSoon() {
         <rect width="100%" height="100%" filter="url(#cs-noise)" />
       </svg>
 
-      {/* Vinheta â€” respira (scene breathing) */}
+      {/* Vinheta — respira (scene breathing) */}
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 z-[3] cs-vignette"
@@ -107,7 +107,7 @@ export default function ComingSoon() {
       {/* Poeira (ambiente + reativa) */}
       <DustCanvas />
 
-      {/* Glow Ã¢mbar atrÃ¡s do logo â€” bloom de entrada + respiraÃ§Ã£o */}
+      {/* Glow âmbar atrás do logo — bloom de entrada + respiração */}
       <div
         ref={glowRef}
         aria-hidden="true"
@@ -125,7 +125,7 @@ export default function ComingSoon() {
         }}
       />
 
-      {/* ConteÃºdo central */}
+      {/* Conteúdo central */}
       <div className="relative z-[10] w-full h-full flex flex-col items-center justify-center px-6">
         <div className="relative cs-logo-reveal" style={{ willChange: "transform, filter, opacity" }}>
           <img
@@ -175,7 +175,7 @@ export default function ComingSoon() {
               textIndent: "0.45em",
             }}
           >
-            LanÃ§amento em breve
+            Lançamento em breve
           </p>
           <p
             className="mt-3 font-display"
@@ -201,7 +201,7 @@ export default function ComingSoon() {
         }
         .cs-bloom { animation: cs-bloom-kf 2.4s cubic-bezier(0.22,1,0.36,1) 0.05s both; }
 
-        /* ----- RespiraÃ§Ã£o contÃ­nua do glow (entra apÃ³s o bloom) ----- */
+        /* ----- Respiração contínua do glow (entra após o bloom) ----- */
         @keyframes cs-breathe-kf {
           0%, 100% { opacity: calc(0.82 * var(--cs-reward, 1)); }
           50%      { opacity: calc(1.00 * var(--cs-reward, 1)); }
@@ -219,7 +219,7 @@ export default function ComingSoon() {
         }
         .cs-grain { animation: cs-grain-kf 8s steps(6) infinite; }
 
-        /* ----- Scene breathing (vinheta/exposiÃ§Ã£o) ----- */
+        /* ----- Scene breathing (vinheta/exposição) ----- */
         @keyframes cs-vignette-kf {
           0%, 100% { opacity: 0.92; }
           50%      { opacity: 1; }

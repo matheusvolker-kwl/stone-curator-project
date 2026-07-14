@@ -14,7 +14,7 @@ import logo from "@/assets/logo-vertical-bege.png";
 import proImage from "@/assets/projetos-western/05_cascata-escalonada.webp";
 import residencialImage from "@/assets/projetos-western/08_piscina-paisagismo.webp";
 
-type TipoProjeto = "Cascata" | "Lago / piscina natural" | "Ãrea de lazer completa" | "Outro";
+type TipoProjeto = "Cascata" | "Lago / piscina natural" | "Área de lazer completa" | "Outro";
 
 const formSchema = z.object({
   nome: z.string().transform(normalizeText).pipe(z.string().min(2, "Informe seu nome")),
@@ -22,7 +22,7 @@ const formSchema = z.object({
   tipo_projeto: z.enum([
     "Cascata",
     "Lago / piscina natural",
-    "Ãrea de lazer completa",
+    "Área de lazer completa",
     "Outro",
   ]),
 });
@@ -96,12 +96,12 @@ export default function Entrada() {
   }, [view]);
 
   const waHrefDirect = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
-    "OlÃ¡! Gostaria de conversar sobre um projeto prÃ³prio (cascata, lago ou Ã¡rea de lazer).",
+    "Olá! Gostaria de conversar sobre um projeto próprio (cascata, lago ou área de lazer).",
   )}`;
 
   const waHrefAfter = (() => {
-    const msg = `OlÃ¡! Sou ${nome || ""}. Acabei de solicitar um orÃ§amento no site${
-      tipo ? ` â€” projeto: ${tipo}` : ""
+    const msg = `Olá! Sou ${nome || ""}. Acabei de solicitar um orçamento no site${
+      tipo ? ` — projeto: ${tipo}` : ""
     }.`;
     return `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`;
   })();
@@ -133,7 +133,7 @@ export default function Entrada() {
       setView("done");
     } catch (err) {
       console.error(err);
-      toast.error("NÃ£o conseguimos enviar agora. Tente novamente ou fale pelo WhatsApp.");
+      toast.error("Não conseguimos enviar agora. Tente novamente ou fale pelo WhatsApp.");
     } finally {
       setSubmitting(false);
     }
@@ -142,8 +142,8 @@ export default function Entrada() {
   return (
     <>
       <Seo
-        title="Western â€” Bem-vindo"
-        description="Escolha por onde comeÃ§ar: profissional do ramo (preÃ§o de parceiro) ou projeto prÃ³prio (solicitar orÃ§amento)."
+        title="Western — Bem-vindo"
+        description="Escolha por onde começar: profissional do ramo (preço de parceiro) ou projeto próprio (solicitar orçamento)."
         path="/entrada"
       />
       <Helmet>
@@ -167,28 +167,28 @@ export default function Entrada() {
             <div className="w-full flex flex-col items-center animate-in fade-in duration-500">
               <div className="mt-8 max-w-2xl text-center">
                 <p className="font-mono text-[11px] font-medium uppercase tracking-[0.28em] text-western-gold-soft">
-                  Bem-vindo Ã  Western
+                  Bem-vindo à Western
                 </p>
                 <div className="mx-auto mt-4 h-px w-10 bg-western-gold" />
                 <h1 className="mt-5 font-display text-2xl md:text-4xl lg:text-[42px] leading-[1.1] text-western-cream text-balance">
-                  Por onde vocÃª prefere comeÃ§ar?
+                  Por onde você prefere começar?
                 </h1>
               </div>
 
               <div className="mt-10 md:mt-14 grid w-full max-w-4xl grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
                 <OptionCard
-                  eyebrow="OpÃ§Ã£o 01"
+                  eyebrow="Opção 01"
                   title="Sou profissional do ramo"
                   description="Arquiteto, paisagista, laguista ou revenda."
-                  ariaLabel="Sou profissional do ramo â€” ir para a loja"
+                  ariaLabel="Sou profissional do ramo — ir para a loja"
                   imageUrl={proImage}
                   onActivate={() => navigate("/")}
                 />
                 <OptionCard
-                  eyebrow="OpÃ§Ã£o 02"
-                  title="Ã‰ para um projeto meu"
-                  description="Cascata, lago ou Ã¡rea de lazer na sua casa."
-                  ariaLabel="Ã‰ para um projeto meu â€” solicitar orÃ§amento"
+                  eyebrow="Opção 02"
+                  title="É para um projeto meu"
+                  description="Cascata, lago ou área de lazer na sua casa."
+                  ariaLabel="É para um projeto meu — solicitar orçamento"
                   imageUrl={residencialImage}
                   onActivate={() => setView("form")}
                 />
@@ -198,7 +198,7 @@ export default function Entrada() {
                 to="/linhas"
                 className="mt-10 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-western-cream-muted transition-colors hover:text-western-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2 focus-visible:ring-offset-western-green-deep"
               >
-                SÃ³ quero ver o catÃ¡logo
+                Só quero ver o catálogo
                 <ArrowRight className="h-3 w-3" aria-hidden="true" />
               </Link>
             </div>
@@ -216,14 +216,14 @@ export default function Entrada() {
 
               <div className="mt-6 text-center">
                 <p className="font-mono text-[11px] font-medium uppercase tracking-[0.28em] text-western-gold-soft">
-                  Solicitar orÃ§amento
+                  Solicitar orçamento
                 </p>
                 <div className="mx-auto mt-4 h-px w-10 bg-western-gold" />
                 <h1 className="mt-5 font-display text-2xl md:text-3xl leading-[1.15] text-western-cream text-balance">
                   Conta pra gente sobre seu projeto
                 </h1>
                 <p className="mt-3 text-sm text-western-cream-muted">
-                  TrÃªs campos rÃ¡pidos. Nosso time retorna pelo WhatsApp.
+                  Três campos rápidos. Nosso time retorna pelo WhatsApp.
                 </p>
               </div>
 
@@ -281,10 +281,10 @@ export default function Entrada() {
                         : "border-western-gold/25 focus:border-western-gold"
                     }`}
                   >
-                    <option value="" className="bg-western-green-deep">Selecioneâ€¦</option>
+                    <option value="" className="bg-western-green-deep">Selecione…</option>
                     <option value="Cascata" className="bg-western-green-deep">Cascata</option>
                     <option value="Lago / piscina natural" className="bg-western-green-deep">Lago / piscina natural</option>
-                    <option value="Ãrea de lazer completa" className="bg-western-green-deep">Ãrea de lazer completa</option>
+                    <option value="Área de lazer completa" className="bg-western-green-deep">Área de lazer completa</option>
                     <option value="Outro" className="bg-western-green-deep">Outro</option>
                   </select>
                   {errors.tipo_projeto && (
@@ -301,11 +301,11 @@ export default function Entrada() {
                 >
                   {submitting ? (
                     <>
-                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Enviandoâ€¦
+                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Enviando…
                     </>
                   ) : (
                     <>
-                      Solicitar orÃ§amento
+                      Solicitar orçamento
                       <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                     </>
                   )}
@@ -356,7 +356,7 @@ export default function Entrada() {
                 to="/linhas"
                 className="mt-6 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-western-cream-muted hover:text-western-gold transition-colors"
               >
-                Enquanto isso, veja o catÃ¡logo
+                Enquanto isso, veja o catálogo
                 <ArrowRight className="h-3 w-3" aria-hidden="true" />
               </Link>
             </div>

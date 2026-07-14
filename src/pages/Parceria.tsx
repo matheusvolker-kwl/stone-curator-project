@@ -39,31 +39,31 @@ type DorItem = {
 const DORES: DorItem[] = [
   {
     Icon: Hammer,
-    dor: "Pedra natural Ã© pesada e cara de instalar.",
+    dor: "Pedra natural é pesada e cara de instalar.",
     ancora: "Muito mais leve",
     virada: (
       <>
-        Instala <strong className="text-western-green-deep font-semibold">sem estrutura extra</strong>, com menos mÃ£o de obra.
+        Instala <strong className="text-western-green-deep font-semibold">sem estrutura extra</strong>, com menos mão de obra.
       </>
     ),
   },
   {
     Icon: Brush,
-    dor: "O acabamento artificial denuncia que Ã© falso.",
-    ancora: "6 fases Ã  mÃ£o",
+    dor: "O acabamento artificial denuncia que é falso.",
+    ancora: "6 fases à mão",
     virada: (
       <>
-        Pintura mineral em camadas. O cliente <strong className="text-western-green-deep font-semibold">jura que Ã© pedra de verdade</strong>.
+        Pintura mineral em camadas. O cliente <strong className="text-western-green-deep font-semibold">jura que é pedra de verdade</strong>.
       </>
     ),
   },
   {
     Icon: Layers,
-    dor: "VocÃª recusa projetos que nÃ£o consegue executar.",
-    ancora: "Viabiliza o difÃ­cil",
+    dor: "Você recusa projetos que não consegue executar.",
+    ancora: "Viabiliza o difícil",
     virada: (
       <>
-        Cascata de 15m, pele em cobertura, limite de peso: <strong className="text-western-green-deep font-semibold">serviÃ§o novo que vocÃª fatura</strong>.
+        Cascata de 15m, pele em cobertura, limite de peso: <strong className="text-western-green-deep font-semibold">serviço novo que você fatura</strong>.
       </>
     ),
   },
@@ -83,27 +83,27 @@ const GANHOS: GanhoItem[] = [
     t: "Cobra mais",
     d: (
       <>
-        Acabamento premium sustenta preÃ§o que <strong className="text-western-cream font-semibold">revestimento comum nÃ£o alcanÃ§a</strong>.
+        Acabamento premium sustenta preço que <strong className="text-western-cream font-semibold">revestimento comum não alcança</strong>.
       </>
     ),
   },
   {
     Icon: LineChart,
-    numero: "2Ã—",
+    numero: "2×",
     t: "Produto que mais cresce",
     d: (
       <>
-        A linha de pedras <strong className="text-western-cream font-semibold">dobrou de vendas</strong> nos Ãºltimos ciclos.
+        A linha de pedras <strong className="text-western-cream font-semibold">dobrou de vendas</strong> nos últimos ciclos.
       </>
     ),
   },
   {
     Icon: Wrench,
-    numero: "âˆ’",
+    numero: "−",
     t: "Menos custo de obra",
     d: (
       <>
-        Leveza reduz <strong className="text-western-cream font-semibold">mÃ£o de obra, transporte e estrutura</strong>.
+        Leveza reduz <strong className="text-western-cream font-semibold">mão de obra, transporte e estrutura</strong>.
       </>
     ),
   },
@@ -117,7 +117,7 @@ const BENEFICIOS = [
   },
   {
     Icon: Palette,
-    t: "6 fases de pintura Ã  mÃ£o",
+    t: "6 fases de pintura à mão",
     d: "Resiste ao cloro, UV e tempo.",
   },
   {
@@ -133,13 +133,13 @@ const BENEFICIOS = [
 ];
 
 const PASSOS = [
-  { n: "01", t: "Cadastro com CNPJ", d: "FormulÃ¡rio curto." },
-  { n: "02", t: "Acesso liberado", d: "ValidaÃ§Ã£o automÃ¡tica pelo ramo." },
-  { n: "03", t: "PreÃ§o e 3D", d: "Tabela de atacado e arquivos SketchUp." },
-  { n: "04", t: "Compre no atacado", d: `Sem pedido mÃ­nimo Â· produÃ§Ã£o ${BUSINESS.prazoProducaoDias} dias Ãºteis.` },
+  { n: "01", t: "Cadastro com CNPJ", d: "Formulário curto." },
+  { n: "02", t: "Acesso liberado", d: "Validação automática pelo ramo." },
+  { n: "03", t: "Preço e 3D", d: "Tabela de atacado e arquivos SketchUp." },
+  { n: "04", t: "Compre no atacado", d: `Sem pedido mínimo · produção ${BUSINESS.prazoProducaoDias} dias úteis.` },
 ];
 
-/** Placeholder visual â€” cliente preenche depois com foto real. */
+/** Placeholder visual — cliente preenche depois com foto real. */
 function ImageSlot({ aspect = "aspect-[4/3]", texto }: { aspect?: string; texto: string }) {
   return (
     <div
@@ -158,14 +158,14 @@ export default function Parceria() {
   const scrollY = useScrollY();
   const heroParallax = `translate3d(0, ${scrollY * 0.18}px, 0) scale(${1 + scrollY * 0.0003})`;
   const waHref = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
-    "OlÃ¡! Vim pela pÃ¡gina de parceria e quero conversar sobre a Western."
+    "Olá! Vim pela página de parceria e quero conversar sobre a Western."
   )}`;
 
   return (
     <>
       <Seo
-        title="Western â€” Parceria"
-        description="HÃ¡ 33 anos recriando a natureza em pedra artesanal. Fabricamos peÃ§a a peÃ§a em Cajamar/SP para profissionais do paisagismo e da construÃ§Ã£o. Seja parceiro Western."
+        title="Western — Parceria"
+        description="Há 33 anos recriando a natureza em pedra artesanal. Fabricamos peça a peça em Cajamar/SP para profissionais do paisagismo e da construção. Seja parceiro Western."
         path="/parceria"
         ogType="website"
       />
@@ -176,7 +176,7 @@ export default function Parceria() {
           src={heroParceria}
           srcSet={`${heroParceriaSm} 900w, ${heroParceria} 1800w`}
           sizes="100vw"
-          alt="Pedra artesanal Western Ã  beira de piscina com Ã¡gua cristalina."
+          alt="Pedra artesanal Western à beira de piscina com água cristalina."
           loading="eager"
           {...({ fetchpriority: "high" } as Record<string, string>)}
           decoding="async"
@@ -199,13 +199,13 @@ export default function Parceria() {
             <div className="max-w-3xl text-western-cream">
               <Reveal variant="fade-up" duration={800}>
                 <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-western-gold-soft mb-6">
-                  Programa de parceiros Â· {BUSINESS.anosOperacao} anos
+                  Programa de parceiros · {BUSINESS.anosOperacao} anos
                 </p>
               </Reveal>
               <Reveal variant="fade-up" duration={900} delay={120}>
                 <h1 className="font-display text-4xl md:text-6xl lg:text-7xl leading-[1.02] mb-6">
                   Entregue o lago que o cliente jura ser natural{" "}
-                  <span className="italic font-light text-western-gold-soft">â€” e cobre por isso.</span>
+                  <span className="italic font-light text-western-gold-soft">— e cobre por isso.</span>
                 </h1>
               </Reveal>
               <Reveal variant="fade-up" duration={800} delay={240}>
@@ -225,7 +225,7 @@ export default function Parceria() {
                     to="/linhas"
                     className="inline-flex items-center gap-2 h-12 px-7 border border-western-cream/40 text-western-cream hover:border-western-cream/70 font-mono text-xs uppercase tracking-[0.22em] transition-colors"
                   >
-                    Ver catÃ¡logo
+                    Ver catálogo
                   </Link>
                 </div>
               </Reveal>
@@ -239,10 +239,10 @@ export default function Parceria() {
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="max-w-2xl mb-12 md:mb-16">
-              <p className="text-eyebrow mb-3">Quem jÃ¡ executa entende</p>
+              <p className="text-eyebrow mb-3">Quem já executa entende</p>
               <div className="w-12 h-px bg-western-gold mb-6" />
               <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
-                VocÃª conhece esses problemas.
+                Você conhece esses problemas.
               </h2>
             </div>
           </Reveal>
@@ -255,7 +255,7 @@ export default function Parceria() {
                   src={parceriaDetalhe}
                   srcSet={`${parceriaDetalheSm} 600w, ${parceriaDetalhe} 1200w`}
                   sizes="(min-width: 1024px) 40vw, 100vw"
-                  alt="Detalhe da pedra Western entre vegetaÃ§Ã£o â€” acabamento natural que engana o olho."
+                  alt="Detalhe da pedra Western entre vegetação — acabamento natural que engana o olho."
                   loading="lazy"
                   decoding="async"
                   width={1200}
@@ -270,7 +270,7 @@ export default function Parceria() {
                 <Reveal key={item.dor} variant="fade-up" delay={i * 100} duration={700}>
                   <li className="border-t border-western-stone-warm/25 pt-6">
                     <p className="font-display text-lg md:text-xl text-western-stone-warm/75 italic leading-snug mb-4">
-                      â€œ{item.dor}â€
+                      “{item.dor}”
                     </p>
                     <div className="flex items-start gap-4 border-l-2 border-western-gold pl-5">
                       <item.Icon className="h-5 w-5 text-western-gold mt-1 flex-shrink-0" strokeWidth={1.5} aria-hidden />
@@ -294,7 +294,7 @@ export default function Parceria() {
       {/* 3. O GANHO NO BOLSO */}
       <section className="surface-forest py-16 md:py-24 border-y border-western-gold/15">
         <div className="container-western">
-          {/* TODO: inserir nÃºmeros reais de ganho/markup quando o cliente fornecer */}
+          {/* TODO: inserir números reais de ganho/markup quando o cliente fornecer */}
           <Reveal variant="fade-up" duration={700}>
             <div className="max-w-2xl mb-12 md:mb-14">
               <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-western-gold-soft mb-4">
@@ -302,7 +302,7 @@ export default function Parceria() {
               </p>
               <h2 className="font-display text-3xl md:text-5xl text-western-cream leading-[1.05]">
                 A conta fecha{" "}
-                <span className="italic font-light text-western-gold-soft">antes da obra comeÃ§ar.</span>
+                <span className="italic font-light text-western-gold-soft">antes da obra começar.</span>
               </h2>
             </div>
           </Reveal>
@@ -315,7 +315,7 @@ export default function Parceria() {
                   src={parceriaInstalacao}
                   srcSet={`${parceriaInstalacaoSm} 600w, ${parceriaInstalacao} 1200w`}
                   sizes="(min-width: 1024px) 40vw, 100vw"
-                  alt="Profissional instalando pedra Western â€” leveza que dispensa estrutura extra."
+                  alt="Profissional instalando pedra Western — leveza que dispensa estrutura extra."
                   loading="lazy"
                   decoding="async"
                   width={1200}
@@ -351,7 +351,7 @@ export default function Parceria() {
         </div>
       </section>
 
-      {/* 4. PROVA â€” 33 anos + Ricardo */}
+      {/* 4. PROVA — 33 anos + Ricardo */}
       <section className="surface-ivory pt-20 md:pt-28 pb-4 border-b border-western-stone-warm/10">
         <div className="container-western max-w-3xl text-center">
           <Reveal variant="fade-up" duration={700}>
@@ -360,16 +360,16 @@ export default function Parceria() {
           </Reveal>
           <Reveal variant="fade-up" duration={800} delay={100}>
             <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05] mb-6">
-              NÃ£o Ã© promessa de vendedor.{" "}
+              Não é promessa de vendedor.{" "}
               <span className="italic font-light text-western-gold">
-                Ã‰ o que a Western faz hÃ¡ {BUSINESS.anosOperacao} anos.
+                É o que a Western faz há {BUSINESS.anosOperacao} anos.
               </span>
             </h2>
           </Reveal>
           <Reveal variant="fade-up" duration={750} delay={200}>
             <p className="text-western-stone-warm text-base md:text-lg leading-relaxed">
-              TÃ©cnica trazida do <strong className="text-western-green-deep font-semibold">Arizona</strong> pelos artistas que assinaram trabalhos para a <strong className="text-western-green-deep font-semibold">Disney</strong>.{" "}
-              Composto mineral com <strong className="text-western-green-deep font-semibold">PET reciclado</strong>, fabricado peÃ§a a peÃ§a em <strong className="text-western-green-deep font-semibold">Cajamar/SP</strong>.
+              Técnica trazida do <strong className="text-western-green-deep font-semibold">Arizona</strong> pelos artistas que assinaram trabalhos para a <strong className="text-western-green-deep font-semibold">Disney</strong>.{" "}
+              Composto mineral com <strong className="text-western-green-deep font-semibold">PET reciclado</strong>, fabricado peça a peça em <strong className="text-western-green-deep font-semibold">Cajamar/SP</strong>.
             </p>
           </Reveal>
         </div>
@@ -390,7 +390,7 @@ export default function Parceria() {
           {/* TODO: substituir por depoimento real de parceiro */}
           <Reveal variant="fade-up" duration={750}>
             <div className="text-center mb-12">
-              <p className="text-eyebrow mb-3">Quem jÃ¡ Ã© parceiro</p>
+              <p className="text-eyebrow mb-3">Quem já é parceiro</p>
               <div className="w-12 h-px bg-western-gold mx-auto" />
             </div>
           </Reveal>
@@ -403,7 +403,7 @@ export default function Parceria() {
                 aria-hidden
               />
               <blockquote className="font-display text-xl md:text-2xl lg:text-3xl text-western-green-deep leading-[1.25] italic pl-4 md:pl-10">
-                â€œInstalei minha primeira cascata Western e o cliente nÃ£o acreditou que nÃ£o era pedra de verdade. Hoje Ã© o serviÃ§o que mais me dÃ¡ lucro â€” e o que mais me indicam.â€
+                “Instalei minha primeira cascata Western e o cliente não acreditou que não era pedra de verdade. Hoje é o serviço que mais me dá lucro — e o que mais me indicam.”
               </blockquote>
               <figcaption className="mt-10 pl-4 md:pl-10 flex items-center gap-4">
                 <img
@@ -420,7 +420,7 @@ export default function Parceria() {
                     Thiago Castro
                   </p>
                   <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-western-stone-warm mt-1">
-                    Rio de Janeiro Â· Paisagista
+                    Rio de Janeiro · Paisagista
                   </p>
                 </div>
               </figcaption>
@@ -429,7 +429,7 @@ export default function Parceria() {
 
           <Reveal variant="fade-up" duration={700} delay={220}>
             <p className="text-center mt-12 text-sm md:text-base text-western-stone-warm">
-              Junte-se aos profissionais que jÃ¡ sÃ£o parceiros Western.
+              Junte-se aos profissionais que já são parceiros Western.
             </p>
           </Reveal>
         </div>
@@ -443,7 +443,7 @@ export default function Parceria() {
               <p className="text-eyebrow mb-3">Por que Western</p>
               <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
                 A pedra que resolve o projeto{" "}
-                <span className="italic font-light text-western-gold">â€” e sobrevive a ele.</span>
+                <span className="italic font-light text-western-gold">— e sobrevive a ele.</span>
               </h2>
             </div>
           </Reveal>
@@ -465,14 +465,14 @@ export default function Parceria() {
         </div>
       </section>
 
-      {/* 8. PROVA SOCIAL â€” rostos + mural de logos */}
+      {/* 8. PROVA SOCIAL — rostos + mural de logos */}
       <section className="surface-forest py-16 md:py-20 border-y border-western-gold/15">
         <div className="container-western max-w-5xl">
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
               variant="dark"
               eyebrow="Especificada por quem define o mercado"
-              titulo={<>Profissionais e marcas que mantÃªm a Western em seus projetos.</>}
+              titulo={<>Profissionais e marcas que mantêm a Western em seus projetos.</>}
               groups={["celebridades", "profissionais", "marcas"]}
             />
           </Reveal>
@@ -486,7 +486,7 @@ export default function Parceria() {
             <div className="max-w-2xl mb-12 md:mb-16">
               <p className="text-eyebrow mb-3">Como funciona</p>
               <h2 className="font-display text-3xl md:text-5xl text-western-green-deep leading-[1.05]">
-                Quatro passos atÃ© virar parceiro.
+                Quatro passos até virar parceiro.
               </h2>
             </div>
           </Reveal>
@@ -511,12 +511,12 @@ export default function Parceria() {
           {/* Degrau de baixo compromisso */}
           <Reveal variant="fade-up" duration={700} delay={150}>
             <div className="mt-12 md:mt-14 pt-6 border-t border-western-stone-warm/15 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-western-stone-warm">
-              <span>Ainda nÃ£o quer se cadastrar?</span>
+              <span>Ainda não quer se cadastrar?</span>
               <Link
                 to="/linhas"
                 className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold border-b border-western-stone-warm/30 hover:border-western-gold pb-0.5 transition-colors"
               >
-                Ver catÃ¡logo
+                Ver catálogo
               </Link>
               <span aria-hidden>ou</span>
               <a
@@ -540,11 +540,11 @@ export default function Parceria() {
               Parceria Western
             </p>
             <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-western-cream leading-[1.05] mb-8">
-              Pronto para entregar o que ninguÃ©m{" "}
-              <span className="italic font-light text-western-gold-soft">na sua regiÃ£o entrega?</span>
+              Pronto para entregar o que ninguém{" "}
+              <span className="italic font-light text-western-gold-soft">na sua região entrega?</span>
             </h2>
             <p className="text-western-cream-muted text-base md:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
-              Cadastro na hora para profissionais do paisagismo e da construÃ§Ã£o.
+              Cadastro na hora para profissionais do paisagismo e da construção.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Link

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
-import { formatPreco } from "@/data/guideMap";
+import GatedPrice from "@/components/shared/GatedPrice";
 import type { ProjetoPeca } from "./types";
 
 interface Props {
@@ -35,7 +35,13 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-gold mt-1.5 break-words">
             {peca.codigo}{peca.pesoKg ? ` · ${peca.pesoKg} kg` : ""}{peca.dim && peca.dim !== "—" ? ` · ${peca.dim}` : ""}
           </p>
-          <p className="font-sans text-[16px] md:text-[17px] font-medium tabular-nums text-western-green-deep mt-2">{formatPreco(peca.preco)}</p>
+          {/* Preço unitário só para parceiro aprovado (gate B2B). O sidebar
+              já traz o CTA do gate — sem repetir chip em cada linha. */}
+          <GatedPrice
+            amount={peca.preco}
+            variant="hidden"
+            className="font-sans text-[16px] md:text-[17px] font-medium tabular-nums text-western-green-deep mt-2"
+          />
         </div>
       </div>
       <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-3 md:gap-2.5">

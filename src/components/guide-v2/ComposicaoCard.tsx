@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { cn } from "@/lib/utils";
-import { formatPreco, nivelMeta, type ConjuntoLeaf, type Nivel } from "@/data/guideMap";
-import { fetchProduct } from "@/lib/datasource";
+import { nivelMeta, type ConjuntoLeaf, type Nivel } from "@/data/guideMap";
+import { fetchProduct, fetchProductsByHandles } from "@/lib/datasource";
 import { useAuth } from "@/hooks/useAuth";
+import GatedPrice from "@/components/shared/GatedPrice";
 import { nivelLabelMap } from "./types";
 import { getPecasPlaceholder, getPecaCount } from "./pecasPlaceholder";
 import { conjuntoComposicao, handleToDisplayName } from "@/data/conjuntoComposicao";
@@ -15,9 +17,11 @@ interface Props {
   image: string;
   highlight?: boolean;
   refinarHref: string;
+  /** Href da PDP do conjunto COM o contexto do guia (tipo/área/acabamento). */
+  conjuntoHref?: string;
 }
 
-export default function ComposicaoCard({ conjunto, nivel, image, highlight, refinarHref }: Props) {
+export default function ComposicaoCard({ conjunto, nivel, image, highlight, refinarHref, conjuntoHref }: Props) {
   const { isApproved } = useAuth();
   const real = conjuntoComposicao[conjunto.handle];
   const pecas = getPecasPlaceholder(nivel);
@@ -28,19 +32,46 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
   const extras = Math.max(0, distintas - 4);
 
 
-  // Preço vem do Shopify (fonte de verdade). Fallback: preço do brief no guideMap.
+  // Preço: soma REAL do manifesto (peça × qty, catálogo Woo) para parceiro
+  // aprovado; fallbacks: produto do conjunto no Woo → preço do brief.
+  // Visitante nunca vê número — GatedPrice mostra o chip do gate B2B.
   const { data: produto } = useQuery({
     queryKey: ["conjunto-product", conjunto.handle],
     queryFn: () => fetchProduct(conjunto.handle),
     staleTime: 5 * 60 * 1000,
     retry: 1,
+    enabled: isApproved,
   });
+  const { data: pecasReais } = useQuery({
+    queryKey: ["conjunto-soma", conjunto.handle],
+    queryFn: () => fetchProductsByHandles(real!.map((r) => r.handle)),
+    staleTime: 5 * 60 * 1000,
+    enabled: isApproved && !!real?.length,
+  });
+
+  const somaReal = useMemo(() => {
+    if (!real?.length || !pecasReais?.length) return NaN;
+    const byHandle = new Map(pecasReais.map((p) => [p.handle, p]));
+    let s = 0;
+    for (const r of real) {
+      const p = byHandle.get(r.handle);
+      const unit = p ? parseFloat(p.priceRange.minVariantPrice.amount) : NaN;
+      if (!Number.isFinite(unit) || unit <= 0) return NaN;
+      s += unit * r.qty;
+    }
+    return s;
+  }, [real, pecasReais]);
 
   const precoShopify = produto
     ? parseFloat(produto.priceRange.minVariantPrice.amount)
     : NaN;
-  const preco = Number.isFinite(precoShopify) ? precoShopify : conjunto.preco;
-  
+  const preco =
+    Number.isFinite(somaReal) && somaReal > 0
+      ? somaReal
+      : Number.isFinite(precoShopify) && precoShopify > 0
+        ? precoShopify
+        : conjunto.preco;
+
 
   return (
     <article
@@ -110,17 +141,15 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
         </div>
 
         <div className="mt-auto">
-          <div className="font-display text-[34px] font-medium text-western-green-deep leading-none mb-2">
-            {formatPreco(preco)}
+          <div className="mb-5">
+            <GatedPrice
+              amount={preco}
+              variant="block"
+              className="font-display text-[34px] font-medium text-western-green-deep leading-none"
+            />
           </div>
-          {isApproved && (
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-6">
-              Preço de parceiro aplicado
-            </p>
-          )}
 
-
-          <Link to={`/conjuntos/${conjunto.handle}`} className="btn-dark w-full">
+          <Link to={conjuntoHref ?? `/conjuntos/${conjunto.handle}`} className="btn-dark w-full">
             Ver esta composição <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
