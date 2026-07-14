@@ -8,6 +8,28 @@ import { ArrowRight, X } from "lucide-react";
 import { LINHA_COVER_OVERRIDES } from "@/lib/lineCovers";
 import { LINHA_DESCRIPTIONS } from "@/lib/lineDescriptions";
 
+/**
+ * Ordem curada do índice (carro-chefe primeiro — não alfabética do Woo).
+ * Espelha a hierarquia do footer. Linhas fora da lista caem para o fim.
+ */
+const LINHA_ORDER = [
+  "cascatas",
+  "fontes-para-jardim",
+  "pedras-grandes",
+  "pedras-medias",
+  "pedras-pequenas",
+  "pedras-de-borda",
+  "revestimentos",
+  "pisadas",
+  "acessorios",
+  "fosseis-decorativos",
+  "amostras",
+];
+const linhaRank = (handle: string) => {
+  const i = LINHA_ORDER.indexOf(handle);
+  return i === -1 ? LINHA_ORDER.length : i;
+};
+
 export default function Linhas() {
   const { data: collections = [], isLoading: loadingCollections } = useQuery({
     queryKey: ["collections"],
@@ -30,7 +52,9 @@ export default function Linhas() {
   });
 
   const linhas = useMemo(() => {
-    const base = collections.filter((c) => !isSeasonal(c));
+    const base = [...collections.filter((c) => !isSeasonal(c))].sort(
+      (a, b) => linhaRank(a.handle) - linhaRank(b.handle),
+    );
     if (!q) return base;
     const needle = q.toLowerCase();
     return base.filter(
