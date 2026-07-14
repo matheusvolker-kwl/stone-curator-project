@@ -25,7 +25,7 @@ import ScrollProgress from "@/components/shared/ScrollProgress";
 import BackToTop from "@/components/shared/BackToTop";
 import ProductTabs from "@/components/product/ProductTabs";
 import { trackRecentlyViewed } from "@/hooks/useRecentlyViewed";
-import ProductComparison from "@/components/product/ProductComparison";
+import TamanhoReal from "@/components/product/TamanhoReal";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import SocialProofBand from "@/components/product/SocialProofBand";
 import ProductInUse from "@/components/product/ProductInUse";
@@ -554,10 +554,11 @@ export default function ProductPage() {
         />
       </Reveal>
       <Reveal variant="fade-up">
-        <ProductComparison
+        <TamanhoReal
           productTitle={product.title}
+          sku={sku || product.variants.edges[0]?.node?.sku}
+          dims={dims}
           pesoKg={pesoKg}
-          dimensoes={dimsStr}
         />
       </Reveal>
       <Reveal variant="fade-up">
