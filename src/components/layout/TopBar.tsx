@@ -1,11 +1,27 @@
 import { ShieldCheck, Truck, Box, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-
+/**
+ * `curto` é o que aparece quando não há espaço (mobile com movimento reduzido,
+ * onde o marquee não roda e a mensagem ficaria parada e cortada).
+ */
 const items = [
-  { Icon: ShieldCheck, text: "Canal B2B — exclusivo para profissionais com CNPJ" },
-  { Icon: Truck, text: "Produção em 15 dias úteis após confirmação" },
-  { Icon: Box, text: "Modelos 3D · +300 mil downloads no SketchUp Warehouse" },
+  {
+    Icon: ShieldCheck,
+    text: "Canal B2B — exclusivo para profissionais com CNPJ",
+    curto: "Canal B2B · só com CNPJ",
+  },
+  {
+    Icon: Truck,
+    text: "Produção em 15 dias úteis após confirmação",
+    curto: "Produção em 15 dias úteis",
+  },
+  {
+    Icon: Box,
+    // Sem "Warehouse": os 3 itens não cabiam em 1280px e o 3º corria por baixo do ✕.
+    text: "Modelos 3D · +300 mil downloads no SketchUp",
+    curto: "Modelos 3D no SketchUp",
+  },
 ];
 
 const STORAGE_KEY = "western:topbar-dismissed-v1";
@@ -34,34 +50,45 @@ export default function TopBar() {
 
   return (
     <div className="bg-western-green-deep text-western-cream-muted border-b border-western-gold/15">
-      <div className="container-western relative flex items-center justify-between py-2 gap-6 overflow-hidden">
-        <ul className="hidden md:flex items-center gap-8 lg:gap-12 mx-auto">
+      {/* pr-11 reserva a faixa do botão ✕ — nenhum texto passa por baixo dele */}
+      <div className="container-western relative flex items-center py-2 pr-11 overflow-hidden">
+        {/* Desktop: 3 avisos (o 3º só quando há largura de sobra) */}
+        <ul className="hidden md:flex items-center justify-center gap-8 lg:gap-10 mx-auto min-w-0">
           {items.map(({ Icon, text }, i) => (
             <li
               key={i}
-              className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] whitespace-nowrap"
+              className={`flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] whitespace-nowrap ${
+                i === 2 ? "hidden lg:flex" : ""
+              }`}
             >
-              <Icon className="h-3.5 w-3.5 text-western-gold-soft" strokeWidth={1.4} />
+              <Icon className="h-3.5 w-3.5 text-western-gold-soft shrink-0" strokeWidth={1.4} />
               <span>{text}</span>
             </li>
           ))}
         </ul>
-        {/* Mobile — marquee horizontal */}
-        <div className="md:hidden w-full overflow-hidden pr-10 relative">
-          <div className="flex w-max animate-marquee-x gap-10 whitespace-nowrap motion-reduce:animate-none hover:[animation-play-state:paused] focus-within:[animation-play-state:paused]">
+
+        {/* Mobile: marquee (só quando o movimento é permitido) */}
+        <div className="md:hidden motion-reduce:hidden w-full overflow-hidden relative">
+          <div className="flex w-max animate-marquee-x gap-10 whitespace-nowrap hover:[animation-play-state:paused] focus-within:[animation-play-state:paused]">
             {[...items, ...items].map(({ Icon, text }, i) => (
               <span
                 key={i}
                 className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em]"
               >
-                <Icon className="h-3.5 w-3.5 text-western-gold-soft" strokeWidth={1.4} />
+                <Icon className="h-3.5 w-3.5 text-western-gold-soft shrink-0" strokeWidth={1.4} />
                 {text}
               </span>
             ))}
           </div>
-          {/* Fade right edge to hide marquee behind close button */}
-          <div className="pointer-events-none absolute top-0 right-0 h-full w-12 bg-gradient-to-l from-western-green-deep to-transparent" />
+          <div className="pointer-events-none absolute top-0 right-0 h-full w-10 bg-gradient-to-l from-western-green-deep to-transparent" />
         </div>
+
+        {/* Mobile + movimento reduzido: 1 aviso curto, inteiro (sem marquee, sem corte) */}
+        <div className="hidden motion-reduce:flex md:motion-reduce:hidden w-full min-w-0 items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em]">
+          <ShieldCheck className="h-3.5 w-3.5 text-western-gold-soft shrink-0" strokeWidth={1.4} />
+          <span className="truncate">{items[0].curto}</span>
+        </div>
+
         <button
           onClick={dismiss}
           aria-label="Fechar barra de avisos"

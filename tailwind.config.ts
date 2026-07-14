@@ -14,10 +14,17 @@ export default {
       screens: { "2xl": "1360px" },
     },
     extend: {
+      /**
+       * DS V3 (jul/2026): "sans-serif em tudo". Archivo 650 só em títulos ≥22px;
+       * Source Sans 3 no corpo, preços, botões e labels.
+       * `mono` é apelido de Source Sans 3 de propósito: o DS proíbe mono
+       * ("eyebrow/label uppercase — sans semibold, nunca mono") e o app tinha
+       * 641 usos de font-mono herdados do design antigo.
+       */
       fontFamily: {
-        display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        display: ['Archivo', 'system-ui', 'sans-serif'],
+        sans: ['"Source Sans 3"', 'system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
+        mono: ['"Source Sans 3"', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

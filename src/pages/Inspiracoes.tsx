@@ -210,16 +210,23 @@ export default function Inspiracoes() {
                   <p className="text-western-stone-warm leading-relaxed max-w-[56ch]">
                     {lk.idea}
                   </p>
-                  <p className="text-eyebrow mt-7 mb-3">Peças usadas</p>
+                  <p className="text-eyebrow mt-7 mb-3">
+                    Peças usadas <span className="text-western-stone-warm/70">— toque para ver</span>
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     {lk.pecas.map((nome) => (
                       <Link
                         key={nome}
                         to={CHIP_DEST[nome] ?? "/guia-de-composicao"}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-western-stone-warm/20 text-western-green-deep font-mono text-[11px] uppercase tracking-[0.16em] hover:border-western-gold hover:text-western-gold transition-colors"
+                        className="group/chip inline-flex items-center gap-2 px-4 py-2 bg-white border border-western-stone-warm/20 text-western-green-deep font-mono text-[11px] uppercase tracking-[0.16em] hover:border-western-gold hover:text-western-gold transition-colors"
                       >
                         <span className="w-1.5 h-1.5 bg-western-gold" aria-hidden />
                         {nome}
+                        {/* seta = signifier de navegação (o chip é link, precisa parecer link) */}
+                        <ArrowRight
+                          className="h-3 w-3 text-western-gold transition-transform motion-safe:group-hover/chip:translate-x-0.5"
+                          aria-hidden
+                        />
                       </Link>
                     ))}
                   </div>

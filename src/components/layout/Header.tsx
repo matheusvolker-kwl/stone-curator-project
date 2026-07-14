@@ -18,15 +18,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+/**
+ * Nav = "menu enxuto de entradas de intenção" do kit de design aprovado.
+ * O nav antigo (8 itens, um deles "Guia de composição") somava ~1.330px e
+ * estourava o container de 1.200px em 1280 — a busca sangrava pra fora da tela.
+ * Sobre/Contato/FAQ vivem no rodapé e no menu lateral (como no kit).
+ */
 const nav = [
   { to: "/linhas", label: "Linhas" },
   { to: "/conjuntos", label: "Conjuntos" },
+  { to: "/guia-de-composicao", label: "Guia" },
   { to: "/inspiracoes", label: "Inspirações" },
-  { to: "/guia-de-composicao", label: "Guia de composição" },
   { to: "/western-box", label: "Amostras" },
-  { to: "/contrate-a-western", label: "Contrate" },
-  { to: "/sobre", label: "Sobre" },
-  { to: "/contato", label: "Contato" },
 ];
 
 export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
@@ -302,47 +305,18 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           ))}
         </nav>
 
-        {/* Search */}
-        <div className="hidden md:block relative flex-1 max-w-sm ml-auto">
-          <form
-            onSubmit={handleSearch}
-            className="flex items-center gap-2 px-3 h-10 border border-western-stone-warm/25 bg-white focus-within:border-western-gold transition-colors"
-          >
-            <Search className="h-4 w-4 text-western-stone-warm flex-shrink-0" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onFocus={handleSuggestFocus}
-              onBlur={handleSuggestBlur}
-              onKeyDown={handleSearchKeyDown}
-              type="search"
-              placeholder="Buscar linha, peça, código…"
-              className="flex-1 bg-transparent outline-none text-sm text-western-green-deep placeholder:text-western-stone-warm/60"
-              role="combobox"
-              aria-expanded={suggestOpen}
-              aria-controls="d-search-suggestions"
-              aria-autocomplete="list"
-              aria-activedescendant={
-                activeIndex >= 0 ? `d-search-opt-${activeIndex}` : undefined
-              }
-            />
-          </form>
-          <div className="absolute left-0 right-0 top-full mt-1 z-50">
-            {renderSuggestions("d-")}
-          </div>
-        </div>
-
-        {/* Search mobile (ícone) */}
+        {/* Busca — ícone em qualquer largura; abre o painel de busca (mesma UX
+            do mobile). O input inline não cabia junto do nav em 1280px. */}
         <button
           type="button"
           onClick={() => setSearchOpen(true)}
           aria-label="Buscar"
-          className="md:hidden ml-auto p-2 text-western-green-deep hover:text-western-gold transition-colors"
+          className="ml-auto p-2 text-western-green-deep hover:text-western-gold transition-colors"
         >
           <Search className="h-5 w-5" />
         </button>
 
-        <div className="flex items-center gap-1 lg:gap-3 ml-auto md:ml-0">
+        <div className="flex items-center gap-1 lg:gap-3">
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -383,14 +357,24 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link
-              to="/parceiro/login"
-              aria-label="Entrar"
-              className="hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors whitespace-nowrap"
-            >
-              <User className="h-4 w-4" />
-              <span>Entrar</span>
-            </Link>
+            <>
+              <Link
+                to="/parceiro/login"
+                aria-label="Entrar"
+                className="hidden lg:inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors whitespace-nowrap"
+              >
+                <User className="h-4 w-4" />
+                <span>Entrar</span>
+              </Link>
+              {/* Ação primária do site (única em dourado no header): virar parceiro
+                  = é o que libera o preço de atacado. */}
+              <Link
+                to="/parceiro/cadastro"
+                className="hidden lg:inline-flex items-center h-9 px-4 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.18em] whitespace-nowrap transition-colors"
+              >
+                Seja parceiro
+              </Link>
+            </>
           )}
 
 
