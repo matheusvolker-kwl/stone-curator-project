@@ -28,7 +28,7 @@ import { trackRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import TamanhoReal from "@/components/product/TamanhoReal";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import SocialProofBand from "@/components/product/SocialProofBand";
-import ProductInUse from "@/components/product/ProductInUse";
+import { getAplicadas } from "@/components/product/ProductInUse";
 import WishlistButton from "@/components/product/WishlistButton";
 import Reveal from "@/components/shared/Reveal";
 import { InstallationSection } from "@/components/product/InstallationModule";
@@ -96,13 +96,29 @@ export default function ProductPage() {
     );
   }, [product, activeOptions, visibleOptions, allOptionsSelected]);
 
+  /**
+   * Galeria canônica (C-refinado): estúdio (capa Woo) → ambiente (aplicada) →
+   * detalhe (aplicada _close) → demais fotos do Woo. A foto de escala vive
+   * SÓ no bloco Tamanho real.
+   */
+  const galleryImages = useMemo(() => {
+    if (!product) return [];
+    const wooImages = product.images.edges.map((e) => e.node);
+    const aplicadas = getAplicadas(product.variants.edges[0]?.node?.sku);
+    const extras: { url: string; altText: string | null }[] = [];
+    if (aplicadas.ambiente)
+      extras.push({ url: aplicadas.ambiente, altText: `${product.title} aplicado em projeto real` });
+    if (aplicadas.close)
+      extras.push({ url: aplicadas.close, altText: `${product.title} — detalhe do acabamento` });
+    if (extras.length === 0) return wooImages;
+    return [...wooImages.slice(0, 1), ...extras, ...wooImages.slice(1)];
+  }, [product]);
+
   useEffect(() => {
     if (!product || !variant?.image?.url) return;
-    const idx = product.images.edges.findIndex(
-      (e) => e.node.url === variant.image!.url
-    );
+    const idx = galleryImages.findIndex((img) => img.url === variant.image!.url);
     if (idx >= 0) setActiveImage(idx);
-  }, [variant?.image?.url, product]);
+  }, [variant?.image?.url, product, galleryImages]);
 
   useEffect(() => {
     if (!product) return;
@@ -258,7 +274,7 @@ export default function ProductPage() {
           {/* Gallery */}
           <div className="md:sticky md:top-24 min-w-0">
             <ProductGallery
-              images={images}
+              images={galleryImages}
               activeIndex={activeImage}
               onChange={setActiveImage}
               productTitle={product.title}
@@ -557,12 +573,7 @@ export default function ProductPage() {
         hideModelo3d
       />
       <InstallationSection config={installationConfig} />
-      <Reveal variant="fade-up">
-        <ProductInUse
-          productTitle={product.title}
-          sku={sku || product.variants.edges[0]?.node?.sku}
-        />
-      </Reveal>
+      {/* "Veja em uso" absorvido pela galeria canônica (estúdio → ambiente → detalhe) */}
       <Reveal variant="fade-up">
         <SocialProofBand />
       </Reveal>
