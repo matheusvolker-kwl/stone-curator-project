@@ -82,7 +82,6 @@ const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 const Entrada = lazy(() => import("./pages/Entrada.tsx"));
 const Parceria = lazy(() => import("./pages/Parceria.tsx"));
 const ParceriaDireto = lazy(() => import("./pages/ParceriaDireto.tsx"));
-const Orcamento = lazy(() => import("./pages/Orcamento.tsx"));
 const FavoritosCompartilhados = lazy(() => import("./pages/FavoritosCompartilhados.tsx"));
 
 const queryClient = new QueryClient({
@@ -160,7 +159,8 @@ const App = () => (
                     <Route path="/entrada" element={<Entrada />} />
                     <Route path="/parceria" element={<Parceria />} />
                     <Route path="/parceria-direto" element={<ParceriaDireto />} />
-                    <Route path="/orcamento" element={<Orcamento />} />
+                    {/* Orçamento (página pública) removido por decisão do dono — B2C vai pro atendimento */}
+                    <Route path="/orcamento" element={<Navigate to="/contato" replace />} />
                     <Route path="/linhas/:handle" element={<LinhaPage />} />
                     <Route path="/conjuntos" element={<Conjuntos />} />
                     <Route path="/conjuntos/:handle" element={<ConjuntoPage />} />
