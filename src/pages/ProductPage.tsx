@@ -536,6 +536,16 @@ export default function ProductPage() {
         </div>
       </div>
 
+      {/* A leveza — Tamanho real, logo após a decisão */}
+      <Reveal variant="fade-up">
+        <TamanhoReal
+          productTitle={product.title}
+          sku={sku || product.variants.edges[0]?.node?.sku}
+          dims={dims}
+          pesoKg={pesoKg}
+        />
+      </Reveal>
+
       {/* Below-the-fold — enxuto */}
       <ProductTabs
         parsed={parsed}
@@ -551,14 +561,6 @@ export default function ProductPage() {
         <ProductInUse
           productTitle={product.title}
           sku={sku || product.variants.edges[0]?.node?.sku}
-        />
-      </Reveal>
-      <Reveal variant="fade-up">
-        <TamanhoReal
-          productTitle={product.title}
-          sku={sku || product.variants.edges[0]?.node?.sku}
-          dims={dims}
-          pesoKg={pesoKg}
         />
       </Reveal>
       <Reveal variant="fade-up">
