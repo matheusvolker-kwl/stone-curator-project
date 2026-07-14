@@ -94,10 +94,15 @@ export default function PoliticaComercial() {
         exceção: aberta também a clientes finais, sem cadastro B2B.
       </p>
 
+      {/* Fonte única: BUSINESS.pedidoMinimoLabel (src/config/business.ts).
+       * Nunca reescreva o valor aqui — abolir ou alterar o mínimo se faz lá. */}
       <h2>Pedido mínimo</h2>
       <p>
-        Não há pedido mínimo. Você pode montar a nota a partir de qualquer valor,
-        respeitando a produção sob demanda de cada peça.
+        Pedido mínimo por nota: <strong>{BUSINESS.pedidoMinimoLabel}</strong>, exclusivo B2B. O
+        valor é o mesmo em todo o catálogo, em todas as condições comerciais e em todo o site —
+        você monta a nota como quiser (uma peça ou uma composição inteira), desde que ela alcance
+        esse valor. A Western Box de amostras é a única exceção: aberta a todos, sem cadastro B2B e
+        sem pedido mínimo.
       </p>
 
       <h2>Pagamento</h2>

@@ -127,6 +127,7 @@ export default function Footer() {
             <h4 className={colTitle}>Para parceiros</h4>
             <ul className="flex flex-col">
               <li><Link to="/parceiro/cadastro" className={colLink}>Seja parceiro</Link></li>
+              <li><Link to="/como-comprar" className={colLink}>Como comprar</Link></li>
               <li><Link to="/conjuntos" className={colLink}>Conjuntos prontos</Link></li>
               <li><Link to="/guia-de-composicao" className={colLink}>Guia de composição</Link></li>
               <li><Link to="/inspiracoes" className={colLink}>Inspirações</Link></li>
@@ -142,6 +143,7 @@ export default function Footer() {
             <ul className="flex flex-col">
               <li><Link to="/sobre" className={colLink}>Sobre o ateliê</Link></li>
               <li><Link to="/por-que-western" className={colLink}>Por que Western</Link></li>
+              <li><Link to="/para-sua-casa" className={colLink}>Para sua casa</Link></li>
               <li><Link to="/contrate-a-western" className={colLink}>Contrate a Western</Link></li>
               <li><Link to="/visitar" className={colLink}>Agendar visita</Link></li>
               <li><Link to="/faq" className={colLink}>Perguntas frequentes</Link></li>

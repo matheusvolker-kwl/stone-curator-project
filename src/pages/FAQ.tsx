@@ -71,17 +71,35 @@ const GRUPOS: Grupo[] = [
         text: "A loja é um canal exclusivo para parceiros do ramo — arquitetos, paisagistas, laguistas, revendas e profissionais correlatos — que compram para aplicar nos projetos dos seus clientes. Por isso o preço de parceiro é liberado após o cadastro. A aprovação é automática e imediata para CNAEs compatíveis; casos que exigem análise manual têm retorno em até 2 dias úteis.",
         a: "A loja é um canal exclusivo para parceiros do ramo — arquitetos, paisagistas, laguistas, revendas e profissionais correlatos — que compram para aplicar nos projetos dos seus clientes. Por isso o preço de parceiro é liberado após o cadastro. A aprovação é automática e imediata para CNAEs compatíveis; casos que exigem análise manual têm retorno em até 2 dias úteis.",
       },
+      /* Fonte única do mínimo: BUSINESS.pedidoMinimoLabel (src/config/business.ts).
+       * Nunca escreva o valor à mão aqui — nem no `text` do JSON-LD. */
       {
-        q: "Posso comprar uma peça só ou uma amostra antes?",
-        text: "Sim — não há pedido mínimo. Para conhecer o material antes, temos a Western Box (amostras com cashback). Clientes com serviço contratado ou pedidos maiores podem negociar um kit de amostras diretamente com o nosso time.",
+        q: "Qual o pedido mínimo?",
+        text: `${BUSINESS.pedidoMinimoLabel} por nota, exclusivo B2B. O mesmo valor vale para todo o catálogo — você monta a nota com uma peça ou uma composição inteira, desde que ela alcance esse valor. A Western Box de amostras é a única exceção: aberta a todos, sem cadastro e sem mínimo.`,
         a: (
           <>
-            Sim — não há pedido mínimo. Para conhecer o material antes, temos a{" "}
+            <strong>{BUSINESS.pedidoMinimoLabel} por nota</strong>, exclusivo B2B. O mesmo valor vale para
+            todo o catálogo — você monta a nota com uma peça ou uma composição inteira, desde que ela
+            alcance esse valor. A{" "}
             <Link to="/western-box" className={linkClass}>
               Western Box
             </Link>{" "}
-            (amostras com cashback). Clientes com serviço contratado ou pedidos maiores podem negociar um
-            kit de amostras diretamente com o nosso time.
+            de amostras é a única exceção: aberta a todos, sem cadastro e sem mínimo.
+          </>
+        ),
+      },
+      {
+        q: "Posso comprar uma peça só ou uma amostra antes?",
+        text: `Uma peça só, sim — desde que a nota alcance o pedido mínimo de ${BUSINESS.pedidoMinimoLabel}. Para conhecer o material antes de fechar pedido, temos a Western Box (amostras com cashback), aberta a todos e sem mínimo. Clientes com serviço contratado ou pedidos maiores podem negociar um kit de amostras diretamente com o nosso time.`,
+        a: (
+          <>
+            Uma peça só, sim — desde que a nota alcance o pedido mínimo de{" "}
+            {BUSINESS.pedidoMinimoLabel}. Para conhecer o material antes de fechar pedido, temos a{" "}
+            <Link to="/western-box" className={linkClass}>
+              Western Box
+            </Link>{" "}
+            (amostras com cashback), aberta a todos e sem mínimo. Clientes com serviço contratado ou
+            pedidos maiores podem negociar um kit de amostras diretamente com o nosso time.
           </>
         ),
       },

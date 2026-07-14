@@ -407,6 +407,17 @@ export default function CartDrawer({
               </button>
             )}
 
+            {/* Saída para a página cheia do orçamento — o drawer é para conferir
+                rápido; ajustar quantidade item a item pede a mesa grande. */}
+            <Link
+              to="/carrinho"
+              onClick={() => onOpenChange(false)}
+              className="flex items-center justify-center gap-1.5 min-h-[48px] font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-bronze transition-colors"
+            >
+              Ver orçamento completo
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+
             {!isApproved && (
               <Link
                 to="/parceiro/login"

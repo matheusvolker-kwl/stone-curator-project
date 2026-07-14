@@ -123,8 +123,12 @@ export const guideMap: Record<Tipo, SizeMap> = {
 export const PRODUCT_BASE_URL = `${STORE_PUBLIC_URL}/produto`;
 export const COLLECTION_BASE_URL = `${STORE_PUBLIC_URL}/categoria-produto`;
 export const WHATSAPP_NUMBER = "5511958967088";
-/** Pedido mínimo da loja Western (não por conjunto). */
-export const PEDIDO_MINIMO = 700;
+/*
+ * O pedido mínimo NÃO mora aqui. Havia um `PEDIDO_MINIMO = 700` duplicado
+ * neste arquivo (sem nenhum consumidor) — exatamente a armadilha que gerou a
+ * contradição "R$ 700" × "não há mínimo" pelo site. Fonte única:
+ * BUSINESS.pedidoMinimoBRL / BUSINESS.pedidoMinimoLabel em src/config/business.ts.
+ */
 
 export function formatPreco(valor: number): string {
   return new Intl.NumberFormat("pt-BR", {

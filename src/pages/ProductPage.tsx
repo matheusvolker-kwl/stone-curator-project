@@ -26,6 +26,7 @@ import BackToTop from "@/components/shared/BackToTop";
 import ProductTabs from "@/components/product/ProductTabs";
 import { trackRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import TamanhoReal from "@/components/product/TamanhoReal";
+import CalculadoraQuantidade from "@/components/product/CalculadoraQuantidade";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import SocialProofBand from "@/components/product/SocialProofBand";
 import { getAplicadas } from "@/components/product/ProductInUse";
@@ -588,6 +589,21 @@ export default function ProductPage() {
           sku={sku || product.variants.edges[0]?.node?.sku}
           dims={dims}
           pesoKg={pesoKg}
+        />
+      </Reveal>
+
+      {/* A conta — quantas peças. Nasce da dúvida que o "Tamanho real" acabou de
+       * abrir: "beleza, e quantas eu peço?". Só renderiza em revestimento e
+       * pisada (peças com regra física de quantidade). */}
+      <Reveal variant="fade-up">
+        <CalculadoraQuantidade
+          key={product.handle}
+          handle={product.handle}
+          isApproved={isApproved}
+          onUseQuantity={(n) => {
+            setQty(n);
+            addBtnRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+          }}
         />
       </Reveal>
 

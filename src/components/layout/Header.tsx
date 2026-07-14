@@ -46,7 +46,9 @@ const NAV_INTENTS = [
   { to: "/produtos", label: "Catálogo" },
   { to: "/guia-de-composicao", label: "Guia" },
   { to: "/inspiracoes", label: "Inspirações" },
-  { to: "/contrate-a-western", label: "Para sua casa" },
+  // Hub B2C do kit: todo caminho vai direto ao WhatsApp, sem formulário.
+  // (Não confundir com /contrate-a-western, que é a página com formulário.)
+  { to: "/para-sua-casa", label: "Para sua casa" },
 ];
 
 /* Ação de intenção primária. Bronze (não dourado chapado): sobre marfim o
@@ -315,25 +317,6 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
     </Link>
   );
 
-  const drawerButton = (label: string, onClick: () => void, sub?: string) => (
-    <button
-      type="button"
-      className={rowCls}
-      onClick={() => {
-        setMenuOpen(false);
-        onClick();
-      }}
-    >
-      <span>
-        {label}
-        {sub && (
-          <span className="block text-[14px] font-normal text-western-stone-warm">{sub}</span>
-        )}
-      </span>
-      <ChevronRight className="h-5 w-5 shrink-0 text-western-border-strong" />
-    </button>
-  );
-
   return (
     <header
       className={`sticky top-0 z-40 transition-shadow duration-300 bg-western-ivory border-b border-western-border-soft ${
@@ -494,12 +477,20 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               {drawerLink("/produtos", "Catálogo completo", "Todas as peças, com filtros")}
               {drawerLink("/conjuntos", "Conjuntos", "Kits prontos por tipo de projeto")}
               {drawerLink("/western-box", "Western Box", "Amostras dos acabamentos")}
-              {drawerButton("Meu orçamento", onCartOpen, totalItems > 0 ? `${totalItems} ${totalItems === 1 ? "peça" : "peças"}` : undefined)}
+              {drawerLink("/como-comprar", "Como comprar", "Preço de parceiro em 4 passos")}
+              {drawerLink(
+                "/carrinho",
+                "Meu orçamento",
+                totalItems > 0
+                  ? `${totalItems} ${totalItems === 1 ? "peça" : "peças"}`
+                  : "Nenhuma peça ainda",
+              )}
 
               <p className="text-eyebrow mt-7 mb-1">Descobrir</p>
               {drawerLink("/guia-de-composicao", "Guia de composição", "Monte seu projeto em 3 passos")}
               {drawerLink("/inspiracoes", "Inspirações", "Obras e projetos reais")}
-              {drawerLink("/contrate-a-western", "Para sua casa", "Projeto e execução com a Western")}
+              {drawerLink("/para-sua-casa", "Para sua casa", "Sem CNPJ? A Western executa pra você")}
+              {drawerLink("/contrate-a-western", "Contrate a Western", "Consultoria, projeto 3D e instalação")}
               {drawerLink("/por-que-western", "Por que Western", "A pedra com ~10% do peso")}
               {drawerLink("/sobre", "Sobre o ateliê", `Cajamar/SP · desde ${BUSINESS.fundadaEm}`)}
 
