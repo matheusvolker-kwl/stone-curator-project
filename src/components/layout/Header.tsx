@@ -30,29 +30,68 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 /**
- * DS V3 — SHELL.
- * Header de duas fileiras (como o kit `loja-a-vitrine/shell.jsx`):
- *   fileira 1 = marca + ações (buscar / conta / orçamento)
- *   fileira 2 = "menu enxuto de 6 entradas de intenção" (só ≥lg)
+ * DS V3 — SHELL / HEADER.
  *
+ * Header de duas fileiras (como o kit `loja-a-vitrine/shell.jsx`):
+ *   fileira 1 = marca + busca + ações (Buscar / Minha conta / Meu carrinho)
+ *   fileira 2 = "menu enxuto de 6 entradas de intenção" (só ≥lg)
  * Foi assim que o estouro de 1280px morreu: nav, busca e ícones não disputam
- * mais a mesma linha de 1.200px. Nav = 16px, peso 500, sentence case
- * (o mono 12px caixa-alta com tracking largo era do design antigo).
- * Tudo o que não é intenção de compra (Conjuntos, Western Box, institucional)
- * vive no drawer "Menu" — disponível no desktop e no mobile.
+ * mais a mesma linha. Tudo o que não é intenção de compra vive no drawer "Menu".
+ *
+ * ---------------------------------------------------------------------------
+ * REGRA DE PRIORIDADE DO NAV — do mais importante ao menos (esq. → dir.)
+ * ---------------------------------------------------------------------------
+ *   1. VENDER  — leva à peça e ao carrinho ....... Catálogo · Conjuntos · Guia
+ *   2. CONFIAR — prova que a Western entrega ..... Inspirações
+ *   3. CAPTAR  — vira lead quando não há CNPJ .... Para sua casa
+ *   4. AGIR    — a ação primária, isolada à dir .. Seja parceiro (verde)
+ *
+ *   Regra de corte: se uma entrada não serve a 1–4, ela NÃO fica no topo —
+ *   vive no drawer. É o que mantém o nav em 5 links + 1 ação.
+ *
+ *   Regra da PORTA ÚNICA: dois caminhos que resolvem a MESMA intenção nunca
+ *   disputam o topo. O mais forte fica; o outro vira entrada interna.
+ *
+ * ---------------------------------------------------------------------------
+ * DECISÃO: "Linhas" e "Catálogo" eram a MESMA porta com dois nomes.
+ * ---------------------------------------------------------------------------
+ * O próprio conteúdo do site já resolvia isso — só o nav é que não tinha
+ * percebido:
+ *   · /linhas   → o eyebrow da própria página já diz "Catálogo", e ela tem um
+ *                 btn-primary para /produtos ("ver todas as peças").
+ *   · /produtos → o H1 é "Todas as peças", o eyebrow é "Catálogo completo",
+ *                 e ela tem um back-link "‹ Linhas".
+ * Ou seja: /linhas é o HUB e /produtos é a vista plana DENTRO dele. Elas já se
+ * tratam como pai e filho. O nav é que as colocava lado a lado como iguais —
+ * e ainda por cima com o rótulo trocado: a palavra que o leigo entende
+ * ("Catálogo") apontava para o grid cru, e a palavra de jargão ("Linhas")
+ * apontava para o hub bom.
+ *
+ * Então: UMA porta no topo — "Catálogo" → /linhas (rótulo e destino agora
+ * concordam com o eyebrow da própria página). O grid plano continua a um
+ * clique, por onde já era alcançado: o botão na /linhas, o drawer
+ * ("Todas as peças"), a busca, o rodapé, a home e a conta (16 links de entrada
+ * no app — nada fica órfão).
+ *
+ * A palavra "linha" NÃO morre: ela é vocabulário da marca e continua no H1 da
+ * página, nas specs e no sublabel do drawer. O que muda é só o rótulo de
+ * NAVEGAÇÃO — nav fala a língua do visitante; o conteúdo ensina a da casa.
  */
 const NAV_INTENTS = [
-  { to: "/linhas", label: "Linhas" },
-  { to: "/produtos", label: "Catálogo" },
-  { to: "/guia-de-composicao", label: "Guia" },
+  // 1. VENDER
+  { to: "/linhas", label: "Catálogo" },
+  { to: "/conjuntos", label: "Conjuntos" },
+  { to: "/guia-de-composicao", label: "Guia de composição" },
+  // 2. CONFIAR
   { to: "/inspiracoes", label: "Inspirações" },
-  // Hub B2C do kit: todo caminho vai direto ao WhatsApp, sem formulário.
-  // (Não confundir com /contrate-a-western, que é a página com formulário.)
+  // 3. CAPTAR — hub B2C: sem CNPJ, a Western executa (vira lead turnkey).
+  //    (Não confundir com /contrate-a-western, que é a página com formulário.)
   { to: "/para-sua-casa", label: "Para sua casa" },
 ];
 
-/* Ação de intenção primária. Bronze (não dourado chapado): sobre marfim o
- * dourado não bate AA. O verde fica reservado ao CTA de compra. */
+/* 4. AGIR — ação primária do B2B: o cadastro é o que libera o preço de parceiro.
+ * Isolada à direita e em VERDE (CTA primário do DS V3). O bronze/dourado é
+ * acento — só sobre foto ou verde —, por isso não serve para o botão em si. */
 const PARTNER_INTENT = { to: "/parceiro/cadastro", label: "Seja parceiro" };
 
 export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
@@ -317,14 +356,24 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
     </Link>
   );
 
+  const contaLabel = empresa || user?.email?.split("@")[0] || "Minha conta";
+
   return (
     <header
       className={`sticky top-0 z-40 transition-shadow duration-300 bg-western-ivory border-b border-western-border-soft ${
         scrolled ? "shadow-[0_6px_24px_-16px_rgba(15,41,24,0.28)]" : ""
       }`}
     >
-      {/* Fileira 1 — marca + ações */}
-      <div className="container-western flex items-center gap-2 lg:gap-4 h-16 lg:h-20">
+      {/* ===================================================================
+          Fileira 1 — marca · busca · ações
+          Encaixe: no mobile cabem 3 ações + logo (312px úteis em 360px de tela:
+          Menu 56 + logo ~96 + Buscar 56 + Carrinho 62 + gaps ≈ 282). Uma 4ª ação
+          ("Minha conta") estouraria — por isso a conta, no mobile, é o PRIMEIRO
+          bloco do drawer, que fica a um toque do botão Menu ao lado.
+          No desktop o miolo vazio da fileira 1 vira o campo de busca: espaço
+          morto vira a alavanca de conversão mais barata da loja.
+          =================================================================== */}
+      <div className="container-western flex items-center gap-1 sm:gap-2 lg:gap-6 h-16 lg:h-20">
         <button
           onClick={() => setMenuOpen(true)}
           aria-label="Abrir menu"
@@ -334,30 +383,88 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           Menu
         </button>
 
-        <Link to="/" aria-label="Western — Início" className="flex-shrink-0">
-          <img src={logoVerde} alt="Western" className="h-9 lg:h-12 w-auto" />
+        {/* O alvo de toque é o LINK (≥48px), não a imagem: a logo pode encolher
+            para caber em 360px sem quebrar a regra de toque do DS. */}
+        <Link
+          to="/"
+          aria-label="Western — Início"
+          className="flex-shrink-0 inline-flex items-center min-h-[48px]"
+        >
+          <img src={logoVerde} alt="Western" className="h-8 sm:h-9 lg:h-12 w-auto" />
         </Link>
 
+        {/* Busca persistente (desktop). Mesmo motor de sugestões do painel mobile. */}
+        <div className="hidden lg:block relative flex-1 max-w-[420px]">
+          <form
+            onSubmit={handleSearch}
+            className="flex items-center gap-3 px-4 h-[52px] rounded-[10px] border-[1.5px] border-western-border-strong bg-white focus-within:border-western-cta transition-colors"
+          >
+            <Search className="h-5 w-5 text-western-stone-warm flex-shrink-0" strokeWidth={1.75} />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={handleSuggestFocus}
+              onBlur={handleSuggestBlur}
+              onKeyDown={handleSearchKeyDown}
+              type="search"
+              placeholder="Buscar linha, peça, código…"
+              aria-label="Buscar no catálogo"
+              className="flex-1 min-w-0 bg-transparent outline-none text-[16px] text-western-green-deep placeholder:text-western-stone-warm/70"
+              role="combobox"
+              aria-expanded={suggestOpen}
+              aria-controls="d-search-suggestions"
+              aria-autocomplete="list"
+              aria-activedescendant={activeIndex >= 0 ? `d-search-opt-${activeIndex}` : undefined}
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                aria-label="Limpar busca"
+                className="inline-flex items-center justify-center h-9 w-9 -mr-2 rounded-[6px] text-western-stone-warm hover:text-western-green-deep transition-colors"
+              >
+                <X className="h-5 w-5" strokeWidth={1.75} />
+              </button>
+            )}
+          </form>
+          <div className="absolute top-[calc(100%+8px)] left-0 right-0 z-50">
+            {renderSuggestions("d-")}
+          </div>
+        </div>
+
         <div className="ml-auto flex items-center gap-1 lg:gap-2">
+          {/* Busca no mobile = painel superior (não há largura para um campo fixo). */}
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
             aria-label="Buscar no catálogo"
-            className={actionCls}
+            className={`lg:hidden ${actionCls}`}
           >
             <Search className="h-6 w-6" strokeWidth={1.75} />
             Buscar
           </button>
 
+          {/* MINHA CONTA — entrada visível (pedido do dono). Logado: "Minha conta"
+              (a empresa passa a ser o cabeçalho de dentro do menu, onde ela
+              informa sem roubar o rótulo). Deslogado: "Entrar". */}
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button aria-label="Minha conta" className={`hidden lg:inline-flex ${actionCls}`}>
                   <User className="h-6 w-6" strokeWidth={1.75} />
-                  <span className="max-w-[130px] truncate">{empresa || user?.email?.split("@")[0] || "Conta"}</span>
+                  Minha conta
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-60">
+              <DropdownMenuContent align="end" className="w-64">
+                <div className="px-2 py-2">
+                  <p className="text-[16px] font-semibold text-western-green-deep truncate">
+                    {contaLabel}
+                  </p>
+                  <p className="text-[14px] text-western-stone-warm">
+                    {isApproved ? "Parceiro credenciado" : "Credenciamento em análise"}
+                  </p>
+                </div>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-[16px] py-2.5" onClick={() => navigate("/minha-conta")}>
                   <User className="h-4 w-4 mr-2" /> Minha conta
                 </DropdownMenuItem>
@@ -367,7 +474,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 >
                   <Heart className="h-4 w-4 mr-2" /> Favoritos
                   {wishCount > 0 && (
-                    <span className="ml-auto text-[14px] tabular-nums text-western-cream-muted">
+                    <span className="ml-auto text-[14px] tabular-nums text-western-stone-warm">
                       {wishCount}
                     </span>
                   )}
@@ -396,13 +503,22 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
             </Link>
           )}
 
+          {/* MEU CARRINHO — era "Orçamento". O dono foi explícito: o topo fala a
+              língua de quem compra. "Orçamento" continua sendo o DOCUMENTO que
+              sai daqui, mas o objeto que se enche de peças é o carrinho. */}
           <button
             onClick={onCartOpen}
-            aria-label="Abrir orçamento"
+            aria-label={
+              totalItems > 0
+                ? `Abrir meu carrinho — ${totalItems} ${totalItems === 1 ? "peça" : "peças"}`
+                : "Abrir meu carrinho"
+            }
             className={`${actionCls} -mr-2 ${pulse ? "anim-settle" : ""}`}
           >
             <ShoppingBag className="h-6 w-6" strokeWidth={1.75} />
-            Orçamento
+            {/* Em 360px o rótulo cheio estouraria a fileira — abaixo de sm, "Carrinho". */}
+            <span className="sm:hidden">Carrinho</span>
+            <span className="hidden sm:inline">Meu carrinho</span>
             {totalItems > 0 && (
               <span
                 className={`absolute top-0 right-0 min-w-[22px] h-[22px] px-1 inline-flex items-center justify-center rounded-full bg-western-cta text-western-cream text-[14px] font-bold leading-none tabular-nums transition-shadow ${
@@ -416,42 +532,53 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         </div>
       </div>
 
-      {/* Fileira 2 — menu enxuto de intenções (desktop).
-          Nav em linha própria = nada disputa largura com a busca e os ícones. */}
+      {/* ===================================================================
+          Fileira 2 — nav de intenções (desktop), na ordem da REGRA DE
+          PRIORIDADE do topo do arquivo: VENDER → CONFIAR → CAPTAR → AGIR.
+          =================================================================== */}
       <nav
         aria-label="Navegação principal"
         className="hidden lg:block border-t border-western-border-soft"
       >
-        <div className="container-western flex items-center gap-1 xl:gap-2">
+        <div className="container-western flex items-center gap-1 xl:gap-2 py-1">
           {NAV_INTENTS.map((item) => (
             <NavLink key={item.to} to={item.to} className={navLinkCls}>
               {item.label}
             </NavLink>
           ))}
-          {!session && (
-            <NavLink
-              to={PARTNER_INTENT.to}
-              className={({ isActive }) =>
-                `inline-flex items-center min-h-[48px] px-3 xl:px-3.5 text-[16px] font-semibold whitespace-nowrap text-western-bronze border-b-2 transition-colors ${
-                  isActive ? "border-western-gold" : "border-transparent hover:border-western-gold"
-                }`
-              }
+
+          {/* Bloco direito: o "resto" (drawer) e, isolada, a ação primária. */}
+          <div className="ml-auto flex items-center gap-2 xl:gap-3">
+            <button
+              type="button"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Abrir menu completo"
+              className="inline-flex items-center gap-2 min-h-[48px] px-3 text-[16px] font-medium text-western-green-deep border-b-2 border-transparent hover:border-western-gold transition-colors"
             >
-              {PARTNER_INTENT.label}
-            </NavLink>
-          )}
-          <button
-            type="button"
-            onClick={() => setMenuOpen(true)}
-            className="ml-auto inline-flex items-center gap-2 min-h-[48px] px-3 text-[16px] font-medium text-western-green-deep border-b-2 border-transparent hover:border-western-gold transition-colors"
-          >
-            <Menu className="h-5 w-5" strokeWidth={1.75} />
-            Menu
-          </button>
+              <Menu className="h-5 w-5" strokeWidth={1.75} />
+              Menu
+            </button>
+
+            {!session && (
+              <>
+                <span aria-hidden="true" className="h-6 w-px bg-western-border-soft" />
+                <Link
+                  to={PARTNER_INTENT.to}
+                  className="inline-flex items-center justify-center min-h-[48px] px-5 rounded-[10px] bg-western-cta text-western-cream text-[16px] font-semibold whitespace-nowrap hover:bg-western-green-deep transition-colors"
+                >
+                  {PARTNER_INTENT.label}
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </nav>
 
-      {/* Drawer — tudo que não é intenção de compra mora aqui (mobile e desktop) */}
+      {/* ===================================================================
+          Drawer — o lugar de TUDO que não cabe (ou não merece) o topo.
+          Ordem dos grupos = a mesma regra de prioridade:
+            [conta] → Comprar → Decidir → Sem CNPJ → Ateliê → Políticas
+          =================================================================== */}
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
         <SheetContent
           side="left"
@@ -472,60 +599,99 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
             </div>
 
             <nav className="flex-1 min-h-0 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] px-6 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
-              <p className="text-eyebrow mt-6 mb-1">Comprar</p>
-              {drawerLink("/linhas", "Todas as linhas", "O catálogo por coleção")}
-              {drawerLink("/produtos", "Catálogo completo", "Todas as peças, com filtros")}
+              {/* CONTA — primeiro bloco, sem eyebrow. No mobile este é o "botão
+                  Minha conta" que não cabe na fileira 1. Deslogado, é o cadastro
+                  que libera o preço de parceiro: a ação mais valiosa da loja. */}
+              <div className="mt-6">
+                {session ? (
+                  <>
+                    <Link
+                      to="/minha-conta"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-3 w-full min-h-[64px] px-4 rounded-[10px] bg-western-paper border border-western-border-soft hover:border-western-cta transition-colors"
+                    >
+                      <User className="h-6 w-6 shrink-0 text-western-cta" strokeWidth={1.75} />
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-[17px] font-semibold text-western-green-deep">
+                          Minha conta
+                        </span>
+                        <span className="block text-[14px] font-normal text-western-stone-warm truncate">
+                          {contaLabel}
+                        </span>
+                      </span>
+                      <ChevronRight className="h-5 w-5 shrink-0 text-western-border-strong" />
+                    </Link>
+                    <div className="mt-2">
+                      {drawerLink(
+                        "/minha-conta/favoritos",
+                        "Favoritos",
+                        wishCount > 0
+                          ? `${wishCount} ${wishCount === 1 ? "peça salva" : "peças salvas"}`
+                          : undefined,
+                      )}
+                      {isAdmin && drawerLink("/admin", "Painel admin")}
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          setMenuOpen(false);
+                          await signOut();
+                          navigate("/", { replace: true });
+                        }}
+                        className={rowCls}
+                      >
+                        <span>Sair</span>
+                        <LogOut className="h-5 w-5 shrink-0 text-western-border-strong" />
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/parceiro/cadastro"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center justify-center w-full min-h-[52px] px-5 rounded-[10px] bg-western-cta text-western-cream text-[17px] font-semibold hover:bg-western-green-deep transition-colors"
+                    >
+                      Seja parceiro
+                    </Link>
+                    <p className="mt-2 text-[14px] text-western-stone-warm">
+                      Cadastro com CNPJ · libera o preço de parceiro.
+                    </p>
+                    <div className="mt-2">
+                      {drawerLink("/parceiro/login", "Entrar", "Já sou parceiro")}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* 1. VENDER */}
+              <p className="text-eyebrow mt-7 mb-1">Comprar</p>
+              {drawerLink("/linhas", "Catálogo", "As 11 linhas do ateliê")}
+              {drawerLink("/produtos", "Todas as peças", "A coleção inteira, com filtros")}
               {drawerLink("/conjuntos", "Conjuntos", "Kits prontos por tipo de projeto")}
               {drawerLink("/western-box", "Western Box", "Amostras dos acabamentos")}
-              {drawerLink("/como-comprar", "Como comprar", "Preço de parceiro em 4 passos")}
               {drawerLink(
                 "/carrinho",
-                "Meu orçamento",
+                "Meu carrinho",
                 totalItems > 0
                   ? `${totalItems} ${totalItems === 1 ? "peça" : "peças"}`
                   : "Nenhuma peça ainda",
               )}
+              {drawerLink("/como-comprar", "Como comprar", "Preço de parceiro em 4 passos")}
 
-              <p className="text-eyebrow mt-7 mb-1">Descobrir</p>
+              {/* 2. CONFIAR */}
+              <p className="text-eyebrow mt-7 mb-1">Decidir</p>
               {drawerLink("/guia-de-composicao", "Guia de composição", "Monte seu projeto em 3 passos")}
               {drawerLink("/inspiracoes", "Inspirações", "Obras e projetos reais")}
-              {drawerLink("/para-sua-casa", "Para sua casa", "Sem CNPJ? A Western executa pra você")}
-              {drawerLink("/contrate-a-western", "Contrate a Western", "Consultoria, projeto 3D e instalação")}
               {drawerLink("/por-que-western", "Por que Western", "A pedra com ~10% do peso")}
+
+              {/* 3. CAPTAR — a rampa B2C. Agrupada e rotulada pela PERGUNTA do
+                  visitante ("não tenho CNPJ"), para o B2B pular e o B2C achar. */}
+              <p className="text-eyebrow mt-7 mb-1">Sem CNPJ?</p>
+              {drawerLink("/para-sua-casa", "Para sua casa", "A Western executa pra você")}
+              {drawerLink("/contrate-a-western", "Contrate a Western", "Consultoria, projeto 3D e instalação")}
+
+              <p className="text-eyebrow mt-7 mb-1">Ateliê</p>
               {drawerLink("/sobre", "Sobre o ateliê", `Cajamar/SP · desde ${BUSINESS.fundadaEm}`)}
-
-              <p className="text-eyebrow mt-7 mb-1">Parceria</p>
-              {session ? (
-                <>
-                  {drawerLink("/minha-conta", "Minha conta")}
-                  {drawerLink(
-                    "/minha-conta/favoritos",
-                    "Favoritos",
-                    wishCount > 0 ? `${wishCount} ${wishCount === 1 ? "peça salva" : "peças salvas"}` : undefined,
-                  )}
-                  {isAdmin && drawerLink("/admin", "Painel admin")}
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      setMenuOpen(false);
-                      await signOut();
-                      navigate("/", { replace: true });
-                    }}
-                    className={rowCls}
-                  >
-                    <span>Sair</span>
-                    <LogOut className="h-5 w-5 shrink-0 text-western-border-strong" />
-                  </button>
-                </>
-              ) : (
-                <>
-                  {drawerLink("/parceiro/login", "Acessar conta", "Já sou parceiro")}
-                  {drawerLink("/parceiro/cadastro", "Seja parceiro", "Cadastro com CNPJ · libera o preço de parceiro")}
-                </>
-              )}
-              {drawerLink("/contrate-a-western", "Contrate a Western", "Produção, execução e projeto 3D")}
-
-              <p className="text-eyebrow mt-7 mb-1">Ajuda</p>
               <a
                 href={`https://wa.me/${BUSINESS.whatsappFabrica}`}
                 target="_blank"
@@ -541,25 +707,20 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 </span>
                 <MessageCircle className="h-5 w-5 shrink-0 text-western-cta" strokeWidth={1.75} />
               </a>
-              {drawerLink("/faq", "Perguntas frequentes")}
               {drawerLink("/contato", "Contato")}
-              {drawerLink("/politica-comercial", "Política comercial")}
+              {drawerLink("/faq", "Perguntas frequentes")}
 
-              {!session && (
-                <Link
-                  to="/parceiro/cadastro"
-                  onClick={() => setMenuOpen(false)}
-                  className="btn-primary w-full mt-8"
-                >
-                  Solicitar acesso de parceiro
-                </Link>
-              )}
+              <p className="text-eyebrow mt-7 mb-1">Políticas</p>
+              {drawerLink("/politica-comercial", "Política comercial")}
+              {drawerLink("/politica-de-entrega", "Política de entrega")}
+              {drawerLink("/trocas-e-avarias", "Trocas e avarias")}
+              {drawerLink("/privacidade", "Privacidade")}
             </nav>
           </div>
         </SheetContent>
       </Sheet>
 
-      {/* Busca — painel superior (mesma UX em qualquer largura) */}
+      {/* Busca — painel superior (mobile; no desktop o campo vive na fileira 1) */}
       <Sheet open={searchOpen} onOpenChange={setSearchOpen}>
         <SheetContent
           side="top"

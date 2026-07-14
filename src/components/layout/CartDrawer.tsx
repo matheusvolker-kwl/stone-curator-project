@@ -152,7 +152,11 @@ export default function CartDrawer({
             <ArrowLeft className="h-5 w-5" /> Continuar comprando
           </button>
           <div className="mt-1">
-            <p className="text-eyebrow">Seu orçamento</p>
+            {/* VOCABULÁRIO (regra do site): o CARRINHO é o objeto — você enche de
+                peças. O ORÇAMENTO é o documento que sai dele. O topo diz
+                "Meu carrinho"; aqui também. "Orçamento" só aparece quando é o
+                documento (baixar composição / solicitar orçamento). */}
+            <p className="text-eyebrow">Meu carrinho</p>
             <SheetTitle className="display-md text-western-green-deep mt-1.5">
               Composição atual
             </SheetTitle>
@@ -414,7 +418,7 @@ export default function CartDrawer({
               onClick={() => onOpenChange(false)}
               className="flex items-center justify-center gap-1.5 min-h-[48px] font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-bronze transition-colors"
             >
-              Ver orçamento completo
+              Ver carrinho completo
               <ArrowRight className="h-4 w-4" />
             </Link>
 

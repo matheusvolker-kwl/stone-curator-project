@@ -205,17 +205,20 @@ export default function ProductPage() {
     });
   };
 
+  /* Medida e peso da PEÇA: extraídos aqui, mas entregues a UM só consumidor —
+   * o bloco "Tamanho real". A ficha de Especificações não repete número nenhum:
+   * fora comprimento/largura/altura/peso (moram no Tamanho real) e acabamento
+   * (é uma decisão, tomada acima no FinishSelector — não um dado a repetir),
+   * sobra o que só a ficha tem: código e material. Garantia vem do BUSINESS. */
   const dims = extractDimensions(parsed.ficha);
-  const fichaCleaned = parsed.ficha.filter(
-    (f) => !/comprimento|largura|altura|garantia/i.test(f.label)
-  );
   const fichaRows = [
-    ...fichaCleaned.filter((f) => !/acabament/i.test(f.label)),
+    ...parsed.ficha.filter(
+      (f) => !/comprimento|largura|altura|peso|garantia|acabament/i.test(f.label)
+    ),
     { label: "Garantia", value: BUSINESS.garantiaLabel },
   ];
   const pesoStr = parsed.ficha.find((f) => /peso/i.test(f.label))?.value ?? "";
   const pesoKg = pesoStr.match(/(\d+[.,]?\d*)/)?.[1]?.replace(",", ".") ?? null;
-  const dimsStr = dims ? `${dims.c} × ${dims.l} × ${dims.a} cm` : null;
 
   const plainDesc = (product.description || product.title).replace(/\s+/g, " ").trim();
   const productJsonLd: Record<string, unknown> = {
@@ -607,12 +610,10 @@ export default function ProductPage() {
         />
       </Reveal>
 
-      {/* Below-the-fold — enxuto */}
+      {/* Below-the-fold — enxuto. Sem pesoKg/dims: medida e peso da peça não
+       * entram aqui, moram só no bloco "Tamanho real" acima. */}
       <ProductTabs
         parsed={parsed}
-        pesoKg={pesoKg}
-        dimsStr={dimsStr}
-        dims={dims}
         fichaRows={fichaRows}
         modelo3dValue={product.modelo3d?.value}
         hideModelo3d
@@ -627,6 +628,7 @@ export default function ProductPage() {
           collectionHandle={collection?.handle}
           collectionTitle={collection?.title}
           currentHandle={product.handle}
+          currentSku={sku || product.variants.edges[0]?.node?.sku}
           productTitle={product.title}
         />
       </Reveal>

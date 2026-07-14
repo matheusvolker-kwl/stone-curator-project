@@ -173,7 +173,7 @@ export default function Carrinho() {
     return (
       <>
         <Seo
-          title="Seu orçamento · Western"
+          title="Meu carrinho · Western"
           description="Revise as peças da sua composição e finalize seu pedido com a Western."
           path="/carrinho"
         />
@@ -185,7 +185,7 @@ export default function Carrinho() {
                 aria-hidden="true"
               />
               <h1 className="display-lg text-western-green-deep mt-5">
-                Seu orçamento está vazio
+                Seu carrinho está vazio
               </h1>
               <p className="text-body mt-3">
                 Explore o catálogo ou comece pela Western Box — o kit de amostras aberto a
@@ -262,7 +262,7 @@ export default function Carrinho() {
   return (
     <>
       <Seo
-        title="Seu orçamento · Western"
+        title="Meu carrinho · Western"
         description="Revise as peças da sua composição, confira o subtotal e finalize seu pedido com a Western."
         path="/carrinho"
       />
@@ -280,7 +280,7 @@ export default function Carrinho() {
 
           <header className="mt-2">
             <p className="text-eyebrow">Composição atual</p>
-            <h1 className="display-xl text-western-green-deep mt-2">Seu orçamento</h1>
+            <h1 className="display-xl text-western-green-deep mt-2">Meu carrinho</h1>
             <p className="text-body mt-2">
               {totalQty} {totalQty === 1 ? "peça" : "peças"} · garantia de{" "}
               {BUSINESS.garantiaLabel} e reposição garantida

@@ -1,10 +1,32 @@
 // Browser-side client that talks to our edge-function proxy (woo-proxy).
 // Consumer key/secret never reach the browser.
 
+import { supabase } from "@/integrations/supabase/client";
+
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
 
 const PROXY_URL = `${SUPABASE_URL}/functions/v1/woo-proxy`;
+
+/**
+ * O TOKEN DO USUÁRIO PRECISA CHEGAR NA woo-proxy.
+ *
+ * Este cliente mandava a anon key no `Authorization` SEMPRE — inclusive para o
+ * parceiro logado. Enquanto o proxy era um repasse cego isso não fazia
+ * diferença; agora que ele decide QUEM VÊ PREÇO pelo token, mandar a anon key
+ * significa "sou visitante" — e o parceiro aprovado ficaria sem preço.
+ *
+ * Então: se houver sessão, manda o JWT dela; senão, a anon key (visitante).
+ * O `apikey` continua sendo sempre a anon key — é o que identifica o projeto.
+ */
+async function authHeader(): Promise<string> {
+  try {
+    const { data } = await supabase.auth.getSession();
+    return `Bearer ${data.session?.access_token ?? SUPABASE_ANON_KEY}`;
+  } catch {
+    return `Bearer ${SUPABASE_ANON_KEY}`;
+  }
+}
 
 export interface WooFetchOptions {
   /** WooCommerce REST path, e.g. "products" or "products/123/variations" */
@@ -28,7 +50,7 @@ export async function wooFetch<T = unknown>({ path, params, signal }: WooFetchOp
     method: "GET",
     headers: {
       apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      Authorization: await authHeader(),
     },
     signal,
   });

@@ -1,4 +1,4 @@
-import { Check, ArrowRight, BookOpen, FileDown, PlayCircle } from "lucide-react";
+import { Check, ArrowRight, BookOpen, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Accordion,
@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
+import ManualDownload from "@/components/product/ManualDownload";
 import type { InstallationConfig } from "@/data/installation";
 
 const ANCHOR_ID = "instalacao";
@@ -82,10 +83,36 @@ function LevelBars({ level }: { level: number }) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 2) SEÇÃO INSTALAÇÃO — completa, com âncora #instalacao
+//    Todo o conteúdo vem do capítulo correspondente do Manual de Instalação.
 // ─────────────────────────────────────────────────────────────────────────────
-export function InstallationSection({ config }: { config: InstallationConfig }) {
-  const { level, levelLabel, subtitle, facts, reassure, steps, guideUrl, manualUrl, videoUrl } =
-    config;
+export function InstallationSection({
+  config,
+  pieceName,
+  lineHandle,
+  origem,
+}: {
+  config: InstallationConfig;
+  /** Nome da peça/conjunto — acompanha o lead do download do manual. */
+  pieceName?: string;
+  /** Handle da linha/coleção — acompanha o lead do download do manual. */
+  lineHandle?: string;
+  /** Origem do lead (default: PDP). */
+  origem?: string;
+}) {
+  const {
+    level,
+    levelLabel,
+    subtitle,
+    facts,
+    reassure,
+    stepsLabel,
+    steps,
+    warnings,
+    chapter,
+    chapterTitle,
+    manualPage,
+    guideUrl,
+  } = config;
 
   return (
     <section
@@ -133,12 +160,38 @@ export function InstallationSection({ config }: { config: InstallationConfig }) 
 
               {/* Reassurance */}
               <p className="text-body border-l-2 border-western-gold pl-4">{reassure}</p>
+
+              {/* Avisos que valem ouro — impermeabilização, cura, elétrica, bomba */}
+              {warnings.length > 0 && (
+                <div className="rounded-[16px] border border-western-border-strong bg-western-ivory p-5">
+                  <p className="text-sublabel mb-4">Antes de começar</p>
+                  <ul className="space-y-5">
+                    {warnings.map((w) => (
+                      <li key={w.title} className="flex gap-3">
+                        <AlertTriangle
+                          className="mt-0.5 h-5 w-5 shrink-0 text-western-bronze"
+                          strokeWidth={2}
+                          aria-hidden="true"
+                        />
+                        <div>
+                          <p className="font-sans text-[17px] font-semibold text-western-green-deep">
+                            {w.title}
+                          </p>
+                          <p className="mt-1 font-sans text-[16px] leading-relaxed text-western-stone-warm">
+                            {w.text}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* Coluna direita — Passos + CTAs */}
             <div className="space-y-8 md:col-span-7">
               <div>
-                <p className="text-section-label mb-4">Passo a passo resumido</p>
+                <p className="text-section-label mb-4">{stepsLabel}</p>
                 <Accordion
                   type="single"
                   collapsible
@@ -168,75 +221,37 @@ export function InstallationSection({ config }: { config: InstallationConfig }) 
                   ))}
                 </Accordion>
                 <p className="text-meta mt-4">
-                  Este é um resumo. O passo a passo completo está no guia e no manual.
+                  Resumo do Capítulo {chapter} · {chapterTitle}. O passo a passo completo,
+                  a ficha técnica com o peso de cada peça e os cuidados de manutenção estão
+                  no manual.
                 </p>
               </div>
 
-              {/* CTAs — DS V3: primário verde, secundários outline-forest.
+              {/* CTAs — DS V3: primário verde, secundário outline-forest.
                   Mobile: empilhados full-width, 52px. */}
-              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <Link to={guideUrl || "/como-instalar"} className="btn-primary w-full sm:w-auto">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start">
+                <ManualDownload
+                  chapter={chapter}
+                  chapterTitle={chapterTitle}
+                  page={manualPage}
+                  pieceName={pieceName}
+                  lineHandle={lineHandle}
+                  origem={origem}
+                  variant="primary"
+                  className="w-full sm:w-auto"
+                />
+                <Link
+                  to={guideUrl || "/como-instalar"}
+                  className="btn-outline-forest w-full sm:w-auto"
+                >
                   <BookOpen className="h-5 w-5" aria-hidden="true" />
                   Guia completo de instalação
                 </Link>
-                <InstallCta
-                  href={manualUrl}
-                  icon={<FileDown className="h-5 w-5" aria-hidden="true" />}
-                  label="Baixar manual (PDF)"
-                />
-                <InstallCta
-                  href={videoUrl}
-                  icon={<PlayCircle className="h-5 w-5" aria-hidden="true" />}
-                  label="Assistir ao vídeo"
-                />
               </div>
             </div>
           </div>
         </div>
       </div>
     </section>
-  );
-}
-
-/**
- * CTA secundário da seção de instalação.
- * Sem href (manual/vídeo ainda não publicados) → estado "Em breve" explícito:
- * o motivo fica escrito, e não codificado num texto lavado que reprova AA.
- */
-function InstallCta({
-  href,
-  icon,
-  label,
-}: {
-  href?: string;
-  icon: React.ReactNode;
-  label: string;
-}) {
-  if (!href) {
-    return (
-      <span
-        aria-disabled="true"
-        className="inline-flex min-h-[52px] w-full cursor-not-allowed items-center justify-center gap-2 rounded-[10px] border border-western-border-soft bg-transparent px-7 font-sans text-[16px] font-semibold text-western-stone-warm sm:w-auto"
-      >
-        {icon}
-        {label}
-        <span className="font-sans text-[14px] font-normal text-western-stone-warm">
-          · Em breve
-        </span>
-      </span>
-    );
-  }
-
-  const external = href.startsWith("http");
-  return (
-    <a
-      href={href}
-      target={external ? "_blank" : undefined}
-      rel={external ? "noopener noreferrer" : undefined}
-      className="btn-outline-forest w-full sm:w-auto"
-    >
-      {icon}
-      {label}
-    </a>
   );
 }

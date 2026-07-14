@@ -4,17 +4,21 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import HardFactsCard from "@/components/product/HardFactsCard";
-import WhatsInTheBox from "@/components/product/WhatsInTheBox";
-import { Download, Check } from "lucide-react";
+import { Download, Check, Package, Paintbrush, FileText, ArrowRight } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import type { ParsedDescription } from "@/lib/catalog/parseDescription";
 
+/**
+ * REGRA DE OURO DESTA PDP — cada número aparece UMA vez, no lugar onde a
+ * pergunta nasce:
+ *   • A PEÇA (medida + peso real)  → bloco "Tamanho real" (acima). AQUI: nunca.
+ *   • A EMBALAGEM (volumes, caixas, peso bruto) → aba "Entrega". É dado de frete.
+ *   • Especificações → do que é feita, código, garantia. Zero medida.
+ */
+
 interface Props {
   parsed: ParsedDescription;
-  pesoKg: string | null;
-  dimsStr: string | null;
-  dims: { c: string; l: string; a: string } | null;
+  /** Ficha SEM medida/peso: Código, Material, Garantia. Montada na ProductPage. */
   fichaRows: Array<{ label: string; value: string }>;
   modelo3dValue?: string;
   hideModelo3d?: boolean;
@@ -46,8 +50,27 @@ const SKETCHUP_INCLUI = [
   "Compatível com SketchUp Pro e Free, versões 2020+",
 ];
 
-/* DS V3: gatilho do acordeão é UI, não display — sans semibold 20px, alvo 56px.
- * O mono 12px caixa-alta era do design antigo. */
+/* O que acompanha a peça. Sem promessa de vídeo de instalação — ele não vai
+ * existir (decisão do dono). Só manual impresso + guia. */
+const NA_CAIXA = [
+  {
+    Icon: Package,
+    title: "Peça pronta para instalar",
+    desc: "Acabamento finalizado, embalada com proteção para transporte.",
+  },
+  {
+    Icon: Paintbrush,
+    title: "Kit de retoque incluso",
+    desc: "Pintura mineral na mesma cor da peça, para eventuais reparos.",
+  },
+  {
+    Icon: FileText,
+    title: "Manual de fixação",
+    desc: "Instruções passo a passo impressas — as mesmas do guia online.",
+  },
+];
+
+/* DS V3: gatilho do acordeão é UI, não display — sans semibold 20px, alvo 56px. */
 const TRIGGER =
   "font-sans text-[18px] md:text-[20px] font-semibold text-western-green-deep " +
   "py-5 min-h-[56px] hover:no-underline";
@@ -60,15 +83,17 @@ const ROW =
 
 export default function ProductTabs({
   parsed,
-  pesoKg,
-  dimsStr,
-  dims,
   fichaRows,
   modelo3dValue,
   hideModelo3d = false,
 }: Props) {
   const url = modelo3dValue?.trim() || BUSINESS.sketchupWarehouse;
   const isProductSpecific = !!modelo3dValue?.trim();
+
+  const scrollToTamanho = (e: React.MouseEvent) => {
+    e.preventDefault();
+    document.getElementById("tamanho")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
     <section className="surface-paper border-t border-western-border-soft py-14 md:py-20">
@@ -78,7 +103,7 @@ export default function ProductTabs({
           defaultValue={["descricao", "specs", "entrega"]}
           className="w-full max-w-5xl border-t border-western-border-soft"
         >
-          {/* DESCRIÇÃO */}
+          {/* DESCRIÇÃO — narrativa. Nenhum número. */}
           <AccordionItem value="descricao" className={ITEM}>
             <AccordionTrigger className={TRIGGER}>Descrição</AccordionTrigger>
             <AccordionContent className="pt-2 pb-10">
@@ -87,23 +112,37 @@ export default function ProductTabs({
                   <p className="text-section-label mb-2">Sobre a peça</p>
                   {parsed.lead && <p className="text-body">{parsed.lead}</p>}
                   {parsed.intro && <p className="text-body">{parsed.intro}</p>}
-                  {parsed.aplicacoes.length > 0 && (
-                    <div className="pt-4">
-                      <p className="text-sublabel mb-3">Aplicações</p>
-                      <p className="font-sans text-[16px] text-western-green-deep">
-                        {parsed.aplicacoes.map((a, i) => (
-                          <span key={a}>
-                            {a}
-                            {i < parsed.aplicacoes.length - 1 && (
-                              <span className="text-western-stone-warm/50 mx-2">·</span>
-                            )}
-                          </span>
-                        ))}
-                      </p>
-                    </div>
-                  )}
                 </div>
 
+                {parsed.aplicacoes.length > 0 && (
+                  <div className="md:col-span-5">
+                    <p className="text-section-label mb-4">Aplicações</p>
+                    <ul className="space-y-3">
+                      {parsed.aplicacoes.map((a) => (
+                        <li key={a} className="flex gap-3 items-start">
+                          <Check
+                            className="h-5 w-5 text-western-bronze mt-0.5 shrink-0"
+                            aria-hidden
+                          />
+                          <span className="font-sans text-[16px] leading-relaxed text-western-green-deep">
+                            {a}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* ESPECIFICAÇÕES — do que é feita, código, garantia. ZERO medida:
+            * medida e peso da peça vivem só em "Tamanho real"; volumes e peso
+            * bruto vivem só em "Entrega". Aqui só o ponteiro. */}
+          <AccordionItem value="specs" className={ITEM}>
+            <AccordionTrigger className={TRIGGER}>Especificações</AccordionTrigger>
+            <AccordionContent className="pt-2 pb-10">
+              <div className="grid md:grid-cols-12 gap-10 lg:gap-16">
                 <div className="md:col-span-5">
                   <p className="text-section-label mb-5">Composição & material</p>
                   <ul className="space-y-5">
@@ -119,66 +158,24 @@ export default function ProductTabs({
                     ))}
                   </ul>
                 </div>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-
-          {/* ESPECIFICAÇÕES */}
-          <AccordionItem value="specs" className={ITEM}>
-            <AccordionTrigger className={TRIGGER}>Especificações</AccordionTrigger>
-            <AccordionContent className="pt-2 pb-10">
-              <div className="grid md:grid-cols-12 gap-10 lg:gap-16">
-                <div className="md:col-span-5">
-                  <HardFactsCard pesoKg={pesoKg} dimensoes={dimsStr} variant="card" />
-                </div>
 
                 <div className="md:col-span-7 space-y-10">
-                  {dims && (
-                    <div>
-                      <p className="text-section-label mb-4">Dimensões</p>
-                      <div className="grid grid-cols-3 gap-px overflow-hidden rounded-[10px] border border-western-border-soft bg-western-border-soft">
-                        {[
-                          { rotulo: "Comprimento", sigla: "C", valor: dims.c },
-                          { rotulo: "Largura", sigla: "L", valor: dims.l },
-                          { rotulo: "Altura", sigla: "A", valor: dims.a },
-                        ].map((d) => (
-                          <div key={d.sigla} className="bg-western-cream p-5 text-center">
-                            <p className="text-sublabel mb-2">
-                              {d.sigla} · {d.rotulo}
-                            </p>
-                            <p className="font-sans font-bold text-[26px] text-western-green-deep tabular-nums leading-none">
-                              {d.valor || "—"}
-                              <span className="font-sans font-normal text-[14px] text-western-stone-warm ml-1">
-                                cm
-                              </span>
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                      <p className="text-meta mt-3 text-center">
-                        Variação artesanal de até ±3 cm por peça
-                      </p>
-                    </div>
-                  )}
-
-                  {parsed.embalado.length > 0 && (
-                    <div>
-                      <p className="text-section-label mb-4">Dados de envio</p>
-                      <p className="text-meta mb-4">
-                        Medidas da embalagem — usadas para cálculo de frete
-                      </p>
-                      <dl>
-                        {parsed.embalado.map((f) => (
-                          <div key={f.label} className={ROW}>
-                            <dt className="text-western-stone-warm">{f.label}</dt>
-                            <dd className="font-semibold text-western-green-deep text-right break-words">
-                              {f.value}
-                            </dd>
-                          </div>
-                        ))}
-                      </dl>
-                    </div>
-                  )}
+                  {/* Ponteiro — quem procura medida aqui acha o caminho na hora,
+                    * sem repetir número nenhum. */}
+                  <a
+                    href="#tamanho"
+                    onClick={scrollToTamanho}
+                    className="group flex items-center justify-between gap-4 min-h-[52px] rounded-[10px] border border-western-border-soft bg-western-cream px-5 py-4 transition-colors hover:border-western-green-deep"
+                  >
+                    <span className="font-sans text-[16px] text-western-green-deep">
+                      <span className="font-semibold">Medidas e peso da peça</span>{" "}
+                      <span className="text-western-stone-warm">— veja Tamanho real</span>
+                    </span>
+                    <ArrowRight
+                      className="h-5 w-5 shrink-0 text-western-bronze transition-transform motion-safe:group-hover:translate-x-0.5"
+                      aria-hidden
+                    />
+                  </a>
 
                   {fichaRows.length > 0 && (
                     <div>
@@ -267,8 +264,9 @@ export default function ProductTabs({
             </AccordionItem>
           )}
 
-          {/* ENTREGA & INSTALAÇÃO */}
-          <AccordionItem value="entrega" className={ITEM}>
+          {/* ENTREGA — a peça EMBALADA mora aqui, e só aqui. É o que a
+            * transportadora cobra: quantos volumes, cada caixa, peso bruto. */}
+          <AccordionItem value="entrega" id="entrega" className={`${ITEM} scroll-mt-24`}>
             <AccordionTrigger className={TRIGGER}>Entrega</AccordionTrigger>
             <AccordionContent className="pt-2 pb-10">
               <div className="grid md:grid-cols-12 gap-10 lg:gap-16">
@@ -296,6 +294,25 @@ export default function ProductTabs({
                     </dl>
                   </div>
 
+                  {parsed.embalado.length > 0 && (
+                    <div>
+                      <p className="text-section-label mb-4">Como a peça chega</p>
+                      <p className="text-meta mb-4">
+                        Medidas e peso da caixa — é o que a transportadora cobra no frete.
+                      </p>
+                      <dl>
+                        {parsed.embalado.map((f) => (
+                          <div key={f.label} className={ROW}>
+                            <dt className="text-western-stone-warm">{f.label}</dt>
+                            <dd className="font-semibold text-western-green-deep text-right break-words">
+                              {f.value}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+                  )}
+
                   <div>
                     <p className="text-section-label mb-4">Cuidados</p>
                     <p className="text-body max-w-[60ch]">
@@ -308,7 +325,27 @@ export default function ProductTabs({
 
                 <div className="md:col-span-5">
                   <p className="text-section-label mb-4">O que vem na caixa</p>
-                  <WhatsInTheBox />
+                  <div className="rounded-[16px] border border-western-border-soft bg-western-cream px-5 py-6 md:px-7 md:py-7">
+                    <ul className="space-y-5">
+                      {NA_CAIXA.map(({ Icon, title, desc }) => (
+                        <li key={title} className="flex gap-3">
+                          <Icon
+                            className="h-5 w-5 flex-shrink-0 text-western-bronze mt-0.5"
+                            strokeWidth={1.5}
+                            aria-hidden="true"
+                          />
+                          <div>
+                            <p className="font-sans font-semibold text-[16px] text-western-green-deep leading-snug">
+                              {title}
+                            </p>
+                            <p className="font-sans text-[14px] text-western-stone-warm leading-relaxed mt-1">
+                              {desc}
+                            </p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </AccordionContent>

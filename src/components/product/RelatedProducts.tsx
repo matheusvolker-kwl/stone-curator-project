@@ -10,13 +10,26 @@ interface Props {
   collectionHandle?: string;
   collectionTitle?: string;
   currentHandle: string;
+  /**
+   * SKU da peça aberta. Serve para NÃO recomendar a própria peça: o bundle de
+   * acabamento (WEST-FSL-G) e a peça-mãe (WEST-FSL) têm HANDLES diferentes, então
+   * filtrar por handle deixava a PDP da Fonte Sabino recomendar a Fonte Sabino.
+   */
+  currentSku?: string | null;
   productTitle: string;
+}
+
+/** WEST-FSL-G → FSL · WEST-PM5-MOLEDO → PM5. É o código que identifica a PEÇA. */
+function codigoBase(sku?: string | null): string {
+  if (!sku) return "";
+  return sku.trim().toUpperCase().replace(/^WEST(ERN)?-/, "").split("-")[0];
 }
 
 export default function RelatedProducts({
   collectionHandle,
   collectionTitle,
   currentHandle,
+  currentSku,
   productTitle,
 }: Props) {
   const { data: coll, isPending: collPending } = useQuery({
@@ -29,16 +42,25 @@ export default function RelatedProducts({
     queryFn: () => fetchCollection("conjuntos", 6),
   });
 
+  // A mesma peça pode aparecer com outro handle (bundle de acabamento × peça-mãe).
+  // Só o código base do SKU identifica a PEÇA — o handle não.
+  const baseAtual = codigoBase(currentSku);
+  const ehOutraPeca = (p: { handle: string; variants: { edges: Array<{ node: { sku?: string | null } }> } }) => {
+    if (p.handle === currentHandle) return false;
+    if (!baseAtual) return true;
+    return codigoBase(p.variants.edges[0]?.node?.sku) !== baseAtual;
+  };
+
   const related =
     coll?.products?.edges
       ?.map((e) => e.node)
-      .filter((p) => p.handle !== currentHandle)
+      .filter(ehOutraPeca)
       .slice(0, 4) ?? [];
 
   const sets =
     conjuntos?.products?.edges
       ?.map((e) => e.node)
-      .filter((p) => p.handle !== currentHandle)
+      .filter(ehOutraPeca)
       .slice(0, 2) ?? [];
 
   const loading = (!!collectionHandle && collPending) || setsPending;

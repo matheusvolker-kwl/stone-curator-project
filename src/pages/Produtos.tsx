@@ -18,7 +18,9 @@ export default function Produtos() {
           to="/linhas"
           className="tap-target -ml-1 mb-6 inline-flex items-center gap-2 px-1 font-sans text-[16px] font-semibold text-western-cta transition-colors hover:text-western-green-deep"
         >
-          <ChevronLeft className="h-5 w-5" /> Linhas
+          {/* O menu agora chama /linhas de "Catálogo" — o caminho de volta tem
+              que usar a mesma palavra, senão o visitante não reconhece de onde veio. */}
+          <ChevronLeft className="h-5 w-5" /> Catálogo
         </Link>
 
         <Reveal variant="fade-up">
