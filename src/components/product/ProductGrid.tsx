@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Search, X } from "lucide-react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -18,6 +18,7 @@ import {
   type PesoBucket,
 } from "@/lib/catalog/sizeWeight";
 import type { ShopifyProduct } from "@/lib/catalog/types";
+import { linhaRank, naturalTitleCompare } from "@/lib/lineOrder";
 import { cn } from "@/lib/utils";
 
 type SortKey = "az" | "za" | "price-asc" | "price-desc";
@@ -101,10 +102,10 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
     const arr = [...list];
     switch (sort) {
       case "az":
-        arr.sort((a, b) => a.node.title.localeCompare(b.node.title));
+        arr.sort((a, b) => naturalTitleCompare(a.node.title, b.node.title));
         break;
       case "za":
-        arr.sort((a, b) => b.node.title.localeCompare(a.node.title));
+        arr.sort((a, b) => naturalTitleCompare(b.node.title, a.node.title));
         break;
       case "price-asc":
         arr.sort(
@@ -120,16 +121,52 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
             parseFloat(a.node.priceRange.minVariantPrice.amount)
         );
         break;
+      default:
+        // Ordenação padrão curada: linha carro-chefe primeiro, título natural dentro da linha.
+        arr.sort((a, b) => {
+          const ra = linhaRank(a.node.collections?.edges?.[0]?.node?.handle);
+          const rb = linhaRank(b.node.collections?.edges?.[0]?.node?.handle);
+          if (ra !== rb) return ra - rb;
+          return naturalTitleCompare(a.node.title, b.node.title);
+        });
     }
     return arr;
   }, [enriched, q, activeTamanhos, activePesos, sort]);
 
   const hasFilters = !!q || activeTamanhos.length > 0 || activePesos.length > 0;
+  const activeCount = (q ? 1 : 0) + activeTamanhos.length + activePesos.length;
+  // Mobile: filtros começam recolhidos pra não empurrar os produtos pra baixo
+  // da dobra; abertos automaticamente se a URL já chega com filtros ativos.
+  const [filtersOpen, setFiltersOpen] = useState(hasFilters);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-10">
+    <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 lg:gap-10">
+      {/* Toggle de filtros — só mobile/tablet */}
+      <button
+        type="button"
+        onClick={() => setFiltersOpen((o) => !o)}
+        aria-expanded={filtersOpen}
+        className="lg:hidden flex items-center justify-between gap-3 h-12 px-4 bg-white border border-western-stone-warm/20 text-western-green-deep font-mono text-[11px] uppercase tracking-[0.2em]"
+      >
+        <span className="inline-flex items-center gap-2">
+          <SlidersHorizontal className="h-4 w-4 text-western-gold" />
+          Filtrar &amp; buscar
+          {activeCount > 0 && (
+            <span className="inline-flex items-center justify-center min-w-5 h-5 px-1 bg-western-gold text-western-green-deep text-[10px] font-bold">
+              {activeCount}
+            </span>
+          )}
+        </span>
+        <span className="text-western-stone-warm">{filtersOpen ? "−" : "+"}</span>
+      </button>
+
       {/* Sidebar */}
-      <aside className="lg:sticky lg:top-24 lg:self-start space-y-8 bg-white border border-western-stone-warm/15 p-6">
+      <aside
+        className={cn(
+          "lg:sticky lg:top-24 lg:self-start space-y-8 bg-white border border-western-stone-warm/15 p-6",
+          filtersOpen ? "block" : "hidden lg:block"
+        )}
+      >
         <div>
           <p className="text-eyebrow mb-3">Buscar</p>
           <div className="relative">
