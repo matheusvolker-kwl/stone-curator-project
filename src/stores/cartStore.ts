@@ -31,6 +31,16 @@ export interface CartItem {
   wooVariationId?: number | null;
   wooKind?: "simple" | "variation" | "bundle";
   wooAttributes?: Array<{ slug: string; value: string }>;
+  /**
+   * Configuração dos itens embrulhados quando o bundle tem base VARIÁVEL
+   * (kits "Leve 3"). Vira o campo `bundle_config` da linha do handoff.
+   */
+  wooBundleConfig?: Array<{
+    bundled_item_id: number;
+    quantity: number;
+    variation_id: number | null;
+    attributes: Array<{ slug: string; value: string }>;
+  }>;
   /** Handle do conjunto/guia, quando o item veio de uma composição. */
   conjuntoRef?: string;
   /** Handle da 1ª coleção/categoria do produto — usado para cross-sell inteligente. */

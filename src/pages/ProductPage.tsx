@@ -33,6 +33,7 @@ import WishlistButton from "@/components/product/WishlistButton";
 import Reveal from "@/components/shared/Reveal";
 import { InstallationSection } from "@/components/product/InstallationModule";
 import StickyBuyBarLab from "@/components/product/lab/StickyBuyBarLab";
+import KitUpsell from "@/components/product/KitUpsell";
 import {
   getInstallationConfig,
   resolveInstallationType,
@@ -433,6 +434,9 @@ export default function ProductPage() {
                       className="!h-14 !w-12 sm:!w-14 !p-0 justify-center flex-shrink-0"
                     />
                   </div>
+
+                  {/* Upsell "Leve 3, −10%" — pós-quantidade (C-refinado) */}
+                  <KitUpsell product={product} variant={variant} />
 
                   {/* Modelo 3D — botão secundário */}
                   <a
