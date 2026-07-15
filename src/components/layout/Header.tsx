@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useWishlist } from "@/hooks/useWishlist";
 import logoVerde from "@/assets/logo-horizontal-verde.png";
+import CatalogMegaMenu from "./CatalogMegaMenu";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -541,7 +542,9 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         className="hidden lg:block border-t border-western-border-soft"
       >
         <div className="container-western flex items-center gap-1 xl:gap-2 py-1">
-          {NAV_INTENTS.map((item) => (
+          {/* "Catálogo" é o gatilho do mega-menu por cena (só desktop). */}
+          <CatalogMegaMenu navLinkCls={navLinkCls} />
+          {NAV_INTENTS.slice(1).map((item) => (
             <NavLink key={item.to} to={item.to} className={navLinkCls}>
               {item.label}
             </NavLink>
