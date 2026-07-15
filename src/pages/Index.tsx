@@ -146,7 +146,7 @@ export default function Index() {
             </div>
             <div className="flex flex-wrap gap-x-10 gap-y-5 mt-10 pt-7 border-t border-western-cream/20">
               {[
-                { b: "+400", s: "modelos" },
+                { b: "50", s: "modelos" },
                 { b: "+300 mil", s: "downloads no SketchUp" },
                 { b: "33 anos", s: "de ateliê" },
               ].map((x) => (
@@ -211,7 +211,7 @@ export default function Index() {
       <section className="bg-white border-b border-western-border-soft">
         <div className="container-western py-6 md:py-7 grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
           {[
-            { Icon: Box, t: "+400 modelos", d: "Formato para cada cena." },
+            { Icon: Box, t: "50 modelos", d: "Formato para cada cena." },
             { Icon: ShieldCheck, t: "Garantia de 1 ano", d: "+ reposição em caso de avaria." },
             { Icon: Truck, t: "Reposição garantida", d: "Chegou com defeito? A gente repõe." },
             { Icon: Check, t: "≈10% do peso", d: "Instala sem guindaste." },
@@ -445,7 +445,7 @@ export default function Index() {
                   {[
                     "≈10% do peso — instala sem guindaste",
                     "Fácil em cobertura, terraço e pavimento alto",
-                    "+400 modelos, formatos para cada cena",
+                    "50 modelos, formatos para cada cena",
                     "Reprodução fiel da textura da pedra real",
                   ].map((t) => (
                     <li key={t} className="flex gap-3 items-start text-[17px] leading-[1.5] text-western-cream">

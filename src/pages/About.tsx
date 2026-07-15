@@ -11,7 +11,7 @@ import { BUSINESS } from "@/config/business";
 
 const NUMEROS = [
   { n: "33", l: "anos de operação ininterrupta" },
-  { n: "+400", l: "modelos fabricados em ateliê" },
+  { n: "50", l: "modelos fabricados em ateliê" },
   { n: "50", l: "selecionados no catálogo atual" },
   { n: "+300", l: "projetos entregues pelo Brasil" },
 ];
