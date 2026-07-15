@@ -101,7 +101,7 @@ export default function Footer() {
             <img src={logo} alt="Western" className="h-11 md:h-12 w-auto mb-5" />
             <p className="text-[17px] leading-[1.6] text-western-cream-muted max-w-[320px]">
               Ateliê de pedra artesanal desde {BUSINESS.fundadaEm}. Peças com cerca de 10% do peso
-              da pedra natural — sem guindaste, até em laje.
+              da pedra natural — sobem sem guindaste, até em coberturas e terraços.
             </p>
             <a
               href={`https://wa.me/${BUSINESS.whatsappFabrica}`}

@@ -42,7 +42,7 @@ const INSP: Record<string, { titulo: string; intro: string; looks: Look[] }> = {
       {
         t: "Cascata que vira paisagem",
         img: heroCascata,
-        idea: "Uma cascata ancora o olhar e cria o som da água. Ao redor, pedras médias dão volume e escondem a estrutura, enquanto as pedras de borda arrematam o encontro com o deck — tudo leve, direto na laje.",
+        idea: "Uma cascata ancora o olhar e cria o som da água. Ao redor, pedras médias dão volume e escondem a estrutura, enquanto as pedras de borda arrematam o encontro com o deck — tudo leve, sem guindaste.",
         pecas: ["Cascata", "Pedras Médias", "Pedras de Borda"],
       },
       {
@@ -62,7 +62,7 @@ const INSP: Record<string, { titulo: string; intro: string; looks: Look[] }> = {
   jardim: {
     titulo: "Como compor seu jardim",
     intro:
-      "Pedra é o que dá calma e permanência a um jardim. Três formas de compor o seu — da peça de destaque ao caminho que conduz o olhar. Cada peça pesa ~10% da pedra natural: entra sem guindaste, assenta até na laje.",
+      "Pedra é o que dá calma e permanência a um jardim. Três formas de compor o seu — da peça de destaque ao caminho que conduz o olhar. Cada peça pesa ~10% da pedra natural: entra sem guindaste, até em coberturas e terraços.",
     looks: [
       {
         t: "O jardim seco que acalma",
@@ -90,9 +90,9 @@ const INSP: Record<string, { titulo: string; intro: string; looks: Look[] }> = {
       "Um lago não se resolve com uma pedra só — ele se compõe. Tamanhos que conversam, uma cascata que dá o som da água, uma borda que esconde o acabamento. E se você já tem pedra natural, dá para completar o que existe — lago híbrido.",
     looks: [
       {
-        t: "Lago com cascata, direto na laje",
+        t: "Lago com cascata, direto na cobertura",
         img: conjuntoRenders["conjunto-lago-juparana-equilibrado"],
-        idea: "A cascata é o ponto de partida: dá movimento e som. Em volta, pedras grandes ancoram a base e médias fazem a transição até a lâmina. Como o conjunto pesa ~10% da pedra natural, sobe para a laje sem guindaste. À noite, a Pedra LED acende a moldura.",
+        idea: "A cascata é o ponto de partida: dá movimento e som. Em volta, pedras grandes ancoram a base e médias fazem a transição até a lâmina. Como o conjunto pesa ~10% da pedra natural, sobe sem guindaste. À noite, a Pedra LED acende a moldura.",
         pecas: ["Cascata", "Pedras Grandes", "Pedras Médias", "Pedra LED"],
       },
       {

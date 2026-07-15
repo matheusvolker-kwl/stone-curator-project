@@ -20,7 +20,7 @@ const PILARES = [
   {
     Icon: Mountain,
     eyebrow: "Origem",
-    titulo: "Pedra real, sem extração",
+    titulo: "Da pedra real, sem extrair pedra",
     texto:
       "Cada matriz nasce de uma pedra natural moldada no próprio ambiente — Mata Atlântica, Cerrado, Caatinga e formações brasileiras. Tiramos o molde sem mover a pedra. A natureza permanece intacta; o que vai para o projeto é a réplica autoral.",
   },

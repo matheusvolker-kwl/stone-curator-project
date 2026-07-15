@@ -173,7 +173,7 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
                   >
                     <path d="M3 8.5l3.2 3.2L13 5" />
                   </svg>
-                  Sobe sem guindaste — instala até em laje.
+                  Sobe sem guindaste — instala em terraços, coberturas e pavimentos altos.
                 </p>
               </div>
             )}

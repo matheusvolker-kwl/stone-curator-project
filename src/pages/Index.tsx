@@ -77,7 +77,7 @@ export default function Index() {
     <>
       <Seo
         title="Western — Pedras artesanais para paisagismo profissional"
-        description="Réplica fiel da pedra natural, ~10% do peso: sobe sem guindaste, instala até em laje. Catálogo B2B para arquitetos, paisagistas e laguistas, com modelos 3D no SketchUp."
+        description="Cascatas, pedras e revestimentos artesanais, até 10× mais leves que a pedra natural — sem guindaste. Catálogo B2B para arquitetos, paisagistas e laguistas, com modelos 3D no SketchUp."
         path="/"
         ogType="website"
       />
@@ -127,12 +127,11 @@ export default function Index() {
             <div className="w-12 h-px bg-western-gold mb-6" />
             <p className={`${eyebrowDark} mb-4`}>Pedra artesanal desde 1993</p>
             <h1 className="display-xl text-western-cream">
-              Pedra de verdade.
-              <br />
-              <span className="text-western-gold-soft">10% do peso.</span>
+              Natureza que ninguém acredita ser{" "}
+              <span className="text-western-gold-soft">obra.</span>
             </h1>
             <p className="text-[17px] md:text-[19px] leading-[1.6] text-western-cream/85 max-w-md mt-5 mb-6">
-              Reprodução fiel da pedra natural. Sem guindaste — sobe até na laje.
+              Cascatas, pedras e revestimentos artesanais — até 10× mais leves — para projetos e profissionais.
             </p>
 
             {/* Comparativo visual de peso — o argumento-assinatura, tangível
@@ -466,7 +465,7 @@ export default function Index() {
                 <ul className="space-y-4">
                   {[
                     "Pesada — exige guindaste e caminhão Munck",
-                    "Difícil em laje, cobertura ou terraço",
+                    "Difícil em cobertura, terraço ou pavimento alto",
                     "Variedade limitada ao que a natureza deu",
                     "Obra pesada, mais tempo e custo",
                   ].map((t) => (
@@ -484,7 +483,7 @@ export default function Index() {
                 <ul className="space-y-4">
                   {[
                     "≈10% do peso — instala sem guindaste",
-                    "Vai na laje, na cobertura e no terraço",
+                    "Fácil em cobertura, terraço e pavimento alto",
                     "+400 modelos, formatos para cada cena",
                     "Reprodução fiel da textura da pedra real",
                   ].map((t) => (
