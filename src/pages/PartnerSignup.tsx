@@ -13,6 +13,7 @@ import PasswordField from "@/components/forms/PasswordField";
 import SegmentoSelect, { SEGMENTOS } from "@/components/forms/SegmentoSelect";
 import FieldLabel from "@/components/forms/FieldLabel";
 import CartaoCnpjUpload from "@/components/forms/CartaoCnpjUpload";
+import SocialProof from "@/components/shared/SocialProof";
 import {
   cnpjSchema, phoneBRSchema, emailSchema, passwordSchema,
   normalizeText, focusFirstInvalid, fetchCnpj, isValidCNPJ,
@@ -662,6 +663,18 @@ export default function PartnerSignup() {
             </Link>
           </p>
         </form>
+
+        {/* Prova social perto da conversão (auditoria): quem já especifica
+            Western. Reforça a decisão de se cadastrar. */}
+        <div className="mt-16 border-t border-western-border-soft pt-12 md:mt-20 md:pt-16">
+          <SocialProof
+            compact
+            variant="light"
+            groups={["profissionais", "marcas"]}
+            eyebrow="Boa companhia"
+            titulo="Arquitetos, paisagistas e marcas que já especificam Western."
+          />
+        </div>
       </div>
     </div>
   );

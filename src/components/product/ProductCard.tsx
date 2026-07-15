@@ -171,12 +171,13 @@ export default function ProductCard({ product }: Props) {
             />
           ) : (
             /* O gate é INFORMAÇÃO, não botão: sem borda, sem cara de CTA, sem
-               roubar o clique do card. O caminho de credenciamento continua na
-               PDP (é para lá que o card leva). */
-            <p className="flex items-start gap-1.5 font-sans text-[14px] font-semibold leading-snug text-western-stone-warm">
-              <Lock className="mt-[3px] h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+               roubar o clique do card. Mas o TEXTO enquadra como VALOR (há um
+               preço de atacado a destravar), não como "bloqueado" — por isso
+               bronze, não cinza. O caminho de cadastro continua na PDP. */
+            <p className="flex items-start gap-1.5 font-sans text-[14px] font-semibold leading-snug text-western-bronze">
+              <Lock className="mt-[2px] h-4 w-4 shrink-0" aria-hidden="true" />
               <span>
-                {session ? "Preço após a aprovação" : "Preço exclusivo para parceiros"}
+                {session ? "Preço liberado após a aprovação" : "Preço de parceiro no cadastro"}
               </span>
             </p>
           )}
