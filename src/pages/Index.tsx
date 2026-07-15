@@ -7,14 +7,7 @@ import ArtistaSection from "@/components/home/ArtistaSection";
 import SobreAWestern from "@/components/home/SobreAWestern";
 import Reveal from "@/components/shared/Reveal";
 import SocialProof from "@/components/shared/SocialProof";
-import {
-  ArrowRight,
-  Box,
-  Truck,
-  ShieldCheck,
-  Check,
-  X,
-} from "lucide-react";
+import { ArrowRight, Check, X } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { texturaPara } from "@/lib/acabamentoTexturas";
 import heroCascata from "@/assets/hero-cascata.webp";
@@ -177,30 +170,10 @@ export default function Index() {
       {/* 1 — O que é a Western Store (orientação p/ quem cai de paraquedas) */}
       <SobreAWestern />
 
-      {/* 2 — Barra de confiança */}
-      <section className="bg-white border-b border-western-border-soft">
-        <div className="container-western py-6 md:py-7 grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
-          {[
-            { Icon: Box, t: "50 modelos", d: "Formato para cada cena." },
-            { Icon: ShieldCheck, t: "Garantia de 1 ano", d: "+ reposição em caso de avaria." },
-            { Icon: Truck, t: "Reposição garantida", d: "Chegou com defeito? A gente repõe." },
-            { Icon: Check, t: "≈10% do peso", d: "Instala sem guindaste." },
-          ].map(({ Icon, t, d }, i) => (
-            <Reveal key={t} variant="fade-up" delay={i * 70} duration={550} distance={14}>
-              <div className="flex items-start gap-3">
-                <Icon className="h-6 w-6 text-western-bronze mt-0.5 flex-shrink-0" strokeWidth={1.75} />
-                <div>
-                  <p className="font-sans text-[16px] font-semibold text-western-green-deep leading-snug">{t}</p>
-                  <p className="text-meta mt-1">{d}</p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      {/* 3 — Mais vendidos (catálogo dinâmico). Ordem pedida pelo dono: best-sellers
-          primeiro, depois as linhas, e só então "o que você vai construir". */}
+      {/* Mais vendidos (catálogo dinâmico). Ordem pedida pelo dono: best-sellers
+          primeiro, depois as linhas, e só então "o que você vai construir".
+          (A antiga "barra de confiança" saiu daqui: repetia 10% do peso / garantia
+          / reposição / 50 modelos, que a seção "O que é a Western Store" já diz.) */}
       <section className="surface-paper py-16 md:py-20 border-t border-western-border-soft" id="produtos">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
