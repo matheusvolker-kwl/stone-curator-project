@@ -33,7 +33,7 @@ export default function Produtos() {
             <h1 className="display-xl text-western-green-deep">Todas as peças.</h1>
             <p className="text-body mt-5">
               Toda a coleção em uma única vista. Filtre por tamanho e peso, ordene
-              por preço — ou navegue por linha quando souber a categoria.
+              por preço — ou navegue por categoria quando souber o que procura.
             </p>
           </div>
         </Reveal>

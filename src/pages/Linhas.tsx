@@ -189,7 +189,7 @@ export default function Linhas() {
                   ? "Buscando…"
                   : totalResults === 0
                     ? "Nada encontrado. Refine o termo ou explore o catálogo completo abaixo."
-                    : `${searchLinhas.length} ${searchLinhas.length === 1 ? "linha" : "linhas"} · ${products.length} ${products.length === 1 ? "peça" : "peças"}.`}
+                    : `${searchLinhas.length} ${searchLinhas.length === 1 ? "categoria" : "categorias"} · ${products.length} ${products.length === 1 ? "peça" : "peças"}.`}
               </p>
               <button
                 type="button"
@@ -253,7 +253,7 @@ export default function Linhas() {
           // Busca: grade plana das linhas que casaram
           searchCards.length > 0 && (
             <>
-              <h2 className="text-eyebrow mb-6">Linhas</h2>
+              <h2 className="text-eyebrow mb-6">Categorias</h2>
               <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3">
                 {searchCards.map((c) => (
                   <LinhaCard key={c.handle} c={c} />

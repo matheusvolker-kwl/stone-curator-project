@@ -43,16 +43,16 @@ export default function LinhaPage() {
         <div className="container-western py-24 md:py-32">
           <div className="mx-auto max-w-md text-center">
             <h1 className="display-lg text-western-green-deep">
-              Linha não encontrada.
+              Categoria não encontrada.
             </h1>
             <p className="text-body mt-4">
-              O endereço pode ter mudado. Veja as linhas disponíveis no catálogo.
+              O endereço pode ter mudado. Veja as categorias disponíveis no catálogo.
             </p>
             <Link
               to="/linhas"
               className="btn-primary mt-8 w-full sm:w-auto"
             >
-              Ver todas as linhas
+              Ver todas as categorias
             </Link>
           </div>
         </div>
@@ -70,12 +70,12 @@ export default function LinhaPage() {
           to="/linhas"
           className="tap-target -ml-2 mb-6 inline-flex items-center gap-2 px-2 font-sans text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep md:mb-8"
         >
-          <ChevronLeft className="h-5 w-5" aria-hidden="true" /> Todas as linhas
+          <ChevronLeft className="h-5 w-5" aria-hidden="true" /> Todas as categorias
         </Link>
 
         <Reveal variant="fade-up">
           <header className="mb-10 max-w-2xl md:mb-14">
-            <p className="text-eyebrow mb-4">Linha</p>
+            <p className="text-eyebrow mb-4">Categoria</p>
             <h1 className="display-lg text-western-green-deep">
               {data?.title ?? "—"}
             </h1>

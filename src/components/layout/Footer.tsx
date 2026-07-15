@@ -27,9 +27,7 @@ const newsletterSchema = z.object({
 const COLECOES: { label: string; handle: string }[] = [
   { label: "Cascatas", handle: "cascatas" },
   { label: "Fontes para Jardim", handle: "fontes-para-jardim" },
-  { label: "Pedras Grandes", handle: "pedras-grandes" },
-  { label: "Pedras Médias", handle: "pedras-medias" },
-  { label: "Pedras Pequenas", handle: "pedras-pequenas" },
+  { label: "Pedras decorativas", handle: "pedras-decorativas" },
   { label: "Pedras de Borda", handle: "pedras-de-borda" },
   { label: "Revestimentos", handle: "revestimentos" },
   { label: "Pisadas", handle: "pisadas" },
@@ -117,7 +115,7 @@ export default function Footer() {
           </div>
 
           <div className="min-w-0 md:col-span-2">
-            <h4 className={colTitle}>Linhas</h4>
+            <h4 className={colTitle}>Categorias</h4>
             <ul className="flex flex-col">
               {COLECOES.map((c) => (
                 <li key={c.handle}>

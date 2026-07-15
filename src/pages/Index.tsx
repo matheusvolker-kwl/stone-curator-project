@@ -131,9 +131,36 @@ export default function Index() {
               <br />
               <span className="text-western-gold-soft">10% do peso.</span>
             </h1>
-            <p className="text-[17px] md:text-[19px] leading-[1.6] text-western-cream/85 max-w-md mt-5 mb-8">
+            <p className="text-[17px] md:text-[19px] leading-[1.6] text-western-cream/85 max-w-md mt-5 mb-6">
               Reprodução fiel da pedra natural. Sem guindaste — sobe até na laje.
             </p>
+
+            {/* Comparativo visual de peso — o argumento-assinatura, tangível
+                (auditoria). Razão, não kg absoluto, para não overclaim. */}
+            <div className="mb-8 max-w-[320px]">
+              <div className="mb-1.5 flex items-baseline justify-between text-[14px] text-western-cream/75">
+                <span>Pedra natural</span>
+                <span>peso cheio</span>
+              </div>
+              <div
+                className="h-2.5 w-full overflow-hidden rounded-full bg-western-cream/15"
+                role="img"
+                aria-label="Pedra natural: peso de referência (100%)"
+              >
+                <div className="h-full w-full rounded-full bg-western-cream/45" />
+              </div>
+              <div className="mb-1.5 mt-4 flex items-baseline justify-between text-[14px] text-western-gold-soft">
+                <span className="font-semibold">A mesma peça, em Western</span>
+                <span className="font-semibold tabular-nums">~10% do peso</span>
+              </div>
+              <div
+                className="h-2.5 w-full overflow-hidden rounded-full bg-western-gold/20"
+                role="img"
+                aria-label="Peça Western: cerca de 10% do peso da pedra natural"
+              >
+                <div className="h-full w-[10%] rounded-full bg-western-gold" />
+              </div>
+            </div>
             {/* Hierarquia de CTA: a AÇÃO de maior valor (converter) vem primeiro.
                 Dourado porque o verde não teria contraste sobre a foto com overlay
                 verde — é a regra do V3 (verde é primário sobre fundo claro; sobre
