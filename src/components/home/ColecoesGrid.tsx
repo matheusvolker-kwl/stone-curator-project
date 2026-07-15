@@ -25,7 +25,7 @@ export default function ColecoesGrid({ collections, isLoading }: Props) {
           </div>
           <Link
             to="/linhas"
-            className="link-underline font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep"
+            className="link-underline text-[14px] font-semibold uppercase tracking-[0.06em] text-western-green-deep"
           >
             Ver todas as coleções →
           </Link>
@@ -97,7 +97,7 @@ export default function ColecoesGrid({ collections, isLoading }: Props) {
                     <ArrowUpRight className="h-4 w-4 text-western-stone-warm/50 group-hover:text-western-gold transition-colors flex-shrink-0 mt-1" />
                   </div>
                   {typeof c.count === "number" && (
-                    <p className="text-spec text-western-stone-warm/80 mt-1 text-xs">
+                    <p className="text-spec text-western-stone-warm/80 mt-1 text-[14px]">
                       {c.count} {c.count === 1 ? "modelo" : "modelos"}
                     </p>
                   )}

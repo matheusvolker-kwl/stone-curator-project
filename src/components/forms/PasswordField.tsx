@@ -67,7 +67,7 @@ export default function PasswordField({
               />
             ))}
           </div>
-          <div className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.16em]">
+          <div className="flex flex-wrap gap-x-3 gap-y-1 text-[14px] font-semibold uppercase tracking-[0.06em]">
             <Rule ok={s.rules.has8} label="8+ caracteres" />
             <Rule ok={s.rules.hasNumber} label="número" />
             <Rule ok={s.rules.hasUpper} label="maiúscula" />
@@ -77,7 +77,7 @@ export default function PasswordField({
       )}
 
       {error && (
-        <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">
+        <p className="mt-1.5 text-[14px] font-semibold text-[#B3372E]">
           {error}
         </p>
       )}

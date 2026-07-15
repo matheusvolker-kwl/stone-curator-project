@@ -105,7 +105,7 @@ export default function ProductInUse({ productTitle, sku }: Props) {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <figcaption className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
+              <figcaption className="mt-3 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm">
                 {it.legenda}
               </figcaption>
             </figure>

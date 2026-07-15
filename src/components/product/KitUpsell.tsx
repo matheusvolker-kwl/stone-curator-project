@@ -74,7 +74,7 @@ export default function KitUpsell({ product, variant }: Props) {
     <div className="mt-4 border border-western-gold/35 bg-western-gold/[0.06] p-4 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-western-gold flex items-center gap-1.5">
+          <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold flex items-center gap-1.5">
             <Layers className="h-3.5 w-3.5" /> Leve 3 · economize {kit.discountPct}%
           </p>
           <p className="mt-2 font-sans text-sm text-western-green-deep">
@@ -89,7 +89,7 @@ export default function KitUpsell({ product, variant }: Props) {
         <button
           type="button"
           onClick={handleAddKit}
-          className="h-10 px-4 border border-western-gold text-western-green-deep hover:bg-western-gold/15 font-mono text-[10px] uppercase tracking-[0.2em] transition-colors inline-flex items-center gap-2 flex-shrink-0"
+          className="h-11 px-4 rounded-[10px] border border-western-gold text-western-green-deep hover:bg-western-gold/15 font-semibold text-[14px] uppercase tracking-[0.06em] transition-colors inline-flex items-center gap-2 flex-shrink-0"
         >
           {added ? (
             <>

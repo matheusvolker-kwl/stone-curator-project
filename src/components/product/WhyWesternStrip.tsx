@@ -34,7 +34,7 @@ export default function WhyWesternStrip() {
     <section className="bg-western-green-deep text-western-cream py-14 md:py-20">
       <div className="container-western">
         <header className="text-center max-w-2xl mx-auto mb-14">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-western-gold mb-4">
+          <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold mb-4">
             Por que Western
           </p>
           <h2 className="font-display text-3xl md:text-4xl leading-tight">
@@ -49,7 +49,7 @@ export default function WhyWesternStrip() {
                 <p className="font-display text-5xl text-western-cream mb-3 leading-none">{c.big}</p>
                 <p className="text-base font-medium text-western-cream mb-2">{c.title}</p>
                 <p className="text-sm text-western-cream/70 leading-relaxed mb-5">{c.text}</p>
-                <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold group-hover:translate-x-0.5 transition-transform">
+                <span className="inline-flex items-center gap-1.5 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold group-hover:translate-x-0.5 transition-transform">
                   {c.cta} <ArrowRight className="h-3 w-3" />
                 </span>
               </>

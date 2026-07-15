@@ -26,7 +26,7 @@ export default function PriceGate({ children, variant = "inline", productRef }: 
     return (
       <Link
         to={to}
-        className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80 hover:text-western-gold transition-colors"
+        className="inline-flex items-center gap-1.5 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm/80 hover:text-western-gold transition-colors"
       >
         <Icon className="h-3 w-3" /> {label}
       </Link>
@@ -63,7 +63,7 @@ export default function PriceGate({ children, variant = "inline", productRef }: 
         {beneficios.map((b) => (
           <li
             key={b}
-            className="flex items-start gap-2 text-[13px] leading-snug text-western-green-deep/90"
+            className="flex items-start gap-2 text-[14px] leading-snug text-western-green-deep/90"
           >
             <Check className="h-4 w-4 text-western-gold mt-0.5 flex-shrink-0" />
             <span>{b}</span>
@@ -73,8 +73,8 @@ export default function PriceGate({ children, variant = "inline", productRef }: 
 
       <div className="border border-western-green-deep/15 bg-western-cream/60 px-4 py-3 mb-5 flex items-start gap-3">
         <Package className="h-4 w-4 text-western-green-deep mt-0.5 flex-shrink-0" />
-        <p className="text-[12.5px] leading-snug text-western-green-deep/90">
-          <span className="font-mono uppercase tracking-[0.14em] text-[11px] text-western-green-deep">
+        <p className="text-[14px] leading-snug text-western-green-deep/90">
+          <span className="font-semibold uppercase tracking-[0.06em] text-[14px] text-western-green-deep">
             Western Box
           </span>{" "}
           — leve o kit de amostras + catálogo e receba o valor 100% de volta em cashback
@@ -85,25 +85,25 @@ export default function PriceGate({ children, variant = "inline", productRef }: 
       <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
         <Link
           to="/parceiro/cadastro"
-          className="flex items-center justify-center text-center h-11 px-5 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors w-full sm:w-auto whitespace-normal"
+          className="flex items-center justify-center text-center h-11 px-5 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-semibold text-[14px] uppercase tracking-[0.06em] transition-colors w-full sm:w-auto whitespace-normal"
         >
           CRIAR CONTA DE PARCEIRO COMERCIAL
         </Link>
         <Link
           to="/parceiro/login"
-          className="flex items-center justify-center text-center h-11 px-5 border border-western-green-deep/30 text-western-green-deep hover:border-western-gold hover:text-western-gold font-mono text-[11px] uppercase tracking-[0.22em] w-full sm:w-auto whitespace-normal"
+          className="flex items-center justify-center text-center h-11 px-5 border border-western-green-deep/30 text-western-green-deep hover:border-western-gold hover:text-western-gold font-semibold text-[14px] uppercase tracking-[0.06em] w-full sm:w-auto whitespace-normal"
         >
           Já sou parceiro · Entrar
         </Link>
       </div>
-      <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80">
+      <p className="mt-3 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm/80">
         Grátis · aprovação na hora
       </p>
 
       {/* ─── Trilha B2C — cliente final sem CNPJ ─── */}
       <div className="mt-6 pt-5 border-t border-western-green-deep/15">
         <div className="flex items-center gap-3 mb-3">
-          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70">
+          <span className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm/70">
             ou
           </span>
           <span className="h-px flex-1 bg-western-green-deep/15" />
@@ -111,13 +111,13 @@ export default function PriceGate({ children, variant = "inline", productRef }: 
         <h4 className="font-display text-lg md:text-xl text-western-green-deep leading-tight mb-1.5">
           É para o seu projeto residencial?
         </h4>
-        <p className="text-[13px] leading-snug text-western-green-deep/80 mb-4">
+        <p className="text-[14px] leading-snug text-western-green-deep/80 mb-4">
           Sem CNPJ? A gente monta seu orçamento.
         </p>
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <Link
             to={contrateTo}
-            className="flex items-center justify-center text-center h-11 px-5 bg-western-green-deep text-western-cream hover:bg-western-green-deep/90 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors w-full sm:w-auto whitespace-normal"
+            className="flex items-center justify-center text-center h-11 px-5 bg-western-green-deep text-western-cream hover:bg-western-green-deep/90 font-semibold text-[14px] uppercase tracking-[0.06em] transition-colors w-full sm:w-auto whitespace-normal"
           >
             Peça um orçamento
           </Link>
@@ -125,7 +125,7 @@ export default function PriceGate({ children, variant = "inline", productRef }: 
             href={waHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors"
+            className="inline-flex items-center gap-1.5 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm hover:text-western-green-deep transition-colors"
           >
             <MessageCircle className="h-3.5 w-3.5" /> Falar no WhatsApp
           </a>

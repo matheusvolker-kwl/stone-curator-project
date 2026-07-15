@@ -38,7 +38,7 @@ export default function CnpjInput({ value, onChange, onBlur, id, name, required,
         }`}
       />
       {finalError && (
-        <p id={describedBy} className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">
+        <p id={describedBy} className="mt-1.5 text-[14px] font-semibold text-[#B3372E]">
           {finalError}
         </p>
       )}

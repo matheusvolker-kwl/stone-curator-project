@@ -68,7 +68,7 @@ export default function CartaoCnpjUpload({ userId, onUploaded, disabled }: Props
       {error && (
         <p className="mt-1.5 font-sans text-[14px] text-[#B3372E]">{error}</p>
       )}
-      <p className="mt-2 text-[11px] text-western-stone-warm">
+      <p className="mt-2 text-[14px] text-western-stone-warm">
         JPG, PNG, WEBP ou PDF até 5 MB. Documento usado apenas para conferência interna.
       </p>
     </div>

@@ -12,7 +12,7 @@ export default function SocialProofBand() {
   return (
     <section className="bg-white border-y border-western-stone-warm/12 py-8 md:py-10">
       <div className="container-western max-w-4xl text-center">
-        <p className="font-mono text-[10px] uppercase tracking-[0.26em] text-western-gold mb-5">
+        <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold mb-5">
           Especificado e revendido por
         </p>
         <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 md:gap-x-12">

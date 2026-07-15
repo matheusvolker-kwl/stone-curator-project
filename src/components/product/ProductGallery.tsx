@@ -155,13 +155,13 @@ export default function ProductGallery({
 
 
           {/* Expand hint */}
-          <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 px-2 py-1 bg-western-cream/85 border border-western-stone-warm/20 font-mono text-[9px] uppercase tracking-[0.2em] text-western-green-deep pointer-events-none opacity-70 group-hover:opacity-100 transition-opacity">
+          <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 px-2 py-1 bg-western-cream/85 border border-western-stone-warm/20 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-green-deep pointer-events-none opacity-70 group-hover:opacity-100 transition-opacity">
             <Maximize2 className="h-3 w-3" /> Ampliar
           </span>
 
           {/* Counter */}
           {total > 1 && (
-            <span className="absolute bottom-3 right-3 px-2 py-1 bg-western-cream/85 border border-western-stone-warm/20 font-mono text-[9px] uppercase tracking-[0.2em] text-western-stone-warm pointer-events-none">
+            <span className="absolute bottom-3 right-3 px-2 py-1 bg-western-cream/85 border border-western-stone-warm/20 text-[14px] font-semibold uppercase tracking-[0.06em] tabular-nums text-western-stone-warm pointer-events-none">
               {activeIndex + 1} / {total}
             </span>
           )}
@@ -284,7 +284,7 @@ export default function ProductGallery({
             />
           </button>
 
-          <span className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.25em] text-western-cream/70">
+          <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/70">
             {activeIndex + 1} / {total} · ← → para navegar · esc para fechar
           </span>
         </div>,

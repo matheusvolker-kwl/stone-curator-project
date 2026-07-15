@@ -57,7 +57,7 @@ export default function ProductPagination({
           </div>
         )}
         <div>
-          <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-1 inline-flex items-center gap-1.5">
+          <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm/70 mb-1 inline-flex items-center gap-1.5">
             {side === "prev" ? (
               <>
                 <ArrowLeft className="h-3 w-3" /> Peça anterior
@@ -92,7 +92,7 @@ export default function ProductPagination({
     <section className="border-t border-western-stone-warm/15 py-12 md:py-16">
       <div className="container-western grid grid-cols-1 md:grid-cols-3 items-center gap-8">
         {prev ? <Side p={prev} side="prev" /> : <div />}
-        <p className="hidden md:block text-center font-mono text-[10px] uppercase tracking-[0.3em] text-western-stone-warm/70">
+        <p className="hidden md:block text-center text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm/70">
           {collectionTitle ?? "Coleção"} · {idx + 1} de {products.length}
         </p>
         {next ? <Side p={next} side="next" /> : <div />}

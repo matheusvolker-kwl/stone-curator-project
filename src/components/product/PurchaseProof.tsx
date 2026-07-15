@@ -14,7 +14,7 @@ export default function PurchaseProof() {
             <Star key={i} className="h-3.5 w-3.5 fill-western-gold text-western-gold" />
           ))}
         </div>
-        <p className="font-sans text-[12.5px] text-western-green-deep leading-snug min-w-0 break-words">
+        <p className="font-sans text-[14px] text-western-green-deep leading-snug min-w-0 break-words">
           Especificada por{" "}
           <span className="font-medium">Faisal</span>,{" "}
           <span className="font-medium">Hayasaki</span> e{" "}
@@ -24,7 +24,7 @@ export default function PurchaseProof() {
       <div className="hidden sm:block w-px h-7 bg-western-stone-warm/20 shrink-0" />
       <div className="flex items-start gap-2 text-western-stone-warm min-w-0">
         <ShieldCheck className="h-4 w-4 text-western-gold shrink-0 mt-0.5" strokeWidth={1.6} />
-        <p className="font-sans text-[12px] leading-snug min-w-0 break-words">
+        <p className="font-sans text-[14px] leading-snug min-w-0 break-words">
           {BUSINESS.garantiaLabel} de garantia · troca sem custo em caso de avaria no transporte
         </p>
       </div>

@@ -141,7 +141,7 @@ export default function RespiroSection() {
               visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
-            <p className="font-mono text-[10px] md:text-xs uppercase tracking-[0.32em] text-western-gold-soft mb-5">
+            <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft mb-5">
               Matéria · Projeto · Lugar
             </p>
             <div className="w-12 h-px bg-western-gold-soft/70 mb-8" />
@@ -162,7 +162,7 @@ export default function RespiroSection() {
         }`}
         aria-hidden
       >
-        <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-cream-muted">
+        <span className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream-muted">
           01 — Respiro
         </span>
         <div className="relative w-px h-12 overflow-hidden bg-western-cream-muted/20">

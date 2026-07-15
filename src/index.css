@@ -357,7 +357,7 @@
   }
 
   .spec-chip {
-    @apply inline-flex items-center px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] border;
+    @apply inline-flex items-center px-3 py-1 text-[14px] font-semibold uppercase tracking-[0.06em] border rounded-[6px];
     border-color: hsl(var(--western-stone-warm) / 0.3);
     color: hsl(var(--western-green-deep));
   }
@@ -440,9 +440,8 @@
 
   /* Eyebrow numerado com filete dourado vertical */
   .eyebrow-bar {
-    @apply font-mono text-xs uppercase tracking-[0.25em] inline-flex items-center;
+    @apply text-[14px] font-semibold uppercase tracking-[0.06em] inline-flex items-center;
     color: hsl(var(--western-gold));
-    font-weight: 300;
   }
   .eyebrow-bar::before {
     content: "";

@@ -44,12 +44,12 @@ export default function ProductComparison({ productTitle, pesoKg, dimensoes }: P
         <div className="hidden md:grid grid-cols-[200px_1fr_1fr] border-b border-western-stone-warm/25">
           <div />
           <div className="px-6 py-3 bg-western-paper/60 border-l-2 border-western-gold">
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep font-semibold">
+            <p className="text-[14px] uppercase tracking-[0.06em] text-western-green-deep font-semibold">
               {productTitle} · Western
             </p>
           </div>
           <div className="px-6 py-3">
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/80">
+            <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm/80">
               Pedra natural equivalente
             </p>
           </div>

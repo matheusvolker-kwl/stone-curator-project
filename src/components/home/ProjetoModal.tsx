@@ -35,7 +35,7 @@ export default function ProjetoModal({ projeto, onClose }: Props) {
                 />
               )}
               {projeto.confidencial && (
-                <span className="absolute top-3 right-3 font-mono text-[10px] uppercase tracking-[0.22em] bg-western-green-deep/85 border border-western-gold/30 text-western-gold-soft px-2.5 py-1.5">
+                <span className="absolute top-3 right-3 text-[14px] font-semibold uppercase tracking-[0.06em] bg-western-green-deep/85 border border-western-gold/30 text-western-gold-soft px-2.5 py-1.5 rounded-[6px]">
                   Sob confidencialidade
                 </span>
               )}

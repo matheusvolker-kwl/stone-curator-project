@@ -116,7 +116,7 @@ export default function StickyBuyBar({
                 {productTitle}
               </p>
               {selectedFinish && (
-                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/80 mt-0.5">
+                <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm/80 mt-0.5">
                   {selectedFinish}
                 </p>
               )}
@@ -152,7 +152,7 @@ export default function StickyBuyBar({
               <Button
                 onClick={onAdd}
                 disabled={!canAdd || !available || isLoading}
-                className="h-11 px-7 bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60 flex-shrink-0"
+                className="h-11 px-7 bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-bold text-[14px] uppercase tracking-[0.06em] rounded-[10px] disabled:opacity-60 flex-shrink-0"
               >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -169,13 +169,13 @@ export default function StickyBuyBar({
             <>
               <Link
                 to={orcamentoTo}
-                className="h-11 px-6 inline-flex items-center justify-center bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono font-bold text-xs uppercase tracking-[0.22em] flex-shrink-0"
+                className="h-11 px-6 inline-flex items-center justify-center bg-western-gold text-western-green-deep hover:bg-western-gold/90 rounded-[10px] font-bold text-[14px] uppercase tracking-[0.06em] flex-shrink-0"
               >
                 Peça um orçamento
               </Link>
               <Link
                 to="/parceiro/cadastro"
-                className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors flex-shrink-0"
+                className="inline-flex items-center gap-1.5 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm hover:text-western-green-deep transition-colors flex-shrink-0"
               >
                 <Unlock className="h-3 w-3" /> Sou parceiro · Ver preço
               </Link>
@@ -207,7 +207,7 @@ export default function StickyBuyBar({
                   </p>
                 )
               ) : (
-                <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-western-stone-warm flex items-center gap-1 mt-0.5">
+                <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm flex items-center gap-1 mt-0.5">
                   <Unlock className="h-2.5 w-2.5" /> Ver preço de parceiro
                 </p>
               )}
@@ -221,7 +221,7 @@ export default function StickyBuyBar({
                 >
                   <Minus className="h-3 w-3" />
                 </button>
-                <span className="px-2 text-xs min-w-[2ch] text-center tabular-nums">
+                <span className="px-2 text-[14px] min-w-[2ch] text-center tabular-nums">
                   {qty}
                 </span>
                 <button
@@ -239,7 +239,7 @@ export default function StickyBuyBar({
             <Button
               onClick={onAdd}
               disabled={!canAdd || !available || isLoading}
-              className="w-full h-11 bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-mono font-bold text-[11px] uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
+              className="w-full h-11 bg-western-green-deep text-western-gold hover:bg-western-green-deep/90 border border-western-gold/30 hover:border-western-gold/60 font-bold text-[14px] uppercase tracking-[0.06em] rounded-[10px] disabled:opacity-60"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -255,13 +255,13 @@ export default function StickyBuyBar({
             <div className="flex flex-col gap-2">
               <Link
                 to={orcamentoTo}
-                className="w-full h-11 inline-flex items-center justify-center bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono font-bold text-[11px] uppercase tracking-[0.22em]"
+                className="w-full h-11 inline-flex items-center justify-center bg-western-gold text-western-green-deep hover:bg-western-gold/90 rounded-[10px] font-bold text-[14px] uppercase tracking-[0.06em]"
               >
                 Peça um orçamento
               </Link>
               <Link
                 to="/parceiro/cadastro"
-                className="w-full inline-flex items-center justify-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm hover:text-western-green-deep transition-colors"
+                className="w-full inline-flex items-center justify-center gap-1.5 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm hover:text-western-green-deep transition-colors"
               >
                 <Unlock className="h-3 w-3" /> Sou parceiro · Ver preço
               </Link>

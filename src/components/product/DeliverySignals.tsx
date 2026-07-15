@@ -27,7 +27,7 @@ export default function DeliverySignals({ variant = "minimal" }: Props) {
       {items.map(({ Icon, label }) => (
         <li
           key={label}
-          className="flex items-center gap-2 font-sans text-[12px] text-western-stone-warm/85"
+          className="flex items-center gap-2 font-sans text-[14px] text-western-stone-warm/85"
         >
           <Icon className="h-3.5 w-3.5 text-western-stone-warm/60 flex-shrink-0" />
           <span className="leading-tight">{label}</span>

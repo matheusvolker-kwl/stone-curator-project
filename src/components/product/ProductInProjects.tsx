@@ -50,7 +50,7 @@ export default function ProductInProjects({ productHandle, productTitle }: Props
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
               />
               <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/40 to-transparent p-5 opacity-0 group-hover:opacity-100 transition-opacity">
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-cream/80 mb-1">
+                <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/80 mb-1">
                   {p.eyebrow}
                 </p>
                 <p className="text-western-cream text-sm leading-snug">{p.titulo}</p>
@@ -62,7 +62,7 @@ export default function ProductInProjects({ productHandle, productTitle }: Props
         <div className="text-center mt-10">
           <Link
             to="/#projetos"
-            className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep hover:text-western-gold transition-colors"
+            className="inline-flex items-center gap-1.5 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-green-deep hover:text-western-gold transition-colors"
           >
             Ver mais projetos <ArrowRight className="h-3 w-3" />
           </Link>

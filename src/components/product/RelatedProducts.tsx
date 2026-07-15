@@ -131,7 +131,7 @@ export default function RelatedProducts({
                       </div>
                       <div className="px-1 pt-4 pb-2">
                         {p.productType && (
-                          <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-1">
+                          <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm/70 mb-1">
                             {p.productType}
                           </p>
                         )}
@@ -183,7 +183,7 @@ export default function RelatedProducts({
                           <p className="text-spec text-western-stone-warm mt-1 line-clamp-2">
                             {s.description}
                           </p>
-                          <span className="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep group-hover:text-western-gold transition-colors">
+                          <span className="mt-3 inline-flex items-center gap-1.5 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-green-deep group-hover:text-western-gold transition-colors">
                             Ver conjunto <ArrowRight className="h-3 w-3" />
                           </span>
                         </div>

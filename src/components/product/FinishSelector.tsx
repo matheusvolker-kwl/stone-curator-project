@@ -126,7 +126,7 @@ export default function FinishSelector({ values, selected, onSelect }: Props) {
             >
 
               {isBestseller && (
-                <span className="absolute -top-2 -right-2 px-1.5 py-0.5 bg-western-gold text-western-green-deep font-mono text-[8px] uppercase tracking-[0.18em] leading-none rounded-sm shadow-sm">
+                <span className="absolute -top-2 -right-2 px-1.5 py-0.5 bg-western-gold text-western-green-deep text-[14px] font-semibold uppercase tracking-[0.06em] leading-none rounded-[6px] shadow-sm">
                   + vendido
                 </span>
               )}
@@ -148,7 +148,7 @@ export default function FinishSelector({ values, selected, onSelect }: Props) {
 
               <div className="flex flex-col min-w-0">
                 <span
-                  className={`font-mono text-[9px] tracking-[0.22em] transition-opacity ${
+                  className={`text-[14px] font-semibold tracking-[0.06em] tabular-nums transition-opacity ${
                     isSelected ? "opacity-100 text-western-gold" : "opacity-50 group-hover:opacity-100 text-western-stone-warm"
                   }`}
                 >
@@ -170,7 +170,7 @@ export default function FinishSelector({ values, selected, onSelect }: Props) {
       {selectedMeta?.hint && (
         <p
           key={selected}
-          className="mt-3 text-xs leading-relaxed text-western-stone-warm italic animate-fade-in"
+          className="mt-3 text-[14px] leading-relaxed text-western-stone-warm italic animate-fade-in"
         >
           {selectedMeta.hint}
         </p>
