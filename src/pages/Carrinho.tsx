@@ -16,6 +16,7 @@ import { Link } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
+  Clock,
   Download,
   FileText,
   Loader2,
@@ -25,13 +26,16 @@ import {
   Plus,
   ShieldCheck,
   ShoppingBag,
+  Store,
   Trash2,
+  Truck,
 } from "lucide-react";
 import { toast } from "sonner";
 
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
+import CartCrossSell from "@/components/cart/CartCrossSell";
 import { useCartStore, type CartItem } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { usePartnerPricing } from "@/hooks/usePartnerPricing";
@@ -230,7 +234,7 @@ export default function Carrinho() {
    * Sobram: este CTA + o link discreto "Já sou parceiro" logo abaixo dele.
    * O rótulo também deixa de mentir: visitante não "finaliza" nada. */
   const ctaLabel = showValues
-    ? "Finalizar compra"
+    ? "Ir para o pagamento"
     : session
       ? "Acompanhar meu cadastro"
       : "Criar cadastro para ver preços";
@@ -423,6 +427,21 @@ export default function Carrinho() {
                 ))}
               </ul>
 
+              {/* Cross-sell — combina com a composição (mesmo componente do drawer) */}
+              {items.length > 0 && (
+                <div className="mt-8">
+                  <CartCrossSell
+                    collectionHandle={
+                      items.every((i) => i.wooKind !== "bundle" && !i.conjuntoRef)
+                        ? "conjuntos"
+                        : items[0]?.collectionHandle ?? "conjuntos"
+                    }
+                    excludeHandles={items.map((i) => i.productHandle)}
+                    onNavigate={() => {}}
+                  />
+                </div>
+              )}
+
             </div>
 
             {/* ============ COLUNA DIREITA — resumo ============ */}
@@ -461,9 +480,58 @@ export default function Carrinho() {
                     </p>
                   )}
 
-                  <p className="text-meta mt-2">
-                    Frete e prazo são calculados por CEP na próxima etapa.
-                  </p>
+                  {/* Frete/retirada/prazo são resolvidos no checkout Woo (decisão do
+                      dono). Aqui só antecipamos, com clareza, o que vem no próximo passo. */}
+                  <div className="mt-4 rounded-[12px] border border-western-border-soft bg-western-paper p-4">
+                    <p className="text-eyebrow mb-3">No próximo passo</p>
+                    <ul className="space-y-3">
+                      <li className="flex items-start gap-3">
+                        <Truck
+                          className="h-5 w-5 flex-shrink-0 text-western-bronze"
+                          strokeWidth={1.75}
+                          aria-hidden="true"
+                        />
+                        <div className="min-w-0">
+                          <p className="font-sans text-[15px] font-semibold leading-snug text-western-green-deep">
+                            Frete pelo seu CEP
+                          </p>
+                          <p className="text-meta mt-0.5">
+                            Você calcula o valor para o seu endereço.
+                          </p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <Store
+                          className="h-5 w-5 flex-shrink-0 text-western-bronze"
+                          strokeWidth={1.75}
+                          aria-hidden="true"
+                        />
+                        <div className="min-w-0">
+                          <p className="font-sans text-[15px] font-semibold leading-snug text-western-green-deep">
+                            Ou retire grátis no ateliê
+                          </p>
+                          <p className="text-meta mt-0.5">
+                            Retirada em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}, sem custo.
+                          </p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <Clock
+                          className="h-5 w-5 flex-shrink-0 text-western-bronze"
+                          strokeWidth={1.75}
+                          aria-hidden="true"
+                        />
+                        <div className="min-w-0">
+                          <p className="font-sans text-[15px] font-semibold leading-snug text-western-green-deep">
+                            Prazo de entrega
+                          </p>
+                          <p className="text-meta mt-0.5">
+                            Aparece junto com o frete, antes de você pagar.
+                          </p>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
 
                   {/* Pedido mínimo — progresso, nunca bloqueio */}
                   {minApplies && (
@@ -529,6 +597,17 @@ export default function Carrinho() {
                           aria-hidden="true"
                         />
                       </Link>
+                    )}
+
+                    {/* Formas de pagamento — reassurance no ponto de decisão */}
+                    {showValues && (
+                      <div className="flex items-center justify-center gap-2.5 pt-1 font-sans text-[14px] font-semibold text-western-stone-warm">
+                        <span>Pix</span>
+                        <span aria-hidden="true" className="text-western-border-strong">·</span>
+                        <span>Boleto</span>
+                        <span aria-hidden="true" className="text-western-border-strong">·</span>
+                        <span>Cartão até 12×</span>
+                      </div>
                     )}
 
                     {/* Mesma porta, outra chave — rebaixada a link de texto. */}

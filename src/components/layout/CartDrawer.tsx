@@ -1,12 +1,10 @@
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
 import { formatBRL, cdnImg } from "@/lib/catalog/client";
 import {
   Minus,
   Plus,
   Trash2,
-  Loader2,
   MessageCircle,
   Lock,
   ArrowLeft,
@@ -25,11 +23,6 @@ import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import EmptyCartHints from "@/components/cart/EmptyCartHints";
 
 
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { registerPedidoNovoLead } from "@/lib/leads/pedidoNovo";
-
-
 
 
 export default function CartDrawer({
@@ -39,7 +32,7 @@ export default function CartDrawer({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { items, isLoading, updateQuantity, removeItem } = useCartStore();
+  const { items, updateQuantity, removeItem } = useCartStore();
   // (auth context obtained below)
   const [quoteOpen, setQuoteOpen] = useState(false);
   const totalQty = items.reduce((s, i) => s + i.quantity, 0);
@@ -47,94 +40,13 @@ export default function CartDrawer({
   const currency = items[0]?.price.currencyCode ?? "BRL";
 
 
-  const { user, isApproved, empresa } = useAuth();
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const { isApproved } = useAuth();
 
   // Pedido mínimo B2B — informativo (progresso no orçamento), nunca bloqueia o
   // checkout: a Western Box é vendida sem mínimo e sem cadastro.
   const minOrder = BUSINESS.pedidoMinimoBRL;
   const belowMin = isApproved && subtotal > 0 && subtotal < minOrder;
   const minPct = Math.min(100, Math.round((subtotal / minOrder) * 100));
-
-  const handleCheckout = async () => {
-    if (checkoutLoading) return;
-    setCheckoutLoading(true);
-
-    // Fire-and-forget: registra lead antes do redirect
-    void (async () => {
-      let profile: { nome?: string; telefone?: string; cidade?: string; empresa?: string } | null = null;
-      if (user) {
-        const { data } = await supabase
-          .from("partner_profiles")
-          .select("nome, telefone, cidade, empresa")
-          .eq("user_id", user.id)
-          .maybeSingle();
-        profile = data ?? null;
-      }
-      await registerPedidoNovoLead({
-        items,
-        subtotal,
-        currency,
-        userId: user?.id ?? null,
-        origem: "cart_checkout",
-        contact: {
-          nome: profile?.nome ?? null,
-          email: user?.email ?? null,
-          telefone: profile?.telefone ?? null,
-          empresa: profile?.empresa ?? empresa ?? null,
-          cidade: profile?.cidade ?? null,
-        },
-      });
-    })();
-
-    try {
-      // Se parceiro aprovado, solicita um TICKET OPACO ao backend.
-      // O ticket é apenas uma string aleatória; o payload PJ nunca trafega
-      // pelo browser — o mu-plugin do Woo troca o ticket server-to-server.
-      let ticket: string | null = null;
-      if (isApproved && user) {
-        try {
-          const { data, error } = await supabase.functions.invoke("checkout-ticket-create", {
-            method: "POST",
-          });
-          if (error) console.warn("[checkout-ticket-create] failed", error);
-          else if (typeof data?.ticket === "string" && data.ticket.length >= 16) {
-            ticket = data.ticket;
-          }
-        } catch (e) {
-          // Segue como visitante em caso de falha — não bloqueia o checkout.
-          console.warn("[checkout-ticket-create] exception", e);
-        }
-      }
-
-      // Hand-off top-level (form POST) → cookies first-party no domínio do Woo.
-      const { submitCheckoutHandoff } = await import("@/lib/woo-checkout");
-      const result = submitCheckoutHandoff(items, ticket);
-
-      if (result.submitted === 0) {
-        toast.error("Não foi possível abrir o checkout", {
-          description: "Atualize a página e tente novamente, ou fale conosco no WhatsApp.",
-        });
-        return;
-      }
-      if (result.skipped > 0) {
-        console.warn("[checkout] skipped lines", result.skipped);
-        toast.warning("Alguns itens não puderam ser enviados ao checkout", {
-          description: `${result.skipped} ${result.skipped === 1 ? "item ficou" : "itens ficaram"} de fora. Revise sua composição ou fale no WhatsApp.`,
-          duration: 8000,
-        });
-      }
-      onOpenChange(false);
-      // navegação top-level já foi disparada por form.submit().
-    } catch (e) {
-      console.error(e);
-      toast.error("Instabilidade no checkout", {
-        description: "Tente novamente em alguns minutos ou fale conosco no WhatsApp.",
-      });
-    } finally {
-      setCheckoutLoading(false);
-    }
-  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -375,30 +287,16 @@ export default function CartDrawer({
               </div>
             )}
 
-            {/* CTA primário — VERDE, full-width, 52px+ */}
-            {isApproved ? (
-              <Button
-                onClick={handleCheckout}
-                disabled={isLoading || checkoutLoading}
-                className="group w-full h-14 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold normal-case tracking-normal [&_svg]:size-5 disabled:opacity-45"
-              >
-                {isLoading || checkoutLoading ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <>
-                    Finalizar compra
-                    <ArrowRight className="transition-transform motion-safe:group-hover:translate-x-0.5" />
-                  </>
-                )}
-              </Button>
-            ) : (
-              <Button
-                onClick={() => setQuoteOpen(true)}
-                className="w-full h-14 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold normal-case tracking-normal [&_svg]:size-5"
-              >
-                <Download /> Baixar composição (PDF)
-              </Button>
-            )}
+            {/* CTA primário — leva SEMPRE à página do carrinho (revisão + frete +
+                pagamento). O checkout direto saiu do drawer por decisão do dono. */}
+            <Link
+              to="/carrinho"
+              onClick={() => onOpenChange(false)}
+              className="group flex w-full items-center justify-center gap-2 h-14 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold [&_svg]:size-5 transition-colors"
+            >
+              Ir para o carrinho
+              <ArrowRight className="transition-transform motion-safe:group-hover:translate-x-0.5" />
+            </Link>
 
             {/* CTA secundário */}
             {isApproved && (
@@ -411,16 +309,7 @@ export default function CartDrawer({
               </button>
             )}
 
-            {/* Saída para a página cheia do orçamento — o drawer é para conferir
-                rápido; ajustar quantidade item a item pede a mesa grande. */}
-            <Link
-              to="/carrinho"
-              onClick={() => onOpenChange(false)}
-              className="flex items-center justify-center gap-1.5 min-h-[48px] font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-bronze transition-colors"
-            >
-              Ver carrinho completo
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            {/* Sem "Ver carrinho completo": o CTA primário já leva ao carrinho. */}
 
             {!isApproved && (
               <Link
