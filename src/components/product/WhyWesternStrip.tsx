@@ -16,7 +16,7 @@ const CARDS = [
     title: "Fases de pintura mineral",
     text: "Manual, peça por peça, com 5 cores sobrepostas em cada fase. Projetada para resistir a cloro, UV e intempéries por décadas — garantia contratual de 1 ano contra defeito de fabricação.",
     cta: "Processo",
-    to: "/por-que-western",
+    to: "/faq",
     external: false,
   },
   {

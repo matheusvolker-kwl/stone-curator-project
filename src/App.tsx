@@ -75,7 +75,6 @@ const PartnerLogin = lazy(() => import("./pages/PartnerLogin.tsx"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 
 const AgendarVisita = lazy(() => import("./pages/AgendarVisita.tsx"));
-const PorQueWestern = lazy(() => import("./pages/PorQueWestern.tsx"));
 const ContrateAWestern = lazy(() => import("./pages/ContrateAWestern.tsx"));
 const FAQ = lazy(() => import("./pages/FAQ.tsx"));
 const PoliticaComercial = lazy(() => import("./pages/legal/PoliticaComercial.tsx"));
@@ -217,7 +216,8 @@ const App = () => (
                     {/* Rota antiga de amostras: substituída pela Western Box (página paga). */}
                     <Route path="/pedir-amostras" element={<Navigate to="/western-box" replace />} />
                     <Route path="/visitar" element={<AgendarVisita />} />
-                    <Route path="/por-que-western" element={<PorQueWestern />} />
+                    {/* "Por que Western" foi fundida no FAQ (2026-07). */}
+                    <Route path="/por-que-western" element={<Navigate to="/faq" replace />} />
                     <Route path="/faq" element={<FAQ />} />
                     <Route path="/politica-comercial" element={<PoliticaComercial />} />
                     {/* Política de entrega foi fundida na comercial (2026-07). */}

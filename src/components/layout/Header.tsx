@@ -713,7 +713,6 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               <p className="text-eyebrow mt-7 mb-1">Decidir</p>
               {drawerLink("/guia-de-composicao", "Guia de composição", "Monte seu projeto em 3 passos")}
               {drawerLink("/inspiracoes", "Inspire-se", "Obras e projetos reais")}
-              {drawerLink("/por-que-western", "Por que Western", "A pedra com ~10% do peso")}
 
               {/* 3. CAPTAR — a rampa B2C. Agrupada e rotulada pela PERGUNTA do
                   visitante ("não tenho CNPJ"), para o B2B pular e o B2C achar. */}
