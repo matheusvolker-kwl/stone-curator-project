@@ -127,7 +127,7 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
                     </div>
                   ))}
                 </div>
-                <p className="text-meta mb-7">Variação artesanal de até ±3 cm por peça</p>
+                <p className="text-meta mb-7">Variação artesanal de até 5% por peça</p>
               </>
             )}
 
