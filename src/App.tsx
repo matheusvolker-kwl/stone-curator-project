@@ -79,7 +79,6 @@ const PorQueWestern = lazy(() => import("./pages/PorQueWestern.tsx"));
 const ContrateAWestern = lazy(() => import("./pages/ContrateAWestern.tsx"));
 const FAQ = lazy(() => import("./pages/FAQ.tsx"));
 const PoliticaComercial = lazy(() => import("./pages/legal/PoliticaComercial.tsx"));
-const PoliticaEntrega = lazy(() => import("./pages/legal/PoliticaEntrega.tsx"));
 const TrocasAvarias = lazy(() => import("./pages/legal/TrocasAvarias.tsx"));
 const PoliticaPrivacidade = lazy(() => import("./pages/legal/PoliticaPrivacidade.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
@@ -221,7 +220,8 @@ const App = () => (
                     <Route path="/por-que-western" element={<PorQueWestern />} />
                     <Route path="/faq" element={<FAQ />} />
                     <Route path="/politica-comercial" element={<PoliticaComercial />} />
-                    <Route path="/politica-de-entrega" element={<PoliticaEntrega />} />
+                    {/* Política de entrega foi fundida na comercial (2026-07). */}
+                    <Route path="/politica-de-entrega" element={<Navigate to="/politica-comercial" replace />} />
                     <Route path="/trocas-e-avarias" element={<TrocasAvarias />} />
                     <Route path="/privacidade" element={<PoliticaPrivacidade />} />
                     <Route path="/parceiro/favoritos" element={<Navigate to="/minha-conta/favoritos" replace />} />

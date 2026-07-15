@@ -742,8 +742,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               {drawerLink("/faq", "Perguntas frequentes")}
 
               <p className="text-eyebrow mt-7 mb-1">Políticas</p>
-              {drawerLink("/politica-comercial", "Política comercial")}
-              {drawerLink("/politica-de-entrega", "Política de entrega")}
+              {drawerLink("/politica-comercial", "Política comercial e de entrega")}
               {drawerLink("/trocas-e-avarias", "Trocas e avarias")}
               {drawerLink("/privacidade", "Privacidade")}
             </nav>

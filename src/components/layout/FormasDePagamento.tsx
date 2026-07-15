@@ -6,7 +6,7 @@
  * DPI) sobre chips claros, para as marcas coloridas terem contraste mesmo sobre
  * o rodape verde. Pagamento real: Appmax (Pix, boleto, cartao ate 12x).
  */
-import { ShieldCheck, Lock, FileText } from "lucide-react";
+import { ShieldCheck, Lock, CreditCard, Wallet } from "lucide-react";
 
 function Chip({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -96,14 +96,16 @@ export default function FormasDePagamento() {
         </div>
       </div>
 
-      <ul className="flex flex-col sm:flex-row lg:flex-col xl:flex-row flex-wrap gap-x-6 gap-y-2 lg:justify-self-end">
+      {/* 2×2 fixo: alinhamento coerente (era flex que quebrava 2+1). */}
+      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 lg:max-w-md lg:justify-self-end">
         {[
-          { Icon: ShieldCheck, text: "Pagamento processado com segurança pela Appmax" },
-          { Icon: Lock, text: "Site seguro (SSL) — seus dados protegidos" },
-          { Icon: FileText, text: "Compra 100% segura" },
+          { Icon: ShieldCheck, text: "Pagamento processado pela Appmax" },
+          { Icon: Lock, text: "Site seguro (SSL) — dados protegidos" },
+          { Icon: CreditCard, text: "Parcele em até 12× no cartão" },
+          { Icon: Wallet, text: "Pix e boleto à vista" },
         ].map(({ Icon, text }) => (
-          <li key={text} className="flex items-center gap-2 text-[14px] text-western-cream-muted leading-[1.5]">
-            <Icon className="h-[18px] w-[18px] text-western-gold-soft shrink-0" strokeWidth={1.75} />
+          <li key={text} className="flex items-start gap-2 text-[14px] text-western-cream-muted leading-[1.4]">
+            <Icon className="h-[18px] w-[18px] text-western-gold-soft shrink-0 mt-px" strokeWidth={1.75} />
             <span>{text}</span>
           </li>
         ))}

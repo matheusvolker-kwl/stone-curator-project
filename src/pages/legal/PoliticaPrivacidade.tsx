@@ -8,8 +8,7 @@ import { BUSINESS } from "@/config/business";
  * do LegalPage ([&_a]:underline, [&_h2]:text-western-green-deep), que sairiam
  * errados na faixa escura. */
 const POLITICAS = [
-  { to: "/politica-comercial", label: "Comercial" },
-  { to: "/politica-de-entrega", label: "Entrega" },
+  { to: "/politica-comercial", label: "Comercial e entrega" },
   { to: "/privacidade", label: "Privacidade" },
   { to: "/trocas-e-avarias", label: "Trocas e avarias" },
 ] as const;

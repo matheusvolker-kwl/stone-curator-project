@@ -11,6 +11,7 @@ import {
   Truck,
   FileText,
   MapPin,
+  Clock,
   MessageCircle,
 } from "lucide-react";
 import { BUSINESS } from "@/config/business";
@@ -141,8 +142,7 @@ export default function Footer() {
               <li><Link to="/guia-de-composicao" className={colLink}>Guia de composição</Link></li>
               <li><Link to="/inspiracoes" className={colLink}>Inspire-se</Link></li>
               <li><Link to="/western-box" className={colLink}>Western Box · amostras</Link></li>
-              <li><Link to="/politica-comercial" className={colLink}>Política comercial</Link></li>
-              <li><Link to="/politica-de-entrega" className={colLink}>Política de entrega</Link></li>
+              <li><Link to="/politica-comercial" className={colLink}>Política comercial e de entrega</Link></li>
               <li><Link to="/trocas-e-avarias" className={colLink}>Trocas e avarias</Link></li>
             </ul>
           </div>
@@ -196,15 +196,29 @@ export default function Footer() {
                   <span>Instagram @westernpools</span>
                 </a>
               </li>
-              <li className="text-[16px] text-western-cream-muted mt-2 leading-[1.6]">
-                {BUSINESS.horarioAtelie}
+              {/* Horário/retirada e endereço — com ícone, destacados do resto
+                  da lista de links, pra ler num relance. */}
+              <li className="mt-4 flex items-start gap-2.5 text-[15px] text-western-cream-muted leading-[1.5]">
+                <Clock
+                  className="h-[18px] w-[18px] text-western-gold-soft shrink-0 mt-0.5"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                <span>{BUSINESS.horarioAtelie}</span>
               </li>
-              <li className="text-[16px] text-western-cream-muted leading-[1.6] break-normal">
-                Ateliê em {BUSINESS.enderecoAtelieRua} ·{" "}
-                <span className="whitespace-nowrap">
-                  {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}
-                </span>{" "}
-                · <span className="whitespace-nowrap">{BUSINESS.enderecoAtelieCep}</span>
+              <li className="mt-2.5 flex items-start gap-2.5 text-[15px] text-western-cream-muted leading-[1.5] break-normal">
+                <MapPin
+                  className="h-[18px] w-[18px] text-western-gold-soft shrink-0 mt-0.5"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                <span>
+                  {BUSINESS.enderecoAtelieRua} ·{" "}
+                  <span className="whitespace-nowrap">
+                    {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}
+                  </span>{" "}
+                  · <span className="whitespace-nowrap">{BUSINESS.enderecoAtelieCep}</span>
+                </span>
               </li>
             </ul>
           </div>
