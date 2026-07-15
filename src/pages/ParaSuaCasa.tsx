@@ -186,12 +186,15 @@ export default function ParaSuaCasa() {
                   <h3 className={CARD_TITLE}>{c.titulo}</h3>
                   <p className="text-body flex-1">{c.desc}</p>
 
-                  {/* Fundo claro → CTA primário VERDE, full-width. */}
+                  {/* Significado travado (auditoria): WhatsApp/relacionamento = GOLD,
+                      igual ao herói e ao fecho. O verde fica reservado para a ação
+                      de "ver preço/cadastrar" (site B2B) — não aparece nesta página
+                      B2C, que é 100% conversa com o ateliê. */}
                   <a
                     href={waLink(c.msg)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn-primary mt-6 w-full"
+                    className="btn-gold mt-6 w-full"
                   >
                     <MessageCircle className="h-5 w-5" />
                     {c.cta}

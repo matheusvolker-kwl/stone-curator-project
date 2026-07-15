@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Check, ChevronDown } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import GuideHeader from "@/components/guide-v2/GuideHeader";
 import TipoCard from "@/components/guide-v2/TipoCard";
 import AreaInput from "@/components/guide-v2/AreaInput";
@@ -109,7 +109,7 @@ export default function GuiaContexto() {
 
       {/* Hero — Ricardo no ateliê */}
       <section className="relative bg-western-ivory border-b border-western-border-soft">
-        <div className="container-western grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-8 md:gap-12 items-center py-10 md:py-16">
+        <div className="container-western grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-8 md:gap-12 items-center py-8 md:py-12">
           <div className="flex flex-col justify-center">
             <p className="text-eyebrow mb-4">Guia de composição · Etapa 01</p>
             <h1 className="display-xl text-western-green-deep mb-6">
@@ -122,7 +122,7 @@ export default function GuiaContexto() {
             </p>
           </div>
 
-          <figure className="relative m-0 h-[260px] md:h-[440px] overflow-hidden rounded-[16px]">
+          <figure className="relative m-0 h-[220px] md:h-[340px] overflow-hidden rounded-[16px]">
             <img
               src={ricardoAtelie}
               alt="Ricardo Western, fundador, no ateliê de Cajamar"
@@ -145,7 +145,7 @@ export default function GuiaContexto() {
 
       {/* Como funciona */}
       <section className="border-b border-western-border-soft surface-paper">
-        <div className="container-western py-12 md:py-16">
+        <div className="container-western py-8 md:py-12">
           <p className="text-eyebrow mb-8">Como funciona o guia</p>
           <ol className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
             {[
@@ -166,17 +166,14 @@ export default function GuiaContexto() {
               </li>
             ))}
           </ol>
-          <div className="flex flex-col items-center mt-12">
-            <p className="text-meta mb-3">Comece pela primeira pergunta</p>
-            <ChevronDown className="h-6 w-6 text-western-gold animate-bounce" aria-hidden />
-          </div>
         </div>
       </section>
 
-      <main className="container-western max-w-[920px] pt-16 pb-28 relative">
-        {/* 01 */}
+      <main className="container-western max-w-[920px] pt-10 md:pt-12 pb-28 relative">
+        {/* 01 — a 1ª pergunta renderiza JÁ no load (auditoria): sem gate de
+            scroll-reveal, senão o preview/crawler/scroll-rápido pega vazio. */}
         <section ref={refTipo} className={SCROLL_ANCHOR}>
-          <Reveal variant="fade-up" duration={700} delay={140}>
+          <div>
             <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
               <p
                 className={`text-eyebrow transition-colors ${
@@ -207,7 +204,7 @@ export default function GuiaContexto() {
                 />
               ))}
             </div>
-          </Reveal>
+          </div>
         </section>
 
         <div className="mt-14">
