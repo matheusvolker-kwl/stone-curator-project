@@ -155,7 +155,8 @@ export default function AgendarVisita() {
   if (done) {
     return (
       <div className="surface-ivory">
-        <div className="container-western max-w-2xl py-24 text-center md:py-32">
+        <div className="container-western py-24 md:py-32">
+          <div className="mx-auto max-w-2xl text-center">
           <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-western-paper">
             <MapPin className="h-7 w-7 text-western-bronze" strokeWidth={1.75} aria-hidden />
           </div>
@@ -172,6 +173,7 @@ export default function AgendarVisita() {
             Voltar ao catálogo
             <ArrowRight className="h-5 w-5" aria-hidden />
           </Link>
+          </div>
         </div>
       </div>
     );
@@ -179,7 +181,8 @@ export default function AgendarVisita() {
 
   return (
     <div className="surface-ivory">
-      <div className="container-western max-w-2xl py-16 md:py-24">
+      <div className="container-western py-16 md:py-24">
+        <div className="mx-auto max-w-2xl">
         <p className="text-eyebrow mb-5">Visita ao ateliê</p>
         <div className="mb-8 h-px w-12 bg-western-gold" />
         <h1 className="display-xl mb-6 text-western-green-deep">
@@ -411,6 +414,7 @@ export default function AgendarVisita() {
             )}
           </Button>
         </form>
+        </div>
       </div>
     </div>
   );

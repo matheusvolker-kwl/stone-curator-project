@@ -449,7 +449,8 @@ export default function Parceria() {
 
       {/* 5. PROVA — 33 anos */}
       <section className="surface-ivory pt-16 md:pt-24 pb-4">
-        <div className="container-western max-w-3xl text-center">
+        <div className="container-western">
+          <div className="mx-auto max-w-3xl text-center">
           <Reveal variant="fade-up" duration={700}>
             <p className="text-eyebrow mb-4">A prova</p>
           </Reveal>
@@ -464,6 +465,7 @@ export default function Parceria() {
               Composto mineral com <strong className="text-western-green-deep font-semibold">PET reciclado</strong>, fabricado peça a peça em <strong className="text-western-green-deep font-semibold">Cajamar/SP</strong>.
             </p>
           </Reveal>
+          </div>
         </div>
       </section>
 
@@ -478,7 +480,8 @@ export default function Parceria() {
 
       {/* 7. DEPOIMENTO */}
       <section className="surface-ivory py-16 md:py-24">
-        <div className="container-western max-w-3xl">
+        <div className="container-western">
+          <div className="mx-auto max-w-3xl">
           {/* TODO: substituir por depoimento real de parceiro */}
           <Reveal variant="fade-up" duration={700}>
             <div className="text-center mb-10 md:mb-12">
@@ -515,6 +518,7 @@ export default function Parceria() {
               </figcaption>
             </figure>
           </Reveal>
+          </div>
         </div>
       </section>
 
@@ -547,7 +551,8 @@ export default function Parceria() {
 
       {/* 9. PROVA SOCIAL */}
       <section className="surface-forest py-16 md:py-20">
-        <div className="container-western max-w-5xl">
+        <div className="container-western">
+          <div className="mx-auto max-w-5xl">
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
               variant="dark"
@@ -556,6 +561,7 @@ export default function Parceria() {
               groups={["celebridades", "profissionais", "marcas"]}
             />
           </Reveal>
+          </div>
         </div>
       </section>
 
@@ -641,7 +647,8 @@ export default function Parceria() {
 
       {/* 11. DÚVIDAS RÁPIDAS */}
       <section className="surface-paper py-16 md:py-24">
-        <div className="container-western max-w-3xl">
+        <div className="container-western">
+          <div className="max-w-3xl">
           <Reveal variant="fade-up" duration={700}>
             <p className="text-eyebrow mb-3">Dúvidas rápidas</p>
             <h2 className="display-lg text-western-green-deep mb-10 md:mb-12">
@@ -660,6 +667,7 @@ export default function Parceria() {
               </Reveal>
             ))}
           </dl>
+          </div>
         </div>
       </section>
 

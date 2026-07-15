@@ -195,20 +195,23 @@ export default function Contact() {
       />
 
       {/* Hero */}
-      <section className="container-western pt-12 md:pt-20 pb-10 md:pb-14 max-w-6xl">
-        <p className="text-eyebrow mb-4">Contato</p>
-        <h1 className="display-xl text-western-green-deep max-w-[18ch]">
-          Fale com a Western.
-        </h1>
-        <p className="text-body mt-5 max-w-[56ch]">
-          Atendimento direto com quem desenha e fabrica. Sem call center, sem formulário
-          labiríntico — uma equipe pequena, focada em projetos de arquitetura e paisagismo.
-        </p>
+      <section className="container-western pt-12 md:pt-20 pb-10 md:pb-14">
+        <div className="max-w-6xl">
+          <p className="text-eyebrow mb-4">Contato</p>
+          <h1 className="display-xl text-western-green-deep max-w-[18ch]">
+            Fale com a Western.
+          </h1>
+          <p className="text-body mt-5 max-w-[56ch]">
+            Atendimento direto com quem desenha e fabrica. Sem call center, sem formulário
+            labiríntico — uma equipe pequena, focada em projetos de arquitetura e paisagismo.
+          </p>
+        </div>
       </section>
 
       {/* Canais + formulário */}
-      <section className="container-western pb-16 md:pb-24 max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.05fr] gap-8 lg:gap-14 items-start">
+      <section className="container-western pb-16 md:pb-24">
+        <div className="max-w-6xl">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.05fr] gap-8 lg:gap-14 items-start">
           {/* Coluna de canais */}
           <div className="space-y-4">
             {/* WhatsApp — canal preferido do ateliê */}
@@ -471,13 +474,15 @@ export default function Contact() {
               </form>
             )}
           </div>
+          </div>
         </div>
       </section>
 
       {/* Ateliê */}
       <section className="surface-forest">
-        <div className="container-western max-w-6xl py-16 md:py-24">
-          <div className="grid gap-12 md:grid-cols-12 md:gap-16">
+        <div className="container-western py-16 md:py-24">
+          <div className="max-w-6xl">
+            <div className="grid gap-12 md:grid-cols-12 md:gap-16">
             <div className="md:col-span-5">
               <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft">
                 Conheça o ateliê
@@ -527,6 +532,7 @@ export default function Contact() {
                 Fundada em {BUSINESS.fundadaEm} · {BUSINESS.anosOperacao}+ anos de coautoria com arquitetos ·
                 Compra segura · Garantia de {BUSINESS.garantiaLabel}
               </p>
+            </div>
             </div>
           </div>
         </div>

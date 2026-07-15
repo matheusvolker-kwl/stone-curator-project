@@ -89,10 +89,11 @@ export default function About() {
       </section>
 
       {/* NÚMEROS — escala da operação */}
-      <section className="surface-ivory py-12 md:py-16 border-y border-western-border-soft">
-        <div className="container-western max-w-5xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-western-border-soft border border-western-border-soft rounded-2xl overflow-hidden">
-            {NUMEROS.map((s, i) => (
+      <section className="surface-ivory py-14 md:py-20 border-y border-western-border-soft">
+        <div className="container-western">
+          <div className="mx-auto max-w-5xl">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-western-border-soft border border-western-border-soft rounded-2xl overflow-hidden">
+              {NUMEROS.map((s, i) => (
               <Reveal key={s.l} variant="fade-up" delay={i * 80} duration={650} distance={20}>
                 <div className="bg-white h-full p-6 md:p-8 text-center">
                   <p className="font-display text-[34px] md:text-[46px] leading-none tracking-[-0.02em] text-western-green-deep tabular-nums">
@@ -101,7 +102,8 @@ export default function About() {
                   <p className="text-meta mt-2 leading-snug">{s.l}</p>
                 </div>
               </Reveal>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -208,7 +210,7 @@ export default function About() {
 
       {/* MÉTODO — 4 pilares */}
       <section className="surface-paper py-14 md:py-20 border-t border-western-border-soft">
-        <div className="container-western max-w-6xl">
+        <div className="container-western">
           <Reveal variant="fade-up" duration={750}>
             <div className="max-w-2xl mb-9 md:mb-12">
               <p className="text-eyebrow mb-3">O método Western</p>
@@ -240,7 +242,8 @@ export default function About() {
 
       {/* PROVA SOCIAL — rostos + marcas */}
       <section className="surface-ivory py-14 md:py-20">
-        <div className="container-western max-w-5xl">
+        <div className="container-western">
+          <div className="mx-auto max-w-5xl">
           <Reveal variant="fade-up" duration={800}>
             <div className="text-center max-w-2xl mx-auto mb-9 md:mb-12">
               <p className="text-eyebrow mb-3">Especificada por</p>
@@ -250,12 +253,13 @@ export default function About() {
             </div>
             <SocialProof groups={["celebridades", "profissionais", "marcas"]} />
           </Reveal>
+          </div>
         </div>
       </section>
 
       {/* VOCABULÁRIO DO ATELIÊ */}
       <section className="surface-paper py-14 md:py-20 border-t border-western-border-soft">
-        <div className="container-western max-w-5xl">
+        <div className="container-western">
           <Reveal variant="fade-up" duration={750}>
             <div className="max-w-2xl mb-8 md:mb-10">
               <p className="text-eyebrow mb-3">Filosofia de marca</p>

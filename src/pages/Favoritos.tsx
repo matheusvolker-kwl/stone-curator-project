@@ -8,7 +8,8 @@ export default function Favoritos() {
 
   return (
     <div className="surface-ivory min-h-screen">
-      <div className="container-western max-w-5xl py-12 md:py-16">
+      <div className="container-western py-12 md:py-16">
+        <div className="max-w-5xl">
         <header className="mb-10 max-w-2xl md:mb-12">
           <p className="text-eyebrow mb-4">Área do parceiro</p>
           <h1 className="display-lg text-western-green-deep">Favoritos</h1>
@@ -93,6 +94,7 @@ export default function Favoritos() {
             ))}
           </div>
         )}
+        </div>
       </div>
     </div>
   );

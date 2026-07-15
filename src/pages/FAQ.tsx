@@ -237,25 +237,27 @@ export default function FAQ() {
 
       {/* Cabeçalho — fundo claro e quente, respiro generoso (V3) */}
       <section className="surface-paper">
-        <div className="container-western max-w-3xl py-14 md:py-20">
-          <p className="text-eyebrow mb-3">Perguntas frequentes</p>
-          <h1 className="display-lg text-western-green-deep mb-4">
-            Dúvidas diretas, respostas diretas.
-          </h1>
-          <p className="text-body max-w-2xl">
-            O que profissionais e clientes mais perguntam antes de fechar pedido — sobre produto, preço,
-            cadastro, entrega, pagamento e pós-venda.
-          </p>
+        <div className="container-western py-14 md:py-20">
+          <div className="max-w-3xl">
+            <p className="text-eyebrow mb-3">Perguntas frequentes</p>
+            <h1 className="display-lg text-western-green-deep mb-4">
+              Dúvidas diretas, respostas diretas.
+            </h1>
+            <p className="text-body max-w-2xl">
+              O que profissionais e clientes mais perguntam antes de fechar pedido — sobre produto, preço,
+              cadastro, entrega, pagamento e pós-venda.
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Acordeão por categoria */}
       <section className="surface-ivory py-12 md:py-16">
-        <div className="container-western max-w-3xl">
-          <div className="space-y-10 md:space-y-12">
+        <div className="container-western">
+          <div className="max-w-3xl space-y-10 md:space-y-12">
             {GRUPOS.map((g, gi) => (
               <section key={g.titulo}>
-                <p className="text-eyebrow mb-2">{g.eyebrow}</p>
+                <p className="text-eyebrow mb-3">{g.eyebrow}</p>
                 <h2 className="display-md text-western-green-deep mb-5">{g.titulo}</h2>
 
                 <ul className="rounded-[16px] border border-western-border-soft bg-white overflow-hidden">
@@ -306,28 +308,30 @@ export default function FAQ() {
 
       {/* Faixa escura pontual — saída para argumentário e contato */}
       <section className="surface-forest">
-        <div className="container-western max-w-3xl py-14 md:py-20 text-center">
-          <h2 className="display-md text-western-cream mx-auto max-w-lg">
-            Não encontrou o que procurava?
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl font-sans text-[17px] leading-[1.6] text-western-cream-muted">
-            Peça uma amostra dos 4 acabamentos e sinta a pedra na mão — ou fale direto com a fábrica.
-          </p>
+        <div className="container-western py-14 md:py-20">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="display-md text-western-cream mx-auto max-w-lg">
+              Não encontrou o que procurava?
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl font-sans text-[17px] leading-[1.6] text-western-cream-muted">
+              Peça uma amostra dos 4 acabamentos e sinta a pedra na mão — ou fale direto com a fábrica.
+            </p>
 
-          <div className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row sm:justify-center">
-            <Link to="/western-box" className="btn-gold w-full sm:w-auto">
-              Receber amostras grátis
-              <ArrowRight className="h-5 w-5" />
-            </Link>
-            <Link to="/contato" className="btn-outline-cream w-full sm:w-auto">
-              Falar com a fábrica
-            </Link>
+            <div className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row sm:justify-center">
+              <Link to="/western-box" className="btn-gold w-full sm:w-auto">
+                Receber amostras grátis
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+              <Link to="/contato" className="btn-outline-cream w-full sm:w-auto">
+                Falar com a fábrica
+              </Link>
+            </div>
+
+            <p className="text-meta mt-8 text-western-cream-muted">
+              Ateliê desde {BUSINESS.fundadaEm} · Compra segura · Garantia de {BUSINESS.garantiaLabel} ·
+              CNPJ {BUSINESS.cnpj}
+            </p>
           </div>
-
-          <p className="text-meta mt-8 text-western-cream-muted">
-            Ateliê desde {BUSINESS.fundadaEm} · Compra segura · Garantia de {BUSINESS.garantiaLabel} ·
-            CNPJ {BUSINESS.cnpj}
-          </p>
         </div>
       </section>
     </>

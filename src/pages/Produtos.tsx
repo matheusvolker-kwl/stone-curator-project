@@ -17,7 +17,7 @@ export default function Produtos() {
 
   return (
     <div className="surface-ivory">
-      <div className="container-western py-10 md:py-16">
+      <div className="container-western py-12 md:py-20">
         <Link
           to="/linhas"
           className="tap-target -ml-1 mb-6 inline-flex items-center gap-2 px-1 font-sans text-[16px] font-semibold text-western-cta transition-colors hover:text-western-green-deep"
@@ -31,7 +31,7 @@ export default function Produtos() {
           <div className="mb-10 max-w-3xl md:mb-14">
             <p className="text-eyebrow mb-4">Catálogo completo</p>
             <h1 className="display-xl text-western-green-deep">Todas as peças.</h1>
-            <p className="text-body mt-5">
+            <p className="text-body mt-5 max-w-[60ch]">
               Toda a coleção em uma única vista. Filtre por tamanho e peso, ordene
               por preço — ou navegue por categoria quando souber o que procura.
             </p>

@@ -158,7 +158,8 @@ export default function ComoComprar() {
           O CTA vive aqui também: a página existe para gerar cadastro, então a ação
           não pode ficar a duas rolagens de distância. */}
       <section className="surface-ivory pt-12 pb-10 md:pt-20 md:pb-12">
-        <div className="container-western max-w-3xl">
+        <div className="container-western">
+          <div className="max-w-3xl">
           <Reveal>
             <p className="text-eyebrow mb-3">Loja para profissionais</p>
             <div className="w-10 h-[2px] bg-western-gold mb-6" aria-hidden />
@@ -175,6 +176,7 @@ export default function ComoComprar() {
               <BlocoCta isPartner={isPartner} align="left" />
             </div>
           </Reveal>
+          </div>
         </div>
       </section>
 
@@ -182,7 +184,8 @@ export default function ComoComprar() {
           A lista é uma escada; o ícone decorativo não acrescentava informação e
           roubava ~100px de largura útil do texto em cada card. */}
       <section className="surface-ivory pb-12 md:pb-16">
-        <div className="container-western max-w-5xl">
+        <div className="container-western">
+          <div className="max-w-5xl">
           <ol className="grid gap-4 md:grid-cols-2">
             {PASSOS.map((p, i) => (
               <Reveal
@@ -207,12 +210,14 @@ export default function ComoComprar() {
               </Reveal>
             ))}
           </ol>
+          </div>
         </div>
       </section>
 
       {/* DÚVIDAS RÁPIDAS — bloco areia. Sem acordeão: são 3 respostas curtas, mostre. */}
       <section className="surface-ivory pb-12 md:pb-16">
-        <div className="container-western max-w-3xl">
+        <div className="container-western">
+          <div className="max-w-3xl">
           <Reveal className="rounded-2xl surface-paper border border-western-border-soft px-6 py-7 md:px-9 md:py-9">
             <h2 className="text-eyebrow mb-5">Dúvidas rápidas</h2>
             <dl>
@@ -231,12 +236,14 @@ export default function ComoComprar() {
               ))}
             </dl>
           </Reveal>
+          </div>
         </div>
       </section>
 
       {/* CTA — a mesma decisão do herói, repetida para quem leu tudo. */}
       <section className="surface-ivory pb-16 md:pb-24">
-        <div className="container-western max-w-3xl">
+        <div className="container-western">
+          <div className="mx-auto max-w-3xl">
           <Reveal>
             <BlocoCta isPartner={isPartner} align="center" />
 
@@ -271,6 +278,7 @@ export default function ComoComprar() {
               {BUSINESS.fundadaEm} · {BUSINESS.razaoSocial} · CNPJ {BUSINESS.cnpj}
             </p>
           </Reveal>
+          </div>
         </div>
       </section>
     </>

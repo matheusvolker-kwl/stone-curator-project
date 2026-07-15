@@ -285,7 +285,7 @@ export default function GuiaRefinar() {
                 <div className="min-w-0">
                   <p className="text-eyebrow mb-4">Etapa 03 · Composição base</p>
                   <h1 className="display-xl text-western-green-deep">{conjunto.nome}</h1>
-                  <div className="w-12 h-px bg-western-gold mt-5 mb-5" />
+                  <div className="w-12 h-px bg-western-gold mt-6 mb-6" />
 
                   <div className="flex flex-wrap gap-2">
                     <Tag>{tipoMeta.label}</Tag>

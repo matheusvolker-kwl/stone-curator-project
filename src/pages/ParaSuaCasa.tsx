@@ -154,7 +154,7 @@ export default function ParaSuaCasa() {
 
       {/* 2) OS CAMINHOS — cada card é uma rampa direta pro WhatsApp, sem formulário. */}
       <section className="surface-ivory py-16 md:py-24">
-        <div className="container-western max-w-6xl">
+        <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <header className="max-w-2xl mb-10 md:mb-12">
               <p className="text-eyebrow">Por onde começar</p>
@@ -208,7 +208,7 @@ export default function ParaSuaCasa() {
 
       {/* 3) O ATELIÊ — a prova de que tem gente de verdade do outro lado. */}
       <section className="surface-paper py-16 md:py-24 border-y border-western-border-soft">
-        <div className="container-western max-w-6xl">
+        <div className="container-western">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-center">
             <Reveal variant="fade-up" duration={700} className="md:col-span-6">
               <div className="aspect-[4/3] overflow-hidden rounded-[16px]">
@@ -250,7 +250,7 @@ export default function ParaSuaCasa() {
 
       {/* 4) FECHAMENTO — última rampa. Sobre verde, CTA dourado. */}
       <section className="surface-forest">
-        <div className="container-western max-w-3xl py-16 md:py-20 text-center">
+        <div className="container-western max-w-3xl py-16 md:py-24 text-center">
           <Reveal variant="fade-up" duration={700}>
             <h2 className="display-md text-western-cream">
               Ainda na dúvida de por onde começar?

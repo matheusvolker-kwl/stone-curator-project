@@ -124,7 +124,8 @@ export default function ParceriaDireto() {
 
       {/* 3. MINI PROVA + CTA FINAL — fundo claro, CTA primário verde. */}
       <section className="surface-ivory py-16 md:py-24">
-        <div className="container-western max-w-3xl text-center">
+        <div className="container-western">
+          <div className="mx-auto max-w-3xl text-center">
           <Reveal variant="fade-up" duration={750}>
             <p className="text-eyebrow mb-4">Especificada pelo topo do mercado</p>
             <div className="mx-auto mb-8 h-px w-12 bg-western-gold" />
@@ -158,6 +159,7 @@ export default function ParceriaDireto() {
               </Link>
             </div>
           </Reveal>
+          </div>
         </div>
       </section>
     </>

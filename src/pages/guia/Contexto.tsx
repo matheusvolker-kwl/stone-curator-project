@@ -109,7 +109,7 @@ export default function GuiaContexto() {
 
       {/* Hero — Ricardo no ateliê */}
       <section className="relative bg-western-ivory border-b border-western-border-soft">
-        <div className="container-western grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-8 md:gap-12 items-center py-8 md:py-12">
+        <div className="container-western grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-8 md:gap-12 items-center py-12 md:py-16">
           <div className="flex flex-col justify-center">
             <p className="text-eyebrow mb-4">Guia de composição · Etapa 01</p>
             <h1 className="display-xl text-western-green-deep mb-6">
@@ -145,7 +145,7 @@ export default function GuiaContexto() {
 
       {/* Como funciona */}
       <section className="border-b border-western-border-soft surface-paper">
-        <div className="container-western py-8 md:py-12">
+        <div className="container-western py-12 md:py-16">
           <p className="text-eyebrow mb-8">Como funciona o guia</p>
           <ol className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
             {[
@@ -169,7 +169,8 @@ export default function GuiaContexto() {
         </div>
       </section>
 
-      <main className="container-western max-w-[920px] pt-10 md:pt-12 pb-28 relative">
+      <main className="container-western pt-10 md:pt-12 pb-28 relative">
+        <div className="max-w-[920px]">
         {/* 01 — a 1ª pergunta renderiza JÁ no load (auditoria): sem gate de
             scroll-reveal, senão o preview/crawler/scroll-rápido pega vazio. */}
         <section ref={refTipo} className={SCROLL_ANCHOR}>
@@ -300,6 +301,7 @@ export default function GuiaContexto() {
               Falar com consultor diretamente
             </a>
           </p>
+        </div>
         </div>
       </main>
 

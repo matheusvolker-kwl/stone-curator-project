@@ -340,7 +340,8 @@ export default function ContrateAWestern() {
 
       {/* 3) POR QUE A WESTERN */}
       <section className="surface-ivory py-16 md:py-24">
-        <div className="container-western max-w-6xl">
+        <div className="container-western">
+          <div className="max-w-6xl">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
             <Reveal variant="fade-up" duration={700} className="md:col-span-5">
               <div>
@@ -381,12 +382,14 @@ export default function ContrateAWestern() {
               ))}
             </div>
           </div>
+          </div>
         </div>
       </section>
 
       {/* 4) SERVIÇOS */}
       <section className="surface-paper py-16 md:py-24 border-y border-western-border-soft">
-        <div className="container-western max-w-6xl">
+        <div className="container-western">
+          <div className="max-w-6xl">
           <Reveal variant="fade-up" duration={700}>
             <header className="text-center max-w-2xl mx-auto mb-12">
               <p className="text-eyebrow">O que fazemos por você</p>
@@ -409,12 +412,14 @@ export default function ContrateAWestern() {
               </Reveal>
             ))}
           </div>
+          </div>
         </div>
       </section>
 
       {/* 5) COMO FUNCIONA */}
       <section className="surface-ivory py-16 md:py-24">
-        <div className="container-western max-w-6xl">
+        <div className="container-western">
+          <div className="max-w-6xl">
           <Reveal variant="fade-up" duration={700}>
             <header className="text-center max-w-2xl mx-auto mb-12">
               <p className="text-eyebrow">Como funciona</p>
@@ -455,12 +460,14 @@ export default function ContrateAWestern() {
               </Reveal>
             ))}
           </ol>
+          </div>
         </div>
       </section>
 
       {/* 6) PROVA SOCIAL — rostos + mural de marcas */}
-      <section className="surface-paper py-14 md:py-20 border-t border-western-border-soft">
-        <div className="container-western max-w-5xl">
+      <section className="surface-paper py-16 md:py-24 border-t border-western-border-soft">
+        <div className="container-western">
+          <div className="mx-auto max-w-5xl">
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
               eyebrow="Quem confia na Western"
@@ -468,12 +475,14 @@ export default function ContrateAWestern() {
               groups={["celebridades", "profissionais", "marcas"]}
             />
           </Reveal>
+          </div>
         </div>
       </section>
 
       {/* 7) FAQ */}
       <section className="surface-ivory py-16 md:py-24 border-y border-western-border-soft">
-        <div className="container-western max-w-3xl">
+        <div className="container-western">
+          <div className="mx-auto max-w-3xl">
           <Reveal variant="fade-up" duration={700}>
             <header className="text-center mb-10">
               <p className="text-eyebrow">Perguntas frequentes</p>
@@ -505,12 +514,14 @@ export default function ContrateAWestern() {
               ))}
             </Accordion>
           </Reveal>
+          </div>
         </div>
       </section>
 
       {/* 8) FORMULÁRIO / RAMPA — faixa verde institucional, formulário em carta clara */}
       <section ref={formRef} id="contato" className="surface-forest">
-        <div className="container-western max-w-5xl py-16 md:py-24">
+        <div className="container-western py-16 md:py-24">
+          <div className="max-w-5xl">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
             <Reveal variant="fade-up" duration={700} className="md:col-span-5">
               <div>
@@ -694,6 +705,7 @@ export default function ContrateAWestern() {
                 </div>
               </form>
             </Reveal>
+          </div>
           </div>
         </div>
       </section>

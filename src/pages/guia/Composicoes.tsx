@@ -52,7 +52,7 @@ export default function GuiaComposicoes() {
       {/* Header (80px) + barra de contexto (44px) são sticky: reserva o espaço. */}
       <main className="container-western pt-12 md:pt-16 pb-24 relative">
         <Reveal variant="fade-up" duration={700} delay={120}>
-          <p className="text-eyebrow mb-5">Guia de composição · Etapa 02</p>
+          <p className="text-eyebrow mb-4">Guia de composição · Etapa 02</p>
           <h1 className="display-xl text-western-green-deep mb-6 max-w-[20ch] md:max-w-[24ch]">
             Três pontos de partida para os {ctx.area} m² do seu projeto.
           </h1>

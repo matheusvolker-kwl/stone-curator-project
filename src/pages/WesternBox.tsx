@@ -399,7 +399,7 @@ function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLDivElement> 
 function MidBuyStrip() {
   const { disabled, buy } = useBuyAction();
   return (
-    <section className="surface-ivory border-y border-western-border-soft py-14 md:py-16">
+    <section className="surface-ivory border-y border-western-border-soft py-16 md:py-20">
       <div className="container-western">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between md:gap-10">
           <div className="flex items-center gap-5">
@@ -476,7 +476,7 @@ export default function WesternBox() {
             ))}
           </div>
           <Reveal variant="fade-up" delay={340} duration={500}>
-            <p className="text-body mt-8 max-w-2xl">
+            <p className="text-body mt-8 max-w-[60ch]">
               Conhecer um acabamento apenas pela tela nunca conta a história completa. A Western Box
               leva até você os quatro acabamentos, com o catálogo oficial, para que você analise
               textura, cor e detalhe exatamente como serão percebidos no seu projeto.
@@ -726,7 +726,7 @@ export default function WesternBox() {
           aria-hidden
         />
         <div className="absolute inset-0 bg-western-green-deep/70" aria-hidden />
-        <div className="container-western relative z-10 max-w-3xl">
+        <div className="container-western relative z-10">
           <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft">
             Cashback exclusivo
           </p>

@@ -518,7 +518,7 @@ export default function ConjuntoPage() {
             <h2 className="display-lg text-western-green-deep">
               {nivelMeta[nivel].tagline}.
             </h2>
-            <div className="w-12 h-px bg-western-gold mt-5 mb-6" />
+            <div className="w-12 h-px bg-western-gold mt-6 mb-6" />
             <p className="text-body max-w-[62ch]">
               Para {faixa.toLowerCase()} de {tipoLbl.toLowerCase()}, essa densidade
               equilibra presença e respiro. {nivelMeta[nivel].detalhe}
@@ -549,7 +549,7 @@ export default function ConjuntoPage() {
       <SocialProofBand />
 
       {/* ── Fecho racional ──────────────────────────────────────────── */}
-      <section className="border-t border-western-border-soft surface-paper py-14">
+      <section className="border-t border-western-border-soft surface-paper py-16 md:py-20">
         <div className="container-western">
           <p className="text-section-label mb-6">Antes de decidir</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
