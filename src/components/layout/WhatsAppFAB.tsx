@@ -1,6 +1,8 @@
 
 
 
+import { BUSINESS } from "@/config/business";
+
 function WhatsAppGlyph({ className }: { className?: string }) {
   return (
     <svg
@@ -17,7 +19,7 @@ function WhatsAppGlyph({ className }: { className?: string }) {
 export default function WhatsAppFAB() {
   return (
     <a
-      href="https://wa.me/5511958967088?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20Western%20e%20gostaria%20de%20falar%20com%20um%20consultor."
+      href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20Western%20e%20gostaria%20de%20falar%20com%20um%20consultor.`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Falar com consultor no WhatsApp"

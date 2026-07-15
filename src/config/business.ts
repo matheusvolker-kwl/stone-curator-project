@@ -38,13 +38,10 @@ export const BUSINESS = {
   fundadaEm: 1993,
   anosOperacao: 2026 - 1993,
 
-  // Contato
-  // Telefone/WhatsApp: (11) 4448-2918 é o contato oficial (decisão do dono).
-  // ATENÇÃO: whatsappFabrica alimenta TODOS os botões de WhatsApp do site
-  // (inclusive o funil B2C do /para-sua-casa). Só trocar para o fixo depois de
-  // confirmar que ele tem WhatsApp — senão os links abrem vazios.
-  whatsappFabrica: "5511958967088",
-  whatsappLabel: "+55 11 95896-7088",
+  // Contato — oficial (decisão do dono, 2026-07-15). Tem WhatsApp (confirmado).
+  // whatsappFabrica alimenta TODOS os botões de WhatsApp do site.
+  whatsappFabrica: "551144482918",
+  whatsappLabel: "(11) 4448-2918",
   emailComercial: "atendimento@westernstore.com.br",
   emailSuporte: "suporte@westernpools.com.br",
   emailNewsletter: "contato@westernpools.com.br",
