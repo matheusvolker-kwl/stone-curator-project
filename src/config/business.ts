@@ -39,9 +39,13 @@ export const BUSINESS = {
   anosOperacao: 2026 - 1993,
 
   // Contato
+  // Telefone/WhatsApp: (11) 4448-2918 é o contato oficial (decisão do dono).
+  // ATENÇÃO: whatsappFabrica alimenta TODOS os botões de WhatsApp do site
+  // (inclusive o funil B2C do /para-sua-casa). Só trocar para o fixo depois de
+  // confirmar que ele tem WhatsApp — senão os links abrem vazios.
   whatsappFabrica: "5511958967088",
   whatsappLabel: "+55 11 95896-7088",
-  emailComercial: "comercial@westernpools.com.br",
+  emailComercial: "atendimento@westernstore.com.br",
   emailSuporte: "suporte@westernpools.com.br",
   emailNewsletter: "contato@westernpools.com.br",
   razaoSocial: "Western Pools - Cascatas e Pedras Artesanais LTDA",
