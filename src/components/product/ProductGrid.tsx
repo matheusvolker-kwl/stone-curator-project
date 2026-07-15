@@ -9,14 +9,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ProductCard from "@/components/product/ProductCard";
+import RangeFilter, { type Range } from "@/components/product/RangeFilter";
 import { BUSINESS } from "@/config/business";
-import {
-  extractSizeWeight,
-  TAMANHO_META,
-  PESO_META,
-  type TamanhoBucket,
-  type PesoBucket,
-} from "@/lib/catalog/sizeWeight";
+import { extractSizeWeight } from "@/lib/catalog/sizeWeight";
 import type { ShopifyProduct } from "@/lib/catalog/types";
 import { linhaRank, naturalTitleCompare } from "@/lib/lineOrder";
 import { cn } from "@/lib/utils";
@@ -30,33 +25,35 @@ interface Props {
   emptyLabel?: string;
 }
 
-const TAMANHOS: TamanhoBucket[] = ["pequeno", "medio", "grande", "enorme"];
-const PESOS: PesoBucket[] = ["leve", "medio", "pesado", "muito-pesado"];
+/** Arredonda o máximo do catálogo para um número "redondo" (piso mínimo). */
+function roundUp(n: number, step: number, floor: number) {
+  return Math.max(floor, Math.ceil(n / step) * step);
+}
+
+/** Lê "min-max" da URL; fora do formato → faixa cheia (sem filtro). */
+function parseRange(raw: string | null, absMax: number): Range {
+  if (raw) {
+    const m = raw.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      const min = Math.max(0, Math.min(Number(m[1]), absMax));
+      const max = Math.min(absMax, Math.max(Number(m[2]), 0));
+      if (min <= max) return { min, max };
+    }
+  }
+  return { min: 0, max: absMax };
+}
 
 export default function ProductGrid({ products, isLoading, emptyLabel }: Props) {
   const [params, setParams] = useSearchParams();
 
   const q = params.get("q") ?? "";
   const sort = (params.get("sort") as SortKey) || "";
-  const activeTamanhos = (params.get("tamanho") ?? "")
-    .split(",")
-    .filter(Boolean) as TamanhoBucket[];
-  const activePesos = (params.get("peso") ?? "")
-    .split(",")
-    .filter(Boolean) as PesoBucket[];
 
   const update = (key: string, value: string | null) => {
     const next = new URLSearchParams(params);
     if (value && value.length) next.set(key, value);
     else next.delete(key);
     setParams(next, { replace: true });
-  };
-
-  const toggle = (key: "tamanho" | "peso", value: string) => {
-    const current = key === "tamanho" ? activeTamanhos : activePesos;
-    const set = new Set<string>(current);
-    set.has(value) ? set.delete(value) : set.add(value);
-    update(key, set.size ? Array.from(set).join(",") : null);
   };
 
   const clearFilters = () => {
@@ -77,6 +74,27 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
     [products]
   );
 
+  // Máximos reais do catálogo → definem a escala da régua (adapta por página).
+  const { maxCm, maxKg } = useMemo(() => {
+    let mc = 0;
+    let mk = 0;
+    for (const p of enriched) {
+      if (p.sw.maiorDimensaoCm != null) mc = Math.max(mc, p.sw.maiorDimensaoCm);
+      if (p.sw.pesoKg != null) mk = Math.max(mk, p.sw.pesoKg);
+    }
+    return { maxCm: roundUp(mc, 10, 60), maxKg: roundUp(mk, 10, 40) };
+  }, [enriched]);
+
+  const tamRange = parseRange(params.get("tamanho"), maxCm);
+  const pesRange = parseRange(params.get("peso"), maxKg);
+  const tamActive = tamRange.min > 0 || tamRange.max < maxCm;
+  const pesActive = pesRange.min > 0 || pesRange.max < maxKg;
+
+  const setRange = (key: "tamanho" | "peso", r: Range, absMax: number) => {
+    const full = r.min <= 0 && r.max >= absMax;
+    update(key, full ? null : `${r.min}-${r.max}`);
+  };
+
   const filtered = useMemo(() => {
     let list = enriched;
     if (q) {
@@ -89,14 +107,22 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
             .includes(needle)
       );
     }
-    if (activeTamanhos.length) {
+    // Régua: quando a faixa é estreitada, produto SEM medida sai (não há como
+    // posicioná-lo na régua) — foi essa a inconsistência do filtro por bucket.
+    if (tamActive) {
       list = list.filter(
-        (p) => p.sw.tamanho == null || activeTamanhos.includes(p.sw.tamanho)
+        (p) =>
+          p.sw.maiorDimensaoCm != null &&
+          p.sw.maiorDimensaoCm >= tamRange.min &&
+          p.sw.maiorDimensaoCm <= tamRange.max
       );
     }
-    if (activePesos.length) {
+    if (pesActive) {
       list = list.filter(
-        (p) => p.sw.peso == null || activePesos.includes(p.sw.peso)
+        (p) =>
+          p.sw.pesoKg != null &&
+          p.sw.pesoKg >= pesRange.min &&
+          p.sw.pesoKg <= pesRange.max
       );
     }
     const arr = [...list];
@@ -131,10 +157,10 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
         });
     }
     return arr;
-  }, [enriched, q, activeTamanhos, activePesos, sort]);
+  }, [enriched, q, tamActive, tamRange.min, tamRange.max, pesActive, pesRange.min, pesRange.max, sort]);
 
-  const hasFilters = !!q || activeTamanhos.length > 0 || activePesos.length > 0;
-  const activeCount = (q ? 1 : 0) + activeTamanhos.length + activePesos.length;
+  const hasFilters = !!q || tamActive || pesActive;
+  const activeCount = (q ? 1 : 0) + (tamActive ? 1 : 0) + (pesActive ? 1 : 0);
   // Mobile: filtros começam recolhidos pra não empurrar os produtos pra baixo
   // da dobra; abertos automaticamente se a URL já chega com filtros ativos.
   const [filtersOpen, setFiltersOpen] = useState(hasFilters);
@@ -184,30 +210,33 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
           </div>
         </div>
 
-        <FilterChips
+        {/* Régua de TAMANHO (maior dimensão, cm) */}
+        <RangeFilter
           eyebrow="Tamanho"
-          subline="maior dimensão"
-          options={TAMANHOS.map((k) => ({
-            key: k,
-            label: TAMANHO_META[k].label,
-            hint: TAMANHO_META[k].hint,
-          }))}
-          active={activeTamanhos}
-          onToggle={(v) => toggle("tamanho", v)}
+          unit="cm"
+          absMin={0}
+          absMax={maxCm}
+          step={5}
+          value={tamRange}
+          onChange={(r) => setRange("tamanho", r, maxCm)}
         />
 
-        <FilterChips
+        {/* Régua de PESO (kg) */}
+        <RangeFilter
           eyebrow="Peso"
-          options={PESOS.map((k) => ({
-            key: k,
-            label: PESO_META[k].label,
-            hint: PESO_META[k].hint,
-          }))}
-          active={activePesos}
-          onToggle={(v) => toggle("peso", v)}
+          unit="kg"
+          absMin={0}
+          absMax={maxKg}
+          step={5}
+          value={pesRange}
+          onChange={(r) => setRange("peso", r, maxKg)}
         />
 
         <div className="space-y-4 border-t border-western-border-soft pt-5">
+          <p className="text-meta">
+            A régua usa a maior dimensão da peça. Peças sem medida na ficha não
+            entram quando você estreita a faixa.
+          </p>
           <p className="text-meta">
             Produção em {BUSINESS.prazoProducaoDias} dias úteis após a confirmação.
           </p>
@@ -280,58 +309,6 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
             ))}
           </div>
         )}
-      </div>
-    </div>
-  );
-}
-
-function FilterChips({
-  eyebrow,
-  subline,
-  options,
-  active,
-  onToggle,
-}: {
-  eyebrow: string;
-  subline?: string;
-  options: Array<{ key: string; label: string; hint: string }>;
-  active: string[];
-  onToggle: (key: string) => void;
-}) {
-  return (
-    <div>
-      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3">
-        <p className="text-eyebrow">{eyebrow}</p>
-        {subline && <span className="text-meta">{subline}</span>}
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {options.map((opt) => {
-          const isActive = active.includes(opt.key);
-          return (
-            <button
-              key={opt.key}
-              type="button"
-              onClick={() => onToggle(opt.key)}
-              aria-pressed={isActive}
-              className={cn(
-                "tap-target inline-flex flex-col justify-center rounded-full border-[1.5px] px-4 py-2 text-left font-sans transition-colors",
-                isActive
-                  ? "border-western-cta bg-western-cta text-western-cream"
-                  : "border-western-border-strong bg-white text-western-green-deep hover:border-western-cta"
-              )}
-            >
-              <span className="text-[16px] font-semibold leading-tight">{opt.label}</span>
-              <span
-                className={cn(
-                  "text-[14px] leading-tight",
-                  isActive ? "text-western-cream/80" : "text-western-stone-warm"
-                )}
-              >
-                {opt.hint}
-              </span>
-            </button>
-          );
-        })}
       </div>
     </div>
   );

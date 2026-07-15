@@ -575,3 +575,50 @@
     }
   }
 }
+
+/* ── Régua (dual-range) do filtro de tamanho/peso ─────────────────────────────
+   Dois <input type=range> sobrepostos: o trilho é transparente e não recebe
+   toque; só o thumb recebe. A barra colorida é desenhada por divs no RangeFilter. */
+.range-thumb {
+  pointer-events: none;
+  background: transparent;
+}
+.range-thumb::-webkit-slider-runnable-track {
+  height: 36px;
+  background: transparent;
+}
+.range-thumb::-moz-range-track {
+  height: 36px;
+  background: transparent;
+}
+.range-thumb::-webkit-slider-thumb {
+  pointer-events: auto;
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: 7px;
+  height: 22px;
+  width: 22px;
+  border-radius: 9999px;
+  background: hsl(var(--western-cta));
+  border: 3px solid #fff;
+  box-shadow: 0 1px 5px rgba(23, 32, 24, 0.3);
+  cursor: pointer;
+}
+.range-thumb::-moz-range-thumb {
+  pointer-events: auto;
+  height: 22px;
+  width: 22px;
+  border: 3px solid #fff;
+  border-radius: 9999px;
+  background: hsl(var(--western-cta));
+  box-shadow: 0 1px 5px rgba(23, 32, 24, 0.3);
+  cursor: pointer;
+}
+.range-thumb:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid hsl(var(--western-gold));
+  outline-offset: 2px;
+}
+.range-thumb:focus-visible::-moz-range-thumb {
+  outline: 2px solid hsl(var(--western-gold));
+  outline-offset: 2px;
+}
