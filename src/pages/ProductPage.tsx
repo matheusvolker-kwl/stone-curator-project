@@ -19,7 +19,6 @@ import {
   Truck,
 } from "lucide-react";
 import { BUSINESS } from "@/config/business";
-import { toast } from "sonner";
 import FinishSelector from "@/components/product/FinishSelector";
 import { useAuth } from "@/hooks/useAuth";
 import ProductGallery from "@/components/product/ProductGallery";
@@ -202,11 +201,9 @@ export default function ProductPage() {
     if (!variant) return;
     const item = buildCartItem(product, variant.id, qty);
     if (!item) return;
-    await addItem(item);
-    toast.success("Peça adicionada ao pedido", {
-      description: product.title,
-      position: "top-right",
-    });
+    // O feedback — toast ÚNICO com "Ver" + pulso do badge — vive no cartStore.
+    // Não disparamos um segundo toast aqui (era o empilhamento que o dono viu).
+    addItem(item);
   };
 
   /* Medida e peso da PEÇA: extraídos aqui, mas entregues a UM só consumidor —
@@ -461,7 +458,7 @@ export default function ProductPage() {
                       <span className="truncate">Selecione {pendingOption.name.toLowerCase()}</span>
                     ) : variant?.availableForSale ? (
                       <>
-                        <span className="truncate">Adicionar ao pedido</span>
+                        <span className="truncate">Adicionar ao orçamento</span>
                         <ArrowRight className="h-5 w-5 ml-2 transition-transform motion-safe:group-hover:translate-x-0.5" />
                       </>
                     ) : (

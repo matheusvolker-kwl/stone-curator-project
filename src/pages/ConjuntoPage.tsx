@@ -8,11 +8,12 @@
 // A PDP é a etapa "avaliar de perto" entre os 3 cards (/guia-de-composicao/composicoes)
 // e o Refinar (/guia-de-composicao/refinar/:handle).
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { usePublishStickyBarHeight } from "@/hooks/usePublishStickyBarHeight";
 import {
   ArrowRight,
   Bookmark,
@@ -83,6 +84,9 @@ export default function ConjuntoPage() {
   const navigate = useNavigate();
   const { isApproved, session } = useAuth();
   const { addBundle } = useCartStore();
+  // Barra fixa mobile publica sua altura p/ o FAB/pílula subirem acima do CTA.
+  const mobileBarRef = useRef<HTMLDivElement>(null);
+  usePublishStickyBarHeight(mobileBarRef);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [zoomed, setZoomed] = useState(false);
@@ -224,8 +228,10 @@ export default function ConjuntoPage() {
       );
       return;
     }
-    addBundle(items);
-    toast.success(`Conjunto ${leaf.nome} adicionado ao orçamento`, {
+    // UM só toast (com "Ver"): passamos o label rico ao store em vez de disparar
+    // um segundo toast por cima do genérico do addBundle.
+    addBundle(items, {
+      label: `Conjunto ${leaf.nome} adicionado ao orçamento`,
       description: `${items.length} ${items.length === 1 ? "peça" : "peças"} · ${faixa} · acabamento ${acabLabel}`,
     });
   };
@@ -571,7 +577,10 @@ export default function ConjuntoPage() {
       </div>
 
       {/* Barra fixa mobile — CTA primário full-width (V3) */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-western-border-soft px-4 pt-3 pb-4 shadow-[0_-8px_24px_-12px_hsl(var(--western-stone-dark)/0.25)]">
+      <div
+        ref={mobileBarRef}
+        className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-western-border-soft px-4 pt-3 pb-4 shadow-[0_-8px_24px_-12px_hsl(var(--western-stone-dark)/0.25)]"
+      >
         <div className="flex items-center justify-between gap-4 mb-2">
           <GatedPrice
             amount={totalPreco || leaf.preco}

@@ -50,19 +50,34 @@ export interface CartItem {
 interface CartStore {
   items: CartItem[];
   isLoading: boolean;
-  addItem: (item: CartItem) => void;
-  addBundle: (items: CartItem[]) => void;
+  /**
+   * opts.silent: só pulsa o badge, sem toast (para adições em lote — ex.:
+   * "adicionar todos os favoritos" — que emitem um único toast-resumo).
+   */
+  addItem: (item: CartItem, opts?: { silent?: boolean }) => void;
+  /** opts.label/description: toast rico (ex.: nome do conjunto), no lugar do
+   *  genérico — assim o chamador não precisa disparar um segundo toast. */
+  addBundle: (
+    items: CartItem[],
+    opts?: { label?: string; description?: string; silent?: boolean },
+  ) => void;
   updateQuantity: (variantId: string, quantity: number) => void;
   removeItem: (variantId: string) => void;
   clearCart: () => void;
 }
 
-function notifyCartChanged(opts?: { toastLabel?: string }) {
+// FONTE ÚNICA de feedback do carrinho. Todo add passa por aqui: pulsa o badge
+// do header (sinal ambiente) e mostra NO MÁXIMO um toast com ação "Ver". Os
+// chamadores (PDP, kit, cross-sell, conjunto) NÃO disparam toast próprio — isso
+// gerava 2–3 toasts empilhados com vocabulário divergente. Vocabulário único:
+// "orçamento" (funil consultivo B2B).
+function notifyCartChanged(opts?: { toastLabel?: string; toastDescription?: string }) {
   if (typeof window === "undefined") return;
   // Não abre o drawer automaticamente — só pulsa o ícone e dispara toast discreto.
   window.dispatchEvent(new CustomEvent("western:cart-pulse"));
   if (opts?.toastLabel) {
     toast.success(opts.toastLabel, {
+      description: opts.toastDescription,
       action: {
         label: "Ver",
         onClick: () => window.dispatchEvent(new CustomEvent("western:open-cart")),
@@ -78,7 +93,7 @@ export const useCartStore = create<CartStore>()(
       items: [],
       isLoading: false,
 
-      addItem: (item) => {
+      addItem: (item, opts) => {
         const existing = get().items.find((i) => i.variantId === item.variantId);
         if (existing) {
           set({
@@ -91,11 +106,16 @@ export const useCartStore = create<CartStore>()(
         } else {
           set({ items: [...get().items, item] });
         }
-        notifyCartChanged({ toastLabel: "Adicionada ao orçamento" });
-
+        // Silencioso (lote): só pulsa. Senão: o ÚNICO toast do fluxo, já com o
+        // nome da peça na descrição (antes cada chamador dava seu próprio toast).
+        notifyCartChanged(
+          opts?.silent
+            ? undefined
+            : { toastLabel: "Adicionada ao orçamento", toastDescription: item.productTitle },
+        );
       },
 
-      addBundle: (newItems) => {
+      addBundle: (newItems, opts) => {
         const next = [...get().items];
         for (const item of newItems) {
           const idx = next.findIndex((i) => i.variantId === item.variantId);
@@ -111,13 +131,18 @@ export const useCartStore = create<CartStore>()(
         }
         set({ items: next });
         const totalQty = newItems.reduce((s, i) => s + i.quantity, 0);
-        notifyCartChanged({
-          toastLabel:
-            newItems.length > 1
-              ? `${newItems.length} peças adicionadas ao orçamento`
-              : `${totalQty > 1 ? `${totalQty} ` : ""}Adicionada ao orçamento`,
-        });
-
+        notifyCartChanged(
+          opts?.silent
+            ? undefined
+            : {
+                toastLabel:
+                  opts?.label ??
+                  (newItems.length > 1
+                    ? `${newItems.length} peças adicionadas ao orçamento`
+                    : `${totalQty > 1 ? `${totalQty} ` : ""}Adicionada ao orçamento`),
+                toastDescription: opts?.description,
+              },
+        );
       },
 
       updateQuantity: (variantId, quantity) => {

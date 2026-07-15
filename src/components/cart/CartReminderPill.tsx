@@ -1,29 +1,27 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { ShoppingBag, X } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 
 /**
- * Pílula fina fixa no rodapé (mobile), lembrando que há um orçamento aberto.
- * - Só aparece quando há itens no carrinho e o drawer está fechado.
- * - Some ao rolar pra baixo, volta ao rolar pra cima (mesma UX da StickyBuyBar).
- * - Botão X descarta a sessão; reaparece quando o total de itens sobe.
- * - Empilha acima da StickyBuyBarLab usando --sticky-buy-bar-h.
+ * Pílula fina fixa no rodapé (mobile): lembrete de que há um orçamento aberto.
+ *
+ * É um LEMBRETE PERSISTENTE — NÃO uma confirmação de "adicionado". A confirmação
+ * de cada add é o toast único do cartStore (+ pulso do badge no header). Por isso
+ * a pílula não "pisca" a cada peça: ela aparece enquanto há orçamento, some ao
+ * rolar pra baixo, é dispensável no X e fica escondida na própria /carrinho.
+ * - Empilha acima da barra fixa via --sticky-buy-bar-h.
  * - Escondida em ≥ md (desktop tem "Orçamento (N)" no header).
- * - V3: age como CTA flutuante — verde sólido sobre a página clara, texto areia,
- *   dourado só como acento sobre o verde. Toque ≥ 48px nos dois botões.
  */
 export default function CartReminderPill({ cartOpen }: { cartOpen: boolean }) {
   const items = useCartStore((s) => s.items);
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
+  const { pathname } = useLocation();
+  const onCartPage = pathname === "/carrinho";
 
   const [visible, setVisible] = useState(true);
-  const [dismissedAt, setDismissedAt] = useState(0);
+  const [dismissed, setDismissed] = useState(false);
   const lastY = useRef(0);
-
-  // Reaparece quando o cliente adiciona mais peças (total sobe acima do dismiss).
-  useEffect(() => {
-    if (totalItems > dismissedAt) setDismissedAt(0);
-  }, [totalItems, dismissedAt]);
 
   useEffect(() => {
     lastY.current = window.scrollY;
@@ -39,7 +37,7 @@ export default function CartReminderPill({ cartOpen }: { cartOpen: boolean }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const shouldRender = totalItems > 0 && !cartOpen && dismissedAt < totalItems;
+  const shouldRender = totalItems > 0 && !cartOpen && !dismissed && !onCartPage;
   if (!shouldRender) return null;
 
   return (
@@ -68,7 +66,7 @@ export default function CartReminderPill({ cartOpen }: { cartOpen: boolean }) {
           </button>
           <button
             type="button"
-            onClick={() => setDismissedAt(totalItems)}
+            onClick={() => setDismissed(true)}
             aria-label="Dispensar lembrete"
             className="min-h-[48px] min-w-[48px] inline-flex items-center justify-center rounded-full text-western-cream/80 hover:text-western-cream hover:bg-western-green-deep/40 transition-colors"
           >

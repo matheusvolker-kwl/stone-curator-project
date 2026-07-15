@@ -11,7 +11,7 @@
 //     falta, nunca bloqueia o botão (idêntico ao CartDrawer).
 //   · Checkout = hand-off top-level para o Woo (submitCheckoutHandoff).
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowLeft,
@@ -39,11 +39,11 @@ import CartCrossSell from "@/components/cart/CartCrossSell";
 import { useCartStore, type CartItem } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { usePartnerPricing } from "@/hooks/usePartnerPricing";
+import { usePublishStickyBarHeight } from "@/hooks/usePublishStickyBarHeight";
 import { formatBRL, cdnImg } from "@/lib/catalog/client";
 import { supabase } from "@/integrations/supabase/client";
 import { registerPedidoNovoLead } from "@/lib/leads/pedidoNovo";
 import { BUSINESS } from "@/config/business";
-import atelieFoto from "@/assets/ricardo-botelho.webp";
 
 const WHATS_URL = `https://wa.me/${BUSINESS.whatsappFabrica}`;
 
@@ -65,6 +65,11 @@ export default function Carrinho() {
 
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  // Publica a altura da barra fixa mobile p/ o FAB do WhatsApp e a pílula
+  // subirem acima do CTA de checkout (antes cobriam o botão).
+  const mobileBarRef = useRef<HTMLDivElement>(null);
+  usePublishStickyBarHeight(mobileBarRef);
 
   const currency = items[0]?.price.currencyCode ?? "BRL";
 
@@ -631,34 +636,10 @@ export default function Carrinho() {
                   </div>
 
                   <p className="text-meta mt-4 leading-normal">
-                    Próximo passo em ambiente seguro: entrega → pagamento → confirmação.
-                    Produção em {BUSINESS.prazoProducaoLabel}.
+                    Produção em {BUSINESS.prazoProducaoLabel} após a confirmação do pedido.
                   </p>
                 </div>
               </Reveal>
-
-              {/* Atendimento humano */}
-              <div className="mt-4 flex items-center gap-3.5 rounded-[10px] border border-western-border-soft bg-white p-4">
-                <img
-                  src={atelieFoto}
-                  alt="Equipe do ateliê Western"
-                  loading="lazy"
-                  className="h-12 w-12 rounded-full object-cover flex-shrink-0"
-                />
-                <div className="min-w-0">
-                  <p className="font-sans text-[16px] font-semibold leading-snug text-western-green-deep">
-                    Atendimento humano do ateliê
-                  </p>
-                  <a
-                    href={WHATS_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
-                  >
-                    WhatsApp {BUSINESS.whatsappLabel}
-                  </a>
-                </div>
-              </div>
 
               {/* Selos DEPOIS do resumo — no mobile eles vinham antes do CTA. */}
               <div className="mt-6">
@@ -691,7 +672,10 @@ export default function Carrinho() {
       </main>
 
       {/* Barra fixa no mobile — o CTA nunca sai da tela */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 surface-paper border-t border-western-border-soft shadow-[0_-12px_32px_-24px_rgba(30,26,22,0.35)] px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+      <div
+        ref={mobileBarRef}
+        className="lg:hidden fixed bottom-0 inset-x-0 z-40 surface-paper border-t border-western-border-soft shadow-[0_-12px_32px_-24px_rgba(30,26,22,0.35)] px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+      >
         <div className="flex items-baseline justify-between gap-3 mb-2">
           <span className="font-sans text-[14px] font-semibold text-western-stone-warm">
             {showValues

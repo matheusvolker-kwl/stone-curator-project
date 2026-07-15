@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
+import { usePublishStickyBarHeight } from "@/hooks/usePublishStickyBarHeight";
 import {
   Check,
   Package,
@@ -144,6 +145,9 @@ function useBuyAction() {
 function StickyBuyBar({ topBuyRef }: { topBuyRef: React.RefObject<HTMLElement> }) {
   const { disabled, buy } = useBuyAction();
   const [visible, setVisible] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
+  // Publica a altura da barra p/ o FAB do WhatsApp subir acima do CTA (não cobrir).
+  usePublishStickyBarHeight(barRef, visible);
 
   useEffect(() => {
     const el = topBuyRef.current;
@@ -167,7 +171,8 @@ function StickyBuyBar({ topBuyRef }: { topBuyRef: React.RefObject<HTMLElement> }
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 90, opacity: 0 }}
           transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-x-0 bottom-0 z-50 border-t border-western-border-soft bg-western-paper shadow-[0_-10px_30px_-16px_rgba(35,28,20,0.28)]"
+          ref={barRef}
+          className="fixed inset-x-0 bottom-0 z-40 border-t border-western-border-soft bg-western-paper shadow-[0_-10px_30px_-16px_rgba(35,28,20,0.28)]"
         >
           <div className="container-western py-3">
             <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-8">

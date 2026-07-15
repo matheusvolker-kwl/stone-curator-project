@@ -71,11 +71,8 @@ export default function CartCrossSell({
       }
       const item = buildCartItem(product, variant.id, 1);
       if (!item) return;
-      await addItem(item);
-      toast.success("Peça adicionada à composição", {
-        description: product.title,
-        position: "top-right",
-      });
+      // Toast único (com "Ver") vive no cartStore — sem segundo toast aqui.
+      addItem(item);
     } finally {
       setAdding(null);
     }

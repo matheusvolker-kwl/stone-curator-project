@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Check, Layers } from "lucide-react";
-import { toast } from "sonner";
 import type { ShopifyProductNode, ShopifyVariant } from "@/lib/catalog/types";
 import { formatBRL } from "@/lib/catalog/client";
 import { useCartStore, type CartItem } from "@/stores/cartStore";
@@ -63,10 +62,7 @@ export default function KitUpsell({ product, variant }: Props) {
     };
     addItem(item);
     setAdded(true);
-    toast.success("Kit adicionado ao pedido", {
-      description: `${kit.kitTitle}${acabamento ? ` · ${acabamento}` : ""}`,
-      position: "top-right",
-    });
+    // Toast único (com "Ver") vive no cartStore; aqui só o estado visual do botão.
     window.setTimeout(() => setAdded(false), 3500);
   };
 

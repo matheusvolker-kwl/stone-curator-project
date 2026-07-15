@@ -35,8 +35,9 @@ export default function EmptyCartHints({ onNavigate }: Props) {
         if (!variant) continue;
         const item = buildCartItem(product, variant.id, 1);
         if (!item) continue;
-        // eslint-disable-next-line no-await-in-loop
-        await addItem(item);
+        // Lote silencioso: sem toast por item — só o toast-resumo abaixo (antes
+        // 5 favoritos geravam 6 toasts empilhados).
+        addItem(item, { silent: true });
         added += 1;
       }
       if (added > 0) {
