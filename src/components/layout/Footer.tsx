@@ -17,6 +17,7 @@ import { BUSINESS } from "@/config/business";
 import { submitSecureLead } from "@/lib/leads";
 import TurnstileWidget from "@/components/security/TurnstileWidget";
 import { toast } from "sonner";
+import FormasDePagamento from "./FormasDePagamento";
 
 const newsletterSchema = z.object({
   email: z.string().trim().toLowerCase().email("E-mail inválido").max(320),
@@ -286,6 +287,9 @@ export default function Footer() {
             </li>
           ))}
         </ul>
+
+        {/* Formas de pagamento — faixa do kit V3 que não tinha sido repassada */}
+        <FormasDePagamento />
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 pt-8 border-t border-western-gold/15">
           <p className="text-[14px] text-western-cream-muted leading-[1.6]">
