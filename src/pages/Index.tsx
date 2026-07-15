@@ -13,7 +13,9 @@ import {
   ShieldCheck,
   Check,
   X,
+  MessageCircle,
 } from "lucide-react";
+import { BUSINESS } from "@/config/business";
 import heroCascata from "@/assets/hero-cascata.webp";
 import heroCascataSm from "@/assets/hero-cascata-sm.webp";
 import iconePedraBranco from "@/assets/icone-pedra-branco.png";
@@ -64,10 +66,6 @@ const featuredTrack =
   "sm:mx-0 sm:px-0 sm:scroll-px-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible " +
   "md:grid-cols-3 lg:grid-cols-4";
 const featuredItem = "snap-start shrink-0 w-[76vw] max-w-[300px] sm:w-auto sm:max-w-none";
-
-function scrollToId(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-}
 
 export default function Index() {
   const { data: featured = [], isLoading: loadingFeatured } = useQuery({
@@ -136,20 +134,29 @@ export default function Index() {
             <p className="text-[17px] md:text-[19px] leading-[1.6] text-western-cream/85 max-w-md mt-5 mb-8">
               Reprodução fiel da pedra natural. Sem guindaste — sobe até na laje.
             </p>
-            {/* CTA primário full-width no mobile. Dourado porque o verde não teria
-                contraste sobre a foto com overlay verde. */}
+            {/* Hierarquia de CTA: a AÇÃO de maior valor (converter) vem primeiro.
+                Dourado porque o verde não teria contraste sobre a foto com overlay
+                verde — é a regra do V3 (verde é primário sobre fundo claro; sobre
+                foto/verde, o acento dourado assume). */}
             <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
-              <Link to="/produtos" className="btn-gold w-full sm:w-auto">
-                Ver catálogo <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+              <Link to="/parceiro/cadastro" className="btn-gold w-full sm:w-auto">
+                Criar cadastro · ver preços <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
               </Link>
-              <button
-                type="button"
-                onClick={() => scrollToId("como-comprar")}
-                className="btn-outline-cream w-full sm:w-auto"
-              >
-                Como comprar
-              </button>
+              <Link to="/produtos" className="btn-outline-cream w-full sm:w-auto">
+                Ver catálogo
+              </Link>
             </div>
+            <a
+              href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
+                "Olá, vim pelo site da Western e gostaria de falar com o ateliê.",
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center gap-2 text-[15px] text-western-cream/80 hover:text-western-gold-soft transition-colors"
+            >
+              <MessageCircle className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+              Prefere falar? Chame o ateliê no WhatsApp
+            </a>
             <div className="flex flex-wrap gap-x-10 gap-y-5 mt-10 pt-7 border-t border-western-cream/20">
               {[
                 { b: "+400", s: "modelos" },
@@ -162,6 +169,53 @@ export default function Index() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 1b — Segmentação B2B×B2C inline (substitui o antigo modal de entrada).
+          Uma porta só para "por onde começar": profissional (vê preço) ou casa. */}
+      <section className="surface-paper border-b border-western-border-soft py-12 md:py-16">
+        <div className="container-western">
+          <Reveal variant="fade-up" duration={600}>
+            <div className="max-w-2xl mb-7 md:mb-9">
+              <p className="text-eyebrow mb-3">Por onde começar</p>
+              <h2 className="display-md text-western-green-deep">
+                Você é profissional, ou é para a sua casa?
+              </h2>
+            </div>
+          </Reveal>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Reveal variant="fade-up" duration={600} distance={16}>
+              <div className="h-full flex flex-col rounded-[16px] border border-western-border-soft bg-white p-6 md:p-7">
+                <h3 className="font-display text-[20px] text-western-green-deep">
+                  Sou profissional ou revenda
+                </h3>
+                <p className="mt-2 text-[16px] leading-[1.6] text-western-stone-warm flex-1">
+                  Arquiteto, paisagista, laguista ou loja. Cadastre-se e veja os
+                  preços de parceiro — atacado, com CNPJ.
+                </p>
+                <Link to="/parceiro/cadastro" className="btn-primary mt-5 w-full sm:w-auto">
+                  Criar cadastro · ver preços
+                  <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+                </Link>
+              </div>
+            </Reveal>
+            <Reveal variant="fade-up" duration={600} distance={16} delay={80}>
+              <div className="h-full flex flex-col rounded-[16px] border border-western-border-soft bg-white p-6 md:p-7">
+                <h3 className="font-display text-[20px] text-western-green-deep">
+                  É para a minha casa
+                </h3>
+                <p className="mt-2 text-[16px] leading-[1.6] text-western-stone-warm flex-1">
+                  Quer uma cascata, lago ou área de lazer em casa? A gente cuida
+                  do projeto pra você, do desenho à entrega.
+                </p>
+                <Link to="/para-sua-casa" className="btn-outline-forest mt-5 w-full sm:w-auto">
+                  Ver as opções para a sua casa
+                  <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+                </Link>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>
