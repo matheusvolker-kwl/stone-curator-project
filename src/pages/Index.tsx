@@ -4,6 +4,7 @@ import { fetchProducts } from "@/lib/datasource";
 import Seo from "@/components/seo/Seo";
 import ProductCard from "@/components/product/ProductCard";
 import ArtistaSection from "@/components/home/ArtistaSection";
+import SobreAWestern from "@/components/home/SobreAWestern";
 import Reveal from "@/components/shared/Reveal";
 import SocialProof from "@/components/shared/SocialProof";
 import {
@@ -173,50 +174,8 @@ export default function Index() {
 
       {/* 1b — Segmentação B2B×B2C inline (substitui o antigo modal de entrada).
           Uma porta só para "por onde começar": profissional (vê preço) ou casa. */}
-      <section className="surface-paper border-b border-western-border-soft py-12 md:py-16">
-        <div className="container-western">
-          <Reveal variant="fade-up" duration={600}>
-            <div className="max-w-2xl mb-7 md:mb-9">
-              <p className="text-eyebrow mb-3">Por onde começar</p>
-              <h2 className="display-md text-western-green-deep">
-                Você é profissional, ou é para a sua casa?
-              </h2>
-            </div>
-          </Reveal>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Reveal variant="fade-up" duration={600} distance={16}>
-              <div className="h-full flex flex-col rounded-[16px] border border-western-border-soft bg-white p-6 md:p-7">
-                <h3 className="font-display text-[20px] text-western-green-deep">
-                  Sou profissional ou revenda
-                </h3>
-                <p className="mt-2 text-[16px] leading-[1.6] text-western-stone-warm flex-1">
-                  Arquiteto, paisagista, laguista ou loja. Cadastre-se e veja os
-                  preços de parceiro — atacado, com CNPJ.
-                </p>
-                <Link to="/parceiro/cadastro" className="btn-primary mt-5 w-full sm:w-auto">
-                  Criar cadastro · ver preços
-                  <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
-                </Link>
-              </div>
-            </Reveal>
-            <Reveal variant="fade-up" duration={600} distance={16} delay={80}>
-              <div className="h-full flex flex-col rounded-[16px] border border-western-border-soft bg-white p-6 md:p-7">
-                <h3 className="font-display text-[20px] text-western-green-deep">
-                  É para a minha casa
-                </h3>
-                <p className="mt-2 text-[16px] leading-[1.6] text-western-stone-warm flex-1">
-                  Quer uma cascata, lago ou área de lazer em casa? A gente cuida
-                  do projeto pra você, do desenho à entrega.
-                </p>
-                <Link to="/para-sua-casa" className="btn-outline-forest mt-5 w-full sm:w-auto">
-                  Ver as opções para a sua casa
-                  <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
-                </Link>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
+      {/* 1 — O que é a Western Store (orientação p/ quem cai de paraquedas) */}
+      <SobreAWestern />
 
       {/* 2 — Barra de confiança */}
       <section className="bg-white border-b border-western-border-soft">
