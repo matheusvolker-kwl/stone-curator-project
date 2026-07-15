@@ -267,7 +267,7 @@ export default function FAQ() {
           </div>
 
           <p className="text-meta mt-8 text-western-cream-muted">
-            Ateliê desde {BUSINESS.fundadaEm} · NF-e em todo pedido · Garantia de {BUSINESS.garantiaLabel} ·
+            Ateliê desde {BUSINESS.fundadaEm} · Compra segura · Garantia de {BUSINESS.garantiaLabel} ·
             CNPJ {BUSINESS.cnpj}
           </p>
         </div>

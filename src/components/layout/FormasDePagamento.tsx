@@ -100,7 +100,7 @@ export default function FormasDePagamento() {
         {[
           { Icon: ShieldCheck, text: "Pagamento processado com segurança pela Appmax" },
           { Icon: Lock, text: "Site seguro (SSL) — seus dados protegidos" },
-          { Icon: FileText, text: "Nota fiscal (NF-e) em todo pedido" },
+          { Icon: FileText, text: "Compra 100% segura" },
         ].map(({ Icon, text }) => (
           <li key={text} className="flex items-center gap-2 text-[14px] text-western-cream-muted leading-[1.5]">
             <Icon className="h-[18px] w-[18px] text-western-gold-soft shrink-0" strokeWidth={1.75} />

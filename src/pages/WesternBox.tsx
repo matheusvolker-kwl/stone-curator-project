@@ -378,7 +378,7 @@ function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLDivElement> 
               </li>
               <li className="text-spec flex items-center gap-3">
                 <FileText className="h-5 w-5 shrink-0 text-western-bronze" aria-hidden />
-                NF-e em todo pedido · ateliê brasileiro desde {BUSINESS.fundadaEm}
+                Compra segura · ateliê brasileiro desde {BUSINESS.fundadaEm}
               </li>
             </ul>
           </div>

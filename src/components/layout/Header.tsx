@@ -84,7 +84,7 @@ const NAV_INTENTS = [
   { to: "/conjuntos", label: "Conjuntos" },
   { to: "/guia-de-composicao", label: "Guia de composição" },
   // 2. CONFIAR
-  { to: "/inspiracoes", label: "Inspirações" },
+  { to: "/inspiracoes", label: "Inspire-se" },
   // 3. CAPTAR — hub B2C: sem CNPJ, a Western executa (vira lead turnkey).
   //    (Não confundir com /contrate-a-western, que é a página com formulário.)
   { to: "/para-sua-casa", label: "Para sua casa" },
@@ -684,7 +684,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               {/* 2. CONFIAR */}
               <p className="text-eyebrow mt-7 mb-1">Decidir</p>
               {drawerLink("/guia-de-composicao", "Guia de composição", "Monte seu projeto em 3 passos")}
-              {drawerLink("/inspiracoes", "Inspirações", "Obras e projetos reais")}
+              {drawerLink("/inspiracoes", "Inspire-se", "Obras e projetos reais")}
               {drawerLink("/por-que-western", "Por que Western", "A pedra com ~10% do peso")}
 
               {/* 3. CAPTAR — a rampa B2C. Agrupada e rotulada pela PERGUNTA do

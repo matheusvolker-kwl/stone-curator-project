@@ -263,7 +263,7 @@ function PanelBody({
           </span>
           <span className="inline-flex items-center gap-1.5 font-sans text-[14px] text-western-stone-warm">
             <FileText className="h-4 w-4 text-western-bronze flex-shrink-0" aria-hidden />
-            NF-e em todo pedido
+            Compra segura
           </span>
           <span className="inline-flex items-center gap-1.5 font-sans text-[14px] text-western-stone-warm">
             <Truck className="h-4 w-4 text-western-bronze flex-shrink-0" aria-hidden />

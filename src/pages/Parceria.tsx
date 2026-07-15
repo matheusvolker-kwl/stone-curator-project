@@ -139,7 +139,7 @@ const LIBERA = [
   {
     Icon: FileText,
     t: "Condições B2B",
-    d: `NF-e, garantia de ${BUSINESS.garantiaLabel} e reposição garantida.`,
+    d: `Compra segura, garantia de ${BUSINESS.garantiaLabel} e reposição garantida.`,
   },
 ];
 
@@ -189,7 +189,7 @@ const PASSOS = [
 
 const CONFIANCA = [
   { Icon: Check, t: "Aprovação automática e imediata" },
-  { Icon: FileText, t: "NF-e em todo pedido" },
+  { Icon: FileText, t: "Compra segura" },
   { Icon: ShieldCheck, t: `Garantia de ${BUSINESS.garantiaLabel} · ateliê brasileiro desde ${BUSINESS.fundadaEm}` },
   { Icon: Lock, t: `CNPJ ${BUSINESS.cnpj}` },
 ];
@@ -689,7 +689,7 @@ export default function Parceria() {
               </a>
             </div>
             <p className="mt-6 text-[14px] text-western-cream-muted">
-              Ateliê desde {BUSINESS.fundadaEm} · NF-e em todo pedido · Garantia de {BUSINESS.garantiaLabel}
+              Ateliê desde {BUSINESS.fundadaEm} · Compra segura · Garantia de {BUSINESS.garantiaLabel}
             </p>
           </Reveal>
         </div>

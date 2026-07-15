@@ -25,6 +25,10 @@ import imgJardim from "@/assets/casos-western/unique-garden.webp";
 import imgLago from "@/assets/casos-western/projeto-residencial.webp";
 import imgLagoHibrido from "@/assets/conjuntos-render/conjunto-lago-hibrido-igarape-equilibrado.webp";
 import imgFazzenda from "@/assets/casos-western/fazzenda-park.webp";
+import linhaCapaCascatas from "@/assets/linhas/cascatas.webp";
+import linhaCapaRevestimentos from "@/assets/linhas/revestimentos.webp";
+import linhaCapaAcessorios from "@/assets/linhas/acessorios.webp";
+import linhaCapaPedras from "@/assets/linhas/pedras-grandes.webp";
 
 /* DS V3 — eyebrow sobre fundo escuro/foto: mesma métrica do .text-eyebrow
  * (sans semibold 14px, tracking 0.06em), em dourado claro porque o bronze
@@ -45,6 +49,13 @@ const TILES = [
   { nome: "Lago híbrido", desc: "Estrutura Western + pedra natural", img: imgLagoHibrido },
   { nome: "Jardim", desc: "Jardins contemplativos, com ou sem água", img: imgJardim },
   { nome: "Fonte & cascata", desc: "Fontes e quedas com água corrente", img: imgFonte },
+];
+
+const LINHAS_HOME = [
+  { handle: "pedras-decorativas", label: "Pedras decorativas", cover: linhaCapaPedras },
+  { handle: "cascatas", label: "Cascatas", cover: linhaCapaCascatas },
+  { handle: "revestimentos", label: "Revestimentos", cover: linhaCapaRevestimentos },
+  { handle: "acessorios", label: "Acessórios", cover: linhaCapaAcessorios },
 ];
 
 const PROJETOS = [
@@ -229,47 +240,15 @@ export default function Index() {
         </div>
       </section>
 
-      {/* 3 — O que você vai construir? (intenção por aplicação → guia) */}
-      <section className="surface-ivory py-16 md:py-24">
-        <div className="container-western">
-          <Reveal variant="fade-up" duration={700}>
-            <p className="text-eyebrow mb-3">Compre por projeto</p>
-            <h2 className="display-lg text-western-green-deep mb-8 md:mb-12">
-              O que você vai construir?
-            </h2>
-          </Reveal>
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
-            {TILES.map((t, i) => (
-              <Reveal key={t.nome} variant="fade-up" delay={(i % 4) * 80} duration={600} distance={18}>
-                <Link to="/guia-de-composicao" className="group block">
-                  <div className="relative overflow-hidden rounded-[16px] aspect-[4/5] bg-western-cream-muted">
-                    <img
-                      src={t.img}
-                      alt={t.nome}
-                      loading="lazy"
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-western-green-deep/90 via-western-green-deep/25 to-transparent" />
-                    <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
-                      <p className="font-sans text-[20px] font-semibold text-western-cream leading-snug">{t.nome}</p>
-                      <p className="text-[14px] text-western-cream/80 mt-1 leading-snug">{t.desc}</p>
-                    </div>
-                  </div>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 4 — Mais especificados (catálogo dinâmico) */}
+      {/* 3 — Mais vendidos (catálogo dinâmico). Ordem pedida pelo dono: best-sellers
+          primeiro, depois as linhas, e só então "o que você vai construir". */}
       <section className="surface-paper py-16 md:py-20 border-t border-western-border-soft" id="produtos">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
               <div>
-                <p className="text-eyebrow mb-3">Em destaque</p>
-                <h2 className="display-lg text-western-green-deep">Mais especificados.</h2>
+                <p className="text-eyebrow mb-3">Os mais pedidos</p>
+                <h2 className="display-lg text-western-green-deep">Mais vendidos.</h2>
               </div>
               <Link
                 to="/produtos"
@@ -309,6 +288,78 @@ export default function Index() {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* 3b — Principais linhas (navegação por categoria) */}
+      <section className="surface-ivory py-16 md:py-20 border-t border-western-border-soft">
+        <div className="container-western">
+          <Reveal variant="fade-up" duration={700}>
+            <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
+              <div>
+                <p className="text-eyebrow mb-3">Navegue por linha</p>
+                <h2 className="display-lg text-western-green-deep">Principais linhas.</h2>
+              </div>
+              <Link
+                to="/linhas"
+                className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
+              >
+                Ver todas as linhas <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+              </Link>
+            </div>
+          </Reveal>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            {LINHAS_HOME.map((l, i) => (
+              <Reveal key={l.handle} variant="fade-up" delay={(i % 4) * 80} duration={620} distance={18}>
+                <Link to={`/linhas/${l.handle}`} className="group block">
+                  <div className="relative overflow-hidden rounded-[16px] aspect-[4/3] bg-western-cream-muted">
+                    <img
+                      src={l.cover}
+                      alt={l.label}
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  <h3 className="mt-3 font-sans text-[18px] font-semibold text-western-green-deep transition-colors group-hover:text-western-bronze">
+                    {l.label}
+                  </h3>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 3c — O que você vai construir? (intenção por aplicação → guia) */}
+      <section className="surface-paper py-16 md:py-24 border-t border-western-border-soft">
+        <div className="container-western">
+          <Reveal variant="fade-up" duration={700}>
+            <p className="text-eyebrow mb-3">Compre por projeto</p>
+            <h2 className="display-lg text-western-green-deep mb-8 md:mb-12">
+              O que você vai construir?
+            </h2>
+          </Reveal>
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
+            {TILES.map((t, i) => (
+              <Reveal key={t.nome} variant="fade-up" delay={(i % 4) * 80} duration={600} distance={18}>
+                <Link to="/guia-de-composicao" className="group block">
+                  <div className="relative overflow-hidden rounded-[16px] aspect-[4/5] bg-western-cream-muted">
+                    <img
+                      src={t.img}
+                      alt={t.nome}
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-western-green-deep/90 via-western-green-deep/25 to-transparent" />
+                    <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
+                      <p className="font-sans text-[20px] font-semibold text-western-cream leading-snug">{t.nome}</p>
+                      <p className="text-[14px] text-western-cream/80 mt-1 leading-snug">{t.desc}</p>
+                    </div>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -519,6 +570,30 @@ export default function Index() {
       {/* 10 — Prova social (faixa institucional escura) */}
       <section className="surface-forest py-16 md:py-24 border-y border-western-gold/15">
         <div className="container-western max-w-5xl">
+          {/* Números verificáveis primeiro — dão peso antes dos nomes. */}
+          <Reveal variant="fade-up" duration={700}>
+            <div className="mb-12 grid grid-cols-3 gap-3 border-b border-western-gold/15 pb-12 md:mb-16 md:gap-8 md:pb-16">
+              {[
+                { n: "4,9", l: "no Google", stars: true },
+                { n: "+14 mil", l: "no Instagram", stars: false },
+                { n: "+700", l: "projetos pelo Brasil", stars: false },
+              ].map((s) => (
+                <div key={s.l} className="text-center">
+                  <p className="font-display text-[28px] leading-none text-western-cream tabular-nums md:text-[46px]">
+                    {s.n}
+                  </p>
+                  {s.stars && (
+                    <p className="mt-1.5 text-[13px] tracking-[0.2em] text-western-gold-soft" aria-hidden="true">
+                      ★★★★★
+                    </p>
+                  )}
+                  <p className="mt-2 text-[14px] leading-snug text-western-cream/75 md:text-[15px]">
+                    {s.l}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
               variant="dark"

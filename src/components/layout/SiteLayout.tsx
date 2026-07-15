@@ -3,7 +3,6 @@ import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import CartDrawer from "./CartDrawer";
-import TopBar from "./TopBar";
 import WhatsAppFAB from "./WhatsAppFAB";
 import CartReminderPill from "@/components/cart/CartReminderPill";
 import { useCartSync } from "@/hooks/useCartSync";
@@ -27,7 +26,6 @@ export default function SiteLayout() {
       >
         Pular para o conteúdo
       </a>
-      <TopBar />
       <Header onCartOpen={() => setCartOpen(true)} />
       <main id="main-content" className="flex-1 relative z-10" tabIndex={-1}>
         <Outlet context={{ openCart: () => setCartOpen(true) }} />

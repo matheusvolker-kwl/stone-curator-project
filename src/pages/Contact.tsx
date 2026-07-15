@@ -525,7 +525,7 @@ export default function Contact() {
 
               <p className="mt-12 border-t border-western-gold/20 pt-8 text-[14px] leading-relaxed text-western-cream-muted">
                 Fundada em {BUSINESS.fundadaEm} · {BUSINESS.anosOperacao}+ anos de coautoria com arquitetos ·
-                NF-e em todo pedido · Garantia de {BUSINESS.garantiaLabel}
+                Compra segura · Garantia de {BUSINESS.garantiaLabel}
               </p>
             </div>
           </div>

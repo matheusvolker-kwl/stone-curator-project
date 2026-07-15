@@ -139,7 +139,7 @@ export default function Footer() {
               <li><Link to="/como-comprar" className={colLink}>Como comprar</Link></li>
               <li><Link to="/conjuntos" className={colLink}>Conjuntos prontos</Link></li>
               <li><Link to="/guia-de-composicao" className={colLink}>Guia de composição</Link></li>
-              <li><Link to="/inspiracoes" className={colLink}>Inspirações</Link></li>
+              <li><Link to="/inspiracoes" className={colLink}>Inspire-se</Link></li>
               <li><Link to="/western-box" className={colLink}>Western Box · amostras</Link></li>
               <li><Link to="/politica-comercial" className={colLink}>Política comercial</Link></li>
               <li><Link to="/politica-de-entrega" className={colLink}>Política de entrega</Link></li>
@@ -275,7 +275,7 @@ export default function Footer() {
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4 py-10 border-t border-western-gold/15">
           {[
             { Icon: ShieldCheck, text: `Garantia de ${BUSINESS.garantiaLabel} em todas as peças` },
-            { Icon: FileText, text: "Nota fiscal (NF-e) em todo pedido" },
+            { Icon: FileText, text: "Compra 100% segura" },
             { Icon: Truck, text: "Entrega rastreada por transportadora" },
             { Icon: MapPin, text: `Retirada no ateliê em ${BUSINESS.cidadeAtelie}/${BUSINESS.ufAtelie}` },
           ].map(({ Icon, text }) => (

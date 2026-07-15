@@ -327,7 +327,7 @@ export default function About() {
             </div>
 
             <p className="text-[14px] text-western-cream-muted mt-7">
-              Ateliê desde {BUSINESS.fundadaEm} · NF-e em todo pedido · Garantia de{" "}
+              Ateliê desde {BUSINESS.fundadaEm} · Compra segura · Garantia de{" "}
               {BUSINESS.garantiaLabel} · CNPJ {BUSINESS.cnpj}
             </p>
           </Reveal>

@@ -75,7 +75,7 @@ function FieldError({ id, children }: { id?: string; children: React.ReactNode }
 /* Sinais de legitimidade perto da decisão (§12) — todos vindos de BUSINESS. */
 const CONFIANCA = [
   "Cadastro gratuito, com aprovação automática para profissionais do ramo",
-  `NF-e em todo pedido · garantia de ${BUSINESS.garantiaLabel}`,
+  `Compra segura · garantia de ${BUSINESS.garantiaLabel}`,
   `Ateliê brasileiro desde ${BUSINESS.fundadaEm} · CNPJ ${BUSINESS.cnpj}`,
 ];
 

@@ -133,7 +133,7 @@ export default function Inspiracoes() {
   return (
     <div className="surface-ivory">
       <Seo
-        title="Inspirações — cenas reais com pedra Western"
+        title="Inspire-se — cenas reais com pedra Western"
         description="Lookbook de composições reais: piscina, jardim e lago com pedras artesanais Western. Veja a ideia por trás de cada cena e as peças usadas."
         path="/inspiracoes"
       />
@@ -141,7 +141,7 @@ export default function Inspiracoes() {
         {/* Cabeçalho + seletor de tipo */}
         <Reveal variant="fade-up">
           <div className="max-w-3xl">
-            <p className="text-eyebrow mb-4">Inspiração · Cenas reais</p>
+            <p className="text-eyebrow mb-4">Inspire-se · Cenas reais</p>
             <div className="w-12 h-px bg-western-gold mb-8" />
             <div
               role="group"
@@ -248,7 +248,7 @@ export default function Inspiracoes() {
               </Link>
             </div>
             <p className="mt-7 text-[14px] text-western-cream-muted">
-              Ateliê desde 1993 · NF-e em todo pedido · Garantia de 1 ano
+              Ateliê desde 1993 · Compra segura · Garantia de 1 ano
             </p>
           </section>
         </Reveal>

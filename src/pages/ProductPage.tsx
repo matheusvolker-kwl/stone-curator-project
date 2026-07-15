@@ -521,7 +521,7 @@ export default function ProductPage() {
                   <p className="mt-4 pt-4 border-t border-western-border-soft text-meta flex flex-wrap items-center gap-x-2 gap-y-1.5">
                     <span className="inline-flex items-center gap-1.5">
                       <FileText className="h-4 w-4 text-western-bronze" aria-hidden />
-                      NF-e em todo pedido
+                      Compra segura
                     </span>
                     <span className="opacity-40">·</span>
                     <span className="inline-flex items-center gap-1.5">

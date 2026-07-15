@@ -245,7 +245,7 @@ export default function ComoComprar() {
             <ul className="mt-9 pt-6 border-t border-western-border-soft flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8">
               <li className="text-spec inline-flex items-center gap-2">
                 <FileText className="h-[18px] w-[18px] shrink-0 text-western-bronze" aria-hidden />
-                NF-e em todo pedido
+                Compra segura
               </li>
               <li className="text-spec inline-flex items-center gap-2">
                 <ShieldCheck className="h-[18px] w-[18px] shrink-0 text-western-bronze" aria-hidden />

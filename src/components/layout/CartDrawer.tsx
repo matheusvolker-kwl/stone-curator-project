@@ -5,20 +5,15 @@ import {
   Minus,
   Plus,
   Trash2,
-  MessageCircle,
   Lock,
   ArrowLeft,
   ArrowRight,
   Download,
-  Truck,
-  ShieldCheck,
-  FileText,
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { BUSINESS } from "@/config/business";
 import { useAuth } from "@/hooks/useAuth";
-import CartCrossSell from "@/components/cart/CartCrossSell";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import EmptyCartHints from "@/components/cart/EmptyCartHints";
 
@@ -180,30 +175,6 @@ export default function CartDrawer({
             </ul>
           )}
 
-          {items.length > 0 && (
-            <a
-              href={`https://wa.me/${BUSINESS.whatsappFabrica}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="tap-target inline-flex items-center gap-2 mt-4 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
-            >
-              <MessageCircle className="h-5 w-5 text-western-bronze" /> Dúvidas? Falar com o ateliê
-            </a>
-          )}
-
-          {items.length > 0 && (() => {
-            const soAvulsos = items.every((i) => i.wooKind !== "bundle" && !i.conjuntoRef);
-            const crossHandle = soAvulsos ? "conjuntos" : (items[0]?.collectionHandle ?? "conjuntos");
-            return (
-              <div className="mt-8 -mx-5 md:-mx-8">
-                <CartCrossSell
-                  collectionHandle={crossHandle}
-                  excludeHandles={items.map((i) => i.productHandle)}
-                  onNavigate={() => onOpenChange(false)}
-                />
-              </div>
-            );
-          })()}
         </div>
 
         {items.length > 0 && (
@@ -250,32 +221,8 @@ export default function CartDrawer({
               </div>
             )}
 
-            {/* Frete — cotado por CEP no checkout */}
-            {isApproved && (
-              <div className="rounded-[10px] border border-western-border-soft bg-western-ivory px-3.5 py-3">
-                <div className="flex items-start gap-2.5">
-                  <Truck className="h-5 w-5 text-western-bronze flex-shrink-0 mt-0.5" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-eyebrow">Frete calculado no checkout</p>
-                    <p className="font-sans text-[15px] leading-normal text-western-stone-warm mt-1">
-                      Cotamos por CEP, incluindo pedidos multivolume, na etapa de pagamento.
-                      Retirada grátis em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
-                    </p>
-                    <a
-                      href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
-                        "Olá, Western. Estou montando um pedido grande / de obra e gostaria de uma cotação logística dedicada.",
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center mt-2 font-sans text-[15px] font-semibold text-western-green-deep hover:underline"
-                    >
-                      Pedido grande ou obra? Falar no WhatsApp
-                      <ArrowRight className="h-4 w-4 ml-1.5" />
-                    </a>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Frete, selos e pagamento vivem na PÁGINA do carrinho — aqui o drawer
+                é só a prévia (produtos + subtotal), pra o cliente ver o que somou. */}
 
             {/* Preço gated — política comercial B2B */}
             {!isApproved && (
@@ -321,35 +268,11 @@ export default function CartDrawer({
               </Link>
             )}
 
-            {/* Formas de pagamento */}
-            {isApproved && (
-              <div className="flex items-center justify-center gap-3 flex-wrap">
-                {["Pix", "Boleto", "Cartão até 12×"].map((label, i) => (
-                  <div key={label} className="flex items-center gap-3">
-                    {i > 0 && <span className="text-western-gold text-[9px]">◆</span>}
-                    <span className="font-sans text-[14px] font-semibold text-western-stone-warm">
-                      {label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Sinais de confiança perto da decisão */}
-            <div className="pt-1 space-y-1.5">
-              <p className="flex items-start gap-2 font-sans text-[14px] leading-snug text-western-stone-warm">
-                <FileText className="h-4 w-4 text-western-bronze flex-shrink-0 mt-0.5" />
-                Empresa brasileira · NF-e em todo pedido · CNPJ {BUSINESS.cnpj}
-              </p>
-              <p className="flex items-start gap-2 font-sans text-[14px] leading-snug text-western-stone-warm">
-                <ShieldCheck className="h-4 w-4 text-western-bronze flex-shrink-0 mt-0.5" />
-                Garantia de {BUSINESS.garantiaLabel} · reposição garantida · entrega rastreada
-              </p>
-              <p className="flex items-start gap-2 font-sans text-[14px] leading-snug text-western-stone-warm">
-                <Lock className="h-4 w-4 text-western-bronze flex-shrink-0 mt-0.5" />
-                Você conclui o pagamento em ambiente seguro, fora do site. Produção em {BUSINESS.prazoProducaoLabel}.
-              </p>
-            </div>
+            {/* Uma reasseguração breve — o resto (selos, pagamento) fica no carrinho. */}
+            <p className="flex items-start gap-2 pt-1 font-sans text-[14px] leading-snug text-western-stone-warm">
+              <Lock className="h-4 w-4 text-western-bronze flex-shrink-0 mt-0.5" />
+              Pagamento em ambiente seguro · garantia de {BUSINESS.garantiaLabel}.
+            </p>
           </div>
         )}
       </SheetContent>

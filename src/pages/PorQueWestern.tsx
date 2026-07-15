@@ -182,7 +182,7 @@ export default function PorQueWestern() {
             <div className="mt-6 pt-5 border-t border-western-border-soft flex flex-wrap justify-center gap-x-6 gap-y-3">
               <span className="text-spec inline-flex items-center gap-2">
                 <FileText className="h-[18px] w-[18px] text-western-bronze shrink-0" aria-hidden />
-                NF-e em todo pedido
+                Compra segura
               </span>
               <span className="text-spec inline-flex items-center gap-2">
                 <ShieldCheck className="h-[18px] w-[18px] text-western-bronze shrink-0" aria-hidden />

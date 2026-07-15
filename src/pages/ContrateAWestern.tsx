@@ -681,7 +681,7 @@ export default function ContrateAWestern() {
 
                 <div className="md:col-span-2 pt-5 border-t border-western-border-soft grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
-                    { icon: FileText, label: "NF-e em todo pedido" },
+                    { icon: FileText, label: "Compra segura" },
                     { icon: ShieldCheck, label: `Garantia de ${BUSINESS.garantiaLabel}` },
                     { icon: Check, label: `Ateliê brasileiro desde ${BUSINESS.fundadaEm}` },
                     { icon: Lock, label: `CNPJ ${BUSINESS.cnpj}` },

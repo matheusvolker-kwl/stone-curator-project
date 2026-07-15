@@ -70,7 +70,7 @@ function FechamentoLegal({
         </Link>
       </div>
       <p className="mt-8 text-[14px] leading-[1.5] text-western-cream/70">
-        Ateliê desde {BUSINESS.fundadaEm} · CNPJ {BUSINESS.cnpj} · NF-e em todo pedido · Garantia de{" "}
+        Ateliê desde {BUSINESS.fundadaEm} · CNPJ {BUSINESS.cnpj} · Compra segura · Garantia de{" "}
         {BUSINESS.garantiaLabel}
       </p>
     </section>

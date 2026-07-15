@@ -251,7 +251,7 @@ export default function Carrinho() {
           className="h-4 w-4 text-western-bronze flex-shrink-0 mt-0.5"
           aria-hidden="true"
         />
-        Empresa brasileira · NF-e em todo pedido · CNPJ {BUSINESS.cnpj}
+        Empresa brasileira · Compra segura · CNPJ {BUSINESS.cnpj}
       </p>
       <p className="flex items-start gap-2.5 font-sans text-[14px] leading-snug text-western-stone-warm">
         <ShieldCheck
