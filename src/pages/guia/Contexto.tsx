@@ -191,7 +191,7 @@ export default function GuiaContexto() {
             <p className="text-body mb-8 max-w-[56ch]">
               Selecione o tipo que mais se aproxima do projeto que você está atendendo.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
               {TIPOS.map((t) => (
                 <TipoCard
                   key={t.value}

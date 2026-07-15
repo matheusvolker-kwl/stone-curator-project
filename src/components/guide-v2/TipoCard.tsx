@@ -62,7 +62,9 @@ export default function TipoCard({ value, label, microcopy, image, selected, onS
         <span className="font-sans text-[20px] font-semibold leading-tight text-western-green-deep">
           {label}
         </span>
-        {microcopy && <span className="text-meta mt-1.5 leading-snug">{microcopy}</span>}
+        {microcopy && (
+          <span className="text-meta mt-1.5 line-clamp-2 leading-snug">{microcopy}</span>
+        )}
       </div>
     </button>
   );
