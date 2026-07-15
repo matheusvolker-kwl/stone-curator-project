@@ -8,7 +8,7 @@ import { ArrowRight, X } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
 import { LINHA_COVER_OVERRIDES } from "@/lib/lineCovers";
 import { LINHA_DESCRIPTIONS } from "@/lib/lineDescriptions";
-import { linhaRank } from "@/lib/lineOrder";
+import { resolveSearch } from "@/lib/search/vocab";
 import {
   CATALOG_SCENES,
   PEDRAS_HANDLES,
@@ -85,17 +85,20 @@ export default function Linhas() {
   const [params, setParams] = useSearchParams();
   const q = (params.get("q") ?? "").trim();
 
-  const { data: products = [], isLoading: loadingProducts } = useQuery({
-    queryKey: ["productSearch", q],
-    queryFn: () => {
-      const term = q.replace(/[^\p{L}\p{N}\s-]/gu, " ").trim();
-      if (!term) return Promise.resolve([]);
-      const query = `title:*${term}* OR tag:*${term}* OR sku:*${term}* OR product_type:*${term}*`;
-      return fetchProducts(24, query);
-    },
+  const { data: allProducts = [], isLoading: loadingProducts } = useQuery({
+    queryKey: ["search-all-products"],
+    queryFn: () => fetchProducts(300),
     enabled: q.length >= 2,
     staleTime: 60_000,
   });
+
+  // Busca inteligente: sinônimo + acento + atalhos de intenção (serviço/cena).
+  const smart = useMemo(
+    () => resolveSearch(q, collections, allProducts, isSeasonal, { linhas: 12, produtos: 48, atalhos: 4 }),
+    [q, collections, allProducts],
+  );
+  const products = smart.produtos;
+  const atalhos = smart.atalhos;
 
   const collByHandle = useMemo(() => {
     const m = new Map<string, ShopifyCollection>();
@@ -141,20 +144,8 @@ export default function Linhas() {
     })).filter((s) => s.cards.length > 0);
   }, [collByHandle]);
 
-  // Busca: lista plana de linhas que casam com o termo.
-  const searchLinhas = useMemo(() => {
-    if (!q) return [];
-    const base = [...collections.filter((c) => !isSeasonal(c))].sort(
-      (a, b) => linhaRank(a.handle) - linhaRank(b.handle),
-    );
-    const needle = q.toLowerCase();
-    return base.filter(
-      (c) =>
-        c.title.toLowerCase().includes(needle) ||
-        (c.description ?? "").toLowerCase().includes(needle) ||
-        c.handle.toLowerCase().includes(needle),
-    );
-  }, [collections, q]);
+  // Linhas que casam com a busca — já com sinônimo/acento (via smart).
+  const searchLinhas = smart.linhas;
 
   const totalResults = q ? searchLinhas.length + products.length : 0;
   const isSearching = q.length >= 2 && (loadingCollections || loadingProducts);
@@ -188,7 +179,9 @@ export default function Linhas() {
                 {isSearching
                   ? "Buscando…"
                   : totalResults === 0
-                    ? "Nada encontrado. Refine o termo ou explore o catálogo completo abaixo."
+                    ? atalhos.length > 0
+                      ? "Nenhuma peça com esse nome — mas veja para onde ir logo abaixo."
+                      : "Nada encontrado. Refine o termo ou explore o catálogo completo abaixo."
                     : `${searchLinhas.length} ${searchLinhas.length === 1 ? "categoria" : "categorias"} · ${products.length} ${products.length === 1 ? "peça" : "peças"}.`}
               </p>
               <button
@@ -226,6 +219,33 @@ export default function Linhas() {
             </>
           )}
         </header>
+
+        {/* Ir para — atalhos de intenção. A busca leva quem digita serviço/cena
+            ("projeto 3d", "instalação", "amostra", "piscina") pra tela certa. */}
+        {q && atalhos.length > 0 && (
+          <section className="mb-12 md:mb-16">
+            <h2 className="text-eyebrow mb-5">Ir para</h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {atalhos.map((a) => (
+                <Link
+                  key={a.id}
+                  to={a.to}
+                  className="group flex items-center gap-4 rounded-[12px] border border-western-border-soft bg-white p-4 transition-colors hover:border-western-cta"
+                >
+                  <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[8px] bg-western-cta/10">
+                    <ArrowRight className="h-5 w-5 text-western-cta" aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-sans text-[17px] font-semibold text-western-green-deep">
+                      {a.label}
+                    </span>
+                    <span className="text-meta">{a.desc}</span>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Peças encontradas na busca — ProductCard mantém o preço gated */}
         {q && products.length > 0 && (

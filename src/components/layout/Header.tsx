@@ -10,6 +10,7 @@ import {
   LogOut,
   Heart,
   ChevronRight,
+  ArrowRight,
   MessageCircle,
 } from "lucide-react";
 import { useWishlist } from "@/hooks/useWishlist";
@@ -17,6 +18,7 @@ import logoVerde from "@/assets/logo-horizontal-verde.png";
 import CatalogMegaMenu from "./CatalogMegaMenu";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { resolveSearch } from "@/lib/search/vocab";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/datasource";
@@ -143,26 +145,10 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
     staleTime: 60_000,
   });
 
-  const suggestions = useMemo(() => {
-    const term = query.trim().toLowerCase();
-    if (term.length < 2) return { linhas: [], produtos: [], flatCount: 0 };
-    const linhas = allCollections
-      .filter((c) => !isSeasonal({ handle: c.handle, description: c.description }))
-      .filter(
-        (c) =>
-          c.title.toLowerCase().includes(term) ||
-          c.handle.toLowerCase().includes(term),
-      )
-      .slice(0, 3);
-    const produtos = allProducts
-      .filter((p) => {
-        const n = p.node;
-        if (n.title.toLowerCase().includes(term)) return true;
-        return (n.tags ?? []).some((t) => t.toLowerCase().includes(term));
-      })
-      .slice(0, 6);
-    return { linhas, produtos, flatCount: linhas.length + produtos.length };
-  }, [query, allCollections, allProducts]);
+  const suggestions = useMemo(
+    () => resolveSearch(query, allCollections, allProducts, isSeasonal),
+    [query, allCollections, allProducts],
+  );
 
   useEffect(() => {
     setActiveIndex(-1);
@@ -170,6 +156,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
 
   const flatItems = useMemo(
     () => [
+      ...suggestions.atalhos.map((a) => ({ kind: "atalho" as const, to: a.to })),
       ...suggestions.linhas.map((c) => ({ kind: "linha" as const, handle: c.handle })),
       ...suggestions.produtos.map((p) => ({ kind: "produto" as const, handle: p.node.handle })),
     ],
@@ -195,11 +182,16 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
     else setSuggestOpen(false);
   }, [query, suggestions.flatCount]);
 
-  const goToItem = (item: { kind: "linha" | "produto"; handle: string }) => {
+  const goToItem = (
+    item:
+      | { kind: "atalho"; to: string }
+      | { kind: "linha" | "produto"; handle: string },
+  ) => {
     closeSuggest();
     setSearchOpen(false);
     setQuery("");
-    if (item.kind === "linha") navigate(`/linhas/${item.handle}`);
+    if (item.kind === "atalho") navigate(item.to);
+    else if (item.kind === "linha") navigate(`/linhas/${item.handle}`);
     else navigate(`/produtos/${item.handle}`);
   };
 
@@ -239,6 +231,40 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         role="listbox"
         className="bg-white border border-western-border-soft rounded-[10px] shadow-lg max-h-[60vh] overflow-y-auto overflow-hidden"
       >
+        {suggestions.atalhos.length > 0 && (
+          <li className="text-eyebrow px-4 pt-4 pb-2">Ir para</li>
+        )}
+        {suggestions.atalhos.map((a) => {
+          idx += 1;
+          const i = idx;
+          const active = i === activeIndex;
+          return (
+            <li
+              key={`atalho-${a.id}`}
+              id={`${idPrefix}search-opt-${i}`}
+              role="option"
+              aria-selected={active}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                goToItem({ kind: "atalho", to: a.to });
+              }}
+              onMouseEnter={() => setActiveIndex(i)}
+              className={`flex items-center gap-3 px-4 min-h-[56px] py-2 cursor-pointer transition-colors ${
+                active ? "bg-western-paper" : "hover:bg-western-paper"
+              }`}
+            >
+              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[6px] bg-western-cta/10">
+                <ArrowRight className="h-5 w-5 text-western-cta" aria-hidden="true" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[16px] font-semibold text-western-green-deep">
+                  {a.label}
+                </p>
+                <p className="truncate text-[14px] text-western-stone-warm">{a.desc}</p>
+              </div>
+            </li>
+          );
+        })}
         {suggestions.linhas.length > 0 && (
           <li className="text-eyebrow px-4 pt-4 pb-2">Linhas</li>
         )}
