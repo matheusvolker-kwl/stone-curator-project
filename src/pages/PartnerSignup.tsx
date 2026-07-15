@@ -8,15 +8,14 @@ import { Loader2, ChevronLeft, ChevronRight, MessageCircle, CheckCircle2, AlertT
 import { BUSINESS } from "@/config/business";
 import PhoneInput from "@/components/forms/PhoneInput";
 import CnpjInput from "@/components/forms/CnpjInput";
-import CepInput from "@/components/forms/CepInput";
 import EmailInput from "@/components/forms/EmailInput";
 import PasswordField from "@/components/forms/PasswordField";
 import SegmentoSelect, { SEGMENTOS } from "@/components/forms/SegmentoSelect";
 import FieldLabel from "@/components/forms/FieldLabel";
 import CartaoCnpjUpload from "@/components/forms/CartaoCnpjUpload";
 import {
-  cnpjSchema, phoneBRSchema, cepSchema, emailSchema, passwordSchema, UF_LIST,
-  normalizeText, focusFirstInvalid,
+  cnpjSchema, phoneBRSchema, emailSchema, passwordSchema,
+  normalizeText, focusFirstInvalid, fetchCnpj, isValidCNPJ,
 } from "@/lib/forms/br";
 import { z } from "zod";
 
@@ -78,6 +77,10 @@ const CONFIANCA = [
   `Ateliê brasileiro desde ${BUSINESS.fundadaEm} · CNPJ ${BUSINESS.cnpj}`,
 ];
 
+// Etapa 1 = o mínimo para criar a conta e liberar o preço. O credenciamento
+// (função `credenciar`) só usa CNPJ + nome + e-mail; o endereço não entra na
+// decisão e o Woo já o coleta no checkout — por isso saiu do caminho crítico
+// (virou opcional na etapa 2, e a BrasilAPI ainda pré-preenche pelo CNPJ).
 const empresaSchema = z.object({
   empresa: z.string().trim().min(2, "Informe a razão social").max(160),
   cnpj: cnpjSchema,
@@ -85,13 +88,6 @@ const empresaSchema = z.object({
   segmentoOutro: z.string().optional(),
   site: z.string().max(200).optional(),
   instagram: z.string().max(60).optional(),
-  cep: cepSchema,
-  endereco: z.string().trim().min(2, "Informe o endereço").max(200),
-  numero: z.string().trim().min(1, "Número").max(20),
-  complemento: z.string().max(80).optional(),
-  bairro: z.string().trim().min(2, "Bairro").max(80),
-  cidade: z.string().trim().min(2, "Cidade").max(80),
-  estado: z.enum(UF_LIST as unknown as [string, ...string[]], { message: "UF" }),
 }).refine((v) => v.segmento !== "Outro" || (v.segmentoOutro && v.segmentoOutro.trim().length >= 2), {
   message: "Especifique o segmento",
   path: ["segmentoOutro"],
@@ -125,6 +121,34 @@ export default function PartnerSignup() {
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) =>
     setF((p) => ({ ...p, [k]: v }));
+
+  // Busca automática de CNPJ (BrasilAPI): preenche razão social + endereço, para
+  // o parceiro não digitar. Só preenche campos ainda vazios (não sobrescreve).
+  const [cnpjLoading, setCnpjLoading] = useState(false);
+  const [cnpjFound, setCnpjFound] = useState(false);
+  const lastCnpj = useRef("");
+
+  const lookupCnpj = async (digits: string) => {
+    if (digits.length !== 14 || !isValidCNPJ(digits) || lastCnpj.current === digits) return;
+    lastCnpj.current = digits;
+    setCnpjFound(false);
+    setCnpjLoading(true);
+    const res = await fetchCnpj(digits);
+    setCnpjLoading(false);
+    if (!res) return;
+    setF((p) => ({
+      ...p,
+      empresa: p.empresa.trim() || res.razao_social,
+      cep: p.cep || res.cep,
+      endereco: p.endereco || res.logradouro,
+      numero: p.numero || res.numero,
+      complemento: p.complemento || res.complemento,
+      bairro: p.bairro || res.bairro,
+      cidade: p.cidade || res.municipio,
+      estado: p.estado || res.uf,
+    }));
+    setCnpjFound(true);
+  };
 
   const goNext = () => {
     const normalized = { ...f, empresa: normalizeText(f.empresa) };
@@ -207,7 +231,9 @@ export default function PartnerSignup() {
         type: "partner_signup",
         nome: f.nome, email: f.email, telefone: f.telefone, empresa: f.empresa,
         cnpj: f.cnpj, segmento: segmentoFinal, cidade: f.cidade, uf: f.estado,
-        endereco: `${f.endereco}, ${f.numero}${f.complemento ? " - " + f.complemento : ""} - ${f.bairro}`,
+        endereco: f.endereco
+          ? `${f.endereco}, ${f.numero}${f.complemento ? " - " + f.complemento : ""} - ${f.bairro}`
+          : null,
         cep: f.cep,
         payload: { site: f.site, instagram: f.instagram, cargo: cargoFinal },
         origem: "site/parceiro/cadastro",
@@ -408,20 +434,39 @@ export default function PartnerSignup() {
           {step === 1 && (
             <>
               <div>
+                <FieldLabel htmlFor="cnpj" hint="Digite o CNPJ — a gente busca a razão social pra você.">CNPJ</FieldLabel>
+                <CnpjInput
+                  id="cnpj"
+                  value={f.cnpj}
+                  onChange={(v) => { set("cnpj", v); setCnpjFound(false); if (v.length === 14) void lookupCnpj(v); }}
+                  onBlur={() => void lookupCnpj(f.cnpj)}
+                  required
+                  error={errors.cnpj}
+                />
+                {cnpjLoading && (
+                  <p className="mt-2 inline-flex items-center gap-2 text-meta">
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Buscando dados do CNPJ…
+                  </p>
+                )}
+                {cnpjFound && !cnpjLoading && (
+                  <p className="mt-2 inline-flex items-center gap-2 text-meta text-western-bronze">
+                    <Check className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                    Razão social e endereço preenchidos pelo CNPJ.
+                  </p>
+                )}
+              </div>
+
+              <div>
                 <FieldLabel htmlFor="empresa">Razão social</FieldLabel>
                 <Input
                   id="empresa" value={f.empresa} onChange={(e) => set("empresa", e.target.value)} required
                   autoComplete="organization"
+                  placeholder="Preenchemos pelo CNPJ — confira ou ajuste"
                   aria-invalid={!!errors.empresa}
                   aria-describedby={errors.empresa ? "empresa-error" : undefined}
                   className={control(!!errors.empresa)}
                 />
                 {errors.empresa && <FieldError id="empresa-error">{errors.empresa}</FieldError>}
-              </div>
-
-              <div>
-                <FieldLabel htmlFor="cnpj" hint="Usamos o CNPJ para liberar o preço de parceiro na hora.">CNPJ</FieldLabel>
-                <CnpjInput id="cnpj" value={f.cnpj} onChange={(v) => set("cnpj", v)} required error={errors.cnpj} />
               </div>
 
               <div>
@@ -468,107 +513,10 @@ export default function PartnerSignup() {
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-western-border-soft">
-                <p className="text-eyebrow mb-5">Endereço comercial</p>
-
-                <div className="grid sm:grid-cols-3 gap-5">
-                  <div className="sm:col-span-1">
-                    <FieldLabel htmlFor="cep">CEP</FieldLabel>
-                    <CepInput
-                      id="cep"
-                      value={f.cep}
-                      onChange={(v) => set("cep", v)}
-                      onResolved={(d) => {
-                        setF((p) => ({
-                          ...p,
-                          endereco: d.logradouro || p.endereco,
-                          bairro: d.bairro || p.bairro,
-                          cidade: d.localidade || p.cidade,
-                          estado: d.uf || p.estado,
-                        }));
-                      }}
-                      focusNextId="numero"
-                      required
-                      error={errors.cep}
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <FieldLabel htmlFor="endereco">Logradouro</FieldLabel>
-                    <Input
-                      id="endereco" value={f.endereco} onChange={(e) => set("endereco", e.target.value)} required
-                      autoComplete="address-line1"
-                      aria-invalid={!!errors.endereco}
-                      aria-describedby={errors.endereco ? "endereco-error" : undefined}
-                      className={control(!!errors.endereco)}
-                    />
-                    {errors.endereco && <FieldError id="endereco-error">{errors.endereco}</FieldError>}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-5">
-                  <div>
-                    <FieldLabel htmlFor="numero">Número</FieldLabel>
-                    <Input
-                      id="numero" value={f.numero} onChange={(e) => set("numero", e.target.value)} required
-                      inputMode="numeric"
-                      aria-invalid={!!errors.numero}
-                      aria-describedby={errors.numero ? "numero-error" : undefined}
-                      className={control(!!errors.numero)}
-                    />
-                    {errors.numero && <FieldError id="numero-error">{errors.numero}</FieldError>}
-                  </div>
-                  <div className="sm:col-span-2">
-                    <FieldLabel htmlFor="complemento" optional>Complemento</FieldLabel>
-                    <Input
-                      id="complemento" value={f.complemento} onChange={(e) => set("complemento", e.target.value)}
-                      autoComplete="address-line2"
-                      className={control()}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid sm:grid-cols-3 gap-5 mt-5">
-                  <div>
-                    <FieldLabel htmlFor="bairro">Bairro</FieldLabel>
-                    <Input
-                      id="bairro" value={f.bairro} onChange={(e) => set("bairro", e.target.value)} required
-                      autoComplete="address-level3"
-                      aria-invalid={!!errors.bairro}
-                      aria-describedby={errors.bairro ? "bairro-error" : undefined}
-                      className={control(!!errors.bairro)}
-                    />
-                    {errors.bairro && <FieldError id="bairro-error">{errors.bairro}</FieldError>}
-                  </div>
-                  <div>
-                    <FieldLabel htmlFor="cidade">Cidade</FieldLabel>
-                    <Input
-                      id="cidade" value={f.cidade} onChange={(e) => set("cidade", e.target.value)} required
-                      autoComplete="address-level2"
-                      aria-invalid={!!errors.cidade}
-                      aria-describedby={errors.cidade ? "cidade-error" : undefined}
-                      className={control(!!errors.cidade)}
-                    />
-                    {errors.cidade && <FieldError id="cidade-error">{errors.cidade}</FieldError>}
-                  </div>
-                  <div>
-                    <FieldLabel htmlFor="estado">UF</FieldLabel>
-                    <select
-                      id="estado"
-                      value={f.estado}
-                      onChange={(e) => set("estado", e.target.value)}
-                      required
-                      autoComplete="address-level1"
-                      aria-invalid={!!errors.estado}
-                      aria-describedby={errors.estado ? "estado-error" : undefined}
-                      className={control(!!errors.estado)}
-                    >
-                      <option value="" disabled>—</option>
-                      {UF_LIST.map((uf) => <option key={uf} value={uf}>{uf}</option>)}
-                    </select>
-                    {errors.estado && <FieldError id="estado-error">{errors.estado}</FieldError>}
-                  </div>
-                </div>
-              </div>
+              <p className="text-meta">
+                O endereço não é pedido aqui — a gente puxa pelo CNPJ e você
+                confirma na hora da entrega.
+              </p>
 
               <Button type="button" onClick={goNext} size="lg" className="w-full mt-4">
                 Avançar <ChevronRight aria-hidden="true" />
