@@ -29,6 +29,7 @@ import BackToTop from "@/components/shared/BackToTop";
 import ProductTabs from "@/components/product/ProductTabs";
 import { trackRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import TamanhoReal from "@/components/product/TamanhoReal";
+import UsageScenes from "@/components/product/UsageScenes";
 import CalculadoraQuantidade from "@/components/product/CalculadoraQuantidade";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import SocialProofBand from "@/components/product/SocialProofBand";
@@ -629,6 +630,13 @@ export default function ProductPage() {
           dims={dims}
           pesoKg={pesoKg}
         />
+      </Reveal>
+
+      {/* A versatilidade — "onde usar". Vem colado à leveza: o Tamanho real
+       * acabou de mostrar que a peça é leve, então "vai em qualquer cena, até
+       * na cobertura" cai naturalmente. Liga com o Inspire-se. */}
+      <Reveal variant="fade-up">
+        <UsageScenes collectionHandle={collection?.handle} productTitle={product.title} />
       </Reveal>
 
       {/* A conta — quantas peças. Nasce da dúvida que o "Tamanho real" acabou de
