@@ -548,11 +548,13 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
             <span className="hidden sm:inline">Meu carrinho</span>
             {totalItems > 0 && (
               <span
-                className={`absolute top-0 right-0 min-w-[22px] h-[22px] px-1 inline-flex items-center justify-center rounded-full bg-western-cta text-western-cream text-[14px] font-bold leading-none tabular-nums transition-shadow ${
+                className={`absolute top-0 right-0 min-w-[22px] h-[22px] px-1 inline-flex items-center justify-center rounded-full bg-western-cta text-western-cream text-[13px] font-bold tabular-nums transition-shadow ${
                   pulse ? "ring-2 ring-western-gold/60 ring-offset-1 ring-offset-western-ivory" : ""
                 }`}
               >
-                {totalItems}
+                {/* O dígito senta acima da baseline (sobra de descender); um leve
+                    nudge pra baixo o centra opticamente no círculo. */}
+                <span className="block leading-none translate-y-[0.5px]">{totalItems}</span>
               </span>
             )}
           </button>
