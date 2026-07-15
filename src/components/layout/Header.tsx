@@ -390,7 +390,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           aria-label="Western — Início"
           className="flex-shrink-0 inline-flex items-center min-h-[48px]"
         >
-          <img src={logoVerde} alt="Western" className="h-8 sm:h-9 lg:h-12 w-auto" />
+          <img src={logoVerde} alt="Western" className="h-7 sm:h-8 lg:h-10 w-auto" />
         </Link>
 
         {/* Busca persistente (desktop). Mesmo motor de sugestões do painel mobile. */}
@@ -587,7 +587,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
           <div className="flex flex-col h-full">
             <div className="flex items-center justify-between px-6 py-3 border-b border-western-border-soft">
-              <img src={logoVerde} alt="Western" className="h-9 w-auto" />
+              <img src={logoVerde} alt="Western" className="h-8 w-auto" />
               <button
                 onClick={() => setMenuOpen(false)}
                 aria-label="Fechar menu"

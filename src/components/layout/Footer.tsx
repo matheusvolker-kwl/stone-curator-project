@@ -98,7 +98,7 @@ export default function Footer() {
             Mobile: 1 coluna (nada de 145px úteis). sm: 2 colunas. md: 12 colunas. */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-x-8 gap-y-10 md:gap-y-12 pb-14">
           <div className="min-w-0 sm:col-span-2 md:col-span-3">
-            <img src={logo} alt="Western" className="h-14 w-auto mb-5" />
+            <img src={logo} alt="Western" className="h-11 md:h-12 w-auto mb-5" />
             <p className="text-[17px] leading-[1.6] text-western-cream-muted max-w-[320px]">
               Ateliê de pedra artesanal desde {BUSINESS.fundadaEm}. Peças com cerca de 10% do peso
               da pedra natural — sem guindaste, até em laje.

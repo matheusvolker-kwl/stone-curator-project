@@ -16,6 +16,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { BUSINESS } from "@/config/business";
+import { texturaPara } from "@/lib/acabamentoTexturas";
 import heroCascata from "@/assets/hero-cascata.webp";
 import heroCascataSm from "@/assets/hero-cascata-sm.webp";
 import iconePedraBranco from "@/assets/icone-pedra-branco.png";
@@ -25,7 +26,6 @@ import imgJardim from "@/assets/casos-western/unique-garden.webp";
 import imgLago from "@/assets/casos-western/projeto-residencial.webp";
 import imgLagoHibrido from "@/assets/conjuntos-render/conjunto-lago-hibrido-igarape-equilibrado.webp";
 import imgFazzenda from "@/assets/casos-western/fazzenda-park.webp";
-import { BUSINESS } from "@/config/business";
 
 /* DS V3 — eyebrow sobre fundo escuro/foto: mesma métrica do .text-eyebrow
  * (sans semibold 14px, tracking 0.06em), em dourado claro porque o bronze
@@ -361,10 +361,22 @@ export default function Index() {
                 {ACABAMENTOS.map((a) => (
                   <div
                     key={a.nome}
-                    className="flex items-end p-4 min-h-[140px] md:min-h-[160px]"
-                    style={{ background: a.tone }}
+                    className="relative flex items-end p-4 min-h-[140px] md:min-h-[160px] overflow-hidden"
+                    style={{ backgroundColor: a.tone }}
                   >
-                    <span className="font-sans text-[16px] font-semibold" style={{ color: "rgba(18,22,15,.86)" }}>
+                    <img
+                      src={texturaPara(a.nome)}
+                      alt={`Acabamento ${a.nome}`}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                    {/* gradiente inferior — mantém o rótulo legível sobre texturas escuras */}
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/55 via-black/15 to-transparent"
+                    />
+                    <span className="relative font-sans text-[16px] font-semibold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]">
                       {a.nome}
                     </span>
                   </div>

@@ -41,7 +41,7 @@ export default function GuideHeader({ breadcrumb, step }: Props) {
         )}
 
         <Link to="/" className="flex-shrink-0" aria-label="Western">
-          <img src={logoWestern} alt="Western" className="h-9 md:h-11 w-auto object-contain" />
+          <img src={logoWestern} alt="Western" className="h-8 md:h-9 w-auto object-contain" />
         </Link>
 
         <span aria-hidden className="hidden md:block w-px h-8 bg-western-border-strong" />
