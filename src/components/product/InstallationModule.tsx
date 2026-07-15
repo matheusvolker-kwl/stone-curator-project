@@ -45,7 +45,7 @@ export function InstallationTrustStrip({
         <Check className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
       </span>
       <span className="font-sans text-[16px] font-semibold text-western-green-deep">
-        Instalação assistida
+        Guia de instalação
       </span>
       <span className="font-sans text-[14px] text-western-stone-warm">
         Nível {config.level} de 4 · {config.levelLabel}

@@ -13,7 +13,6 @@ import {
   ShieldCheck,
   Check,
   X,
-  MessageCircle,
 } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { texturaPara } from "@/lib/acabamentoTexturas";
@@ -125,7 +124,6 @@ export default function Index() {
         <div className="relative container-western py-16 md:py-24 md:min-h-[620px] md:flex md:items-center">
           <div className="w-full max-w-2xl text-western-cream animate-fade-in-up">
             <div className="w-12 h-px bg-western-gold mb-6" />
-            <p className={`${eyebrowDark} mb-4`}>Pedra artesanal desde 1993</p>
             <h1 className="display-xl text-western-cream">
               Natureza que ninguém acredita ser{" "}
               <span className="text-western-gold-soft">obra.</span>
@@ -134,32 +132,6 @@ export default function Index() {
               Cascatas, pedras e revestimentos artesanais — até 10× mais leves — para projetos e profissionais.
             </p>
 
-            {/* Comparativo visual de peso — o argumento-assinatura, tangível
-                (auditoria). Razão, não kg absoluto, para não overclaim. */}
-            <div className="mb-8 max-w-[320px]">
-              <div className="mb-1.5 flex items-baseline justify-between text-[14px] text-western-cream/75">
-                <span>Pedra natural</span>
-                <span>peso cheio</span>
-              </div>
-              <div
-                className="h-2.5 w-full overflow-hidden rounded-full bg-western-cream/15"
-                role="img"
-                aria-label="Pedra natural: peso de referência (100%)"
-              >
-                <div className="h-full w-full rounded-full bg-western-cream/45" />
-              </div>
-              <div className="mb-1.5 mt-4 flex items-baseline justify-between text-[14px] text-western-gold-soft">
-                <span className="font-semibold">A mesma peça, em Western</span>
-                <span className="font-semibold tabular-nums">~10% do peso</span>
-              </div>
-              <div
-                className="h-2.5 w-full overflow-hidden rounded-full bg-western-gold/20"
-                role="img"
-                aria-label="Peça Western: cerca de 10% do peso da pedra natural"
-              >
-                <div className="h-full w-[10%] rounded-full bg-western-gold" />
-              </div>
-            </div>
             {/* Hierarquia de CTA: a AÇÃO de maior valor (converter) vem primeiro.
                 Dourado porque o verde não teria contraste sobre a foto com overlay
                 verde — é a regra do V3 (verde é primário sobre fundo claro; sobre
@@ -172,17 +144,6 @@ export default function Index() {
                 Ver catálogo
               </Link>
             </div>
-            <a
-              href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
-                "Olá, vim pelo site da Western e gostaria de falar com o ateliê.",
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 text-[15px] text-western-cream/80 hover:text-western-gold-soft transition-colors"
-            >
-              <MessageCircle className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
-              Prefere falar? Chame o ateliê no WhatsApp
-            </a>
             <div className="flex flex-wrap gap-x-10 gap-y-5 mt-10 pt-7 border-t border-western-cream/20">
               {[
                 { b: "+400", s: "modelos" },
