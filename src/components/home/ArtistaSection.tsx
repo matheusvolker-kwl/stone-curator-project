@@ -4,7 +4,7 @@ import ricardoDesenhando from "@/assets/ricardo-desenhando.webp";
 
 export default function ArtistaSection() {
   return (
-    <section className="surface-ivory pt-14 md:pt-18 pb-14 md:pb-18 border-t border-western-border-soft">
+    <section className="surface-ivory py-16 md:py-24 border-t border-western-border-soft">
       {/* Eyebrow centralizado, anunciando a seção */}
       <div className="container-western max-w-4xl text-center mb-7 md:mb-10">
         <p className="text-eyebrow mb-4">O artista</p>
@@ -40,7 +40,7 @@ export default function ArtistaSection() {
         {/* Display Archivo, sempre ≥22px. Sem serifa, sem itálico, sem dourado
          * como cor de texto sobre fundo claro (dourado é acento sobre foto/verde). */}
         <blockquote className="display-xl text-western-green-deep">
-          “Cada peça da Western nasce duas vezes: uma na natureza, outra no traço.”
+          “Cada peça da Western nasce duas vezes: uma na natureza, outra no projeto.”
         </blockquote>
 
         <div className="mt-6 mb-2">

@@ -43,7 +43,7 @@ export default function SobreAWestern() {
       className="surface-paper border-b border-western-border-soft py-16 md:py-24"
       aria-label="O que é a Western Store"
     >
-      <div className="container-western max-w-5xl">
+      <div className="container-western">
         <Reveal variant="fade-up" duration={650}>
           <div className="max-w-2xl">
             <p className="text-eyebrow mb-3">A Western Store</p>

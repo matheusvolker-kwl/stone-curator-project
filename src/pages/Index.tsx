@@ -174,7 +174,7 @@ export default function Index() {
           primeiro, depois as linhas, e só então "o que você vai construir".
           (A antiga "barra de confiança" saiu daqui: repetia 10% do peso / garantia
           / reposição / 50 modelos, que a seção "O que é a Western Store" já diz.) */}
-      <section className="surface-paper py-16 md:py-20 border-t border-western-border-soft" id="produtos">
+      <section className="surface-paper py-16 md:py-24 border-t border-western-border-soft" id="produtos">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
@@ -224,7 +224,7 @@ export default function Index() {
       </section>
 
       {/* 3b — Principais linhas (navegação por categoria) */}
-      <section className="surface-ivory py-16 md:py-20 border-t border-western-border-soft">
+      <section className="surface-ivory py-16 md:py-24 border-t border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
@@ -395,7 +395,7 @@ export default function Index() {
 
       {/* 7 — Por que Western e não pedra natural */}
       <section className="surface-ivory py-16 md:py-24 border-y border-western-border-soft">
-        <div className="container-western max-w-5xl">
+        <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <p className="text-eyebrow mb-3">Por que Western</p>
             <h2 className="display-lg text-western-green-deep mb-8 md:mb-12">

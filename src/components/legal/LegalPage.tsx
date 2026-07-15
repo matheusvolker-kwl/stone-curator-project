@@ -47,7 +47,8 @@ export default function LegalPage({
           path={seoPath}
         />
       )}
-      <div className="container-western py-20 md:py-24 max-w-3xl">
+      <div className="container-western py-20 md:py-24">
+        <div className="max-w-3xl">
         <p className="text-eyebrow mb-4">{eyebrow}</p>
         {/* Filete dourado: acento fino, não texto. */}
         <div className="w-12 h-px bg-western-gold mb-6" />
@@ -86,6 +87,7 @@ export default function LegalPage({
           ].join(" ")}
         >
           {children}
+        </div>
         </div>
       </div>
     </div>
