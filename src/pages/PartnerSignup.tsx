@@ -1,10 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, ChevronLeft, ChevronRight, MessageCircle, CheckCircle2, AlertTriangle, XCircle, Check } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { Loader2, ChevronLeft, ChevronRight, MessageCircle, CheckCircle2, AlertTriangle, XCircle, Check, ArrowRight } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import PhoneInput from "@/components/forms/PhoneInput";
 import CnpjInput from "@/components/forms/CnpjInput";
@@ -117,6 +118,14 @@ export default function PartnerSignup() {
   const [newUserId, setNewUserId] = useState<string | null>(null);
   const [cardPath, setCardPath] = useState<string | null>(null);
   const [cardLoading, setCardLoading] = useState(false);
+  const { refresh } = useAuth();
+
+  // Quando o credenciamento APROVA, recarrega o perfil (isApproved vira true).
+  // Aí o AuthProvider invalida o catálogo cacheado e o preço de parceiro aparece
+  // NA HORA — sem o cliente precisar recarregar a página (era o "delay").
+  useEffect(() => {
+    if (credResult?.decisao === "aprovado") void refresh();
+  }, [credResult, refresh]);
   const navigate = useNavigate();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -292,11 +301,22 @@ export default function PartnerSignup() {
             <>
               <h1 className="display-xl mb-6">Bem-vindo à Western Pro.</h1>
               <p className="text-body mb-10 mx-auto max-w-[46ch]">
-                Sua condição B2B já está liberada. Confirme seu e-mail e faça login para ver tabela, modelos 3D e composições.
+                Sua condição B2B já está liberada — o preço de parceiro, os modelos 3D
+                e as composições já aparecem pra você. Comece a montar seu pedido.
               </p>
-              <Button asChild className="w-full sm:w-auto">
-                <Link to="/parceiro/login">Acessar minha conta</Link>
-              </Button>
+              <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-center">
+                <Button asChild variant="outline" className="w-full sm:w-auto">
+                  <Link to="/minha-conta">Ir para minha conta</Link>
+                </Button>
+                <Button asChild className="w-full sm:w-auto">
+                  <Link to="/linhas">
+                    Ver produtos <ArrowRight className="h-5 w-5" aria-hidden="true" />
+                  </Link>
+                </Button>
+              </div>
+              <p className="text-meta mt-6">
+                Enviamos um e-mail de confirmação — use-o nos próximos acessos.
+              </p>
             </>
           )}
 

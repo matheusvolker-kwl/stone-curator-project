@@ -21,7 +21,9 @@ export default function PartnerLogin() {
   const [showReset, setShowReset] = useState(false);
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const next = params.get("next") || "/minha-conta";
+  // Aprovado cai direto no catálogo (comprar), não na conta — a conta fica a um
+  // clique no header. Se veio de uma página específica (?next=), volta pra ela.
+  const next = params.get("next") || "/linhas";
 
   // If already logged in, send to next/account
   useEffect(() => {
