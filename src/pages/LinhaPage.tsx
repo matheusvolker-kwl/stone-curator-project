@@ -1,16 +1,39 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCollection } from "@/lib/datasource";
+import { fetchCollection, fetchProducts } from "@/lib/datasource";
 import { ChevronLeft } from "lucide-react";
 import ProductGrid from "@/components/product/ProductGrid";
 import Reveal from "@/components/shared/Reveal";
+import {
+  PEDRAS_HANDLES,
+  PEDRAS_VIRTUAL,
+  PEDRAS_VIRTUAL_HANDLE,
+} from "@/lib/catalogScenes";
 
 export default function LinhaPage() {
   const { handle = "" } = useParams();
+  const isVirtualPedras = handle === PEDRAS_VIRTUAL_HANDLE;
 
   const { data, isLoading } = useQuery({
-    queryKey: ["collection", handle],
-    queryFn: () => fetchCollection(handle, 100),
+    queryKey: isVirtualPedras ? ["linha-virtual", "pedras"] : ["collection", handle],
+    queryFn: async () => {
+      // "Pedras decorativas" não é uma categoria do Woo — funde as 3 (grandes/
+      // médias/pequenas). O ProductGrid oferece o filtro de tamanho.
+      if (isVirtualPedras) {
+        const all = await fetchProducts(250);
+        const edges = all.filter((p) =>
+          (p.node.collections?.edges ?? []).some((e) =>
+            PEDRAS_HANDLES.includes(e.node.handle),
+          ),
+        );
+        return {
+          title: PEDRAS_VIRTUAL.title,
+          description: PEDRAS_VIRTUAL.description,
+          products: { edges },
+        };
+      }
+      return fetchCollection(handle, 100);
+    },
     enabled: !!handle,
   });
 

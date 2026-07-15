@@ -9,6 +9,72 @@ import ProductCard from "@/components/product/ProductCard";
 import { LINHA_COVER_OVERRIDES } from "@/lib/lineCovers";
 import { LINHA_DESCRIPTIONS } from "@/lib/lineDescriptions";
 import { linhaRank } from "@/lib/lineOrder";
+import {
+  CATALOG_SCENES,
+  PEDRAS_HANDLES,
+  PEDRAS_VIRTUAL,
+  PEDRAS_VIRTUAL_HANDLE,
+} from "@/lib/catalogScenes";
+import type { ShopifyCollection } from "@/lib/catalog/types";
+
+/** Um card do índice, já normalizado (categoria real ou "Pedras decorativas"). */
+interface LinhaCardData {
+  handle: string;
+  coverKey: string;
+  image: ShopifyCollection["image"] | null;
+  title: string;
+  count: number;
+  desc?: string | null;
+  to: string;
+}
+
+function LinhaCard({ c }: { c: LinhaCardData }) {
+  const cover = LINHA_COVER_OVERRIDES[c.coverKey];
+  return (
+    <Link to={c.to} className="group block">
+      <div className="frame-product mb-3 aspect-[4/3] overflow-hidden rounded-2xl sm:mb-4">
+        {cover ? (
+          <img
+            src={cover.url}
+            sizes="(min-width: 1024px) 380px, 45vw"
+            alt={cover.alt}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : c.image ? (
+          <img
+            src={cdnImg(c.image.url, 800)}
+            srcSet={cdnSrcSet(c.image.url, [400, 800, 1200])}
+            sizes="(min-width: 1024px) 380px, 45vw"
+            alt={c.image.altText ?? c.title}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-western-cream">
+            <img src={iconePedra} alt="" className="h-12 opacity-30" />
+          </div>
+        )}
+      </div>
+
+      <h3 className="font-sans text-[20px] font-semibold leading-snug text-western-green-deep transition-colors group-hover:text-western-bronze">
+        {c.title}
+      </h3>
+      {c.count > 0 && (
+        <p className="text-meta mt-1">
+          {c.count} {c.count === 1 ? "peça" : "peças"}
+        </p>
+      )}
+      {c.desc && (
+        <div className="mt-2 hidden sm:block">
+          <p className="text-meta line-clamp-2">{c.desc}</p>
+        </div>
+      )}
+    </Link>
+  );
+}
 
 export default function Linhas() {
   const { data: collections = [], isLoading: loadingCollections } = useQuery({
@@ -31,29 +97,81 @@ export default function Linhas() {
     staleTime: 60_000,
   });
 
-  const linhas = useMemo(() => {
+  const collByHandle = useMemo(() => {
+    const m = new Map<string, ShopifyCollection>();
+    collections.forEach((c) => m.set(c.handle, c));
+    return m;
+  }, [collections]);
+
+  // Índice agrupado por CENA (Água / Superfícies / Volumes / Detalhes).
+  // "Pedras decorativas" funde as 3 categorias de pedra num card só.
+  const scenes = useMemo(() => {
+    const toCard = (handle: string): LinhaCardData | null => {
+      if (handle === PEDRAS_VIRTUAL_HANDLE) {
+        const count = PEDRAS_HANDLES.reduce(
+          (s, ph) => s + (collByHandle.get(ph)?.productsCount ?? 0),
+          0,
+        );
+        if (count === 0) return null;
+        return {
+          handle,
+          coverKey: PEDRAS_VIRTUAL.coverFrom,
+          image: collByHandle.get(PEDRAS_VIRTUAL.coverFrom)?.image ?? null,
+          title: PEDRAS_VIRTUAL.title,
+          count,
+          desc: "Grandes, médias e pequenas — filtre por tamanho.",
+          to: `/linhas/${PEDRAS_VIRTUAL_HANDLE}`,
+        };
+      }
+      const c = collByHandle.get(handle);
+      if (!c || (c.productsCount ?? 0) === 0) return null;
+      return {
+        handle,
+        coverKey: handle,
+        image: c.image ?? null,
+        title: c.title,
+        count: c.productsCount ?? 0,
+        desc: LINHA_DESCRIPTIONS[handle] ?? c.description,
+        to: `/linhas/${handle}`,
+      };
+    };
+    return CATALOG_SCENES.map((scene) => ({
+      scene,
+      cards: scene.handles.map(toCard).filter((x): x is LinhaCardData => x !== null),
+    })).filter((s) => s.cards.length > 0);
+  }, [collByHandle]);
+
+  // Busca: lista plana de linhas que casam com o termo.
+  const searchLinhas = useMemo(() => {
+    if (!q) return [];
     const base = [...collections.filter((c) => !isSeasonal(c))].sort(
       (a, b) => linhaRank(a.handle) - linhaRank(b.handle),
     );
-    if (!q) return base;
     const needle = q.toLowerCase();
     return base.filter(
       (c) =>
         c.title.toLowerCase().includes(needle) ||
         (c.description ?? "").toLowerCase().includes(needle) ||
-        c.handle.toLowerCase().includes(needle)
+        c.handle.toLowerCase().includes(needle),
     );
   }, [collections, q]);
 
-  const totalResults = q ? linhas.length + products.length : 0;
+  const totalResults = q ? searchLinhas.length + products.length : 0;
   const isSearching = q.length >= 2 && (loadingCollections || loadingProducts);
 
-  const linhasList = useMemo(() => {
-    const src = q && totalResults === 0 ? collections.filter((c) => !isSeasonal(c)) : linhas;
-    const seen = new Set<string>();
-    return src.filter((c) => { if (seen.has(c.handle)) return false; seen.add(c.handle); return true; });
-  }, [q, totalResults, collections, linhas]);
-
+  const searchCards: LinhaCardData[] = useMemo(
+    () =>
+      searchLinhas.map((c) => ({
+        handle: c.handle,
+        coverKey: c.handle,
+        image: c.image ?? null,
+        title: c.title,
+        count: c.productsCount ?? 0,
+        desc: LINHA_DESCRIPTIONS[c.handle] ?? c.description,
+        to: c.handle === "amostras" ? "/western-box" : `/linhas/${c.handle}`,
+      })),
+    [searchLinhas],
+  );
 
   return (
     <div className="surface-ivory">
@@ -71,7 +189,7 @@ export default function Linhas() {
                   ? "Buscando…"
                   : totalResults === 0
                     ? "Nada encontrado. Refine o termo ou explore o catálogo completo abaixo."
-                    : `${linhas.length} ${linhas.length === 1 ? "linha" : "linhas"} · ${products.length} ${products.length === 1 ? "peça" : "peças"}.`}
+                    : `${searchLinhas.length} ${searchLinhas.length === 1 ? "linha" : "linhas"} · ${products.length} ${products.length === 1 ? "peça" : "peças"}.`}
               </p>
               <button
                 type="button"
@@ -85,18 +203,17 @@ export default function Linhas() {
             <>
               <p className="text-eyebrow mb-4">Catálogo</p>
               <h1 className="display-lg text-western-green-deep">
-                Todas as linhas.
+                O que você vai construir?
               </h1>
-              <p className="text-body mt-5 max-w-[46ch]">
-                Cada peça tem um papel na cena. Navegue por linha — ou veja o
-                catálogo inteiro.
+              <p className="text-body mt-5 max-w-[48ch]">
+                Navegue por cena — água, superfícies, volumes e detalhes. Ou veja
+                o catálogo inteiro de uma vez.
               </p>
               <p className="text-meta mt-3 max-w-[52ch]">
-                A maioria das peças está disponível em até 4 acabamentos:
-                Quartzo, Arenito, Moledo e Granito.
+                A maioria das peças vem em até 4 acabamentos: Quartzo, Arenito,
+                Moledo e Granito.
               </p>
 
-              {/* CTA primário verde, full-width no mobile */}
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link to="/produtos" className="btn-primary w-full sm:w-auto">
                   Ver o catálogo inteiro
@@ -122,9 +239,7 @@ export default function Linhas() {
           </section>
         )}
 
-        {q && linhas.length > 0 && <h2 className="text-eyebrow mb-6">Linhas</h2>}
-
-        {/* Grid de linhas — 2 colunas já no mobile (cards compactos, foto primeiro) */}
+        {/* Índice de linhas */}
         {loadingCollections ? (
           <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -134,63 +249,39 @@ export default function Linhas() {
               />
             ))}
           </div>
+        ) : q ? (
+          // Busca: grade plana das linhas que casaram
+          searchCards.length > 0 && (
+            <>
+              <h2 className="text-eyebrow mb-6">Linhas</h2>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3">
+                {searchCards.map((c) => (
+                  <LinhaCard key={c.handle} c={c} />
+                ))}
+              </div>
+            </>
+          )
         ) : (
-          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3">
-            {linhasList.map((c) => {
-              const cover = LINHA_COVER_OVERRIDES[c.handle];
-              const desc = LINHA_DESCRIPTIONS[c.handle] ?? c.description;
-              const count = c.productsCount ?? 0;
-
-              return (
-                <Link
-                  key={c.handle}
-                  to={c.handle === "amostras" ? "/western-box" : `/linhas/${c.handle}`}
-                  className="group block"
-                >
-                  <div className="frame-product mb-3 aspect-[4/3] overflow-hidden rounded-2xl sm:mb-4">
-                    {cover ? (
-                      <img
-                        src={cover.url}
-                        sizes="(min-width: 1024px) 380px, 45vw"
-                        alt={cover.alt}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    ) : c.image ? (
-                      <img
-                        src={cdnImg(c.image.url, 800)}
-                        srcSet={cdnSrcSet(c.image.url, [400, 800, 1200])}
-                        sizes="(min-width: 1024px) 380px, 45vw"
-                        alt={c.image.altText ?? c.title}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-western-cream">
-                        <img src={iconePedra} alt="" className="h-12 opacity-30" />
-                      </div>
-                    )}
-                  </div>
-
-                  <h2 className="font-sans text-[20px] font-semibold leading-snug text-western-green-deep transition-colors group-hover:text-western-bronze">
-                    {c.title}
+          // Navegação: agrupada por CENA
+          <div className="space-y-14 md:space-y-20">
+            {scenes.map(({ scene, cards }) => (
+              <section key={scene.key} aria-labelledby={`cena-${scene.key}`}>
+                <div className="mb-6 md:mb-8 max-w-2xl">
+                  <h2
+                    id={`cena-${scene.key}`}
+                    className="font-display text-[26px] md:text-[30px] font-semibold text-western-green-deep"
+                  >
+                    {scene.titulo}
                   </h2>
-                  {count > 0 && (
-                    <p className="text-meta mt-1">
-                      {count} {count === 1 ? "peça" : "peças"}
-                    </p>
-                  )}
-                  {/* Descrição some no mobile: mantém o card compacto (2 colunas) */}
-                  {desc && (
-                    <div className="mt-2 hidden sm:block">
-                      <p className="text-meta line-clamp-2">{desc}</p>
-                    </div>
-                  )}
-                </Link>
-              );
-            })}
+                  <p className="text-meta mt-2">{scene.descricao}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3">
+                  {cards.map((c) => (
+                    <LinhaCard key={c.handle} c={c} />
+                  ))}
+                </div>
+              </section>
+            ))}
           </div>
         )}
 
