@@ -668,7 +668,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               {drawerLink("/linhas", "Catálogo", "As 11 linhas do ateliê")}
               {drawerLink("/produtos", "Todas as peças", "A coleção inteira, com filtros")}
               {drawerLink("/conjuntos", "Conjuntos", "Kits prontos por tipo de projeto")}
-              {drawerLink("/western-box", "Western Box", "Amostras dos acabamentos")}
+              {drawerLink("/western-box", "Western Box", "Amostras · o valor volta como crédito no 1º pedido")}
               {drawerLink(
                 "/carrinho",
                 "Meu carrinho",

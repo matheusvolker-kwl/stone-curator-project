@@ -14,6 +14,9 @@ import {
   Lock,
   MessageCircle,
   MapPin,
+  ShieldCheck,
+  FileText,
+  Truck,
 } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { toast } from "sonner";
@@ -512,6 +515,25 @@ export default function ProductPage() {
                     Pronto em {BUSINESS.prazoProducaoDias} dias úteis · Retira em{" "}
                     {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · Frete no checkout
                   </p>
+
+                  {/* Selos colados à decisão (kit pdp.jsx:101-102) — NF-e, entrega
+                   * rastreada e reposição. Não repete garantia/prazo (já acima). */}
+                  <p className="mt-4 pt-4 border-t border-western-border-soft text-meta flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                    <span className="inline-flex items-center gap-1.5">
+                      <FileText className="h-4 w-4 text-western-bronze" aria-hidden />
+                      NF-e em todo pedido
+                    </span>
+                    <span className="opacity-40">·</span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Truck className="h-4 w-4 text-western-bronze" aria-hidden />
+                      Entrega rastreada
+                    </span>
+                    <span className="opacity-40">·</span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <ShieldCheck className="h-4 w-4 text-western-bronze" aria-hidden />
+                      Reposição garantida em caso de avaria
+                    </span>
+                  </p>
                 </div>
               </section>
             ) : (
@@ -544,6 +566,20 @@ export default function ProductPage() {
                     </Link>
                   </div>
                 </div>
+
+                {/* Pedido mínimo colado ao gate (kit pdp.jsx:120) — seta a
+                 * expectativa comercial antes do cadastro. */}
+                <p className="mt-3 text-meta text-center">
+                  Pedido mínimo {BUSINESS.pedidoMinimoLabel} ·{" "}
+                  <a
+                    href={`https://wa.me/${BUSINESS.whatsappFabrica}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-western-green-deep underline decoration-western-gold underline-offset-4 hover:decoration-2"
+                  >
+                    fale no WhatsApp
+                  </a>
+                </p>
 
                 <div className="flex items-center gap-4 my-7">
                   <div className="flex-1 h-px bg-western-border-soft" />

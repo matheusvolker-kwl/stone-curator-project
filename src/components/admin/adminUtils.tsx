@@ -21,19 +21,19 @@ export function downloadCSV(filename: string, content: string) {
 }
 
 export function chipCls(active: boolean) {
-  return `h-9 px-4 font-mono text-[11px] uppercase tracking-[0.18em] border transition-colors ${
+  return `tap-target inline-flex items-center rounded-[10px] px-4 text-[16px] font-semibold border transition-colors ${
     active
-      ? "border-western-gold text-western-green-deep bg-western-gold/10"
-      : "border-western-stone-warm/25 text-western-stone-warm hover:border-western-gold/60"
+      ? "border-western-cta/40 text-western-green-deep bg-western-cta/[0.08]"
+      : "border-western-border-soft text-western-stone-warm hover:border-western-cta/50 hover:text-western-green-deep"
   }`;
 }
 
 export function KV({ k, v }: { k: string; v: string | null | undefined }) {
   if (!v) return null;
   return (
-    <div className="flex gap-3 text-sm">
-      <dt className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm w-32 flex-shrink-0 pt-1">{k}</dt>
-      <dd className="text-western-green-deep flex-1 break-words">{v}</dd>
+    <div className="flex gap-3">
+      <dt className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze w-32 flex-shrink-0 pt-1">{k}</dt>
+      <dd className="text-[16px] text-western-green-deep flex-1 break-words">{v}</dd>
     </div>
   );
 }

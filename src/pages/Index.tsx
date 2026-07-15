@@ -21,6 +21,7 @@ import imgPiscina from "@/assets/about-projetos/piscina-praia.webp";
 import imgFonte from "@/assets/about-projetos/cascata-tropical.webp";
 import imgJardim from "@/assets/casos-western/unique-garden.webp";
 import imgLago from "@/assets/casos-western/projeto-residencial.webp";
+import imgLagoHibrido from "@/assets/conjuntos-render/conjunto-lago-hibrido-igarape-equilibrado.webp";
 import imgFazzenda from "@/assets/casos-western/fazzenda-park.webp";
 import { BUSINESS } from "@/config/business";
 
@@ -40,6 +41,7 @@ const ACABAMENTOS = [
 const TILES = [
   { nome: "Piscina", desc: "Cascatas e bordas para o entorno da piscina", img: imgPiscina },
   { nome: "Lago ornamental", desc: "Composições para lagos e espelhos d'água", img: imgLago },
+  { nome: "Lago híbrido", desc: "Estrutura Western + pedra natural", img: imgLagoHibrido },
   { nome: "Jardim", desc: "Jardins contemplativos, com ou sem água", img: imgJardim },
   { nome: "Fonte & cascata", desc: "Fontes e quedas com água corrente", img: imgFonte },
 ];
@@ -195,7 +197,7 @@ export default function Index() {
               O que você vai construir?
             </h2>
           </Reveal>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
             {TILES.map((t, i) => (
               <Reveal key={t.nome} variant="fade-up" delay={(i % 4) * 80} duration={600} distance={18}>
                 <Link to="/guia-de-composicao" className="group block">

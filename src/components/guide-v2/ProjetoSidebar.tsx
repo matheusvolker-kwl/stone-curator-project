@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Download, ExternalLink, Loader2, Lock } from "lucide-react";
+import { Download, ExternalLink, FileText, Loader2, Lock, ShieldCheck, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatPreco, type ConjuntoLeaf } from "@/data/guideMap";
+import { BUSINESS } from "@/config/business";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -251,6 +252,23 @@ function PanelBody({
           >
             {salvando ? "Salvando…" : "Salvar projeto e decidir depois"}
           </button>
+        </div>
+
+        {/* Faixa de confiança transacional — reduz o atrito no momento de fechar
+            (análogo à faixa de pagamento). Ref. kit guia.jsx:159-163. */}
+        <div className="border-t border-western-border-soft pt-5 flex flex-wrap gap-x-4 gap-y-2.5">
+          <span className="inline-flex items-center gap-1.5 font-sans text-[14px] text-western-stone-warm">
+            <ShieldCheck className="h-4 w-4 text-western-bronze flex-shrink-0" aria-hidden />
+            Garantia de {BUSINESS.garantiaLabel}
+          </span>
+          <span className="inline-flex items-center gap-1.5 font-sans text-[14px] text-western-stone-warm">
+            <FileText className="h-4 w-4 text-western-bronze flex-shrink-0" aria-hidden />
+            NF-e em todo pedido
+          </span>
+          <span className="inline-flex items-center gap-1.5 font-sans text-[14px] text-western-stone-warm">
+            <Truck className="h-4 w-4 text-western-bronze flex-shrink-0" aria-hidden />
+            Reposição garantida
+          </span>
         </div>
       </div>
     </div>
