@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
 import {
   SOCIAL_PROOF,
   SOCIAL_PROOF_LABELS,
@@ -5,6 +7,7 @@ import {
   type PessoaComFoto,
   type MarcaComLogo,
 } from "@/data/socialProof";
+import { resolverProva } from "@/data/socialProofLinks";
 
 const faceImages = import.meta.glob("../../assets/famosos/*.{webp,jpg,jpeg,png}", {
   eager: true, query: "?url", import: "default",
@@ -44,6 +47,12 @@ interface Props {
   titulo?: React.ReactNode;
   eyebrow?: string;
   className?: string;
+  /**
+   * Torna clicável APENAS quem tem lastro real (obra + mídia) — resolvido por
+   * socialProofLinks. Quem não tem obra continua não-clicável: nada de
+   * afordância falsa. Off por padrão (ex.: reasseguro no meio do cadastro).
+   */
+  interactive?: boolean;
 }
 
 export default function SocialProof({
@@ -53,6 +62,7 @@ export default function SocialProof({
   titulo,
   eyebrow,
   className = "",
+  interactive = false,
 }: Props) {
   const isDark = variant === "dark";
 
@@ -83,11 +93,14 @@ export default function SocialProof({
     <ul className={`grid grid-cols-3 ${tileGap} ${tierMax} mx-auto`}>
       {pessoas.map((c) => {
         const foto = FOTOS[c.slug];
-        return (
-          <li key={c.slug} className="group flex flex-col items-center">
+        const prova = interactive ? resolverProva(c.slug) : null;
+        const conteudo = (
+          <>
             {/* Raio 10px (md do V3) — sem cantos vivos. */}
             <div
-              className={`relative w-full aspect-[4/5] overflow-hidden rounded-[10px] ${tileBg} ring-1 ${tileRing} shadow-[0_14px_30px_-20px_rgba(15,41,24,0.45)] transition-shadow duration-300`}
+              className={`relative w-full aspect-[4/5] overflow-hidden rounded-[10px] ${tileBg} ring-1 ${tileRing} shadow-[0_14px_30px_-20px_rgba(15,41,24,0.45)] transition-all duration-300 ${
+                prova ? "group-hover:ring-western-gold/60 group-hover:shadow-[0_18px_36px_-18px_rgba(15,41,24,0.55)]" : ""
+              }`}
             >
               {foto ? (
                 /* Foto sempre em cor cheia: a prova é o rosto, e no celular não
@@ -110,10 +123,37 @@ export default function SocialProof({
                 </div>
               )}
             </div>
-            {/* Nome: sans semibold 16px (UI). Nunca abaixo de 14px. */}
-            <p className={`mt-3 text-center font-sans text-[16px] font-semibold leading-snug ${captionColor}`}>
+            {/* Nome: sans semibold 16px (UI). Nunca abaixo de 14px.
+                A seta é a afordância de "tem obra atrás" — visível também no
+                toque (no celular não existe hover para revelar). */}
+            <p
+              className={`mt-3 text-center font-sans text-[16px] font-semibold leading-snug ${captionColor} ${
+                prova ? "transition-colors group-hover:text-western-gold-soft" : ""
+              }`}
+            >
               {c.nome}
+              {prova && (
+                <ArrowUpRight
+                  className="inline-block h-3.5 w-3.5 ml-1 -translate-y-[1px] opacity-70"
+                  aria-hidden="true"
+                />
+              )}
             </p>
+          </>
+        );
+        return (
+          <li key={c.slug} className="group flex flex-col items-center">
+            {prova ? (
+              <Link
+                to={`/obras/${prova.obra.slug}`}
+                aria-label={`Ver a obra: ${prova.obra.titulo}`}
+                className="flex w-full flex-col items-center"
+              >
+                {conteudo}
+              </Link>
+            ) : (
+              conteudo
+            )}
           </li>
         );
       })}
@@ -125,19 +165,41 @@ export default function SocialProof({
   const wordmarkFs = compact
     ? { mobile: 16, desktop: 18 }
     : { mobile: 17, desktop: 20 };
-  const renderMarca = (m: MarcaComLogo) => (
-    <span
-      style={{
-        fontSize: `${wordmarkFs.mobile}px`,
-        lineHeight: 1.2,
-        letterSpacing: "0.02em",
-        ["--wm-fs-md" as string]: `${wordmarkFs.desktop}px`,
-      }}
-      className={`whitespace-nowrap text-center font-sans font-semibold ${wordmarkColor} md:text-[length:var(--wm-fs-md)]`}
-    >
-      {m.nome}
-    </span>
-  );
+  const renderMarca = (m: MarcaComLogo) => {
+    const prova = interactive ? resolverProva(m.slug) : null;
+    const wordmark = (
+      <span
+        style={{
+          fontSize: `${wordmarkFs.mobile}px`,
+          lineHeight: 1.2,
+          letterSpacing: "0.02em",
+          ["--wm-fs-md" as string]: `${wordmarkFs.desktop}px`,
+        }}
+        className={`whitespace-nowrap text-center font-sans font-semibold ${wordmarkColor} md:text-[length:var(--wm-fs-md)] ${
+          prova ? "transition-colors group-hover/marca:text-western-gold-soft" : ""
+        }`}
+      >
+        {m.nome}
+        {prova && (
+          <ArrowUpRight
+            className="inline-block h-3 w-3 ml-1 -translate-y-[1px] opacity-70"
+            aria-hidden="true"
+          />
+        )}
+      </span>
+    );
+    return prova ? (
+      <Link
+        to={`/obras/${prova.obra.slug}`}
+        aria-label={`Ver a obra: ${prova.obra.titulo}`}
+        className="group/marca tap-target inline-flex items-center"
+      >
+        {wordmark}
+      </Link>
+    ) : (
+      wordmark
+    );
+  };
 
   return (
     <div className={className}>

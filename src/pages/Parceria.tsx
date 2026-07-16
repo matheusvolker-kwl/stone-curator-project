@@ -556,6 +556,7 @@ export default function Parceria() {
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
               variant="dark"
+              interactive
               eyebrow="Especificada por quem define o mercado"
               titulo={<>Profissionais e marcas que mantêm a Western em seus projetos.</>}
               groups={["celebridades", "profissionais", "marcas"]}

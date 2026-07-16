@@ -534,6 +534,7 @@ export default function Index() {
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
               variant="dark"
+              interactive
               eyebrow="Quem especifica e confia na Western"
               titulo={<>Especificada pelo topo do mercado — de celebridades a profissionais de referência.</>}
               groups={["celebridades", "profissionais", "marcas"]}

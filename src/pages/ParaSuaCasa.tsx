@@ -514,6 +514,7 @@ export default function ParaSuaCasa() {
           <div className="mx-auto max-w-4xl">
             <Reveal variant="fade-up" duration={750}>
               <SocialProof
+                interactive
                 eyebrow="Quem já tem uma"
                 titulo={<>Nas casas de quem podia ter qualquer coisa.</>}
                 groups={["celebridades"]}

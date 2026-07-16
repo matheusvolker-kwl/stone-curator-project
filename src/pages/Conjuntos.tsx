@@ -17,7 +17,6 @@ import {
 } from "@/data/guideMap";
 import GatedPrice from "@/components/shared/GatedPrice";
 import { ArrowRight, SlidersHorizontal, X } from "lucide-react";
-import ProjetosWesternBand from "@/components/shared/ProjetosWesternBand";
 import { conjuntoRenders } from "@/data/conjuntoRenders";
 import { nivelImage } from "@/components/guide-v2/imagery";
 
@@ -332,7 +331,6 @@ export default function Conjuntos() {
         </div>
       </div>
 
-      <ProjetosWesternBand />
 
       {/* MOBILE — drawer de filtros */}
       {filtersOpen && (

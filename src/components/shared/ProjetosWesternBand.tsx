@@ -57,7 +57,10 @@ function PlayOverlay() {
 
 export default function ProjetosWesternBand() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const items = CASOS_WESTERN;
+  /* Só DEPOIMENTOS (vídeo). As obras (fotos) têm casa própria em /inspiracoes e
+   * /obras/:slug — misturar os dois tipos na mesma grade era o que fazia esta
+   * seção parecer um amontoado. Esta faixa vive só no /sobre. */
+  const items = CASOS_WESTERN.filter((c) => c.tipo === "video");
 
   const destaque = items.find((c) => c.destaque) ?? items[0];
   const restantes = items.filter((c) => c.id !== destaque?.id);
@@ -91,13 +94,11 @@ export default function ProjetosWesternBand() {
     <section className="surface-forest border-y border-western-gold/15 py-14 md:py-20">
       <div className="container-western">
         <header className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
-          <p className={EYEBROW_DARK}>Depoimentos e obras</p>
+          <p className={EYEBROW_DARK}>Depoimentos</p>
           <div className="w-12 h-px bg-western-gold mx-auto my-5" />
-          <h2 className="display-lg text-western-cream">
-            Projetos que a Western tornou possível
-          </h2>
+          <h2 className="display-lg text-western-cream">Quem já fez, conta.</h2>
           <p className="font-sans text-[17px] leading-[1.6] text-western-cream/85 mt-4">
-            Arquitetos, empresários e destinos icônicos contam por que escolheram Western.
+            Arquitetos, clientes e destinos icônicos falam por que escolheram Western.
           </p>
         </header>
 
@@ -135,7 +136,7 @@ export default function ProjetosWesternBand() {
         )}
 
         {/* Grade dos demais */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
           {restantes.map((caso) => (
             <button
               type="button"
@@ -190,12 +191,14 @@ export default function ProjetosWesternBand() {
                       />
                     </div>
                   ) : (
+                    /* Sem autoPlay + preload="none": o play é explícito. Com
+                       autoplay, abrir o modal já disparava o download do vídeo
+                       (o maior tem 18 MB). Agora só baixa se a pessoa der play. */
                     <video
                       src={current.mediaUrl}
                       poster={current.posterUrl}
                       controls
-                      muted
-                      autoPlay
+                      preload="none"
                       playsInline
                       className="w-full max-h-[80vh] object-contain bg-black"
                     />
