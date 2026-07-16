@@ -10,8 +10,8 @@ import SocialProof from "@/components/shared/SocialProof";
 import { ArrowRight, Check, X } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { texturaPara } from "@/lib/acabamentoTexturas";
-import heroCascata from "@/assets/hero-cascata.webp";
-import heroCascataSm from "@/assets/hero-cascata-sm.webp";
+import heroHome from "@/assets/hero-home.webp";
+import heroHomeMobile from "@/assets/hero-home-mobile.webp";
 import iconePedraBranco from "@/assets/icone-pedra-branco.png";
 import imgFonte from "@/assets/about-projetos/cascata-tropical.webp";
 import imgLagoHibrido from "@/assets/conjuntos-render/conjunto-lago-hibrido-igarape-equilibrado.webp";
@@ -92,26 +92,33 @@ export default function Index() {
       />
 
       {/* 1 — HERO "Declaração 10%" (foto full-bleed + overlay verde de proteção) */}
-      <section className="relative w-full overflow-hidden bg-western-green-deep">
-        <img
-          src={heroCascata}
-          srcSet={`${heroCascataSm} 900w, ${heroCascata} 1800w`}
-          sizes="100vw"
-          alt="Projeto Western — piscina com cascata de pedra artesanal."
-          loading="eager"
-          {...({ fetchpriority: "high" } as Record<string, string>)}
-          decoding="async"
-          width={1820}
-          height={1213}
-          className="absolute inset-0 w-full h-full object-cover object-center"
-        />
-        {/* Scrim mobile: vertical e mais denso — o texto ocupa a largura toda */}
+      {/* Art direction por breakpoint: no celular a foto é um RECORTE RETRATO
+          (9:16) da mesma obra; no desktop, uma faixa. Antes era a mesma foto
+          deitada espremida num slot em pé — o navegador ampliava 1,3x e jogava
+          fora 68% da largura. */}
+      <section className="relative w-full overflow-hidden bg-western-green-deep flex items-end md:items-center min-h-[700px] md:min-h-[620px]">
+        <picture>
+          <source media="(min-width: 768px)" srcSet={heroHome} width={1600} height={900} />
+          <img
+            src={heroHomeMobile}
+            alt="Piscina natural Western em Tapiraí — matacões e água cristalina na mata."
+            loading="eager"
+            {...({ fetchpriority: "high" } as Record<string, string>)}
+            decoding="async"
+            width={860}
+            height={1529}
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+        </picture>
+        {/* Scrim mobile ANCORADO EMBAIXO: a foto respira em cima (é o assunto),
+            o texto vive no escuro do rodapé. Antes era um cobertor de 70-90% em
+            toda a altura — por isso a imagem virava só um fundo. */}
         <div
           className="absolute inset-0 pointer-events-none md:hidden"
           aria-hidden
           style={{
             background:
-              "linear-gradient(180deg, hsl(var(--western-green-deep) / 0.9) 0%, hsl(var(--western-green-deep) / 0.7) 55%, hsl(var(--western-green-deep) / 0.86) 100%)",
+              "linear-gradient(180deg, hsl(var(--western-green-deep) / 0) 0%, hsl(var(--western-green-deep) / 0.30) 34%, hsl(var(--western-green-deep) / 0.86) 68%, hsl(var(--western-green-deep) / 0.97) 100%)",
           }}
         />
         {/* Scrim desktop: horizontal — texto vive na metade esquerda */}
@@ -131,7 +138,9 @@ export default function Index() {
           className="hidden md:block absolute right-[6%] top-1/2 -translate-y-1/2 w-[38vw] max-w-[480px] opacity-[0.1] pointer-events-none select-none"
         />
 
-        <div className="relative container-western py-16 md:py-24 md:min-h-[620px] md:flex md:items-center">
+        {/* O posicionamento vertical agora é da <section> (items-end no celular,
+            items-center no desktop) — o texto ancora no rodapé escuro. */}
+        <div className="relative container-western w-full pt-28 pb-12 md:py-24">
           <div className="w-full max-w-2xl text-western-cream animate-fade-in-up">
             <div className="w-12 h-px bg-western-gold mb-6" />
             <h1 className="display-xl text-western-cream">
