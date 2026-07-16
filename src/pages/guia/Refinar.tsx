@@ -14,7 +14,6 @@ import ProjetoSidebar from "@/components/guide-v2/ProjetoSidebar";
 import ContextoChips from "@/components/guide-v2/ContextoChips";
 import SectionDivider from "@/components/guide-v2/SectionDivider";
 import Reveal from "@/components/shared/Reveal";
-import ProjetosWesternBand from "@/components/shared/ProjetosWesternBand";
 import brasao from "@/assets/brasao.png";
 import {
   acabamentoMeta,
@@ -453,8 +452,6 @@ export default function GuiaRefinar() {
           />
         </div>
       </main>
-
-      <ProjetosWesternBand />
 
       <AutoralProductModal
         item={modalItem}
