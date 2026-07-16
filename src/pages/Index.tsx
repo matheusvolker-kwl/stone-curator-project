@@ -96,7 +96,7 @@ export default function Index() {
           (9:16) da mesma obra; no desktop, uma faixa. Antes era a mesma foto
           deitada espremida num slot em pé — o navegador ampliava 1,3x e jogava
           fora 68% da largura. */}
-      <section className="relative w-full overflow-hidden bg-western-green-deep flex items-end md:items-center min-h-[700px] md:min-h-[720px]">
+      <section className="relative w-full overflow-hidden bg-western-green-deep flex items-start md:items-center min-h-[760px] md:min-h-[720px]">
         <picture>
           <source media="(min-width: 768px)" srcSet={heroHome} width={1600} height={900} />
           <img
@@ -113,15 +113,16 @@ export default function Index() {
             className="absolute inset-0 w-full h-full object-cover object-center md:object-bottom"
           />
         </picture>
-        {/* Scrim mobile ANCORADO EMBAIXO: a foto respira em cima (é o assunto),
-            o texto vive no escuro do rodapé. Antes era um cobertor de 70-90% em
-            toda a altura — por isso a imagem virava só um fundo. */}
+        {/* Scrim mobile ANCORADO NO TOPO: o texto vive no escuro de cima (onde a
+            foto só tem copa de árvore) e a base fica LIMPA — é lá que está o
+            matacão, que é o produto. Antes era um cobertor de 70-90% na altura
+            toda: a foto virava fundo. */}
         <div
           className="absolute inset-0 pointer-events-none md:hidden"
           aria-hidden
           style={{
             background:
-              "linear-gradient(180deg, hsl(var(--western-green-deep) / 0) 0%, hsl(var(--western-green-deep) / 0.30) 34%, hsl(var(--western-green-deep) / 0.86) 68%, hsl(var(--western-green-deep) / 0.97) 100%)",
+              "linear-gradient(180deg, hsl(var(--western-green-deep) / 0.95) 0%, hsl(var(--western-green-deep) / 0.92) 45%, hsl(var(--western-green-deep) / 0.55) 70%, hsl(var(--western-green-deep) / 0.08) 100%)",
           }}
         />
         {/* Scrim desktop: horizontal — texto vive na metade esquerda */}
@@ -141,9 +142,9 @@ export default function Index() {
           className="hidden md:block absolute right-[6%] top-1/2 -translate-y-1/2 w-[38vw] max-w-[480px] opacity-[0.1] pointer-events-none select-none"
         />
 
-        {/* O posicionamento vertical agora é da <section> (items-end no celular,
-            items-center no desktop) — o texto ancora no rodapé escuro. */}
-        <div className="relative container-western w-full pt-28 pb-12 md:py-24">
+        {/* O posicionamento vertical é da <section>: no celular o texto ancora
+            no TOPO (items-start) e a foto respira na base; no desktop, centro. */}
+        <div className="relative container-western w-full pt-14 pb-20 md:py-24">
           <div className="w-full max-w-2xl text-western-cream animate-fade-in-up">
             <div className="w-12 h-px bg-western-gold mb-6" />
             <h1 className="display-xl text-western-cream">
