@@ -31,6 +31,12 @@ const JOBS = [
   ["obras/evandro-leveza.webp", "PROJETOS INSPIRAÇÃO/Evandro Mesquita/WhatsApp Image 2023-12-24 at 09.07.31.jpeg", 1000],
   ["obras/unique.webp",         "ESPECIAIS/unique garden/04. FOTOS/Cópia de WhatsApp Image 2026-03-25 at 13.50.15 (3).jpeg", 1400],
   ["obras/rosewood.webp",       "ESPECIAIS/hotel rosewood/Fotos-11.jpg", 1400],
+  // Módulo 15 (fotos curadas pelo dono). Capa = a única landscape (cena inteira);
+  // galeria = a cascata Santa Bárbara (peça-âncora), a aérea (a forma) e o deck.
+  ["obras/modulo-15.webp",   "PROJETOS INSPIRAÇÃO/Modulo 15/Fotos/DSC08466-HDR.jpg", 1500],
+  ["obras/modulo-15-2.webp", "PROJETOS INSPIRAÇÃO/Modulo 15/Fotos/DSC08288-HDR.jpg", 1200],
+  ["obras/modulo-15-3.webp", "PROJETOS INSPIRAÇÃO/Modulo 15/Fotos/dji_fly_20250820_104108_0007_1755696916937_aeb-HDR.jpg", 1200],
+  ["obras/modulo-15-4.webp", "PROJETOS INSPIRAÇÃO/Modulo 15/Fotos/DSC08273-HDR.jpg", 1200],
   // ── Linguagens (galerias / heróis) ───────────────────────────────
   ["linguagens/piscina.webp",       "Piscinas/Western Pools - Embu das Artes-28.JPG", 1600],
   ["linguagens/piscina-praia.webp", "Piscinas/Cópia de DSC08268-HDR.jpg", 1100],

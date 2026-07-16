@@ -33,7 +33,7 @@ export const SEGMENTOS: Segmento[] = [
     intro:
       "A piscina que apaga a fronteira entre água e paisagem: lâmina orgânica, entrada de praia com profundidade zero, cascata como âncora e blowers que imitam a arrebentação. Água tratada por sal — sem cloro, sem olho ardendo.",
     galeria: galeriaDe("piscinas"),
-    obraSlugs: ["showroom-riviera", "casa-de-praia-tato", "tapirai"],
+    obraSlugs: ["showroom-riviera", "casa-de-praia-tato", "tapirai", "modulo-15"],
   },
   {
     id: "lagos",

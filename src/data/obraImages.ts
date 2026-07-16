@@ -16,6 +16,10 @@ import evandro from "@/assets/obras/evandro.webp";
 import evandroLeveza from "@/assets/obras/evandro-leveza.webp";
 import unique from "@/assets/obras/unique.webp";
 import rosewood from "@/assets/obras/rosewood.webp";
+import modulo15 from "@/assets/obras/modulo-15.webp";
+import modulo15Cascata from "@/assets/obras/modulo-15-2.webp";
+import modulo15Aerea from "@/assets/obras/modulo-15-3.webp";
+import modulo15Deck from "@/assets/obras/modulo-15-4.webp";
 import caito from "@/assets/casos-western/caito-maia.webp";
 
 export const OBRA_COVER: Record<string, string> = {
@@ -26,6 +30,7 @@ export const OBRA_COVER: Record<string, string> = {
   "evandro-mesquita": evandro,
   "unique-garden": unique,
   rosewood,
+  "modulo-15": modulo15,
   "caito-maia": caito,
 };
 
@@ -37,5 +42,6 @@ export const OBRA_GALERIA: Record<string, string[]> = {
   "evandro-mesquita": [evandro, evandroLeveza],
   "unique-garden": [unique],
   rosewood: [rosewood],
+  "modulo-15": [modulo15, modulo15Cascata, modulo15Aerea, modulo15Deck],
   "caito-maia": [caito],
 };
