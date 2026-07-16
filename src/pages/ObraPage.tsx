@@ -57,10 +57,10 @@ export default function ObraPage() {
 
       <div className="container-western pt-6">
         <Link
-          to="/obras"
+          to="/inspiracoes"
           className="tap-target inline-flex items-center gap-1.5 font-sans text-[14px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
         >
-          <ChevronLeft className="h-4 w-4" /> Todas as obras
+          <ChevronLeft className="h-4 w-4" /> Inspire-se
         </Link>
       </div>
 

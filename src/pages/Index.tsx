@@ -391,7 +391,7 @@ export default function Index() {
             ))}
           </div>
           <div className="mt-10 md:text-center">
-            <Link to="/obras" className="btn-outline-forest w-full md:w-auto">
+            <Link to="/inspiracoes" className="btn-outline-forest w-full md:w-auto">
               Ver todas as obras <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
             </Link>
           </div>

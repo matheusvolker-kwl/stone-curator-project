@@ -151,7 +151,6 @@ export default function Footer() {
             <h4 className={colTitle}>Western</h4>
             <ul className="flex flex-col">
               <li><Link to="/sobre" className={colLink}>Sobre o ateliê</Link></li>
-              <li><Link to="/obras" className={colLink}>Obras entregues</Link></li>
               <li><Link to="/para-sua-casa" className={colLink}>Para sua casa</Link></li>
               <li><Link to="/contrate-a-western" className={colLink}>Contrate a Western</Link></li>
               <li><Link to="/visitar" className={colLink}>Agendar visita</Link></li>
