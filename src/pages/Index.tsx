@@ -179,15 +179,47 @@ export default function Index() {
                 Ver catálogo
               </Link>
             </div>
-            <div className="flex flex-wrap gap-x-10 gap-y-5 mt-10 pt-7 border-t border-western-cream/20">
+            {/* Régua de provas. Era `flex flex-wrap` SEM breakpoint nenhum — o
+                layout no celular não era projetado, era emergente: a 375/390px
+                os três quebravam 2+1 com "33 anos" órfão, e só a partir de 403px
+                (limiar que ninguém escolheu) cabiam numa linha. Agora a grade é
+                DECLARADA: 2×2 no celular, 4 colunas no desktop. Nunca há órfão,
+                de 320px a 1360px.
+
+                min-h no rótulo: dentro do max-w-2xl do hero as colunas do desktop
+                têm ~144px, então os rótulos longos quebram em 2 linhas de todo
+                jeito. Reservar a altura mantém as 4 células iguais e os números
+                na mesma base — a quebra vira projeto, não acidente.
+
+                O 50% é o único dourado, no mesmo token do "obra." do h1 (regra do
+                DS: sobre foto/verde o acento é dourado). Vem primeiro porque fica
+                logo abaixo do "Criar cadastro · ver preços" — ele é a resposta à
+                pergunta que o botão faz.
+
+                "abaixo do varejo" e não "de desconto": no vocabulário deste site
+                "% de desconto" já significa o desconto do TIER (AccountLayout.tsx
+                :155 mostra os 5–20% reais pós-login). São coisas diferentes — o
+                50% é a distância do preço B2B para o preço B2C, e o tier corre em
+                cima dessa base. Mesma palavra para as duas quebraria a promessa
+                no primeiro login. */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 md:gap-x-8 gap-y-7 md:gap-y-0 mt-10 pt-7 border-t border-western-cream/20">
               {[
-                { b: "50", s: "modelos" },
-                { b: "+300 mil", s: "downloads no SketchUp" },
-                { b: "33 anos", s: "de ateliê" },
+                { b: "50%", s: "abaixo do varejo, em média", destaque: true },
+                { b: "8", s: "linhas de produtos", destaque: false },
+                { b: "+300 mil", s: "downloads no SketchUp", destaque: false },
+                { b: "33 anos", s: "de ateliê", destaque: false },
               ].map((x) => (
                 <div key={x.s}>
-                  <p className="display-md text-western-cream">{x.b}</p>
-                  <p className="text-[14px] text-western-cream/70 mt-1.5">{x.s}</p>
+                  <p
+                    className={`display-md tabular-nums ${
+                      x.destaque ? "text-western-gold-soft" : "text-western-cream"
+                    }`}
+                  >
+                    {x.b}
+                  </p>
+                  <p className="text-[14px] leading-[1.3] text-western-cream/70 mt-1.5 min-h-[2.6em]">
+                    {x.s}
+                  </p>
                 </div>
               ))}
             </div>
