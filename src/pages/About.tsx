@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 
 import SocialProof from "@/components/shared/SocialProof";
 import Reveal from "@/components/shared/Reveal";
-import ProjetosWesternBand from "@/components/shared/ProjetosWesternBand";
 import { ArrowRight, Layers, Mountain, Recycle, Hammer } from "lucide-react";
 import irmaosGruta from "@/assets/irmaos-botelho-gruta.webp";
 import heroObra from "@/assets/linguagens/piscina.webp";
@@ -237,8 +236,30 @@ export default function About() {
         </div>
       </section>
 
-      {/* GALERIA — padrão canônico de obras */}
-      <ProjetosWesternBand />
+      {/* OBRAS — a vitrine vive em /inspiracoes (por segmento). Aqui é só a
+          ponte: nada de repetir a galeria numa segunda superfície. */}
+      <section className="surface-forest py-14 md:py-20 border-y border-western-gold/15">
+        <div className="container-western">
+          <Reveal variant="fade-up" duration={700}>
+            <div className="text-center max-w-2xl mx-auto">
+              <p className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft mb-4">
+                Obras entregues
+              </p>
+              <div className="w-12 h-px bg-western-gold mx-auto mb-5" />
+              <h2 className="display-lg text-western-cream">
+                De piscinas de celebridades a endereços icônicos.
+              </h2>
+              <p className="font-sans text-[17px] leading-[1.6] text-western-cream/85 mt-4 mb-8">
+                A ideia por trás de cada obra, as fotos do que já foi entregue e as peças que
+                compõem cada cena.
+              </p>
+              <Link to="/inspiracoes" className="btn-gold w-full sm:w-auto">
+                Ver as obras <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+              </Link>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
       {/* PROVA SOCIAL — rostos + marcas */}
       <section className="surface-ivory py-14 md:py-20">
