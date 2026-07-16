@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import GatedPrice from "@/components/shared/GatedPrice";
+import { papelDaPeca } from "./papelPeca";
 import type { ProjetoPeca } from "./types";
 
 interface Props {
@@ -26,6 +27,9 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
     peca.dim && peca.dim !== "—" ? peca.dim : null,
   ].filter(Boolean);
 
+  // Papel na composição (gramática de projeto) — derivado do código/handle.
+  const papel = papelDaPeca(peca.codigo);
+
   return (
     <div className="flex flex-col md:flex-row md:items-start gap-5 py-6 border-b border-western-border-soft first:border-t">
       <div className="flex gap-4 md:gap-5 flex-1 min-w-0">
@@ -47,6 +51,16 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
           <h4 className="font-sans text-[18px] md:text-[20px] font-semibold text-western-green-deep leading-snug break-words">
             {peca.nome}
           </h4>
+          {papel && (
+            <span
+              className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-western-gold/15 px-2.5 py-0.5 font-sans text-[12.5px] font-semibold text-western-bronze"
+              title={papel.frase}
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-western-gold" aria-hidden />
+              {papel.papel}
+              <span className="sr-only"> — {papel.frase}</span>
+            </span>
+          )}
           <p className="text-meta mt-1.5 break-words">{specs.join(" · ")}</p>
           {/* Preço unitário só para parceiro aprovado (gate B2B). O sidebar
               já traz o CTA do gate — sem repetir chip em cada linha. */}
