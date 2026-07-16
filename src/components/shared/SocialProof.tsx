@@ -53,6 +53,15 @@ interface Props {
    * afordância falsa. Off por padrão (ex.: reasseguro no meio do cadastro).
    */
   interactive?: boolean;
+  /**
+   * "tiers" (padrão): um rótulo por grupo, grade centralizada e estreita.
+   * "row": celebridades + profissionais numa FILEIRA só, largura cheia, sem os
+   * rótulos de tier — mostra a função de cada pessoa, que informa mais do que
+   * a nossa taxonomia interna.
+   */
+  layout?: "tiers" | "row";
+  /** "left" acompanha o ritmo editorial do resto do site (eyebrow+título à esquerda). */
+  align?: "center" | "left";
 }
 
 export default function SocialProof({
@@ -63,7 +72,11 @@ export default function SocialProof({
   eyebrow,
   className = "",
   interactive = false,
+  layout = "tiers",
+  align = "center",
 }: Props) {
+  const isRow = layout === "row";
+  const isLeft = align === "left";
   const isDark = variant === "dark";
 
   /* V3: eyebrow = sans semibold 14px, tracking 0.06em. Nunca mono, nunca 10px.
@@ -89,8 +102,14 @@ export default function SocialProof({
   const tierMax = compact ? "max-w-md md:max-w-lg" : "max-w-md md:max-w-2xl";
   const tileGap = compact ? "gap-3 md:gap-4" : "gap-4 md:gap-6";
 
-  const renderTier = (pessoas: readonly PessoaComFoto[]) => (
-    <ul className={`grid grid-cols-3 ${tileGap} ${tierMax} mx-auto`}>
+  const renderTier = (pessoas: readonly PessoaComFoto[], full = false) => (
+    <ul
+      className={
+        full
+          ? "grid grid-cols-3 gap-4 sm:grid-cols-6 md:gap-6"
+          : `grid grid-cols-3 ${tileGap} ${tierMax} mx-auto`
+      }
+    >
       {pessoas.map((c) => {
         const foto = FOTOS[c.slug];
         const prova = interactive ? resolverProva(c.slug) : null;
@@ -139,6 +158,15 @@ export default function SocialProof({
                 />
               )}
             </p>
+            {c.papel && (
+              <p
+                className={`text-center font-sans text-[13px] leading-snug mt-1 ${
+                  isDark ? "text-western-cream/60" : "text-western-stone-warm"
+                }`}
+              >
+                {c.papel}
+              </p>
+            )}
           </>
         );
         return (
@@ -201,29 +229,58 @@ export default function SocialProof({
     );
   };
 
+  /* layout="row": celebridades + profissionais viram uma fileira só. */
+  const pessoasRow = avatarGroups.flatMap(
+    (g) => SOCIAL_PROOF[g] as readonly PessoaComFoto[],
+  );
+
   return (
     <div className={className}>
       {(eyebrow || titulo) && (
-        <div className="text-center mb-9 md:mb-12">
+        <div className={`${isLeft ? "" : "text-center"} mb-9 md:mb-12`}>
           {eyebrow && <p className={`${eyebrowCls} mb-4`}>{eyebrow}</p>}
-          <div className={`w-12 h-px ${goldLine} mx-auto mb-5`} />
-          {titulo && <h2 className={`display-lg ${nameColor} max-w-2xl mx-auto`}>{titulo}</h2>}
+          <div className={`w-12 h-px ${goldLine} ${isLeft ? "" : "mx-auto"} mb-5`} />
+          {titulo && (
+            <h2 className={`display-lg ${nameColor} max-w-2xl ${isLeft ? "" : "mx-auto"}`}>
+              {titulo}
+            </h2>
+          )}
         </div>
       )}
 
-      {avatarGroups.map((g) => (
-        <div key={g} className={compact ? "mb-8 md:mb-9" : "mb-10 md:mb-12"}>
-          <p className={`text-center ${eyebrowCls} mb-5 md:mb-6`}>{SOCIAL_PROOF_LABELS[g]}</p>
-          {renderTier(SOCIAL_PROOF[g] as readonly PessoaComFoto[])}
-        </div>
-      ))}
+      {isRow
+        ? pessoasRow.length > 0 && renderTier(pessoasRow, true)
+        : avatarGroups.map((g) => (
+            <div key={g} className={compact ? "mb-8 md:mb-9" : "mb-10 md:mb-12"}>
+              <p className={`text-center ${eyebrowCls} mb-5 md:mb-6`}>
+                {SOCIAL_PROOF_LABELS[g]}
+              </p>
+              {renderTier(SOCIAL_PROOF[g] as readonly PessoaComFoto[])}
+            </div>
+          ))}
 
       {showMarcas && (
-        <div className={avatarGroups.length ? "mt-1" : ""}>
-          <p className={`text-center ${eyebrowCls} mb-6 md:mb-7`}>{SOCIAL_PROOF_LABELS.marcas}</p>
-          <ul className="grid grid-cols-2 gap-x-6 gap-y-5 md:flex md:flex-wrap md:items-center md:justify-center md:gap-x-10 lg:gap-x-14 md:gap-y-6 max-w-full">
+        <div
+          className={
+            isRow
+              ? `mt-10 md:mt-14 pt-8 border-t ${isDark ? "border-western-gold/15" : "border-western-border-soft"}`
+              : avatarGroups.length
+                ? "mt-1"
+                : ""
+          }
+        >
+          <p className={`${isLeft ? "" : "text-center"} ${eyebrowCls} mb-6 md:mb-7`}>
+            {SOCIAL_PROOF_LABELS.marcas}
+          </p>
+          <ul
+            className={
+              isRow
+                ? "flex flex-wrap items-center gap-x-8 gap-y-4 md:gap-x-12"
+                : "grid grid-cols-2 gap-x-6 gap-y-5 md:flex md:flex-wrap md:items-center md:justify-center md:gap-x-10 lg:gap-x-14 md:gap-y-6 max-w-full"
+            }
+          >
             {(SOCIAL_PROOF.marcas as readonly MarcaComLogo[]).map((m) => (
-              <li key={m.slug} className="flex items-center justify-center">
+              <li key={m.slug} className={isRow ? "flex items-center" : "flex items-center justify-center"}>
                 {renderMarca(m)}
               </li>
             ))}

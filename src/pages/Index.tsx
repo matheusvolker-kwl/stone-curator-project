@@ -504,46 +504,59 @@ export default function Index() {
         </div>
       </section>
 
-      {/* 10 — Prova social (faixa institucional escura) */}
-      <section className="surface-forest py-16 md:py-24 border-y border-western-gold/15">
-        <div className="container-western max-w-5xl">
-          {/* Números verificáveis primeiro — dão peso antes dos nomes. */}
+      {/* 10 — Prova social. CLARA e alinhada à esquerda: acompanha o ritmo
+          editorial do resto da home (o verde fica para o CTA de credenciamento,
+          onde escuro = ação — antes eram duas faixas escuras quase coladas).
+          Os 6 rostos numa fileira só, largura cheia, com a função de cada um:
+          o rótulo de tier era taxonomia nossa, não informação para quem visita. */}
+      <section className="surface-paper py-16 md:py-24 border-t border-western-border-soft">
+        <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
-            <div className="mb-12 grid grid-cols-3 gap-3 border-b border-western-gold/15 pb-12 md:mb-16 md:gap-8 md:pb-16">
-              {[
-                { n: "4,9", l: "no Google", stars: true },
-                { n: "+14 mil", l: "no Instagram", stars: false },
-                { n: "+700", l: "projetos pelo Brasil", stars: false },
-              ].map((s) => (
-                <div key={s.l} className="text-center">
-                  <p className="font-display text-[28px] leading-none text-western-cream tabular-nums md:text-[46px]">
-                    {s.n}
-                  </p>
-                  {s.stars && (
-                    <p className="mt-1.5 text-[13px] tracking-[0.2em] text-western-gold-soft" aria-hidden="true">
-                      ★★★★★
+            <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-8 mb-10 md:mb-14">
+              <div>
+                <p className="text-eyebrow mb-3">Quem especifica e confia na Western</p>
+                <h2 className="display-lg text-western-green-deep max-w-[18ch]">
+                  Especificada pelo topo do mercado.
+                </h2>
+              </div>
+              {/* Números verificáveis — strip quieto, não um painel */}
+              <div className="flex gap-8 md:gap-12">
+                {[
+                  { n: "4,9", l: "no Google", stars: true },
+                  { n: "+14 mil", l: "no Instagram", stars: false },
+                  { n: "+700", l: "projetos", stars: false },
+                ].map((s) => (
+                  <div key={s.l}>
+                    <p className="font-display text-[26px] md:text-[34px] leading-none text-western-green-deep tabular-nums">
+                      {s.n}
                     </p>
-                  )}
-                  <p className="mt-2 text-[14px] leading-snug text-western-cream/75 md:text-[15px]">
-                    {s.l}
-                  </p>
-                </div>
-              ))}
+                    {s.stars && (
+                      <p className="mt-1 text-[11px] tracking-[0.18em] text-western-gold" aria-hidden="true">
+                        ★★★★★
+                      </p>
+                    )}
+                    <p className="mt-1.5 text-[13px] md:text-[14px] leading-snug text-western-stone-warm">
+                      {s.l}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           </Reveal>
+
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
-              variant="dark"
               interactive
-              eyebrow="Quem especifica e confia na Western"
-              titulo={<>Especificada pelo topo do mercado — de celebridades a profissionais de referência.</>}
+              layout="row"
+              align="left"
               groups={["celebridades", "profissionais", "marcas"]}
             />
           </Reveal>
-          <div className="text-center mt-10 md:mt-14">
+
+          <div className="mt-10 md:mt-12">
             <Link
               to="/sobre"
-              className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-gold-soft underline underline-offset-4 decoration-western-gold/50 hover:decoration-western-gold-soft transition-colors"
+              className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
             >
               Conhecer a Western <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
             </Link>
