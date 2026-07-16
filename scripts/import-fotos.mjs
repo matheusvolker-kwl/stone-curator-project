@@ -38,6 +38,8 @@ const JOBS = [
   ["linguagens/jardim.webp",        "Jardins/DSC07163-HDR.jpg", 1200],
   ["linguagens/revestimento.webp",  "revestimentos/balcão pedra japones 3.jpg", 1600],
   ["linguagens/viveiro.webp",       "Viveiros/Projeto-HG-Avare-3.jpg", 1200],
+  // ── Herói próprio da página B2C (evita repetir home/sobre) ───────
+  ["para-sua-casa/hero.webp",       "Piscinas/Western Pools - Embu das Artes-18.JPG", 1800],
 ];
 
 let ok = 0, fail = 0;
