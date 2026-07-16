@@ -444,7 +444,7 @@ export default function ProductPage() {
                     ref={addBtnRef as React.RefObject<HTMLButtonElement>}
                     onClick={handleAdd}
                     disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
-                    className={`group mt-4 w-full h-[52px] px-6 rounded-[10px] font-sans text-[16px] font-semibold normal-case tracking-normal transition-colors ${
+                    className={`group mt-4 w-full h-[52px] px-6 rounded-[10px] font-sans text-[16px] font-semibold normal-case tracking-normal transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 ${
                       acabPending
                         ? "bg-western-stone-warm/20 text-western-green-deep/70 hover:bg-western-stone-warm/25 disabled:opacity-100"
                         : "bg-western-cta text-western-cream hover:bg-western-green-deep disabled:opacity-45"

@@ -203,7 +203,7 @@ export default function Carrinho() {
               <div className="mt-8 grid gap-3">
                 <Link
                   to="/produtos"
-                  className="inline-flex w-full items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors"
+                  className="inline-flex w-full items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
                 >
                   Ver catálogo
                   <ArrowRight className="h-5 w-5" />
@@ -577,7 +577,7 @@ export default function Carrinho() {
                         type="button"
                         onClick={handleCheckout}
                         disabled={isLoading || checkoutLoading}
-                        className="group w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors disabled:opacity-45 disabled:cursor-not-allowed"
+                        className="group w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 disabled:opacity-45 disabled:cursor-not-allowed"
                       >
                         {isLoading || checkoutLoading ? (
                           <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
@@ -594,7 +594,7 @@ export default function Carrinho() {
                     ) : (
                       <Link
                         to={ctaTo}
-                        className="group w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors"
+                        className="group w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
                       >
                         {ctaLabel}
                         <ArrowRight
@@ -697,7 +697,7 @@ export default function Carrinho() {
             type="button"
             onClick={handleCheckout}
             disabled={isLoading || checkoutLoading}
-            className="w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors disabled:opacity-45 disabled:cursor-not-allowed"
+            className="w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 disabled:opacity-45 disabled:cursor-not-allowed"
           >
             {isLoading || checkoutLoading ? (
               <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
@@ -711,7 +711,7 @@ export default function Carrinho() {
         ) : (
           <Link
             to={ctaTo}
-            className="w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors"
+            className="w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
           >
             {ctaLabel}
             <ArrowRight className="h-5 w-5" aria-hidden="true" />

@@ -472,9 +472,19 @@
    * A ação primária é VERDE (--cta-bg = green-800). O dourado é ACENTO —
    * usar só quando a ação precisa saltar sobre fundo verde/foto. */
   .btn-base {
-    @apply inline-flex items-center justify-center gap-2 px-7 font-sans text-[16px] font-semibold transition-colors;
+    @apply inline-flex items-center justify-center gap-2 px-7 font-sans text-[16px] font-semibold;
+    /* Micro-interação padrão Apple: o botão "afunda" ~3% ao ser pressionado
+       (clique E toque). Sutil, rápido, na GPU (transform); desligado com
+       prefers-reduced-motion. */
+    @apply transition-[background-color,border-color,color,transform] duration-150 ease-out;
+    @apply active:scale-[0.97] motion-reduce:active:scale-100;
     min-height: var(--control-h);
     border-radius: var(--radius);
+  }
+  /* Mesmo "press" para os CTAs que não usam .btn-base (herói, add-to-cart,
+     barras fixas): basta acrescentar a classe `press`. */
+  .press {
+    @apply transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100;
   }
   .btn-base:disabled {
     opacity: 0.45;
