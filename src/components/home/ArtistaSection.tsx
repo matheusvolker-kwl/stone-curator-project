@@ -2,61 +2,67 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import ricardoDesenhando from "@/assets/ricardo-desenhando.webp";
 
+/**
+ * O fecho da home — a assinatura da casa, DEPOIS do credenciamento.
+ * (O credenciamento é o pedido; esta seção é o aperto de mão.)
+ *
+ * Antes ela estava "solta" por quatro desobediências empilhadas:
+ *  1. fora da grade — a foto vivia em max-w-[1600px], 240px mais larga que o site;
+ *  2. centralizada, num site inteiro alinhado à esquerda;
+ *  3. a citação em display-xl (48px) = o MESMO tamanho do h1 da página;
+ *  4. posicionada antes de um formulário de vendas (clímax emocional no meio).
+ * Quatro exceções não fazem uma seção especial — fazem uma seção órfã.
+ *
+ * Agora ela RIMA com o hero: régua dourada → texto creme → divisor fino → a
+ * autoria. Mesmo desenho, papéis opostos (a promessa lá, a assinatura aqui).
+ * Continuidade feita com forma, não com texto.
+ */
 export default function ArtistaSection() {
   return (
-    <section className="surface-ivory py-16 md:py-24 border-t border-western-border-soft">
-      {/* Eyebrow centralizado, anunciando a seção */}
-      <div className="container-western max-w-4xl text-center mb-7 md:mb-10">
-        <p className="text-eyebrow mb-4">O artista</p>
-        <div className="w-12 h-px bg-western-gold mx-auto" />
-      </div>
+    <section className="surface-forest pb-20 pt-4 md:pb-28 md:pt-8">
+      <div className="container-western">
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14">
+          {/* Foto — 7 colunas, DENTRO da grade. 5:4 (quase quadrada): uma pessoa
+              desenhando é um assunto vertical; 21:9 num retrato é enquadrar o vazio. */}
+          <figure className="m-0 lg:col-span-7">
+            <div className="aspect-[5/4] overflow-hidden rounded-[16px] ring-1 ring-western-gold/20 shadow-[0_28px_60px_-32px_rgba(0,0,0,0.6)]">
+              <img
+                src={ricardoDesenhando}
+                alt="Ricardo Botelho desenhando uma nova matriz no ateliê Western em Cajamar/SP"
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover object-center"
+              />
+            </div>
+          </figure>
 
-      {/* Foto widescreen (com margem lateral). No celular, proporção mais alta:
-       * 21/9 vira uma fresta de 60px numa tela de 390px. */}
-      <figure className="relative mx-auto max-w-[1600px] px-4 md:px-8">
-        <div className="relative aspect-[16/10] md:aspect-[21/9] overflow-hidden rounded-[16px] shadow-[0_28px_60px_-32px_rgba(15,41,24,0.45)]">
-          <img
-            src={ricardoDesenhando}
-            alt="Ricardo Botelho desenhando uma nova matriz no ateliê Western em Cajamar/SP"
-            loading="lazy"
-            decoding="async"
-            className="w-full h-full object-cover object-center"
-          />
-          {/* Legenda fixa (nunca dependente de hover — no celular não existe hover),
-           * sobre overlay verde de proteção para garantir contraste AA. */}
-          <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-western-green-deep/95 via-western-green-deep/70 to-transparent px-4 md:px-8 pt-16 pb-4 md:pb-6">
-            <p className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft">
-              No ateliê · Cajamar/SP
-            </p>
-            <p className="font-sans text-[16px] text-western-cream mt-1">
-              Ricardo desenhando uma nova matriz.
-            </p>
-          </figcaption>
+          {/* Texto — 5 colunas, à esquerda. 30px: uma página, um 48px (é o hero).
+              Creme sobre verde profundo lê mais forte que 48px sobre bege. */}
+          <div className="lg:col-span-5">
+            <div className="mb-7 h-px w-12 bg-western-gold" />
+            <blockquote className="font-display text-[26px] leading-[1.28] text-western-cream md:text-[30px]">
+              “Cada peça da Western nasce duas vezes: uma na natureza, outra no projeto.”
+            </blockquote>
+
+            <div className="mt-8 border-t border-western-cream/15 pt-6">
+              <p className="font-sans text-[17px] font-semibold text-western-cream">
+                Ricardo Botelho
+              </p>
+              <p className="mt-1 font-sans text-[14px] text-western-cream/60">
+                Diretor criativo · 2ª geração · Cajamar/SP
+              </p>
+            </div>
+
+            {/* Cortesia é link, não botão. Vestir cortesia de botão sólido é o que
+                dilui o CTA de verdade — e um fechamento não despacha a pessoa. */}
+            <Link
+              to="/sobre"
+              className="tap-target mt-7 inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-gold-soft underline underline-offset-4 decoration-western-gold/50 transition-colors hover:decoration-western-gold-soft"
+            >
+              Conhecer o ateliê <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
+            </Link>
+          </div>
         </div>
-      </figure>
-
-      {/* Bloco de texto abaixo — citação como herói + assinatura + CTA */}
-      <div className="container-western max-w-4xl mt-9 md:mt-12 text-center">
-        {/* Display Archivo, sempre ≥22px. Sem serifa, sem itálico, sem dourado
-         * como cor de texto sobre fundo claro (dourado é acento sobre foto/verde). */}
-        <blockquote className="display-xl text-western-green-deep">
-          “Cada peça da Western nasce duas vezes: uma na natureza, outra no projeto.”
-        </blockquote>
-
-        <div className="mt-6 mb-2">
-          {/* Abaixo de 22px a display não entra: assinatura em sans semibold 20px. */}
-          <p className="font-sans text-[20px] font-semibold text-western-green-deep">
-            Ricardo Botelho
-          </p>
-          <p className="text-meta mt-1.5">
-            Diretor criativo · Família Botelho, 2ª geração do ateliê
-          </p>
-        </div>
-
-        {/* CTA primário = verde. Link com .btn-primary (52px, 16px, raio 10px). */}
-        <Link to="/sobre" className="btn-primary mt-7 w-full sm:w-auto">
-          Conhecer o ateliê <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
-        </Link>
       </div>
     </section>
   );

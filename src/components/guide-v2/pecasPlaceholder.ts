@@ -4,7 +4,7 @@ import type { ProjetoPeca } from "./types";
 // Gera lista sintética e estável de peças por nível.
 // Placeholder até integração com Shopify trazer composição real do conjunto.
 const POOL = [
-  { codigo: "CSB", nome: "Cascata Santa Bárbara", peso: 215, dim: "140 × 95 × 80 cm", preco: 2840 },
+  { codigo: "CSB", nome: "Cascata Santa Bárbara", peso: 280, dim: "140 × 95 × 80 cm", preco: 2840 },
   { codigo: "PG5", nome: "Pedra Grande 5", peso: 95, dim: "70 × 55 × 50 cm", preco: 1280 },
   { codigo: "PM2", nome: "Pedra Média 2", peso: 32, dim: "45 × 35 × 30 cm", preco: 420 },
   { codigo: "PM4", nome: "Pedra Média 4", peso: 38, dim: "50 × 38 × 32 cm", preco: 460 },

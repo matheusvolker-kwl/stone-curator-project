@@ -470,6 +470,7 @@ export default function ContrateAWestern() {
           <div className="mx-auto max-w-5xl">
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
+              interactive
               eyebrow="Quem confia na Western"
               titulo={<>Especificada por quem define o paisagismo brasileiro.</>}
               groups={["celebridades", "profissionais", "marcas"]}

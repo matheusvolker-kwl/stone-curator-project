@@ -31,7 +31,6 @@ import {
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
 import GatedPrice from "@/components/shared/GatedPrice";
-import ProjetosWesternBand from "@/components/shared/ProjetosWesternBand";
 import SocialProofBand from "@/components/product/SocialProofBand";
 import {
   InstallationSection,
@@ -543,8 +542,6 @@ export default function ConjuntoPage() {
       </section>
 
       <InstallationSection config={installConfig} />
-
-      <ProjetosWesternBand />
 
       <SocialProofBand />
 

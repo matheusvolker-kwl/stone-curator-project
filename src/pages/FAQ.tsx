@@ -23,11 +23,11 @@ const OBJEÇÕES: { q: string; a: string }[] = [
   },
   {
     q: "É caro.",
-    a: "Comparando só o número da peça com pedra natural, sim. Mas a conta completa muda tudo: pedra natural equivalente pesa até 10× mais — guindaste, fechamento de rua, alvará municipal, equipe de içamento por dias. Western entrega em caminhão comum, descarrega manual e a instalação leva horas com argamassa C3 de loja de bairro. No custo total instalado, fica de 30 a 50% mais barato que pedra natural — e mais previsível.",
+    a: "Comparando só o número da peça com pedra natural, sim. Mas a conta completa muda tudo: pedra natural equivalente pesa até 10× mais — guindaste, fechamento de rua, alvará municipal, equipe de içamento por dias. Western entrega em caminhão comum, descarrega manual e a instalação leva horas com argamassa AC3 de loja de bairro. No custo total instalado, fica de 30 a 50% mais barato que pedra natural — e mais previsível.",
   },
   {
     q: "É pesada para a laje? Aguenta?",
-    a: "Pelo contrário — esse é um dos maiores diferenciais. As pedras são ocas internamente, com armadura de fibra de PET reciclado e cimento estrutural. Uma cascata grande Western pesa cerca de 215 kg; a mesma cascata em pedra natural passa de 2 toneladas. Western viabiliza laje, terraço, mezanino, jardim suspenso e cobertura — projetos que pedra natural inviabiliza.",
+    a: "Pelo contrário — esse é um dos maiores diferenciais. As pedras são ocas internamente, com armadura de fibra de PET reciclado e cimento estrutural. A Cascata Santa Bárbara, a maior peça da linha, pesa 280 kg; a mesma cascata em pedra natural chega a quase 3 toneladas. Western viabiliza laje, terraço, mezanino, jardim suspenso e cobertura — projetos que pedra natural inviabiliza.",
   },
   {
     q: "Mas o cliente vai querer pedra de verdade.",

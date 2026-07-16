@@ -52,6 +52,7 @@ const AccountTracking = lazy(() => import("./pages/account/AccountTracking"));
 const AccountCompositions = lazy(() => import("./pages/account/AccountCompositions"));
 
 const Inspiracoes = lazy(() => import("./pages/Inspiracoes.tsx"));
+const ObraPage = lazy(() => import("./pages/ObraPage.tsx"));
 const ComoComprar = lazy(() => import("./pages/ComoComprar.tsx"));
 const ParaSuaCasa = lazy(() => import("./pages/ParaSuaCasa.tsx"));
 const Carrinho = lazy(() => import("./pages/Carrinho.tsx"));
@@ -168,6 +169,8 @@ const App = () => (
                     <Route path="/linhas/:handle" element={<LinhaPage />} />
                     <Route path="/inspiracoes" element={<Inspiracoes />} />
                     <Route path="/inspiracao" element={<Navigate to="/inspiracoes" replace />} />
+                    <Route path="/obras" element={<Navigate to="/inspiracoes" replace />} />
+                    <Route path="/obras/:slug" element={<ObraPage />} />
                     {/* Telas do V3 que faltavam no app */}
                     <Route path="/como-comprar" element={<ComoComprar />} />
                     <Route path="/para-sua-casa" element={<ParaSuaCasa />} />

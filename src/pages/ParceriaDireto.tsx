@@ -4,8 +4,7 @@ import { MessageCircle, ArrowRight } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
 import { BUSINESS } from "@/config/business";
-import heroCascata from "@/assets/hero-cascata.webp";
-import heroCascataSm from "@/assets/hero-cascata-sm.webp";
+import heroRevestimento from "@/assets/linguagens/revestimento.webp";
 
 /* DS V3 — landing de anúncio (lead direto no WhatsApp).
  * Escuro/foto continua permitido no hero e na faixa institucional; o dourado
@@ -41,15 +40,13 @@ export default function ParceriaDireto() {
       {/* 1. HERO — WhatsApp em primeiro plano. CTA dourado porque está sobre foto. */}
       <section className="relative w-full min-h-[85vh] md:min-h-[90vh] overflow-hidden bg-western-green-deep">
         <img
-          src={heroCascata}
-          srcSet={`${heroCascataSm} 900w, ${heroCascata} 1800w`}
-          sizes="100vw"
-          alt="Cascata artesanal Western em projeto de paisagismo."
+          src={heroRevestimento}
+          alt="Balcão revestido em pedra artesanal Western."
           loading="eager"
           {...({ fetchpriority: "high" } as Record<string, string>)}
           decoding="async"
-          width={1820}
-          height={1213}
+          width={1600}
+          height={1067}
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
         <div
