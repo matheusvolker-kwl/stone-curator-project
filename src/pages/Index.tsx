@@ -7,6 +7,7 @@ import ArtistaSection from "@/components/home/ArtistaSection";
 import SobreAWestern from "@/components/home/SobreAWestern";
 import Reveal from "@/components/shared/Reveal";
 import SocialProof from "@/components/shared/SocialProof";
+import { SOCIAL_PROOF } from "@/data/socialProof";
 import { ArrowRight, Check, X } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { texturaPara } from "@/lib/acabamentoTexturas";
@@ -187,6 +188,47 @@ export default function Index() {
           Uma porta só para "por onde começar": profissional (vê preço) ou casa. */}
       {/* 1 — O que é a Western Store (orientação p/ quem cai de paraquedas) */}
       <SobreAWestern />
+
+      {/* 2b — CREDENCIAL. Uma tira de ~120px que responde "quem são vocês para
+          pedir o meu CNPJ?" — logo abaixo do primeiro pedido de cadastro. Antes
+          estes números viviam na 11ª seção: a página cobrava o crédito muito
+          antes de mostrar o extrato. Cento e vinte pixels resolvem o que uma
+          reordenação inteira tentava resolver. */}
+      <section className="surface-paper border-y border-western-border-soft">
+        <div className="container-western py-6 md:py-7">
+          <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-5">
+            <div className="flex gap-8 md:gap-10">
+              {[
+                { n: "4,9", l: "no Google", stars: true },
+                { n: "+14 mil", l: "no Instagram", stars: false },
+                { n: "+700", l: "obras entregues", stars: false },
+              ].map((s) => (
+                <div key={s.l}>
+                  <p className="font-display text-[22px] md:text-[26px] leading-none text-western-green-deep tabular-nums">
+                    {s.n}
+                  </p>
+                  {s.stars && (
+                    <p className="mt-0.5 text-[10px] tracking-[0.18em] text-western-gold" aria-hidden="true">
+                      ★★★★★
+                    </p>
+                  )}
+                  <p className="mt-1 text-[13px] leading-snug text-western-stone-warm">{s.l}</p>
+                </div>
+              ))}
+            </div>
+            <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 md:gap-x-9">
+              {SOCIAL_PROOF.marcas.slice(0, 5).map((m) => (
+                <li
+                  key={m.slug}
+                  className="font-sans text-[14px] md:text-[15px] font-semibold text-western-stone-warm/85"
+                >
+                  {m.nome}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
 
       {/* Mais vendidos (catálogo dinâmico). Ordem pedida pelo dono: best-sellers
           primeiro, depois as linhas, e só então "o que você vai construir".
@@ -414,8 +456,23 @@ export default function Index() {
               </Reveal>
             ))}
           </div>
-          <div className="mt-10 md:text-center">
-            <Link to="/inspiracoes" className="btn-outline-forest w-full md:w-auto">
+          {/* Os CLIENTES vivem AQUI, não numa seção 4 telas abaixo: eles não
+              ilustram obras — eles SÃO obras. E aqui o rosto pode ser clicável,
+              porque esta é a zona de explorar (no fechamento, não). */}
+          <div className="mt-12 md:mt-16 border-t border-western-border-soft pt-10">
+            <Reveal variant="fade-up" duration={700}>
+              <SocialProof
+                interactive
+                layout="row"
+                align="left"
+                groups={["celebridades"]}
+                eyebrow="Nas casas de"
+              />
+            </Reveal>
+          </div>
+
+          <div className="mt-10">
+            <Link to="/inspiracoes" className="btn-outline-forest w-full sm:w-auto">
               Ver todas as obras <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
             </Link>
           </div>
@@ -520,63 +577,23 @@ export default function Index() {
         </div>
       </section>
 
-      {/* 10 — Prova social. CLARA e alinhada à esquerda: acompanha o ritmo
-          editorial do resto da home (o verde fica para o CTA de credenciamento,
-          onde escuro = ação — antes eram duas faixas escuras quase coladas).
-          Os 6 rostos numa fileira só, largura cheia, com a função de cada um:
-          o rótulo de tier era taxonomia nossa, não informação para quem visita. */}
-      <section className="surface-paper py-16 md:py-24 border-t border-western-border-soft">
+      {/* 10 — QUEM ESPECIFICA. Só os PROFISSIONAIS: são o espelho do visitante,
+          e ele precisa vê-los no exato momento em que vai decidir. SEM link — a
+          uma tela do fechamento não se manda ninguém embora.
+          (Os clientes migraram para "Veja em uso" — eles não ilustram obras,
+          eles SÃO obras. Os números e as marcas viraram a faixa de credencial
+          da 2ª tela, colada no 1º pedido de CNPJ.) */}
+      <section className="surface-paper py-14 md:py-20 border-t border-western-border-soft">
         <div className="container-western">
-          <Reveal variant="fade-up" duration={700}>
-            <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-8 mb-10 md:mb-14">
-              <div>
-                <p className="text-eyebrow mb-3">Quem especifica e confia na Western</p>
-                <h2 className="display-lg text-western-green-deep max-w-[18ch]">
-                  Especificada pelo topo do mercado.
-                </h2>
-              </div>
-              {/* Números verificáveis — strip quieto, não um painel */}
-              <div className="flex gap-8 md:gap-12">
-                {[
-                  { n: "4,9", l: "no Google", stars: true },
-                  { n: "+14 mil", l: "no Instagram", stars: false },
-                  { n: "+700", l: "projetos", stars: false },
-                ].map((s) => (
-                  <div key={s.l}>
-                    <p className="font-display text-[26px] md:text-[34px] leading-none text-western-green-deep tabular-nums">
-                      {s.n}
-                    </p>
-                    {s.stars && (
-                      <p className="mt-1 text-[11px] tracking-[0.18em] text-western-gold" aria-hidden="true">
-                        ★★★★★
-                      </p>
-                    )}
-                    <p className="mt-1.5 text-[13px] md:text-[14px] leading-snug text-western-stone-warm">
-                      {s.l}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
-              interactive
               layout="row"
               align="left"
-              groups={["celebridades", "profissionais", "marcas"]}
+              groups={["profissionais"]}
+              eyebrow="Quem especifica"
+              titulo={<>Os profissionais que assinam com a Western.</>}
             />
           </Reveal>
-
-          <div className="mt-10 md:mt-12">
-            <Link
-              to="/sobre"
-              className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
-            >
-              Conhecer a Western <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
-            </Link>
-          </div>
         </div>
       </section>
 
