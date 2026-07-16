@@ -27,7 +27,7 @@ const OBJEÇÕES: { q: string; a: string }[] = [
   },
   {
     q: "É pesada para a laje? Aguenta?",
-    a: "Pelo contrário — esse é um dos maiores diferenciais. As pedras são ocas internamente, com armadura de fibra de PET reciclado e cimento estrutural. Uma cascata grande Western pesa cerca de 215 kg; a mesma cascata em pedra natural passa de 2 toneladas. Western viabiliza laje, terraço, mezanino, jardim suspenso e cobertura — projetos que pedra natural inviabiliza.",
+    a: "Pelo contrário — esse é um dos maiores diferenciais. As pedras são ocas internamente, com armadura de fibra de PET reciclado e cimento estrutural. A Cascata Santa Bárbara, a maior peça da linha, pesa 280 kg; a mesma cascata em pedra natural chega a quase 3 toneladas. Western viabiliza laje, terraço, mezanino, jardim suspenso e cobertura — projetos que pedra natural inviabiliza.",
   },
   {
     q: "Mas o cliente vai querer pedra de verdade.",
