@@ -283,11 +283,22 @@ export default function Index() {
       {/* 3c — O que você vai construir? (intenção por aplicação → guia) */}
       <section className="surface-paper py-16 md:py-24 border-t border-western-border-soft">
         <div className="container-western">
+          {/* O link do guia vive AQUI, no cabeçalho — os 5 tiles já levam todos
+              para /guia-de-composicao. A antiga seção "Não sabe por onde começar"
+              era um segundo CTA para a MESMA url: um post-it, não uma seção. */}
           <Reveal variant="fade-up" duration={700}>
-            <p className="text-eyebrow mb-3">Compre por projeto</p>
-            <h2 className="display-lg text-western-green-deep mb-8 md:mb-12">
-              O que você vai construir?
-            </h2>
+            <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
+              <div>
+                <p className="text-eyebrow mb-3">Compre por projeto</p>
+                <h2 className="display-lg text-western-green-deep">O que você vai construir?</h2>
+              </div>
+              <Link
+                to="/guia-de-composicao"
+                className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
+              >
+                Responda 3 perguntas <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+              </Link>
+            </div>
           </Reveal>
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
             {TILES.map((t, i) => (
@@ -411,19 +422,26 @@ export default function Index() {
         </div>
       </section>
 
-      {/* 7 — Por que Western e não pedra natural */}
-      <section className="surface-ivory py-16 md:py-24 border-y border-western-border-soft">
+      {/* 7 — O CLÍMAX. Vem logo depois das obras, com a foto ainda quente na
+          retina: "aquilo que você acabou de ver pesa 10% e sobe sem guindaste".
+          É a ÚNICA seção escura do miolo — a página não tinha ponto alto: 11
+          seções com o mesmo h2, o mesmo respiro e o mesmo bege, e por isso nada
+          parecia importante. O argumento da empresa não pode respirar igual a
+          um passo-a-passo. */}
+      <section className="surface-forest py-20 md:py-28 border-y border-western-gold/15">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
-            <p className="text-eyebrow mb-3">Por que Western</p>
-            <h2 className="display-lg text-western-green-deep mb-8 md:mb-12">
+            <p className={`${eyebrowDark} mb-3`}>Por que Western</p>
+            <h2 className="display-lg text-western-cream mb-8 md:mb-12">
               A pedra sem o peso da pedra.
             </h2>
           </Reveal>
           <div className="grid md:grid-cols-2 gap-4 md:gap-6">
             <Reveal variant="fade-up" duration={650}>
-              <div className="rounded-[16px] border border-western-border-soft bg-western-paper p-7 md:p-9 h-full">
-                <p className="text-sublabel mb-6">Pedra natural</p>
+              <div className="rounded-[16px] border border-western-cream/15 bg-western-green-mid/20 p-7 md:p-9 h-full">
+                <p className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/50 mb-6">
+                  Pedra natural
+                </p>
                 <ul className="space-y-4">
                   {[
                     "Pesada — exige guindaste e caminhão Munck",
@@ -431,8 +449,8 @@ export default function Index() {
                     "Variedade limitada ao que a natureza deu",
                     "Obra pesada, mais tempo e custo",
                   ].map((t) => (
-                    <li key={t} className="flex gap-3 items-start text-[17px] leading-[1.5] text-western-stone-warm">
-                      <X className="h-5 w-5 text-western-stone-warm/70 mt-0.5 shrink-0" strokeWidth={1.75} />
+                    <li key={t} className="flex gap-3 items-start text-[17px] leading-[1.5] text-western-cream/55">
+                      <X className="h-5 w-5 text-western-cream/35 mt-0.5 shrink-0" strokeWidth={1.75} />
                       {t}
                     </li>
                   ))}
@@ -440,7 +458,7 @@ export default function Index() {
               </div>
             </Reveal>
             <Reveal variant="fade-up" delay={100} duration={650}>
-              <div className="rounded-[16px] border border-western-gold/40 bg-western-green-deep p-7 md:p-9 h-full">
+              <div className="rounded-[16px] border border-western-gold/50 bg-western-green-mid/50 ring-1 ring-western-gold/20 p-7 md:p-9 h-full">
                 <p className={`${eyebrowDark} mb-6`}>Pedra Western</p>
                 <ul className="space-y-4">
                   {[
@@ -458,7 +476,7 @@ export default function Index() {
               </div>
             </Reveal>
           </div>
-          <p className="text-center text-[16px] text-western-stone-warm mt-9 max-w-xl mx-auto">
+          <p className="mt-9 max-w-xl text-[16px] text-western-cream/70">
             Mesma leitura de pedra natural, sem a obra pesada. Ateliê próprio desde 1993.
           </p>
         </div>
@@ -499,21 +517,6 @@ export default function Index() {
             </Link>
             <span className="text-[16px] text-western-stone-warm">Leva menos de 2 minutos · precisa de CNPJ</span>
           </div>
-        </div>
-      </section>
-
-      {/* 9 — Não sabe por onde começar? → guia */}
-      <section className="surface-ivory py-14 md:py-20 border-y border-western-border-soft">
-        <div className="container-western text-center max-w-xl mx-auto">
-          <Reveal variant="fade-up" duration={650}>
-            <h2 className="display-lg text-western-green-deep mb-3">Não sabe por onde começar?</h2>
-            <p className="text-body mb-8">
-              Responda 3 perguntas e o ateliê indica o conjunto pronto para o seu projeto.
-            </p>
-            <Link to="/guia-de-composicao" className="btn-outline-forest w-full sm:w-auto">
-              Montar no guia <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
-            </Link>
-          </Reveal>
         </div>
       </section>
 
@@ -577,12 +580,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* 11 — Ricardo / ateliê */}
-      <Reveal variant="fade-up" duration={800}>
-        <ArtistaSection />
-      </Reveal>
-
-      {/* 12 — Credenciamento B2B (fechamento de conversão) */}
+      {/* 11 — Credenciamento B2B (o PEDIDO) */}
       <section className="surface-forest py-16 md:py-24">
         <div className="container-western">
           <div className="grid md:grid-cols-2 gap-10 md:gap-14 items-center">
@@ -620,6 +618,14 @@ export default function Index() {
           </div>
         </div>
       </section>
+
+      {/* 12 — Ricardo: a ASSINATURA da casa, por último. O credenciamento é o
+          pedido; esta é o aperto de mão. Quem rolou até aqui e não clicou no
+          dourado não vai clicar num 12º botão — vai olhar quem fez aquilo.
+          As duas telas escuras finais viram um bloco único: o olho lê "fecho". */}
+      <Reveal variant="fade-up" duration={800}>
+        <ArtistaSection />
+      </Reveal>
     </>
   );
 }
