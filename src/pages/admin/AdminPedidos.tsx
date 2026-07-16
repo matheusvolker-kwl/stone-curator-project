@@ -566,6 +566,20 @@ function CreateOrderModal({
   });
   const [saving, setSaving] = useState(false);
 
+  // A11y do modal manual: esc fecha, trava o scroll do fundo, restaura ao sair.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [onClose]);
+
   const create = async () => {
     if (!form.user_id || !form.numero.trim() || !form.titulo.trim()) {
       toast.error("Preencha parceiro, número e título.");
@@ -599,8 +613,12 @@ function CreateOrderModal({
       role="dialog"
       aria-modal="true"
       aria-label="Criar pedido de produção"
+      onClick={onClose}
     >
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[16px] border border-western-border-soft bg-white p-6">
+      <div
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[16px] border border-western-border-soft bg-white p-6"
+        onClick={(e) => e.stopPropagation()}
+      >
         <p className="text-eyebrow mb-2">Novo pedido</p>
         <h2 className="display-md mb-5 text-western-green-deep">Criar pedido de produção</h2>
 

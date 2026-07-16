@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, X, Play } from "lucide-react";
 import { CASOS_WESTERN, type CasoWestern } from "@/data/casosWestern";
 
@@ -169,6 +169,12 @@ export default function ProjetosWesternBand() {
           className="max-w-6xl w-[95vw] max-h-[90dvh] overflow-y-auto p-0 bg-western-green-deep border-western-gold/20 rounded-[16px] [&>button]:hidden"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
+          {/* Título/descrição p/ leitores de tela — Radix exige um DialogTitle
+              (o visível é o <h3> abaixo; estes são só acessibilidade). */}
+          <DialogTitle className="sr-only">{current?.titulo ?? "Projeto Western"}</DialogTitle>
+          <DialogDescription className="sr-only">
+            {current?.story ?? "Obra assinada com pedra Western."}
+          </DialogDescription>
           {current && (
             <div className="relative">
               <div className="w-full bg-black flex items-center justify-center">

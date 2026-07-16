@@ -123,7 +123,12 @@ export const useCartStore = create<CartStore>()(
             next[idx] = {
               ...next[idx],
               quantity: next[idx].quantity + item.quantity,
-              conjuntoRef: item.conjuntoRef ?? next[idx].conjuntoRef,
+              // Atribuição first-touch: o PRIMEIRO conjunto (ou o add individual)
+              // que trouxe a peça mantém o crédito; um merge posterior nunca
+              // apaga nem sobrescreve a atribuição. `addItem` já faz o mesmo (via
+              // ...next[idx]). Antes o addBundle sobrescrevia com o conjunto novo,
+              // perdendo a atribuição original.
+              conjuntoRef: next[idx].conjuntoRef ?? item.conjuntoRef,
             };
           } else {
             next.push(item);
