@@ -96,7 +96,7 @@ export default function Index() {
           (9:16) da mesma obra; no desktop, uma faixa. Antes era a mesma foto
           deitada espremida num slot em pé — o navegador ampliava 1,3x e jogava
           fora 68% da largura. */}
-      <section className="relative w-full overflow-hidden bg-western-green-deep flex items-end md:items-center min-h-[700px] md:min-h-[620px]">
+      <section className="relative w-full overflow-hidden bg-western-green-deep flex items-end md:items-center min-h-[700px] md:min-h-[720px]">
         <picture>
           <source media="(min-width: 768px)" srcSet={heroHome} width={1600} height={900} />
           <img
@@ -107,7 +107,10 @@ export default function Index() {
             decoding="async"
             width={860}
             height={1529}
-            className="absolute inset-0 w-full h-full object-cover object-center"
+            /* object-bottom no desktop: o matacão em primeiro plano é o PRODUTO
+               e vive na base do recorte. Ancorando embaixo, ele nunca sai do
+               quadro — por mais larga que seja a tela, o corte come o topo. */
+            className="absolute inset-0 w-full h-full object-cover object-center md:object-bottom"
           />
         </picture>
         {/* Scrim mobile ANCORADO EMBAIXO: a foto respira em cima (é o assunto),
