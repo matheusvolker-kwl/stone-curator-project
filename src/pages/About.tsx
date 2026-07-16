@@ -5,7 +5,7 @@ import Reveal from "@/components/shared/Reveal";
 import ProjetosWesternBand from "@/components/shared/ProjetosWesternBand";
 import { ArrowRight, Layers, Mountain, Recycle, Hammer } from "lucide-react";
 import irmaosGruta from "@/assets/irmaos-botelho-gruta.webp";
-import heroCascata from "@/assets/hero-cascata.webp";
+import heroObra from "@/assets/linguagens/piscina.webp";
 import projetoCascata from "@/assets/projetos/cover-cascata.webp";
 import { BUSINESS } from "@/config/business";
 
@@ -77,7 +77,7 @@ export default function About() {
 
             <Reveal variant="fade-up" delay={140} duration={900}>
               <img
-                src={heroCascata}
+                src={heroObra}
                 alt="Projeto Western — piscina com cascata de pedra artesanal"
                 loading="eager"
                 decoding="async"

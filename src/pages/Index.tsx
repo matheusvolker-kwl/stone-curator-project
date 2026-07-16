@@ -13,12 +13,17 @@ import { texturaPara } from "@/lib/acabamentoTexturas";
 import heroCascata from "@/assets/hero-cascata.webp";
 import heroCascataSm from "@/assets/hero-cascata-sm.webp";
 import iconePedraBranco from "@/assets/icone-pedra-branco.png";
-import imgPiscina from "@/assets/about-projetos/piscina-praia.webp";
 import imgFonte from "@/assets/about-projetos/cascata-tropical.webp";
-import imgJardim from "@/assets/casos-western/unique-garden.webp";
-import imgLago from "@/assets/casos-western/projeto-residencial.webp";
 import imgLagoHibrido from "@/assets/conjuntos-render/conjunto-lago-hibrido-igarape-equilibrado.webp";
-import imgFazzenda from "@/assets/casos-western/fazzenda-park.webp";
+import imgLangPiscina from "@/assets/linguagens/piscina.webp";
+import imgLangLago from "@/assets/linguagens/lago.webp";
+import imgLangJardim from "@/assets/linguagens/jardim.webp";
+import imgObraTato from "@/assets/obras/tato.webp";
+import imgObraNeymar from "@/assets/obras/neymar.webp";
+import imgObraTapirai from "@/assets/obras/tapirai.webp";
+import imgObraEvandro from "@/assets/obras/evandro.webp";
+import imgObraShowroom from "@/assets/obras/showroom.webp";
+import imgObraUnique from "@/assets/obras/unique.webp";
 import linhaCapaCascatas from "@/assets/linhas/cascatas.webp";
 import linhaCapaRevestimentos from "@/assets/linhas/revestimentos.webp";
 import linhaCapaAcessorios from "@/assets/linhas/acessorios.webp";
@@ -38,10 +43,10 @@ const ACABAMENTOS = [
 ];
 
 const TILES = [
-  { nome: "Piscina", desc: "Cascatas e bordas para o entorno da piscina", img: imgPiscina },
-  { nome: "Lago ornamental", desc: "Composições para lagos e espelhos d'água", img: imgLago },
+  { nome: "Piscina", desc: "Cascatas e bordas para o entorno da piscina", img: imgLangPiscina },
+  { nome: "Lago ornamental", desc: "Composições para lagos e espelhos d'água", img: imgLangLago },
   { nome: "Lago híbrido", desc: "Estrutura Western + pedra natural", img: imgLagoHibrido },
-  { nome: "Jardim", desc: "Jardins contemplativos, com ou sem água", img: imgJardim },
+  { nome: "Jardim", desc: "Jardins contemplativos, com ou sem água", img: imgLangJardim },
   { nome: "Fonte & cascata", desc: "Fontes e quedas com água corrente", img: imgFonte },
 ];
 
@@ -53,12 +58,12 @@ const LINHAS_HOME = [
 ];
 
 const PROJETOS = [
-  { img: imgFazzenda, nome: "Fazzenda Park", tipo: "Paisagismo · área externa" },
-  { img: imgJardim, nome: "Unique Garden", tipo: "Jardim contemplativo" },
-  { img: imgLago, nome: "Projeto residencial", tipo: "Lago ornamental" },
-  { img: heroCascata, nome: "Piscina com cascata", tipo: "Residencial · SP" },
-  { img: imgFonte, nome: "Cascata tropical", tipo: "Área de lazer" },
-  { img: imgPiscina, nome: "Piscina de praia", tipo: "Borda e prainha" },
+  { img: imgObraTato, nome: "Casa de Praia · Tato (Falamansa)", tipo: "Piscina natural + lago" },
+  { img: imgObraNeymar, nome: "Lago híbrido · Neymar Jr.", tipo: "Natural + Western · Genesis" },
+  { img: imgObraTapirai, nome: "Piscina na serra · Tapiraí", tipo: "Borda infinita" },
+  { img: imgObraEvandro, nome: "Cascata no riacho · Evandro Mesquita", tipo: "Rio de Janeiro" },
+  { img: imgObraShowroom, nome: "ShowRoom Riviera", tipo: "Piscina-praia demonstração" },
+  { img: imgObraUnique, nome: "Unique Garden", tipo: "Revestimento em villa" },
 ];
 
 /* "Mais especificados" — a 375px a grade de 2 colunas deixava ~163px por card:
