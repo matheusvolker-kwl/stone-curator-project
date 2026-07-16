@@ -215,19 +215,29 @@ export default function Index() {
                 { n: "+700", l: "obras entregues", stars: false },
               ].map((s) => (
                 <div key={s.l}>
-                  <p className="font-display text-[22px] md:text-[26px] leading-none text-western-green-deep tabular-nums">
-                    {s.n}
-                  </p>
-                  {s.stars && (
-                    <p className="mt-0.5 text-[10px] tracking-[0.18em] text-western-gold" aria-hidden="true">
-                      ★★★★★
+                  {/* estrelas NA LINHA do número: embaixo elas criavam uma 3ª
+                      linha só no "4,9" e desalinhavam os três da faixa. */}
+                  <div className="flex items-baseline gap-1.5">
+                    <p className="font-display text-[22px] md:text-[26px] leading-none text-western-green-deep tabular-nums">
+                      {s.n}
                     </p>
-                  )}
-                  <p className="mt-1 text-[13px] leading-snug text-western-stone-warm">{s.l}</p>
+                    {s.stars && (
+                      <span className="text-[9px] tracking-[0.15em] text-western-gold" aria-hidden="true">
+                        ★★★★★
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1.5 text-[13px] leading-snug text-western-stone-warm">{s.l}</p>
                 </div>
               ))}
             </div>
-            <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 md:gap-x-9">
+            {/* Os wordmarks precisam de rótulo: soltos, oito nomes próprios não
+                dizem se são clientes, parceiros ou fornecedores. */}
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-western-stone-warm/55">
+                Escolhida por
+              </span>
+              <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 md:gap-x-8">
               {SOCIAL_PROOF.marcas.slice(0, 5).map((m) => (
                 <li
                   key={m.slug}
@@ -236,7 +246,8 @@ export default function Index() {
                   {m.nome}
                 </li>
               ))}
-            </ul>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -467,21 +478,11 @@ export default function Index() {
               </Reveal>
             ))}
           </div>
-          {/* Os CLIENTES vivem AQUI, não numa seção 4 telas abaixo: eles não
-              ilustram obras — eles SÃO obras. E aqui o rosto pode ser clicável,
-              porque esta é a zona de explorar (no fechamento, não). */}
-          <div className="mt-12 md:mt-16 border-t border-western-border-soft pt-10">
-            <Reveal variant="fade-up" duration={700}>
-              <SocialProof
-                interactive
-                layout="row"
-                align="left"
-                groups={["celebridades"]}
-                eyebrow="Nas casas de"
-              />
-            </Reveal>
-          </div>
-
+          {/* Os retratos NÃO vivem aqui: são headshots de imprensa, não fotos de
+              obra — no meio de uma grade de obras viravam ruído. E os cards já
+              creditam "Casa de Praia · Tato" e "Lago híbrido · Neymar Jr.":
+              o rosto seria a mesma prova, dita duas vezes. Eles vivem na tira de
+              "quem confia", perto do fechamento. */}
           <div className="mt-10">
             <Link to="/inspiracoes" className="btn-outline-forest w-full sm:w-auto">
               Ver todas as obras <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
@@ -598,11 +599,12 @@ export default function Index() {
         <div className="container-western">
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
+              interactive
               layout="row"
               align="left"
-              groups={["profissionais"]}
-              eyebrow="Quem especifica"
-              titulo={<>Os profissionais que assinam com a Western.</>}
+              groups={["celebridades", "profissionais"]}
+              eyebrow="Clientes · e quem especifica"
+              titulo={<>Quem confia a sua paisagem à Western.</>}
             />
           </Reveal>
         </div>

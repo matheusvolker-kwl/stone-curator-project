@@ -102,15 +102,7 @@ export default function SocialProof({
   const tierMax = compact ? "max-w-md md:max-w-lg" : "max-w-md md:max-w-2xl";
   const tileGap = compact ? "gap-3 md:gap-4" : "gap-4 md:gap-6";
 
-  const renderTier = (pessoas: readonly PessoaComFoto[], full = false) => (
-    <ul
-      className={
-        full
-          ? "grid grid-cols-3 gap-4 sm:grid-cols-6 md:gap-6"
-          : `grid grid-cols-3 ${tileGap} ${tierMax} mx-auto`
-      }
-    >
-      {pessoas.map((c) => {
+  const renderPessoa = (c: PessoaComFoto) => {
         const foto = FOTOS[c.slug];
         const prova = interactive ? resolverProva(c.slug) : null;
         const conteudo = (
@@ -184,7 +176,17 @@ export default function SocialProof({
             )}
           </li>
         );
-      })}
+  };
+
+  const renderTier = (pessoas: readonly PessoaComFoto[], full = false) => (
+    <ul
+      className={
+        full
+          ? "grid grid-cols-3 gap-4 sm:grid-cols-6 md:gap-6"
+          : `grid grid-cols-3 ${tileGap} ${tierMax} mx-auto`
+      }
+    >
+      {pessoas.map(renderPessoa)}
     </ul>
   );
 
@@ -248,16 +250,41 @@ export default function SocialProof({
         </div>
       )}
 
-      {isRow
-        ? pessoasRow.length > 0 && renderTier(pessoasRow, true)
-        : avatarGroups.map((g) => (
+      {isRow && avatarGroups.length === 2 ? (
+        /* Dois grupos: separados por ESPAÇO (filete dourado + respiro), não por
+         * dois títulos concorrentes. O olho agrupa por proximidade muito antes
+         * de agrupar por legenda — e os 6 preenchem a largura (3 rostos numa
+         * grade de 6 colunas deixavam meia seção vazia). No celular quebra 3+3. */
+        <div className="flex flex-col gap-8 md:flex-row md:items-start md:gap-8">
+          <div className="min-w-0 flex-1">
+            <p className={`${eyebrowCls} mb-4`}>{SOCIAL_PROOF_LABELS[avatarGroups[0]]}</p>
+            <ul className="grid grid-cols-3 gap-4 md:gap-5">
+              {(SOCIAL_PROOF[avatarGroups[0]] as readonly PessoaComFoto[]).map(renderPessoa)}
+            </ul>
+          </div>
+          <div
+            className={`hidden w-px self-stretch md:block ${isDark ? "bg-western-gold/30" : "bg-western-gold/40"}`}
+            aria-hidden
+          />
+          <div className="min-w-0 flex-1">
+            <p className={`${eyebrowCls} mb-4`}>{SOCIAL_PROOF_LABELS[avatarGroups[1]]}</p>
+            <ul className="grid grid-cols-3 gap-4 md:gap-5">
+              {(SOCIAL_PROOF[avatarGroups[1]] as readonly PessoaComFoto[]).map(renderPessoa)}
+            </ul>
+          </div>
+        </div>
+      ) : isRow ? (
+        pessoasRow.length > 0 && renderTier(pessoasRow, true)
+      ) : (
+        avatarGroups.map((g) => (
             <div key={g} className={compact ? "mb-8 md:mb-9" : "mb-10 md:mb-12"}>
               <p className={`text-center ${eyebrowCls} mb-5 md:mb-6`}>
                 {SOCIAL_PROOF_LABELS[g]}
               </p>
               {renderTier(SOCIAL_PROOF[g] as readonly PessoaComFoto[])}
             </div>
-          ))}
+          ))
+      )}
 
       {showMarcas && (
         <div
