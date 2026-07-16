@@ -2,7 +2,9 @@
 // Cada segmento: introdução → galeria de fotos gerais → exemplos de obra reais
 // (shop-the-look com "adicionar ao orçamento"). O aprofundamento de cada obra
 // vive em /obras/:slug (mente do criador em acordeão).
-import { useMemo, useState } from "react";
+// UX: seletor sticky + rolagem horizontal no mobile; galeria = carrossel no
+// mobile / grade no desktop; troca de segmento rola para o topo do conteúdo.
+import { useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ArrowRight, Plus, MessageCircle, Check } from "lucide-react";
 import Seo from "@/components/seo/Seo";
@@ -25,24 +27,29 @@ const NORM: Record<string, string> = {
   especial: "especiais",
 };
 
-const waObra = (titulo: string) =>
+const waMsg = (assunto: string) =>
   `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
-    `Olá! Vi a obra "${titulo}" no site da Western e queria algo parecido.`,
+    `Olá! Vi ${assunto} no site da Western e queria algo parecido.`,
   )}`;
 
 function Galeria({ fotos, label }: { fotos: string[]; label: string }) {
   if (!fotos.length) return null;
+  // Mobile: carrossel horizontal com peek (menos scroll vertical). Desktop: grade.
   return (
-    <div className="mt-8 columns-2 md:columns-3 gap-4 [column-fill:_balance]">
+    <div className="mt-8 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6 px-6 pb-2 sm:mx-0 sm:px-0 sm:overflow-visible sm:grid sm:grid-cols-2 lg:grid-cols-3">
       {fotos.map((src, i) => (
-        <img
+        <div
           key={src}
-          src={src}
-          alt={`${label} — foto ${i + 1}`}
-          loading="lazy"
-          decoding="async"
-          className="mb-4 w-full rounded-[12px] break-inside-avoid bg-western-cream-muted"
-        />
+          className="snap-start shrink-0 w-[78vw] max-w-[440px] sm:w-auto sm:max-w-none overflow-hidden rounded-[14px] aspect-[4/3] bg-western-cream-muted"
+        >
+          <img
+            src={src}
+            alt={`${label} — foto ${i + 1}`}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover"
+          />
+        </div>
       ))}
     </div>
   );
@@ -67,7 +74,7 @@ function ObraLook({ obra, index }: { obra: Obra; index: number }) {
 
   return (
     <article
-      className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center ${
+      className={`grid grid-cols-1 lg:grid-cols-2 gap-7 lg:gap-14 items-center ${
         index % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""
       }`}
     >
@@ -148,7 +155,7 @@ function ObraLook({ obra, index }: { obra: Obra; index: number }) {
           <p className="text-meta mt-4">{obra.creditos.join(" · ")}</p>
         )}
 
-        <div className="mt-7 flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="mt-7">
           {comprable ? (
             <>
               <button
@@ -159,7 +166,7 @@ function ObraLook({ obra, index }: { obra: Obra; index: number }) {
               >
                 {added ? (
                   <>
-                    <Check className="h-5 w-5" /> Adicionada
+                    <Check className="h-5 w-5" /> Adicionada ao orçamento
                   </>
                 ) : (
                   <>
@@ -167,24 +174,34 @@ function ObraLook({ obra, index }: { obra: Obra; index: number }) {
                   </>
                 )}
               </button>
-              <GatedPrice amount={totalPreco} variant="block" className="text-price" />
+              <div className="mt-4 flex items-center justify-between gap-4">
+                <GatedPrice amount={totalPreco} variant="block" className="text-price" />
+                <Link
+                  to={`/obras/${obra.slug}`}
+                  className="tap-target inline-flex items-center gap-1.5 font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-bronze shrink-0"
+                >
+                  Ver a obra <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
             </>
           ) : (
-            <a
-              href={waObra(obra.titulo)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-gold w-full sm:w-auto"
-            >
-              <MessageCircle className="h-5 w-5" /> Falar com o ateliê
-            </a>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <a
+                href={waMsg(`a obra "${obra.titulo}"`)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-gold w-full sm:w-auto"
+              >
+                <MessageCircle className="h-5 w-5" /> Falar com o ateliê
+              </a>
+              <Link
+                to={`/obras/${obra.slug}`}
+                className="tap-target inline-flex items-center gap-1.5 font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-bronze"
+              >
+                Ver a obra <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           )}
-          <Link
-            to={`/obras/${obra.slug}`}
-            className="tap-target inline-flex items-center gap-1.5 font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-bronze"
-          >
-            Ver a obra <ArrowRight className="h-4 w-4" />
-          </Link>
         </div>
       </div>
     </article>
@@ -193,6 +210,7 @@ function ObraLook({ obra, index }: { obra: Obra; index: number }) {
 
 export default function Inspiracoes() {
   const [params, setParams] = useSearchParams();
+  const contentRef = useRef<HTMLDivElement>(null);
   const raw = params.get("seg") ?? params.get("tipo") ?? "piscinas";
   const id = NORM[raw] ?? raw;
   const cur = SEGMENTOS.find((s) => s.id === id) ?? SEGMENTOS[0];
@@ -202,6 +220,10 @@ export default function Inspiracoes() {
     next.delete("tipo");
     next.set("seg", segId);
     setParams(next, { replace: true });
+    // começa no topo do conteúdo do novo segmento (abaixo dos stickies)
+    requestAnimationFrame(() => {
+      contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   };
 
   const obras = cur.obraSlugs
@@ -215,91 +237,118 @@ export default function Inspiracoes() {
         description="Piscinas, lagos, cascatas, jardins, revestimentos e viveiros: a ideia por trás de cada segmento, fotos de obras reais e as peças usadas — com preço de parceiro."
         path="/inspiracoes"
       />
-      <div className="container-western py-12 md:py-20">
+
+      {/* Abertura */}
+      <div className="container-western pt-12 md:pt-20 pb-6">
         <Reveal variant="fade-up">
           <div className="max-w-3xl">
             <p className="text-eyebrow mb-4">Inspire-se · Por segmento</p>
             <div className="w-12 h-px bg-western-gold mb-8" />
-            <h1 className="display-xl text-western-green-deep">
-              O que você vai criar com pedra?
-            </h1>
+            <h1 className="display-xl text-western-green-deep">O que você vai criar com pedra?</h1>
             <p className="text-body mt-5 max-w-[60ch]">
               Escolha um caminho — a ideia por trás, fotos de obras reais e as peças que compõem
               cada cena.
             </p>
           </div>
         </Reveal>
+      </div>
 
-        {/* Seletor de segmento */}
-        <div role="group" aria-label="Segmento" className="flex flex-wrap gap-3 mt-9">
-          {SEGMENTOS.map((s) => {
-            const on = cur.id === s.id;
-            return (
-              <button
-                key={s.id}
-                type="button"
-                aria-pressed={on}
-                onClick={() => setSeg(s.id)}
-                className={`tap-target inline-flex items-center justify-center px-5 rounded-full border text-[15px] font-semibold transition-colors ${
-                  on
-                    ? "bg-western-cta text-western-cream border-western-cta"
-                    : "bg-white border-western-border-strong text-western-green-deep hover:bg-western-paper hover:border-western-green-deep"
-                }`}
-              >
-                {s.label}
-              </button>
-            );
-          })}
+      {/* Seletor de segmento — sticky, rolagem horizontal no mobile */}
+      <div className="sticky top-[64px] z-30 surface-ivory border-y border-western-border-soft shadow-[0_8px_18px_-14px_rgba(15,41,24,0.35)]">
+        <div className="container-western">
+          <div
+            role="group"
+            aria-label="Segmento"
+            className="flex gap-2.5 overflow-x-auto scrollbar-hide snap-x py-3 -mx-6 px-6 md:mx-0 md:px-0 md:flex-wrap md:overflow-visible"
+          >
+            {SEGMENTOS.map((s) => {
+              const on = cur.id === s.id;
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => setSeg(s.id)}
+                  className={`shrink-0 snap-start tap-target inline-flex items-center justify-center px-5 rounded-full border text-[15px] font-semibold transition-colors ${
+                    on
+                      ? "bg-western-cta text-western-cream border-western-cta"
+                      : "bg-white border-western-border-strong text-western-green-deep hover:bg-western-paper hover:border-western-green-deep"
+                  }`}
+                >
+                  {s.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
+      </div>
 
-        {/* Segmento ativo: intro + galeria + exemplos */}
-        <div className="mt-12 md:mt-16">
-          <Reveal variant="fade-up">
-            <div className="max-w-3xl">
-              <p className="text-eyebrow mb-3">{cur.eyebrow}</p>
-              <h2 className="display-lg text-western-green-deep">{cur.label}</h2>
-              <p className="text-body mt-4 max-w-[64ch]">{cur.intro}</p>
-            </div>
-          </Reveal>
-
-          <Galeria fotos={cur.galeria} label={cur.label} />
-
-          {obras.length > 0 && (
-            <>
-              <Reveal variant="fade-up">
-                <p className="text-eyebrow mt-16 md:mt-20 mb-2">Obras deste segmento</p>
-                <h2 className="display-md text-western-green-deep">
-                  Veja executado — e leve a composição.
-                </h2>
-              </Reveal>
-              <div className="mt-12 space-y-16 md:space-y-24">
-                {obras.map((obra, i) => (
-                  <Reveal key={`${cur.id}-${obra.slug}`} variant="fade-up">
-                    <ObraLook obra={obra} index={i} />
-                  </Reveal>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Rampa B2C */}
+      {/* Conteúdo do segmento */}
+      <div ref={contentRef} className="container-western py-10 md:py-14 scroll-mt-[128px]">
         <Reveal variant="fade-up">
-          <p className="mt-16 text-center text-meta">
-            É para a sua casa e você não tem CNPJ?{" "}
-            <Link to="/para-sua-casa" className="link-underline font-semibold text-western-green-deep">
-              A Western faz a obra completa
-            </Link>
-            .
-          </p>
+          <div className="max-w-3xl">
+            <p className="text-eyebrow mb-3">{cur.eyebrow}</p>
+            <h2 className="display-lg text-western-green-deep">{cur.label}</h2>
+            <p className="text-body mt-4 max-w-[64ch]">{cur.intro}</p>
+          </div>
         </Reveal>
 
-        {/* CTA — guia */}
+        <Galeria fotos={cur.galeria} label={cur.label} />
+
+        {obras.length > 0 ? (
+          <>
+            <Reveal variant="fade-up">
+              <p className="text-eyebrow mt-16 md:mt-20 mb-2">Obras deste segmento</p>
+              <h2 className="display-md text-western-green-deep">
+                Veja executado — e leve a composição.
+              </h2>
+            </Reveal>
+            <div className="mt-12 space-y-16 md:space-y-24">
+              {obras.map((obra, i) => (
+                <Reveal key={`${cur.id}-${obra.slug}`} variant="fade-up">
+                  <ObraLook obra={obra} index={i} />
+                </Reveal>
+              ))}
+            </div>
+          </>
+        ) : (
+          <Reveal variant="fade-up">
+            <div className="mt-12 rounded-[16px] border border-western-border-soft bg-white p-7 md:p-9 text-center">
+              <p className="text-body max-w-[54ch] mx-auto">
+                Quer {cur.label.toLowerCase()} assim no seu projeto? Monte a composição com preço de
+                parceiro, ou fale direto com o ateliê.
+              </p>
+              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
+                <Link to="/guia-de-composicao" className="btn-primary w-full sm:w-auto">
+                  Montar no guia
+                </Link>
+                <a
+                  href={waMsg(`a linha de ${cur.label.toLowerCase()}`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-gold w-full sm:w-auto"
+                >
+                  <MessageCircle className="h-5 w-5" /> Falar com o ateliê
+                </a>
+              </div>
+            </div>
+          </Reveal>
+        )}
+      </div>
+
+      {/* Fecho */}
+      <div className="container-western pb-16 md:pb-24">
+        <p className="text-center text-meta">
+          É para a sua casa e você não tem CNPJ?{" "}
+          <Link to="/para-sua-casa" className="link-underline font-semibold text-western-green-deep">
+            A Western faz a obra completa
+          </Link>
+          .
+        </p>
+
         <Reveal variant="fade-up">
           <section className="mt-10 md:mt-16 surface-forest rounded-[16px] text-center px-6 py-12 md:py-16">
-            <h2 className="display-md text-western-cream max-w-xl mx-auto">
-              Prefere montar do zero?
-            </h2>
+            <h2 className="display-md text-western-cream max-w-xl mx-auto">Prefere montar do zero?</h2>
             <p className="text-[17px] leading-[1.6] text-western-cream-muted max-w-[44ch] mx-auto mt-4 mb-8">
               Responda 3 perguntas no guia e o ateliê monta uma composição no seu acabamento, com
               preço de parceiro após o cadastro (CNPJ).
