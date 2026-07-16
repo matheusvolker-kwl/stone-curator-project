@@ -562,11 +562,19 @@ export default function Index() {
               <div className="rounded-[16px] border border-western-gold/50 bg-western-green-mid/50 ring-1 ring-western-gold/20 p-7 md:p-9 h-full">
                 <p className={`${eyebrowDark} mb-6`}>Pedra Western</p>
                 <ul className="space-y-4">
+                  {/* A CAUSA (≈10% do peso) e a PROVA (reprodução fiel) subiram
+                      para a 2ª seção, onde o visitante ainda está perguntando o
+                      que a empresa é — aqui elas chegavam sete telas tarde e
+                      repetiam a seção 2 palavra por palavra. Esta seção agora é
+                      CONSEQUÊNCIA, não revelação: o que muda na obra de quem
+                      compra. Os dois bullets novos são fatos publicados e até
+                      hoje sem casa — About.tsx:45 (caminhão comum) e
+                      installation.ts:122 (AC3, sem sistema proprietário). */}
                   {[
-                    "≈10% do peso — instala sem guindaste",
+                    "Sobe em caminhão comum, descarrega manual",
                     "Fácil em cobertura, terraço e pavimento alto",
                     "50 modelos, formatos para cada cena",
-                    "Reprodução fiel da textura da pedra real",
+                    "Fixa com argamassa AC3 — sem sistema proprietário",
                   ].map((t) => (
                     <li key={t} className="flex gap-3 items-start text-[17px] leading-[1.5] text-western-cream">
                       <Check className="h-5 w-5 text-western-gold-soft mt-0.5 shrink-0" strokeWidth={1.75} />

@@ -1,38 +1,68 @@
 import { Link } from "react-router-dom";
-import { Gem, Users, Boxes, Check, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Reveal from "@/components/shared/Reveal";
-import { BUSINESS } from "@/config/business";
+import escalaSantaBarbara from "@/assets/escala/WEST-CSB.webp";
 
 /**
- * "O que é a Western Store" — orientação para quem cai de paraquedas na home.
+ * "A tecnologia Western" — 2ª seção da home: o QUE / PRA QUEM / PORQUÊ.
  *
- * Fica logo após o herói: no scroll, é o momento em que o visitante pergunta
- * "o que É isso, é pra mim, dá pra comprar?". Foi desenhada para ser lida NUM
- * RELANCE — pouco texto, ícone por pilar e bullets curtos (não parágrafos):
- * O QUE fazemos / PRA QUEM / COMO facilitamos a obra do parceiro. Fecha com a
- * bifurcação profissional × casa, onde a AÇÃO principal (cadastro → ver preços)
- * é o único botão sólido; a casa é um off-ramp discreto.
+ * O que havia antes: "o que fazemos" respondido com uma LISTA DE SKU ("cascatas,
+ * pedras, revestimentos e fontes") e "para quem" respondido com CARGOS
+ * ("arquitetos, paisagistas, laguistas e lojas"). Qualquer distribuidor escreve
+ * as duas. A tecnologia — molde tirado da pedra real, composto mineral com fibra
+ * de PET, ~10% do peso — entrava como bullet nº 2 e só era DEFENDIDA na 9ª seção,
+ * sete telas abaixo. A home afirmava o EFEITO e nunca dava a CAUSA nem a PROVA.
  *
- * Reutilizável: pode entrar (compacto) no catálogo/cadastro depois.
+ * Agora a seção faz três coisas, nesta ordem:
+ *   1. CAUSA   — o h2 afirma o método sobre o OBJETO (não acusa o leitor).
+ *   2. PROVA   — a foto da peça real ao lado de uma pessoa de 1,70 m, a ~3 m:
+ *                a distância exata do claim da legenda. A prova vem ANTES do
+ *                argumento (à esquerda no desktop, acima no celular).
+ *   3. CONSEQUÊNCIA — o 3º bloco devolve a pedra ao projeto, com número.
+ *
+ * Sem ícone lucide e sem checkmark de propósito: gramática de checklist de
+ * e-commerce não prova textura nem invenção — foto prova. Os antigos Gem (joia
+ * LAPIDADA; a Western reproduz pedra BRUTA) e Boxes (caixa = distribuidor, a
+ * leitura que a seção existe para derrubar) saíram por dizerem a coisa errada.
+ *
+ * Fecha com a bifurcação profissional × casa, preservada verbatim: um único
+ * botão sólido (cadastro → ver preços) e a casa como off-ramp de texto.
+ *
+ * Específica da home — o layout presume o slot logo após o herói. Não é
+ * reutilizável (o docblock antigo prometia isso e nunca aconteceu).
  */
-const PILARES = [
+
+/* A PROVA em número, amarrada a um SKU NOMEADO — nunca ao genérico "uma cascata
+   grande", que ninguém pode conferir. Fonte: obras.ts:181,186 ("Cascata Santa
+   Bárbara, 280 kg"), o único peso PUBLICADO para este SKU (código CSB →
+   cascata-santa-barbara, skuHandleMap.ts:13). O equivalente natural usa a MESMA
+   conta da PDP (TamanhoReal.tsx:71 → peso × 10 = 2.800 kg), por isso "quase 3
+   toneladas" — arredondado para fora, nunca para dentro.
+   ⚠ BLOQUEIO: o dono precisa cravar este peso antes de publicar. O mesmo CSB
+   aparece com 215 kg em pecasPlaceholder.ts:7 (arquivo sintético, não
+   renderizado) e o FAQ.tsx:30 repete os 215 como "uma cascata grande". A PDP lê
+   o peso da loja: home e PDP TÊM de mostrar o mesmo número. */
+const PROVA = {
+  peca: "Cascata Santa Bárbara",
+  pesoKg: 280,
+  natural: "quase 3 toneladas",
+};
+
+const BLOCOS = [
   {
-    Icon: Gem,
-    t: "O que fazemos",
-    itens: [
-      "Cascatas, pedras, revestimentos e fontes",
-      "~10% do peso — instala sem guindaste",
-    ],
+    label: "O que é",
+    t: "A pedra que pesa 10%",
+    p: "Molde tirado da pedra real, sem tirar a pedra do lugar. Composto mineral com fibra de PET: pisável, perfurável, esconde a fiação por dentro.",
   },
   {
-    Icon: Users,
-    t: "Para quem é",
-    itens: ["Arquitetos, paisagistas, laguistas e lojas", "Preço de atacado com CNPJ"],
+    label: "Pra quem",
+    t: "Quem riscou a pedra da prancha",
+    p: "Guindaste, rua fechada, alvará, dias de equipe içando. A conta não fechava — e a pedra saiu do projeto.",
   },
   {
-    Icon: Boxes,
-    t: "Como facilitamos sua obra",
-    itens: ["Modelos 3D e conjuntos prontos", `Garantia de ${BUSINESS.garantiaLabel} + reposição`],
+    label: "O que muda",
+    t: "A pedra volta pro projeto",
+    p: `${PROVA.peca}: ${PROVA.pesoKg} kg. A mesma em pedra natural: ${PROVA.natural}. Laje, terraço e cobertura entram de novo.`,
   },
 ];
 
@@ -41,55 +71,89 @@ export default function SobreAWestern() {
     <section
       id="o-que-e"
       className="surface-paper border-b border-western-border-soft py-16 md:py-24"
-      aria-label="O que é a Western Store"
+      aria-label="A tecnologia Western"
     >
       <div className="container-western">
         <Reveal variant="fade-up" duration={650}>
           <div className="max-w-2xl">
-            <p className="text-eyebrow mb-3">A Western Store</p>
+            <p className="text-eyebrow mb-3">A tecnologia Western</p>
+            {/* Afirmação sobre o OBJETO, não acusação ao leitor: quem já compra
+                pedra lê uma tecnologia; quem desistiu dela lê a própria saída no
+                bloco "Pra quem", meio segundo depois. Ninguém é excluído. */}
+            {/* Sem max-w em ch: a 2ª frase tem 29 caracteres e qualquer medida
+                mais estreita que ela cria uma 3ª linha órfã ("nossa."). O <br>
+                já define as duas linhas; o max-w-2xl do bloco segura o resto. */}
             <h2 className="display-lg text-western-green-deep">
-              Pedra artesanal, para quem projeta e revende.
+              Por fora, é a pedra.
+              <br />
+              <span className="text-western-bronze">Por dentro, é invenção nossa.</span>
             </h2>
             <p className="text-body mt-4 max-w-[52ch]">
-              O ateliê de pedra artesanal desde 1993 — agora, a loja do profissional.
+              Reproduz a pedra real no toque e na resistência — com cerca de 10% do peso.
             </p>
           </div>
         </Reveal>
 
-        <div className="mt-10 md:mt-14 grid gap-8 md:grid-cols-3 md:gap-10">
-          {PILARES.map(({ Icon, t, itens }, i) => (
-            <Reveal key={t} variant="fade-up" delay={i * 90} duration={600} distance={16}>
-              <div className="h-full">
-                <span className="flex h-14 w-14 items-center justify-center rounded-[14px] bg-western-cta/10">
-                  <Icon
-                    className="h-7 w-7 text-western-cta"
-                    strokeWidth={1.75}
-                    aria-hidden="true"
-                  />
-                </span>
-                <h3 className="font-display text-[21px] text-western-green-deep mt-5">{t}</h3>
-                <ul className="mt-3 space-y-2.5">
-                  {itens.map((it) => (
-                    <li
-                      key={it}
-                      className="flex items-start gap-2.5 text-[16px] leading-snug text-western-stone-warm"
-                    >
-                      <Check
-                        className="h-5 w-5 text-western-cta/70 mt-0.5 shrink-0"
-                        strokeWidth={2}
-                        aria-hidden="true"
-                      />
-                      {it}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-          ))}
+        {/* A foto é 4:5 nativa (1080×1341, como as 50 fotos de escala). Por isso
+            a PROVA fica ao LADO do argumento e não numa banda larga: um retrato
+            recortado em 21/9 perderia ~65% da altura e decapitaria a referência
+            de 1,70 m — que é justamente o que a foto existe para dar. */}
+        <div className="mt-10 md:mt-14 grid gap-8 md:grid-cols-12 md:gap-12 md:items-center">
+          {/* 6/6 no tablet e 5/7 no desktop: em md a coluna de 5 deixava a foto
+              com 259px — a pessoa some e a prova para de provar. Em lg sobra
+              largura, e a foto volta a 5 para o texto respirar. */}
+          <Reveal variant="fade-up" duration={700} className="md:col-span-6 lg:col-span-5">
+            <figure>
+              <img
+                src={escalaSantaBarbara}
+                alt="Cascata Santa Bárbara, réplica Western, ao lado de uma pessoa de 1,70 m num jardim."
+                width={1080}
+                height={1341}
+                loading="lazy"
+                decoding="async"
+                className="w-full aspect-[4/5] object-cover rounded-2xl"
+              />
+              {/* Legenda FORA da foto, não em tarja sobreposta (o padrão de
+                  /sobre). Medido no browser: a pessoa tem os pés em ~82% da
+                  altura e a tarja de 2 linhas começa em ~78% — ela cobria os
+                  pés, ou seja, escondia justamente a referência de 1,70 m que a
+                  legenda afirma. Ancorar no topo quebra igual em md (a coluna
+                  fica com ~290px, o texto quebra em 3 linhas e a tarja invade a
+                  cabeça). Num retrato 4:5 dentro de 5/12 a sobreposição sempre
+                  come a cabeça ou os pés — então a legenda desce. */}
+              <figcaption className="mt-4">
+                <p className="text-body text-western-green-deep">
+                  A três metros, nem o nosso fundador acerta qual é qual.
+                </p>
+                <p className="text-meta mt-1.5">
+                  {PROVA.peca} · pessoa de 1,70 m · escala real
+                </p>
+              </figcaption>
+            </figure>
+          </Reveal>
+
+          {/* Um Reveal para a coluna inteira (não um por bloco): empilhado no
+              celular, um stagger por índice só ATRASA blocos que já estão na
+              tela. O delay de 100ms mantém a ordem prova → argumento. */}
+          <Reveal variant="fade-up" delay={100} duration={700} className="md:col-span-6 lg:col-span-7">
+            <div className="space-y-8 md:space-y-10">
+              {BLOCOS.map(({ label, t, p }) => (
+                <div key={label}>
+                  <p className="text-eyebrow mb-2">{label}</p>
+                  <h3 className="display-md text-western-green-deep">{t}</h3>
+                  <p className="text-body mt-2 max-w-[46ch]">{p}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
         </div>
 
         {/* Bifurca profissional × casa — a AÇÃO principal é o cadastro (ver preços);
-            a casa é off-ramp discreto. Absorveu a antiga seção de segmentação. */}
+            a casa é off-ramp discreto. Absorveu a antiga seção de segmentação.
+            Preservada verbatim, com uma correção: os CTAs viram linha em md (e não
+            em sm), o mesmo breakpoint da grade acima — antes, de 640 a 767px, os
+            botões já estavam lado a lado enquanto o conteúdo ainda empilhava, e a
+            seção parecia meio montada em tablet retrato. */}
         <Reveal variant="fade-up" duration={600}>
           <div className="mt-12 md:mt-16 border-t border-western-border-soft pt-8">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
@@ -97,8 +161,8 @@ export default function SobreAWestern() {
                 Você é profissional, ou é para a sua casa?
               </p>
               <div className="flex flex-col gap-2.5 md:items-end">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <Link to="/parceiro/cadastro" className="btn-primary w-full sm:w-auto">
+                <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                  <Link to="/parceiro/cadastro" className="btn-primary w-full md:w-auto">
                     Criar cadastro · ver preços
                     <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
                   </Link>
@@ -110,7 +174,7 @@ export default function SobreAWestern() {
                     <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
                   </Link>
                 </div>
-                <p className="text-meta sm:text-right">
+                <p className="text-meta md:text-right">
                   Grátis · aprovação na hora · precisa de CNPJ
                 </p>
               </div>
