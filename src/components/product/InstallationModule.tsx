@@ -240,13 +240,25 @@ export function InstallationSection({
                   variant="primary"
                   className="w-full sm:w-auto"
                 />
-                <Link
-                  to={guideUrl || "/como-instalar"}
+                {/* Este botão aparece em TODA página de produto e todo conjunto,
+                    e caía em nada: guideUrl valia "/como-instalar" nas 8
+                    ocorrências de installation.ts, e essa rota nunca existiu no
+                    App.tsx — o fallback também apontava pra ela, então não havia
+                    escapatória. O manual real sempre esteve em
+                    public/manuais/ (28 páginas, declarado como fonte única no
+                    topo do installation.ts).
+                    É <a> e não <Link>: o router tentaria rotear o .pdf e cairia
+                    no NotFound — trocar o destino sem trocar a tag só mudaria o
+                    endereço do mesmo 404. */}
+                <a
+                  href={guideUrl || "/manuais/manual-instalacao-western.pdf"}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="btn-outline-forest w-full sm:w-auto"
                 >
                   <BookOpen className="h-5 w-5" aria-hidden="true" />
                   Guia completo de instalação
-                </Link>
+                </a>
               </div>
             </div>
           </div>

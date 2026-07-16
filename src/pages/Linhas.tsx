@@ -317,7 +317,7 @@ export default function Linhas() {
               </p>
             </div>
             <Link
-              to="/contrate-a-western"
+              to="/para-sua-casa"
               className="btn-gold w-full shrink-0 md:w-auto"
             >
               Pedir orçamento

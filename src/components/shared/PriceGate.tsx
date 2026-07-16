@@ -41,7 +41,10 @@ export default function PriceGate({ children, variant = "inline", productRef }: 
     "Pagamento em Pix, boleto ou cartão de crédito",
   ];
 
-  const contrateTo = "/contrate-a-western";
+  /* Este link vive sob "É para o seu projeto residencial?" (:112) — é o
+   * off-ramp B2C do gate de preço. Ia pra /contrate-a-western, que é a porta
+   * B2B (serviços para quem já tem cliente). A porta dele é /para-sua-casa. */
+  const contrateTo = "/para-sua-casa";
   const waHref = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
     productRef
       ? `Olá Western! Tenho interesse no produto "${productRef}" para o meu projeto residencial.`

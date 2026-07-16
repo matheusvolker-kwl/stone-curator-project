@@ -94,8 +94,11 @@ export default function Produtos() {
           </div>
         </Reveal>
 
+        {/* A faixa se anuncia como "Projeto residencial? Sem CNPJ?" e mandava
+            pra porta B2B. Agora vai pra /para-sua-casa, que é literalmente a
+            página que responde isso. */}
         <Link
-          to="/contrate-a-western"
+          to="/para-sua-casa"
           className="group mt-6 flex flex-col gap-6 rounded-2xl bg-western-green-deep px-6 py-8 text-western-cream transition-colors hover:bg-western-green-mid md:mt-8 md:flex-row md:items-center md:justify-between md:gap-10 md:px-10 md:py-10"
         >
           <div className="max-w-xl">

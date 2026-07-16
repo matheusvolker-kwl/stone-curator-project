@@ -43,7 +43,10 @@ export default function StickyBuyBar({
   productRef,
 }: Props) {
   const { isApproved } = useAuth();
-  const orcamentoTo = "/contrate-a-western";
+  /* "Orçamento" aqui só aparece pra quem NÃO é parceiro aprovado — ou seja,
+   * residencial. /contrate-a-western é a porta B2B (serviços pra quem tem
+   * cliente); a porta dele é /para-sua-casa. */
+  const orcamentoTo = "/para-sua-casa";
   const [visible, setVisible] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
 

@@ -108,11 +108,11 @@ const GRUPOS: Grupo[] = [
           <>
             O valor depende do produto e do porte do projeto — de peças avulsas a composições completas.
             Preços de parceiro ficam liberados após o{" "}
-            <Link to="/parceria" className={linkClass}>
+            <Link to="/parceiro/cadastro" className={linkClass}>
               cadastro
             </Link>{" "}
             (gratuito); para projetos residenciais, solicite um{" "}
-            <Link to="/contrate-a-western" className={linkClass}>
+            <Link to="/para-sua-casa" className={linkClass}>
               orçamento sem compromisso
             </Link>
             .
