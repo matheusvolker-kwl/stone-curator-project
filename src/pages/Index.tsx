@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProducts } from "@/lib/datasource";
 import Seo from "@/components/seo/Seo";
@@ -91,6 +92,16 @@ export default function Index() {
         path="/"
         ogType="website"
       />
+
+      {/* Preload do herói. É o primeiro pixel que a pessoa vê e era o ÚLTIMO a
+          ser pedido: o navegador só descobria a foto depois de baixar e rodar o
+          app inteiro. Duas linhas, o maior ganho de velocidade isolado da
+          página — e não muda um pixel do design. `media` garante que só a versão
+          do breakpoint certo é baixada (nunca as duas). */}
+      <Helmet>
+        <link rel="preload" as="image" href={heroHomeMobile} media="(max-width: 767px)" />
+        <link rel="preload" as="image" href={heroHome} media="(min-width: 768px)" />
+      </Helmet>
 
       {/* 1 — HERO "Declaração 10%" (foto full-bleed + overlay verde de proteção) */}
       {/* Art direction por breakpoint: no celular a foto é um RECORTE RETRATO
