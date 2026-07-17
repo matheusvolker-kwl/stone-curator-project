@@ -47,7 +47,7 @@ function Galeria({ fotos, label }: { fotos: string[]; label: string }) {
   // Mobile: carrossel horizontal com peek (menos scroll vertical). Desktop: grade.
   return (
     <>
-      <div className="mt-8 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6 px-6 pb-2 sm:mx-0 sm:px-0 sm:overflow-visible sm:grid sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-6 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6 px-6 pb-2 sm:mx-0 sm:px-0 sm:overflow-visible sm:grid sm:grid-cols-2 lg:grid-cols-3">
         {itens.map((foto, i) => (
           <button
             key={foto.src}
@@ -260,12 +260,13 @@ export default function Inspiracoes() {
         path="/obras"
       />
 
-      {/* Abertura */}
-      <div className="container-western pt-12 md:pt-20 pb-6">
+      {/* Abertura — lead-in compacto (não é .section: encosta no seletor sticky
+          logo abaixo, por isso pb-6 e top enxuto — puxa a 1ª foto pra dobra). */}
+      <div className="container-western pt-10 md:pt-12 pb-6">
         <Reveal variant="fade-up">
           <div className="max-w-3xl">
-            <p className="text-eyebrow mb-4">Obras · Por segmento</p>
-            <div className="w-12 h-px bg-western-gold mb-8" />
+            <p className="text-eyebrow mb-3">Obras · Por segmento</p>
+            <div className="w-12 h-px bg-western-gold mb-6" />
             <h1 className="display-xl text-western-green-deep">Obras entregues, por segmento.</h1>
             <p className="text-body mt-5 max-w-[60ch]">
               Escolha um caminho — a ideia por trás, fotos de obras reais e as peças que compõem
@@ -305,8 +306,9 @@ export default function Inspiracoes() {
         </div>
       </div>
 
-      {/* Conteúdo do segmento */}
-      <div ref={contentRef} className="container-western py-10 md:py-14 scroll-mt-[128px]">
+      {/* Conteúdo do segmento — top enxuto (exceção declarada ao ritmo nomeado):
+          fica logo sob o seletor sticky e sobe a galeria pra dobra no desktop. */}
+      <div ref={contentRef} className="container-western pt-6 md:pt-8 pb-12 md:pb-16 scroll-mt-[128px]">
         <Reveal variant="fade-up">
           <div className="max-w-3xl">
             <p className="text-eyebrow mb-3">{cur.eyebrow}</p>
@@ -340,6 +342,7 @@ export default function Inspiracoes() {
                 Quer {cur.label.toLowerCase()} assim no seu projeto? Monte a composição com preço de
                 parceiro, ou fale direto com o ateliê.
               </p>
+              {/* UMA ação primária (verde) — o secundário é outline, não sólido. */}
               <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
                 <Link to="/guia-de-composicao" className="btn-primary w-full sm:w-auto">
                   Montar no guia
@@ -348,7 +351,7 @@ export default function Inspiracoes() {
                   href={waMsg(`a linha de ${cur.label.toLowerCase()}`)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-gold w-full sm:w-auto"
+                  className="btn-outline-forest w-full sm:w-auto"
                 >
                   <MessageCircle className="h-5 w-5" /> Falar com o ateliê
                 </a>

@@ -65,6 +65,17 @@ const ALL_LEAVES: LeafMeta[] = TIPOS_ORDER.flatMap((tipo) =>
 
 const ALL_HANDLES = ALL_LEAVES.map((l) => l.handle);
 
+/**
+ * Prova visual na dobra: um conjunto real ancorando o hero no desktop.
+ * Usa o render já existente + o nome vindo do guideMap (nada hardcoded solto).
+ */
+const FEATURED_HANDLE = "conjunto-piscina-noronha-completo";
+const FEATURED = {
+  handle: FEATURED_HANDLE,
+  render: conjuntoRenders[FEATURED_HANDLE],
+  nome: ALL_LEAVES.find((l) => l.handle === FEATURED_HANDLE)?.nome ?? "",
+};
+
 /** Conjuntos mostrados por local antes do "ver todos" (1 linha no desktop). */
 const PREVIEW_POR_TIPO = 3;
 
@@ -170,8 +181,8 @@ export default function Conjuntos() {
       />
       {/* HERO */}
       <header className="border-b border-western-border-soft">
-        <div className="container-western py-14 md:py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-10 lg:gap-16 items-end">
+        <div className="container-western section-tight">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-16 items-start">
             <div className="max-w-3xl">
               <p className="text-eyebrow mb-4">Curadoria · Conjuntos</p>
               <div className="w-12 h-px bg-western-gold mb-7" />
@@ -186,27 +197,48 @@ export default function Conjuntos() {
               </p>
             </div>
 
-            {/* Atalho guiado — o caminho de maior conversão para quem chega sem rumo */}
-            <aside className="surface-forest rounded-2xl p-7 md:p-8">
-              <p className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft mb-3">
-                Não sabe por onde começar?
-              </p>
-              <p className="display-md text-western-cream">
-                Responda 3 perguntas e veja os conjuntos certos para o seu
-                projeto.
-              </p>
-              <Link
-                to="/guia-de-composicao"
-                className="btn-gold mt-7 w-full sm:w-auto"
-              >
-                Abrir o guia <ArrowRight className="h-5 w-5" />
-              </Link>
-            </aside>
+            <div className="space-y-6">
+              {/* Prova visual na dobra — um conjunto real, não um skeleton */}
+              {FEATURED.render && (
+                <Link
+                  to={`/conjuntos/${FEATURED.handle}`}
+                  className="group relative block overflow-hidden rounded-2xl shadow-card"
+                >
+                  <div className="aspect-[4/3] bg-western-paper">
+                    <img
+                      src={FEATURED.render}
+                      alt={`Conjunto ${FEATURED.nome}`}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    />
+                  </div>
+                  <span className="absolute bottom-3 left-3 rounded-md bg-western-green-deep/90 px-3 py-1.5 font-sans text-[14px] font-semibold text-western-cream">
+                    Conjunto {FEATURED.nome} · piscina
+                  </span>
+                </Link>
+              )}
+
+              {/* Atalho guiado — o caminho de maior conversão para quem chega sem rumo */}
+              <aside className="surface-forest rounded-2xl p-7 md:p-8">
+                <p className="text-eyebrow-dark mb-3">
+                  Não sabe por onde começar?
+                </p>
+                <p className="display-md text-western-cream">
+                  Responda 3 perguntas e veja os conjuntos certos para o seu
+                  projeto.
+                </p>
+                <Link
+                  to="/guia-de-composicao"
+                  className="btn-gold mt-7 w-full sm:w-auto"
+                >
+                  Abrir o guia <ArrowRight className="h-5 w-5" />
+                </Link>
+              </aside>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="container-western py-12 md:py-16">
+      <div className="container-western section">
         <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-12">
           {/* SIDEBAR — desktop */}
           <aside className="hidden lg:block">

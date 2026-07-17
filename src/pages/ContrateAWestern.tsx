@@ -33,6 +33,10 @@ import { BUSINESS } from "@/config/business";
 import { submitSecureLead } from "@/lib/leads";
 import TurnstileWidget from "@/components/security/TurnstileWidget";
 import { toast } from "sonner";
+import PhoneInput from "@/components/forms/PhoneInput";
+import EmailInput from "@/components/forms/EmailInput";
+import FieldLabel from "@/components/forms/FieldLabel";
+import { onlyDigits, formatPhoneBR } from "@/lib/forms/br";
 
 // Imagens reais reaproveitadas do projeto (webp otimizadas)
 import heroImg from "@/assets/projetos-western/03_piscina-cascata.webp";
@@ -174,19 +178,12 @@ const CARD_ICON =
 const CARD_TITLE =
   "font-sans font-semibold text-[20px] leading-snug text-western-green-deep mb-2";
 const CARD_DESC = "text-spec leading-relaxed";
-const FIELD_LABEL =
-  "block font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-bronze mb-2";
-const FIELD_INPUT =
-  "w-full rounded-lg bg-white border-[1.5px] border-western-border-strong px-4 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-cta focus:ring-2 focus:ring-western-cta/20 outline-none transition-colors";
+// Nome / perfil / mensagem: pele V3 local (52px, cantos 10px, tipo 16px, fundo
+// paper sobre a carta branca). WhatsApp e e-mail usam PhoneInput/EmailInput
+// compartilhados, que já trazem esta mesma pele — nada de máscara própria aqui.
+const CONTROL =
+  "w-full rounded-lg bg-western-paper border-[1.5px] border-western-border-strong px-4 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-green-deep focus:outline-none transition-colors";
 const FIELD_H = "h-control";
-
-function maskPhone(v: string): string {
-  const d = v.replace(/\D/g, "").slice(0, 11);
-  if (d.length <= 2) return d;
-  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
-  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
-}
 
 export default function ContrateAWestern() {
   const formRef = useRef<HTMLDivElement>(null);
@@ -208,7 +205,7 @@ export default function ContrateAWestern() {
       "Olá, Western! Vim pelo site e quero agendar a consultoria inicial gratuita.",
       "",
       `Nome: ${nome || "—"}`,
-      `WhatsApp: ${telefone || "—"}`,
+      `WhatsApp: ${telefone ? formatPhoneBR(telefone) : "—"}`,
       email ? `E-mail: ${email}` : null,
       perfil ? `Perfil: ${perfilLabel}` : null,
       mensagem ? "" : null,
@@ -223,7 +220,7 @@ export default function ContrateAWestern() {
     e.preventDefault();
     if (enviando) return;
 
-    if (!nome.trim() || telefone.replace(/\D/g, "").length < 10) {
+    if (!nome.trim() || onlyDigits(telefone).length < 10) {
       toast.error("Preencha nome e WhatsApp (mínimo 10 dígitos).");
       return;
     }
@@ -280,7 +277,10 @@ export default function ContrateAWestern() {
           decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-western-green-deep/85 via-western-green-deep/72 to-western-green-deep/92" />
+        {/* Scrim reforçado: a dobra tinha um vão claro no meio (via /72) onde a
+            linha de prova social caía sobre rocha/água claras e sumia — agora o
+            meio e a base seguram contraste. Screenshots 390 e 1280 confirmam. */}
+        <div className="absolute inset-0 bg-gradient-to-b from-western-green-deep/85 via-western-green-deep/84 to-western-green-deep/95" />
 
         <div className="relative container-western py-16 md:py-28 max-w-3xl mx-auto text-center">
           <Reveal variant="fade-up" duration={700}>
@@ -317,7 +317,7 @@ export default function ContrateAWestern() {
               </a>
             </div>
 
-            <p className="mt-8 text-[15px] leading-relaxed text-western-cream/80 max-w-lg mx-auto">
+            <p className="mt-8 text-[15px] leading-relaxed text-western-cream/90 max-w-lg mx-auto [text-shadow:0_1px_12px_hsl(var(--western-green-deep)/0.85)]">
               Especificada nas obras de Neymar Jr. · Alex Hanazaki · Rosewood · Unique Garden
             </p>
             {/* Os quatro nomes acima agora TÊM lastro clicável (o Hanazaki
@@ -336,6 +336,7 @@ export default function ContrateAWestern() {
 
       {/* 2) BARRA DE CONFIANÇA */}
       <section className="surface-paper border-b border-western-border-soft">
+        {/* Exceção declarada ao ritmo: faixa de credencial usa py-6, não .section. */}
         <div className="container-western py-6">
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             {CONFIANCA.map((c) => (
@@ -351,7 +352,7 @@ export default function ContrateAWestern() {
       </section>
 
       {/* 3) POR QUE A WESTERN */}
-      <section className="surface-ivory py-16 md:py-24">
+      <section className="surface-ivory section">
         <div className="container-western">
           <div className="max-w-6xl">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
@@ -416,7 +417,7 @@ export default function ContrateAWestern() {
       </section>
 
       {/* 4) SERVIÇOS */}
-      <section className="surface-paper py-16 md:py-24 border-y border-western-border-soft">
+      <section className="surface-paper section border-y border-western-border-soft">
         <div className="container-western">
           <div className="max-w-6xl">
           <Reveal variant="fade-up" duration={700}>
@@ -446,7 +447,7 @@ export default function ContrateAWestern() {
       </section>
 
       {/* 5) COMO FUNCIONA */}
-      <section className="surface-ivory py-16 md:py-24">
+      <section className="surface-ivory section">
         <div className="container-western">
           <div className="max-w-6xl">
           <Reveal variant="fade-up" duration={700}>
@@ -475,11 +476,18 @@ export default function ContrateAWestern() {
                       : "border-western-border-soft"
                   }`}
                 >
-                  {p.gratis && (
-                    <span className="absolute -top-3 left-6 rounded-sm bg-western-gold px-2.5 py-1 font-sans text-[14px] font-semibold leading-none text-western-green-deep">
-                      Grátis
-                    </span>
-                  )}
+                  {/* Todo passo carrega um sinal de preço: 1–2 grátis (dourado),
+                      3–5 "Sob consulta" (bronze neutro). Antes 3–5 ficavam em
+                      branco e liam como preço escondido — decisão do dono. */}
+                  <span
+                    className={`absolute -top-3 left-6 rounded-sm px-2.5 py-1 font-sans text-[14px] font-semibold leading-none ${
+                      p.gratis
+                        ? "bg-western-gold text-western-green-deep"
+                        : "bg-western-paper border border-western-border-strong text-western-bronze"
+                    }`}
+                  >
+                    {p.gratis ? "Grátis" : "Sob consulta"}
+                  </span>
                   <span className="font-display text-[32px] leading-none text-western-bronze block mb-3">
                     {p.n}
                   </span>
@@ -494,7 +502,7 @@ export default function ContrateAWestern() {
       </section>
 
       {/* 6) PROVA SOCIAL — rostos + mural de marcas */}
-      <section className="surface-paper py-16 md:py-24 border-t border-western-border-soft">
+      <section className="surface-paper section border-t border-western-border-soft">
         <div className="container-western">
           <div className="mx-auto max-w-5xl">
           <Reveal variant="fade-up" duration={750}>
@@ -510,7 +518,7 @@ export default function ContrateAWestern() {
       </section>
 
       {/* 7) FAQ */}
-      <section className="surface-ivory py-16 md:py-24 border-y border-western-border-soft">
+      <section className="surface-ivory section border-y border-western-border-soft">
         <div className="container-western">
           <div className="mx-auto max-w-3xl">
           <Reveal variant="fade-up" duration={700}>
@@ -550,7 +558,7 @@ export default function ContrateAWestern() {
 
       {/* 8) FORMULÁRIO / RAMPA — faixa verde institucional, formulário em carta clara */}
       <section ref={formRef} id="contato" className="surface-forest">
-        <div className="container-western py-16 md:py-24">
+        <div className="container-western section">
           <div className="max-w-5xl">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
             <Reveal variant="fade-up" duration={700} className="md:col-span-5">
@@ -601,69 +609,47 @@ export default function ContrateAWestern() {
             <Reveal variant="fade-up" delay={100} duration={700} className="md:col-span-7">
               <form
                 onSubmit={handleSubmit}
-                className="bg-western-paper border border-western-border-soft rounded-2xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
+                className="bg-white border border-western-border-soft rounded-2xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
                 noValidate
               >
                 <div className="md:col-span-1">
-                  <label htmlFor="ct-nome" className={FIELD_LABEL}>
-                    Nome <span className="text-western-gold">*</span>
-                  </label>
+                  <FieldLabel htmlFor="ct-nome" required>Nome</FieldLabel>
                   <input
                     id="ct-nome"
                     required
                     value={nome}
                     onChange={(e) => setNome(e.target.value)}
                     autoComplete="name"
-                    className={`${FIELD_INPUT} ${FIELD_H}`}
+                    placeholder="Como podemos te chamar"
+                    className={`${CONTROL} ${FIELD_H}`}
                   />
                 </div>
 
                 <div className="md:col-span-1">
-                  <label htmlFor="ct-tel" className={FIELD_LABEL}>
-                    WhatsApp <span className="text-western-gold">*</span>
-                  </label>
-                  <input
+                  <FieldLabel htmlFor="ct-tel" required>WhatsApp</FieldLabel>
+                  <PhoneInput
                     id="ct-tel"
-                    required
-                    type="tel"
-                    inputMode="tel"
                     value={telefone}
-                    onChange={(e) => setTelefone(maskPhone(e.target.value))}
-                    autoComplete="tel"
-                    placeholder="(11) 90000-0000"
-                    className={`${FIELD_INPUT} ${FIELD_H} tabular-nums`}
+                    onChange={setTelefone}
                   />
                 </div>
 
                 <div className="md:col-span-1">
-                  <label htmlFor="ct-email" className={FIELD_LABEL}>
-                    E-mail{" "}
-                    <span className="font-normal normal-case tracking-normal text-western-stone-warm">
-                      (opcional)
-                    </span>
-                  </label>
-                  <input
+                  <FieldLabel htmlFor="ct-email" optional>E-mail</FieldLabel>
+                  <EmailInput
                     id="ct-email"
-                    type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    autoComplete="email"
-                    className={`${FIELD_INPUT} ${FIELD_H}`}
+                    onChange={setEmail}
                   />
                 </div>
 
                 <div className="md:col-span-1">
-                  <label htmlFor="ct-perfil" className={FIELD_LABEL}>
-                    Perfil{" "}
-                    <span className="font-normal normal-case tracking-normal text-western-stone-warm">
-                      (opcional)
-                    </span>
-                  </label>
+                  <FieldLabel htmlFor="ct-perfil" optional>Perfil</FieldLabel>
                   <select
                     id="ct-perfil"
                     value={perfil}
                     onChange={(e) => setPerfil(e.target.value)}
-                    className={`${FIELD_INPUT} ${FIELD_H}`}
+                    className={`${CONTROL} ${FIELD_H}`}
                   >
                     {PERFIS.map((p) => (
                       <option key={p.value} value={p.value}>
@@ -674,19 +660,14 @@ export default function ContrateAWestern() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label htmlFor="ct-msg" className={FIELD_LABEL}>
-                    Sobre o projeto{" "}
-                    <span className="font-normal normal-case tracking-normal text-western-stone-warm">
-                      (opcional)
-                    </span>
-                  </label>
+                  <FieldLabel htmlFor="ct-msg" optional>Sobre o projeto</FieldLabel>
                   <textarea
                     id="ct-msg"
                     rows={4}
                     value={mensagem}
                     onChange={(e) => setMensagem(e.target.value)}
                     placeholder="Local, escopo, prazo — o que quiser adiantar."
-                    className={`${FIELD_INPUT} py-3 resize-none`}
+                    className={`${CONTROL} py-3 resize-none`}
                   />
                 </div>
 

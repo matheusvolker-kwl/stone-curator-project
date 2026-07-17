@@ -196,7 +196,7 @@ export default function APedra() {
       {/* ==================================================================
           S1 · A ORIGEM (paper) — texto esq / macro dir.
           ================================================================== */}
-      <section className="surface-paper py-16 md:py-24">
+      <section className="surface-paper section">
         <div className="container-western">
           <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:gap-14 lg:items-start">
             <Reveal variant="fade-up" duration={700}>
@@ -251,7 +251,7 @@ export default function APedra() {
           que torna a comparação instantânea. Aqui as barras dividem a MESMA
           régua, então a comparação é geométrica antes de ser numérica.
           ================================================================== */}
-      <section className="surface-ivory py-16 md:py-24 border-t border-western-border-soft overflow-x-hidden">
+      <section className="surface-ivory section border-t border-western-border-soft overflow-x-hidden">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="max-w-[52ch]">
@@ -341,7 +341,7 @@ export default function APedra() {
           clímax nenhum (alturas 930/630/738/880/911/558/1004/546, e a seção
           mais alta era "quem faz"). Se tudo tem o mesmo peso, nada tem peso.
           ================================================================== */}
-      <section className="surface-forest py-16 md:py-24">
+      <section className="surface-forest section">
         <div className="container-western">
           <div className="grid gap-10 lg:grid-cols-[0.95fr_1fr] lg:gap-14 lg:items-start">
             <Reveal variant="fade-up" duration={700}>
@@ -426,7 +426,7 @@ export default function APedra() {
           S4 · ONDE A PEDRA FOI (paper) — 4 endereços alternando lado.
           A TESE abre a seção: é o que impede isto de virar lista de casos.
           ================================================================== */}
-      <section className="surface-paper py-16 md:py-24">
+      <section className="surface-paper section">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="max-w-[52ch]">
@@ -476,7 +476,7 @@ export default function APedra() {
           3D de cada uma. A previsibilidade é consequência física de ser autora
           da matriz. E ESCALA com a dificuldade do projeto.
           ================================================================== */}
-      <section className="surface-ivory py-16 md:py-24 border-t border-western-border-soft">
+      <section className="surface-ivory section border-t border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="max-w-[52ch]">
@@ -590,7 +590,7 @@ export default function APedra() {
           artesanal de pedra. Agora são as duas fotos que provam a frase ao
           lado — e existiam no acervo o tempo todo.
           ================================================================== */}
-      <section className="surface-paper py-16 md:py-24 border-t border-western-border-soft">
+      <section className="surface-paper section border-t border-western-border-soft">
         <div className="container-western">
           <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:gap-14 lg:items-start">
             <Reveal variant="fade-up" duration={700}>
@@ -670,7 +670,7 @@ export default function APedra() {
           divergência 1993 (aqui) × 1996 (/sobre) que a mesma foto carregava nas
           duas páginas.
           ================================================================== */}
-      <section className="surface-ivory py-16 md:py-24 border-t border-western-border-soft">
+      <section className="surface-ivory section border-t border-western-border-soft">
         <div className="container-western">
           <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:gap-14 lg:items-start">
             <Reveal variant="fade-up" duration={700}>
@@ -769,7 +769,7 @@ export default function APedra() {
           comercial sugere endosso. NÃO reintroduza imagem de fundo aqui sem
           conferir o arquivo com os próprios olhos.
           ================================================================== */}
-      <section className="surface-forest py-16 md:py-24">
+      <section className="surface-forest section">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="max-w-2xl">

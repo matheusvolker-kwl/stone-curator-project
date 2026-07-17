@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Eye,
   ArrowDown,
+  ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import Seo from "@/components/seo/Seo";
@@ -24,6 +25,10 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import TurnstileWidget from "@/components/security/TurnstileWidget";
+import FieldLabel from "@/components/forms/FieldLabel";
+import PhoneInput from "@/components/forms/PhoneInput";
+import EmailInput from "@/components/forms/EmailInput";
+import { formatPhoneBR } from "@/lib/forms/br";
 import { submitSecureLead } from "@/lib/leads";
 import { BUSINESS } from "@/config/business";
 
@@ -157,19 +162,12 @@ const FAQ_ITEMS = [
   },
 ];
 
-function maskPhone(v: string): string {
-  const d = v.replace(/\D/g, "").slice(0, 11);
-  if (d.length <= 2) return d;
-  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
-  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
-}
-
-const FIELD_LABEL =
-  "block font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-bronze mb-2";
-const FIELD_INPUT =
-  "w-full rounded-lg bg-white border-[1.5px] border-western-border-strong px-4 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-gold focus:ring-2 focus:ring-western-gold/20 outline-none transition-colors";
-const FIELD_H = "h-control";
+/* Telefone e e-mail agora vêm de @/components/forms (PhoneInput/EmailInput) —
+   máscara e normalização vivem lá, não mais nesta página. CONTROL só veste os
+   campos de texto simples (nome, cidade, textarea), na mesma pele V3 que a
+   /agendar-visita e o /contato usam: fundo paper dentro do cartão branco. */
+const CONTROL =
+  "h-control w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 font-sans text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 outline-none transition-colors focus:border-western-green-deep";
 
 export default function ParaSuaCasa() {
   const formRef = useRef<HTMLDivElement>(null);
@@ -216,7 +214,7 @@ export default function ParaSuaCasa() {
       "Olá, Western! Vim pelo site e quero um projeto para a minha casa.",
       "",
       `Nome: ${nome || "—"}`,
-      `WhatsApp: ${telefone || "—"}`,
+      `WhatsApp: ${telefone ? formatPhoneBR(telefone) : "—"}`,
       email ? `E-mail: ${email}` : null,
       cidade ? `Cidade: ${cidade}` : null,
       mensagem ? "" : null,
@@ -309,6 +307,7 @@ export default function ParaSuaCasa() {
 
       {/* 2 — BARRA DE CONFIANÇA */}
       <section className="surface-paper border-b border-western-border-soft">
+        {/* Exceção de ritmo declarada: faixa de credencial usa py-6, não .section. */}
         <div className="container-western py-6">
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             {CONFIANCA.map((c) => (
@@ -324,7 +323,7 @@ export default function ParaSuaCasa() {
       </section>
 
       {/* 3 — AS LINGUAGENS DO SONHO (com foto) */}
-      <section className="surface-ivory py-16 md:py-24">
+      <section className="surface-ivory section">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <header className="max-w-2xl mb-10 md:mb-12">
@@ -372,7 +371,7 @@ export default function ParaSuaCasa() {
       </section>
 
       {/* 4 — VITRINE DE OBRAS REAIS */}
-      <section className="surface-paper py-16 md:py-24 border-y border-western-border-soft">
+      <section className="surface-paper section border-y border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <header className="max-w-2xl mb-10 md:mb-12">
@@ -415,7 +414,10 @@ export default function ParaSuaCasa() {
             ))}
           </div>
 
-          <div className="mt-12 text-center">
+          {/* Primária dourada (WhatsApp) + saída interna para quem ainda quer
+              VER mais antes de falar: /obras é a galeria completa. Secundária
+              em .link-cta (verde, sobre paper) — nunca um segundo sólido. */}
+          <div className="mt-12 flex flex-col items-center gap-5">
             <a
               href={waLink("Olá! Vi as obras no site e quero uma assim na minha casa.")}
               target="_blank"
@@ -425,12 +427,16 @@ export default function ParaSuaCasa() {
               <MessageCircle className="h-5 w-5" />
               Quero uma obra assim na minha casa
             </a>
+            <Link to="/obras" className="link-cta">
+              Ver todas as obras
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
           </div>
         </div>
       </section>
 
       {/* 5 — COMO FUNCIONA */}
-      <section className="surface-ivory py-16 md:py-24">
+      <section className="surface-ivory section">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <header className="text-center max-w-2xl mx-auto mb-12">
@@ -472,7 +478,7 @@ export default function ParaSuaCasa() {
       </section>
 
       {/* 6 — DO DESENHO À OBRA (desenho do Ricardo → 3D → obra entregue) */}
-      <section className="surface-forest py-16 md:py-24">
+      <section className="surface-forest section">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="max-w-[62ch]">
@@ -533,21 +539,30 @@ export default function ParaSuaCasa() {
               As três são o mesmo projeto: repare na escada de pedras chatas descendo até a água, à
               esquerda, e na fileira de quedas ao fundo.
             </p>
-            <a
-              href={waLink("Olá! Quero ver o meu projeto em 3D.")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-gold mt-8 w-full sm:w-auto"
-            >
-              <MessageCircle className="h-5 w-5" />
-              Quero ver o meu em 3D
-            </a>
+            {/* Primária dourada (WhatsApp) + saída interna para entender a
+                tecnologia antes de decidir: /a-pedra conta como a pedra é
+                feita. Sobre verde → .link-cta-dark (creme), não um 2º sólido. */}
+            <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-x-6 gap-y-4">
+              <a
+                href={waLink("Olá! Quero ver o meu projeto em 3D.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-gold w-full sm:w-auto"
+              >
+                <MessageCircle className="h-5 w-5" />
+                Quero ver o meu em 3D
+              </a>
+              <Link to="/a-pedra" className="link-cta-dark">
+                Como a pedra é feita
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
           </Reveal>
         </div>
       </section>
 
       {/* 7 — PROVA SOCIAL ASPIRACIONAL */}
-      <section className="surface-ivory py-16 md:py-24 border-b border-western-border-soft">
+      <section className="surface-ivory section border-b border-western-border-soft">
         <div className="container-western">
           <div className="mx-auto max-w-4xl">
             <Reveal variant="fade-up" duration={750}>
@@ -567,7 +582,7 @@ export default function ParaSuaCasa() {
       </section>
 
       {/* 8 — O ATELIÊ */}
-      <section className="surface-paper py-16 md:py-24 border-b border-western-border-soft">
+      <section className="surface-paper section border-b border-western-border-soft">
         <div className="container-western">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-center">
             <Reveal variant="fade-up" duration={700} className="md:col-span-6">
@@ -643,7 +658,7 @@ export default function ParaSuaCasa() {
       </section>
 
       {/* 9 — FAQ */}
-      <section className="surface-ivory py-16 md:py-24">
+      <section className="surface-ivory section">
         <div className="container-western">
           <div className="mx-auto max-w-3xl">
             <Reveal variant="fade-up" duration={700}>
@@ -681,8 +696,8 @@ export default function ParaSuaCasa() {
       </section>
 
       {/* 10 — FECHAMENTO + CAPTURA */}
-      <section ref={formRef} id="contato" className="surface-forest">
-        <div className="container-western py-16 md:py-24">
+      <section ref={formRef} id="contato" className="surface-forest section">
+        <div className="container-western">
           <div className="max-w-5xl mx-auto">
             <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
               <Reveal variant="fade-up" duration={700} className="md:col-span-5">
@@ -723,41 +738,28 @@ export default function ParaSuaCasa() {
               <Reveal variant="fade-up" delay={100} duration={700} className="md:col-span-7">
                 <form
                   onSubmit={handleSubmit}
-                  className="bg-western-paper border border-western-border-soft rounded-2xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
+                  className="bg-white border border-western-border-soft rounded-2xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
                   noValidate
                 >
                   <div>
-                    <label htmlFor="pc-nome" className={FIELD_LABEL}>
-                      Nome <span className="text-western-gold">*</span>
-                    </label>
-                    <input id="pc-nome" required value={nome} onChange={(e) => setNome(e.target.value)} autoComplete="name" className={`${FIELD_INPUT} ${FIELD_H}`} />
+                    <FieldLabel htmlFor="pc-nome" required>Nome</FieldLabel>
+                    <input id="pc-nome" required value={nome} onChange={(e) => setNome(e.target.value)} autoComplete="name" className={CONTROL} />
                   </div>
                   <div>
-                    <label htmlFor="pc-tel" className={FIELD_LABEL}>
-                      WhatsApp <span className="text-western-gold">*</span>
-                    </label>
-                    <input id="pc-tel" required type="tel" inputMode="tel" value={telefone} onChange={(e) => setTelefone(maskPhone(e.target.value))} autoComplete="tel" placeholder="(11) 90000-0000" className={`${FIELD_INPUT} ${FIELD_H} tabular-nums`} />
+                    <FieldLabel htmlFor="pc-tel" required>WhatsApp</FieldLabel>
+                    <PhoneInput id="pc-tel" name="telefone" value={telefone} onChange={setTelefone} required />
                   </div>
                   <div>
-                    <label htmlFor="pc-email" className={FIELD_LABEL}>
-                      E-mail{" "}
-                      <span className="font-normal normal-case tracking-normal text-western-stone-warm">(opcional)</span>
-                    </label>
-                    <input id="pc-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" className={`${FIELD_INPUT} ${FIELD_H}`} />
+                    <FieldLabel htmlFor="pc-email" optional>E-mail</FieldLabel>
+                    <EmailInput id="pc-email" value={email} onChange={setEmail} />
                   </div>
                   <div>
-                    <label htmlFor="pc-cidade" className={FIELD_LABEL}>
-                      Cidade{" "}
-                      <span className="font-normal normal-case tracking-normal text-western-stone-warm">(opcional)</span>
-                    </label>
-                    <input id="pc-cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} autoComplete="address-level2" placeholder="Cidade / UF" className={`${FIELD_INPUT} ${FIELD_H}`} />
+                    <FieldLabel htmlFor="pc-cidade" optional>Cidade</FieldLabel>
+                    <input id="pc-cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} autoComplete="address-level2" placeholder="Cidade / UF" className={CONTROL} />
                   </div>
                   <div className="md:col-span-2">
-                    <label htmlFor="pc-msg" className={FIELD_LABEL}>
-                      Conte o seu sonho{" "}
-                      <span className="font-normal normal-case tracking-normal text-western-stone-warm">(opcional)</span>
-                    </label>
-                    <textarea id="pc-msg" rows={4} value={mensagem} onChange={(e) => setMensagem(e.target.value)} placeholder="Uma piscina de praia no quintal? Um lago com carpas? Conta pra gente." className={`${FIELD_INPUT} py-3 resize-none`} />
+                    <FieldLabel htmlFor="pc-msg" optional>Conte o seu sonho</FieldLabel>
+                    <textarea id="pc-msg" rows={4} value={mensagem} onChange={(e) => setMensagem(e.target.value)} placeholder="Uma piscina de praia no quintal? Um lago com carpas? Conta pra gente." className="w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 py-3 font-sans text-[16px] leading-[1.6] text-western-green-deep placeholder:text-western-stone-warm/60 outline-none transition-colors focus:border-western-green-deep resize-none" />
                   </div>
                   <div className="md:col-span-2">
                     <TurnstileWidget onToken={setCaptchaToken} onExpire={() => setCaptchaToken(null)} />

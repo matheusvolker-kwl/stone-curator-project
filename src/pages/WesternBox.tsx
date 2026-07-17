@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { usePublishStickyBarHeight } from "@/hooks/usePublishStickyBarHeight";
@@ -142,26 +142,33 @@ function useBuyAction() {
 // ---------------------------------------------------------------------------
 // STICKY BUY BAR — barra fixa de rodapé (V3): CTA verde, full-width no mobile
 // ---------------------------------------------------------------------------
-function StickyBuyBar({ topBuyRef }: { topBuyRef: React.RefObject<HTMLElement> }) {
+function StickyBuyBar({ anchorRefs }: { anchorRefs: React.RefObject<HTMLElement>[] }) {
   const { disabled, buy } = useBuyAction();
   const [visible, setVisible] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
   // Publica a altura da barra p/ o FAB do WhatsApp subir acima do CTA (não cobrir).
   usePublishStickyBarHeight(barRef, visible);
 
+  // A sticky bar é o ponto de compra "de reserva": só aparece quando NENHUM
+  // CTA real (topo, faixa do meio, CTA final) está na viewport. Assim nunca
+  // convivem dois "Adicionar ao carrinho" sólidos na mesma tela.
   useEffect(() => {
-    const el = topBuyRef.current;
-    if (!el) return;
+    const els = anchorRefs.map((r) => r.current).filter(Boolean) as HTMLElement[];
+    if (els.length === 0) return;
+    const intersecting = new Set<Element>();
     const obs = new IntersectionObserver(
-      ([entry]) => {
-        const past = entry.boundingClientRect.top < 0;
-        setVisible(!entry.isIntersecting && past);
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) intersecting.add(entry.target);
+          else intersecting.delete(entry.target);
+        }
+        setVisible(intersecting.size === 0);
       },
-      { threshold: 0, rootMargin: "0px 0px -10% 0px" },
+      { threshold: 0 },
     );
-    obs.observe(el);
+    els.forEach((el) => obs.observe(el));
     return () => obs.disconnect();
-  }, [topBuyRef]);
+  }, [anchorRefs]);
 
   return (
     <AnimatePresence>
@@ -231,13 +238,13 @@ function QtyStepper({ qty, setQty }: { qty: number; setQty: (n: number) => void 
 // ---------------------------------------------------------------------------
 // PRODUCT TOP — galeria + painel de compra (o CTA é o herói da página)
 // ---------------------------------------------------------------------------
-function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLDivElement> }) {
+function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLElement> }) {
   const { disabled, buy } = useBuyAction();
   const [active, setActive] = useState(0);
   const [qty, setQty] = useState(1);
 
   return (
-    <section className="surface-paper pb-16 pt-6 md:pb-24 md:pt-10" ref={topBuyRef as never}>
+    <section className="surface-paper pb-16 pt-6 md:pb-24 md:pt-10" ref={topBuyRef}>
       <div className="container-western">
         {/* Breadcrumb */}
         <nav
@@ -396,10 +403,10 @@ function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLDivElement> 
 // ---------------------------------------------------------------------------
 // MID BUY STRIP — segundo ponto de compra (compacto, depois do desejo)
 // ---------------------------------------------------------------------------
-function MidBuyStrip() {
+function MidBuyStrip({ sectionRef }: { sectionRef: React.Ref<HTMLElement> }) {
   const { disabled, buy } = useBuyAction();
   return (
-    <section className="surface-ivory border-y border-western-border-soft py-16 md:py-20">
+    <section ref={sectionRef} className="section-tight surface-ivory border-y border-western-border-soft">
       <div className="container-western">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between md:gap-10">
           <div className="flex items-center gap-5">
@@ -436,7 +443,14 @@ export default function WesternBox() {
   const [acabamentoAtivo, setAcabamentoAtivo] = useState<(typeof ACABAMENTOS)[number]["id"]>("moledo");
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const ativo = ACABAMENTOS.find((a) => a.id === acabamentoAtivo)!;
-  const topBuyRef = useRef<HTMLDivElement>(null);
+  const topBuyRef = useRef<HTMLElement>(null);
+  const midBuyRef = useRef<HTMLElement>(null);
+  const finalCtaRef = useRef<HTMLElement>(null);
+  // Todos os CTAs reais de compra: a sticky bar some quando qualquer um está visível.
+  const anchorRefs = useMemo(
+    () => [topBuyRef, midBuyRef, finalCtaRef],
+    [],
+  );
   const { disabled, buy } = useBuyAction();
 
   return (
@@ -449,13 +463,13 @@ export default function WesternBox() {
         image={hero}
       />
 
-      <StickyBuyBar topBuyRef={topBuyRef as never} />
+      <StickyBuyBar anchorRefs={anchorRefs} />
 
       {/* 1. TOPO DE PRODUTO — foto + compra */}
       <ProductTop topBuyRef={topBuyRef} />
 
       {/* 2. POR QUE EXISTE */}
-      <section className="surface-ivory py-16 md:py-24">
+      <section className="section surface-ivory">
         <div className="container-western">
           <Reveal variant="fade-up" duration={500}>
             <p className="text-eyebrow">Por que existe</p>
@@ -486,7 +500,7 @@ export default function WesternBox() {
       </section>
 
       {/* 3. O QUE ACOMPANHA */}
-      <section className="surface-paper py-16 md:py-24">
+      <section className="section surface-paper">
         <div className="container-western">
           <div className="grid items-center gap-10 md:grid-cols-12 md:gap-16">
             <div className="md:col-span-6">
@@ -529,7 +543,7 @@ export default function WesternBox() {
       </section>
 
       {/* 4. OS QUATRO ACABAMENTOS */}
-      <section className="surface-ivory py-16 md:py-24">
+      <section className="section surface-ivory">
         <div className="container-western">
           <div className="mb-10 max-w-2xl md:mb-14">
             <p className="text-eyebrow">Os quatro acabamentos</p>
@@ -638,7 +652,7 @@ export default function WesternBox() {
       </section>
 
       {/* 5. SEGUNDO PONTO DE COMPRA */}
-      <MidBuyStrip />
+      <MidBuyStrip sectionRef={midBuyRef} />
 
       {/* 6. RESPIRO EDITORIAL — foto com overlay verde */}
       <section className="relative w-full overflow-hidden surface-forest">
@@ -662,7 +676,7 @@ export default function WesternBox() {
       </section>
 
       {/* 7. FERRAMENTA DE ESPECIFICAÇÃO */}
-      <section className="surface-paper py-16 md:py-24">
+      <section className="section surface-paper">
         <div className="container-western grid gap-10 md:grid-cols-12 md:gap-14">
           <div className="md:col-span-5">
             <p className="text-eyebrow">Mais do que amostras</p>
@@ -689,7 +703,7 @@ export default function WesternBox() {
       </section>
 
       {/* 8. CATÁLOGO */}
-      <section className="surface-ivory py-16 md:py-24">
+      <section className="section surface-ivory">
         <div className="container-western">
           <div className="grid items-center gap-10 md:grid-cols-12 md:gap-16">
             <div className="md:col-span-6 md:order-2">
@@ -711,13 +725,18 @@ export default function WesternBox() {
                 Inspirações, aplicações, informações técnicas e toda a linha Western Pools. Pensado
                 para acompanhar você durante toda a fase de especificação.
               </p>
+              {/* Saída discreta p/ o catálogo: quem pediu amostra vai querer ver as peças. */}
+              <Link to="/produtos" className="link-cta mt-6 text-western-green-deep">
+                Ver todas as peças
+                <ChevronRight className="h-4 w-4" aria-hidden />
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
       {/* 9. CASHBACK 100% — faixa escura pontual */}
-      <section className="surface-forest relative overflow-hidden py-16 md:py-24">
+      <section className="section surface-forest relative overflow-hidden">
         <img
           src={lifestyle}
           alt=""
@@ -744,7 +763,7 @@ export default function WesternBox() {
       </section>
 
       {/* 10. PARA QUEM É */}
-      <section className="surface-paper py-16 md:py-24">
+      <section className="section surface-paper">
         <div className="container-western">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-eyebrow">Para quem é</p>
@@ -769,7 +788,7 @@ export default function WesternBox() {
       </section>
 
       {/* 11. ENVIO, CONTEÚDO E CASHBACK — acordeão */}
-      <section className="surface-ivory border-t border-western-border-soft py-16 md:py-24">
+      <section className="section surface-ivory border-t border-western-border-soft">
         <div className="container-western grid gap-10 md:grid-cols-12 md:gap-16">
           <div className="md:col-span-5">
             <p className="text-eyebrow">Sem letras miúdas</p>
@@ -849,7 +868,10 @@ export default function WesternBox() {
       </section>
 
       {/* 12. CTA FINAL */}
-      <section className="surface-forest relative overflow-hidden py-20 pb-40 text-center md:py-28 md:pb-44">
+      <section
+        ref={finalCtaRef}
+        className="surface-forest relative overflow-hidden py-20 pb-40 text-center md:py-28 md:pb-44"
+      >
         <img
           src={lifestyle}
           alt=""
