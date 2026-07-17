@@ -15,13 +15,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;650;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
-  <script type="module" crossorigin src="./assets/index-C4YMzAxN.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-Em2c7MHw.css">
+  <script type="module" crossorigin src="./assets/index-CqR0JwbO.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DyoN3cXH.css">
 </head>
 <body>
 
   <!-- ===== Topbar ===== -->
   <header class="topbar" id="topbar">
+    <span class="topbar__progress" id="readProgress" aria-hidden="true"></span>
     <div class="topbar__inner">
       <a class="topbar__brand" href="#topo" aria-label="Western — início">
         <img src="./img/logo-white-h.avif" alt="Western" class="topbar__logo" />
@@ -295,6 +296,20 @@
             <span>As 5 texturas na sua mão por R$ 149,90 — o valor volta em crédito no 1º pedido.</span>
           </li>
         </ul>
+        <div class="sitephone" id="sitePhone">
+          <figure class="sitephone__media">
+            <img src="./img/detalhe-phone.jpg" alt="Celular sobre a mesa mostrando a home do novo westernstore.com.br, ao lado da Western Box com amostras dos acabamentos" loading="lazy" decoding="async" />
+          </figure>
+          <div class="sitephone__copy">
+            <h3 class="display sitephone__title">Feita primeiro<br />pro celular.</h3>
+            <ul class="checklist checklist--tight">
+              <li>Texto de 17 px e alvos de toque de 48 px — para ler e tocar sem esforço.</li>
+              <li>Preço de parceiro, pedido e consultor no WhatsApp na palma da mão.</li>
+              <li>O catálogo inteiro no bolso, com medida e peso reais de cada peça.</li>
+            </ul>
+          </div>
+        </div>
+
         <p class="site__note">No estande, um balcão exclusivo faz seu cadastro de parceiro na hora — e quem se cadastrar aqui navega no site antes de todo mundo.</p>
         <div class="site__cta">
           <a href="#convite" class="btn btn--dark">Quero acesso antecipado</a>
@@ -313,7 +328,9 @@
       </div>
 
       <figure class="booth__media container">
-        <img src="./img/estande.jpg" alt="Estande Western na Expolazer 2026 ao entardecer, com o Western Spa iluminado" class="booth__img" id="boothImg" loading="lazy" />
+        <div class="frame">
+          <img src="./img/estande.jpg" alt="Estande Western na Expolazer 2026 ao entardecer, com o Western Spa iluminado" class="booth__img" id="boothImg" loading="lazy" />
+        </div>
       </figure>
 
       <div class="container booth__grid">
