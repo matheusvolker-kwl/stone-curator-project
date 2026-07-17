@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import Reveal from "@/components/shared/Reveal";
-import levezaDuasPessoas from "@/assets/a-pedra/leveza-duas-pessoas.webp";
+/* PLACEHOLDER (dono, 2026-07-17): a foto das duas pessoas carregando a pedra
+   PROVAVA leveza melhor, mas tinha máscaras de COVID visíveis / era foto de
+   celular. O dono reverteu SÓ a imagem e vai escolher outra com calma. A
+   hierarquia 1+2 e a copy ficaram (foram aprovadas). Quando a foto nova vier,
+   troca-se só este import e a legenda abaixo. */
+import escalaSantaBarbara from "@/assets/escala/WEST-CSB.webp";
 
 /**
  * "A tecnologia Western" — 2ª seção da home: o QUE / PRA QUEM / PORQUÊ.
@@ -86,26 +91,26 @@ export default function SobreAWestern() {
         </Reveal>
 
         <div className="mt-10 md:mt-14 grid gap-8 md:grid-cols-12 md:gap-12 md:items-center">
-          {/* A FOTO É A PROVA. Duas pessoas, mãos, sorrindo, uma pedra que em
-              natural pediria guindaste — leveza VISTA, não afirmada. Nativa 3:4
-              (960×1280); mantida em aspect-[3/4] para não decapitar as duas
-              figuras nem os pés (a referência de escala está no corpo inteiro). */}
+          {/* Foto placeholder (ver import): escala real — pessoa de 1,70 m ao
+              lado da peça. Nativa 4:5 (1080×1341); aspect-[4/5] não decapita a
+              figura. A legenda fala do que ESTA foto mostra (escala), não de
+              carregar — a foto de "carregar sem içamento" saiu com o dono. */}
           <Reveal variant="fade-up" duration={700} className="md:col-span-6 lg:col-span-5">
             <figure>
               <img
-                src={levezaDuasPessoas}
-                alt="Duas pessoas segurando com as mãos, sorrindo, uma peça Western do tamanho de uma pedra grande, num jardim."
-                width={960}
-                height={1280}
+                src={escalaSantaBarbara}
+                alt="Peça Western ao lado de uma pessoa de 1,70 m, num jardim — referência de tamanho real."
+                width={1080}
+                height={1341}
                 loading="lazy"
                 decoding="async"
-                className="w-full aspect-[3/4] object-cover rounded-2xl"
+                className="w-full aspect-[4/5] object-cover rounded-2xl"
               />
               <figcaption className="mt-4">
                 <p className="text-body text-western-green-deep max-w-[34ch]">
-                  Ninguém segura assim uma pedra de verdade desse tamanho.
+                  Tamanho real, ao lado de uma pessoa de 1,70 m.
                 </p>
-                <p className="text-meta mt-1.5">Peça Western · sem içamento</p>
+                <p className="text-meta mt-1.5">Peça Western · escala verdadeira</p>
               </figcaption>
             </figure>
           </Reveal>
