@@ -8,6 +8,7 @@ import { BUSINESS } from "@/config/business";
 import EmailInput from "@/components/forms/EmailInput";
 import PasswordField from "@/components/forms/PasswordField";
 import FieldLabel from "@/components/forms/FieldLabel";
+import Seo from "@/components/seo/Seo";
 import { emailSchema } from "@/lib/forms/br";
 
 const waClienteFinalUrl = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
@@ -93,6 +94,11 @@ export default function PartnerLogin() {
 
   return (
     <div className="surface-ivory">
+      <Seo
+        title="Entrar na conta de parceiro · Western"
+        description="Acesso de parceiros aprovados: tabela comercial, modelos 3D no SketchUp e composições. Ainda sem conta? O cadastro com CNPJ é gratuito."
+        path="/parceiro/login"
+      />
       <div className="container-western py-16 md:py-24 max-w-5xl">
         <div className="grid md:grid-cols-[1fr_1.1fr] gap-10 md:gap-16 items-start">
           {/* COLUNA ESQUERDA — contexto B2B + saída pra cliente final */}

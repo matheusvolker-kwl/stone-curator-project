@@ -7,6 +7,7 @@ import AreaInput from "@/components/guide-v2/AreaInput";
 import AcabamentoCard from "@/components/guide-v2/AcabamentoCard";
 import SectionDivider from "@/components/guide-v2/SectionDivider";
 import Reveal from "@/components/shared/Reveal";
+import Seo from "@/components/seo/Seo";
 import {
   acabamentoMeta,
   tipoVisualMap,
@@ -105,6 +106,11 @@ export default function GuiaContexto() {
 
   return (
     <div className="min-h-screen surface-ivory relative">
+      <Seo
+        title="Guia de composição — Western"
+        description="Conte o contexto do projeto — tipo, área e acabamento — e veja três caminhos de composição com peças, preço e visualização."
+        path="/guia-de-composicao"
+      />
       <GuideHeader step={1} />
 
       {/* Hero — Ricardo no ateliê */}

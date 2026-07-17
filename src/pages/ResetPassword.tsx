@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import PasswordField from "@/components/forms/PasswordField";
 import FieldLabel from "@/components/forms/FieldLabel";
+import Seo from "@/components/seo/Seo";
 import { passwordSchema } from "@/lib/forms/br";
 
 export default function ResetPassword() {
@@ -48,6 +49,12 @@ export default function ResetPassword() {
 
   return (
     <div className="surface-ivory">
+      <Seo
+        title="Redefinir senha · Western"
+        description="Defina uma nova senha para a sua conta de parceiro Western. Abra o link enviado por e-mail para continuar."
+        path="/parceiro/redefinir-senha"
+        noindex
+      />
       <div className="container-western py-16 md:py-24 max-w-md">
         <p className="text-eyebrow mb-5">Recuperação de senha</p>
         <div className="w-12 h-px bg-western-gold mb-8" />

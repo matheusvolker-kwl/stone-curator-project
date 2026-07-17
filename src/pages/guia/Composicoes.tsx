@@ -4,6 +4,7 @@ import ComposicaoCard from "@/components/guide-v2/ComposicaoCard";
 import ContextoChips from "@/components/guide-v2/ContextoChips";
 import SectionDivider from "@/components/guide-v2/SectionDivider";
 import Reveal from "@/components/shared/Reveal";
+import Seo from "@/components/seo/Seo";
 import { acabamentoMeta, tipoVisualMap } from "@/components/guide-v2/types";
 import { nivelImage } from "@/components/guide-v2/imagery";
 import { conjuntoRenders } from "@/data/conjuntoRenders";
@@ -46,6 +47,11 @@ export default function GuiaComposicoes() {
 
   return (
     <div className="min-h-screen surface-ivory relative">
+      <Seo
+        title="Guia de composição — três caminhos · Western"
+        description="Três pontos de partida para o seu projeto: composições essencial, equilibrada e completa, prontas para ajustar peça por peça."
+        path="/guia-de-composicao/composicoes"
+      />
       <GuideHeader step={2} breadcrumb={{ label: "Voltar · Contexto", to: `/guia-de-composicao?${backQs}` }} />
       <ContextoChips tipo={ctx.tipoVisual} area={ctx.area} acabamento={ctx.acabamento} />
 

@@ -15,6 +15,7 @@ import SegmentoSelect, { SEGMENTOS } from "@/components/forms/SegmentoSelect";
 import FieldLabel from "@/components/forms/FieldLabel";
 import CartaoCnpjUpload from "@/components/forms/CartaoCnpjUpload";
 import SocialProof from "@/components/shared/SocialProof";
+import Seo from "@/components/seo/Seo";
 import {
   cnpjSchema, phoneBRSchema, emailSchema, passwordSchema,
   normalizeText, focusFirstInvalid, fetchCnpj, isValidCNPJ,
@@ -407,6 +408,11 @@ export default function PartnerSignup() {
 
   return (
     <div className="surface-ivory">
+      <Seo
+        title="Cadastro de parceiro comercial — Western"
+        description="Cadastro gratuito para profissionais com CNPJ — arquitetos, paisagistas, laguistas, lojas e construtoras. Tabela comercial e modelos 3D liberados na hora."
+        path="/parceiro/cadastro"
+      />
       <div className="container-western py-16 md:py-24 max-w-2xl">
         <p className="text-eyebrow mb-5">Cadastro B2B · Aprovação imediata</p>
         <div className="w-12 h-px bg-western-gold mb-8" />

@@ -16,6 +16,7 @@ import {
   type Nivel,
 } from "@/data/guideMap";
 import GatedPrice from "@/components/shared/GatedPrice";
+import Seo from "@/components/seo/Seo";
 import { ArrowRight, SlidersHorizontal, X } from "lucide-react";
 import { conjuntoRenders } from "@/data/conjuntoRenders";
 import { nivelImage } from "@/components/guide-v2/imagery";
@@ -162,6 +163,11 @@ export default function Conjuntos() {
 
   return (
     <div className="surface-ivory min-h-screen">
+      <Seo
+        title="Conjuntos curados — Western"
+        description="Composições prontas organizadas pelo local de aplicação — piscinas, lagos, lagos híbridos e jardins. Pedras, volumes e acabamentos já equilibrados."
+        path="/conjuntos"
+      />
       {/* HERO */}
       <header className="border-b border-western-border-soft">
         <div className="container-western py-14 md:py-20">

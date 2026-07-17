@@ -14,6 +14,7 @@ import ProjetoSidebar from "@/components/guide-v2/ProjetoSidebar";
 import ContextoChips from "@/components/guide-v2/ContextoChips";
 import SectionDivider from "@/components/guide-v2/SectionDivider";
 import Reveal from "@/components/shared/Reveal";
+import Seo from "@/components/seo/Seo";
 import brasao from "@/assets/brasao.png";
 import {
   acabamentoMeta,
@@ -269,6 +270,11 @@ export default function GuiaRefinar() {
 
   return (
     <div className="min-h-screen surface-ivory relative">
+      <Seo
+        title={`Refinar ${conjunto.nome} — guia Western`}
+        description={`Ajuste a composição ${conjunto.nome} peça por peça — quantidades, autorais e acabamento — e feche o pedido ou peça um orçamento.`}
+        path={`/guia-de-composicao/refinar/${conjunto.handle}`}
+      />
       <GuideHeader step={3} breadcrumb={{ label: "Voltar · Três caminhos", to: backToCaminhos }} />
       {area && (
         <ContextoChips tipo={tipoVisual} area={Number(area)} acabamento={acabamento} />

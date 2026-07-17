@@ -4,6 +4,7 @@ import { ChevronLeft, ArrowRight, UserPlus } from "lucide-react";
 import { fetchProducts } from "@/lib/datasource";
 import ProductGrid from "@/components/product/ProductGrid";
 import Reveal from "@/components/shared/Reveal";
+import Seo from "@/components/seo/Seo";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Produtos() {
@@ -17,6 +18,11 @@ export default function Produtos() {
 
   return (
     <div className="surface-ivory">
+      <Seo
+        title="Todas as peças — catálogo Western"
+        description="Toda a coleção de pedras artesanais em uma única vista. Filtre por tamanho e peso, ordene por preço. Preço de parceiro após cadastro com CNPJ."
+        path="/produtos"
+      />
       <div className="container-western py-12 md:py-20">
         <Link
           to="/linhas"

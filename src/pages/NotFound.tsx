@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { ArrowRight } from "lucide-react";
+import Seo from "@/components/seo/Seo";
 
 const SUGESTOES = [
   { to: "/linhas", label: "Catálogo de linhas" },
@@ -17,6 +18,12 @@ export default function NotFound() {
 
   return (
     <div className="surface-ivory">
+      <Seo
+        title="Página não encontrada · Western"
+        description="Este endereço não existe ou foi movido. Veja o catálogo, os conjuntos prontos, o guia de composição ou fale com a Western."
+        path={location.pathname}
+        noindex
+      />
       <div className="container-western max-w-2xl py-16 md:py-24">
         {/* Hierarquia V3: eyebrow bronze → display → apoio → saídas → CTA verde.
             Sem filete dourado decorativo e sem caixa-alta mono. */}

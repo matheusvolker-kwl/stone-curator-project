@@ -6,6 +6,7 @@ import iconePedra from "@/assets/icone-pedra-verde.png";
 import { useMemo } from "react";
 import { ArrowRight, X } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
+import Seo from "@/components/seo/Seo";
 import { LINHA_COVER_OVERRIDES } from "@/lib/lineCovers";
 import { LINHA_DESCRIPTIONS } from "@/lib/lineDescriptions";
 import { resolveSearch } from "@/lib/search/vocab";
@@ -166,6 +167,11 @@ export default function Linhas() {
 
   return (
     <div className="surface-ivory">
+      <Seo
+        title="Catálogo Western — pedras artesanais por cena"
+        description="Navegue por cena — água, superfícies, volumes e detalhes — ou veja o catálogo inteiro. A maioria das peças vem em até 4 acabamentos."
+        path="/linhas"
+      />
       <div className="container-western py-12 md:py-20">
         {/* Cabeçalho — hierarquia contida: eyebrow, display, apoio, ação */}
         <header className="max-w-2xl mb-10 md:mb-16">

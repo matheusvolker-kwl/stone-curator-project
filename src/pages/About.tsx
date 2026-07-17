@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 import SocialProof from "@/components/shared/SocialProof";
 import Reveal from "@/components/shared/Reveal";
+import Seo from "@/components/seo/Seo";
 import { ArrowRight, Layers, Mountain, Recycle, Hammer } from "lucide-react";
 import irmaosGruta from "@/assets/irmaos-botelho-gruta.webp";
 import heroObra from "@/assets/linguagens/piscina.webp";
@@ -55,6 +56,12 @@ const VOCABULARIO = [
 export default function About() {
   return (
     <>
+      <Seo
+        title="Sobre a Western — ateliê de pedra artesanal desde 1993"
+        description="Fundada em 1993, a Western replica pedra natural em composto mineral no ateliê de Cajamar/SP. Hoje a segunda geração da família Botelho conduz a operação."
+        path="/sobre"
+        ogType="article"
+      />
       {/* HERO — abertura editorial em superfície clara: texto + foto */}
       <section className="surface-paper py-12 md:py-20">
         <div className="container-western">
