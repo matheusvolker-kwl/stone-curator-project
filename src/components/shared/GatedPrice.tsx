@@ -38,16 +38,16 @@ interface Props {
  * @layer components perderiam para as utilities dos consumidores.
  * ========================================================================== */
 const CHIP_BASE =
-  "inline-flex items-center gap-2 font-sans font-semibold rounded-[10px] " +
+  "inline-flex items-center gap-2 font-sans font-semibold rounded-lg " +
   "border border-western-border-strong bg-western-ivory text-western-green-deep";
 
 const CHIP_SIZE: Record<"inline" | "badge" | "block", string> = {
   // Padrão da vitrine: cards de peça/conjunto, barra fixa.
-  inline: "min-h-[48px] px-3.5 py-2 text-[16px]",
+  inline: "min-h-tap px-3.5 py-2 text-[16px]",
   // Compacto (selo sobre foto/lista densa) — 14px é o mínimo permitido.
-  badge: "min-h-[48px] px-3 py-1.5 text-[14px] rounded-[6px] gap-1.5",
+  badge: "min-h-tap px-3 py-1.5 text-[14px] rounded-sm gap-1.5",
   // Slot de preço da PDP/composição: ocupa a largura do bloco, altura de controle.
-  block: "min-h-[52px] w-full justify-center px-5 py-3 text-[16px]",
+  block: "min-h-control w-full justify-center px-5 py-3 text-[16px]",
 };
 
 /** Só o <a> ganha afordância de hover/foco; o <span> é inerte por definição. */

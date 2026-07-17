@@ -30,9 +30,9 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(function PhoneInput(
   return (
     <div>
       <div
-        className={`flex items-stretch h-[52px] overflow-hidden rounded-[10px] border-[1.5px] bg-western-paper transition-colors ${
+        className={`flex items-stretch h-control overflow-hidden rounded-lg border-[1.5px] bg-western-paper transition-colors ${
           error
-            ? "border-[#B3372E]"
+            ? "border-status-error"
             : "border-western-border-strong focus-within:border-western-green-deep"
         } ${className ?? ""}`}
       >
@@ -68,7 +68,7 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(function PhoneInput(
       {error && (
         <p
           id={describedBy}
-          className="mt-2 font-sans text-[14px] font-semibold normal-case tracking-normal leading-snug text-[#B3372E]"
+          className="mt-2 font-sans text-[14px] font-semibold normal-case tracking-normal leading-snug text-status-error"
         >
           {error}
         </p>

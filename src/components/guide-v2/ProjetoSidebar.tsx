@@ -101,7 +101,7 @@ function PanelBody({
   };
 
   return (
-    <div className="rounded-[16px] border border-western-border-soft bg-white overflow-hidden shadow-[0_24px_44px_-32px_hsl(var(--western-stone-dark)/0.35)]">
+    <div className="rounded-2xl border border-western-border-soft bg-white overflow-hidden shadow-[0_24px_44px_-32px_hsl(var(--western-stone-dark)/0.35)]">
       <div className="h-[3px] bg-western-gold" />
 
       <div className="p-6 flex flex-col gap-5">
@@ -109,8 +109,8 @@ function PanelBody({
         <p
           className={
             isCustomizado
-              ? "self-start inline-flex items-center rounded-[6px] border border-western-gold px-3 py-1.5 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-bronze"
-              : "self-start inline-flex items-center rounded-[6px] bg-western-gold/15 border border-western-gold/50 px-3 py-1.5 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-bronze"
+              ? "self-start inline-flex items-center rounded-sm border border-western-gold px-3 py-1.5 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-bronze"
+              : "self-start inline-flex items-center rounded-sm bg-western-gold/15 border border-western-gold/50 px-3 py-1.5 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-bronze"
           }
         >
           ◆ {isCustomizado ? "Projeto autoral · sob consulta" : "Conjunto curado Western"}
@@ -194,7 +194,7 @@ function PanelBody({
             </div>
           </>
         ) : (
-          <div className="rounded-[10px] border border-western-border-soft bg-western-paper p-5">
+          <div className="rounded-lg border border-western-border-soft bg-western-paper p-5">
             <p className="text-eyebrow inline-flex items-center gap-2 mb-2">
               <Lock className="h-4 w-4" aria-hidden /> Preços para parceiros
             </p>

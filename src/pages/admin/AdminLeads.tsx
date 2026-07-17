@@ -404,7 +404,7 @@ export default function AdminLeads() {
             onChange={(e) => setQInput(e.target.value)}
             placeholder="Buscar nome, e-mail, mensagem…"
             aria-label="Buscar leads"
-            className="h-[52px] rounded-[6px] border-western-border-strong bg-white pl-11 text-[16px] placeholder:text-western-stone-warm/70"
+            className="h-control rounded-sm border-western-border-strong bg-white pl-11 text-[16px] placeholder:text-western-stone-warm/70"
           />
         </div>
       </div>
@@ -441,7 +441,7 @@ export default function AdminLeads() {
                 type="button"
                 onClick={() => setConfirmarExclusao(true)}
                 disabled={excluindo}
-                className="tap-target inline-flex items-center justify-center gap-2 rounded-[10px] border border-[#B3372E]/50 px-4 text-[16px] font-semibold text-[#B3372E] transition-colors hover:bg-[#B3372E]/10 disabled:opacity-45"
+                className="tap-target inline-flex items-center justify-center gap-2 rounded-lg border border-status-error/50 px-4 text-[16px] font-semibold text-status-error transition-colors hover:bg-status-error/10 disabled:opacity-45"
               >
                 {excluindo ? (
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -555,7 +555,7 @@ export default function AdminLeads() {
               </dl>
 
               {detalhe.mensagem && (
-                <div className="mt-6 rounded-[16px] border border-western-border-soft bg-western-paper p-4">
+                <div className="mt-6 rounded-2xl border border-western-border-soft bg-western-paper p-4">
                   <p className="text-eyebrow mb-2">Mensagem</p>
                   <p className="text-[17px] leading-[1.6] whitespace-pre-wrap text-western-green-deep">
                     {detalhe.mensagem}

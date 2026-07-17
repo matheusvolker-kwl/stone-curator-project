@@ -133,7 +133,7 @@ export default function AccountQuotes() {
           type="button"
           onClick={() => void baixarPdf(p)}
           disabled={baixando === p.id}
-          className="tap-target inline-flex items-center justify-center gap-2 rounded-[10px] border border-western-green-deep/25 px-4 text-[16px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper disabled:opacity-50"
+          className="tap-target inline-flex items-center justify-center gap-2 rounded-lg border border-western-green-deep/25 px-4 text-[16px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper disabled:opacity-50"
         >
           {baixando === p.id ? (
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />

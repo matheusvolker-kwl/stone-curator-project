@@ -82,7 +82,7 @@ export default function ObraPage() {
                 type="button"
                 onClick={() => setZoom(ativa)}
                 aria-label={`Ampliar foto de ${obra.titulo}`}
-                className="group frame-product rounded-[16px] overflow-hidden aspect-[4/3] block w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2"
+                className="group frame-product rounded-2xl overflow-hidden aspect-[4/3] block w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2"
               >
                 <img
                   src={galeria[ativa] ?? OBRA_COVER[slug]}
@@ -171,7 +171,7 @@ export default function ObraPage() {
                 {obra.ficha.map((f) => (
                   <span
                     key={f}
-                    className="inline-flex items-center rounded-[6px] bg-western-paper border border-western-border-soft px-3 py-1.5 font-sans text-[14px] text-western-green-deep"
+                    className="inline-flex items-center rounded-sm bg-western-paper border border-western-border-soft px-3 py-1.5 font-sans text-[14px] text-western-green-deep"
                   >
                     {f}
                   </span>

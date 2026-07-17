@@ -56,10 +56,10 @@ const ATELIE_FOTOS = [
  * visível de 1.5px (o público 40+ precisa VER o campo) e fundo claro e quente.
  * Erros em sans 14px semibold — nunca mono, nunca 10px caixa-alta. */
 const CONTROL =
-  "h-[52px] rounded-[10px] border-[1.5px] border-western-border-strong bg-western-paper px-4 text-[16px] md:text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-green-deep";
-const CONTROL_ERR = "border-[1.5px] border-[#B3372E]";
+  "h-control rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 text-[16px] md:text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-green-deep";
+const CONTROL_ERR = "border-[1.5px] border-status-error";
 const SELECT =
-  "h-[52px] w-full rounded-[10px] border-[1.5px] border-western-border-strong bg-western-paper px-4 font-sans text-[16px] text-western-green-deep outline-none transition-colors focus:border-western-green-deep";
+  "h-control w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 font-sans text-[16px] text-western-green-deep outline-none transition-colors focus:border-western-green-deep";
 
 /* Os campos compartilhados (EmailInput/PhoneInput) já nascem V3; estas classes
  * só reforçam a borda de erro/normal quando este formulário controla o estado. */
@@ -67,7 +67,7 @@ const PHONE_FX = "[&_p]:!font-sans [&_p]:!text-[14px] [&_p]:!normal-case [&_p]:!
 
 function FieldError({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mt-2 font-sans text-[14px] font-semibold leading-snug text-[#B3372E]">
+    <p className="mt-2 font-sans text-[14px] font-semibold leading-snug text-status-error">
       {children}
     </p>
   );
@@ -222,7 +222,7 @@ export default function AgendarVisita() {
             de BUSINESS, e nunca de uma legenda dizendo que a foto a comprova. */}
         <div className="mx-auto max-w-4xl">
           <figure className="m-0 mb-10 md:mb-14">
-            <div className="aspect-[4/3] overflow-hidden rounded-[16px]">
+            <div className="aspect-[4/3] overflow-hidden rounded-2xl">
               <img
                 src={atelieHero}
                 alt="Deck de madeira do ateliê à beira de uma piscina de borda de praia com água turquesa. Um homem sentado na beira do deck, com os pés dentro da água, toca violão. Atrás, um pavilhão com pergolado de varas e a porta de vidro aberta; à direita, uma palmeira e pedra Western."
@@ -261,7 +261,7 @@ export default function AgendarVisita() {
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3 list-none p-0">
             {ATELIE_FOTOS.map((f) => (
               <li key={f.img}>
-                <div className="aspect-[4/3] overflow-hidden rounded-[10px]">
+                <div className="aspect-[4/3] overflow-hidden rounded-lg">
                   <img
                     src={f.img}
                     alt={f.alt}
@@ -282,7 +282,7 @@ export default function AgendarVisita() {
         <form
           ref={formRef}
           onSubmit={handleSubmit}
-          className="space-y-6 rounded-[16px] border border-western-border-soft bg-white p-6 shadow-[0_24px_60px_-32px_rgba(30,40,25,0.28)] md:p-9"
+          className="space-y-6 rounded-2xl border border-western-border-soft bg-white p-6 shadow-[0_24px_60px_-32px_rgba(30,40,25,0.28)] md:p-9"
           noValidate
         >
           <div>
@@ -353,7 +353,7 @@ export default function AgendarVisita() {
                 onChange={(e) => set("estado", e.target.value)}
                 required
                 aria-invalid={!!errors.estado}
-                className={cn(SELECT, "px-3", errors.estado && "border-[#B3372E]")}
+                className={cn(SELECT, "px-3", errors.estado && "border-status-error")}
               >
                 <option value="" disabled>—</option>
                 {UF_LIST.map((uf) => <option key={uf} value={uf}>{uf}</option>)}
@@ -389,7 +389,7 @@ export default function AgendarVisita() {
                         type="button"
                         variant="outline"
                         className={cn(
-                          "h-[52px] w-full justify-start rounded-[10px] border-[1.5px] border-western-border-strong bg-western-paper px-4 text-[16px] font-normal text-western-green-deep hover:border-western-green-deep hover:bg-western-paper sm:flex-1",
+                          "h-control w-full justify-start rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 text-[16px] font-normal text-western-green-deep hover:border-western-green-deep hover:bg-western-paper sm:flex-1",
                           !slot.date && "text-western-stone-warm",
                         )}
                       >
@@ -397,7 +397,7 @@ export default function AgendarVisita() {
                         {slot.date ? format(slot.date, "EEE, dd 'de' MMM", { locale: ptBR }) : "Escolher data"}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto rounded-[10px] p-0" align="start">
+                    <PopoverContent className="w-auto rounded-lg p-0" align="start">
                       <Calendar
                         mode="single"
                         selected={slot.date ?? undefined}
@@ -424,7 +424,7 @@ export default function AgendarVisita() {
                       <button
                         type="button"
                         onClick={() => set("slots", f.slots.filter((_, idx) => idx !== i))}
-                        className="tap-target flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-[10px] border border-western-border-soft text-western-stone-warm transition-colors hover:border-[#B3372E] hover:text-[#B3372E]"
+                        className="tap-target flex h-control w-[52px] flex-shrink-0 items-center justify-center rounded-lg border border-western-border-soft text-western-stone-warm transition-colors hover:border-status-error hover:text-status-error"
                         aria-label={`Remover opção ${i + 1}`}
                       >
                         <Trash2 className="h-5 w-5" strokeWidth={1.75} aria-hidden />
@@ -454,7 +454,7 @@ export default function AgendarVisita() {
               onChange={(e) => set("projeto", e.target.value)}
               placeholder="Residencial, hotelaria, comercial — conte um pouco do escopo."
               rows={3}
-              className="min-h-[120px] rounded-[10px] border-[1.5px] border-western-border-strong bg-western-paper px-4 py-3 text-[17px] leading-[1.6] text-western-green-deep placeholder:text-western-stone-warm/60 focus-visible:border-western-green-deep focus-visible:ring-0"
+              className="min-h-[120px] rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 py-3 text-[17px] leading-[1.6] text-western-green-deep placeholder:text-western-stone-warm/60 focus-visible:border-western-green-deep focus-visible:ring-0"
             />
           </div>
 

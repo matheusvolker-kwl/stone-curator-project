@@ -73,12 +73,12 @@ function GradeCarregando() {
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true" aria-live="polite">
       <span className="sr-only">Carregando composições…</span>
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="rounded-[16px] border border-western-border-soft bg-white overflow-hidden">
+        <div key={i} className="rounded-2xl border border-western-border-soft bg-white overflow-hidden">
           <div className="h-28 bg-western-border-soft/60 animate-pulse" />
           <div className="p-5 space-y-3">
-            <div className="h-3 w-1/3 rounded-[6px] bg-western-border-soft animate-pulse" />
-            <div className="h-4 w-2/3 rounded-[6px] bg-western-border-soft/80 animate-pulse" />
-            <div className="h-6 w-32 rounded-[6px] bg-western-border-soft/60 animate-pulse" />
+            <div className="h-3 w-1/3 rounded-sm bg-western-border-soft animate-pulse" />
+            <div className="h-4 w-2/3 rounded-sm bg-western-border-soft/80 animate-pulse" />
+            <div className="h-6 w-32 rounded-sm bg-western-border-soft/60 animate-pulse" />
           </div>
         </div>
       ))}
@@ -187,7 +187,7 @@ export default function AccountCompositions() {
             return (
               <li
                 key={it.id}
-                className="flex flex-col overflow-hidden rounded-[16px] border border-western-border-soft bg-white"
+                className="flex flex-col overflow-hidden rounded-2xl border border-western-border-soft bg-white"
               >
                 {/* Faixa visual das peças — é assim que o parceiro reconhece a composição. */}
                 <div className="flex h-28 items-stretch gap-px bg-western-border-soft">

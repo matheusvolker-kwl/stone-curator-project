@@ -47,12 +47,12 @@ import {
  * Botões/inputs 52px, cantos suaves (10px), sans 16px. CTA primário é VERDE;
  * o dourado fica como acento (selo, filete, seleção), nunca como 2º primário. */
 const CTA_PRIMARY =
-  "inline-flex items-center justify-center gap-2 w-full min-h-[52px] px-6 rounded-[10px] " +
+  "inline-flex items-center justify-center gap-2 w-full min-h-control px-6 rounded-lg " +
   "bg-western-cta text-western-cream hover:bg-western-green-deep " +
   "font-sans text-[16px] font-semibold transition-colors";
 
 const CTA_OUTLINE =
-  "inline-flex items-center justify-center gap-2 min-h-[52px] px-6 rounded-[10px] " +
+  "inline-flex items-center justify-center gap-2 min-h-control px-6 rounded-lg " +
   "border border-western-border-strong text-western-green-deep " +
   "hover:border-western-green-deep hover:bg-western-paper " +
   "font-sans text-[16px] font-semibold transition-colors";
@@ -163,10 +163,10 @@ export default function ProductPage() {
       <div className="surface-ivory">
         <div className="container-western py-24 md:py-32">
           <div className="grid md:grid-cols-2 gap-12">
-            <div className="aspect-square rounded-[16px] bg-western-stone-warm/10 animate-pulse" />
+            <div className="aspect-square rounded-2xl bg-western-stone-warm/10 animate-pulse" />
             <div className="space-y-4">
-              <div className="h-12 w-2/3 rounded-[10px] bg-western-stone-warm/10 animate-pulse" />
-              <div className="h-5 w-1/3 rounded-[6px] bg-western-stone-warm/10 animate-pulse" />
+              <div className="h-12 w-2/3 rounded-lg bg-western-stone-warm/10 animate-pulse" />
+              <div className="h-5 w-1/3 rounded-sm bg-western-stone-warm/10 animate-pulse" />
             </div>
           </div>
         </div>
@@ -181,7 +181,7 @@ export default function ProductPage() {
           <h1 className="display-lg text-western-green-deep">Peça não encontrada</h1>
           <Link
             to="/linhas"
-            className="mt-8 inline-flex items-center justify-center min-h-[52px] px-6 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors"
+            className="mt-8 inline-flex items-center justify-center min-h-control px-6 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors"
           >
             Voltar para linhas
           </Link>
@@ -354,7 +354,7 @@ export default function ProductPage() {
                     <div
                       className={
                         acabPending
-                          ? "rounded-[10px] ring-2 ring-western-gold/40 ring-offset-4 ring-offset-western-ivory transition-all"
+                          ? "rounded-lg ring-2 ring-western-gold/40 ring-offset-4 ring-offset-western-ivory transition-all"
                           : ""
                       }
                     >
@@ -408,14 +408,14 @@ export default function ProductPage() {
                 <div className="pt-7 border-t border-western-border-soft">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`flex items-center h-[52px] rounded-[10px] border border-western-border-strong bg-white transition-opacity ${
+                      className={`flex items-center h-control rounded-lg border border-western-border-strong bg-white transition-opacity ${
                         acabPending ? "opacity-50" : ""
                       }`}
                     >
                       <button
                         onClick={() => setQty(Math.max(1, qty - 1))}
                         disabled={acabPending}
-                        className="h-[52px] w-12 flex items-center justify-center rounded-l-[10px] hover:bg-western-paper transition-colors text-western-green-deep text-xl disabled:cursor-not-allowed"
+                        className="h-control w-12 flex items-center justify-center rounded-l-[10px] hover:bg-western-paper transition-colors text-western-green-deep text-xl disabled:cursor-not-allowed"
                         aria-label="Diminuir quantidade"
                       >
                         −
@@ -426,7 +426,7 @@ export default function ProductPage() {
                       <button
                         onClick={() => setQty(qty + 1)}
                         disabled={acabPending}
-                        className="h-[52px] w-12 flex items-center justify-center rounded-r-[10px] hover:bg-western-paper transition-colors text-western-green-deep text-xl disabled:cursor-not-allowed"
+                        className="h-control w-12 flex items-center justify-center rounded-r-[10px] hover:bg-western-paper transition-colors text-western-green-deep text-xl disabled:cursor-not-allowed"
                         aria-label="Aumentar quantidade"
                       >
                         +
@@ -436,7 +436,7 @@ export default function ProductPage() {
                       handle={product.handle}
                       title={product.title}
                       image={product.images.edges[0]?.node?.url ?? null}
-                      className="!h-[52px] !w-[52px] !p-0 justify-center flex-shrink-0 rounded-[10px]"
+                      className="!h-control !w-[52px] !p-0 justify-center flex-shrink-0 rounded-lg"
                     />
                   </div>
 
@@ -444,7 +444,7 @@ export default function ProductPage() {
                     ref={addBtnRef as React.RefObject<HTMLButtonElement>}
                     onClick={handleAdd}
                     disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
-                    className={`group mt-4 w-full h-[52px] px-6 rounded-[10px] font-sans text-[16px] font-semibold normal-case tracking-normal transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 ${
+                    className={`group mt-4 w-full h-control px-6 rounded-lg font-sans text-[16px] font-semibold normal-case tracking-normal transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 ${
                       acabPending
                         ? "bg-western-stone-warm/20 text-western-green-deep/70 hover:bg-western-stone-warm/25 disabled:opacity-100"
                         : "bg-western-cta text-western-cream hover:bg-western-green-deep disabled:opacity-45"
@@ -537,7 +537,7 @@ export default function ProductPage() {
             ) : (
               /* Gate de preço — política comercial B2B (visitante nunca vê preço) */
               <section className="mt-8" aria-label="Acesso de parceiro">
-                <div className="rounded-[16px] border border-western-border-soft bg-western-paper p-6 md:p-7">
+                <div className="rounded-2xl border border-western-border-soft bg-western-paper p-6 md:p-7">
                   <span className="inline-flex items-center gap-2 mb-5 rounded-full border border-western-border-soft bg-white px-3.5 py-1.5">
                     <Lock className="h-4 w-4 text-western-bronze" aria-hidden />
                     <span className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">
@@ -603,7 +603,7 @@ export default function ProductPage() {
                       href={`https://wa.me/${BUSINESS.whatsappFabrica}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 min-h-[52px] px-6 rounded-[10px] font-sans text-[16px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors"
+                      className="inline-flex items-center justify-center gap-2 min-h-control px-6 rounded-lg font-sans text-[16px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors"
                     >
                       <MessageCircle className="h-5 w-5" aria-hidden />
                       Falar no WhatsApp

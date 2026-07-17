@@ -109,7 +109,7 @@ export default function PartnerLogin() {
             {/* Card 1 — Solicitar cadastro (dourado sobre verde: acento permitido) */}
             <Link
               to="/parceiro/cadastro"
-              className="group block rounded-[16px] surface-forest p-6 md:p-8 transition-colors duration-200 hover:bg-western-green-mid"
+              className="group block rounded-2xl surface-forest p-6 md:p-8 transition-colors duration-200 hover:bg-western-green-mid"
             >
               <div className="flex items-start gap-4 mb-5">
                 <ShieldCheck className="h-6 w-6 flex-shrink-0 text-western-gold-soft mt-0.5" strokeWidth={1.75} aria-hidden="true" />
@@ -134,7 +134,7 @@ export default function PartnerLogin() {
               href={waClienteFinalUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="group block rounded-[16px] border border-western-border-soft bg-western-paper p-6 md:p-8 transition-colors duration-200 hover:border-western-border-strong hover:bg-western-cream/40"
+              className="group block rounded-2xl border border-western-border-soft bg-western-paper p-6 md:p-8 transition-colors duration-200 hover:border-western-border-strong hover:bg-western-cream/40"
             >
               <div className="flex items-start gap-4 mb-5">
                 <MessageCircle className="h-6 w-6 flex-shrink-0 text-western-bronze mt-0.5" strokeWidth={1.75} aria-hidden="true" />

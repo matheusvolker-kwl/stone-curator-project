@@ -31,7 +31,7 @@ export function ConfirmDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="rounded-[16px] border border-western-border-soft">
+      <AlertDialogContent className="rounded-2xl border border-western-border-soft">
         <AlertDialogHeader>
           <AlertDialogTitle className="font-display text-[20px] text-western-green-deep">{title}</AlertDialogTitle>
           {description && (
@@ -46,13 +46,13 @@ export function ConfirmDialog({
               value={typed}
               onChange={(e) => setTyped(e.target.value)}
               placeholder={requireTextPlaceholder ?? `Digite ${requireText}`}
-              className="h-12 rounded-[10px] text-[16px]"
+              className="h-12 rounded-lg text-[16px]"
               autoFocus
             />
           </div>
         )}
         <AlertDialogFooter>
-          <AlertDialogCancel className="tap-target rounded-[10px] text-[16px] font-semibold">
+          <AlertDialogCancel className="tap-target rounded-lg text-[16px] font-semibold">
             {cancelLabel}
           </AlertDialogCancel>
           <AlertDialogAction
@@ -61,9 +61,9 @@ export function ConfirmDialog({
               if (!canConfirm) { e.preventDefault(); return; }
               onConfirm();
             }}
-            className={`tap-target rounded-[10px] text-[16px] font-semibold ${
+            className={`tap-target rounded-lg text-[16px] font-semibold ${
               danger
-                ? "bg-[#B3372E] text-white hover:bg-[#992e26]"
+                ? "bg-status-error text-white hover:bg-[#992e26]"
                 : "bg-western-cta text-white hover:bg-western-cta/90"
             }`}
           >

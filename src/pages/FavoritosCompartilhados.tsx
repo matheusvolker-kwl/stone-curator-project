@@ -67,7 +67,7 @@ export default function FavoritosCompartilhados() {
             {Array.from({ length: Math.min(handles.length, 8) }).map((_, i) => (
               <div
                 key={i}
-                className="aspect-square animate-pulse rounded-[10px] bg-western-stone-warm/10"
+                className="aspect-square animate-pulse rounded-lg bg-western-stone-warm/10"
               />
             ))}
           </div>

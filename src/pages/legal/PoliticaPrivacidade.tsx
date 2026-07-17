@@ -49,7 +49,7 @@ function FechamentoLegal({
   waLabel: string;
 }) {
   return (
-    <section className="surface-forest mt-16 rounded-[16px] px-6 py-12 text-center md:px-12 md:py-14">
+    <section className="surface-forest mt-16 rounded-2xl px-6 py-12 text-center md:px-12 md:py-14">
       <h2 className="display-md mx-auto max-w-xl !mb-3 !mt-0 !text-[1.625rem] !text-western-cream md:!text-[1.875rem]">
         {titulo}
       </h2>

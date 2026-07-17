@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
  *   sentence case, Source Sans 3 — sem mono, sem caixa-alta, sem cantos vivos.
  *
  * ATENÇÃO ao mexer aqui: `cn` é `twMerge`. As alturas são `h-*` (NÃO `min-h-*`) de
- * propósito — `min-h` não conflita com `h` no tailwind-merge, então um `min-h-[52px]`
+ * propósito — `min-h` não conflita com `h` no tailwind-merge, então um `min-h-control`
  * aqui sobreviveria ao `className` do consumidor e quebraria quem depende de
  * `buttonVariants()` com altura própria: Calendar (`h-7 w-7` no nav, `h-9 w-9` no dia),
  * SidebarTrigger (`h-7 w-7`) e as telas de admin (`h-9`/`h-10`/`h-11`).
@@ -29,7 +29,7 @@ import { cn } from "@/lib/utils";
  * alert-dialog, calendar, pagination, carousel e sidebar. `gold` é adição, não troca.
  */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[10px] font-sans text-[16px] font-semibold ring-offset-background transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-bronze focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-sans text-[16px] font-semibold ring-offset-background transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-bronze focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -47,10 +47,10 @@ const buttonVariants = cva(
         link: "text-western-green-deep underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-[52px] px-7 py-2",
+        default: "h-control px-7 py-2",
         sm: "h-[44px] px-5",
         lg: "h-[56px] px-8 text-[17px]",
-        icon: "h-[52px] w-[52px] px-0",
+        icon: "h-control w-[52px] px-0",
       },
     },
     defaultVariants: {

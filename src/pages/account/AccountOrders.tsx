@@ -195,15 +195,15 @@ function LinhaDeProducao({ order }: { order: ProductionOrder }) {
 
   if (order.status === "cancelado") {
     return (
-      <div className="rounded-[16px] border border-[#B3372E]/35 bg-[#B3372E]/[0.06] p-5">
+      <div className="rounded-2xl border border-status-error/35 bg-status-error/[0.06] p-5">
         <p className="text-eyebrow mb-2">Linha de produção</p>
-        <p className="text-[17px] font-semibold text-[#B3372E]">Pedido cancelado</p>
+        <p className="text-[17px] font-semibold text-status-error">Pedido cancelado</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-[16px] border border-western-border-soft bg-white p-5 md:p-6">
+    <div className="rounded-2xl border border-western-border-soft bg-white p-5 md:p-6">
       <p className="text-eyebrow mb-5">Linha de produção</p>
       <ol className="space-y-0">
         {etapas.map((etapa, i) => {
@@ -272,7 +272,7 @@ function CardAcao({
     order.modo_entrega === "frete" && Boolean(order.tracking_code || order.transportadora);
 
   return (
-    <div className="rounded-[16px] border border-western-border-soft bg-western-paper p-5 md:sticky md:top-6">
+    <div className="rounded-2xl border border-western-border-soft bg-western-paper p-5 md:sticky md:top-6">
       <p className="text-eyebrow mb-3">Situação</p>
       <StatusBadge status={order.status} />
       <p className="text-body mt-3">{proximoPasso(order)}</p>
@@ -310,13 +310,13 @@ function CardAcao({
           )}
           {order.tracking_code ? (
             <div className="mt-2 flex flex-wrap items-center gap-2">
-              <span className="rounded-[6px] bg-white px-2.5 py-1.5 text-[16px] font-semibold tabular-nums text-western-green-deep">
+              <span className="rounded-sm bg-white px-2.5 py-1.5 text-[16px] font-semibold tabular-nums text-western-green-deep">
                 {order.tracking_code}
               </span>
               <button
                 type="button"
                 onClick={() => void copiar(order.tracking_code as string)}
-                className="tap-target inline-flex items-center gap-1.5 rounded-[10px] px-2 text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
+                className="tap-target inline-flex items-center gap-1.5 rounded-lg px-2 text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
               >
                 <Copy className="h-4 w-4" aria-hidden="true" />
                 Copiar
@@ -326,7 +326,7 @@ function CardAcao({
                   href={`https://rastreamento.correios.com.br/app/index.php?objeto=${order.tracking_code}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="tap-target inline-flex items-center gap-1.5 rounded-[10px] px-2 text-[16px] font-semibold text-western-bronze transition-colors hover:text-western-green-deep"
+                  className="tap-target inline-flex items-center gap-1.5 rounded-lg px-2 text-[16px] font-semibold text-western-bronze transition-colors hover:text-western-green-deep"
                 >
                   Acompanhar
                   <ExternalLink className="h-4 w-4" aria-hidden="true" />
@@ -468,7 +468,7 @@ function OrderDetail({
           <LinhaDeProducao order={order} />
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <div className="rounded-[16px] border border-western-border-soft bg-white p-5">
+            <div className="rounded-2xl border border-western-border-soft bg-white p-5">
               <p className="text-eyebrow mb-3">Prazos</p>
               <dl className="space-y-2">
                 <div className="flex items-baseline justify-between gap-4">
@@ -492,7 +492,7 @@ function OrderDetail({
               </dl>
             </div>
 
-            <div className="rounded-[16px] border border-western-border-soft bg-white p-5">
+            <div className="rounded-2xl border border-western-border-soft bg-white p-5">
               <p className="text-eyebrow mb-3">
                 {order.modo_entrega === "retirada" ? "Retirada" : "Endereço de entrega"}
               </p>
@@ -509,13 +509,13 @@ function OrderDetail({
           </div>
 
           {order.observacoes_cliente && (
-            <div className="rounded-[16px] border border-western-border-soft bg-white p-5">
+            <div className="rounded-2xl border border-western-border-soft bg-white p-5">
               <p className="text-eyebrow mb-3">Observações</p>
               <p className="text-body whitespace-pre-line">{order.observacoes_cliente}</p>
             </div>
           )}
 
-          <div className="rounded-[16px] border border-western-border-soft bg-white p-5 md:p-6">
+          <div className="rounded-2xl border border-western-border-soft bg-white p-5 md:p-6">
             <p className="text-eyebrow mb-4">Histórico (tempo real)</p>
 
             {erro ? (
@@ -753,7 +753,7 @@ export default function AccountOrders() {
               e.stopPropagation(); // a linha inteira é clicável — não abrir o detalhe aqui.
               handleRepetir(o);
             }}
-            className="tap-target inline-flex items-center justify-center gap-2 rounded-[10px] border border-western-green-deep/25 px-3 text-[16px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
+            className="tap-target inline-flex items-center justify-center gap-2 rounded-lg border border-western-green-deep/25 px-3 text-[16px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
           >
             <RotateCcw className="h-4 w-4" aria-hidden="true" />
             Pedir de novo

@@ -109,7 +109,7 @@ export default function SocialProof({
           <>
             {/* Raio 10px (md do V3) — sem cantos vivos. */}
             <div
-              className={`relative w-full aspect-[4/5] overflow-hidden rounded-[10px] ${tileBg} ring-1 ${tileRing} shadow-[0_14px_30px_-20px_rgba(15,41,24,0.45)] transition-all duration-300 ${
+              className={`relative w-full aspect-[4/5] overflow-hidden rounded-lg ${tileBg} ring-1 ${tileRing} shadow-[0_14px_30px_-20px_rgba(15,41,24,0.45)] transition-all duration-300 ${
                 prova ? "group-hover:ring-western-gold/60 group-hover:shadow-[0_18px_36px_-18px_rgba(15,41,24,0.55)]" : ""
               }`}
             >

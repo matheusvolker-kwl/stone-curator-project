@@ -168,8 +168,8 @@ function maskPhone(v: string): string {
 const FIELD_LABEL =
   "block font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-bronze mb-2";
 const FIELD_INPUT =
-  "w-full rounded-[10px] bg-white border-[1.5px] border-western-border-strong px-4 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-gold focus:ring-2 focus:ring-western-gold/20 outline-none transition-colors";
-const FIELD_H = "h-[52px]";
+  "w-full rounded-lg bg-white border-[1.5px] border-western-border-strong px-4 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-gold focus:ring-2 focus:ring-western-gold/20 outline-none transition-colors";
+const FIELD_H = "h-control";
 
 export default function ParaSuaCasa() {
   const formRef = useRef<HTMLDivElement>(null);
@@ -339,7 +339,7 @@ export default function ParaSuaCasa() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {CAMINHOS.map((c, i) => (
               <Reveal key={c.titulo} variant="fade-up" delay={i * 70} duration={650}>
-                <article className="flex h-full flex-col bg-white rounded-[16px] overflow-hidden border border-western-border-soft shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)]">
+                <article className="flex h-full flex-col bg-white rounded-2xl overflow-hidden border border-western-border-soft shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)]">
                   <div className="aspect-[4/3] overflow-hidden bg-western-cream-muted">
                     <img
                       src={c.img}
@@ -387,7 +387,7 @@ export default function ParaSuaCasa() {
             {OBRAS_SONHO.map((o, i) => (
               <Reveal key={o.titulo} variant="fade-up" delay={i * 80} duration={650}>
                 <figure className="h-full flex flex-col">
-                  <div className="relative overflow-hidden rounded-[16px] aspect-[4/5] bg-western-cream-muted">
+                  <div className="relative overflow-hidden rounded-2xl aspect-[4/5] bg-western-cream-muted">
                     <img
                       src={o.img}
                       alt={o.titulo}
@@ -448,12 +448,12 @@ export default function ParaSuaCasa() {
             {PASSOS.map((p, i) => (
               <Reveal key={p.n} variant="fade-up" delay={i * 70} duration={650}>
                 <li
-                  className={`relative h-full bg-white rounded-[10px] p-6 border shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] ${
+                  className={`relative h-full bg-white rounded-lg p-6 border shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] ${
                     p.gratis ? "border-western-gold/50" : "border-western-border-soft"
                   }`}
                 >
                   {p.gratis && (
-                    <span className="absolute -top-3 left-6 rounded-[6px] bg-western-gold px-2.5 py-1 font-sans text-[14px] font-semibold leading-none text-western-green-deep">
+                    <span className="absolute -top-3 left-6 rounded-sm bg-western-gold px-2.5 py-1 font-sans text-[14px] font-semibold leading-none text-western-green-deep">
                       Grátis
                     </span>
                   )}
@@ -571,7 +571,7 @@ export default function ParaSuaCasa() {
         <div className="container-western">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-center">
             <Reveal variant="fade-up" duration={700} className="md:col-span-6">
-              <div className="aspect-[4/3] overflow-hidden rounded-[16px]">
+              <div className="aspect-[4/3] overflow-hidden rounded-2xl">
                 <img
                   src={atelieImg}
                   alt="Equipe do ateliê Western trabalhando em uma gruta de pedra artesanal"
@@ -606,7 +606,7 @@ export default function ParaSuaCasa() {
               esse que o convite oferece agora. A cidade vem do cadastro (BUSINESS),
               não da foto: nenhuma imagem prova onde o lugar fica. */}
           <Reveal variant="fade-up" delay={120} duration={700}>
-            <div className="mt-12 md:mt-16 grid md:grid-cols-12 gap-8 md:gap-10 items-center rounded-[16px] border border-western-border-soft bg-white overflow-hidden">
+            <div className="mt-12 md:mt-16 grid md:grid-cols-12 gap-8 md:gap-10 items-center rounded-2xl border border-western-border-soft bg-white overflow-hidden">
               <div className="md:col-span-7">
                 <div className="aspect-[4/3] overflow-hidden">
                   <img
@@ -658,7 +658,7 @@ export default function ParaSuaCasa() {
               <Accordion
                 type="single"
                 collapsible
-                className="bg-white border border-western-border-soft rounded-[16px] overflow-hidden"
+                className="bg-white border border-western-border-soft rounded-2xl overflow-hidden"
               >
                 {FAQ_ITEMS.map((item, i) => (
                   <AccordionItem
@@ -723,7 +723,7 @@ export default function ParaSuaCasa() {
               <Reveal variant="fade-up" delay={100} duration={700} className="md:col-span-7">
                 <form
                   onSubmit={handleSubmit}
-                  className="bg-western-paper border border-western-border-soft rounded-[16px] p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
+                  className="bg-western-paper border border-western-border-soft rounded-2xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
                   noValidate
                 >
                   <div>

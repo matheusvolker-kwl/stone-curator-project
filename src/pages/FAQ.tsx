@@ -271,7 +271,7 @@ export default function FAQ() {
                 <p className="text-eyebrow mb-3">{g.eyebrow}</p>
                 <h2 className="display-md text-western-green-deep mb-5">{g.titulo}</h2>
 
-                <ul className="rounded-[16px] border border-western-border-soft bg-white overflow-hidden">
+                <ul className="rounded-2xl border border-western-border-soft bg-white overflow-hidden">
                   {g.itens.map((it, ii) => {
                     const id = `${gi}-${ii}`;
                     const aberto = open === id;

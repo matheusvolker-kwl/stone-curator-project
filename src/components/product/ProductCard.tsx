@@ -82,7 +82,7 @@ export default function ProductCard({ product }: Props) {
       onMouseEnter={prefetch}
       onFocus={prefetch}
       onTouchStart={prefetch}
-      className="group relative flex h-full flex-col overflow-hidden rounded-[16px] border border-western-border-soft bg-white shadow-[0_2px_10px_-6px_hsl(var(--western-stone-dark)/0.25)] transition-shadow duration-200 hover:shadow-[0_14px_30px_-16px_hsl(var(--western-stone-dark)/0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-cta focus-visible:ring-offset-2"
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-western-border-soft bg-white shadow-[0_2px_10px_-6px_hsl(var(--western-stone-dark)/0.25)] transition-shadow duration-200 hover:shadow-[0_14px_30px_-16px_hsl(var(--western-stone-dark)/0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-cta focus-visible:ring-offset-2"
     >
       {/* Favoritar: só no desktop, no hover, ancorado no canto do CARD.
           No mobile ele encavalava a foto (duas caixas brancas se fundindo) e
@@ -92,7 +92,7 @@ export default function ProductCard({ product }: Props) {
           handle={product.handle}
           title={product.title}
           image={img ? cdnImg(img.url, 400) : null}
-          className="h-12 w-12 rounded-[10px] border-western-border-strong shadow-sm"
+          className="h-12 w-12 rounded-lg border-western-border-strong shadow-sm"
         />
       </div>
 
@@ -184,7 +184,7 @@ export default function ProductCard({ product }: Props) {
 
           {/* CTA primário do card: VERDE, 52px, raio 10px, largura total, uma
               linha. É um <span> de propósito — quem clica é o <Link> do card. */}
-          <span className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 whitespace-nowrap rounded-[10px] bg-western-cta px-3 font-sans text-[16px] font-semibold text-western-cream transition-colors group-hover:bg-western-green-deep md:px-5">
+          <span className="inline-flex min-h-control w-full items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-western-cta px-3 font-sans text-[16px] font-semibold text-western-cream transition-colors group-hover:bg-western-green-deep md:px-5">
             Ver a peça
             <ArrowRight
               className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5"

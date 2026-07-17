@@ -25,7 +25,7 @@ export default function ArtistaSection() {
           {/* Foto — 7 colunas, DENTRO da grade. 5:4 (quase quadrada): uma pessoa
               desenhando é um assunto vertical; 21:9 num retrato é enquadrar o vazio. */}
           <figure className="m-0 lg:col-span-7">
-            <div className="aspect-[5/4] overflow-hidden rounded-[16px] ring-1 ring-western-gold/20 shadow-[0_28px_60px_-32px_rgba(0,0,0,0.6)]">
+            <div className="aspect-[5/4] overflow-hidden rounded-2xl ring-1 ring-western-gold/20 shadow-[0_28px_60px_-32px_rgba(0,0,0,0.6)]">
               <img
                 src={ricardoDesenhando}
                 alt="Ricardo Botelho desenhando uma nova matriz no ateliê Western em Cajamar/SP"

@@ -76,14 +76,14 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
   return (
     <article
       className={cn(
-        "relative h-full bg-white rounded-[16px] flex flex-col overflow-hidden transition-shadow duration-300",
+        "relative h-full bg-white rounded-2xl flex flex-col overflow-hidden transition-shadow duration-300",
         highlight
           ? "border-2 border-western-gold shadow-[0_28px_48px_-30px_hsl(var(--western-stone-dark)/0.35)]"
           : "border border-western-border-soft shadow-[0_18px_36px_-30px_hsl(var(--western-stone-dark)/0.3)] hover:shadow-[0_26px_44px_-30px_hsl(var(--western-stone-dark)/0.38)]"
       )}
     >
       {highlight && (
-        <p className="absolute top-4 left-4 z-10 inline-flex items-center rounded-[6px] bg-western-gold px-3 py-1.5 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-green-deep">
+        <p className="absolute top-4 left-4 z-10 inline-flex items-center rounded-sm bg-western-gold px-3 py-1.5 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-green-deep">
           Mais especificado
         </p>
       )}

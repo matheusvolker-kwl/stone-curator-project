@@ -56,7 +56,7 @@ export default function AutoralProductModal({ item, selected, qty, onClose, onTo
         }
       }}
     >
-      <DialogContent className="w-[calc(100%-24px)] max-w-[580px] gap-0 overflow-hidden rounded-[16px] border-0 bg-western-ivory p-0 [&>button:last-child]:hidden">
+      <DialogContent className="w-[calc(100%-24px)] max-w-[580px] gap-0 overflow-hidden rounded-2xl border-0 bg-western-ivory p-0 [&>button:last-child]:hidden">
         {item && (
           <>
             {/* Fechar — 48px, o mínimo de toque do sistema */}
@@ -64,7 +64,7 @@ export default function AutoralProductModal({ item, selected, qty, onClose, onTo
               type="button"
               onClick={onClose}
               aria-label="Fechar"
-              className="tap-target absolute right-3 top-3 z-20 inline-flex items-center justify-center rounded-[10px] border border-western-border-soft bg-western-ivory/95 text-western-green-deep backdrop-blur-sm transition-colors hover:bg-white"
+              className="tap-target absolute right-3 top-3 z-20 inline-flex items-center justify-center rounded-lg border border-western-border-soft bg-western-ivory/95 text-western-green-deep backdrop-blur-sm transition-colors hover:bg-white"
             >
               <X className="h-5 w-5" aria-hidden />
             </button>
@@ -103,7 +103,7 @@ export default function AutoralProductModal({ item, selected, qty, onClose, onTo
                       <p className="text-eyebrow">Preço de parceiro</p>
                       <Link
                         to={session ? "/minha-conta" : "/parceiro/login"}
-                        className="tap-target -ml-1 mt-0.5 inline-flex items-center gap-1.5 rounded-[10px] px-1 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 transition-colors hover:text-western-cta"
+                        className="tap-target -ml-1 mt-0.5 inline-flex items-center gap-1.5 rounded-lg px-1 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 transition-colors hover:text-western-cta"
                       >
                         Acessar para ver o preço
                       </Link>
@@ -119,13 +119,13 @@ export default function AutoralProductModal({ item, selected, qty, onClose, onTo
                 <div className="mt-6">
                   {selected ? (
                     <div className="flex items-stretch gap-2">
-                      <div className="inline-flex flex-1 items-center justify-between overflow-hidden rounded-[10px] border border-western-border-strong bg-white">
+                      <div className="inline-flex flex-1 items-center justify-between overflow-hidden rounded-lg border border-western-border-strong bg-white">
                         <button
                           type="button"
                           onClick={() => onSetQty(Math.max(1, qty - 1))}
                           disabled={qty <= 1}
                           aria-label="Diminuir quantidade"
-                          className="inline-flex h-[52px] w-[52px] items-center justify-center text-western-green-deep transition-colors hover:bg-western-paper disabled:opacity-30"
+                          className="inline-flex h-control w-[52px] items-center justify-center text-western-green-deep transition-colors hover:bg-western-paper disabled:opacity-30"
                         >
                           <Minus className="h-4 w-4" aria-hidden />
                         </button>
@@ -136,7 +136,7 @@ export default function AutoralProductModal({ item, selected, qty, onClose, onTo
                           type="button"
                           onClick={() => onSetQty(qty + 1)}
                           aria-label="Aumentar quantidade"
-                          className="inline-flex h-[52px] w-[52px] items-center justify-center text-western-green-deep transition-colors hover:bg-western-paper"
+                          className="inline-flex h-control w-[52px] items-center justify-center text-western-green-deep transition-colors hover:bg-western-paper"
                         >
                           <Plus className="h-4 w-4" aria-hidden />
                         </button>
@@ -146,7 +146,7 @@ export default function AutoralProductModal({ item, selected, qty, onClose, onTo
                         type="button"
                         onClick={() => { onToggle(); onClose(); }}
                         aria-label="Remover peça do projeto"
-                        className="inline-flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-[10px] border border-western-border-strong text-western-stone-warm transition-colors hover:border-western-green-deep hover:text-western-green-deep"
+                        className="inline-flex h-control w-[52px] flex-shrink-0 items-center justify-center rounded-lg border border-western-border-strong text-western-stone-warm transition-colors hover:border-western-green-deep hover:text-western-green-deep"
                       >
                         <Trash2 className="h-5 w-5" aria-hidden />
                       </button>
@@ -169,7 +169,7 @@ export default function AutoralProductModal({ item, selected, qty, onClose, onTo
                       type="button"
                       onClick={() => setShowMais((v) => !v)}
                       aria-expanded={showMais}
-                      className="tap-target -ml-2 inline-flex items-center gap-2 rounded-[10px] px-2 font-sans text-[16px] font-semibold text-western-green-deep transition-colors hover:text-western-cta"
+                      className="tap-target -ml-2 inline-flex items-center gap-2 rounded-lg px-2 font-sans text-[16px] font-semibold text-western-green-deep transition-colors hover:text-western-cta"
                     >
                       <ChevronDown
                         className={cn("h-4 w-4 transition-transform", showMais && "rotate-180")}

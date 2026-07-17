@@ -32,11 +32,11 @@ function GradeCarregando() {
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3" aria-busy="true" aria-live="polite">
       <span className="sr-only">Carregando favoritos…</span>
       {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="overflow-hidden rounded-[16px] border border-western-border-soft bg-white">
+        <div key={i} className="overflow-hidden rounded-2xl border border-western-border-soft bg-white">
           <div className="aspect-square animate-pulse bg-western-border-soft/50" />
           <div className="space-y-2 p-4">
-            <div className="h-3 w-4/5 animate-pulse rounded-[6px] bg-western-border-soft" />
-            <div className="h-3 w-1/3 animate-pulse rounded-[6px] bg-western-border-soft/70" />
+            <div className="h-3 w-4/5 animate-pulse rounded-sm bg-western-border-soft" />
+            <div className="h-3 w-1/3 animate-pulse rounded-sm bg-western-border-soft/70" />
           </div>
         </div>
       ))}
@@ -137,7 +137,7 @@ export default function AccountFavorites() {
           {items.map((it) => (
             <li
               key={it.id}
-              className="group flex flex-col overflow-hidden rounded-[16px] border border-western-border-soft bg-white transition-colors hover:border-western-gold/60"
+              className="group flex flex-col overflow-hidden rounded-2xl border border-western-border-soft bg-white transition-colors hover:border-western-gold/60"
             >
               <Link
                 to={`/produtos/${it.product_handle}`}
@@ -168,7 +168,7 @@ export default function AccountFavorites() {
                 <button
                   type="button"
                   onClick={() => void handleRemove(it.product_handle, it.product_title)}
-                  className="tap-target -ml-2 mt-auto inline-flex items-center gap-2 self-start rounded-[10px] px-2 text-[14px] font-semibold text-western-stone-warm transition-colors hover:text-[#B3372E]"
+                  className="tap-target -ml-2 mt-auto inline-flex items-center gap-2 self-start rounded-lg px-2 text-[14px] font-semibold text-western-stone-warm transition-colors hover:text-status-error"
                 >
                   <Trash2 className="h-4 w-4" aria-hidden="true" />
                   Remover

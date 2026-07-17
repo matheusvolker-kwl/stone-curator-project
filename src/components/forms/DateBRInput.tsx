@@ -35,14 +35,14 @@ export default function DateBRInput({
         required={required}
         aria-invalid={!!finalError}
         aria-describedby={describedBy}
-        className={`h-[52px] w-full bg-transparent border px-3.5 rounded-[6px] text-[16px] text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none transition-colors ${
+        className={`h-control w-full bg-transparent border px-3.5 rounded-sm text-[16px] text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none transition-colors ${
           finalError
             ? "border-red-700/60"
             : "border-western-stone-warm/30 focus:border-western-gold"
         }`}
       />
       {finalError && (
-        <p id={describedBy} className="mt-1.5 text-[14px] font-semibold text-[#B3372E]">
+        <p id={describedBy} className="mt-1.5 text-[14px] font-semibold text-status-error">
           {finalError}
         </p>
       )}

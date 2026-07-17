@@ -75,7 +75,7 @@ export default function Lightbox({ fotos, index, onIndexChange, onClose, label }
             </span>
             <DialogClose
               aria-label="Fechar"
-              className="inline-flex h-[52px] w-[52px] items-center justify-center rounded-full border border-western-cream/30 text-western-cream transition-colors hover:bg-western-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold"
+              className="inline-flex h-control w-[52px] items-center justify-center rounded-full border border-western-cream/30 text-western-cream transition-colors hover:bg-western-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold"
             >
               <X className="h-6 w-6" aria-hidden />
             </DialogClose>
@@ -87,7 +87,7 @@ export default function Lightbox({ fotos, index, onIndexChange, onClose, label }
               src={foto.src}
               alt={foto.alt}
               decoding="async"
-              className="max-h-full max-w-full object-contain rounded-[10px]"
+              className="max-h-full max-w-full object-contain rounded-lg"
             />
 
             {total > 1 && (
@@ -96,7 +96,7 @@ export default function Lightbox({ fotos, index, onIndexChange, onClose, label }
                   type="button"
                   onClick={() => ir(-1)}
                   aria-label="Foto anterior"
-                  className="absolute left-2 md:left-5 inline-flex h-[52px] w-[52px] items-center justify-center rounded-full border border-western-cream/30 bg-western-green-deep/70 text-western-cream transition-colors hover:bg-western-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold"
+                  className="absolute left-2 md:left-5 inline-flex h-control w-[52px] items-center justify-center rounded-full border border-western-cream/30 bg-western-green-deep/70 text-western-cream transition-colors hover:bg-western-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold"
                 >
                   <ChevronLeft className="h-6 w-6" aria-hidden />
                 </button>
@@ -104,7 +104,7 @@ export default function Lightbox({ fotos, index, onIndexChange, onClose, label }
                   type="button"
                   onClick={() => ir(1)}
                   aria-label="Próxima foto"
-                  className="absolute right-2 md:right-5 inline-flex h-[52px] w-[52px] items-center justify-center rounded-full border border-western-cream/30 bg-western-green-deep/70 text-western-cream transition-colors hover:bg-western-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold"
+                  className="absolute right-2 md:right-5 inline-flex h-control w-[52px] items-center justify-center rounded-full border border-western-cream/30 bg-western-green-deep/70 text-western-cream transition-colors hover:bg-western-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold"
                 >
                   <ChevronRight className="h-6 w-6" aria-hidden />
                 </button>

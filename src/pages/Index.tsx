@@ -308,14 +308,14 @@ export default function Index() {
             <div className={featuredTrack}>
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className={`${featuredItem} space-y-3`}>
-                  <div className="aspect-square rounded-[16px] bg-western-stone-warm/10 animate-pulse" />
-                  <div className="h-5 w-3/4 rounded-[6px] bg-western-stone-warm/10 animate-pulse" />
-                  <div className="h-4 w-1/3 rounded-[6px] bg-western-stone-warm/10 animate-pulse" />
+                  <div className="aspect-square rounded-2xl bg-western-stone-warm/10 animate-pulse" />
+                  <div className="h-5 w-3/4 rounded-sm bg-western-stone-warm/10 animate-pulse" />
+                  <div className="h-4 w-1/3 rounded-sm bg-western-stone-warm/10 animate-pulse" />
                 </div>
               ))}
             </div>
           ) : featured.length === 0 ? (
-            <div className="rounded-[16px] border border-dashed border-western-border-strong p-10 text-center text-body">
+            <div className="rounded-2xl border border-dashed border-western-border-strong p-10 text-center text-body">
               Catálogo indisponível no momento. Tente recarregar em instantes.
             </div>
           ) : (
@@ -358,7 +358,7 @@ export default function Index() {
             {LINHAS_HOME.map((l, i) => (
               <Reveal key={l.handle} variant="fade-up" delay={(i % 4) * 80} duration={620} distance={18}>
                 <Link to={`/linhas/${l.handle}`} className="group block">
-                  <div className="relative overflow-hidden rounded-[16px] aspect-[4/3] bg-western-cream-muted">
+                  <div className="relative overflow-hidden rounded-2xl aspect-[4/3] bg-western-cream-muted">
                     <img
                       src={l.cover}
                       alt={l.label}
@@ -400,7 +400,7 @@ export default function Index() {
             {TILES.map((t, i) => (
               <Reveal key={t.nome} variant="fade-up" delay={(i % 4) * 80} duration={600} distance={18}>
                 <Link to="/guia-de-composicao" className="group block">
-                  <div className="relative overflow-hidden rounded-[16px] aspect-[4/5] bg-western-cream-muted">
+                  <div className="relative overflow-hidden rounded-2xl aspect-[4/5] bg-western-cream-muted">
                     <img
                       src={t.img}
                       alt={t.nome}
@@ -425,7 +425,7 @@ export default function Index() {
         <div className="container-western">
           <div className="grid md:grid-cols-2 gap-8 md:gap-14 items-center">
             <Reveal variant="fade-right" duration={700}>
-              <div className="grid grid-cols-2 gap-px rounded-[16px] overflow-hidden bg-western-border-soft">
+              <div className="grid grid-cols-2 gap-px rounded-2xl overflow-hidden bg-western-border-soft">
                 {ACABAMENTOS.map((a) => (
                   <div
                     key={a.nome}
@@ -492,7 +492,7 @@ export default function Index() {
                     areia) o texto creme sumia (~1,1:1). Agora ela vive FORA da imagem,
                     sobre o fundo claro da seção — contraste não depende da foto. */}
                 <figure className="group">
-                  <div className="relative overflow-hidden rounded-[16px] aspect-[4/3] bg-western-cream-muted">
+                  <div className="relative overflow-hidden rounded-2xl aspect-[4/3] bg-western-cream-muted">
                     <img
                       src={p.img}
                       alt={p.nome}
@@ -539,7 +539,7 @@ export default function Index() {
           </Reveal>
           <div className="grid md:grid-cols-2 gap-4 md:gap-6">
             <Reveal variant="fade-up" duration={650}>
-              <div className="rounded-[16px] border border-western-cream/15 bg-western-green-mid/20 p-7 md:p-9 h-full">
+              <div className="rounded-2xl border border-western-cream/15 bg-western-green-mid/20 p-7 md:p-9 h-full">
                 <p className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/50 mb-6">
                   Pedra natural
                 </p>
@@ -559,7 +559,7 @@ export default function Index() {
               </div>
             </Reveal>
             <Reveal variant="fade-up" delay={100} duration={650}>
-              <div className="rounded-[16px] border border-western-gold/50 bg-western-green-mid/50 ring-1 ring-western-gold/20 p-7 md:p-9 h-full">
+              <div className="rounded-2xl border border-western-gold/50 bg-western-green-mid/50 ring-1 ring-western-gold/20 p-7 md:p-9 h-full">
                 <p className={`${eyebrowDark} mb-6`}>Pedra Western</p>
                 <ul className="space-y-4">
                   {/* A CAUSA (≈10% do peso) e a PROVA (reprodução fiel) subiram
@@ -609,7 +609,7 @@ export default function Index() {
             ].map((s, i) => (
               <Reveal key={s.n} variant="fade-up" delay={i * 80} duration={600} distance={16}>
                 <div className="flex gap-4 items-start">
-                  <span className="font-sans text-[20px] font-semibold text-western-bronze bg-white border border-western-border-soft rounded-[10px] w-12 h-12 flex items-center justify-center shrink-0">
+                  <span className="font-sans text-[20px] font-semibold text-western-bronze bg-white border border-western-border-soft rounded-lg w-12 h-12 flex items-center justify-center shrink-0">
                     {s.n}
                   </span>
                   <div>
@@ -671,7 +671,7 @@ export default function Index() {
               </div>
             </Reveal>
             <Reveal variant="fade-left" delay={120} duration={750}>
-              <div className="grid grid-cols-2 gap-px rounded-[16px] overflow-hidden bg-western-gold/20">
+              <div className="grid grid-cols-2 gap-px rounded-2xl overflow-hidden bg-western-gold/20">
                 {[
                   { eyebrow: "Pedido mínimo", t: BUSINESS.pedidoMinimoLabel },
                   { eyebrow: "Garantia", t: BUSINESS.garantiaLabel },

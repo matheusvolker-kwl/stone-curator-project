@@ -12,7 +12,7 @@ function Chip({ label, children }: { label: string; children: React.ReactNode })
   return (
     <span
       aria-label={label}
-      className="inline-flex items-center gap-1.5 h-8 rounded-[6px] bg-white px-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.12)]"
+      className="inline-flex items-center gap-1.5 h-8 rounded-sm bg-white px-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.12)]"
     >
       {children}
     </span>

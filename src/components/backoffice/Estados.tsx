@@ -36,11 +36,11 @@ export function EstadoCarregando({ linhas = 5, className }: CarregandoProps) {
     <div className={cn("divide-y divide-western-border-soft", className)} aria-busy="true" aria-live="polite">
       <span className="sr-only">Carregando…</span>
       {Array.from({ length: linhas }).map((_, i) => (
-        <div key={i} className="flex items-center gap-4 h-[52px] px-4">
-          <div className="h-3 rounded-[6px] bg-western-border-soft animate-pulse flex-1" style={{ maxWidth: "28%" }} />
-          <div className="h-3 rounded-[6px] bg-western-border-soft/70 animate-pulse flex-1" style={{ maxWidth: "20%" }} />
-          <div className="h-3 rounded-[6px] bg-western-border-soft/70 animate-pulse flex-1 hidden md:block" style={{ maxWidth: "18%" }} />
-          <div className="h-3 rounded-[6px] bg-western-border-soft/50 animate-pulse w-16 ml-auto" />
+        <div key={i} className="flex items-center gap-4 h-control px-4">
+          <div className="h-3 rounded-sm bg-western-border-soft animate-pulse flex-1" style={{ maxWidth: "28%" }} />
+          <div className="h-3 rounded-sm bg-western-border-soft/70 animate-pulse flex-1" style={{ maxWidth: "20%" }} />
+          <div className="h-3 rounded-sm bg-western-border-soft/70 animate-pulse flex-1 hidden md:block" style={{ maxWidth: "18%" }} />
+          <div className="h-3 rounded-sm bg-western-border-soft/50 animate-pulse w-16 ml-auto" />
         </div>
       ))}
     </div>
@@ -66,7 +66,7 @@ export function EstadoVazio({ titulo, mensagem, acao, icone: Icone = Inbox, clas
     <div
       className={cn(
         "flex flex-col items-center justify-center text-center",
-        "rounded-[16px] border border-dashed border-western-border-strong bg-western-paper",
+        "rounded-2xl border border-dashed border-western-border-strong bg-western-paper",
         "px-6 py-14",
         className,
       )}
@@ -121,16 +121,16 @@ export function EstadoErro({ erro, onRetry, titulo = "Não consegui carregar", c
     <div
       role="alert"
       className={cn(
-        "rounded-[16px] border border-[#B3372E]/35 bg-[#B3372E]/[0.06]",
+        "rounded-2xl border border-status-error/35 bg-status-error/[0.06]",
         compacto ? "p-4" : "px-6 py-8",
         className,
       )}
     >
       <div className={cn("flex gap-3", compacto ? "items-start" : "items-start")}>
-        <AlertTriangle className="h-5 w-5 flex-shrink-0 text-[#B3372E] mt-0.5" aria-hidden="true" />
+        <AlertTriangle className="h-5 w-5 flex-shrink-0 text-status-error mt-0.5" aria-hidden="true" />
 
         <div className="flex-1 min-w-0">
-          <p className={cn("font-semibold text-[#B3372E]", compacto ? "text-[16px]" : "text-[17px]")}>{titulo}</p>
+          <p className={cn("font-semibold text-status-error", compacto ? "text-[16px]" : "text-[17px]")}>{titulo}</p>
 
           {/* A mensagem REAL do erro. É isto que evita o dono ficar cego. */}
           <p className="text-[15px] leading-[1.5] text-western-stone-dark/85 mt-1 break-words">{msg}</p>
@@ -144,9 +144,9 @@ export function EstadoErro({ erro, onRetry, titulo = "Não consegui carregar", c
               type="button"
               onClick={onRetry}
               className={cn(
-                "tap-target mt-4 inline-flex items-center justify-center gap-2 rounded-[10px] px-5",
-                "border border-[#B3372E]/50 text-[#B3372E] font-semibold text-[16px]",
-                "hover:bg-[#B3372E]/10 transition-colors",
+                "tap-target mt-4 inline-flex items-center justify-center gap-2 rounded-lg px-5",
+                "border border-status-error/50 text-status-error font-semibold text-[16px]",
+                "hover:bg-status-error/10 transition-colors",
               )}
             >
               <RefreshCw className="h-4 w-4" aria-hidden="true" />

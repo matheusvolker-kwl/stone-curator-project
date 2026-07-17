@@ -82,13 +82,13 @@ const canais = [
  * arquivo), então normalizamos aqui: 52px de altura, cantos 10px, tipo 16px,
  * borda visível e mensagens em sans 14px — nunca mono, nunca abaixo de 14px. */
 const CONTROL =
-  "h-[52px] rounded-[10px] border-[1.5px] border-western-border-strong bg-western-paper px-4 text-[16px] md:text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-green-deep";
-const CONTROL_ERR = "border-[1.5px] border-[#B3372E]";
+  "h-control rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 text-[16px] md:text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-green-deep";
+const CONTROL_ERR = "border-[1.5px] border-status-error";
 
 const EMAIL_FX =
-  "[&_input]:!h-[52px] [&_input]:!rounded-[10px] [&_input]:!border-[1.5px] [&_input]:!bg-western-paper [&_input]:!px-4 [&_input]:!text-[16px] [&_p]:!font-sans [&_p]:!text-[14px] [&_p]:!normal-case [&_p]:!tracking-normal [&_p]:!text-[#B3372E] [&_button]:!font-sans [&_button]:!text-[14px] [&_button]:!normal-case [&_button]:!tracking-normal";
+  "[&_input]:!h-control [&_input]:!rounded-lg [&_input]:!border-[1.5px] [&_input]:!bg-western-paper [&_input]:!px-4 [&_input]:!text-[16px] [&_p]:!font-sans [&_p]:!text-[14px] [&_p]:!normal-case [&_p]:!tracking-normal [&_p]:!text-status-error [&_button]:!font-sans [&_button]:!text-[14px] [&_button]:!normal-case [&_button]:!tracking-normal";
 const PHONE_FX =
-  "[&_input]:!px-4 [&_input]:!text-[16px] [&_span]:!font-sans [&_span]:!text-[16px] [&_p]:!font-sans [&_p]:!text-[14px] [&_p]:!normal-case [&_p]:!tracking-normal [&_p]:!text-[#B3372E]";
+  "[&_input]:!px-4 [&_input]:!text-[16px] [&_span]:!font-sans [&_span]:!text-[16px] [&_p]:!font-sans [&_p]:!text-[14px] [&_p]:!normal-case [&_p]:!tracking-normal [&_p]:!text-status-error";
 
 // email OU telefone obrigatório — RLS exige ao menos um.
 const contactSchema = z
@@ -239,7 +239,7 @@ export default function Contact() {
               {canais.map((c) => {
                 const Icon = c.icon;
                 const cardClass =
-                  "tap-target block h-full rounded-[10px] border border-western-border-soft bg-white p-5 md:p-6 transition-colors hover:border-western-border-strong hover:bg-western-paper";
+                  "tap-target block h-full rounded-lg border border-western-border-soft bg-white p-5 md:p-6 transition-colors hover:border-western-border-strong hover:bg-western-paper";
                 const inner = (
                   <div className="flex items-start gap-4">
                     <Icon
@@ -288,8 +288,8 @@ export default function Contact() {
           <div className="lg:sticky lg:top-24">
             {success ? (
               <div className="rounded-2xl border border-western-border-soft bg-white p-6 md:p-9 shadow-[0_24px_60px_-32px_rgba(30,40,25,0.28)]">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2E7D4F]/10">
-                  <CheckCircle2 className="h-6 w-6 text-[#2E7D4F]" strokeWidth={1.75} aria-hidden="true" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-status-success/10">
+                  <CheckCircle2 className="h-6 w-6 text-status-success" strokeWidth={1.75} aria-hidden="true" />
                 </div>
                 <h2 className="display-md mt-6 text-western-green-deep">Recebemos sua mensagem.</h2>
                 <p className="text-body mt-4">
@@ -371,7 +371,7 @@ export default function Contact() {
                       value={f.telefone}
                       onChange={(v) => setField("telefone", v)}
                       error={errors.telefone}
-                      className={`!h-[52px] overflow-hidden rounded-[10px] !bg-western-paper ${
+                      className={`!h-control overflow-hidden rounded-lg !bg-western-paper ${
                         errors.telefone ? "" : "!border-[1.5px] !border-western-border-strong"
                       }`}
                     />
@@ -415,9 +415,9 @@ export default function Contact() {
                       rows={5}
                       aria-invalid={!!errors.mensagem}
                       placeholder="Conte brevemente sobre o projeto: tipo (piscina, lago, jardim), tamanho aproximado e cidade."
-                      className={`min-h-[140px] rounded-[10px] border-[1.5px] bg-western-paper px-4 py-3 text-[17px] leading-[1.6] text-western-green-deep placeholder:text-western-stone-warm/60 focus-visible:ring-0 ${
+                      className={`min-h-[140px] rounded-lg border-[1.5px] bg-western-paper px-4 py-3 text-[17px] leading-[1.6] text-western-green-deep placeholder:text-western-stone-warm/60 focus-visible:ring-0 ${
                         errors.mensagem
-                          ? "border-[#B3372E]"
+                          ? "border-status-error"
                           : "border-western-border-strong focus-visible:border-western-green-deep"
                       }`}
                     />
@@ -581,7 +581,7 @@ function FieldLabel({
 
 function FieldError({ id, children }: { id: string; children: React.ReactNode }) {
   return (
-    <p id={id} className="mt-2 text-[14px] font-semibold text-[#B3372E]">
+    <p id={id} className="mt-2 text-[14px] font-semibold text-status-error">
       {children}
     </p>
   );

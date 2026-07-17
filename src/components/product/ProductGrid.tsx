@@ -205,7 +205,7 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
               onChange={(e) => update("q", e.target.value || null)}
               placeholder="Nome ou código"
               aria-label="Buscar peça por nome ou código"
-              className="h-[52px] w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper pl-12 pr-4 font-sans text-[16px] text-western-green-deep transition-colors placeholder:text-western-stone-warm focus:border-western-cta focus:outline-none"
+              className="h-control w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper pl-12 pr-4 font-sans text-[16px] text-western-green-deep transition-colors placeholder:text-western-stone-warm focus:border-western-cta focus:outline-none"
             />
           </div>
         </div>
@@ -264,7 +264,7 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
             value={sort || undefined}
             onValueChange={(v) => update("sort", v || null)}
           >
-            <SelectTrigger className="h-[52px] w-[200px] rounded-lg border-[1.5px] border-western-border-strong bg-white px-4 font-sans text-[16px] font-semibold text-western-green-deep">
+            <SelectTrigger className="h-control w-[200px] rounded-lg border-[1.5px] border-western-border-strong bg-white px-4 font-sans text-[16px] font-semibold text-western-green-deep">
               <SelectValue placeholder="Ordenar" />
             </SelectTrigger>
             <SelectContent className="rounded-lg">

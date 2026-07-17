@@ -175,7 +175,7 @@ export default function AccountPreferences() {
     return (
       <div>
         <PageHeader eyebrow="Minha conta" titulo="Configurações" />
-        <div className="rounded-[16px] border border-western-border-soft bg-white">
+        <div className="rounded-2xl border border-western-border-soft bg-white">
           <EstadoCarregando linhas={4} />
         </div>
       </div>
@@ -203,16 +203,16 @@ export default function AccountPreferences() {
 
       <div className="max-w-3xl space-y-6">
         {/* ── Identificação (leitura) ───────────────────────────── */}
-        <section className="rounded-[16px] border border-western-border-soft bg-white p-6">
+        <section className="rounded-2xl border border-western-border-soft bg-white p-6">
           <h2 className="text-[20px] font-semibold text-western-green-deep">Acesso</h2>
           <p className="text-meta mt-1">É com este e-mail que você entra na conta.</p>
-          <p className="mt-4 rounded-[6px] bg-western-paper px-3 py-2.5 text-[16px] text-western-green-deep">
+          <p className="mt-4 rounded-sm bg-western-paper px-3 py-2.5 text-[16px] text-western-green-deep">
             {user?.email ?? "—"}
           </p>
         </section>
 
         {/* ── Newsletter ────────────────────────────────────────── */}
-        <section className="rounded-[16px] border border-western-border-soft bg-white p-6">
+        <section className="rounded-2xl border border-western-border-soft bg-white p-6">
           <div className="flex items-center justify-between gap-6">
             <div className="min-w-0">
               <Label htmlFor="newsletter" className="text-[20px] font-semibold text-western-green-deep">
@@ -239,7 +239,7 @@ export default function AccountPreferences() {
         </section>
 
         {/* ── Senha ─────────────────────────────────────────────── */}
-        <section className="rounded-[16px] border border-western-border-soft bg-white p-6">
+        <section className="rounded-2xl border border-western-border-soft bg-white p-6">
           <h2 className="text-[20px] font-semibold text-western-green-deep">Trocar a senha</h2>
           <p className="text-meta mt-1">
             Digite a nova senha duas vezes. Só confirmamos a troca quando as duas forem iguais.
@@ -277,12 +277,12 @@ export default function AccountPreferences() {
                   className={SENHA_CLS}
                 />
                 {repetirSenha.length > 0 && !senhasBatem && (
-                  <p className="mt-1.5 text-[14px] font-semibold text-[#B3372E]">
+                  <p className="mt-1.5 text-[14px] font-semibold text-status-error">
                     As duas senhas não são iguais.
                   </p>
                 )}
                 {senhasBatem && (
-                  <p className="mt-1.5 inline-flex items-center gap-1.5 text-[14px] font-semibold text-[#2E7D4F]">
+                  <p className="mt-1.5 inline-flex items-center gap-1.5 text-[14px] font-semibold text-status-success">
                     <Check className="h-4 w-4" aria-hidden="true" />
                     As senhas conferem.
                   </p>
@@ -306,11 +306,11 @@ export default function AccountPreferences() {
         </section>
 
         {/* ── Zona sensível: cancelamento ───────────────────────── */}
-        <section className="rounded-[16px] border border-[#B3372E]/35 bg-[#B3372E]/[0.06] p-6">
+        <section className="rounded-2xl border border-status-error/35 bg-status-error/[0.06] p-6">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#B3372E]" aria-hidden="true" />
+            <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-status-error" aria-hidden="true" />
             <div className="min-w-0">
-              <h2 className="text-[20px] font-semibold text-[#B3372E]">Cancelar a minha conta</h2>
+              <h2 className="text-[20px] font-semibold text-status-error">Cancelar a minha conta</h2>
               <p className="mt-1 text-[16px] leading-[1.5] text-western-stone-dark/90">
                 Sua conta é desativada e o preço de parceiro é suspenso. O histórico de pedidos fica
                 guardado por obrigação legal (LGPD), mas você perde o acesso ao painel. Não dá para
@@ -323,7 +323,7 @@ export default function AccountPreferences() {
             <button
               type="button"
               onClick={() => setCancelOpen(true)}
-              className="tap-target mt-5 inline-flex items-center justify-center rounded-[10px] border border-[#B3372E]/50 px-5 text-[16px] font-semibold text-[#B3372E] transition-colors hover:bg-[#B3372E]/10"
+              className="tap-target mt-5 inline-flex items-center justify-center rounded-lg border border-status-error/50 px-5 text-[16px] font-semibold text-status-error transition-colors hover:bg-status-error/10"
             >
               Quero cancelar
             </button>
@@ -339,10 +339,10 @@ export default function AccountPreferences() {
                   onChange={(e) => setMotivo(e.target.value)}
                   rows={3}
                   placeholder="Conte rapidamente o motivo — a gente lê tudo."
-                  className="rounded-[6px] border-western-border-strong bg-white text-[16px] text-western-green-deep"
+                  className="rounded-sm border-western-border-strong bg-white text-[16px] text-western-green-deep"
                 />
                 {motivo.length > 0 && motivo.trim().length < 10 && (
-                  <p className="mt-1.5 text-[14px] font-semibold text-[#B3372E]">
+                  <p className="mt-1.5 text-[14px] font-semibold text-status-error">
                     Escreva pelo menos 10 caracteres.
                   </p>
                 )}
@@ -358,7 +358,7 @@ export default function AccountPreferences() {
                   onChange={(e) => setConfirmText(e.target.value)}
                   autoComplete="off"
                   placeholder="CANCELAR"
-                  className="h-[52px] max-w-xs rounded-[6px] border-western-border-strong bg-white px-3 text-[16px] text-western-green-deep"
+                  className="h-control max-w-xs rounded-sm border-western-border-strong bg-white px-3 text-[16px] text-western-green-deep"
                 />
               </div>
 
@@ -367,7 +367,7 @@ export default function AccountPreferences() {
                   type="button"
                   onClick={() => setConfirmDialogOpen(true)}
                   disabled={!podeCancelar || cancelando}
-                  className="tap-target inline-flex items-center justify-center gap-2 rounded-[10px] bg-[#B3372E] px-5 text-[16px] font-semibold text-white transition-colors hover:bg-[#932C25] disabled:cursor-not-allowed disabled:opacity-45"
+                  className="tap-target inline-flex items-center justify-center gap-2 rounded-lg bg-status-error px-5 text-[16px] font-semibold text-white transition-colors hover:bg-[#932C25] disabled:cursor-not-allowed disabled:opacity-45"
                 >
                   {cancelando ? (
                     <>
@@ -399,9 +399,9 @@ export default function AccountPreferences() {
 
       {/* Última porta antes do irreversível. */}
       <AlertDialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
-        <AlertDialogContent className="rounded-[16px]">
+        <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="display-md text-[#B3372E]">
+            <AlertDialogTitle className="display-md text-status-error">
               Cancelar a conta de {user?.email}?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-[17px] leading-[1.6] text-western-stone-warm">
@@ -418,7 +418,7 @@ export default function AccountPreferences() {
             <AlertDialogCancel className="mt-0">Não, quero ficar</AlertDialogCancel>
             <AlertDialogAction
               onClick={cancelarConta}
-              className="bg-[#B3372E] text-white hover:bg-[#932C25]"
+              className="bg-status-error text-white hover:bg-[#932C25]"
             >
               Sim, cancelar a conta
             </AlertDialogAction>
@@ -430,12 +430,12 @@ export default function AccountPreferences() {
 }
 
 const SENHA_CLS =
-  "h-[52px] rounded-[6px] border-western-border-strong bg-white px-3 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/50 focus-visible:border-western-green-deep focus-visible:ring-0 focus-visible:ring-offset-0";
+  "h-control rounded-sm border-western-border-strong bg-white px-3 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/50 focus-visible:border-western-green-deep focus-visible:ring-0 focus-visible:ring-offset-0";
 
 /** Força da senha — 4 barras. Verde só quando é forte de verdade. */
 function MedidorDeForca({ score, label }: { score: 0 | 1 | 2 | 3 | 4; label: string }) {
   const cor =
-    score <= 1 ? "bg-[#B3372E]" : score === 2 ? "bg-[#9C6812]" : score === 3 ? "bg-[#9C6812]" : "bg-[#2E7D4F]";
+    score <= 1 ? "bg-status-error" : score === 2 ? "bg-status-warning" : score === 3 ? "bg-status-warning" : "bg-status-success";
 
   return (
     <div>
@@ -443,7 +443,7 @@ function MedidorDeForca({ score, label }: { score: 0 | 1 | 2 | 3 | 4; label: str
         {[1, 2, 3, 4].map((i) => (
           <span
             key={i}
-            className={`h-1.5 flex-1 rounded-[6px] transition-colors ${
+            className={`h-1.5 flex-1 rounded-sm transition-colors ${
               i <= score ? cor : "bg-western-border-soft"
             }`}
           />

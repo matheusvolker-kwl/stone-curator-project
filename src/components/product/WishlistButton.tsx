@@ -52,7 +52,7 @@ export default function WishlistButton({ handle, title, image, variant = "icon",
         type="button"
         aria-label={active ? "Remover dos favoritos" : "Adicionar aos favoritos"}
         className={cn(
-          "inline-flex items-center gap-2 h-11 px-4 border rounded-[10px] text-[14px] font-semibold uppercase tracking-[0.06em] transition-colors",
+          "inline-flex items-center gap-2 h-11 px-4 border rounded-lg text-[14px] font-semibold uppercase tracking-[0.06em] transition-colors",
           active
             ? "border-western-gold bg-western-gold/10 text-western-green-deep"
             : "border-western-stone-warm/30 text-western-stone-warm hover:border-western-gold hover:text-western-green-deep",

@@ -41,7 +41,7 @@ const FORMAS_PAGAMENTO = [
 ];
 
 const INPUT_CLS =
-  "h-[52px] rounded-[6px] border-western-border-strong bg-white text-[16px] text-western-green-deep";
+  "h-control rounded-sm border-western-border-strong bg-white text-[16px] text-western-green-deep";
 
 interface EditableItem extends QuotePayloadItem {
   /** key local pra render */
@@ -670,15 +670,15 @@ export default function AdminQuoteDetail() {
                 <button
                   type="button"
                   aria-label="Mais ações"
-                  className="tap-target inline-flex items-center justify-center rounded-[10px] border border-western-border-strong text-western-stone-warm transition-colors hover:text-western-green-deep"
+                  className="tap-target inline-flex items-center justify-center rounded-lg border border-western-border-strong text-western-stone-warm transition-colors hover:text-western-green-deep"
                 >
                   <MoreVertical className="h-4 w-4" aria-hidden="true" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="rounded-[10px]">
+              <DropdownMenuContent align="end" className="rounded-lg">
                 <DropdownMenuItem
                   onClick={() => setConfirmarExclusao(true)}
-                  className="text-[16px] font-semibold text-[#B3372E] focus:bg-[#B3372E]/10 focus:text-[#B3372E]"
+                  className="text-[16px] font-semibold text-status-error focus:bg-status-error/10 focus:text-status-error"
                 >
                   <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" />
                   Apagar orçamento
@@ -692,7 +692,7 @@ export default function AdminQuoteDetail() {
       <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
         {/* ══════════ COLUNA DIREITA (no mobile vem primeiro): CARD DE AÇÃO ══════════ */}
         <aside className="order-1 space-y-6 lg:order-2 lg:sticky lg:top-6">
-          <section className="rounded-[16px] border border-western-cta/30 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+          <section className="rounded-2xl border border-western-cta/30 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
             <div className="mb-4 flex items-center justify-between gap-3">
               <p className="text-eyebrow">Próximo passo</p>
               <StatusBadge status={thread.status} />
@@ -702,7 +702,7 @@ export default function AdminQuoteDetail() {
             <p className="text-body mt-2 text-[16px]">{passo.descricao}</p>
 
             {/* O número que importa ao lado do botão */}
-            <div className="mt-5 rounded-[10px] bg-western-paper px-4 py-3">
+            <div className="mt-5 rounded-lg bg-western-paper px-4 py-3">
               <div className="flex items-baseline justify-between gap-3">
                 <span className="text-sublabel">
                   {jaVendida ? "Valor da venda" : "Total da proposta"}
@@ -807,7 +807,7 @@ export default function AdminQuoteDetail() {
           </section>
 
           {/* Notas internas + status */}
-          <section className="rounded-[16px] border border-western-border-soft bg-white p-5">
+          <section className="rounded-2xl border border-western-border-soft bg-white p-5">
             <p className="text-eyebrow mb-3">Acompanhamento</p>
 
             <Label htmlFor="status-orcamento" className="text-sublabel mb-1.5 block">
@@ -834,7 +834,7 @@ export default function AdminQuoteDetail() {
               value={notas}
               onChange={(e) => setNotas(e.target.value)}
               rows={5}
-              className="rounded-[6px] border-western-border-strong bg-white text-[16px]"
+              className="rounded-sm border-western-border-strong bg-white text-[16px]"
               placeholder="Ligações, contexto, próximos passos…"
             />
             <button
@@ -856,7 +856,7 @@ export default function AdminQuoteDetail() {
         {/* ══════════ COLUNA ESQUERDA: o trabalho ══════════ */}
         <div className="order-2 min-w-0 space-y-8 lg:order-1">
           {/* Cliente */}
-          <section className="rounded-[16px] border border-western-border-soft bg-white p-5">
+          <section className="rounded-2xl border border-western-border-soft bg-white p-5">
             <p className="text-eyebrow mb-4">Cliente</p>
             <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
               <Campo rotulo="Nome" valor={lead.nome} />
@@ -867,7 +867,7 @@ export default function AdminQuoteDetail() {
               <Campo rotulo="Origem" valor={lead.origem} />
             </dl>
             {lead.mensagem && (
-              <div className="mt-5 rounded-[10px] bg-western-paper p-4">
+              <div className="mt-5 rounded-lg bg-western-paper p-4">
                 <p className="text-eyebrow mb-2">Mensagem do cliente</p>
                 <p className="whitespace-pre-wrap text-[17px] leading-[1.6] text-western-green-deep">
                   {lead.mensagem}
@@ -877,7 +877,7 @@ export default function AdminQuoteDetail() {
           </section>
 
           {/* Editor da proposta */}
-          <section className="rounded-[16px] border border-western-border-soft bg-white p-5">
+          <section className="rounded-2xl border border-western-border-soft bg-white p-5">
             <p className="text-eyebrow mb-1">Proposta</p>
             <h2 className="display-md text-western-green-deep mb-5">
               Edite as peças, aplique desconto e gere o PDF
@@ -886,7 +886,7 @@ export default function AdminQuoteDetail() {
             {/* Peças */}
             <div className="mb-5 space-y-3">
               {items.length === 0 && (
-                <div className="rounded-[10px] border border-dashed border-western-border-strong bg-western-paper p-6 text-center">
+                <div className="rounded-lg border border-dashed border-western-border-strong bg-western-paper p-6 text-center">
                   <p className="text-body text-[16px]">
                     Nenhuma peça na proposta. Inclua abaixo.
                   </p>
@@ -896,7 +896,7 @@ export default function AdminQuoteDetail() {
               {items.map((it) => (
                 <div
                   key={it._key}
-                  className="rounded-[10px] border border-western-border-soft p-3 md:grid md:grid-cols-[1fr_auto_150px_auto] md:items-center md:gap-3"
+                  className="rounded-lg border border-western-border-soft p-3 md:grid md:grid-cols-[1fr_auto_150px_auto] md:items-center md:gap-3"
                 >
                   <div className="min-w-0 space-y-2">
                     <p className="text-[17px] font-semibold text-western-green-deep">{it.title}</p>
@@ -905,7 +905,7 @@ export default function AdminQuoteDetail() {
                       onChange={(e) => updateItem(it._key, { acabamento: e.target.value })}
                       placeholder="Acabamento / cor"
                       aria-label={`Acabamento de ${it.title}`}
-                      className="h-[48px] rounded-[6px] border-western-border-strong text-[16px]"
+                      className="h-tap rounded-sm border-western-border-strong text-[16px]"
                     />
                   </div>
 
@@ -915,7 +915,7 @@ export default function AdminQuoteDetail() {
                         type="button"
                         onClick={() => updateItem(it._key, { quantity: Math.max(1, it.quantity - 1) })}
                         aria-label={`Diminuir quantidade de ${it.title}`}
-                        className="tap-target inline-flex items-center justify-center rounded-[6px] border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
+                        className="tap-target inline-flex items-center justify-center rounded-sm border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
                       >
                         <Minus className="h-4 w-4" aria-hidden="true" />
                       </button>
@@ -926,7 +926,7 @@ export default function AdminQuoteDetail() {
                         type="button"
                         onClick={() => updateItem(it._key, { quantity: it.quantity + 1 })}
                         aria-label={`Aumentar quantidade de ${it.title}`}
-                        className="tap-target inline-flex items-center justify-center rounded-[6px] border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
+                        className="tap-target inline-flex items-center justify-center rounded-sm border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
                       >
                         <Plus className="h-4 w-4" aria-hidden="true" />
                       </button>
@@ -937,7 +937,7 @@ export default function AdminQuoteDetail() {
                       onClick={() => removeItem(it._key)}
                       aria-label={`Remover ${it.title}`}
                       title="Remover"
-                      className="tap-target inline-flex items-center justify-center rounded-[6px] text-western-stone-warm transition-colors hover:text-[#B3372E] md:order-last"
+                      className="tap-target inline-flex items-center justify-center rounded-sm text-western-stone-warm transition-colors hover:text-status-error md:order-last"
                     >
                       <X className="h-4 w-4" aria-hidden="true" />
                     </button>
@@ -947,7 +947,7 @@ export default function AdminQuoteDetail() {
                     <BRLInput
                       value={it.unitPrice}
                       onChange={(n) => updateItem(it._key, { unitPrice: n })}
-                      className="h-[48px] w-full rounded-[6px] border-western-border-strong text-right text-[16px] tabular-nums"
+                      className="h-tap w-full rounded-sm border-western-border-strong text-right text-[16px] tabular-nums"
                       placeholder="R$ 0,00"
                     />
                   </div>
@@ -956,7 +956,7 @@ export default function AdminQuoteDetail() {
             </div>
 
             {/* Incluir peça */}
-            <div className="mb-6 rounded-[10px] border border-western-border-soft bg-western-paper p-4">
+            <div className="mb-6 rounded-lg border border-western-border-soft bg-western-paper p-4">
               <p className="text-eyebrow mb-3">Incluir peça</p>
               <div className="grid gap-3 md:grid-cols-[1fr_1fr_90px_150px_auto] md:items-end">
                 <Input
@@ -964,14 +964,14 @@ export default function AdminQuoteDetail() {
                   onChange={(e) => setNewItemTitle(e.target.value)}
                   placeholder="Nome da peça"
                   aria-label="Nome da peça"
-                  className="h-[48px] rounded-[6px] border-western-border-strong bg-white text-[16px]"
+                  className="h-tap rounded-sm border-western-border-strong bg-white text-[16px]"
                 />
                 <Input
                   value={newItemAcabamento}
                   onChange={(e) => setNewItemAcabamento(e.target.value)}
                   placeholder="Acabamento (cor)"
                   aria-label="Acabamento da peça"
-                  className="h-[48px] rounded-[6px] border-western-border-strong bg-white text-[16px]"
+                  className="h-tap rounded-sm border-western-border-strong bg-white text-[16px]"
                 />
                 <Input
                   type="number"
@@ -980,13 +980,13 @@ export default function AdminQuoteDetail() {
                   onChange={(e) => setNewItemQty(e.target.value)}
                   placeholder="Qtd"
                   aria-label="Quantidade"
-                  className="h-[48px] rounded-[6px] border-western-border-strong bg-white text-right text-[16px] tabular-nums"
+                  className="h-tap rounded-sm border-western-border-strong bg-white text-right text-[16px] tabular-nums"
                 />
                 <BRLInput
                   value={newItemPrice}
                   onChange={(n) => setNewItemPrice(n)}
                   placeholder="R$ 0,00"
-                  className="h-[48px] rounded-[6px] border-western-border-strong bg-white text-right text-[16px] tabular-nums"
+                  className="h-tap rounded-sm border-western-border-strong bg-white text-right text-[16px] tabular-nums"
                 />
                 <button type="button" onClick={addItem} className="btn-outline-forest tap-target px-4">
                   <Plus className="h-4 w-4" aria-hidden="true" />
@@ -1057,7 +1057,7 @@ export default function AdminQuoteDetail() {
                 value={observacoes}
                 onChange={(e) => setObservacoes(e.target.value)}
                 rows={2}
-                className="rounded-[6px] border-western-border-strong bg-white text-[16px]"
+                className="rounded-sm border-western-border-strong bg-white text-[16px]"
                 placeholder="Ex.: Frete por conta da Western até Cajamar/SP."
               />
             </div>
@@ -1132,7 +1132,7 @@ export default function AdminQuoteDetail() {
 
           {/* Histórico de propostas — erro aqui NÃO vira "nenhuma proposta". */}
           {(erroPropostas || proposals.length > 0) && (
-            <section className="rounded-[16px] border border-western-border-soft bg-white p-5">
+            <section className="rounded-2xl border border-western-border-soft bg-white p-5">
               <p className="text-eyebrow mb-4">Propostas enviadas</p>
 
               {erroPropostas ? (
@@ -1147,7 +1147,7 @@ export default function AdminQuoteDetail() {
                   {proposals.map((p) => (
                     <li
                       key={p.id}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-western-border-soft p-3"
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-western-border-soft p-3"
                     >
                       <div className="flex min-w-0 items-center gap-3">
                         <FileText className="h-5 w-5 flex-shrink-0 text-western-bronze" aria-hidden="true" />
@@ -1176,7 +1176,7 @@ export default function AdminQuoteDetail() {
                             onClick={() => openProposalPdf(p.pdf_path!)}
                             title="Abrir PDF"
                             aria-label={`Abrir PDF da proposta ${p.numero}`}
-                            className="tap-target inline-flex items-center justify-center rounded-[6px] border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
+                            className="tap-target inline-flex items-center justify-center rounded-sm border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
                           >
                             <ExternalLink className="h-4 w-4" aria-hidden="true" />
                           </button>
@@ -1185,7 +1185,7 @@ export default function AdminQuoteDetail() {
                             onClick={() => shareProposal(p, "whatsapp")}
                             title="Enviar por WhatsApp"
                             aria-label={`Enviar a proposta ${p.numero} por WhatsApp`}
-                            className="tap-target inline-flex items-center justify-center rounded-[6px] border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
+                            className="tap-target inline-flex items-center justify-center rounded-sm border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
                           >
                             <MessageCircle className="h-4 w-4" aria-hidden="true" />
                           </button>
@@ -1194,7 +1194,7 @@ export default function AdminQuoteDetail() {
                             onClick={() => shareProposal(p, "email")}
                             title="Enviar por e-mail"
                             aria-label={`Enviar a proposta ${p.numero} por e-mail`}
-                            className="tap-target inline-flex items-center justify-center rounded-[6px] border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
+                            className="tap-target inline-flex items-center justify-center rounded-sm border border-western-border-strong text-western-green-deep transition-colors hover:border-western-green-deep"
                           >
                             <Mail className="h-4 w-4" aria-hidden="true" />
                           </button>
@@ -1208,10 +1208,10 @@ export default function AdminQuoteDetail() {
           )}
 
           {/* Fechar venda */}
-          <section className="rounded-[16px] border border-[#2E7D4F]/25 bg-[#2E7D4F]/[0.04] p-5">
+          <section className="rounded-2xl border border-status-success/25 bg-status-success/[0.04] p-5">
             <div className="mb-1 flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-[#2E7D4F]" aria-hidden="true" />
-              <p className="text-eyebrow text-[#2E7D4F]">Fechar venda</p>
+              <CheckCircle2 className="h-4 w-4 text-status-success" aria-hidden="true" />
+              <p className="text-eyebrow text-status-success">Fechar venda</p>
             </div>
             <p className="text-body mb-5 text-[16px]">
               Marca este orçamento como pago e registra como a venda foi fechada.
@@ -1254,7 +1254,7 @@ export default function AdminQuoteDetail() {
               onChange={(e) => setSaleObs(e.target.value)}
               rows={2}
               aria-label="Observações da venda"
-              className="mb-4 rounded-[6px] border-western-border-strong bg-white text-[16px]"
+              className="mb-4 rounded-sm border-western-border-strong bg-white text-[16px]"
               placeholder="Observações da venda (opcional)"
             />
 
@@ -1273,7 +1273,7 @@ export default function AdminQuoteDetail() {
             </button>
 
             {thread.pago_em && (
-              <p className="mt-4 flex flex-wrap items-center gap-1.5 text-[16px] font-semibold tabular-nums text-[#2E7D4F]">
+              <p className="mt-4 flex flex-wrap items-center gap-1.5 text-[16px] font-semibold tabular-nums text-status-success">
                 <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                 Vendido em {dataAbsoluta(thread.pago_em)}
                 {thread.valor_final != null && ` · ${formatBRL(Number(thread.valor_final), "BRL")}`}
@@ -1284,7 +1284,7 @@ export default function AdminQuoteDetail() {
           </section>
 
           {/* Pedido original (o que o cliente pediu, antes de qualquer edição) */}
-          <section className="rounded-[16px] border border-western-border-soft bg-white p-5">
+          <section className="rounded-2xl border border-western-border-soft bg-white p-5">
             <p className="text-eyebrow mb-4">Pedido original do cliente</p>
             <div className="mb-3 flex items-baseline justify-between gap-3">
               <span className="text-[16px] tabular-nums text-western-stone-warm">

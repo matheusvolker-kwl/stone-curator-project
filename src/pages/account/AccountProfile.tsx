@@ -195,7 +195,7 @@ export default function AccountProfile() {
     return (
       <div>
         <PageHeader eyebrow="Minha conta" titulo="Dados da empresa" />
-        <div className="rounded-[16px] border border-western-border-soft bg-white">
+        <div className="rounded-2xl border border-western-border-soft bg-white">
           <EstadoCarregando linhas={8} />
         </div>
       </div>
@@ -254,7 +254,7 @@ export default function AccountProfile() {
       />
 
       {eraAprovado && (
-        <p className="text-body mb-8 max-w-3xl rounded-[10px] border border-[#9C6812]/30 bg-[#9C6812]/[0.06] px-4 py-3 text-western-stone-dark">
+        <p className="text-body mb-8 max-w-3xl rounded-lg border border-status-warning/30 bg-status-warning/[0.06] px-4 py-3 text-western-stone-dark">
           <strong className="font-semibold text-western-green-deep">Atenção:</strong> alterar a ficha
           cadastral envia a sua empresa para reanálise. O preço de parceiro fica suspenso até a
           equipe revisar — normalmente 1 dia útil.
@@ -271,7 +271,7 @@ export default function AccountProfile() {
         ref={formRef}
         onSubmit={submeter}
         noValidate
-        className="grid max-w-3xl grid-cols-1 gap-5 md:grid-cols-2 [&_input]:h-[52px] [&_input]:rounded-[6px]"
+        className="grid max-w-3xl grid-cols-1 gap-5 md:grid-cols-2 [&_input]:h-control [&_input]:rounded-sm"
       >
         <Field full label="Razão social" id="empresa" error={errors.empresa}>
           <Input id="empresa" value={form.empresa} onChange={(e) => set("empresa", e.target.value)} className={INPUT_CLS} />
@@ -352,7 +352,7 @@ export default function AccountProfile() {
             value={form.estado}
             onChange={(e) => set("estado", e.target.value)}
             aria-invalid={!!errors.estado}
-            className="h-[52px] w-full rounded-[6px] border border-western-border-strong bg-white px-3 text-[16px] text-western-green-deep transition-colors focus:border-western-green-deep focus:outline-none"
+            className="h-control w-full rounded-sm border border-western-border-strong bg-white px-3 text-[16px] text-western-green-deep transition-colors focus:border-western-green-deep focus:outline-none"
           >
             <option value="">—</option>
             {UF_LIST.map((uf) => <option key={uf} value={uf}>{uf}</option>)}
@@ -376,7 +376,7 @@ export default function AccountProfile() {
 
       {/* Confirmação: salvar aqui tem consequência comercial. Nunca por acidente. */}
       <AlertDialog open={confirmarOpen} onOpenChange={setConfirmarOpen}>
-        <AlertDialogContent className="rounded-[16px]">
+        <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="display-md text-western-green-deep">
               {eraAprovado ? "Isto envia a sua empresa para reanálise" : "Confirmar alterações"}
@@ -415,7 +415,7 @@ export default function AccountProfile() {
 }
 
 const INPUT_CLS =
-  "h-[52px] rounded-[6px] border-western-border-strong bg-white px-3 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/50 focus-visible:border-western-green-deep focus-visible:ring-0 focus-visible:ring-offset-0";
+  "h-control rounded-sm border-western-border-strong bg-white px-3 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/50 focus-visible:border-western-green-deep focus-visible:ring-0 focus-visible:ring-offset-0";
 
 function Field({
   label, id, error, full, children,
@@ -429,7 +429,7 @@ function Field({
       </Label>
       {children}
       {error && (
-        <p id={`${id}-error`} className="mt-1.5 text-[14px] font-semibold text-[#B3372E]">
+        <p id={`${id}-error`} className="mt-1.5 text-[14px] font-semibold text-status-error">
           {error}
         </p>
       )}

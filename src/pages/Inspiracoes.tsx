@@ -102,7 +102,7 @@ function ObraLook({ obra, index }: { obra: Obra; index: number }) {
     >
       <Link
         to={`/obras/${obra.slug}`}
-        className="group relative frame-product rounded-[16px] overflow-hidden aspect-[4/3] block"
+        className="group relative frame-product rounded-2xl overflow-hidden aspect-[4/3] block"
         aria-label={`Ver obra ${obra.titulo}`}
       >
         {cover ? (
@@ -131,7 +131,7 @@ function ObraLook({ obra, index }: { obra: Obra; index: number }) {
         </Link>
 
         {isHibrido && (
-          <span className="mt-3 inline-flex items-center gap-1.5 rounded-[6px] border border-western-gold/50 bg-western-gold/15 px-3 py-1 text-[14px] font-semibold text-western-bronze">
+          <span className="mt-3 inline-flex items-center gap-1.5 rounded-sm border border-western-gold/50 bg-western-gold/15 px-3 py-1 text-[14px] font-semibold text-western-bronze">
             <span aria-hidden>◆</span> Lago híbrido · natural + Western
           </span>
         )}
@@ -335,7 +335,7 @@ export default function Inspiracoes() {
           </>
         ) : (
           <Reveal variant="fade-up">
-            <div className="mt-12 rounded-[16px] border border-western-border-soft bg-white p-7 md:p-9 text-center">
+            <div className="mt-12 rounded-2xl border border-western-border-soft bg-white p-7 md:p-9 text-center">
               <p className="text-body max-w-[54ch] mx-auto">
                 Quer {cur.label.toLowerCase()} assim no seu projeto? Monte a composição com preço de
                 parceiro, ou fale direto com o ateliê.
@@ -369,7 +369,7 @@ export default function Inspiracoes() {
         </p>
 
         <Reveal variant="fade-up">
-          <section className="mt-10 md:mt-16 surface-forest rounded-[16px] text-center px-6 py-12 md:py-16">
+          <section className="mt-10 md:mt-16 surface-forest rounded-2xl text-center px-6 py-12 md:py-16">
             <h2 className="display-md text-western-cream max-w-xl mx-auto">Prefere montar do zero?</h2>
             <p className="text-[17px] leading-[1.6] text-western-cream-muted max-w-[44ch] mx-auto mt-4 mb-8">
               Responda 3 perguntas no guia e o ateliê monta uma composição no seu acabamento, com

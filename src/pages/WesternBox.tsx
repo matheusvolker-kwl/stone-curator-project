@@ -204,11 +204,11 @@ function StickyBuyBar({ topBuyRef }: { topBuyRef: React.RefObject<HTMLElement> }
 // ---------------------------------------------------------------------------
 function QtyStepper({ qty, setQty }: { qty: number; setQty: (n: number) => void }) {
   return (
-    <div className="inline-flex items-center rounded-[10px] border-[1.5px] border-western-border-strong bg-white">
+    <div className="inline-flex items-center rounded-lg border-[1.5px] border-western-border-strong bg-white">
       <button
         type="button"
         onClick={() => setQty(Math.max(1, qty - 1))}
-        className="flex h-[52px] w-[52px] items-center justify-center rounded-l-[9px] text-western-green-deep transition-colors hover:bg-western-paper"
+        className="flex h-control w-[52px] items-center justify-center rounded-l-[9px] text-western-green-deep transition-colors hover:bg-western-paper"
         aria-label="Diminuir quantidade"
       >
         <Minus className="h-5 w-5" />
@@ -219,7 +219,7 @@ function QtyStepper({ qty, setQty }: { qty: number; setQty: (n: number) => void 
       <button
         type="button"
         onClick={() => setQty(qty + 1)}
-        className="flex h-[52px] w-[52px] items-center justify-center rounded-r-[9px] text-western-green-deep transition-colors hover:bg-western-paper"
+        className="flex h-control w-[52px] items-center justify-center rounded-r-[9px] text-western-green-deep transition-colors hover:bg-western-paper"
         aria-label="Aumentar quantidade"
       >
         <Plus className="h-5 w-5" />
@@ -267,7 +267,7 @@ function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLDivElement> 
                     onClick={() => setActive(i)}
                     onMouseEnter={() => setActive(i)}
                     className={cn(
-                      "relative aspect-square overflow-hidden rounded-[10px] border bg-western-ivory transition-colors duration-200",
+                      "relative aspect-square overflow-hidden rounded-lg border bg-western-ivory transition-colors duration-200",
                       active === i
                         ? "border-[1.5px] border-western-green-deep"
                         : "border-western-border-soft hover:border-western-border-strong",
@@ -283,7 +283,7 @@ function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLDivElement> 
                   </button>
                 ))}
               </div>
-              <div className="relative aspect-[4/5] overflow-hidden rounded-[16px] border border-western-border-soft bg-western-ivory">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-western-border-soft bg-western-ivory">
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={active}
@@ -305,7 +305,7 @@ function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLDivElement> 
                 {GALLERY.map((g, i) => (
                   <div
                     key={i}
-                    className="aspect-[4/5] w-[86%] shrink-0 snap-center overflow-hidden rounded-[16px] border border-western-border-soft bg-western-ivory"
+                    className="aspect-[4/5] w-[86%] shrink-0 snap-center overflow-hidden rounded-2xl border border-western-border-soft bg-western-ivory"
                   >
                     <img
                       src={g.src}
@@ -403,7 +403,7 @@ function MidBuyStrip() {
       <div className="container-western">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between md:gap-10">
           <div className="flex items-center gap-5">
-            <div className="aspect-square w-24 shrink-0 overflow-hidden rounded-[10px] border border-western-border-soft bg-western-paper md:w-32">
+            <div className="aspect-square w-24 shrink-0 overflow-hidden rounded-lg border border-western-border-soft bg-western-paper md:w-32">
               <img src={boxFechada} alt="" className="h-full w-full object-cover" loading="lazy" />
             </div>
             <div className="min-w-0">
@@ -490,7 +490,7 @@ export default function WesternBox() {
         <div className="container-western">
           <div className="grid items-center gap-10 md:grid-cols-12 md:gap-16">
             <div className="md:col-span-6">
-              <div className="aspect-[4/5] overflow-hidden rounded-[16px] border border-western-border-soft bg-western-ivory">
+              <div className="aspect-[4/5] overflow-hidden rounded-2xl border border-western-border-soft bg-western-ivory">
                 <img
                   src={boxAberta}
                   alt="Western Box aberta exibindo as quatro amostras e o catálogo"
@@ -555,7 +555,7 @@ export default function WesternBox() {
                     onMouseLeave={() => setHoveredCard(null)}
                     aria-pressed={isActive}
                     className={cn(
-                      "group w-full overflow-hidden rounded-[16px] border bg-white text-left transition-colors duration-200",
+                      "group w-full overflow-hidden rounded-2xl border bg-white text-left transition-colors duration-200",
                       isActive
                         ? "border-[1.5px] border-western-green-deep shadow-[0_18px_40px_-28px_rgba(35,28,20,0.45)]"
                         : "border-western-border-soft hover:border-western-border-strong",
@@ -604,7 +604,7 @@ export default function WesternBox() {
             </div>
 
             <div className="md:col-span-5 md:sticky md:top-28">
-              <div className="rounded-[16px] border border-western-border-soft bg-white p-6 md:p-8">
+              <div className="rounded-2xl border border-western-border-soft bg-white p-6 md:p-8">
                 <p className="text-eyebrow">Em destaque</p>
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -693,7 +693,7 @@ export default function WesternBox() {
         <div className="container-western">
           <div className="grid items-center gap-10 md:grid-cols-12 md:gap-16">
             <div className="md:col-span-6 md:order-2">
-              <div className="aspect-[4/3] overflow-hidden rounded-[16px] border border-western-border-soft bg-western-paper">
+              <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-western-border-soft bg-western-paper">
                 <img
                   src={catalogo}
                   alt="Catálogo oficial Western Pools"
@@ -776,7 +776,7 @@ export default function WesternBox() {
             <h2 className="display-lg mt-4 text-western-green-deep">
               Envio, conteúdo e cashback.
             </h2>
-            <div className="mt-8 hidden aspect-[4/5] overflow-hidden rounded-[16px] border border-western-border-soft md:block">
+            <div className="mt-8 hidden aspect-[4/5] overflow-hidden rounded-2xl border border-western-border-soft md:block">
               <img
                 src={boxFechada}
                 alt="Western Box fechada com selo da marca"
@@ -830,7 +830,7 @@ export default function WesternBox() {
               </AccordionItem>
             </Accordion>
 
-            <div className="mt-8 rounded-[16px] border border-western-border-soft bg-white p-6">
+            <div className="mt-8 rounded-2xl border border-western-border-soft bg-white p-6">
               <p className="font-sans text-[20px] font-semibold leading-snug text-western-green-deep">
                 Ficou em dúvida sobre o acabamento ideal?
               </p>

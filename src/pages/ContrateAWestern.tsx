@@ -168,17 +168,17 @@ const BENEFICIOS_CONSULTORIA = [
 
 // Classes compartilhadas — DS V3 (cantos suaves, 16px mínimo em UI, alvo 52px)
 const CARD =
-  "h-full bg-white border border-western-border-soft rounded-[10px] p-6 md:p-7 shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] hover:border-western-gold/50 transition-colors";
+  "h-full bg-white border border-western-border-soft rounded-lg p-6 md:p-7 shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] hover:border-western-gold/50 transition-colors";
 const CARD_ICON =
-  "inline-flex h-12 w-12 items-center justify-center rounded-[10px] bg-western-paper border border-western-border-soft text-western-bronze mb-5";
+  "inline-flex h-12 w-12 items-center justify-center rounded-lg bg-western-paper border border-western-border-soft text-western-bronze mb-5";
 const CARD_TITLE =
   "font-sans font-semibold text-[20px] leading-snug text-western-green-deep mb-2";
 const CARD_DESC = "text-spec leading-relaxed";
 const FIELD_LABEL =
   "block font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-bronze mb-2";
 const FIELD_INPUT =
-  "w-full rounded-[10px] bg-white border-[1.5px] border-western-border-strong px-4 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-cta focus:ring-2 focus:ring-western-cta/20 outline-none transition-colors";
-const FIELD_H = "h-[52px]";
+  "w-full rounded-lg bg-white border-[1.5px] border-western-border-strong px-4 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-cta focus:ring-2 focus:ring-western-cta/20 outline-none transition-colors";
+const FIELD_H = "h-control";
 
 function maskPhone(v: string): string {
   const d = v.replace(/\D/g, "").slice(0, 11);
@@ -366,7 +366,7 @@ export default function ContrateAWestern() {
                   técnica e responsabilidade concentrados em um só time —
                   do render 3D à peça posicionada em obra.
                 </p>
-                <div className="mt-8 aspect-[4/3] overflow-hidden rounded-[16px]">
+                <div className="mt-8 aspect-[4/3] overflow-hidden rounded-2xl">
                   <img
                     src={serraImg}
                     alt="Piscina com cascata Western em meio à serra"
@@ -400,9 +400,12 @@ export default function ContrateAWestern() {
               afirma sem provar (o card "Viabiliza o inviável" e a linha de obras
               logo abaixo) são exatamente os que pedem a saída. */}
           <Reveal variant="fade-up" delay={80} duration={650}>
+            {/* Era text-western-cream DENTRO de surface-ivory — texto claro
+                sobre fundo claro, link invisível (auditoria 2026-07-17).
+                Primeiro consumidor da classe nova .link-cta. */}
             <Link
               to="/a-pedra"
-              className="tap-target mt-10 inline-flex items-center gap-1.5 font-sans text-base font-semibold text-western-cream hover:text-western-gold-soft transition-colors"
+              className="link-cta mt-10"
             >
               Por que a pedra pesa 10× menos
               <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden />
@@ -466,14 +469,14 @@ export default function ContrateAWestern() {
             {PASSOS.map((p, i) => (
               <Reveal key={p.n} variant="fade-up" delay={i * 70} duration={650}>
                 <li
-                  className={`relative h-full bg-white rounded-[10px] p-6 border shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] ${
+                  className={`relative h-full bg-white rounded-lg p-6 border shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] ${
                     p.gratis
                       ? "border-western-gold/50"
                       : "border-western-border-soft"
                   }`}
                 >
                   {p.gratis && (
-                    <span className="absolute -top-3 left-6 rounded-[6px] bg-western-gold px-2.5 py-1 font-sans text-[14px] font-semibold leading-none text-western-green-deep">
+                    <span className="absolute -top-3 left-6 rounded-sm bg-western-gold px-2.5 py-1 font-sans text-[14px] font-semibold leading-none text-western-green-deep">
                       Grátis
                     </span>
                   )}
@@ -523,7 +526,7 @@ export default function ContrateAWestern() {
             <Accordion
               type="single"
               collapsible
-              className="bg-white border border-western-border-soft rounded-[16px] overflow-hidden"
+              className="bg-white border border-western-border-soft rounded-2xl overflow-hidden"
             >
               {FAQ_ITEMS.map((item, i) => (
                 <AccordionItem
@@ -598,7 +601,7 @@ export default function ContrateAWestern() {
             <Reveal variant="fade-up" delay={100} duration={700} className="md:col-span-7">
               <form
                 onSubmit={handleSubmit}
-                className="bg-western-paper border border-western-border-soft rounded-[16px] p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
+                className="bg-western-paper border border-western-border-soft rounded-2xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
                 noValidate
               >
                 <div className="md:col-span-1">

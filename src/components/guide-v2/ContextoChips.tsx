@@ -32,7 +32,7 @@ export default function ContextoChips({ tipo, area, acabamento }: Props) {
 
   return (
     <div className="sticky top-20 z-20 bg-western-paper/95 backdrop-blur-sm border-b border-western-border-soft">
-      <div className="container-western h-[52px] flex items-center gap-3">
+      <div className="container-western h-control flex items-center gap-3">
         <ol className="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto scrollbar-hide">
           {items.map((label) => (
             <li key={label} className="flex-shrink-0">
@@ -46,7 +46,7 @@ export default function ContextoChips({ tipo, area, acabamento }: Props) {
         <Link
           to={editHref}
           aria-label="Editar contexto do projeto"
-          className="tap-target flex-shrink-0 inline-flex items-center gap-2 rounded-[10px] px-2 font-sans text-[14px] font-semibold text-western-bronze hover:text-western-green-deep hover:bg-western-ivory transition-colors"
+          className="tap-target flex-shrink-0 inline-flex items-center gap-2 rounded-lg px-2 font-sans text-[14px] font-semibold text-western-bronze hover:text-western-green-deep hover:bg-western-ivory transition-colors"
         >
           <Pencil className="h-4 w-4 flex-shrink-0" aria-hidden />
           <span className="whitespace-nowrap">

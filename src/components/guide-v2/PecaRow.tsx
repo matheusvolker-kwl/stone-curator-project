@@ -33,7 +33,7 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
   return (
     <div className="flex flex-col md:flex-row md:items-start gap-5 py-6 border-b border-western-border-soft first:border-t">
       <div className="flex gap-4 md:gap-5 flex-1 min-w-0">
-        <div className="w-24 h-24 flex-shrink-0 rounded-[10px] bg-western-paper border border-western-border-soft overflow-hidden">
+        <div className="w-24 h-24 flex-shrink-0 rounded-lg bg-western-paper border border-western-border-soft overflow-hidden">
           {peca.imageUrl ? (
             <img
               src={peca.imageUrl}
@@ -73,7 +73,7 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
       </div>
 
       <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-4 md:gap-3 flex-shrink-0">
-        <div className="inline-flex items-center rounded-[10px] border border-western-border-strong bg-white overflow-hidden">
+        <div className="inline-flex items-center rounded-lg border border-western-border-strong bg-white overflow-hidden">
           <button
             type="button"
             onClick={() => handleQty(peca.qty - 1)}

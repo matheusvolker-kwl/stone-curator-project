@@ -19,7 +19,7 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
   return (
     <article
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-[10px] bg-white cursor-pointer transition-shadow duration-300",
+        "group relative flex flex-col overflow-hidden rounded-lg bg-white cursor-pointer transition-shadow duration-300",
         selected
           ? "border-2 border-western-gold shadow-[0_18px_32px_-26px_hsl(var(--western-stone-dark)/0.4)]"
           : "border border-western-border-soft shadow-[0_12px_24px_-22px_hsl(var(--western-stone-dark)/0.32)] hover:shadow-[0_20px_34px_-26px_hsl(var(--western-stone-dark)/0.4)]"
@@ -50,9 +50,9 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
           }}
           aria-label={selected ? `Adicionar mais uma unidade de ${item.nome}` : `Adicionar ${item.nome} ao projeto`}
           className={cn(
-            "absolute top-2 right-2 inline-flex h-12 items-center justify-center gap-1.5 rounded-[10px] font-sans text-[16px] font-semibold tabular-nums transition-colors",
+            "absolute top-2 right-2 inline-flex h-12 items-center justify-center gap-1.5 rounded-lg font-sans text-[16px] font-semibold tabular-nums transition-colors",
             selected
-              ? "anim-settle min-w-[48px] px-3 bg-western-cta text-western-cream"
+              ? "anim-settle min-w-tap px-3 bg-western-cta text-western-cream"
               : "w-12 bg-white text-western-green-deep border border-western-border-strong hover:bg-western-cta hover:text-western-cream hover:border-western-cta"
           )}
         >
@@ -82,7 +82,7 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
 
         {selected && onSetQty && (
           <div
-            className="mt-3 inline-flex w-full items-center justify-between rounded-[10px] border border-western-border-strong bg-western-ivory overflow-hidden"
+            className="mt-3 inline-flex w-full items-center justify-between rounded-lg border border-western-border-strong bg-western-ivory overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <button

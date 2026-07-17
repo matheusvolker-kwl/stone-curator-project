@@ -94,7 +94,7 @@ export default function CartDrawer({
                     idx === items.length - 1 ? "" : "border-b border-western-border-soft"
                   }`}
                 >
-                  <div className="w-[84px] h-[84px] flex-shrink-0 overflow-hidden rounded-[10px] bg-western-paper border border-western-border-soft">
+                  <div className="w-[84px] h-[84px] flex-shrink-0 overflow-hidden rounded-lg bg-western-paper border border-western-border-soft">
                     {item.productImage && (
                       <img
                         src={cdnImg(item.productImage, 200)}
@@ -141,7 +141,7 @@ export default function CartDrawer({
                     </div>
 
                     <div className="flex items-center gap-4 mt-3 flex-wrap">
-                      <div className="inline-flex items-center rounded-[10px] border border-western-border-strong bg-white overflow-hidden">
+                      <div className="inline-flex items-center rounded-lg border border-western-border-strong bg-white overflow-hidden">
                         <button
                           onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
                           className="h-12 w-12 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
@@ -163,7 +163,7 @@ export default function CartDrawer({
 
                       <button
                         onClick={() => removeItem(item.variantId)}
-                        className="tap-target inline-flex items-center gap-2 px-1 font-sans text-[15px] font-semibold text-[#B3372E] hover:underline"
+                        className="tap-target inline-flex items-center gap-2 px-1 font-sans text-[15px] font-semibold text-status-error hover:underline"
                         aria-label={`Remover ${item.productTitle}`}
                       >
                         <Trash2 className="h-4 w-4" /> Remover
@@ -204,14 +204,14 @@ export default function CartDrawer({
                 <div className="h-2 rounded-full bg-western-border-soft overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-[width] duration-300 ease-out ${
-                      belowMin ? "bg-[#9C6812]" : "bg-[#2E7D4F]"
+                      belowMin ? "bg-status-warning" : "bg-status-success"
                     }`}
                     style={{ width: `${minPct}%` }}
                   />
                 </div>
                 <p
                   className={`font-sans text-[14px] font-semibold mt-1.5 ${
-                    belowMin ? "text-[#9C6812]" : "text-[#2E7D4F]"
+                    belowMin ? "text-status-warning" : "text-status-success"
                   }`}
                 >
                   {belowMin
@@ -226,7 +226,7 @@ export default function CartDrawer({
 
             {/* Preço gated — política comercial B2B */}
             {!isApproved && (
-              <div className="flex items-start gap-2.5 rounded-[10px] border border-western-border-soft bg-western-ivory px-3.5 py-3">
+              <div className="flex items-start gap-2.5 rounded-lg border border-western-border-soft bg-western-ivory px-3.5 py-3">
                 <Lock className="h-5 w-5 text-western-bronze flex-shrink-0 mt-0.5" />
                 <p className="font-sans text-[15px] leading-normal text-western-stone-warm">
                   Preços B2B liberados após aprovação do cadastro. Você pode solicitar orçamento agora mesmo.
@@ -239,7 +239,7 @@ export default function CartDrawer({
             <Link
               to="/carrinho"
               onClick={() => onOpenChange(false)}
-              className="group flex w-full items-center justify-center gap-2 h-14 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold [&_svg]:size-5 transition-colors"
+              className="group flex w-full items-center justify-center gap-2 h-14 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold [&_svg]:size-5 transition-colors"
             >
               Ir para o carrinho
               <ArrowRight className="transition-transform motion-safe:group-hover:translate-x-0.5" />

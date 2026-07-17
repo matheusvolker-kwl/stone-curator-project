@@ -340,7 +340,7 @@ export default function QuoteLeadModal({
                       className="rounded-none mt-1"
                       placeholder="Seu nome completo"
                     />
-                    {errors.nome && <p className="text-[14px] font-semibold text-[#B3372E] mt-1">{errors.nome}</p>}
+                    {errors.nome && <p className="text-[14px] font-semibold text-status-error mt-1">{errors.nome}</p>}
                   </div>
                   <div>
                     <Label className="text-spec text-western-stone-warm">Empresa</Label>
@@ -359,7 +359,7 @@ export default function QuoteLeadModal({
                     <div className="mt-1">
                       <EmailInput value={form.email} onChange={handleChange("email")} />
                     </div>
-                    {errors.email && <p className="text-[14px] font-semibold text-[#B3372E] mt-1">{errors.email}</p>}
+                    {errors.email && <p className="text-[14px] font-semibold text-status-error mt-1">{errors.email}</p>}
                   </div>
                   <div>
                     <Label className="text-spec text-western-stone-warm">WhatsApp *</Label>
@@ -368,7 +368,7 @@ export default function QuoteLeadModal({
                       onChange={handleChange("telefone")}
                       className="rounded-none mt-1"
                     />
-                    {errors.telefone && <p className="text-[14px] font-semibold text-[#B3372E] mt-1">{errors.telefone}</p>}
+                    {errors.telefone && <p className="text-[14px] font-semibold text-status-error mt-1">{errors.telefone}</p>}
                   </div>
                 </div>
 
@@ -393,7 +393,7 @@ export default function QuoteLeadModal({
                   onChange={handleChange("telefone")}
                   className="rounded-none mt-1"
                 />
-                {errors.telefone && <p className="text-[14px] font-semibold text-[#B3372E] mt-1">{errors.telefone}</p>}
+                {errors.telefone && <p className="text-[14px] font-semibold text-status-error mt-1">{errors.telefone}</p>}
               </div>
             )}
 

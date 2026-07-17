@@ -36,7 +36,7 @@ export function InstallationTrustStrip({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center gap-x-3 gap-y-1 rounded-[10px] border border-western-border-soft bg-western-paper/60 px-4 py-2",
+        "flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-western-border-soft bg-western-paper/60 px-4 py-2",
         className,
       )}
     >
@@ -53,7 +53,7 @@ export function InstallationTrustStrip({
       <a
         href={`#${ANCHOR_ID}`}
         onClick={scrollToInstallation}
-        className="ml-auto inline-flex min-h-[48px] items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep underline-offset-4 transition-colors hover:underline"
+        className="ml-auto inline-flex min-h-tap items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep underline-offset-4 transition-colors hover:underline"
       >
         Ver como
         <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -132,7 +132,7 @@ export function InstallationSection({
             {/* Coluna esquerda — Selo nível + fatos + reassurance */}
             <div className="space-y-8 md:col-span-5">
               {/* Selo de nível */}
-              <div className="rounded-[10px] border border-western-border-soft bg-western-cream p-5">
+              <div className="rounded-lg border border-western-border-soft bg-western-cream p-5">
                 <p className="text-sublabel mb-3">Nível de instalação</p>
                 <div className="flex items-center justify-between gap-4">
                   <LevelBars level={level} />
@@ -146,7 +146,7 @@ export function InstallationSection({
               </div>
 
               {/* 3 fatos rápidos */}
-              <ul className="grid grid-cols-3 gap-px overflow-hidden rounded-[10px] border border-western-border-soft bg-western-border-soft">
+              <ul className="grid grid-cols-3 gap-px overflow-hidden rounded-lg border border-western-border-soft bg-western-border-soft">
                 {facts.map((f) => (
                   <li key={f.label} className="bg-western-cream px-3 py-4 text-center">
                     <p className="text-sublabel mb-2">{f.label}</p>
@@ -162,7 +162,7 @@ export function InstallationSection({
 
               {/* Avisos que valem ouro — impermeabilização, cura, elétrica, bomba */}
               {warnings.length > 0 && (
-                <div className="rounded-[16px] border border-western-border-strong bg-western-ivory p-5">
+                <div className="rounded-2xl border border-western-border-strong bg-western-ivory p-5">
                   <p className="text-sublabel mb-4">Antes de começar</p>
                   <ul className="space-y-5">
                     {warnings.map((w) => (

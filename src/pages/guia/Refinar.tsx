@@ -316,7 +316,7 @@ export default function GuiaRefinar() {
 
             {/* Aviso sob consulta */}
             {isCustomizado && (
-              <div className="mt-10 rounded-[10px] border border-western-gold/40 bg-western-gold/[0.08] p-5 md:p-6">
+              <div className="mt-10 rounded-lg border border-western-gold/40 bg-western-gold/[0.08] p-5 md:p-6">
                 <p className="text-eyebrow inline-flex items-center gap-2 mb-2">
                   <Info className="h-4 w-4" aria-hidden /> Projeto autoral · sob consulta
                 </p>
@@ -509,11 +509,11 @@ function SkeletonRows({ count }: { count: number }) {
           key={i}
           className="flex items-start gap-5 py-6 border-b border-western-border-soft first:border-t animate-pulse"
         >
-          <div className="w-24 h-24 rounded-[10px] bg-western-paper" />
+          <div className="w-24 h-24 rounded-lg bg-western-paper" />
           <div className="flex-1 space-y-3">
-            <div className="h-5 w-2/3 rounded-[6px] bg-western-paper" />
-            <div className="h-4 w-1/3 rounded-[6px] bg-western-paper" />
-            <div className="h-5 w-1/4 rounded-[6px] bg-western-paper" />
+            <div className="h-5 w-2/3 rounded-sm bg-western-paper" />
+            <div className="h-4 w-1/3 rounded-sm bg-western-paper" />
+            <div className="h-5 w-1/4 rounded-sm bg-western-paper" />
           </div>
         </div>
       ))}
@@ -527,12 +527,12 @@ function SkeletonCards({ count }: { count: number }) {
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="rounded-[10px] border border-western-border-soft bg-white overflow-hidden animate-pulse"
+          className="rounded-lg border border-western-border-soft bg-white overflow-hidden animate-pulse"
         >
           <div className="aspect-square bg-western-paper" />
           <div className="p-4 space-y-3">
-            <div className="h-5 w-2/3 rounded-[6px] bg-western-paper" />
-            <div className="h-4 w-1/3 rounded-[6px] bg-western-paper" />
+            <div className="h-5 w-2/3 rounded-sm bg-western-paper" />
+            <div className="h-4 w-1/3 rounded-sm bg-western-paper" />
           </div>
         </div>
       ))}

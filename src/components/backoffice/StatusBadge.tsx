@@ -28,10 +28,10 @@ export type TomStatus = "neutro" | "info" | "andamento" | "positivo" | "aviso" |
 const TOM_CLS: Record<TomStatus, string> = {
   neutro: "border-western-border-strong bg-western-paper text-western-stone-warm",
   info: "border-western-bronze/35 bg-western-bronze/[0.07] text-western-bronze",
-  andamento: "border-[#9C6812]/30 bg-[#9C6812]/[0.07] text-[#9C6812]",
-  positivo: "border-[#2E7D4F]/30 bg-[#2E7D4F]/[0.07] text-[#2E7D4F]",
-  aviso: "border-[#9C6812]/30 bg-[#9C6812]/[0.07] text-[#9C6812]",
-  negativo: "border-[#B3372E]/30 bg-[#B3372E]/[0.06] text-[#B3372E]",
+  andamento: "border-status-warning/30 bg-status-warning/[0.07] text-status-warning",
+  positivo: "border-status-success/30 bg-status-success/[0.07] text-status-success",
+  aviso: "border-status-warning/30 bg-status-warning/[0.07] text-status-warning",
+  negativo: "border-status-error/30 bg-status-error/[0.06] text-status-error",
 };
 
 interface Meta {
@@ -100,7 +100,7 @@ export function StatusBadge({ status, label, tom, className }: Props) {
   return (
     <span
       className={cn(
-        "inline-flex items-center whitespace-nowrap rounded-[6px] border px-2.5 py-1",
+        "inline-flex items-center whitespace-nowrap rounded-sm border px-2.5 py-1",
         "text-[14px] font-semibold leading-none",
         TOM_CLS[tomFinal],
         className,

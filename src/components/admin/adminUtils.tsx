@@ -21,7 +21,7 @@ export function downloadCSV(filename: string, content: string) {
 }
 
 export function chipCls(active: boolean) {
-  return `tap-target inline-flex items-center rounded-[10px] px-4 text-[16px] font-semibold border transition-colors ${
+  return `tap-target inline-flex items-center rounded-lg px-4 text-[16px] font-semibold border transition-colors ${
     active
       ? "border-western-cta/40 text-western-green-deep bg-western-cta/[0.08]"
       : "border-western-border-soft text-western-stone-warm hover:border-western-cta/50 hover:text-western-green-deep"

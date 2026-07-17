@@ -147,7 +147,7 @@ export default function AccountSketches() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="tap-target inline-flex items-center gap-2 rounded-[10px] px-3 text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+            className="tap-target inline-flex items-center gap-2 rounded-lg px-3 text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
           >
             <Download className="h-4 w-4" aria-hidden="true" />
             Baixar

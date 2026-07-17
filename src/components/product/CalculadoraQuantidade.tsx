@@ -118,14 +118,14 @@ export default function CalculadoraQuantidade({
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 items-start">
           {/* Entrada — uma pergunta por vez */}
-          <div className="rounded-[16px] border border-western-border-soft bg-white p-6 md:p-7">
+          <div className="rounded-2xl border border-western-border-soft bg-white p-6 md:p-7">
             <label
               htmlFor={inputId}
               className="block font-sans text-[16px] font-semibold text-western-green-deep mb-3"
             >
               {campoLabel}
             </label>
-            <div className="flex items-center h-[52px] rounded-[10px] border border-western-border-strong bg-white focus-within:border-western-green-deep transition-colors">
+            <div className="flex items-center h-control rounded-lg border border-western-border-strong bg-white focus-within:border-western-green-deep transition-colors">
               <input
                 id={inputId}
                 type="text"
@@ -137,7 +137,7 @@ export default function CalculadoraQuantidade({
                   if (/^\d{0,5}([.,]\d{0,2})?$/.test(v)) setRaw(v);
                 }}
                 placeholder="0"
-                className="h-[52px] flex-1 min-w-0 bg-transparent px-4 rounded-l-[10px] font-sans text-[20px] font-semibold tabular-nums text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none"
+                className="h-control flex-1 min-w-0 bg-transparent px-4 rounded-l-[10px] font-sans text-[20px] font-semibold tabular-nums text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none"
               />
               <span
                 aria-hidden
@@ -160,7 +160,7 @@ export default function CalculadoraQuantidade({
                       type="button"
                       onClick={() => setSobra(pct)}
                       aria-pressed={selected}
-                      className={`tap-target inline-flex items-center justify-center px-6 rounded-[10px] border font-sans text-[16px] tabular-nums transition-colors ${
+                      className={`tap-target inline-flex items-center justify-center px-6 rounded-lg border font-sans text-[16px] tabular-nums transition-colors ${
                         selected
                           ? "border-western-gold bg-western-gold/10 text-western-green-deep font-semibold"
                           : "border-western-border-strong text-western-green-deep font-medium hover:border-western-green-deep"
@@ -180,7 +180,7 @@ export default function CalculadoraQuantidade({
           </div>
 
           {/* Resultado — grande, legível e explicado */}
-          <div className="rounded-[16px] bg-western-green-deep p-6 md:p-7 text-western-cream">
+          <div className="rounded-2xl bg-western-green-deep p-6 md:p-7 text-western-cream">
             <p className="font-sans text-[14px] uppercase tracking-[0.06em] font-semibold text-western-gold">
               Você precisa de
             </p>

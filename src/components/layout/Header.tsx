@@ -229,7 +229,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
       <ul
         id={`${idPrefix}search-suggestions`}
         role="listbox"
-        className="bg-white border border-western-border-soft rounded-[10px] shadow-lg max-h-[60vh] overflow-y-auto overflow-hidden"
+        className="bg-white border border-western-border-soft rounded-lg shadow-lg max-h-[60vh] overflow-y-auto overflow-hidden"
       >
         {suggestions.atalhos.length > 0 && (
           <li className="text-eyebrow px-4 pt-4 pb-2">Ir para</li>
@@ -253,7 +253,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 active ? "bg-western-paper" : "hover:bg-western-paper"
               }`}
             >
-              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[6px] bg-western-cta/10">
+              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-sm bg-western-cta/10">
                 <ArrowRight className="h-5 w-5 text-western-cta" aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">
@@ -287,7 +287,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 active ? "bg-western-paper" : "hover:bg-western-paper"
               }`}
             >
-              <div className="h-11 w-11 flex-shrink-0 bg-western-paper rounded-[6px] overflow-hidden">
+              <div className="h-11 w-11 flex-shrink-0 bg-western-paper rounded-sm overflow-hidden">
                 {c.image?.url && (
                   <img
                     src={cdnImg(c.image.url, 80)}
@@ -328,7 +328,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 active ? "bg-western-paper" : "hover:bg-western-paper"
               }`}
             >
-              <div className="h-11 w-11 flex-shrink-0 bg-western-paper rounded-[6px] overflow-hidden">
+              <div className="h-11 w-11 flex-shrink-0 bg-western-paper rounded-sm overflow-hidden">
                 {img?.url && (
                   <img
                     src={cdnImg(img.url, 80)}
@@ -358,10 +358,10 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   /* Ação do header: ícone + rótulo (público 40+ não decifra ícone mudo).
      56x48 mínimo — alvo de toque do DS. */
   const actionCls =
-    "relative inline-flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 rounded-[6px] text-[14px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors";
+    "relative inline-flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-tap px-2 rounded-sm text-[14px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors";
 
   const navLinkCls = ({ isActive }: { isActive: boolean }) =>
-    `inline-flex items-center min-h-[48px] px-3 xl:px-3.5 text-[16px] font-medium whitespace-nowrap border-b-2 transition-colors ${
+    `inline-flex items-center min-h-tap px-3 xl:px-3.5 text-[16px] font-medium whitespace-nowrap border-b-2 transition-colors ${
       isActive
         ? "border-western-gold text-western-green-deep font-semibold"
         : "border-transparent text-western-green-deep hover:border-western-gold"
@@ -415,7 +415,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         <Link
           to="/"
           aria-label="Western — Início"
-          className="flex-shrink-0 inline-flex items-center min-h-[48px]"
+          className="flex-shrink-0 inline-flex items-center min-h-tap"
         >
           <img src={logoVerde} alt="Western" className="h-7 sm:h-8 lg:h-10 w-auto" />
         </Link>
@@ -424,7 +424,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         <div className="hidden lg:block relative flex-1 max-w-[420px]">
           <form
             onSubmit={handleSearch}
-            className="flex items-center gap-3 px-4 h-[52px] rounded-[10px] border-[1.5px] border-western-border-strong bg-white focus-within:border-western-cta transition-colors"
+            className="flex items-center gap-3 px-4 h-control rounded-lg border-[1.5px] border-western-border-strong bg-white focus-within:border-western-cta transition-colors"
           >
             <Search className="h-5 w-5 text-western-stone-warm flex-shrink-0" strokeWidth={1.75} />
             <input
@@ -448,7 +448,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 type="button"
                 onClick={() => setQuery("")}
                 aria-label="Limpar busca"
-                className="inline-flex items-center justify-center h-9 w-9 -mr-2 rounded-[6px] text-western-stone-warm hover:text-western-green-deep transition-colors"
+                className="inline-flex items-center justify-center h-9 w-9 -mr-2 rounded-sm text-western-stone-warm hover:text-western-green-deep transition-colors"
               >
                 <X className="h-5 w-5" strokeWidth={1.75} />
               </button>
@@ -584,7 +584,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               type="button"
               onClick={() => setMenuOpen(true)}
               aria-label="Abrir menu completo"
-              className="inline-flex items-center gap-2 min-h-[48px] px-3 text-[16px] font-medium text-western-green-deep border-b-2 border-transparent hover:border-western-gold transition-colors"
+              className="inline-flex items-center gap-2 min-h-tap px-3 text-[16px] font-medium text-western-green-deep border-b-2 border-transparent hover:border-western-gold transition-colors"
             >
               <Menu className="h-5 w-5" strokeWidth={1.75} />
               Menu
@@ -595,7 +595,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 <span aria-hidden="true" className="h-6 w-px bg-western-border-soft" />
                 <Link
                   to={PARTNER_INTENT.to}
-                  className="inline-flex items-center justify-center min-h-[48px] px-5 rounded-[10px] bg-western-cta text-western-cream text-[16px] font-semibold whitespace-nowrap hover:bg-western-green-deep transition-colors"
+                  className="inline-flex items-center justify-center min-h-tap px-5 rounded-lg bg-western-cta text-western-cream text-[16px] font-semibold whitespace-nowrap hover:bg-western-green-deep transition-colors"
                 >
                   {PARTNER_INTENT.label}
                 </Link>
@@ -622,7 +622,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               <button
                 onClick={() => setMenuOpen(false)}
                 aria-label="Fechar menu"
-                className="-mr-2 inline-flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] rounded-[6px] text-[14px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors"
+                className="-mr-2 inline-flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-tap rounded-sm text-[14px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors"
               >
                 <X className="h-6 w-6" strokeWidth={1.75} />
                 Fechar
@@ -639,7 +639,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                     <Link
                       to="/minha-conta"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-3 w-full min-h-[64px] px-4 rounded-[10px] bg-western-paper border border-western-border-soft hover:border-western-cta transition-colors"
+                      className="flex items-center gap-3 w-full min-h-[64px] px-4 rounded-lg bg-western-paper border border-western-border-soft hover:border-western-cta transition-colors"
                     >
                       <User className="h-6 w-6 shrink-0 text-western-cta" strokeWidth={1.75} />
                       <span className="min-w-0 flex-1">
@@ -680,7 +680,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                     <Link
                       to="/parceiro/cadastro"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center justify-center w-full min-h-[52px] px-5 rounded-[10px] bg-western-cta text-western-cream text-[17px] font-semibold hover:bg-western-green-deep transition-colors"
+                      className="flex items-center justify-center w-full min-h-control px-5 rounded-lg bg-western-cta text-western-cream text-[17px] font-semibold hover:bg-western-green-deep transition-colors"
                     >
                       Seja parceiro
                     </Link>
@@ -765,7 +765,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           <SheetTitle className="text-eyebrow mb-3">Buscar no catálogo</SheetTitle>
           <form
             onSubmit={handleSearch}
-            className="flex items-center gap-3 px-4 h-[52px] rounded-[10px] border-[1.5px] border-western-border-strong bg-white focus-within:border-western-cta transition-colors"
+            className="flex items-center gap-3 px-4 h-control rounded-lg border-[1.5px] border-western-border-strong bg-white focus-within:border-western-cta transition-colors"
           >
             <Search className="h-5 w-5 text-western-stone-warm flex-shrink-0" strokeWidth={1.75} />
             <input

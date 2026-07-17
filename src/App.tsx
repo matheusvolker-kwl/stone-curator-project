@@ -91,9 +91,9 @@ const PoliticaComercial = lazy(() => import("./pages/legal/PoliticaComercial.tsx
 const TrocasAvarias = lazy(() => import("./pages/legal/TrocasAvarias.tsx"));
 const PoliticaPrivacidade = lazy(() => import("./pages/legal/PoliticaPrivacidade.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
-const Entrada = lazy(() => import("./pages/Entrada.tsx"));
-const Parceria = lazy(() => import("./pages/Parceria.tsx"));
-const ParceriaDireto = lazy(() => import("./pages/ParceriaDireto.tsx"));
+/* Entrada/Parceria/ParceriaDireto aposentadas em 2026-07-17 — viraram
+   redirects (ver as rotas). A home já segmenta B2B×B2C e /contrate-a-western
+   é a página de serviços que a /parceria prometia. */
 const FavoritosCompartilhados = lazy(() => import("./pages/FavoritosCompartilhados.tsx"));
 
 const queryClient = new QueryClient({
@@ -168,9 +168,12 @@ const App = () => (
                       ? <Route path="/inicio" element={<Index />} />
                       : <Route path="/" element={<Index />} />}
                     <Route path="/linhas" element={<Linhas />} />
-                    <Route path="/entrada" element={<Entrada />} />
-                    <Route path="/parceria" element={<Parceria />} />
-                    <Route path="/parceria-direto" element={<ParceriaDireto />} />
+                    {/* Aposentadas (2026-07-17, decisão do dono): 873 linhas
+                        órfãs de nav vendendo a versão velha do site. Redirect
+                        preserva qualquer link antigo. */}
+                    <Route path="/entrada" element={<Navigate to="/" replace />} />
+                    <Route path="/parceria" element={<Navigate to="/contrate-a-western" replace />} />
+                    <Route path="/parceria-direto" element={<Navigate to="/contrate-a-western" replace />} />
                     {/* Orçamento (página pública) removido por decisão do dono — B2C vai pro atendimento */}
                     <Route path="/orcamento" element={<Navigate to="/contato" replace />} />
                     {/* v1 usava /linhas/pisantes — preservar SEO/links externos no cutover */}

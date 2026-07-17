@@ -69,7 +69,7 @@ export default function EmptyCartHints({ onNavigate }: Props) {
               <Link
                 to={h.to}
                 onClick={onNavigate}
-                className="group flex items-center justify-between gap-3 min-h-[64px] p-4 rounded-[10px] border border-western-border-soft bg-white hover:border-western-border-strong transition-colors"
+                className="group flex items-center justify-between gap-3 min-h-[64px] p-4 rounded-lg border border-western-border-soft bg-white hover:border-western-border-strong transition-colors"
               >
                 <span className="min-w-0">
                   <span className="block font-sans text-[17px] font-semibold leading-snug text-western-green-deep group-hover:text-western-cta transition-colors">
@@ -93,7 +93,7 @@ export default function EmptyCartHints({ onNavigate }: Props) {
       {showWishlist && (
         <section>
           <p className="text-eyebrow mb-3">Seus favoritos</p>
-          <div className="rounded-[10px] border border-western-border-soft bg-western-paper p-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="rounded-lg border border-western-border-soft bg-western-paper p-4 flex flex-wrap items-center justify-between gap-3">
             <p className="flex-1 min-w-[180px] font-sans text-[16px] leading-normal text-western-stone-warm">
               Você tem{" "}
               <span className="font-semibold text-western-green-deep">{wishItems.length}</span>{" "}
@@ -103,7 +103,7 @@ export default function EmptyCartHints({ onNavigate }: Props) {
               type="button"
               onClick={handleAddAllFavorites}
               disabled={loadingAll}
-              className="flex-shrink-0 min-h-[48px] px-4 inline-flex items-center justify-center gap-2 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors disabled:opacity-45"
+              className="flex-shrink-0 min-h-tap px-4 inline-flex items-center justify-center gap-2 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors disabled:opacity-45"
             >
               {loadingAll ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -124,12 +124,12 @@ export default function EmptyCartHints({ onNavigate }: Props) {
             {recents.slice(0, 4).map((r) => (
               <li
                 key={r.handle}
-                className="flex items-center gap-3 p-3 rounded-[10px] border border-western-border-soft bg-white hover:border-western-border-strong transition-colors"
+                className="flex items-center gap-3 p-3 rounded-lg border border-western-border-soft bg-white hover:border-western-border-strong transition-colors"
               >
                 <Link
                   to={`/produtos/${r.handle}`}
                   onClick={onNavigate}
-                  className="w-14 h-14 flex-shrink-0 overflow-hidden rounded-[6px] bg-western-paper border border-western-border-soft"
+                  className="w-14 h-14 flex-shrink-0 overflow-hidden rounded-sm bg-western-paper border border-western-border-soft"
                 >
                   {r.image && (
                     <img
@@ -150,7 +150,7 @@ export default function EmptyCartHints({ onNavigate }: Props) {
                 <Link
                   to={`/produtos/${r.handle}`}
                   onClick={onNavigate}
-                  className="tap-target flex-shrink-0 inline-flex items-center justify-center rounded-[10px] text-western-bronze hover:text-western-cta hover:bg-western-paper transition-colors"
+                  className="tap-target flex-shrink-0 inline-flex items-center justify-center rounded-lg text-western-bronze hover:text-western-cta hover:bg-western-paper transition-colors"
                   aria-label={`Ver ${r.title}`}
                 >
                   <ArrowRight className="h-5 w-5" />

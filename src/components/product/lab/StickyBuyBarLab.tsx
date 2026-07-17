@@ -125,10 +125,10 @@ export default function StickyBuyBarLab({
                   {priceLabel}
                 </span>
               )}
-              <div className="flex items-center rounded-[10px] border border-western-border-strong h-[52px] flex-shrink-0 overflow-hidden">
+              <div className="flex items-center rounded-lg border border-western-border-strong h-control flex-shrink-0 overflow-hidden">
                 <button
                   onClick={() => onQtyChange(Math.max(1, qty - 1))}
-                  className="h-[52px] w-12 flex items-center justify-center hover:bg-western-paper transition-colors text-western-green-deep"
+                  className="h-control w-12 flex items-center justify-center hover:bg-western-paper transition-colors text-western-green-deep"
                   aria-label="Diminuir"
                 >
                   <Minus className="h-4 w-4" />
@@ -138,7 +138,7 @@ export default function StickyBuyBarLab({
                 </span>
                 <button
                   onClick={() => onQtyChange(qty + 1)}
-                  className="h-[52px] w-12 flex items-center justify-center hover:bg-western-paper transition-colors text-western-green-deep"
+                  className="h-control w-12 flex items-center justify-center hover:bg-western-paper transition-colors text-western-green-deep"
                   aria-label="Aumentar"
                 >
                   <Plus className="h-4 w-4" />
@@ -181,7 +181,7 @@ export default function StickyBuyBarLab({
         <div className="md:hidden">
           <div className="flex items-center gap-3 mb-2.5">
             {productImage && (
-              <div className="w-11 h-11 flex-shrink-0 rounded-[6px] overflow-hidden bg-western-paper border border-western-border-soft">
+              <div className="w-11 h-11 flex-shrink-0 rounded-sm overflow-hidden bg-western-paper border border-western-border-soft">
                 <img
                   src={cdnImg(productImage, 160)}
                   alt=""
@@ -201,7 +201,7 @@ export default function StickyBuyBarLab({
               )}
             </div>
             {isApproved && (
-              <div className="flex items-center rounded-[10px] border border-western-border-strong h-12 flex-shrink-0 overflow-hidden">
+              <div className="flex items-center rounded-lg border border-western-border-strong h-12 flex-shrink-0 overflow-hidden">
                 <button
                   onClick={() => onQtyChange(Math.max(1, qty - 1))}
                   className="h-12 w-11 flex items-center justify-center text-western-green-deep"

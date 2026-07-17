@@ -92,7 +92,7 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
           }
         >
           {img && (
-            <figure className="relative m-0 overflow-hidden rounded-[16px] border border-western-border-soft bg-western-cream-muted">
+            <figure className="relative m-0 overflow-hidden rounded-2xl border border-western-border-soft bg-western-cream-muted">
               <img
                 src={img}
                 alt={`Pessoa de 1,70 m ao lado de ${productTitle} — referência de tamanho real`}

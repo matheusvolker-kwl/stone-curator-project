@@ -47,7 +47,7 @@ const COLECOES: { label: string; handle: string }[] = [
  * break-all/anywhere aqui. */
 const colTitle = "text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft mb-4";
 const colLink =
-  "inline-flex items-center min-h-[48px] md:min-h-[36px] max-w-full break-normal text-[16px] text-western-cream hover:text-western-gold-soft hover:underline underline-offset-4 transition-colors";
+  "inline-flex items-center min-h-tap md:min-h-[36px] max-w-full break-normal text-[16px] text-western-cream hover:text-western-gold-soft hover:underline underline-offset-4 transition-colors";
 
 /* Quebra saudável do e-mail: única oportunidade de quebra é DEPOIS do "@"
  * (comercial@ / westernpools.com.br). O domínio nunca é partido no meio. */
@@ -235,14 +235,14 @@ export default function Footer() {
 
           <div>
             {done ? (
-              <div className="flex items-center gap-3 rounded-[10px] border border-western-gold/40 bg-western-gold/10 px-4 min-h-[52px] text-[17px] text-western-cream">
+              <div className="flex items-center gap-3 rounded-lg border border-western-gold/40 bg-western-gold/10 px-4 min-h-control text-[17px] text-western-cream">
                 <Check className="h-5 w-5 text-western-gold-soft shrink-0" strokeWidth={1.75} />
                 Inscrição confirmada.
               </div>
             ) : (
               <>
                 <form onSubmit={handleNewsletter} className="flex flex-col sm:flex-row gap-3">
-                  <div className="flex items-center gap-3 flex-1 px-4 min-h-[52px] rounded-[10px] border-[1.5px] border-western-cream/40 focus-within:border-western-gold-soft transition-colors">
+                  <div className="flex items-center gap-3 flex-1 px-4 min-h-control rounded-lg border-[1.5px] border-western-cream/40 focus-within:border-western-gold-soft transition-colors">
                     <Mail className="h-5 w-5 text-western-gold-soft shrink-0" strokeWidth={1.75} />
                     <input
                       type="email"

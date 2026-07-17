@@ -26,7 +26,7 @@ export default function TipoCard({ value, label, microcopy, image, selected, onS
       onClick={() => onSelect(value)}
       aria-pressed={selected}
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-[10px] border-2 bg-white text-left transition-colors duration-200",
+        "group relative flex h-full flex-col overflow-hidden rounded-lg border-2 bg-white text-left transition-colors duration-200",
         selected
           ? "border-western-cta shadow-[0_22px_36px_-28px_hsl(var(--western-stone-dark)/0.42)]"
           : "border-western-border-soft hover:border-western-border-strong",

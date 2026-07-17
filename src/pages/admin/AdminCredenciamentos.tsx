@@ -247,7 +247,7 @@ export function CredenciamentoTab() {
               {r.email ? ` · ${r.email}` : ""}
             </p>
             {isPendentes && !r.user_id && (
-              <span className="mt-1 inline-flex items-center rounded-[6px] border border-[#9C6812]/30 bg-[#9C6812]/[0.07] px-2 py-0.5 text-[14px] font-semibold leading-none text-[#9C6812]">
+              <span className="mt-1 inline-flex items-center rounded-sm border border-status-warning/30 bg-status-warning/[0.07] px-2 py-0.5 text-[14px] font-semibold leading-none text-status-warning">
                 Sem conta vinculada
               </span>
             )}
@@ -361,7 +361,7 @@ export function CredenciamentoTab() {
             onChange={(e) => setQ(e.target.value)}
             placeholder="Empresa, CNPJ, e-mail, protocolo…"
             aria-label="Buscar credenciamento"
-            className="h-[48px] rounded-[6px] border-western-border-strong bg-white pl-10 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/70"
+            className="h-tap rounded-sm border-western-border-strong bg-white pl-10 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/70"
           />
         </div>
       </div>
@@ -397,7 +397,7 @@ export function CredenciamentoTab() {
                 barra: () => (
                   <>
                     {semConta > 0 && (
-                      <span className="text-[14px] font-semibold text-[#9C6812]">
+                      <span className="text-[14px] font-semibold text-status-warning">
                         {semConta} sem conta — será pulado
                       </span>
                     )}
@@ -405,7 +405,7 @@ export function CredenciamentoTab() {
                       type="button"
                       onClick={() => setConfirmRejectOpen(true)}
                       disabled={bulkBusy}
-                      className="tap-target inline-flex items-center gap-2 rounded-[10px] border border-[#B3372E]/45 px-4 text-[16px] font-semibold text-[#B3372E] transition-colors hover:bg-[#B3372E]/10 disabled:opacity-45"
+                      className="tap-target inline-flex items-center gap-2 rounded-lg border border-status-error/45 px-4 text-[16px] font-semibold text-status-error transition-colors hover:bg-status-error/10 disabled:opacity-45"
                     >
                       <ShieldX className="h-4 w-4" aria-hidden="true" />
                       Recusar
@@ -540,7 +540,7 @@ function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: 
 
         <div className="mt-6 space-y-6">
           {/* O veredito da máquina, e por quê. */}
-          <section className="rounded-[16px] border border-western-border-soft bg-western-paper p-4">
+          <section className="rounded-2xl border border-western-border-soft bg-western-paper p-4">
             <p className="text-eyebrow mb-3">Decisão automática</p>
             <div className="flex flex-wrap items-center gap-3">
               <StatusBadge
@@ -574,7 +574,7 @@ function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: 
           </dl>
 
           {cred.card_path && (
-            <section className="rounded-[16px] border border-western-border-soft p-4">
+            <section className="rounded-2xl border border-western-border-soft p-4">
               <p className="text-eyebrow mb-3">Cartão CNPJ</p>
               {cardErro ? (
                 <EstadoErro erro={cardErro} titulo="Não consegui abrir o documento" compacto />
@@ -599,7 +599,7 @@ function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: 
             <div>
               <Label className="text-eyebrow mb-2 block">Nível ao aprovar</Label>
               <Select value={tier} onValueChange={(v) => setTier(v as Tier)}>
-                <SelectTrigger className="h-[52px] rounded-[6px] border-western-border-strong text-[16px]">
+                <SelectTrigger className="h-control rounded-sm border-western-border-strong text-[16px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -614,12 +614,12 @@ function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: 
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Fica registrada no cadastro."
-                className="h-[52px] rounded-[6px] border-western-border-strong text-[16px]"
+                className="h-control rounded-sm border-western-border-strong text-[16px]"
               />
             </div>
 
             {!cred.user_id && (
-              <p className="rounded-[10px] border border-[#9C6812]/35 bg-[#9C6812]/[0.07] p-3 text-[16px] leading-[1.5] text-[#9C6812]">
+              <p className="rounded-lg border border-status-warning/35 bg-status-warning/[0.07] p-3 text-[16px] leading-[1.5] text-status-warning">
                 Cadastro sem conta vinculada — não é possível liberar o acesso. O cliente precisa se
                 cadastrar em /parceria primeiro.
               </p>
@@ -630,7 +630,7 @@ function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: 
                 type="button"
                 onClick={() => apply("recusado")}
                 disabled={saving}
-                className="tap-target inline-flex h-[52px] items-center justify-center gap-2 rounded-[10px] border border-[#B3372E]/45 px-5 text-[16px] font-semibold text-[#B3372E] transition-colors hover:bg-[#B3372E]/10 disabled:opacity-45"
+                className="tap-target inline-flex h-control items-center justify-center gap-2 rounded-lg border border-status-error/45 px-5 text-[16px] font-semibold text-status-error transition-colors hover:bg-status-error/10 disabled:opacity-45"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <ShieldX className="h-4 w-4" aria-hidden="true" />}
                 Recusar
@@ -651,7 +651,7 @@ function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: 
               type="button"
               onClick={reavaliar}
               disabled={saving}
-              className="tap-target w-full rounded-[10px] border border-western-border-strong px-5 text-[16px] font-semibold text-western-stone-warm transition-colors hover:border-western-green-deep hover:text-western-green-deep disabled:opacity-45"
+              className="tap-target w-full rounded-lg border border-western-border-strong px-5 text-[16px] font-semibold text-western-stone-warm transition-colors hover:border-western-green-deep hover:text-western-green-deep disabled:opacity-45"
             >
               Reavaliar nas fontes (Receita / BrasilAPI / CNPJá)
             </button>

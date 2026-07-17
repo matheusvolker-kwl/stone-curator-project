@@ -58,15 +58,15 @@ const INITIAL: Form = {
  * de 1.5px — o público 40+ precisa VER o campo. Erro em sans 14px semibold,
  * nunca mono/caixa-alta de 10px. CTA primário é VERDE e full-width no mobile. */
 const CONTROL =
-  "h-[52px] w-full rounded-[10px] border-[1.5px] bg-western-paper px-4 font-sans text-[16px] md:text-[16px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 transition-colors focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0";
+  "h-control w-full rounded-lg border-[1.5px] bg-western-paper px-4 font-sans text-[16px] md:text-[16px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 transition-colors focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0";
 const CONTROL_OK = "border-western-border-strong focus:border-western-green-deep";
-const CONTROL_ERR = "border-[#B3372E] focus:border-[#B3372E]";
+const CONTROL_ERR = "border-status-error focus:border-status-error";
 
 const control = (hasError?: boolean) => `${CONTROL} ${hasError ? CONTROL_ERR : CONTROL_OK}`;
 
 function FieldError({ id, children }: { id?: string; children: React.ReactNode }) {
   return (
-    <p id={id} role="alert" className="mt-2 font-sans text-[14px] font-semibold leading-snug text-[#B3372E]">
+    <p id={id} role="alert" className="mt-2 font-sans text-[14px] font-semibold leading-snug text-status-error">
       {children}
     </p>
   );
@@ -284,10 +284,10 @@ export default function PartnerSignup() {
     return (
       <div className="surface-ivory">
         <div className="container-western py-16 md:py-24 max-w-2xl text-center">
-          {d === "aprovado" && <CheckCircle2 className="h-12 w-12 text-[#2E7D4F] mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
-          {d === "analise" && <AlertTriangle className="h-12 w-12 text-[#9C6812] mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
-          {d === "reprovado" && <XCircle className="h-12 w-12 text-[#B3372E] mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
-          {d === "solicitar_cartao" && <AlertTriangle className="h-12 w-12 text-[#9C6812] mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
+          {d === "aprovado" && <CheckCircle2 className="h-12 w-12 text-status-success mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
+          {d === "analise" && <AlertTriangle className="h-12 w-12 text-status-warning mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
+          {d === "reprovado" && <XCircle className="h-12 w-12 text-status-error mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
+          {d === "solicitar_cartao" && <AlertTriangle className="h-12 w-12 text-status-warning mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
 
           <p className="text-eyebrow mb-4">
             {d === "aprovado" && "Cadastro aprovado"}
@@ -423,7 +423,7 @@ export default function PartnerSignup() {
           )}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="group tap-target flex items-center gap-4 rounded-[16px] border border-western-border-soft bg-western-paper p-5 md:p-6 mb-10 transition-colors duration-200 hover:border-western-border-strong hover:bg-western-cream/40"
+          className="group tap-target flex items-center gap-4 rounded-2xl border border-western-border-soft bg-western-paper p-5 md:p-6 mb-10 transition-colors duration-200 hover:border-western-border-strong hover:bg-western-cream/40"
         >
           <MessageCircle className="h-6 w-6 flex-shrink-0 text-western-bronze" strokeWidth={1.75} aria-hidden="true" />
           <span className="flex-1 min-w-0">
@@ -446,8 +446,8 @@ export default function PartnerSignup() {
             Etapa {step} de 2 · {step === 1 ? "Empresa" : "Responsável e acesso"}
           </p>
           <div className="flex gap-2" aria-hidden="true">
-            <span className="h-1.5 flex-1 rounded-[6px] bg-western-cta" />
-            <span className={`h-1.5 flex-1 rounded-[6px] ${step >= 2 ? "bg-western-cta" : "bg-western-border-soft"}`} />
+            <span className="h-1.5 flex-1 rounded-sm bg-western-cta" />
+            <span className={`h-1.5 flex-1 rounded-sm ${step >= 2 ? "bg-western-cta" : "bg-western-border-soft"}`} />
           </div>
         </div>
 
@@ -518,7 +518,7 @@ export default function PartnerSignup() {
                 </div>
                 <div>
                   <FieldLabel htmlFor="instagram" optional>Instagram</FieldLabel>
-                  <div className="flex items-stretch h-[52px] overflow-hidden rounded-[10px] border-[1.5px] border-western-border-strong bg-western-paper transition-colors focus-within:border-western-green-deep">
+                  <div className="flex items-stretch h-control overflow-hidden rounded-lg border-[1.5px] border-western-border-strong bg-western-paper transition-colors focus-within:border-western-green-deep">
                     <span className="px-4 flex items-center font-sans text-[16px] font-medium text-western-stone-warm border-r border-western-border-soft select-none">
                       @
                     </span>
@@ -617,7 +617,7 @@ export default function PartnerSignup() {
                     onChange={(e) => set("aceite", e.target.checked)}
                     aria-invalid={!!errors.aceite}
                     aria-describedby={errors.aceite ? "aceite-error" : undefined}
-                    className="mt-0.5 h-6 w-6 flex-shrink-0 rounded-[6px] accent-western-cta"
+                    className="mt-0.5 h-6 w-6 flex-shrink-0 rounded-sm accent-western-cta"
                   />
                   <span className="font-sans text-[16px] leading-relaxed text-western-stone-warm">
                     Li e concordo com a{" "}

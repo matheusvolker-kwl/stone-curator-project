@@ -203,14 +203,14 @@ export default function Carrinho() {
               <div className="mt-8 grid gap-3">
                 <Link
                   to="/produtos"
-                  className="inline-flex w-full items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
+                  className="inline-flex w-full items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
                 >
                   Ver catálogo
                   <ArrowRight className="h-5 w-5" />
                 </Link>
                 <Link
                   to="/western-box"
-                  className="inline-flex w-full items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] border border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper font-sans text-[16px] font-semibold transition-colors"
+                  className="inline-flex w-full items-center justify-center gap-2 min-h-control px-7 rounded-lg border border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper font-sans text-[16px] font-semibold transition-colors"
                 >
                   Conhecer a Western Box
                 </Link>
@@ -303,7 +303,7 @@ export default function Carrinho() {
                * Explica a regra; NÃO oferece botões. A ação vive uma única vez,
                * no resumo (e na barra fixa do mobile, que é o mesmo CTA). */}
               {!showValues && (
-                <div className="mb-6 rounded-[10px] border border-western-border-soft bg-western-paper p-5 md:p-6">
+                <div className="mb-6 rounded-lg border border-western-border-soft bg-western-paper p-5 md:p-6">
                   <div className="flex items-start gap-3">
                     <Lock
                       className="h-5 w-5 text-western-bronze flex-shrink-0 mt-0.5"
@@ -324,7 +324,7 @@ export default function Carrinho() {
               )}
 
               {/* Linhas do orçamento */}
-              <ul className="rounded-[16px] border border-western-border-soft bg-white px-5 md:px-6">
+              <ul className="rounded-2xl border border-western-border-soft bg-white px-5 md:px-6">
                 {items.map((item, idx) => (
                   <li
                     key={item.variantId}
@@ -334,7 +334,7 @@ export default function Carrinho() {
                   >
                     <Link
                       to={`/produtos/${item.productHandle}`}
-                      className="w-[92px] h-[92px] md:w-[110px] md:h-[110px] flex-shrink-0 overflow-hidden rounded-[10px] bg-western-paper border border-western-border-soft"
+                      className="w-[92px] h-[92px] md:w-[110px] md:h-[110px] flex-shrink-0 overflow-hidden rounded-lg bg-western-paper border border-western-border-soft"
                     >
                       {item.productImage && (
                         <img
@@ -396,11 +396,11 @@ export default function Carrinho() {
 
                       {/* Quantidade + remover */}
                       <div className="flex items-center gap-3 md:gap-4 mt-4 flex-wrap">
-                        <div className="inline-flex items-center rounded-[10px] border border-western-border-strong bg-white overflow-hidden">
+                        <div className="inline-flex items-center rounded-lg border border-western-border-strong bg-white overflow-hidden">
                           <button
                             type="button"
                             onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
-                            className="h-[52px] w-[52px] flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+                            className="h-control w-[52px] flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
                             aria-label={`Diminuir quantidade de ${item.productTitle}`}
                           >
                             <Minus className="h-4 w-4" aria-hidden="true" />
@@ -411,7 +411,7 @@ export default function Carrinho() {
                           <button
                             type="button"
                             onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                            className="h-[52px] w-[52px] flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+                            className="h-control w-[52px] flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
                             aria-label={`Aumentar quantidade de ${item.productTitle}`}
                           >
                             <Plus className="h-4 w-4" aria-hidden="true" />
@@ -421,7 +421,7 @@ export default function Carrinho() {
                         <button
                           type="button"
                           onClick={() => removeItem(item.variantId)}
-                          className="tap-target inline-flex items-center gap-2 px-2 font-sans text-[15px] font-semibold text-[#B3372E] hover:underline"
+                          className="tap-target inline-flex items-center gap-2 px-2 font-sans text-[15px] font-semibold text-status-error hover:underline"
                           aria-label={`Remover ${item.productTitle} do orçamento`}
                         >
                           <Trash2 className="h-4 w-4" aria-hidden="true" /> Remover
@@ -452,7 +452,7 @@ export default function Carrinho() {
             {/* ============ COLUNA DIREITA — resumo ============ */}
             <aside className="lg:sticky lg:top-28">
               <Reveal variant="fade" duration={500}>
-                <div className="rounded-[16px] border border-western-border-soft surface-paper p-6">
+                <div className="rounded-2xl border border-western-border-soft surface-paper p-6">
                   <p className="text-eyebrow">Resumo</p>
 
                   <div className="mt-4 flex items-baseline justify-between gap-3">
@@ -544,14 +544,14 @@ export default function Carrinho() {
                       <div className="h-2 rounded-full bg-western-border-soft overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-[width] duration-300 ease-out ${
-                            belowMin ? "bg-[#9C6812]" : "bg-[#2E7D4F]"
+                            belowMin ? "bg-status-warning" : "bg-status-success"
                           }`}
                           style={{ width: `${minPct}%` }}
                         />
                       </div>
                       <p
                         className={`font-sans text-[14px] font-semibold mt-2 ${
-                          belowMin ? "text-[#9C6812]" : "text-[#2E7D4F]"
+                          belowMin ? "text-status-warning" : "text-status-success"
                         }`}
                       >
                         {belowMin
@@ -565,7 +565,7 @@ export default function Carrinho() {
                   )}
 
                   {boxOnly && (
-                    <p className="mt-5 rounded-[10px] border border-western-border-soft bg-western-ivory px-3.5 py-3 font-sans text-[15px] leading-normal text-western-stone-warm">
+                    <p className="mt-5 rounded-lg border border-western-border-soft bg-western-ivory px-3.5 py-3 font-sans text-[15px] leading-normal text-western-stone-warm">
                       A Western Box é vendida sem cadastro e sem pedido mínimo.
                     </p>
                   )}
@@ -577,7 +577,7 @@ export default function Carrinho() {
                         type="button"
                         onClick={handleCheckout}
                         disabled={isLoading || checkoutLoading}
-                        className="group w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 disabled:opacity-45 disabled:cursor-not-allowed"
+                        className="group w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 disabled:opacity-45 disabled:cursor-not-allowed"
                       >
                         {isLoading || checkoutLoading ? (
                           <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
@@ -594,7 +594,7 @@ export default function Carrinho() {
                     ) : (
                       <Link
                         to={ctaTo}
-                        className="group w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
+                        className="group w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
                       >
                         {ctaLabel}
                         <ArrowRight
@@ -628,7 +628,7 @@ export default function Carrinho() {
                     <button
                       type="button"
                       onClick={() => setQuoteOpen(true)}
-                      className="w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] border border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper font-sans text-[16px] font-semibold transition-colors"
+                      className="w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg border border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper font-sans text-[16px] font-semibold transition-colors"
                     >
                       <Download className="h-5 w-5" aria-hidden="true" />
                       Baixar composição (PDF)
@@ -697,7 +697,7 @@ export default function Carrinho() {
             type="button"
             onClick={handleCheckout}
             disabled={isLoading || checkoutLoading}
-            className="w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 disabled:opacity-45 disabled:cursor-not-allowed"
+            className="w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 disabled:opacity-45 disabled:cursor-not-allowed"
           >
             {isLoading || checkoutLoading ? (
               <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
@@ -711,7 +711,7 @@ export default function Carrinho() {
         ) : (
           <Link
             to={ctaTo}
-            className="w-full inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
+            className="w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
           >
             {ctaLabel}
             <ArrowRight className="h-5 w-5" aria-hidden="true" />

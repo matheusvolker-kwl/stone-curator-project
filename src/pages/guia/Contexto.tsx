@@ -122,7 +122,7 @@ export default function GuiaContexto() {
             </p>
           </div>
 
-          <figure className="relative m-0 h-[220px] md:h-[340px] overflow-hidden rounded-[16px]">
+          <figure className="relative m-0 h-[220px] md:h-[340px] overflow-hidden rounded-2xl">
             <img
               src={ricardoAtelie}
               alt="Ricardo Western, fundador, no ateliê de Cajamar"

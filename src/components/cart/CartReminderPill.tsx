@@ -56,7 +56,7 @@ export default function CartReminderPill({ cartOpen }: { cartOpen: boolean }) {
           <button
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent("western:open-cart"))}
-            className="min-h-[48px] pl-2 pr-2 inline-flex items-center font-sans text-[16px] font-semibold whitespace-nowrap"
+            className="min-h-tap pl-2 pr-2 inline-flex items-center font-sans text-[16px] font-semibold whitespace-nowrap"
           >
             {totalItems} no orçamento
             <span className="mx-2 text-western-cream/50" aria-hidden="true">
@@ -68,7 +68,7 @@ export default function CartReminderPill({ cartOpen }: { cartOpen: boolean }) {
             type="button"
             onClick={() => setDismissed(true)}
             aria-label="Dispensar lembrete"
-            className="min-h-[48px] min-w-[48px] inline-flex items-center justify-center rounded-full text-western-cream/80 hover:text-western-cream hover:bg-western-green-deep/40 transition-colors"
+            className="min-h-tap min-w-tap inline-flex items-center justify-center rounded-full text-western-cream/80 hover:text-western-cream hover:bg-western-green-deep/40 transition-colors"
           >
             <X className="h-5 w-5" />
           </button>

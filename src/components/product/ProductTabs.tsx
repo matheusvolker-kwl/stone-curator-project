@@ -176,7 +176,7 @@ export default function ProductTabs({
                   <a
                     href="#tamanho"
                     onClick={scrollToTamanho}
-                    className="group flex items-center justify-between gap-4 min-h-[52px] rounded-[10px] border border-western-border-soft bg-western-cream px-5 py-4 transition-colors hover:border-western-green-deep"
+                    className="group flex items-center justify-between gap-4 min-h-control rounded-lg border border-western-border-soft bg-western-cream px-5 py-4 transition-colors hover:border-western-green-deep"
                   >
                     <span className="font-sans text-[16px] text-western-green-deep">
                       <span className="font-semibold">Medidas e peso da peça</span>{" "}
@@ -246,7 +246,7 @@ export default function ProductTabs({
                         href={url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex w-full sm:w-auto items-center justify-center gap-2 min-h-[52px] px-6 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors"
+                        className="inline-flex w-full sm:w-auto items-center justify-center gap-2 min-h-control px-6 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors"
                       >
                         <Download className="h-5 w-5" aria-hidden />
                         {isProductSpecific ? "Baixar modelo 3D (.skp)" : "Abrir no 3D Warehouse"}
@@ -336,7 +336,7 @@ export default function ProductTabs({
 
                 <div className="md:col-span-5">
                   <p className="text-section-label mb-4">O que vem na caixa</p>
-                  <div className="rounded-[16px] border border-western-border-soft bg-western-cream px-5 py-6 md:px-7 md:py-7">
+                  <div className="rounded-2xl border border-western-border-soft bg-western-cream px-5 py-6 md:px-7 md:py-7">
                     <ul className="space-y-5">
                       {NA_CAIXA.map(({ Icon, title, desc }) => (
                         <li key={title} className="flex gap-3">
