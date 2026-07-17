@@ -38,6 +38,54 @@ const VALID_TIPOS: TipoVisual[] = ["piscina", "lago", "lago-hibrido", "jardim-fo
  */
 const SCROLL_ANCHOR = "scroll-mt-[104px]";
 
+/**
+ * Cabeçalho reutilizável de pergunta (01/02/03) — redesign da 1ª dobra do guia
+ * (2026-07-17). Um numeral-token quieto (verde só no highlight de validação, pra
+ * NÃO duplicar o círculo verde de etapa ativa do GuideHeader sticky) + h2 real
+ * (a11y) + chip "selecionado". Aplicado igual nas 3 perguntas = ritmo.
+ */
+function QuestionHead({
+  n,
+  title,
+  help,
+  highlighted,
+  selection,
+}: {
+  n: string;
+  title: string;
+  help: string;
+  highlighted?: boolean;
+  selection?: { label: string };
+}) {
+  return (
+    <div className="mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span
+            aria-hidden
+            className={`inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border font-sans text-[15px] font-semibold tabular-nums transition-colors ${
+              highlighted
+                ? "border-western-cta bg-western-cta text-western-cream"
+                : "border-western-border-strong bg-white text-western-bronze"
+            }`}
+          >
+            {n}
+          </span>
+          <h2 className="text-title-sm text-western-green-deep">{title}</h2>
+        </div>
+        {selection && (
+          <span className="inline-flex items-center gap-2 rounded-full border border-western-border-soft bg-white px-3 py-1 font-sans text-[14px] font-semibold text-western-green-deep">
+            <Check className="h-4 w-4 text-western-gold" aria-hidden /> {selection.label}
+          </span>
+        )}
+      </div>
+      {/* help pendura sob o título no desktop (pl-12 = token 36 + gap 12);
+          flush-left no mobile para não comer largura em 375px */}
+      <p className="text-body mt-3 max-w-[58ch] md:pl-12">{help}</p>
+    </div>
+  );
+}
+
 function readStored(): { tipo?: TipoVisual; area?: string; acabamento?: Acabamento } {
   try {
     const raw = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
@@ -113,81 +161,90 @@ export default function GuiaContexto() {
       />
       <GuideHeader step={1} />
 
-      {/* Cabeçalho compacto — o retrato acompanha o h1 (não empurra a 1ª
-          pergunta para baixo da dobra). A ação — escolher o tipo — começa
-          logo abaixo, ainda na dobra, nos dois viewports. */}
+      {/* Cabeçalho da etapa — split editorial numa calha única (redesign 1ª
+          dobra, 2026-07-17): texto 7col / retrato 5col; a borda direita do
+          retrato cai no rail = borda direita da grade de cards abaixo. Nada
+          centralizado; o equilíbrio vem da assimetria 7/5 e das bordas
+          coincidentes. No mobile o retrato vira faixa de 44px (não empurra a
+          1ª pergunta pra baixo da dobra). */}
       <section className="bg-western-ivory border-b border-western-border-soft">
-        <div className="container-western py-8 md:py-9">
-          <div className="grid grid-cols-[1fr_auto] gap-5 md:gap-10 items-center">
-            <div>
-              <p className="text-eyebrow mb-3">Etapa 01 de 3 · Contexto</p>
-              <h1 className="display-lg text-western-green-deep mb-3">
-                Conte sobre o projeto.
-              </h1>
-              <p className="text-body max-w-[52ch]">
-                Três perguntas. No fim, três caminhos de composição — com peças, preço e
-                visualização.
+        <div className="container-western py-9 md:py-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 lg:items-center">
+            <div className="lg:col-span-7">
+              <p className="text-eyebrow mb-3">Contexto</p>
+              <h1 className="display-lg text-western-green-deep mb-4">Conte sobre o projeto.</h1>
+              <p className="text-body max-w-[54ch]">
+                Três perguntas rápidas. No fim, três caminhos de composição — com peças, preço
+                e visualização.
               </p>
+
+              {/* Ricardo em escala de pessoa — só mobile/tablet. */}
+              <div className="lg:hidden mt-7 flex items-center gap-3">
+                <img
+                  src={ricardoAtelie}
+                  alt="Ricardo Western, fundador, no ateliê de Cajamar"
+                  className="h-11 w-11 flex-shrink-0 rounded-full object-cover object-center ring-1 ring-western-border-strong"
+                />
+                <p className="text-meta">
+                  Guiado por{" "}
+                  <span className="font-semibold text-western-green-deep">Ricardo Western</span> ·
+                  fundador, ateliê Cajamar
+                </p>
+              </div>
             </div>
 
-            <figure className="relative m-0 h-[116px] w-[92px] md:h-[200px] md:w-[300px] flex-shrink-0 overflow-hidden rounded-2xl">
-              <img
-                src={ricardoAtelie}
-                alt="Ricardo Western, fundador, no ateliê de Cajamar"
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              <div
-                aria-hidden
-                className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none"
-                style={{
-                  background:
-                    "linear-gradient(180deg, transparent, hsl(var(--western-green-deep) / 0.72))",
-                }}
-              />
-              <figcaption className="absolute bottom-3 left-4 right-4 hidden md:block font-sans text-[13px] font-semibold tracking-[0.06em] text-western-cream">
-                Ricardo Western · ateliê Cajamar
-              </figcaption>
+            {/* Retrato — desktop. Borda direita no rail = borda direita dos cards. */}
+            <figure className="hidden lg:block lg:col-span-5 m-0">
+              <div className="relative overflow-hidden rounded-2xl border border-western-border-soft aspect-[4/3]">
+                <img
+                  src={ricardoAtelie}
+                  alt="Ricardo Western, fundador, no ateliê de Cajamar"
+                  className="absolute inset-0 h-full w-full object-cover object-center"
+                />
+                <div
+                  aria-hidden
+                  className="absolute inset-x-0 bottom-0 h-2/5 pointer-events-none"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, transparent, hsl(var(--western-green-deep) / 0.78))",
+                  }}
+                />
+                <figcaption className="absolute bottom-3 left-4 right-4 flex items-center gap-2 font-sans text-[13px] font-semibold tracking-[0.04em] text-western-cream">
+                  <span aria-hidden className="inline-block h-1.5 w-1.5 rounded-full bg-western-gold" />
+                  Ricardo Western · fundador, ateliê Cajamar
+                </figcaption>
+              </div>
             </figure>
           </div>
         </div>
       </section>
 
-      <main className="container-western pt-8 md:pt-9 pb-28 relative">
-        <div className="max-w-[920px]">
+      <main className="container-western pt-9 md:pt-10 pb-28 relative">
+        {/* Perguntas usam o RAIL INTEIRO (sem max-w-[920px]): assim a borda
+            direita da grade de cards coincide com a do retrato acima — o
+            alinhamento que matava o "torto". */}
         {/* 01 — a 1ª pergunta renderiza JÁ no load (auditoria): sem gate de
             scroll-reveal, senão o preview/crawler/scroll-rápido pega vazio. */}
         <section ref={refTipo} className={SCROLL_ANCHOR}>
-          <div>
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-              <p
-                className={`text-eyebrow transition-colors ${
-                  highlight === "tipo" ? "!text-western-green-deep" : ""
-                }`}
-              >
-                01 · Tipo de ambiente
-              </p>
-              {tipo && (
-                <span className="inline-flex items-center gap-2 font-sans text-[14px] font-semibold text-western-green-deep">
-                  <Check className="h-4 w-4 text-western-gold" aria-hidden /> {tipoVisualMap[tipo].label}
-                </span>
-              )}
-            </div>
-            <p className="text-body mb-6 max-w-[56ch]">
-              Selecione o que mais se aproxima do projeto que você está atendendo.
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
-              {TIPOS.map((t) => (
-                <TipoCard
-                  key={t.value}
-                  value={t.value}
-                  label={tipoVisualMap[t.value].label}
-                  microcopy={tipoMicrocopy[t.value]}
-                  image={tipoImage[t.value]}
-                  selected={tipo === t.value}
-                  onSelect={setTipo}
-                />
-              ))}
-            </div>
+          <QuestionHead
+            n="01"
+            title="Tipo de ambiente"
+            help="Selecione o que mais se aproxima do projeto que você está atendendo."
+            highlighted={highlight === "tipo"}
+            selection={tipo ? { label: tipoVisualMap[tipo].label } : undefined}
+          />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
+            {TIPOS.map((t) => (
+              <TipoCard
+                key={t.value}
+                value={t.value}
+                label={tipoVisualMap[t.value].label}
+                microcopy={tipoMicrocopy[t.value]}
+                image={tipoImage[t.value]}
+                selected={tipo === t.value}
+                onSelect={setTipo}
+              />
+            ))}
           </div>
         </section>
 
@@ -198,24 +255,16 @@ export default function GuiaContexto() {
         {/* 02 */}
         <section ref={refArea} className={`mt-14 ${SCROLL_ANCHOR}`}>
           <Reveal variant="fade-up" duration={700} delay={140}>
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-              <p
-                className={`text-eyebrow transition-colors ${
-                  highlight === "area" ? "!text-western-green-deep" : ""
-                }`}
-              >
-                02 · Área aproximada
-              </p>
-              {areaNum >= 1 && areaNum <= 200 && (
-                <span className="inline-flex items-center gap-2 font-sans text-[14px] font-semibold text-western-green-deep tabular-nums">
-                  <Check className="h-4 w-4 text-western-gold" aria-hidden /> {areaNum} m²
-                </span>
-              )}
+            <QuestionHead
+              n="02"
+              title="Área aproximada"
+              help="Digite a metragem aproximada (entre 1 e 200 m²). Pode ser estimativa."
+              highlighted={highlight === "area"}
+              selection={areaNum >= 1 && areaNum <= 200 ? { label: `${areaNum} m²` } : undefined}
+            />
+            <div className="md:pl-12">
+              <AreaInput value={area} onChange={setArea} id="area-input" />
             </div>
-            <p className="text-body mb-8 max-w-[56ch]">
-              Digite a metragem aproximada (entre 1 e 200 m²). Pode ser estimativa.
-            </p>
-            <AreaInput value={area} onChange={setArea} id="area-input" />
           </Reveal>
         </section>
 
@@ -226,25 +275,13 @@ export default function GuiaContexto() {
         {/* 03 */}
         <section ref={refAcab} className={`mt-14 ${SCROLL_ANCHOR}`}>
           <Reveal variant="fade-up" duration={700} delay={140}>
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-              <p
-                className={`text-eyebrow transition-colors ${
-                  highlight === "acabamento" ? "!text-western-green-deep" : ""
-                }`}
-              >
-                03 · Acabamento dominante
-              </p>
-              {acabamento && (
-                <span className="inline-flex items-center gap-2 font-sans text-[14px] font-semibold text-western-green-deep">
-                  <Check className="h-4 w-4 text-western-gold" aria-hidden />{" "}
-                  {acabamentoMeta[acabamento].label}
-                </span>
-              )}
-            </div>
-            <p className="text-body mb-8 max-w-[56ch]">
-              Escolha o tom dominante das pedras. Único para todas as peças do conjunto — você troca
-              no próximo passo se quiser.
-            </p>
+            <QuestionHead
+              n="03"
+              title="Acabamento dominante"
+              help="Escolha o tom dominante das pedras. Único para todas as peças do conjunto — você troca no próximo passo se quiser."
+              highlighted={highlight === "acabamento"}
+              selection={acabamento ? { label: acabamentoMeta[acabamento].label } : undefined}
+            />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
               {(Object.keys(acabamentoMeta) as Acabamento[]).map((a, i) => (
                 <AcabamentoCard
@@ -284,7 +321,6 @@ export default function GuiaContexto() {
               Falar com consultor diretamente
             </a>
           </p>
-        </div>
         </div>
       </main>
 
