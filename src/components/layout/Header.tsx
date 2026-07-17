@@ -44,10 +44,19 @@ import {
  * ---------------------------------------------------------------------------
  * REGRA DE PRIORIDADE DO NAV — do mais importante ao menos (esq. → dir.)
  * ---------------------------------------------------------------------------
- *   1. VENDER  — leva à peça e ao carrinho ....... Catálogo · Conjuntos · Guia
- *   2. CONFIAR — prova que a Western entrega ..... Inspirações
+ *   1. VENDER  — leva à peça e ao carrinho ....... Catálogo · Conjuntos prontos
+ *   2. CONFIAR — prova que a Western entrega ..... Obras · A pedra
  *   3. CAPTAR  — vira lead quando não há CNPJ .... Para sua casa
  *   4. AGIR    — a ação primária, isolada à dir .. Seja parceiro (verde)
+ *
+ *   2026-07-17 (6 movimentos aprovados pelo dono): "A pedra" SUBIU ao topo —
+ *   é a página que responde a pergunta nº 1 do visitante frio ("isso é pedra
+ *   de verdade?") e estava enterrada no drawer. "Guia de composição" DESCEU:
+ *   é ferramenta de meio de jornada (o próprio drawer o classifica em
+ *   "Decidir") e já tem 3 entradas a um clique (mega-menu "Montar no guia",
+ *   drawer, rodapé) — a regra da PORTA ÚNICA se aplica. O ☰ Menu migrou para
+ *   o INÍCIO da fileira (o drawer nasce da esquerda; o gatilho colado no CTA
+ *   diluía a única ação da barra). O CTA ficou sozinho na zona direita.
  *
  *   Regra de corte: se uma entrada não serve a 1–4, ela NÃO fica no topo —
  *   vive no drawer. É o que mantém o nav em 5 links + 1 ação.
@@ -83,12 +92,14 @@ import {
 const NAV_INTENTS = [
   // 1. VENDER
   { to: "/linhas", label: "Catálogo" },
-  { to: "/conjuntos", label: "Conjuntos" },
-  { to: "/guia-de-composicao", label: "Guia de composição" },
+  // "prontos" é o qualificador que o próprio rodapé já usava — "Conjuntos"
+  // seco não diz se é linha, kit ou categoria.
+  { to: "/conjuntos", label: "Conjuntos prontos" },
   // 2. CONFIAR
   { to: "/obras", label: "Obras" },
+  { to: "/a-pedra", label: "A pedra" },
   // 3. CAPTAR — hub B2C: sem CNPJ, a Western executa (vira lead turnkey).
-  //    (Não confundir com /contrate-a-western, que é a página com formulário.)
+  //    (Não confundir com /contrate-a-western, que é a página de SERVIÇOS B2B.)
   { to: "/para-sua-casa", label: "Para sua casa" },
 ];
 
@@ -420,8 +431,10 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           <img src={logoVerde} alt="Western" className="h-7 sm:h-8 lg:h-10 w-auto" />
         </Link>
 
-        {/* Busca persistente (desktop). Mesmo motor de sugestões do painel mobile. */}
-        <div className="hidden lg:block relative flex-1 max-w-[420px]">
+        {/* Busca persistente — desktop E tablet (2026-07-17): em 768px havia
+            342px de miolo morto medido, com a busca ("a alavanca de conversão
+            mais barata da loja") escondida atrás de um toque. md:block resolve. */}
+        <div className="hidden md:block relative flex-1 max-w-[420px]">
           <form
             onSubmit={handleSearch}
             className="flex items-center gap-3 px-4 h-control rounded-lg border-[1.5px] border-western-border-strong bg-white focus-within:border-western-cta transition-colors"
@@ -460,12 +473,13 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         </div>
 
         <div className="ml-auto flex items-center gap-1 lg:gap-2">
-          {/* Busca no mobile = painel superior (não há largura para um campo fixo). */}
+          {/* Busca no mobile = painel superior (não há largura para um campo
+              fixo). Do tablet pra cima o campo inline assume (md:block acima). */}
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
             aria-label="Buscar no catálogo"
-            className={`lg:hidden ${actionCls}`}
+            className={`md:hidden ${actionCls}`}
           >
             <Search className="h-6 w-6" strokeWidth={1.75} />
             Buscar
@@ -477,7 +491,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button aria-label="Minha conta" className={`hidden lg:inline-flex ${actionCls}`}>
+                <button aria-label="Minha conta" className={`hidden md:inline-flex ${actionCls}`}>
                   <User className="h-6 w-6" strokeWidth={1.75} />
                   Minha conta
                 </button>
@@ -524,7 +538,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link to="/parceiro/login" aria-label="Entrar" className={`hidden lg:inline-flex ${actionCls}`}>
+            <Link to="/parceiro/login" aria-label="Entrar" className={`hidden md:inline-flex ${actionCls}`}>
               <User className="h-6 w-6" strokeWidth={1.75} />
               Entrar
             </Link>
@@ -570,6 +584,22 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         className="hidden lg:block border-t border-western-border-soft"
       >
         <div className="container-western flex items-center gap-1 xl:gap-2 py-1">
+          {/* ☰ Menu no INÍCIO (2026-07-17): o drawer nasce da esquerda — o
+              gatilho agora fica do lado de onde a coisa abre (no mobile sempre
+              foi assim). E é onde ML/Leroy/Amazon põem o "todos os
+              departamentos": memória muscular do público 40+. Sair da zona
+              direita devolve ao CTA o isolamento que a regra 4 exige. */}
+          <button
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Abrir menu completo"
+            className="-ml-3 inline-flex items-center gap-2 min-h-tap px-3 text-[16px] font-medium text-western-green-deep border-b-2 border-transparent hover:border-western-gold transition-colors"
+          >
+            <Menu className="h-5 w-5" strokeWidth={1.75} />
+            Menu
+          </button>
+          <span aria-hidden="true" className="mx-1 h-6 w-px bg-western-border-soft" />
+
           {/* "Catálogo" é o gatilho do mega-menu por cena (só desktop). */}
           <CatalogMegaMenu navLinkCls={navLinkCls} />
           {NAV_INTENTS.slice(1).map((item) => (
@@ -578,30 +608,16 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
             </NavLink>
           ))}
 
-          {/* Bloco direito: o "resto" (drawer) e, isolada, a ação primária. */}
-          <div className="ml-auto flex items-center gap-2 xl:gap-3">
-            <button
-              type="button"
-              onClick={() => setMenuOpen(true)}
-              aria-label="Abrir menu completo"
-              className="inline-flex items-center gap-2 min-h-tap px-3 text-[16px] font-medium text-western-green-deep border-b-2 border-transparent hover:border-western-gold transition-colors"
+          {/* Zona direita: SÓ a ação primária (logado, fica vazia — o CTA de
+              cadastro não faz sentido pra quem já tem conta). */}
+          {!session && (
+            <Link
+              to={PARTNER_INTENT.to}
+              className="ml-auto inline-flex items-center justify-center min-h-tap px-5 rounded-lg bg-western-cta text-western-cream text-[16px] font-semibold whitespace-nowrap hover:bg-western-green-deep transition-colors"
             >
-              <Menu className="h-5 w-5" strokeWidth={1.75} />
-              Menu
-            </button>
-
-            {!session && (
-              <>
-                <span aria-hidden="true" className="h-6 w-px bg-western-border-soft" />
-                <Link
-                  to={PARTNER_INTENT.to}
-                  className="inline-flex items-center justify-center min-h-tap px-5 rounded-lg bg-western-cta text-western-cream text-[16px] font-semibold whitespace-nowrap hover:bg-western-green-deep transition-colors"
-                >
-                  {PARTNER_INTENT.label}
-                </Link>
-              </>
-            )}
-          </div>
+              {PARTNER_INTENT.label}
+            </Link>
+          )}
         </div>
       </nav>
 
@@ -696,9 +712,12 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
 
               {/* 1. VENDER */}
               <p className="text-eyebrow mt-7 mb-1">Comprar</p>
-              {drawerLink("/linhas", "Catálogo", "As 11 linhas do ateliê")}
+              {/* "8 linhas" é a CONTAGEM OFICIAL (decisão do dono, 2026-07-17):
+                  é o que o hero diz e o que a página /linhas mostra em cards.
+                  O site dizia 8, 9 e 11 em três lugares — acabou. */}
+              {drawerLink("/linhas", "Catálogo", "As 8 linhas do ateliê")}
               {drawerLink("/produtos", "Todas as peças", "A coleção inteira, com filtros")}
-              {drawerLink("/conjuntos", "Conjuntos", "Kits prontos por tipo de projeto")}
+              {drawerLink("/conjuntos", "Conjuntos prontos", "Combinações por tipo de projeto")}
               {drawerLink("/western-box", "Western Box", "Amostras · o valor volta como crédito no 1º pedido")}
               {drawerLink(
                 "/carrinho",
@@ -714,19 +733,24 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               {drawerLink("/guia-de-composicao", "Guia de composição", "Monte seu projeto em 3 passos")}
               {drawerLink("/obras", "Obras", "Obras e projetos reais")}
 
-              {/* 3. CAPTAR — a rampa B2C. Agrupada e rotulada pela PERGUNTA do
-                  visitante ("não tenho CNPJ"), para o B2B pular e o B2C achar. */}
+              {/* SERVIÇOS — B2B contratando capacidade (projeto 3D, consultoria,
+                  execução). Estava arquivado sob "Sem CNPJ?" — mas o laguista
+                  COM CNPJ procurando projeto 3D pulava o grupo inteiro. Decisão
+                  das duas portas (dono, 2026-07-17): /contrate-a-western é a
+                  porta de serviços B2B; /para-sua-casa é a B2C. */}
+              <p className="text-eyebrow mt-7 mb-1">Serviços</p>
+              {drawerLink("/contrate-a-western", "Contrate a Western", "Projeto 3D, consultoria e execução — com o seu projeto")}
+
+              {/* 3. CAPTAR — a rampa B2C. Rotulada pela PERGUNTA do visitante
+                  ("não tenho CNPJ"), para o B2B pular e o B2C achar. */}
               <p className="text-eyebrow mt-7 mb-1">Sem CNPJ?</p>
               {drawerLink("/para-sua-casa", "Para sua casa", "A Western executa pra você")}
-              {drawerLink("/contrate-a-western", "Contrate a Western", "Consultoria, projeto 3D e instalação")}
 
               <p className="text-eyebrow mt-7 mb-1">Ateliê</p>
               {/* "A pedra" vem ANTES de "Sobre": quem chega frio pergunta o que
-                  é a peça antes de perguntar quem a fabrica. O nav principal
-                  (6 slots cheios, regra de prioridade no topo deste arquivo)
-                  não foi tocado — a decisão de promover "A pedra" ao topo é do
-                  dono. As 5 entradas (home, PDP, drawer, rodapé, redirect de
-                  /por-que-western) já resolvem a orfandade sem isso. */}
+                  é a peça antes de perguntar quem a fabrica. Desde 2026-07-17
+                  ela também está no nav principal (decisão do dono) — aqui é o
+                  superset, e a entrada fica pra quem navega pelo drawer. */}
               {drawerLink("/a-pedra", "A pedra", "Como é feita · por que pesa 10× menos")}
               {drawerLink("/sobre", "Sobre o ateliê", `Cajamar/SP · desde ${BUSINESS.fundadaEm}`)}
               <a
