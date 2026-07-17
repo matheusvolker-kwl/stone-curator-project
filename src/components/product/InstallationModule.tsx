@@ -1,4 +1,4 @@
-import { Check, ArrowRight, BookOpen, AlertTriangle } from "lucide-react";
+import { Check, ArrowRight, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Accordion,
@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import ManualDownload from "@/components/product/ManualDownload";
-import { MANUAL_PDF_URL } from "@/data/installation";
 import type { InstallationConfig } from "@/data/installation";
 
 const ANCHOR_ID = "instalacao";
@@ -112,7 +111,6 @@ export function InstallationSection({
     chapter,
     chapterTitle,
     manualPage,
-    guideUrl,
   } = config;
 
   return (
@@ -241,25 +239,15 @@ export function InstallationSection({
                   variant="primary"
                   className="w-full sm:w-auto"
                 />
-                {/* Este botão aparece em TODA página de produto e todo conjunto,
-                    e caía em nada: guideUrl valia "/como-instalar" nas 8
-                    ocorrências de installation.ts, e essa rota nunca existiu no
-                    App.tsx — o fallback também apontava pra ela, então não havia
-                    escapatória. O manual real sempre esteve em
-                    public/manuais/ (28 páginas, declarado como fonte única no
-                    topo do installation.ts).
-                    É <a> e não <Link>: o router tentaria rotear o .pdf e cairia
-                    no NotFound — trocar o destino sem trocar a tag só mudaria o
-                    endereço do mesmo 404. */}
-                <a
-                  href={guideUrl || MANUAL_PDF_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-outline-forest w-full sm:w-auto"
-                >
-                  <BookOpen className="h-5 w-5" aria-hidden="true" />
-                  Guia completo de instalação
-                </a>
+                {/* Havia aqui um terceiro botão, "Guia completo de instalação",
+                    que apontava para a rota /como-instalar — inexistente no
+                    App.tsx, ou seja, 404 em toda PDP. Ele foi REMOVIDO, não
+                    consertado: o <ManualDownload> acima já entrega as duas ações
+                    reais (baixar para a obra · abrir no capítulo da peça), e um
+                    terceiro botão para o mesmo PDF só empata a decisão.
+                    Consertar o destino dele teria sido pior que o 404: como era
+                    um <a> cru, ele entregava o manual POR FORA do portão de
+                    lead do ManualDownload (free = isApproved || unlocked). */}
               </div>
             </div>
           </div>
