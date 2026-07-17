@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
 import SocialProof from "@/components/shared/SocialProof";
+import ObraCard from "@/components/shared/ObraCard";
 import {
   Accordion,
   AccordionItem,
@@ -383,35 +384,20 @@ export default function ParaSuaCasa() {
           </Reveal>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {OBRAS_SONHO.map((o, i) => (
-              <Reveal key={o.titulo} variant="fade-up" delay={i * 80} duration={650}>
-                <figure className="h-full flex flex-col">
-                  <div className="relative overflow-hidden rounded-2xl aspect-[4/5] bg-western-cream-muted">
-                    <img
-                      src={o.img}
-                      alt={o.titulo}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover"
-                    />
-                    {/* Saiu a miniatura "ANTES" sobreposta (w-24, borda creme,
-                        sombra). Era um selo de UI grudado em cima de uma
-                        fotografia — a mesma mistura de categorias visuais que já
-                        derrubou seções desta casa. E não funcionava nem como
-                        prova: 96px de largura não deixam ninguém ver o "antes".
-                        O contraste do Tato está contado no texto e vive
-                        inteiro, em tamanho de verdade, na obra. */}
-                  </div>
-                  <figcaption className="mt-4">
-                    <p className="text-eyebrow">{o.credito}</p>
-                    <h3 className="font-sans text-[19px] font-semibold text-western-green-deep leading-snug mt-1.5">
-                      {o.titulo}
-                    </h3>
-                    <p className="text-[15px] leading-relaxed text-western-stone-warm mt-2">{o.linha}</p>
-                  </figcaption>
-                </figure>
-              </Reveal>
-            ))}
+            {/* Card unificado (ObraCard, variant editorial). A miniatura "ANTES"
+                  saiu numa passada anterior: selo de UI a 96px não provava nada. */}
+              {OBRAS_SONHO.map((o, i) => (
+                <ObraCard
+                  key={o.titulo}
+                  variant="editorial"
+                  index={i}
+                  image={o.img}
+                  alt={o.titulo}
+                  eyebrow={o.credito}
+                  title={o.titulo}
+                  desc={o.linha}
+                />
+              ))}
           </div>
 
           {/* Primária dourada (WhatsApp) + saída interna para quem ainda quer

@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchProducts } from "@/lib/datasource";
 import Seo from "@/components/seo/Seo";
 import ProductCard from "@/components/product/ProductCard";
+import ObraCard from "@/components/shared/ObraCard";
 import ArtistaSection from "@/components/home/ArtistaSection";
 import SobreAWestern from "@/components/home/SobreAWestern";
 import Reveal from "@/components/shared/Reveal";
@@ -486,29 +487,12 @@ export default function Index() {
             </h2>
           </Reveal>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-7 md:gap-x-6 md:gap-y-10">
-            {PROJETOS.map((p, i) => (
-              <Reveal key={p.nome} variant="fade-up" delay={(i % 3) * 80} duration={620} distance={18}>
-                {/* A legenda vivia POR CIMA da foto: nas fotos claras (água turquesa,
-                    areia) o texto creme sumia (~1,1:1). Agora ela vive FORA da imagem,
-                    sobre o fundo claro da seção — contraste não depende da foto. */}
-                <figure className="group">
-                  <div className="relative overflow-hidden rounded-2xl aspect-[4/3] bg-western-cream-muted">
-                    <img
-                      src={p.img}
-                      alt={p.nome}
-                      loading="lazy"
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <figcaption className="mt-3">
-                    <p className="font-sans text-[17px] font-semibold text-western-green-deep leading-snug">
-                      {p.nome}
-                    </p>
-                    <p className="text-[14px] leading-snug text-western-stone-warm mt-1">{p.tipo}</p>
-                  </figcaption>
-                </figure>
-              </Reveal>
-            ))}
+            {/* Card unificado (ObraCard, variant teaser): a legenda vive FORA da
+                  foto de propósito — sobre foto clara (água/areia) o texto creme
+                  sumia (~1,1:1); no fundo da seção o contraste não depende dela. */}
+              {PROJETOS.map((p, i) => (
+                <ObraCard key={p.nome} variant="teaser" index={i} image={p.img} alt={p.nome} title={p.nome} desc={p.tipo} />
+              ))}
           </div>
           {/* Os retratos NÃO vivem aqui: são headshots de imprensa, não fotos de
               obra — no meio de uma grade de obras viravam ruído. E os cards já
