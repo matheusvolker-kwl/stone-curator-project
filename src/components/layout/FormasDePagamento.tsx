@@ -27,10 +27,13 @@ export default function FormasDePagamento() {
           Formas de pagamento
         </p>
         <div className="flex flex-wrap items-center gap-2">
+          {/* Sem Arial: era a ÚNICA fonte fora do sistema no site inteiro
+              (auditoria 2026-07-17). Source Sans 3 itálico 900 lê igual num
+              chip de 8px de altura. */}
           <Chip label="Visa">
             <span
-              className="italic"
-              style={{ fontFamily: "Arial, sans-serif", fontWeight: 900, fontSize: 15, letterSpacing: "-0.02em", color: "#1A1F71" }}
+              className="italic font-sans"
+              style={{ fontWeight: 900, fontSize: 15, letterSpacing: "-0.02em", color: "#1A1F71" }}
             >
               VISA
             </span>
@@ -44,11 +47,13 @@ export default function FormasDePagamento() {
             </svg>
           </Chip>
 
+          {/* Era "AMERICAN EXPRESS" em duas linhas de 6px — texto ilegível
+              (o menor do site) e em Arial. "AMEX" numa linha, no dobro do
+              corpo, é o shorthand que todo mundo reconhece. */}
           <Chip label="American Express">
             <svg width="38" height="24" viewBox="0 0 38 24" aria-hidden="true">
               <rect width="38" height="24" rx="3" fill="#006FCF" />
-              <text x="19" y="9.6" textAnchor="middle" fill="#fff" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="6" letterSpacing=".3">AMERICAN</text>
-              <text x="19" y="17.4" textAnchor="middle" fill="#fff" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="6" letterSpacing=".3">EXPRESS</text>
+              <text x="19" y="16" textAnchor="middle" fill="#fff" fontWeight="800" fontSize="10" letterSpacing=".5">AMEX</text>
             </svg>
           </Chip>
 

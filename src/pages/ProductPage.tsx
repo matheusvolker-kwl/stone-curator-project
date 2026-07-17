@@ -43,19 +43,11 @@ import {
   resolveInstallationType,
 } from "@/data/installation";
 
-/* DS V3 — classes de controle reaproveitadas na escada de decisão.
- * Botões/inputs 52px, cantos suaves (10px), sans 16px. CTA primário é VERDE;
- * o dourado fica como acento (selo, filete, seleção), nunca como 2º primário. */
-const CTA_PRIMARY =
-  "inline-flex items-center justify-center gap-2 w-full min-h-control px-6 rounded-lg " +
-  "bg-western-cta text-western-cream hover:bg-western-green-deep " +
-  "font-sans text-[16px] font-semibold transition-colors";
-
-const CTA_OUTLINE =
-  "inline-flex items-center justify-center gap-2 min-h-control px-6 rounded-lg " +
-  "border border-western-border-strong text-western-green-deep " +
-  "hover:border-western-green-deep hover:bg-western-paper " +
-  "font-sans text-[16px] font-semibold transition-colors";
+/* Eram cópias à mão do .btn-primary/.btn-outline-forest (auditoria 2026-07-17:
+ * a PDP tinha 24 de 27 CTAs fora do sistema). Agora são as classes do DS — o
+ * que também dá a elas o "press" do btn-base, que faltava aqui. */
+const CTA_PRIMARY = "btn-primary w-full";
+const CTA_OUTLINE = "btn-outline-forest";
 
 function pluralizeCollection(title?: string): string {
   if (!title) return "";
