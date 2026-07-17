@@ -56,13 +56,13 @@ const BLOCOS = [
   },
   {
     label: "Pra quem",
-    t: "Quem riscou a pedra da prancha",
-    p: "Guindaste, rua fechada, alvará, dias de equipe içando. A conta não fechava — e a pedra saiu do projeto.",
+    t: "Quem entrega o que desenhou",
+    p: "Tem bloco no SketchUp: você mostra ao cliente e entrega aquilo. Sem içamento, sem empilhamento, sem surpresa na obra.",
   },
   {
     label: "O que muda",
-    t: "A pedra volta pro projeto",
-    p: `${PROVA.peca}: ${PROVA.pesoKg} kg. A mesma em pedra natural: ${PROVA.natural}. Laje, terraço e cobertura entram de novo.`,
+    t: "Entra onde pedra não entra",
+    p: `${PROVA.peca}: ${PROVA.pesoKg} kg. A mesma em pedra natural: ${PROVA.natural}. Sacada, laje, cobertura e obra pronta deixam de ser problema.`,
   },
 ];
 
@@ -77,9 +77,15 @@ export default function SobreAWestern() {
         <Reveal variant="fade-up" duration={650}>
           <div className="max-w-2xl">
             <p className="text-eyebrow mb-3">A tecnologia Western</p>
-            {/* Afirmação sobre o OBJETO, não acusação ao leitor: quem já compra
-                pedra lê uma tecnologia; quem desistiu dela lê a própria saída no
-                bloco "Pra quem", meio segundo depois. Ninguém é excluído. */}
+            {/* Afirmação sobre o OBJETO, nunca sobre o leitor.
+                O eixo é ALTERNATIVA, não redenção (decisão do dono, 2026-07-16):
+                muita gente trabalha com pedra natural e ninguém errou por isso —
+                inclusive os melhores clientes da casa, que compram há duas
+                décadas. Os blocos abaixo já disseram "quem riscou a pedra da
+                prancha / a conta não fechava"; era acusação, e acusação exclui
+                justamente quem já compra. Agora o argumento é o que a Western
+                FAZ (planeja, entrega, entra onde a outra não entra), não o que
+                o leitor teria deixado de fazer. */}
             {/* Sem max-w em ch: a 2ª frase tem 29 caracteres e qualquer medida
                 mais estreita que ela cria uma 3ª linha órfã ("nossa."). O <br>
                 já define as duas linhas; o max-w-2xl do bloco segura o resto. */}
@@ -147,6 +153,22 @@ export default function SobreAWestern() {
             </div>
           </Reveal>
         </div>
+
+        {/* ENTRADA Nº1 DE /a-pedra — e o conserto desta seção: a home bifurca
+            (profissional × casa) ANTES de provar. Este link é a saída para
+            quem ainda está na pergunta "isso é pedra de verdade?", e por isso
+            vem ANTES da bifurcação, não depois. */}
+        <Reveal variant="fade-up" duration={600}>
+          <div className="mt-10 md:mt-12">
+            <Link
+              to="/a-pedra"
+              className="tap-target inline-flex items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+            >
+              Como a pedra é feita
+              <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+            </Link>
+          </div>
+        </Reveal>
 
         {/* Bifurca profissional × casa — a AÇÃO principal é o cadastro (ver preços);
             a casa é off-ramp discreto. Absorveu a antiga seção de segmentação.

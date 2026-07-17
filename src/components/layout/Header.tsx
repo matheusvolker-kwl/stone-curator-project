@@ -721,6 +721,13 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               {drawerLink("/contrate-a-western", "Contrate a Western", "Consultoria, projeto 3D e instalação")}
 
               <p className="text-eyebrow mt-7 mb-1">Ateliê</p>
+              {/* "A pedra" vem ANTES de "Sobre": quem chega frio pergunta o que
+                  é a peça antes de perguntar quem a fabrica. O nav principal
+                  (6 slots cheios, regra de prioridade no topo deste arquivo)
+                  não foi tocado — a decisão de promover "A pedra" ao topo é do
+                  dono. As 5 entradas (home, PDP, drawer, rodapé, redirect de
+                  /por-que-western) já resolvem a orfandade sem isso. */}
+              {drawerLink("/a-pedra", "A pedra", "Como é feita · por que pesa 10× menos")}
               {drawerLink("/sobre", "Sobre o ateliê", `Cajamar/SP · desde ${BUSINESS.fundadaEm}`)}
               <a
                 href={`https://wa.me/${BUSINESS.whatsappFabrica}`}

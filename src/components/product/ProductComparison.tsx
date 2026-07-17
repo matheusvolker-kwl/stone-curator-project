@@ -16,7 +16,11 @@ const ROWS = (pesoKg?: string | null) => [
   { label: "Tempo de instalação", western: "algumas horas", natural: "dias" },
   { label: "Base", western: "plana, assentamento direto", natural: "preparação de berço, calços, ajustes" },
   { label: "Previsibilidade", western: "modelo 3D antes da compra", natural: "só na obra" },
-  { label: "Custo total", western: "referência", natural: "30% a 50% mais alto" },
+  /* Sem percentual até o dono cravar: o FAQ dizia "30 a 50% MAIS BARATO" e esta
+     linha dizia "30% a 50% MAIS ALTO" — não é a mesma conta (se a natural é 50%
+     mais alta, a Western é 33% mais barata, não 50%). Dois números que se
+     contradizem a um clique de distância são piores que nenhum. */
+  { label: "Custo total", western: "referência", natural: "mais alto — e imprevisível" },
 ];
 
 export default function ProductComparison({ productTitle, pesoKg, dimensoes }: Props) {

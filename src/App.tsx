@@ -64,6 +64,7 @@ const ConjuntoPage = lazy(() => import("./pages/ConjuntoPage.tsx"));
 const ProductPage = lazy(() => import("./pages/ProductPage.tsx"));
 
 const About = lazy(() => import("./pages/About.tsx"));
+const APedra = lazy(() => import("./pages/APedra.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
 const WesternBoxPage = lazy(() => import("./pages/WesternBox.tsx"));
 
@@ -182,6 +183,7 @@ const App = () => (
                     <Route path="/lab/produtos/:handle" element={<LabProductRedirect />} />
                     <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
                     <Route path="/sobre" element={<About />} />
+                    <Route path="/a-pedra" element={<APedra />} />
                     <Route path="/contato" element={<Contact />} />
                     <Route path="/western-box" element={<WesternBoxPage />} />
                     <Route path="/contrate-a-western" element={<ContrateAWestern />} />
@@ -219,8 +221,10 @@ const App = () => (
                     {/* Rota antiga de amostras: substituída pela Western Box (página paga). */}
                     <Route path="/pedir-amostras" element={<Navigate to="/western-box" replace />} />
                     <Route path="/visitar" element={<AgendarVisita />} />
-                    {/* "Por que Western" foi fundida no FAQ (2026-07). */}
-                    <Route path="/por-que-western" element={<Navigate to="/faq" replace />} />
+                    {/* "Por que Western" foi para /a-pedra (2026-07): é lá que o
+                        argumento mora agora — o FAQ ficou com a logística.
+                        O redirect traz o histórico de SEO junto. */}
+                    <Route path="/por-que-western" element={<Navigate to="/a-pedra" replace />} />
                     <Route path="/faq" element={<FAQ />} />
                     <Route path="/politica-comercial" element={<PoliticaComercial />} />
                     {/* Política de entrega foi fundida na comercial (2026-07). */}

@@ -150,6 +150,7 @@ export default function Footer() {
           <div className="min-w-0 md:col-span-2">
             <h4 className={colTitle}>Western</h4>
             <ul className="flex flex-col">
+              <li><Link to="/a-pedra" className={colLink}>A pedra Western</Link></li>
               <li><Link to="/sobre" className={colLink}>Sobre o ateliê</Link></li>
               <li><Link to="/para-sua-casa" className={colLink}>Para sua casa</Link></li>
               <li><Link to="/contrate-a-western" className={colLink}>Contrate a Western</Link></li>
