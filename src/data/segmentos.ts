@@ -42,7 +42,7 @@ export const SEGMENTOS: Segmento[] = [
     intro:
       "Espelhos d'água vivos, com carpas e plantas aquáticas, onde a pedra faz a margem naturalística. A água por salinização deixa peixe e planta conviverem na mesma lâmina — inclusive no lago híbrido, misturando pedra natural e Western.",
     galeria: galeriaDe("lagos"),
-    obraSlugs: ["lago-neymar", "evandro-mesquita", "sachelli"],
+    obraSlugs: ["lago-neymar", "evandro-mesquita", "sachelli", "modulo-15-lago"],
   },
   {
     id: "cascatas",

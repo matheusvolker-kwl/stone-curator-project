@@ -297,22 +297,55 @@ const JOBS = [
     root: "", width: 1100,
     crop: { left: 0, top: 0, width: 1200, height: 900 }, // 1200×1324, ancorado no TOPO: é lá que está a borda de pedra separando piscina e lago. Descer 180px já a perdia e sobrava água com carpas.
   },
-  // 09: o lago com o estar rebaixado dentro d'água. ⚠ Veio na pasta "lago
-  // ornamental do modulo 15", mas NÃO bate com as fotos que já estão no site sob
-  // a obra `modulo-15` (lá: piscina-praia, parede preta texturizada, mata fechada,
-  // sol; aqui: casa de dois pavimentos, prédio vizinho à vista, piscina retangular,
-  // nublado). Sem confirmação do dono não entra na obra — entraria com o nome de
-  // outra. Aqui prova a mesma coisa sem nomear ninguém.
+  // ⚠ 09 SAIU daqui em 2026-07-17 e virou obra própria (`modulo-15-lago`, abaixo).
+  // O motivo de estar nesta galeria era um só, e está registrado: a foto não podia
+  // ser atribuída sem confirmação do dono. O dono confirmou — "as fotos novas do
+  // modulo 15 são de outro ângulo da casa onde foi feito um lago". Foto com dono
+  // conhecido não fica em galeria anônima: vai para a obra. O arquivo 09.webp foi
+  // deletado; o glob de segmentos.ts é por diretório e o teria mantido publicado.
+
+  // ── Lote 2026-07-17 · obra `modulo-15-lago` ─────────────────────────
+  // O lago é OUTRA PARTE DO TERRENO da obra `modulo-15` (a piscina): mesma casa,
+  // ângulo diferente — confirmado pelo dono. Por isso obra NOVA e não fotos
+  // anexadas à `modulo-15`: o quadro daqui (casa de dois pavimentos, piscina
+  // retangular de pastilha, dia nublado) não bate com o de lá (piscina-praia
+  // orgânica na mata, sol) e leria como outro lugar. Agente anterior recusou o
+  // anexo — estava certo; o erro seria forçar as duas na mesma página.
   //
-  // É a ÚNICA das 11 do lote que entra. As outras 10 foram abertas e recusadas:
-  // 5 têm lona bege cobrindo móvel ou parede vazia (leem "obra não terminada"),
-  // 1 tem folha de palmeira desfocada atravessando o quadro inteiro, 3 são
-  // redundantes e 1 (o estar visto de perto) não tem pedra dentro do quadro 4:3 —
-  // entrega um sofá. Nesta a pedra é protagonista de ponta a ponta.
+  // Fonte: 11 fotos 1066×1600 (2:3). Entram 3. As 8 recusadas, cada uma olhada:
+  //   38, 39(4), 41, 40(1), 40(2), 39(2) → lona bege cobrindo móvel no quadro
+  //     ("obra não entregue"); em 38/39(4)/39(2) a lona não sai de nenhum 4:3 que
+  //     preserve o lago. 40(1) ainda tem folha de palmeira desfocada atravessando
+  //     tudo. 40(2)/41 perdem a lona no corte, mas repetem a 2ª sem melhorá-la.
+  //   39(1), 40(3) → redundantes (versões mais fechadas/sujas da 39 e da capa;
+  //     a 40(3) ainda tem uma pessoa no vidro e um resto de lona na quina).
   {
-    dest: "segmentos/lagos/09.webp", src: `${EXTRA}/lago ornamental do modulo 15/WhatsApp Image 2026-07-17 at 02.23.39 (3).jpeg`,
+    dest: "obras/modulo-15-lago.webp", src: `${EXTRA}/lago ornamental do modulo 15/WhatsApp Image 2026-07-17 at 02.23.40.jpeg`,
+    root: "", width: 1400,
+    crop: { left: 0, top: 620, width: 1066, height: 800 }, // top=620 escolhido comparando 3 cortes: 800 entrega só o sofá (a pedra sai do quadro), 620 mantém a faixa de pedra inteira + a água com o seixo no fundo + o vidro da casa atrás. Sai 1066×800 (fonte tem 1066 de largura; withoutEnlargement segura).
+  },
+  {
+    dest: "obras/modulo-15-lago-2.webp", src: `${EXTRA}/lago ornamental do modulo 15/WhatsApp Image 2026-07-17 at 02.23.39 (3).jpeg`,
     root: "", width: 1100,
-    crop: { left: 0, top: 360, width: 1066, height: 800 }, // a crista de pedra serpenteando ao longo da água + a faixa de seixos
+    crop: { left: 0, top: 360, width: 1066, height: 800 }, // a pedra serpenteando ao longo da água + a faixa de seixo (crop herdado do antigo 09.webp, revisto e mantido: é o melhor da foto)
+  },
+  {
+    dest: "obras/modulo-15-lago-3.webp", src: `${EXTRA}/lago ornamental do modulo 15/WhatsApp Image 2026-07-17 at 02.23.39.jpeg`,
+    root: "", width: 1100,
+    crop: { left: 0, top: 740, width: 1066, height: 800 }, // o estar no nível da água. top=740 mantém a pedra grande da quina inferior direita dentro do quadro — era ela que fazia a foto valer; subir o corte pegava palmeira e devolvia um sofá.
+  },
+
+  // casa-de-praia-tato, 3ª foto — a casa em uso. 1200×1600 → 4:3.
+  // Mesma obra CONFERIDA na imagem contra a tato-2.webp, não no nome da pasta:
+  // a cascata sobre pedra, o Buda no meio da vegetação, as cadeiras de corda
+  // terracota e a almofada bege grande são os MESMOS objetos, nos mesmos lugares.
+  // ⚠ Tem pessoas identificáveis (um adulto e uma criança) na casa de um cliente.
+  // Entra por autorização explícita do dono em 2026-07-17 ("pode usar a foto do
+  // tato"). Não é decisão de agente — não reabrir sem ele.
+  {
+    dest: "obras/tato-3.webp", src: `${EXTRA}/Mais fotos tato/WhatsApp Image 2026-07-16 at 23.26.31 (3).jpeg`,
+    root: "", width: 1400,
+    crop: { left: 0, top: 400, width: 1200, height: 900 }, // top=400 é o teto: a 500 a cabeça do homem sai cortada. Mantém a cascata e o Buda ao fundo, a entrada de areia e a mesa; corta o guarda-sol e o piso vazio do primeiro plano.
   },
 ];
 

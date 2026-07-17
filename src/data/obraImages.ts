@@ -44,6 +44,10 @@ import nigro2 from "@/assets/obras/nigro-2.webp";
 import nigro3 from "@/assets/obras/nigro-3.webp";
 // ── Lote 2026-07-17 ─────────────────────────────────────────────────
 import sachelli from "@/assets/obras/sachelli.webp";
+import tato3 from "@/assets/obras/tato-3.webp";
+import modulo15Lago from "@/assets/obras/modulo-15-lago.webp";
+import modulo15Lago2 from "@/assets/obras/modulo-15-lago-2.webp";
+import modulo15Lago3 from "@/assets/obras/modulo-15-lago-3.webp";
 
 export const OBRA_COVER: Record<string, string> = {
   "showroom-riviera": showroom,
@@ -54,6 +58,7 @@ export const OBRA_COVER: Record<string, string> = {
   "unique-garden": unique,
   rosewood,
   "modulo-15": modulo15,
+  "modulo-15-lago": modulo15Lago,
   "caito-maia": caito,
   "jader-porto-belo": jader,
   "hanazaki-expo-revestir": hanazaki,
@@ -67,16 +72,33 @@ export const OBRA_COVER: Record<string, string> = {
 export const OBRA_GALERIA: Record<string, string[]> = {
   "showroom-riviera": [showroom, showroom2],
   // 1ª = a melhor de água/praia (sol estourando, pedra submersa); 2ª = a vista
-  // ampla, a que explica o espaço inteiro; 3ª = o "antes" (a piscina de pastilha).
+  // ampla, a que explica o espaço inteiro; 3ª = a casa em uso numa tarde de sol
+  // (cascata caindo na piscina ao fundo, entrada de areia, mesa posta na borda);
+  // 4ª = o "antes" (a piscina de pastilha). O "antes" fica por último de
+  // propósito: é a referência que fecha a sequência, não a que a abre.
   // Mesma obra conferida na imagem: ofurô redondo, entrada de areia, cascata e a
-  // estrutura branca envidraçada aparecem nas três.
-  "casa-de-praia-tato": [tato, tato2, tatoAntes],
+  // estrutura branca envidraçada aparecem nas duas primeiras; na 3ª reaparecem a
+  // cascata sobre pedra, o Buda na vegetação, as cadeiras de corda terracota e a
+  // almofada bege grande — os mesmos objetos da 2ª, nos mesmos lugares.
+  // ⚠ A 3ª tem pessoas identificáveis na casa de um cliente. Entra por
+  // autorização explícita do dono em 2026-07-17 ("pode usar a foto do tato").
+  // Não é decisão de agente: não republicar nem repropor sem ele.
+  "casa-de-praia-tato": [tato, tato2, tato3, tatoAntes],
   "lago-neymar": [neymar, neymar2],
   tapirai: [tapirai, tapiraiReal, tapiraiRender],
   "evandro-mesquita": [evandro, evandroLeveza],
   "unique-garden": [unique],
   rosewood: [rosewood],
   "modulo-15": [modulo15, modulo15Cascata, modulo15Aerea, modulo15Deck],
+  // Outra parte do terreno da `modulo-15` (mesma casa, confirmado pelo dono) —
+  // por isso galeria própria e não fotos anexadas lá: o quadro não bate.
+  // 1ª (capa) = o conjunto: a pedra fazendo a margem, o estar rebaixado dentro
+  // d'água, a casa atrás. 2ª = a pedra de perto, serpenteando ao longo da água
+  // com a faixa de seixo. 3ª = o estar no nível da água, com a pedra grande na
+  // quina. 3 de 11 do lote: as outras 8 têm lona bege de móvel coberto, palmeira
+  // desfocada no quadro ou repetem estas. O motivo de cada corte e de cada
+  // recusa está em scripts/import-fotos.mjs.
+  "modulo-15-lago": [modulo15Lago, modulo15Lago2, modulo15Lago3],
   "caito-maia": [caito],
   "jader-porto-belo": [jader, jader2],
   // 2ª = o desenho à mão do estande; 3ª = a montagem (Hanazaki com as pedras).

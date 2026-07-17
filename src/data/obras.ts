@@ -270,6 +270,40 @@ export const OBRAS: Obra[] = [
     ],
   },
   // ── Sob-medida / institucional (inspiração, sem carrinho) ───────────────
+  // ⚠ modulo-15-lago é a MESMA RESIDÊNCIA da obra `modulo-15` (a piscina), em
+  // outra parte do terreno — confirmado pelo dono em 2026-07-17: "as fotos novas
+  // do modulo 15 são de outro ângulo da casa onde foi feito um lago". São duas
+  // obras de propósito, não um descuido: o quadro do lago (casa de dois
+  // pavimentos, piscina retangular, nublado) não bate com o da piscina (praia
+  // orgânica na mata, sol) e, na mesma galeria, leriam como dois lugares.
+  //
+  // Sem `skus` porque o dono não passou a lista de peças desta obra. Sem SKU o
+  // card roteia para consultoria — que é o comportamento certo — e nenhuma
+  // quantidade é inventada. Se a lista vier, vira comprable sem tocar no texto.
+  //
+  // ⚠ Texto escrito OLHANDO as 3 fotos, não o nome da pasta. Está no quadro: o
+  // estar rebaixado de granito com o fogo ao centro, a água em volta com seixo
+  // no fundo, a pedra fazendo a margem do lado do jardim, a faixa de seixo até o
+  // deck de madeira, papiro e filodendro encostando na pedra. Não há cascata
+  // nestas fotos (a da `modulo-15` é outra parte da casa) e não se afirma m²,
+  // data, local nem cliente — nada disso a foto prova e o dono não passou.
+  {
+    slug: "modulo-15-lago",
+    titulo: "Módulo 15 · o lago",
+    linguagens: ["lago"],
+    tipo: "sob-medida",
+    snippet:
+      "Um estar rebaixado dentro da água: de um lado a reta do granito, do outro a pedra fazendo a margem.",
+    conceito:
+      "O lago envolve um estar rebaixado — quem senta fica no nível da água, com o fogo no centro e a lâmina correndo em volta. A mesma água tem duas bordas de natureza oposta: no estar, a reta polida do granito; do lado do jardim, a pedra irregular, que serpenteia até encostar na vegetação. É esse contraste que faz o conjunto deixar de parecer um tanque e passar a parecer margem.",
+    menteDoCriador:
+      "A margem não é uma pedra só: são peças encaixadas com as juntas viradas para onde o olho não vai, e alturas que sobem e descem de propósito — borda que repete medida entrega na hora que foi desenhada. A pedra entra na água e continua embaixo dela, e é aí que some a linha onde o lago começa: a água é clara a ponto de se ver o seixo do fundo, e mesmo assim não se acha o começo da obra. Entre a pedra e o deck corre uma faixa de seixo — o encontro se resolve sem rodapé e sem arremate à vista. A vegetação chega até encostar, papiro e filodendro apoiados na pedra, e em nenhum trecho se vê onde termina o jardim. O granito do estar não disputa com nada disso: fica com a reta, e a pedra fica com o resto.",
+    ficha: [
+      "Mesma residência da obra Módulo 15",
+      "Estar rebaixado no nível da água, com fogo ao centro",
+      "Margem em pedra Western; borda do estar em granito",
+    ],
+  },
   {
     slug: "caito-maia",
     titulo: "Base de mesa em pedra Western",
