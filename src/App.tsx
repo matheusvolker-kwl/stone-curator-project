@@ -1,11 +1,19 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import RouteTransition from "@/components/RouteTransition";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 
 function LabProductRedirect() {
   const { handle = "" } = useParams();
   return <Navigate to={`/produtos/${handle}`} replace />;
+}
+
+// /inspiracoes(?tipo=lagos) → /obras(?tipo=lagos). Carrega a query string: um
+// <Navigate to="/obras"> com string a descartaria, e o `?tipo=` de UsageScenes
+// é o que seleciona o segmento na lista.
+function RedirectObras() {
+  const { search } = useLocation();
+  return <Navigate to={{ pathname: "/obras", search }} replace />;
 }
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -168,10 +176,12 @@ const App = () => (
                     {/* v1 usava /linhas/pisantes — preservar SEO/links externos no cutover */}
                     <Route path="/linhas/pisantes" element={<Navigate to="/linhas/pisadas" replace />} />
                     <Route path="/linhas/:handle" element={<LinhaPage />} />
-                    <Route path="/inspiracoes" element={<Inspiracoes />} />
-                    <Route path="/inspiracao" element={<Navigate to="/inspiracoes" replace />} />
-                    <Route path="/obras" element={<Navigate to="/inspiracoes" replace />} />
+                    {/* A lista é /obras (é o que ela é: obra entregue). Os nomes
+                        antigos seguem vivos como redirect — nenhum link morre. */}
+                    <Route path="/obras" element={<Inspiracoes />} />
                     <Route path="/obras/:slug" element={<ObraPage />} />
+                    <Route path="/inspiracoes" element={<RedirectObras />} />
+                    <Route path="/inspiracao" element={<RedirectObras />} />
                     {/* Telas do V3 que faltavam no app */}
                     <Route path="/como-comprar" element={<ComoComprar />} />
                     <Route path="/para-sua-casa" element={<ParaSuaCasa />} />

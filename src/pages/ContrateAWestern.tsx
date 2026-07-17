@@ -324,7 +324,7 @@ export default function ContrateAWestern() {
                 ganhou obra em 2026-07); antes esta linha citava como prova um
                 rosto que o site não conseguia mostrar. */}
             <Link
-              to="/inspiracoes"
+              to="/obras"
               className="tap-target mt-4 inline-flex items-center gap-1.5 font-sans text-base font-semibold text-western-gold-soft hover:text-western-cream transition-colors"
             >
               Ver as obras

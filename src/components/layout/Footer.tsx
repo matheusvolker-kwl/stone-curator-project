@@ -140,7 +140,7 @@ export default function Footer() {
               <li><Link to="/como-comprar" className={colLink}>Como comprar</Link></li>
               <li><Link to="/conjuntos" className={colLink}>Conjuntos prontos</Link></li>
               <li><Link to="/guia-de-composicao" className={colLink}>Guia de composição</Link></li>
-              <li><Link to="/inspiracoes" className={colLink}>Inspire-se</Link></li>
+              <li><Link to="/obras" className={colLink}>Obras</Link></li>
               <li><Link to="/western-box" className={colLink}>Western Box · amostras</Link></li>
               <li><Link to="/politica-comercial" className={colLink}>Política comercial e de entrega</Link></li>
               <li><Link to="/trocas-e-avarias" className={colLink}>Trocas e avarias</Link></li>

@@ -516,7 +516,7 @@ export default function Index() {
               o rosto seria a mesma prova, dita duas vezes. Eles vivem na tira de
               "quem confia", perto do fechamento. */}
           <div className="mt-10">
-            <Link to="/inspiracoes" className="btn-outline-forest w-full sm:w-auto">
+            <Link to="/obras" className="btn-outline-forest w-full sm:w-auto">
               Ver todas as obras <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
             </Link>
           </div>

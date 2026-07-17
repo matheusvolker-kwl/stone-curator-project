@@ -12,10 +12,10 @@
  * ⚠ DECLARAR UMA OBRA SÃO 3 ARQUIVOS, NÃO 1 — nesta ordem:
  *   1. obras.ts        — o dado (este arquivo).
  *   2. obraImages.ts   — OBRA_COVER[slug]. **OBRIGATÓRIO, não cosmético**:
- *      ObraPage.tsx:31 faz `if (!OBRA_COVER[slug]) return <Navigate to="/obras">`
- *      e /obras redireciona para /inspiracoes. Obra sem cover = LINK MORTO que
- *      devolve o usuário para a lista de onde ele saiu. Foi exatamente o que
- *      aconteceu com jader-porto-belo até 2026-07.
+ *      ObraPage faz `if (!OBRA_COVER[slug]) return <Navigate to="/obras">`, e
+ *      /obras É a lista. Obra sem cover = LINK MORTO que devolve o usuário
+ *      para a lista de onde ele saiu. Foi exatamente o que aconteceu com
+ *      jader-porto-belo até 2026-07.
  *   3. segmentos.ts    — o slug em SEGMENTOS[n].obraSlugs, senão a obra não tem
  *      entrada nenhuma.
  * E, se a obra lastreia um rosto da prova social, socialProofLinks.ts.
@@ -233,6 +233,41 @@ export const OBRAS: Obra[] = [
       sku("PS", 1, "Pedra Sonora", "funcional"),
     ],
     creditos: ["Reforma da piscina: @imperiarevestimentos"],
+  },
+  // ⚠ Texto escrito OLHANDO a única foto que a obra tem (sachelli.jpg, 2592×1944).
+  // Tudo que está afirmado aqui está no quadro: o deck curvo, a fila de lajes
+  // aflorando da água, o capim e o papiro na margem, a pedra chata deitada no
+  // gramado, a forração descendo até a lâmina. Nada de m², data ou local — a foto
+  // não carrega isso e o dono não passou.
+  //
+  // ⚠ Esta obra tem UMA foto de propósito. As outras 3 da pasta "obra sachelli"
+  // não entram: 2 são de outro lugar (litoral) e a 3ª não pôde ser confirmada como
+  // o mesmo jardim. Foram todas para a galeria do segmento "lagos", sem nome.
+  // Uma foto certa vale mais que quatro misturadas.
+  {
+    slug: "sachelli",
+    titulo: "Lago com travessia de pedras",
+    cliente: "Sachelli",
+    linguagens: ["lago"],
+    tipo: "comprable",
+    snippet:
+      "Um lago de jardim que se atravessa a pé: lajes chatas afloram da água em fila, do deck até a outra margem.",
+    conceito:
+      "O deck de madeira curva até a água e o caminho não para ali — uma fila de lajes chatas continua por dentro do lago, aflorando o suficiente para o pé. Atrás, o capim e o papiro fecham a margem; na frente, o gramado e a forração descem até a lâmina sem borda aparente. A pedra faz dois trabalhos ao mesmo tempo: é a margem que segura a paisagem e é o piso que leva a gente para dentro dela.",
+    menteDoCriador:
+      "A travessia é o projeto inteiro. A PM7, comprida e chata, é a primeira laje — a que recebe o passo saindo do deck. As 2× PM4 e a PM3 seguem a fila, cada uma virada num ângulo diferente e nenhuma alinhada com a anterior: fila reta lê corrimão, fila torta lê pedra que já estava ali. Todas assentam pouco acima da lâmina — subir demais vira obstáculo, afundar um dedo vira escorregão. Na margem oposta, a PG7 e a PG3 fazem o volume que dá fundo ao papiro e impede o olho de vazar para o vizinho. A PG2, larga e baixa, fica FORA da água, deitada no gramado: é ela que faz o lago parecer achado e não instalado, porque afloramento de verdade não respeita a linha da água. E as pequenas (2× PP3, 2× PP2, PP1) somem nas frestas entre as grandes e a forração — são elas que apagam a linha onde a obra começa.",
+    ficha: ["Lago ornamental de jardim", "Travessia de lajes sobre a água"],
+    skus: [
+      sku("PM7", 1, "Pedra Média 7", "primeira laje da travessia"),
+      sku("PM4", 2, "Pedra Média 4", "travessia"),
+      sku("PM3", 1, "Pedra Média 3", "travessia"),
+      sku("PG7", 1, "Pedra Grande 7", "volume da margem"),
+      sku("PG3", 1, "Pedra Grande 3", "volume da margem"),
+      sku("PG2", 1, "Pedra Grande 2", "afloramento no gramado"),
+      sku("PP3", 2, "Pedra Pequena 3", "costura da margem"),
+      sku("PP2", 2, "Pedra Pequena 2", "costura da margem"),
+      sku("PP1", 1, "Pedra Pequena 1", "preenchimento"),
+    ],
   },
   // ── Sob-medida / institucional (inspiração, sem carrinho) ───────────────
   {

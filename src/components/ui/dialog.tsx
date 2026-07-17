@@ -12,6 +12,11 @@ const DialogPortal = DialogPrimitive.Portal;
 
 const DialogClose = DialogPrimitive.Close;
 
+// Content CRU, sem a moldura do DialogContent (max-w-lg + botão de fechar
+// embutido). Para diálogos que definem a própria moldura — ex.: o Lightbox,
+// que é full-bleed e precisa de um alvo de fechar de 52px.
+const DialogPrimitiveContent = DialogPrimitive.Content;
+
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
@@ -88,6 +93,7 @@ export {
   DialogClose,
   DialogTrigger,
   DialogContent,
+  DialogPrimitiveContent,
   DialogHeader,
   DialogFooter,
   DialogTitle,

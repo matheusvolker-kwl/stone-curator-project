@@ -28,7 +28,7 @@ const staticEntries: Entry[] = [
   { path: "/conjuntos", changefreq: "monthly", priority: "0.8" },
   { path: "/guia-de-composicao", changefreq: "monthly", priority: "0.8" },
   // Páginas do V3 que não existiam quando este gerador foi escrito
-  { path: "/inspiracoes", changefreq: "monthly", priority: "0.8" },
+  { path: "/obras", changefreq: "monthly", priority: "0.8" },
   { path: "/como-comprar", changefreq: "monthly", priority: "0.8" },
   { path: "/para-sua-casa", changefreq: "monthly", priority: "0.8" },
   { path: "/western-box", changefreq: "monthly", priority: "0.8" },

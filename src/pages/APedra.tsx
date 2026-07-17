@@ -553,7 +553,7 @@ export default function APedra() {
                   <p className="text-meta mt-1">downloads no SketchUp</p>
                 </div>
                 <Link
-                  to="/inspiracoes"
+                  to="/obras"
                   className="tap-target mt-6 inline-flex items-center gap-1.5 font-sans text-base font-semibold text-western-green-deep hover:text-western-cta transition-colors"
                 >
                   Ver obras entregues

@@ -1,7 +1,7 @@
 /**
  * Hook compartilhado que transforma uma composição {handle, qty}[] em peças
  * enriquecidas (nome/preço/foto reais do catálogo) e no CartItem[] do orçamento.
- * Extraído do ConjuntoPage para que /inspiracoes (obra → carrinho) use a MESMA
+ * Extraído do ConjuntoPage para que /obras (obra → carrinho) use a MESMA
  * regra de bundle/Woo — sem duplicar lógica.
  *
  * Blindagem nativa: peças cujo variantId não começa com gid:// (sem variante

@@ -21,9 +21,35 @@ import EmailInput from "@/components/forms/EmailInput";
 import FieldLabel from "@/components/forms/FieldLabel";
 import { phoneBRSchema, emailSchema, UF_LIST, normalizeText, focusFirstInvalid } from "@/lib/forms/br";
 import { z } from "zod";
+import Seo from "@/components/seo/Seo";
+import atelieHero from "@/assets/visitar/atelie-hero.webp";
+import atelieReuniao from "@/assets/visitar/atelie-reuniao.webp";
+import atelieEstar from "@/assets/visitar/atelie-estar.webp";
+import atelieCascata from "@/assets/visitar/atelie-cascata.webp";
 
 const PERFIS = ["Arquiteto", "Paisagista", "Cliente final", "Lojista", "Construtora", "Outro"];
 const HORARIOS = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00"];
+
+/* Cada alt abaixo foi escrito OLHANDO o arquivo, não a expectativa. As três são
+ * fotos noturnas de celular do mesmo lugar da hero (o teto de varas, o deck e a
+ * parede verde de samambaias se repetem e amarram as quatro).
+ * Ficou de fora, de propósito, a foto do interior da sala de reunião: sobre a
+ * mesa há lata de energético, copos plásticos, notebook, um nível de pedreiro e
+ * um ring light no tripé. Lê "escritório em dia de trabalho", não showroom. */
+const ATELIE_FOTOS = [
+  {
+    img: atelieCascata,
+    alt: "À noite: uma cascata de pedra Western despejando água numa piscina iluminada de azul, com palmeiras iluminadas ao fundo e o deck de madeira em primeiro plano.",
+  },
+  {
+    img: atelieReuniao,
+    alt: "À noite: o deck coberto por um teto de varas, com uma parede verde de samambaias iluminada e, atrás do vidro, a sala de reunião com mesa redonda branca apoiada numa base de pedra bruta.",
+  },
+  {
+    img: atelieEstar,
+    alt: "À noite: um sofá creme no deck, encostado na parede verde de samambaias iluminada, com a parede de pedra recebendo luz rasante e a piscina azul em primeiro plano.",
+  },
+];
 
 /* DS V3 — pele dos campos.
  * 52px de altura (--control-h), cantos 10px, texto 16px (mínimo de UI), borda
@@ -181,7 +207,35 @@ export default function AgendarVisita() {
 
   return (
     <div className="surface-ivory">
+      <Seo
+        title="Visita ao ateliê Western — agende e conheça o showroom"
+        description={`O showroom do ateliê recebe com hora marcada em ${BUSINESS.cidadeAtelie}/${BUSINESS.ufAtelie}: ponha a mão na pedra, veja as peças montadas em escala e converse com quem produz.`}
+        path="/visitar"
+      />
       <div className="container-western py-16 md:py-24">
+        {/* O showroom que se visita é ESTE — o ateliê. O antigo convite mandava a
+            pessoa à Riviera de São Lourenço, que é obra nossa já entregue e não
+            recebe visita; saiu do site. Esta página era só um formulário: quem
+            chegava tinha que aceitar no escuro que valia a viagem. Agora ela
+            mostra o lugar antes de pedir a agenda.
+            ⚠ Nenhuma destas fotos prova em que cidade o lugar fica — a cidade sai
+            de BUSINESS, e nunca de uma legenda dizendo que a foto a comprova. */}
+        <div className="mx-auto max-w-4xl">
+          <figure className="m-0 mb-10 md:mb-14">
+            <div className="aspect-[4/3] overflow-hidden rounded-[16px]">
+              <img
+                src={atelieHero}
+                alt="Deck de madeira do ateliê à beira de uma piscina de borda de praia com água turquesa. Um homem sentado na beira do deck, com os pés dentro da água, toca violão. Atrás, um pavilhão com pergolado de varas e a porta de vidro aberta; à direita, uma palmeira e pedra Western."
+                width={1400}
+                height={1050}
+                fetchPriority="high"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
+            </div>
+          </figure>
+        </div>
+
         <div className="mx-auto max-w-2xl">
         <p className="text-eyebrow mb-5">Visita ao ateliê</p>
         <div className="mb-8 h-px w-12 bg-western-gold" />
@@ -193,9 +247,37 @@ export default function AgendarVisita() {
           tocar nos quatro acabamentos, ver as composições montadas em escala e
           conversar com quem produz.
         </p>
-        <p className="mb-12 text-[16px] leading-[1.6] text-western-stone-warm">
-          {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · {BUSINESS.horarioAtelie} · Retirada gratuita
+        {/* enderecoAtelieCompleto já traz "Cajamar/SP" — por isso a linha de
+            horário não repete a cidade, como fazia quando não havia endereço. */}
+        <p className="mb-2 text-[16px] leading-[1.6] text-western-stone-warm">
+          {BUSINESS.enderecoAtelieCompleto}
         </p>
+        <p className="mb-12 text-[16px] leading-[1.6] text-western-stone-warm">
+          {BUSINESS.horarioAtelie} · Retirada gratuita
+        </p>
+        </div>
+
+        <div className="mx-auto mb-12 max-w-4xl">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3 list-none p-0">
+            {ATELIE_FOTOS.map((f) => (
+              <li key={f.img}>
+                <div className="aspect-[4/3] overflow-hidden rounded-[10px]">
+                  <img
+                    src={f.img}
+                    alt={f.alt}
+                    width={900}
+                    height={675}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="mx-auto max-w-2xl">
 
         <form
           ref={formRef}

@@ -15,7 +15,7 @@ interface Props {
 /**
  * "Onde usar" — quebra a suposição de que cada peça só serve pra uma coisa.
  * A mesma pedra vai na piscina, no lago, na parede, dentro d'água. Os chips de
- * cena com projeto real levam ao Inspire-se filtrado; as demais cenas ficam
+ * cena com projeto real levam a /obras filtrado por segmento; as demais ficam
  * como texto educativo (sem link morto). Reforça a leveza e o uso em água só
  * onde é verdade — ver [[western-piscinas-naturais-pitch]] / regras de honestidade.
  */
@@ -48,8 +48,8 @@ export default function UsageScenes({ collectionHandle, productTitle }: Props) {
                 return (
                   <Link
                     key={t}
-                    to={`/inspiracoes?tipo=${t}`}
-                    aria-label={`Ver projetos de ${s.label.toLowerCase()} no Inspire-se`}
+                    to={`/obras?seg=${t}`}
+                    aria-label={`Ver obras de ${s.label.toLowerCase()}`}
                     className="group tap-target inline-flex items-center gap-2.5 rounded-full border border-western-border-strong bg-white px-5 text-[16px] font-semibold text-western-green-deep transition-colors hover:border-western-green-deep hover:bg-western-paper"
                   >
                     <Icon className="h-5 w-5 text-western-cta" aria-hidden="true" />
@@ -74,13 +74,13 @@ export default function UsageScenes({ collectionHandle, productTitle }: Props) {
           </p>
         )}
 
-        {/* Peças sem projeto próprio no Inspire-se ainda ganham um caminho pra lá. */}
+        {/* Peças sem projeto próprio ainda ganham um caminho pras obras. */}
         {projetos.length === 0 && (
           <Link
-            to="/inspiracoes"
+            to="/obras"
             className="group mt-6 inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-cta transition-colors hover:text-western-green-deep"
           >
-            Dúvidas de como usar? Inspire-se com projetos reais
+            Dúvidas de como usar? Veja as obras entregues
             <ArrowRight
               className="h-5 w-5 transition-transform motion-safe:group-hover:translate-x-0.5"
               aria-hidden="true"

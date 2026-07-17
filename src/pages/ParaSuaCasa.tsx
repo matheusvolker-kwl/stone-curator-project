@@ -36,9 +36,20 @@ import obraTato from "@/assets/obras/tato.webp";
 import obraTatoAntes from "@/assets/obras/tato-antes.webp";
 import obraEvandro from "@/assets/obras/evandro-leveza.webp";
 import obraShowroom from "@/assets/obras/showroom-2.webp";
-import render3d from "@/assets/obras/tapirai-render.webp";
-import real3d from "@/assets/obras/tapirai-real.webp";
+/* Sequência Conrado: desenho → 3D → obra entregue. Substitui o par
+   tapirai-render/tapirai-real, que a /a-pedra já tinha recusado por escrito —
+   o render era uma casa de tijolo de dois andares e a "real" um deck com
+   guarda-sóis: rotulados "projeto/entregue", o olho lia contradição bem na
+   promessa que a seção sustenta.
+   ⚠ O desenho e o 3D NÃO TÊM CASA — são só a parede de pedra e a água. Por isso
+   nenhuma legenda aqui diz "a mesma casa": diz "o mesmo projeto", que é o que dá
+   pra conferir a olho (a escada de lajes chatas à esquerda e a fileira de quedas
+   ao fundo se repetem nos três). */
+import conradoDesenho from "@/assets/obras/conrado-desenho.webp";
+import conrado3d from "@/assets/obras/conrado-3d.webp";
+import conradoObra from "@/assets/obras/conrado-obra.webp";
 import atelieImg from "@/assets/irmaos-botelho-gruta.webp";
+import atelieVisita from "@/assets/visitar/atelie-hero.webp";
 
 const waLink = (msg: string) =>
   `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`;
@@ -463,59 +474,78 @@ export default function ParaSuaCasa() {
         </div>
       </section>
 
-      {/* 6 — PROJETO 3D (render → realidade) */}
+      {/* 6 — DO DESENHO À OBRA (desenho do Ricardo → 3D → obra entregue) */}
       <section className="surface-forest py-16 md:py-24">
         <div className="container-western">
-          <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-center">
-            <Reveal variant="fade-up" duration={700} className="md:col-span-5">
-              <div>
-                <p className="font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-gold-soft mb-4">
-                  Projeto 3D
-                </p>
-                <h2 className="display-lg text-western-cream">
-                  Você não aprova{" "}
-                  <span className="text-western-gold-soft">no escuro.</span>
-                </h2>
-                <p className="mt-5 text-[17px] leading-[1.6] text-western-cream/85">
-                  A gente desenha a sua área em 3D fotorrealista, você ajusta até ficar do seu jeito —
-                  e só então a obra começa. De 10 a 25 dias para o projeto, e atendemos todo o Brasil.
-                </p>
-                <a
-                  href={waLink("Olá! Quero ver o meu projeto em 3D.")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-gold mt-8 w-full sm:w-auto"
-                >
-                  <MessageCircle className="h-5 w-5" />
-                  Quero ver o meu em 3D
-                </a>
-              </div>
-            </Reveal>
+          <Reveal variant="fade-up" duration={700}>
+            <div className="max-w-[62ch]">
+              <p className="font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-gold-soft mb-4">
+                Do desenho à obra
+              </p>
+              <h2 className="display-lg text-western-cream">
+                Você não aprova{" "}
+                <span className="text-western-gold-soft">no escuro.</span>
+              </h2>
+              <p className="mt-5 text-[17px] leading-[1.6] text-western-cream/85">
+                Começa a lápis, na mão do nosso projetista. Vira 3D para você ajustar até ficar do seu
+                jeito. E só então a obra começa. De 10 a 25 dias para o projeto, e atendemos todo o Brasil.
+              </p>
+            </div>
+          </Reveal>
 
-            <Reveal variant="fade-up" delay={90} duration={700} className="md:col-span-7">
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { img: render3d, label: "O projeto 3D" },
-                  { img: real3d, label: "A obra pronta" },
-                ].map((x) => (
-                  <figure key={x.label} className="m-0">
-                    <div className="aspect-[4/5] overflow-hidden rounded-[12px] bg-western-green-mid/30 ring-1 ring-western-gold/20">
+          <Reveal variant="fade-up" delay={90} duration={700}>
+            <ol className="mt-10 md:mt-12 grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 list-none p-0">
+              {[
+                { img: conradoDesenho, n: "1", label: "O desenho à mão", d: "O primeiro traço do projeto, a lápis.",
+                  alt: "Desenho a lápis de uma parede de pedra com uma queda d'água grande à esquerda, uma fileira de quedas menores em cortina à direita e um lago curvando em primeiro plano." },
+                { img: conrado3d, n: "2", label: "O projeto 3D", d: "O mesmo desenho, para você aprovar.",
+                  alt: "Projeto em 3D da mesma parede de pedra: a queda maior à esquerda, a fileira de quedas em cortina à direita e a água turquesa na frente." },
+                { img: conradoObra, n: "3", label: "A obra entregue", d: "Executada pela nossa equipe.",
+                  alt: "Foto da obra pronta em dia de sol: a parede de pedra cor de ocre com a queda maior à esquerda, as quedas menores ao longo da borda e a piscina de água turquesa com patamar de areia." },
+              ].map((x) => (
+                <li key={x.n}>
+                  <figure className="m-0">
+                    <div className="aspect-[16/9] overflow-hidden rounded-[12px] bg-western-green-mid/30 ring-1 ring-western-gold/20">
                       <img
                         src={x.img}
-                        alt={x.label}
+                        alt={x.alt}
                         loading="lazy"
                         decoding="async"
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <figcaption className="mt-2.5 text-center font-sans text-[14px] font-semibold text-western-gold-soft">
-                      {x.label}
+                    <figcaption className="mt-3">
+                      <span className="font-sans text-[14px] font-semibold text-western-gold-soft tabular-nums">
+                        {x.n} · {x.label}
+                      </span>
+                      <span className="mt-1 block text-[15px] leading-[1.5] text-western-cream/75">
+                        {x.d}
+                      </span>
                     </figcaption>
                   </figure>
-                ))}
-              </div>
-            </Reveal>
-          </div>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
+
+          <Reveal variant="fade-up" delay={140} duration={700}>
+            {/* Diz ao leitor exatamente o que conferir — e só o que as três imagens
+                sustentam de verdade. O desenho e o 3D não têm casa nenhuma, então
+                "o mesmo projeto" é o limite do que dá pra afirmar aqui. */}
+            <p className="mt-8 max-w-[68ch] text-[15px] leading-[1.6] text-western-cream/70">
+              As três são o mesmo projeto: repare na escada de pedras chatas descendo até a água, à
+              esquerda, e na fileira de quedas ao fundo.
+            </p>
+            <a
+              href={waLink("Olá! Quero ver o meu projeto em 3D.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-gold mt-8 w-full sm:w-auto"
+            >
+              <MessageCircle className="h-5 w-5" />
+              Quero ver o meu em 3D
+            </a>
+          </Reveal>
         </div>
       </section>
 
@@ -571,6 +601,47 @@ export default function ParaSuaCasa() {
               </div>
             </Reveal>
           </div>
+
+          {/* O CONVITE VERDADEIRO.
+              O convite anterior mandava a pessoa visitar a Riviera de São Lourenço —
+              e a Riviera é uma obra NOSSA já entregue, que não recebe visita. Já saiu.
+              O showroom que existe e recebe gente com hora marcada é o ateliê, e é
+              esse que o convite oferece agora. A cidade vem do cadastro (BUSINESS),
+              não da foto: nenhuma imagem prova onde o lugar fica. */}
+          <Reveal variant="fade-up" delay={120} duration={700}>
+            <div className="mt-12 md:mt-16 grid md:grid-cols-12 gap-8 md:gap-10 items-center rounded-[16px] border border-western-border-soft bg-white overflow-hidden">
+              <div className="md:col-span-7">
+                <div className="aspect-[4/3] overflow-hidden">
+                  <img
+                    src={atelieVisita}
+                    alt="Deck de madeira do ateliê à beira de uma piscina de borda de praia com água turquesa. Um homem sentado na beira do deck, com os pés dentro da água, toca violão. Atrás, um pavilhão com pergolado de varas e a porta de vidro aberta; à direita, uma palmeira e pedra Western."
+                    width={1200}
+                    height={900}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
+              <div className="md:col-span-5 p-6 pt-0 md:p-8 md:pl-0">
+                <p className="text-eyebrow">Visita ao ateliê</p>
+                <h3 className="display-md text-western-green-deep mt-3">
+                  Você pode vir sentar aqui.
+                </h3>
+                <p className="mt-4 text-[17px] leading-[1.6] text-western-stone-warm">
+                  O ateliê recebe com hora marcada. Dá pra pôr a mão na pedra, ver as peças montadas
+                  em escala e conversar com quem produz — antes de decidir qualquer coisa.
+                </p>
+                <p className="mt-4 text-[16px] leading-[1.6] text-western-stone-warm">
+                  {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · {BUSINESS.horarioAtelie}
+                </p>
+                <Link to="/visitar" className="btn-gold mt-7 w-full sm:w-auto">
+                  <MapPin className="h-5 w-5" aria-hidden />
+                  Agendar uma visita
+                </Link>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
 

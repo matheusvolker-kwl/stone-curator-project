@@ -1,15 +1,16 @@
 /**
  * Camada de imagem das obras (mantém obras.ts puro/sem imports de asset).
  *
- * ⚠ OBRA_COVER NÃO É COSMÉTICO: ObraPage.tsx:31 redireciona a obra que não tem
- * cover aqui, e /obras cai em /inspiracoes. Sem entrada aqui, a obra existe no
- * dado, aparece como card em /inspiracoes (que filtra só por OBRAS_BY_SLUG) e
- * o clique devolve o usuário para a lista — link morto em produção. Foi o caso
- * do jader-porto-belo até 2026-07.
+ * ⚠ OBRA_COVER NÃO É COSMÉTICO: ObraPage redireciona pra /obras (a lista) a
+ * obra que não tem cover aqui. Sem entrada aqui, a obra existe no dado,
+ * aparece como card na lista (que filtra só por OBRAS_BY_SLUG) e o clique
+ * devolve o usuário para a lista de onde ele saiu — link morto em produção.
+ * Foi o caso do jader-porto-belo até 2026-07.
  */
 import showroom from "@/assets/obras/showroom.webp";
 import showroom2 from "@/assets/obras/showroom-2.webp";
 import tato from "@/assets/obras/tato.webp";
+import tato2 from "@/assets/obras/tato-2.webp";
 import tatoAntes from "@/assets/obras/tato-antes.webp";
 import neymar from "@/assets/obras/neymar.webp";
 import neymar2 from "@/assets/obras/neymar-2.webp";
@@ -41,6 +42,8 @@ import quadriplexRender from "@/assets/obras/quadriplex-3.webp";
 import nigro from "@/assets/obras/nigro.webp";
 import nigro2 from "@/assets/obras/nigro-2.webp";
 import nigro3 from "@/assets/obras/nigro-3.webp";
+// ── Lote 2026-07-17 ─────────────────────────────────────────────────
+import sachelli from "@/assets/obras/sachelli.webp";
 
 export const OBRA_COVER: Record<string, string> = {
   "showroom-riviera": showroom,
@@ -58,11 +61,16 @@ export const OBRA_COVER: Record<string, string> = {
   "enora-jader-almeida": enora,
   "quadriplex-caverna": quadriplex,
   "nigro-praia-suspensa": nigro,
+  sachelli,
 };
 
 export const OBRA_GALERIA: Record<string, string[]> = {
   "showroom-riviera": [showroom, showroom2],
-  "casa-de-praia-tato": [tato, tatoAntes],
+  // 1ª = a melhor de água/praia (sol estourando, pedra submersa); 2ª = a vista
+  // ampla, a que explica o espaço inteiro; 3ª = o "antes" (a piscina de pastilha).
+  // Mesma obra conferida na imagem: ofurô redondo, entrada de areia, cascata e a
+  // estrutura branca envidraçada aparecem nas três.
+  "casa-de-praia-tato": [tato, tato2, tatoAntes],
   "lago-neymar": [neymar, neymar2],
   tapirai: [tapirai, tapiraiReal, tapiraiRender],
   "evandro-mesquita": [evandro, evandroLeveza],
@@ -79,4 +87,8 @@ export const OBRA_GALERIA: Record<string, string[]> = {
   // como tal em obras.ts. Render nunca é apresentado como foto.
   "quadriplex-caverna": [quadriplex, quadriplex2, quadriplexRender],
   "nigro-praia-suspensa": [nigro, nigro2, nigro3],
+  // ⚠ UMA foto de propósito, não por descuido: é a única do material que mostra
+  // este jardim. As outras da pasta não puderam ser confirmadas como o mesmo
+  // lugar e foram para a galeria do segmento "lagos", sem nome de cliente.
+  sachelli: [sachelli],
 };

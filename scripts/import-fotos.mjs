@@ -199,6 +199,121 @@ const JOBS = [
     crop: { left: 430, top: 30, width: 1140, height: 1050 } }, // tira o caixilho da janela
   { dest: "obras/nigro-2.webp", src: `${EXTRA}/Thiago Nigro/WhatsApp Image 2026-07-16 at 23.01.56 (2).jpeg`, root: "", width: 1200 },
   { dest: "obras/nigro-3.webp", src: `${EXTRA}/Pedra Oca/9-24 Piscina suspensa - Nigro - Projeto Genesis.jpg`, root: "", width: 1200 },
+
+  // ── Conrado: desenho → 3D → obra entregue ────────────────────────
+  // Substitui o par tapirai-render/tapirai-real na /para-sua-casa, que a /a-pedra
+  // já tinha recusado por escrito (render de casa de tijolo vs. deck com guarda-sóis:
+  // não são o mesmo enquadramento e mal parecem o mesmo projeto).
+  //
+  // ⚠ O QUE AS TRÊS PROVAM, E O QUE NÃO PROVAM. Olhei as três. O desenho e o 3D
+  // NÃO TÊM CASA NENHUMA — são só a parede de pedra com as quedas e a água na
+  // frente. Só a foto tem casa. Logo "é a mesma casa nas três" é INDEMONSTRÁVEL e
+  // não está escrito em lugar nenhum. O que as três compartilham, e dá pra
+  // conferir a olho, é a geometria de assinatura do MESMO PROJETO: a pilha de
+  // lajes chatas descendo em degraus até a água na esquerda, a queda dominante
+  // logo à direita dela, e a corrida de quedas menores em cortina ao longo da
+  // borda do fundo. É isso que a legenda afirma — nada além.
+  //
+  // Aspecto travado em 16:9 nos três para o object-cover do card virar no-op.
+  { dest: "obras/conrado-desenho.webp", src: `${EXTRA}/obra pronta vs 3d/perspectiva artistica Conrado.jpg`, root: "", width: 1400,
+    // 2012×900 (2.24:1) → 16:9. Corta ~200px de cada lado: sobra hachura de grama
+    // à direita e vazio à esquerda; as quedas todas ficam dentro do quadro.
+    crop: { left: 180, top: 0, width: 1600, height: 900 } },
+  { dest: "obras/conrado-3d.webp", src: `${EXTRA}/obra pronta vs 3d/2.CONRADO_IMG_R00.png`, root: "", width: 1400 },
+  // 3840×2160 já é 16:9 exato — sem crop.
+  { dest: "obras/conrado-obra.webp", src: `${EXTRA}/obra pronta vs 3d/IMG_3849.JPEG`, root: "", width: 1400,
+    // 2048×1536 (4:3) → 16:9 tirando céu azul vazio do topo. NÃO é crop para
+    // forçar semelhança com o 3D: a casa e a cascata inteiras seguem no quadro.
+    crop: { left: 0, top: 380, width: 2048, height: 1152 } },
+
+  // ── Showroom do ateliê (Cajamar) — o convite VERDADEIRO ──────────
+  // O convite da Riviera era falso (obra entregue, não recebe visita) e já saiu.
+  // Estas são o showroom que existe hoje e recebe gente com hora marcada.
+  // ⚠ Nenhuma destas fotos PROVA que o lugar é Cajamar — isso vem do dono, não da
+  // imagem. Por isso a cidade aparece como dado de contato, nunca como legenda.
+  { dest: "visitar/atelie-hero.webp", src: `${EXTRA}/Showroom Atelie Western/DSC07017-HDR.jpg`, root: "", width: 1800,
+    // 3979×5968 (retrato 2:3) → 4:3. Homem de camisa bege sentado na beira do
+    // deck com os pés na água tocando violão; pergolado de varas, porta de vidro
+    // aberta, sofá branco, palmeira, piscina de borda de praia. O corte tira
+    // copa de árvore no topo e água vazia embaixo — o homem, o pavilhão e a
+    // piscina ficam todos dentro.
+    crop: { left: 0, top: 1100, width: 3979, height: 2984 } },
+  { dest: "visitar/atelie-reuniao.webp", src: `${EXTRA}/Showroom Atelie Western/IMG_5647.jpg`, root: "", width: 1000 },
+  // 2048×1536 já é 4:3 — deck coberto de varas + parede verde de samambaias e,
+  // atrás do vidro, a sala de reunião. Sem crop.
+  { dest: "visitar/atelie-estar.webp", src: `${EXTRA}/Showroom Atelie Western/IMG_7137.JPEG`, root: "", width: 1000,
+    // 1536×2048 → 4:3: sofá creme, parede verde iluminada, piscina azul.
+    crop: { left: 0, top: 400, width: 1536, height: 1152 } },
+  { dest: "visitar/atelie-cascata.webp", src: `${EXTRA}/Showroom Atelie Western/IMG_5656.jpg`, root: "", width: 1000,
+    // 1536×2048 → 4:3: cascata de pedra caindo na piscina iluminada, palmeiras
+    // ao fundo. É a única das noturnas em que a pedra é protagonista.
+    crop: { left: 0, top: 500, width: 1536, height: 1152 } },
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // LOTE 2026-07-17 — lagos. Cada arquivo abaixo foi ABERTO antes de entrar.
+  //
+  // ⚠ Todo crop deste bloco é 4:3 EXATO (1.333) de propósito. Galeria e ObraPage
+  // renderizam `aspect-[4/3] object-cover`: numa fonte 2:3 o browser descarta 25%
+  // em cima e 25% embaixo — e é justamente aí que a pedra mora, porque ela fica
+  // no chão. Assando o 4:3 aqui, o object-cover vira no-op e o que foi escolhido
+  // olhando a foto é o que embarca.
+  // ═══════════════════════════════════════════════════════════════════════
+
+  // sachelli — 2592×1944 já é 4:3 exato: sem crop. A foto carrega as quatro coisas
+  // que a obra tem a dizer (deck curvo, travessia de lajes, margem, pedra chata no
+  // gramado) e cortar qualquer borda tira uma delas.
+  { dest: "obras/sachelli.webp", src: `${EXTRA}/obra sachelli/sachelli.jpg`, root: "", width: 1400 },
+
+  // casa-de-praia-tato, 2ª foto. 1600×1200 = 4:3 nativo, sem crop.
+  // ⚠ NÃO substitui a tato.webp: aquela é a melhor foto de água/praia (sol
+  // estourando, pedra submersa); esta é a que explica o espaço inteiro. Coexistem.
+  // Mesma obra CONFERIDA na imagem, não no nome da pasta: o ofurô redondo branco,
+  // a entrada de areia, a cascata e a estrutura branca envidraçada batem com a
+  // tato.webp.
+  { dest: "obras/tato-2.webp", src: `${EXTRA}/Mais fotos tato/WhatsApp Image 2026-07-16 at 23.26.32.jpeg`, root: "", width: 1400 },
+
+  // ── Galeria do segmento "lagos" — SEM atribuição de cliente ──────────
+  // São lagos Western reais e é exatamente isso que provam. Nenhuma afirma de quem
+  // é a casa — e é por isso que podem entrar sem o dono precisar confirmar nada.
+
+  // 06/07: o lago de litoral (coqueiros, pavilhão de sapê, morro de mata, deck
+  // oval maciço, praia de areia). Vinha na pasta "obra sachelli" mas é OUTRO
+  // lugar — não tem nada em comum com a sachelli.jpg, que é jardim plano, sem
+  // morro, sem coqueiro, com alambrado ao fundo. Decisão do dono: galeria.
+  {
+    dest: "segmentos/lagos/06.webp", src: `${EXTRA}/obra sachelli/sacchelli_lago_reforma 1 .jpg`,
+    root: "", width: 1100,
+    crop: { left: 0, top: 560, width: 1200, height: 900 }, // 1200×1600 → desce até as pedras de primeiro plano; céu não carrega pedra
+  },
+  // 1600×1200 = 4:3 nativo. A vista mais aberta das duas.
+  { dest: "segmentos/lagos/07.webp", src: `${EXTRA}/obra sachelli/sacchelli_lago_reforma 2 .jpg`, root: "", width: 1100 },
+  // 08: lago de fundo claro com carpas e a borda de pedra que o separa da piscina.
+  // ⚠ Estava na pasta da Sachelli, mas não achei UM elemento que prove ser o mesmo
+  // lugar da sachelli.jpg — sem capim-do-texas, sem papiro, sem o deck parafusado,
+  // sem travessia, e com uma piscina que lá não existe. Enquanto o dono não
+  // confirmar, entra aqui: sem nome, não afirma nada.
+  {
+    dest: "segmentos/lagos/08.webp", src: `${EXTRA}/obra sachelli/sachelli.png`,
+    root: "", width: 1100,
+    crop: { left: 0, top: 0, width: 1200, height: 900 }, // 1200×1324, ancorado no TOPO: é lá que está a borda de pedra separando piscina e lago. Descer 180px já a perdia e sobrava água com carpas.
+  },
+  // 09: o lago com o estar rebaixado dentro d'água. ⚠ Veio na pasta "lago
+  // ornamental do modulo 15", mas NÃO bate com as fotos que já estão no site sob
+  // a obra `modulo-15` (lá: piscina-praia, parede preta texturizada, mata fechada,
+  // sol; aqui: casa de dois pavimentos, prédio vizinho à vista, piscina retangular,
+  // nublado). Sem confirmação do dono não entra na obra — entraria com o nome de
+  // outra. Aqui prova a mesma coisa sem nomear ninguém.
+  //
+  // É a ÚNICA das 11 do lote que entra. As outras 10 foram abertas e recusadas:
+  // 5 têm lona bege cobrindo móvel ou parede vazia (leem "obra não terminada"),
+  // 1 tem folha de palmeira desfocada atravessando o quadro inteiro, 3 são
+  // redundantes e 1 (o estar visto de perto) não tem pedra dentro do quadro 4:3 —
+  // entrega um sofá. Nesta a pedra é protagonista de ponta a ponta.
+  {
+    dest: "segmentos/lagos/09.webp", src: `${EXTRA}/lago ornamental do modulo 15/WhatsApp Image 2026-07-17 at 02.23.39 (3).jpeg`,
+    root: "", width: 1100,
+    crop: { left: 0, top: 360, width: 1066, height: 800 }, // a crista de pedra serpenteando ao longo da água + a faixa de seixos
+  },
 ];
 
 let ok = 0, fail = 0;

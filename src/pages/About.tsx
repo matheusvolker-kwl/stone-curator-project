@@ -255,7 +255,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* OBRAS — a vitrine vive em /inspiracoes (por segmento). Aqui é só a
+      {/* OBRAS — a vitrine vive em /obras (por segmento). Aqui é só a
           ponte: nada de repetir a galeria numa segunda superfície. */}
       <section className="surface-forest py-14 md:py-20 border-y border-western-gold/15">
         <div className="container-western">
@@ -272,7 +272,7 @@ export default function About() {
                 A ideia por trás de cada obra, as fotos do que já foi entregue e as peças que
                 compõem cada cena.
               </p>
-              <Link to="/inspiracoes" className="btn-gold w-full sm:w-auto">
+              <Link to="/obras" className="btn-gold w-full sm:w-auto">
                 Ver as obras <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
               </Link>
             </div>
