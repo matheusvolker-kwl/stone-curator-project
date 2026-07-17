@@ -33,7 +33,6 @@ import imgLago from "@/assets/segmentos/lagos/02.webp";
 import imgCascata from "@/assets/segmentos/cascatas/01.webp";
 import imgJardim from "@/assets/segmentos/jardins/01.webp";
 import obraTato from "@/assets/obras/tato.webp";
-import obraTatoAntes from "@/assets/obras/tato-antes.webp";
 import obraEvandro from "@/assets/obras/evandro-leveza.webp";
 import obraShowroom from "@/assets/obras/showroom-2.webp";
 /* Sequência Conrado: desenho → 3D → obra entregue. Substitui o par
@@ -88,7 +87,6 @@ const CAMINHOS = [
 const OBRAS_SONHO = [
   {
     img: obraTato,
-    antes: obraTatoAntes,
     credito: "Tato (Falamansa)",
     titulo: "De piscina de pastilha a praia particular",
     linha: "Uma piscina retangular azul virou um oásis: areia, pedras, fogo de chão e lago com carpas.",
@@ -397,14 +395,13 @@ export default function ParaSuaCasa() {
                       decoding="async"
                       className="w-full h-full object-cover"
                     />
-                    {o.antes && (
-                      <div className="absolute bottom-3 left-3 w-24 rounded-[8px] overflow-hidden border-2 border-western-cream shadow-lg">
-                        <img src={o.antes} alt="Antes da obra" loading="lazy" className="w-full h-full object-cover" />
-                        <span className="absolute inset-x-0 bottom-0 bg-western-green-deep/85 text-western-cream text-[11px] font-semibold text-center py-0.5">
-                          ANTES
-                        </span>
-                      </div>
-                    )}
+                    {/* Saiu a miniatura "ANTES" sobreposta (w-24, borda creme,
+                        sombra). Era um selo de UI grudado em cima de uma
+                        fotografia — a mesma mistura de categorias visuais que já
+                        derrubou seções desta casa. E não funcionava nem como
+                        prova: 96px de largura não deixam ninguém ver o "antes".
+                        O contraste do Tato está contado no texto e vive
+                        inteiro, em tamanho de verdade, na obra. */}
                   </div>
                   <figcaption className="mt-4">
                     <p className="text-eyebrow">{o.credito}</p>
