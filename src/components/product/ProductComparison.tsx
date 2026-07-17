@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+
 interface Props {
   productTitle: string;
   pesoKg?: string | null;        // ex.: "74"
@@ -16,7 +19,13 @@ const ROWS = (pesoKg?: string | null) => [
   { label: "Tempo de instalação", western: "algumas horas", natural: "dias" },
   { label: "Base", western: "plana, assentamento direto", natural: "preparação de berço, calços, ajustes" },
   { label: "Previsibilidade", western: "modelo 3D antes da compra", natural: "só na obra" },
-  { label: "Custo total", western: "referência", natural: "30% a 50% mais alto" },
+  /* O dono cravou em 2026-07-16: a PEÇA não é mais barata que pedra natural —
+     e o site não deve fingir que é. O que cai, no mínimo 30%, é a OBRA em volta:
+     instalação, transporte e mão de obra. Por isso a linha compara o custo de
+     OBRA, não o da peça. (Antes o FAQ dizia "30 a 50% mais BARATO" e esta linha
+     "30% a 50% mais ALTO" — nem eram a mesma conta, e as duas afirmavam a coisa
+     errada: que o produto sai mais barato.) */
+  { label: "Instalação, transporte e mão de obra", western: "referência", natural: "no mínimo 30% mais alto" },
 ];
 
 export default function ProductComparison({ productTitle, pesoKg, dimensoes }: Props) {
@@ -90,6 +99,17 @@ export default function ProductComparison({ productTitle, pesoKg, dimensoes }: P
         <p className="mt-10 italic text-sm text-western-stone-warm/85 max-w-xl">
           Resultado: projeto previsível, sem surpresa de obra — você decide a peça, a logística e o custo antes de qualquer caminhão sair da fábrica.
         </p>
+
+        {/* A CAUSA de todas as linhas acima (peso ×10, guindaste, alvará, 3D) é
+            da página do argumento, não da ficha da peça. Mesmo padrão de
+            TamanhoReal.tsx. Sem isto a tabela afirma tudo e não deixa sair. */}
+        <Link
+          to="/a-pedra"
+          className="tap-target mt-6 inline-flex items-center gap-1.5 font-sans text-base font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+        >
+          Por que a peça pesa isso
+          <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+        </Link>
       </div>
     </section>
   );

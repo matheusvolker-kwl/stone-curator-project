@@ -1,7 +1,10 @@
-// Inspire-se — página ÚNICA por segmento (fusão de Inspire-se + Obras).
+// /obras — a LISTA, por segmento. (Era /inspiracoes; "inspiração" promete ideia,
+// "obras" é o que a página tem: obra entregue. /inspiracoes e /inspiracao
+// redirecionam pra cá preservando a query string — ver RedirectObras em App.tsx.)
 // Cada segmento: introdução → galeria de fotos gerais → exemplos de obra reais
 // (shop-the-look com "adicionar ao orçamento"). O aprofundamento de cada obra
-// vive em /obras/:slug (mente do criador em acordeão).
+// vive em /obras/:slug (mente do criador em acordeão) — a lista é densidade,
+// o detalhe é profundidade; não funda os dois.
 // UX: seletor sticky + rolagem horizontal no mobile; galeria = carrossel no
 // mobile / grade no desktop; troca de segmento rola para o topo do conteúdo.
 import { useMemo, useRef, useState } from "react";
@@ -9,6 +12,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { ArrowRight, Plus, MessageCircle, Check } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
+import Lightbox from "@/components/shared/Lightbox";
 import GatedPrice from "@/components/shared/GatedPrice";
 import { BUSINESS } from "@/config/business";
 import { OBRAS_BY_SLUG, obraComposicao, type Obra } from "@/data/obras";
@@ -33,25 +37,43 @@ const waMsg = (assunto: string) =>
   )}`;
 
 function Galeria({ fotos, label }: { fotos: string[]; label: string }) {
+  // Hooks antes de qualquer return — a lista de fotos pode ser vazia.
+  const [zoom, setZoom] = useState<number | null>(null);
+  const itens = useMemo(
+    () => fotos.map((src, i) => ({ src, alt: `${label} — foto ${i + 1}` })),
+    [fotos, label],
+  );
   if (!fotos.length) return null;
   // Mobile: carrossel horizontal com peek (menos scroll vertical). Desktop: grade.
   return (
-    <div className="mt-8 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6 px-6 pb-2 sm:mx-0 sm:px-0 sm:overflow-visible sm:grid sm:grid-cols-2 lg:grid-cols-3">
-      {fotos.map((src, i) => (
-        <div
-          key={src}
-          className="snap-start shrink-0 w-[78vw] max-w-[440px] sm:w-auto sm:max-w-none overflow-hidden rounded-[14px] aspect-[4/3] bg-western-cream-muted"
-        >
-          <img
-            src={src}
-            alt={`${label} — foto ${i + 1}`}
-            loading="lazy"
-            decoding="async"
-            className="w-full h-full object-cover"
-          />
-        </div>
-      ))}
-    </div>
+    <>
+      <div className="mt-8 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6 px-6 pb-2 sm:mx-0 sm:px-0 sm:overflow-visible sm:grid sm:grid-cols-2 lg:grid-cols-3">
+        {itens.map((foto, i) => (
+          <button
+            key={foto.src}
+            type="button"
+            onClick={() => setZoom(i)}
+            aria-label={`Ampliar ${foto.alt}`}
+            className="group snap-start shrink-0 w-[78vw] max-w-[440px] sm:w-auto sm:max-w-none overflow-hidden rounded-[14px] aspect-[4/3] bg-western-cream-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2"
+          >
+            <img
+              src={foto.src}
+              alt={foto.alt}
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            />
+          </button>
+        ))}
+      </div>
+      <Lightbox
+        fotos={itens}
+        index={zoom}
+        onIndexChange={setZoom}
+        onClose={() => setZoom(null)}
+        label={label}
+      />
+    </>
   );
 }
 
@@ -233,18 +255,18 @@ export default function Inspiracoes() {
   return (
     <div className="surface-ivory">
       <Seo
-        title="Inspire-se — obras e ideias com pedra Western"
+        title="Obras — piscinas, lagos, cascatas e jardins com pedra Western"
         description="Piscinas, lagos, cascatas, jardins, revestimentos e viveiros: a ideia por trás de cada segmento, fotos de obras reais e as peças usadas — com preço de parceiro."
-        path="/inspiracoes"
+        path="/obras"
       />
 
       {/* Abertura */}
       <div className="container-western pt-12 md:pt-20 pb-6">
         <Reveal variant="fade-up">
           <div className="max-w-3xl">
-            <p className="text-eyebrow mb-4">Inspire-se · Por segmento</p>
+            <p className="text-eyebrow mb-4">Obras · Por segmento</p>
             <div className="w-12 h-px bg-western-gold mb-8" />
-            <h1 className="display-xl text-western-green-deep">O que você vai criar com pedra?</h1>
+            <h1 className="display-xl text-western-green-deep">Obras entregues, por segmento.</h1>
             <p className="text-body mt-5 max-w-[60ch]">
               Escolha um caminho — a ideia por trás, fotos de obras reais e as peças que compõem
               cada cena.

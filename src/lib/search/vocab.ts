@@ -133,9 +133,11 @@ export const ATALHOS: Atalho[] = [
   },
   {
     id: "inspire",
-    label: "Inspire-se",
+    label: "Obras",
     desc: "Obras e projetos reais com Western",
-    to: "/inspiracoes",
+    to: "/obras",
+    // "inspiracao"/"inspire" seguem aqui de propósito: a página mudou de nome,
+    // quem procurava pelo nome antigo continua achando.
     termos: ["inspiracao", "inspire", "exemplo", "exemplos", "obras", "galeria", "fotos", "cases"],
   },
 ];

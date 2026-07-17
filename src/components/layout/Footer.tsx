@@ -140,7 +140,7 @@ export default function Footer() {
               <li><Link to="/como-comprar" className={colLink}>Como comprar</Link></li>
               <li><Link to="/conjuntos" className={colLink}>Conjuntos prontos</Link></li>
               <li><Link to="/guia-de-composicao" className={colLink}>Guia de composição</Link></li>
-              <li><Link to="/inspiracoes" className={colLink}>Inspire-se</Link></li>
+              <li><Link to="/obras" className={colLink}>Obras</Link></li>
               <li><Link to="/western-box" className={colLink}>Western Box · amostras</Link></li>
               <li><Link to="/politica-comercial" className={colLink}>Política comercial e de entrega</Link></li>
               <li><Link to="/trocas-e-avarias" className={colLink}>Trocas e avarias</Link></li>
@@ -150,6 +150,7 @@ export default function Footer() {
           <div className="min-w-0 md:col-span-2">
             <h4 className={colTitle}>Western</h4>
             <ul className="flex flex-col">
+              <li><Link to="/a-pedra" className={colLink}>A pedra Western</Link></li>
               <li><Link to="/sobre" className={colLink}>Sobre o ateliê</Link></li>
               <li><Link to="/para-sua-casa" className={colLink}>Para sua casa</Link></li>
               <li><Link to="/contrate-a-western" className={colLink}>Contrate a Western</Link></li>

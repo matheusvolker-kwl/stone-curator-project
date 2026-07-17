@@ -113,13 +113,13 @@ export default function Index() {
           <source media="(min-width: 768px)" srcSet={heroHome} width={1600} height={900} />
           <img
             src={heroHomeMobile}
-            alt="Piscina natural Western em Tapiraí — matacões e água cristalina na mata."
+            alt="Piscina natural Western em Tapiraí — pedras e água cristalina na mata."
             loading="eager"
             {...({ fetchpriority: "high" } as Record<string, string>)}
             decoding="async"
             width={860}
             height={1529}
-            /* object-bottom no desktop: o matacão em primeiro plano é o PRODUTO
+            /* object-bottom no desktop: a pedra em primeiro plano é o PRODUTO
                e vive na base do recorte. Ancorando embaixo, ele nunca sai do
                quadro — por mais larga que seja a tela, o corte come o topo. */
             className="absolute inset-0 w-full h-full object-cover object-center md:object-bottom"
@@ -127,7 +127,7 @@ export default function Index() {
         </picture>
         {/* Scrim mobile ANCORADO NO TOPO: o texto vive no escuro de cima (onde a
             foto só tem copa de árvore) e a base fica LIMPA — é lá que está o
-            matacão, que é o produto. Antes era um cobertor de 70-90% na altura
+            pedra, que é o produto. Antes era um cobertor de 70-90% na altura
             toda: a foto virava fundo. */}
         <div
           className="absolute inset-0 pointer-events-none md:hidden"
@@ -516,7 +516,7 @@ export default function Index() {
               o rosto seria a mesma prova, dita duas vezes. Eles vivem na tira de
               "quem confia", perto do fechamento. */}
           <div className="mt-10">
-            <Link to="/inspiracoes" className="btn-outline-forest w-full sm:w-auto">
+            <Link to="/obras" className="btn-outline-forest w-full sm:w-auto">
               Ver todas as obras <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
             </Link>
           </div>

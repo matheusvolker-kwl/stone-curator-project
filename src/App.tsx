@@ -1,11 +1,19 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import RouteTransition from "@/components/RouteTransition";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 
 function LabProductRedirect() {
   const { handle = "" } = useParams();
   return <Navigate to={`/produtos/${handle}`} replace />;
+}
+
+// /inspiracoes(?tipo=lagos) → /obras(?tipo=lagos). Carrega a query string: um
+// <Navigate to="/obras"> com string a descartaria, e o `?tipo=` de UsageScenes
+// é o que seleciona o segmento na lista.
+function RedirectObras() {
+  const { search } = useLocation();
+  return <Navigate to={{ pathname: "/obras", search }} replace />;
 }
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -64,6 +72,7 @@ const ConjuntoPage = lazy(() => import("./pages/ConjuntoPage.tsx"));
 const ProductPage = lazy(() => import("./pages/ProductPage.tsx"));
 
 const About = lazy(() => import("./pages/About.tsx"));
+const APedra = lazy(() => import("./pages/APedra.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
 const WesternBoxPage = lazy(() => import("./pages/WesternBox.tsx"));
 
@@ -167,10 +176,12 @@ const App = () => (
                     {/* v1 usava /linhas/pisantes — preservar SEO/links externos no cutover */}
                     <Route path="/linhas/pisantes" element={<Navigate to="/linhas/pisadas" replace />} />
                     <Route path="/linhas/:handle" element={<LinhaPage />} />
-                    <Route path="/inspiracoes" element={<Inspiracoes />} />
-                    <Route path="/inspiracao" element={<Navigate to="/inspiracoes" replace />} />
-                    <Route path="/obras" element={<Navigate to="/inspiracoes" replace />} />
+                    {/* A lista é /obras (é o que ela é: obra entregue). Os nomes
+                        antigos seguem vivos como redirect — nenhum link morre. */}
+                    <Route path="/obras" element={<Inspiracoes />} />
                     <Route path="/obras/:slug" element={<ObraPage />} />
+                    <Route path="/inspiracoes" element={<RedirectObras />} />
+                    <Route path="/inspiracao" element={<RedirectObras />} />
                     {/* Telas do V3 que faltavam no app */}
                     <Route path="/como-comprar" element={<ComoComprar />} />
                     <Route path="/para-sua-casa" element={<ParaSuaCasa />} />
@@ -182,6 +193,7 @@ const App = () => (
                     <Route path="/lab/produtos/:handle" element={<LabProductRedirect />} />
                     <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
                     <Route path="/sobre" element={<About />} />
+                    <Route path="/a-pedra" element={<APedra />} />
                     <Route path="/contato" element={<Contact />} />
                     <Route path="/western-box" element={<WesternBoxPage />} />
                     <Route path="/contrate-a-western" element={<ContrateAWestern />} />
@@ -219,8 +231,10 @@ const App = () => (
                     {/* Rota antiga de amostras: substituída pela Western Box (página paga). */}
                     <Route path="/pedir-amostras" element={<Navigate to="/western-box" replace />} />
                     <Route path="/visitar" element={<AgendarVisita />} />
-                    {/* "Por que Western" foi fundida no FAQ (2026-07). */}
-                    <Route path="/por-que-western" element={<Navigate to="/faq" replace />} />
+                    {/* "Por que Western" foi para /a-pedra (2026-07): é lá que o
+                        argumento mora agora — o FAQ ficou com a logística.
+                        O redirect traz o histórico de SEO junto. */}
+                    <Route path="/por-que-western" element={<Navigate to="/a-pedra" replace />} />
                     <Route path="/faq" element={<FAQ />} />
                     <Route path="/politica-comercial" element={<PoliticaComercial />} />
                     {/* Política de entrega foi fundida na comercial (2026-07). */}

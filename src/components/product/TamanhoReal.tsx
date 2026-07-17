@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 
 interface Props {
   productTitle: string;
@@ -174,6 +175,19 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
                     <path d="M3 8.5l3.2 3.2L13 5" />
                   </svg>
                   Sobe sem guindaste — instala em terraços, coberturas e pavimentos altos.
+                </p>
+
+                {/* ENTRADA DE /a-pedra pela PDP: é exatamente aqui que o
+                    comprador pergunta "por que ela pesa isso?". A CAUSA (molde
+                    tirado da pedra real, composto oco com fibra de PET) é da
+                    página do argumento, não da ficha da peça. */}
+                <p className="mt-4">
+                  <Link
+                    to="/a-pedra"
+                    className="tap-target inline-flex items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+                  >
+                    Por que ela pesa 10% →
+                  </Link>
                 </p>
               </div>
             )}

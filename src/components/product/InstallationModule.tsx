@@ -1,4 +1,4 @@
-import { Check, ArrowRight, BookOpen, AlertTriangle } from "lucide-react";
+import { Check, ArrowRight, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Accordion,
@@ -111,7 +111,6 @@ export function InstallationSection({
     chapter,
     chapterTitle,
     manualPage,
-    guideUrl,
   } = config;
 
   return (
@@ -240,13 +239,15 @@ export function InstallationSection({
                   variant="primary"
                   className="w-full sm:w-auto"
                 />
-                <Link
-                  to={guideUrl || "/como-instalar"}
-                  className="btn-outline-forest w-full sm:w-auto"
-                >
-                  <BookOpen className="h-5 w-5" aria-hidden="true" />
-                  Guia completo de instalação
-                </Link>
+                {/* Havia aqui um terceiro botão, "Guia completo de instalação",
+                    que apontava para a rota /como-instalar — inexistente no
+                    App.tsx, ou seja, 404 em toda PDP. Ele foi REMOVIDO, não
+                    consertado: o <ManualDownload> acima já entrega as duas ações
+                    reais (baixar para a obra · abrir no capítulo da peça), e um
+                    terceiro botão para o mesmo PDF só empata a decisão.
+                    Consertar o destino dele teria sido pior que o 404: como era
+                    um <a> cru, ele entregava o manual POR FORA do portão de
+                    lead do ManualDownload (free = isApproved || unlocked). */}
               </div>
             </div>
           </div>

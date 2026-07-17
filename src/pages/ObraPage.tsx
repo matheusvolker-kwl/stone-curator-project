@@ -6,6 +6,7 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import { ArrowRight, ChevronLeft, Plus, Check, MessageCircle } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
+import Lightbox from "@/components/shared/Lightbox";
 import GatedPrice from "@/components/shared/GatedPrice";
 import {
   Accordion,
@@ -27,6 +28,14 @@ export default function ObraPage() {
   const galeria = (slug && OBRA_GALERIA[slug]) || (slug && OBRA_COVER[slug] ? [OBRA_COVER[slug]] : []);
   const [ativa, setAtiva] = useState(0);
   const [added, setAdded] = useState(false);
+  const [zoom, setZoom] = useState<number | null>(null);
+  // O alt de cada foto é o título da obra — a única descrição que o dado
+  // garante. Não inventar legenda por foto: a galeria não sabe o que cada
+  // imagem mostra.
+  const fotos = useMemo(
+    () => galeria.map((src) => ({ src, alt: obra?.titulo ?? "" })),
+    [galeria, obra],
+  );
 
   if (!obra || !slug || !OBRA_COVER[slug]) {
     return <Navigate to="/obras" replace />;
@@ -57,10 +66,10 @@ export default function ObraPage() {
 
       <div className="container-western pt-6">
         <Link
-          to="/inspiracoes"
+          to="/obras"
           className="tap-target inline-flex items-center gap-1.5 font-sans text-[14px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
         >
-          <ChevronLeft className="h-4 w-4" /> Inspire-se
+          <ChevronLeft className="h-4 w-4" /> Obras
         </Link>
       </div>
 
@@ -69,15 +78,20 @@ export default function ObraPage() {
           {/* Mídia */}
           <div className="lg:sticky lg:top-24">
             <Reveal variant="fade-up">
-              <div className="frame-product rounded-[16px] overflow-hidden aspect-[4/3]">
+              <button
+                type="button"
+                onClick={() => setZoom(ativa)}
+                aria-label={`Ampliar foto de ${obra.titulo}`}
+                className="group frame-product rounded-[16px] overflow-hidden aspect-[4/3] block w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2"
+              >
                 <img
                   src={galeria[ativa] ?? OBRA_COVER[slug]}
                   alt={obra.titulo}
                   loading="eager"
                   decoding="async"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                 />
-              </div>
+              </button>
             </Reveal>
             {galeria.length > 1 && (
               <div className="mt-3 flex gap-3">
@@ -97,6 +111,19 @@ export default function ObraPage() {
                 ))}
               </div>
             )}
+
+            {/* Ao navegar ampliado, a miniatura ativa acompanha — fechar cai na
+                foto que a pessoa estava vendo, não na que ela abriu. */}
+            <Lightbox
+              fotos={fotos}
+              index={zoom}
+              onIndexChange={(i) => {
+                setZoom(i);
+                setAtiva(i);
+              }}
+              onClose={() => setZoom(null)}
+              label={obra.titulo}
+            />
           </div>
 
           {/* Conteúdo */}

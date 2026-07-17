@@ -838,7 +838,9 @@ export default function WesternBox() {
                 Conte sobre o seu projeto e nosso time ajuda a especificar — sem compromisso de
                 compra.
               </p>
-              <Link to="/contrate-a-western" className="btn-outline-forest tap-target mt-6 w-full sm:w-auto">
+              {/* A Western Box é a única compra sem CNPJ — quem chega aqui é
+                  residencial. Ia pra porta B2B; vai pra /para-sua-casa. */}
+              <Link to="/para-sua-casa" className="btn-outline-forest tap-target mt-6 w-full sm:w-auto">
                 Falar sobre meu projeto
               </Link>
             </div>

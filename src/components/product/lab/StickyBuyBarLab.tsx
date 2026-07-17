@@ -41,7 +41,7 @@ export default function StickyBuyBarLab({
   available,
 }: Props) {
   const { isApproved } = useAuth();
-  const orcamentoTo = "/contrate-a-western";
+  const orcamentoTo = "/para-sua-casa";
   const [visible, setVisible] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
 

@@ -592,7 +592,11 @@ export default function ProductPage() {
                     É para a sua casa? A gente monta seu orçamento.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <Link to="/orcamento" className={`${CTA_OUTLINE} w-full sm:w-auto`}>
+                    {/* /orcamento redirecionava pra /contato — um fale-conosco
+                        genérico. Quem clica aqui acabou de bater no cadeado do
+                        preço: é dono de casa, e a porta dele é /para-sua-casa,
+                        que responde preço, prazo e "não tenho CNPJ". */}
+                    <Link to="/para-sua-casa" className={`${CTA_OUTLINE} w-full sm:w-auto`}>
                       Peça um orçamento
                     </Link>
                     <a

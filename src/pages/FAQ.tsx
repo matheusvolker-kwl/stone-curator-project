@@ -5,7 +5,13 @@ import { BUSINESS } from "@/config/business";
 import Seo from "@/components/seo/Seo";
 
 type Item = { q: string; a: React.ReactNode; text: string };
-type Grupo = { eyebrow: string; titulo: string; itens: Item[] };
+type Grupo = {
+  eyebrow: string;
+  titulo: string;
+  itens: Item[];
+  /** saída opcional do grupo (link para a página que aprofunda o assunto) */
+  saida?: { to: string; label: string };
+};
 
 const linkClass =
   "font-semibold text-western-cta underline decoration-western-bronze/50 underline-offset-4 hover:decoration-western-cta transition-colors";
@@ -23,7 +29,7 @@ const OBJEÇÕES: { q: string; a: string }[] = [
   },
   {
     q: "É caro.",
-    a: "Comparando só o número da peça com pedra natural, sim. Mas a conta completa muda tudo: pedra natural equivalente pesa até 10× mais — guindaste, fechamento de rua, alvará municipal, equipe de içamento por dias. Western entrega em caminhão comum, descarrega manual e a instalação leva horas com argamassa AC3 de loja de bairro. No custo total instalado, fica de 30 a 50% mais barato que pedra natural — e mais previsível.",
+    a: "A peça em si não é mais barata que pedra natural, e não vamos fingir que é. O que muda é a obra em volta dela. Pedra natural equivalente pesa até 10× mais, e esse peso cobra: guindaste, fechamento de rua, alvará municipal, equipe de içamento por dias. Western vai em caminhão comum, descarrega na mão e assenta em horas com argamassa AC3 de loja de bairro. Instalação, transporte e mão de obra caem no mínimo 30% — e param de ser surpresa no meio da obra.",
   },
   {
     q: "É pesada para a laje? Aguenta?",
@@ -55,7 +61,7 @@ const OBJEÇÕES: { q: string; a: string }[] = [
   },
   {
     q: "Não tenho como ir até a fábrica para ver.",
-    a: "Sem problema. Mandamos amostra de acabamento gratuita por correio — uma peça pequena de cada acabamento (Quartzo, Arenito, Moledo, Granito) para você sentir a textura na mão. Também mandamos catálogo completo digital, vídeos de obras executadas, e fazemos videochamada do showroom em Cajamar/SP se quiser ver os tamanhos grandes ao vivo. Cajamar fica na Grande São Paulo — visita ao ateliê é sempre bem-vinda.",
+    a: "Sem problema. A Western Box leva os 4 acabamentos (Quartzo, Arenito, Moledo, Granito) até você pelo correio, para sentir a textura na mão — e o valor volta 100% como crédito no primeiro pedido. Também mandamos catálogo completo digital, vídeos de obras executadas, e fazemos videochamada do showroom em Cajamar/SP se quiser ver os tamanhos grandes ao vivo. Cajamar fica na Grande São Paulo — visita ao ateliê é sempre bem-vinda.",
   },
   {
     q: "E se o cliente final não gostar?",
@@ -108,11 +114,11 @@ const GRUPOS: Grupo[] = [
           <>
             O valor depende do produto e do porte do projeto — de peças avulsas a composições completas.
             Preços de parceiro ficam liberados após o{" "}
-            <Link to="/parceria" className={linkClass}>
+            <Link to="/parceiro/cadastro" className={linkClass}>
               cadastro
             </Link>{" "}
             (gratuito); para projetos residenciais, solicite um{" "}
-            <Link to="/contrate-a-western" className={linkClass}>
+            <Link to="/para-sua-casa" className={linkClass}>
               orçamento sem compromisso
             </Link>
             .
@@ -207,6 +213,11 @@ const GRUPOS: Grupo[] = [
     eyebrow: "Para quem especifica",
     titulo: "Por que Western — objeções de arquitetos e paisagistas",
     itens: OBJEÇÕES.map((o) => ({ q: o.q, a: o.a, text: o.a })),
+    // Este grupo é a /a-pedra reescrita em acordeão (9 frases são verbatim nas
+    // duas páginas). O argumento mora lá, com as fotos; aqui fica a logística.
+    // ⚠ Encolher os 12 itens tem custo de SEO — eles alimentam o JSON-LD
+    // FAQPage abaixo. É decisão do dono, não de quem passar por aqui.
+    saida: { to: "/a-pedra", label: "O argumento completo, com as fotos" },
   },
 ];
 
@@ -300,6 +311,16 @@ export default function FAQ() {
                     );
                   })}
                 </ul>
+
+                {g.saida && (
+                  <Link
+                    to={g.saida.to}
+                    className="tap-target mt-5 inline-flex items-center gap-1.5 font-sans text-base font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+                  >
+                    {g.saida.label}
+                    <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+                  </Link>
+                )}
               </section>
             ))}
           </div>
@@ -314,12 +335,12 @@ export default function FAQ() {
               Não encontrou o que procurava?
             </h2>
             <p className="mx-auto mt-4 max-w-xl font-sans text-[17px] leading-[1.6] text-western-cream-muted">
-              Peça uma amostra dos 4 acabamentos e sinta a pedra na mão — ou fale direto com a fábrica.
+              Receba os 4 acabamentos e sinta a pedra na mão — o valor volta como crédito no primeiro pedido. Ou fale direto com a fábrica.
             </p>
 
             <div className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row sm:justify-center">
               <Link to="/western-box" className="btn-gold w-full sm:w-auto">
-                Receber amostras grátis
+                Receber a Western Box
                 <ArrowRight className="h-5 w-5" />
               </Link>
               <Link to="/contato" className="btn-outline-cream w-full sm:w-auto">

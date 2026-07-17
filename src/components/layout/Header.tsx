@@ -86,7 +86,7 @@ const NAV_INTENTS = [
   { to: "/conjuntos", label: "Conjuntos" },
   { to: "/guia-de-composicao", label: "Guia de composição" },
   // 2. CONFIAR
-  { to: "/inspiracoes", label: "Inspire-se" },
+  { to: "/obras", label: "Obras" },
   // 3. CAPTAR — hub B2C: sem CNPJ, a Western executa (vira lead turnkey).
   //    (Não confundir com /contrate-a-western, que é a página com formulário.)
   { to: "/para-sua-casa", label: "Para sua casa" },
@@ -712,7 +712,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               {/* 2. CONFIAR */}
               <p className="text-eyebrow mt-7 mb-1">Decidir</p>
               {drawerLink("/guia-de-composicao", "Guia de composição", "Monte seu projeto em 3 passos")}
-              {drawerLink("/inspiracoes", "Inspire-se", "Obras e projetos reais")}
+              {drawerLink("/obras", "Obras", "Obras e projetos reais")}
 
               {/* 3. CAPTAR — a rampa B2C. Agrupada e rotulada pela PERGUNTA do
                   visitante ("não tenho CNPJ"), para o B2B pular e o B2C achar. */}
@@ -721,6 +721,13 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               {drawerLink("/contrate-a-western", "Contrate a Western", "Consultoria, projeto 3D e instalação")}
 
               <p className="text-eyebrow mt-7 mb-1">Ateliê</p>
+              {/* "A pedra" vem ANTES de "Sobre": quem chega frio pergunta o que
+                  é a peça antes de perguntar quem a fabrica. O nav principal
+                  (6 slots cheios, regra de prioridade no topo deste arquivo)
+                  não foi tocado — a decisão de promover "A pedra" ao topo é do
+                  dono. As 5 entradas (home, PDP, drawer, rodapé, redirect de
+                  /por-que-western) já resolvem a orfandade sem isso. */}
+              {drawerLink("/a-pedra", "A pedra", "Como é feita · por que pesa 10× menos")}
               {drawerLink("/sobre", "Sobre o ateliê", `Cajamar/SP · desde ${BUSINESS.fundadaEm}`)}
               <a
                 href={`https://wa.me/${BUSINESS.whatsappFabrica}`}
