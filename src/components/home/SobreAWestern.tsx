@@ -1,69 +1,61 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import Reveal from "@/components/shared/Reveal";
-import escalaSantaBarbara from "@/assets/escala/WEST-CSB.webp";
+import levezaDuasPessoas from "@/assets/a-pedra/leveza-duas-pessoas.webp";
 
 /**
  * "A tecnologia Western" — 2ª seção da home: o QUE / PRA QUEM / PORQUÊ.
  *
- * O que havia antes: "o que fazemos" respondido com uma LISTA DE SKU ("cascatas,
- * pedras, revestimentos e fontes") e "para quem" respondido com CARGOS
- * ("arquitetos, paisagistas, laguistas e lojas"). Qualquer distribuidor escreve
- * as duas. A tecnologia — molde tirado da pedra real, composto mineral com fibra
- * de PET, ~10% do peso — entrava como bullet nº 2 e só era DEFENDIDA na 9ª seção,
- * sete telas abaixo. A home afirmava o EFEITO e nunca dava a CAUSA nem a PROVA.
+ * Reprovação do dono (2026-07-17): "a imagem tá muito estranha, o design todo
+ * não está no padrão de qualidade". Dois defeitos concretos:
+ *   1. A FOTO não provava a legenda. WEST-CSB.webp é um render de uma pessoa ao
+ *      LADO de uma peça, tocando-a — a legenda dizia "a três metros nem o
+ *      fundador acerta", mas ela está a um braço de distância. Nada ali prova
+ *      leveza; metade do quadro é gramado.
+ *   2. A HIERARQUIA era plana. Três blocos com o MESMO peso tipográfico = o
+ *      wireframe genérico. Sem argumento principal, nada é memorável.
  *
- * Agora a seção faz três coisas, nesta ordem:
- *   1. CAUSA   — o h2 afirma o método sobre o OBJETO (não acusa o leitor).
- *   2. PROVA   — a foto da peça real ao lado de uma pessoa de 1,70 m, a ~3 m:
- *                a distância exata do claim da legenda. A prova vem ANTES do
- *                argumento (à esquerda no desktop, acima no celular).
- *   3. CONSEQUÊNCIA — o 3º bloco devolve a pedra ao projeto, com número.
+ * O conserto:
+ *   - A FOTO agora PROVA sem número: duas pessoas seguram, sorrindo e com as
+ *     mãos, uma pedra que em pedra natural pediria guindaste. É a leveza vista,
+ *     não afirmada — dispensa a legenda-truque dos "três metros".
+ *   - A HIERARQUIA vira 1 + 2: um argumento PRINCIPAL grande (você entrega o que
+ *     desenhou — o diferencial de entregabilidade) e dois fatos de apoio menores
+ *     (onde a pedra não entra; o peso em número). Um herói, dois coadjuvantes.
  *
- * Sem ícone lucide e sem checkmark de propósito: gramática de checklist de
- * e-commerce não prova textura nem invenção — foto prova. Os antigos Gem (joia
- * LAPIDADA; a Western reproduz pedra BRUTA) e Boxes (caixa = distribuidor, a
- * leitura que a seção existe para derrubar) saíram por dizerem a coisa errada.
+ * Eixo = ALTERNATIVA, nunca acusação (decisão do dono, 2026-07-16): o argumento
+ * é o que a Western FAZ, não o que o leitor teria deixado de fazer. Sem "desistiu",
+ * sem "matacão", sem % dizendo que a PEÇA é mais barata.
  *
- * Fecha com a bifurcação profissional × casa, preservada verbatim: um único
- * botão sólido (cadastro → ver preços) e a casa como off-ramp de texto.
+ * Fecha com o link "Como a pedra é feita → /a-pedra" e a bifurcação
+ * profissional × casa, preservada verbatim.
  *
- * Específica da home — o layout presume o slot logo após o herói. Não é
- * reutilizável (o docblock antigo prometia isso e nunca aconteceu).
+ * Específica da home — presume o slot logo após o herói. Não é reutilizável.
  */
 
 /* A PROVA em número, amarrada a um SKU NOMEADO — nunca ao genérico "uma cascata
    grande", que ninguém pode conferir. Fonte: obras.ts:181,186 ("Cascata Santa
-   Bárbara, 280 kg"), o único peso PUBLICADO para este SKU (código CSB →
-   cascata-santa-barbara, skuHandleMap.ts:13). O equivalente natural usa a MESMA
-   conta da PDP (TamanhoReal.tsx:71 → peso × 10 = 2.800 kg), por isso "quase 3
-   toneladas" — arredondado para fora, nunca para dentro.
-   ✓ BLOQUEIO RESOLVIDO (2026-07): o aviso antigo aqui dizia que o FAQ repetia
-   "215 kg" e que o dono precisava cravar o peso. Conferido: 215 não existe mais
-   em lugar nenhum do src (nem no FAQ, nem no pecasPlaceholder). 280 kg está
-   alinhado em home, PDP, FAQ e /a-pedra. Comentário que mente sobre o estado do
-   código custa uma investigação inteira à próxima pessoa — custou duas a esta. */
+   Bárbara, 280 kg"), o único peso PUBLICADO para este SKU. O equivalente natural
+   usa a MESMA conta da PDP (peso × 10 = 2.800 kg), por isso "quase 3 toneladas" —
+   arredondado para fora, nunca para dentro. IMPORTANTE: este número NÃO descreve
+   a foto (a peça da foto é uma pedra redonda genérica, não a Santa Bárbara).
+   Legendar a foto com este nome seria mentira; o número vive só no fato de apoio. */
 const PROVA = {
   peca: "Cascata Santa Bárbara",
   pesoKg: 280,
   natural: "quase 3 toneladas",
 };
 
-const BLOCOS = [
+/* Os dois fatos de APOIO (o herói fica no JSX, com peso tipográfico maior).
+   Ordem: consequência de projeto primeiro, número de conferência depois. */
+const APOIO = [
   {
-    label: "O que é",
-    t: "A pedra que pesa 10%",
-    p: "Molde tirado da pedra real, sem tirar a pedra do lugar. Composto mineral com fibra de PET: pisável, perfurável, esconde a fiação por dentro.",
+    label: "Onde a pedra não entra",
+    p: "Sacada, laje, cobertura, obra pronta. Sobe pela escada, cabe no elevador, apoia onde a pedra natural nunca subiria.",
   },
   {
-    label: "Pra quem",
-    t: "Quem entrega o que desenhou",
-    p: "Tem bloco no SketchUp: você mostra ao cliente e entrega aquilo. Sem içamento, sem empilhamento, sem surpresa na obra.",
-  },
-  {
-    label: "O que muda",
-    t: "Entra onde pedra não entra",
-    p: `${PROVA.peca}: ${PROVA.pesoKg} kg. A mesma em pedra natural: ${PROVA.natural}. Sacada, laje, cobertura e obra pronta deixam de ser problema.`,
+    label: "O peso, em número",
+    p: `${PROVA.peca}: ${PROVA.pesoKg} kg. A mesma peça em pedra natural passaria de ${PROVA.natural}.`,
   },
 ];
 
@@ -78,87 +70,75 @@ export default function SobreAWestern() {
         <Reveal variant="fade-up" duration={650}>
           <div className="max-w-2xl">
             <p className="text-eyebrow mb-3">A tecnologia Western</p>
-            {/* Afirmação sobre o OBJETO, nunca sobre o leitor.
-                O eixo é ALTERNATIVA, não redenção (decisão do dono, 2026-07-16):
-                muita gente trabalha com pedra natural e ninguém errou por isso —
-                inclusive os melhores clientes da casa, que compram há duas
-                décadas. Os blocos abaixo já disseram "quem riscou a pedra da
-                prancha / a conta não fechava"; era acusação, e acusação exclui
-                justamente quem já compra. Agora o argumento é o que a Western
-                FAZ (planeja, entrega, entra onde a outra não entra), não o que
-                o leitor teria deixado de fazer. */}
-            {/* Sem max-w em ch: a 2ª frase tem 29 caracteres e qualquer medida
-                mais estreita que ela cria uma 3ª linha órfã ("nossa."). O <br>
-                já define as duas linhas; o max-w-2xl do bloco segura o resto. */}
+            {/* Afirmação sobre o OBJETO, nunca sobre o leitor. O <br> fixa as
+                duas linhas; "invenção nossa" em bronze marca onde está o argumento. */}
             <h2 className="display-lg text-western-green-deep">
               Por fora, é a pedra.
               <br />
               <span className="text-western-bronze">Por dentro, é invenção nossa.</span>
             </h2>
-            <p className="text-body mt-4 max-w-[52ch]">
-              Reproduz a pedra real no toque e na resistência — com cerca de 10% do peso.
+            <p className="text-body mt-4 max-w-[54ch]">
+              Molde tirado da pedra real: mesma textura, mesma resistência, cerca de 10% do peso.
+              Leve, porém, é só o começo.
             </p>
+            <p className="text-meta mt-3">Ateliê próprio em Cajamar, desde 1993.</p>
           </div>
         </Reveal>
 
-        {/* A foto é 4:5 nativa (1080×1341, como as 50 fotos de escala). Por isso
-            a PROVA fica ao LADO do argumento e não numa banda larga: um retrato
-            recortado em 21/9 perderia ~65% da altura e decapitaria a referência
-            de 1,70 m — que é justamente o que a foto existe para dar. */}
         <div className="mt-10 md:mt-14 grid gap-8 md:grid-cols-12 md:gap-12 md:items-center">
-          {/* 6/6 no tablet e 5/7 no desktop: em md a coluna de 5 deixava a foto
-              com 259px — a pessoa some e a prova para de provar. Em lg sobra
-              largura, e a foto volta a 5 para o texto respirar. */}
+          {/* A FOTO É A PROVA. Duas pessoas, mãos, sorrindo, uma pedra que em
+              natural pediria guindaste — leveza VISTA, não afirmada. Nativa 3:4
+              (960×1280); mantida em aspect-[3/4] para não decapitar as duas
+              figuras nem os pés (a referência de escala está no corpo inteiro). */}
           <Reveal variant="fade-up" duration={700} className="md:col-span-6 lg:col-span-5">
             <figure>
               <img
-                src={escalaSantaBarbara}
-                alt="Cascata Santa Bárbara, réplica Western, ao lado de uma pessoa de 1,70 m num jardim."
-                width={1080}
-                height={1341}
+                src={levezaDuasPessoas}
+                alt="Duas pessoas segurando com as mãos, sorrindo, uma peça Western do tamanho de uma pedra grande, num jardim."
+                width={960}
+                height={1280}
                 loading="lazy"
                 decoding="async"
-                className="w-full aspect-[4/5] object-cover rounded-2xl"
+                className="w-full aspect-[3/4] object-cover rounded-2xl"
               />
-              {/* Legenda FORA da foto, não em tarja sobreposta (o padrão de
-                  /sobre). Medido no browser: a pessoa tem os pés em ~82% da
-                  altura e a tarja de 2 linhas começa em ~78% — ela cobria os
-                  pés, ou seja, escondia justamente a referência de 1,70 m que a
-                  legenda afirma. Ancorar no topo quebra igual em md (a coluna
-                  fica com ~290px, o texto quebra em 3 linhas e a tarja invade a
-                  cabeça). Num retrato 4:5 dentro de 5/12 a sobreposição sempre
-                  come a cabeça ou os pés — então a legenda desce. */}
               <figcaption className="mt-4">
-                <p className="text-body text-western-green-deep">
-                  A três metros, nem o nosso fundador acerta qual é qual.
+                <p className="text-body text-western-green-deep max-w-[34ch]">
+                  Ninguém segura assim uma pedra de verdade desse tamanho.
                 </p>
-                <p className="text-meta mt-1.5">
-                  {PROVA.peca} · pessoa de 1,70 m · escala real
-                </p>
+                <p className="text-meta mt-1.5">Peça Western · sem içamento</p>
               </figcaption>
             </figure>
           </Reveal>
 
-          {/* Um Reveal para a coluna inteira (não um por bloco): empilhado no
-              celular, um stagger por índice só ATRASA blocos que já estão na
-              tela. O delay de 100ms mantém a ordem prova → argumento. */}
           <Reveal variant="fade-up" delay={100} duration={700} className="md:col-span-6 lg:col-span-7">
-            <div className="space-y-8 md:space-y-10">
-              {BLOCOS.map(({ label, t, p }) => (
+            {/* HIERARQUIA 1 + 2. O herói é o diferencial de ENTREGABILIDADE
+                (SketchUp), em display-md; os dois fatos de apoio vêm depois de um
+                filete, em text-title-sm — tipograficamente menores de propósito,
+                para que a página tenha UM argumento principal e não três iguais. */}
+            <div>
+              <p className="text-eyebrow mb-2">O que muda</p>
+              <h3 className="display-md text-western-green-deep">
+                Você entrega o que desenhou.
+              </h3>
+              <p className="text-body mt-3 max-w-[48ch]">
+                Tem bloco no SketchUp. Você mostra ao cliente na tela e entrega aquilo — sem
+                içamento, sem empilhamento, sem surpresa na hora da obra.
+              </p>
+            </div>
+
+            <div className="mt-8 border-t border-western-border-soft pt-8 grid gap-8 sm:grid-cols-2">
+              {APOIO.map(({ label, p }) => (
                 <div key={label}>
                   <p className="text-eyebrow mb-2">{label}</p>
-                  <h3 className="display-md text-western-green-deep">{t}</h3>
-                  <p className="text-body mt-2 max-w-[46ch]">{p}</p>
+                  <p className="text-title-sm text-western-green-deep">{p}</p>
                 </div>
               ))}
             </div>
           </Reveal>
         </div>
 
-        {/* ENTRADA Nº1 DE /a-pedra — e o conserto desta seção: a home bifurca
-            (profissional × casa) ANTES de provar. Este link é a saída para
-            quem ainda está na pergunta "isso é pedra de verdade?", e por isso
-            vem ANTES da bifurcação, não depois. */}
+        {/* ENTRADA Nº1 DE /a-pedra: saída para quem ainda pergunta "isso é pedra
+            de verdade?" — por isso vem ANTES da bifurcação. */}
         <Reveal variant="fade-up" duration={600}>
           <div className="mt-10 md:mt-12">
             <Link
@@ -172,11 +152,7 @@ export default function SobreAWestern() {
         </Reveal>
 
         {/* Bifurca profissional × casa — a AÇÃO principal é o cadastro (ver preços);
-            a casa é off-ramp discreto. Absorveu a antiga seção de segmentação.
-            Preservada verbatim, com uma correção: os CTAs viram linha em md (e não
-            em sm), o mesmo breakpoint da grade acima — antes, de 640 a 767px, os
-            botões já estavam lado a lado enquanto o conteúdo ainda empilhava, e a
-            seção parecia meio montada em tablet retrato. */}
+            a casa é off-ramp discreto. Preservada verbatim. */}
         <Reveal variant="fade-up" duration={600}>
           <div className="mt-12 md:mt-16 border-t border-western-border-soft pt-8">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
