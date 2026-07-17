@@ -498,10 +498,10 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-64">
                 <div className="px-2 py-2">
-                  <p className="text-[16px] font-semibold text-western-green-deep truncate">
+                  <p className="text-[16px] font-semibold text-western-cream truncate">
                     {contaLabel}
                   </p>
-                  <p className="text-[14px] text-western-stone-warm">
+                  <p className="text-[14px] text-western-cream/70">
                     {isApproved ? "Parceiro credenciado" : "Credenciamento em análise"}
                   </p>
                 </div>
