@@ -113,69 +113,46 @@ export default function GuiaContexto() {
       />
       <GuideHeader step={1} />
 
-      {/* Hero — Ricardo no ateliê */}
-      <section className="relative bg-western-ivory border-b border-western-border-soft">
-        <div className="container-western grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-8 md:gap-12 items-center py-12 md:py-16">
-          <div className="flex flex-col justify-center">
-            <p className="text-eyebrow mb-4">Guia de composição · Etapa 01</p>
-            <h1 className="display-xl text-western-green-deep mb-6">
-              Conte sobre o projeto que você está atendendo.
-            </h1>
-            <div className="w-12 h-px bg-western-gold mb-6" />
-            <p className="text-body max-w-[46ch]">
-              O ponto de partida do seu projeto. Em três perguntas, mostramos três caminhos de
-              composição com peças, preço e visualização da composição.
-            </p>
+      {/* Cabeçalho compacto — o retrato acompanha o h1 (não empurra a 1ª
+          pergunta para baixo da dobra). A ação — escolher o tipo — começa
+          logo abaixo, ainda na dobra, nos dois viewports. */}
+      <section className="bg-western-ivory border-b border-western-border-soft">
+        <div className="container-western py-8 md:py-9">
+          <div className="grid grid-cols-[1fr_auto] gap-5 md:gap-10 items-center">
+            <div>
+              <p className="text-eyebrow mb-3">Etapa 01 de 3 · Contexto</p>
+              <h1 className="display-lg text-western-green-deep mb-3">
+                Conte sobre o projeto.
+              </h1>
+              <p className="text-body max-w-[52ch]">
+                Três perguntas. No fim, três caminhos de composição — com peças, preço e
+                visualização.
+              </p>
+            </div>
+
+            <figure className="relative m-0 h-[116px] w-[92px] md:h-[200px] md:w-[300px] flex-shrink-0 overflow-hidden rounded-2xl">
+              <img
+                src={ricardoAtelie}
+                alt="Ricardo Western, fundador, no ateliê de Cajamar"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div
+                aria-hidden
+                className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(180deg, transparent, hsl(var(--western-green-deep) / 0.72))",
+                }}
+              />
+              <figcaption className="absolute bottom-3 left-4 right-4 hidden md:block font-sans text-[13px] font-semibold tracking-[0.06em] text-western-cream">
+                Ricardo Western · ateliê Cajamar
+              </figcaption>
+            </figure>
           </div>
-
-          <figure className="relative m-0 h-[220px] md:h-[340px] overflow-hidden rounded-2xl">
-            <img
-              src={ricardoAtelie}
-              alt="Ricardo Western, fundador, no ateliê de Cajamar"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div
-              aria-hidden
-              className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(180deg, transparent, hsl(var(--western-green-deep) / 0.72))",
-              }}
-            />
-            <figcaption className="absolute bottom-4 left-5 right-5 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-cream">
-              Ricardo Western · ateliê Cajamar
-            </figcaption>
-          </figure>
         </div>
       </section>
 
-      {/* Como funciona */}
-      <section className="border-b border-western-border-soft surface-paper">
-        <div className="container-western py-12 md:py-16">
-          <p className="text-eyebrow mb-8">Como funciona o guia</p>
-          <ol className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
-            {[
-              { n: "01", t: "Conte sobre o ambiente", d: "Tipo, área aproximada e o tom de acabamento." },
-              { n: "02", t: "Veja três caminhos", d: "Composições essencial, equilibrada e completa." },
-              { n: "03", t: "Refine e finalize", d: "Ajuste peças, adicione autorais (exclusivas) e feche o pedido." },
-            ].map((s) => (
-              <li key={s.n} className="flex gap-4">
-                <span className="font-sans text-[14px] font-semibold tracking-[0.06em] text-western-bronze pt-1">
-                  {s.n}
-                </span>
-                <div>
-                  <h3 className="font-sans text-[20px] font-semibold text-western-green-deep leading-snug">
-                    {s.t}
-                  </h3>
-                  <p className="text-body mt-2">{s.d}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <main className="container-western pt-10 md:pt-12 pb-28 relative">
+      <main className="container-western pt-8 md:pt-9 pb-28 relative">
         <div className="max-w-[920px]">
         {/* 01 — a 1ª pergunta renderiza JÁ no load (auditoria): sem gate de
             scroll-reveal, senão o preview/crawler/scroll-rápido pega vazio. */}
@@ -195,8 +172,8 @@ export default function GuiaContexto() {
                 </span>
               )}
             </div>
-            <p className="text-body mb-8 max-w-[56ch]">
-              Selecione o tipo que mais se aproxima do projeto que você está atendendo.
+            <p className="text-body mb-6 max-w-[56ch]">
+              Selecione o que mais se aproxima do projeto que você está atendendo.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
               {TIPOS.map((t) => (
@@ -310,6 +287,32 @@ export default function GuiaContexto() {
         </div>
         </div>
       </main>
+
+      {/* Como funciona — apoio, deliberadamente abaixo da dobra */}
+      <section className="border-t border-western-border-soft surface-paper">
+        <div className="container-western py-12 md:py-16">
+          <p className="text-eyebrow mb-8">Como funciona o guia</p>
+          <ol className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+            {[
+              { n: "01", t: "Conte sobre o ambiente", d: "Tipo, área aproximada e o tom de acabamento." },
+              { n: "02", t: "Veja três caminhos", d: "Composições essencial, equilibrada e completa." },
+              { n: "03", t: "Refine e finalize", d: "Ajuste peças, adicione autorais (exclusivas) e feche o pedido." },
+            ].map((s) => (
+              <li key={s.n} className="flex gap-4">
+                <span className="font-sans text-[14px] font-semibold tracking-[0.06em] text-western-bronze pt-1">
+                  {s.n}
+                </span>
+                <div>
+                  <h3 className="font-sans text-[20px] font-semibold text-western-green-deep leading-snug">
+                    {s.t}
+                  </h3>
+                  <p className="text-body mt-2">{s.d}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
 
       <img
         src={brasao}

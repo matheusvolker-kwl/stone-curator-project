@@ -80,6 +80,14 @@ const CONFIANCA = [
   `Ateliê brasileiro desde ${BUSINESS.fundadaEm} · CNPJ ${BUSINESS.cnpj}`,
 ];
 
+/* Proposta enxuta na coluna esquerda da dobra (desktop) — mata objeção sem
+   parede de texto. Uma prova por linha. */
+const PROPOSTA = [
+  "Aprovação automática para profissionais do ramo",
+  "Tabela comercial e modelos 3D liberados na hora",
+  "Grátis · leva menos de 2 minutos",
+];
+
 // Etapa 1 = o mínimo para criar a conta e liberar o preço. O credenciamento
 // (função `credenciar`) só usa CNPJ + nome + e-mail; o endereço não entra na
 // decisão e o Woo já o coleta no checkout — por isso saiu do caminho crítico
@@ -413,51 +421,43 @@ export default function PartnerSignup() {
         description="Cadastro gratuito para profissionais com CNPJ — arquitetos, paisagistas, laguistas, lojas e construtoras. Tabela comercial e modelos 3D liberados na hora."
         path="/parceiro/cadastro"
       />
-      <div className="container-western py-16 md:py-24 max-w-2xl">
-        <p className="text-eyebrow mb-5">Cadastro B2B · Aprovação imediata</p>
-        <div className="w-12 h-px bg-western-gold mb-8" />
-        <h1 className="display-xl mb-6">Solicite acesso de parceiro comercial.</h1>
-        <p className="text-body mb-3 max-w-[56ch]">
-          A Western atende profissionais e empresas do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a laguistas, jardineiros, garden centers, lojas e construtoras. O acesso à tabela comercial, modelos 3D e composições é liberado automaticamente para profissionais do ramo, na hora do cadastro.
-        </p>
-        <p className="text-meta mb-8">Grátis · leva menos de 2 minutos · precisa de CNPJ</p>
-
-        {/* Saída para cliente final — WhatsApp */}
-        <a
-          href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
-            "Olá Western! Sou cliente final e gostaria de comprar / fazer um projeto com pedras Western."
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group tap-target flex items-center gap-4 rounded-2xl border border-western-border-soft bg-western-paper p-5 md:p-6 mb-10 transition-colors duration-200 hover:border-western-border-strong hover:bg-western-cream/40"
-        >
-          <MessageCircle className="h-6 w-6 flex-shrink-0 text-western-bronze" strokeWidth={1.75} aria-hidden="true" />
-          <span className="flex-1 min-w-0">
-            <span className="block font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">
-              Sou cliente final
-            </span>
-            <span className="mt-1 block font-sans text-[16px] leading-snug text-western-green-deep">
-              Quero fazer um projeto residencial — atendimento direto pelo WhatsApp.
-            </span>
-          </span>
-          <ChevronRight
-            className="h-5 w-5 flex-shrink-0 text-western-stone-warm transition-transform group-hover:translate-x-1"
-            aria-hidden="true"
-          />
-        </a>
-
-        {/* Progresso — uma decisão por vez */}
-        <div className="mb-10">
-          <p className="text-eyebrow mb-3">
-            Etapa {step} de 2 · {step === 1 ? "Empresa" : "Responsável e acesso"}
-          </p>
-          <div className="flex gap-2" aria-hidden="true">
-            <span className="h-1.5 flex-1 rounded-sm bg-western-cta" />
-            <span className={`h-1.5 flex-1 rounded-sm ${step >= 2 ? "bg-western-cta" : "bg-western-border-soft"}`} />
+      <div className="container-western section">
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 xl:gap-24 items-start">
+          {/* Proposta enxuta — coluna esquerda, fixa no desktop */}
+          <div className="lg:sticky lg:top-28">
+            <p className="text-eyebrow mb-5">Cadastro B2B · Aprovação imediata</p>
+            <div className="w-12 h-px bg-western-gold mb-8" />
+            <h1 className="display-xl mb-6">Solicite acesso de parceiro comercial.</h1>
+            <p className="text-body max-w-[42ch]">
+              Para profissionais e empresas com CNPJ ativo — arquitetos,
+              paisagistas, laguistas, lojas e construtoras.
+            </p>
+            <ul className="mt-8 space-y-3 hidden lg:block">
+              {PROPOSTA.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-body">
+                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-western-bronze" strokeWidth={2} aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
 
-        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
+          {/* Formulário — coluna direita, primeiro campo na dobra */}
+          <div>
+            <p className="text-meta mb-8 lg:hidden">Grátis · leva menos de 2 minutos · precisa de CNPJ</p>
+
+            {/* Progresso — uma decisão por vez */}
+            <div className="mb-8">
+              <p className="text-eyebrow mb-3">
+                Etapa {step} de 2 · {step === 1 ? "Empresa" : "Responsável e acesso"}
+              </p>
+              <div className="flex gap-2" aria-hidden="true">
+                <span className="h-1.5 flex-1 rounded-sm bg-western-cta" />
+                <span className={`h-1.5 flex-1 rounded-sm ${step >= 2 ? "bg-western-cta" : "bg-western-border-soft"}`} />
+              </div>
+            </div>
+
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
           {step === 1 && (
             <>
               <div>
@@ -689,6 +689,23 @@ export default function PartnerSignup() {
             </Link>
           </p>
         </form>
+
+            {/* Saída discreta para cliente final — não compete com o formulário */}
+            <p className="text-center pt-6">
+              <a
+                href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
+                  "Olá Western! Sou cliente final e gostaria de comprar / fazer um projeto com pedras Western."
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 font-sans text-[14px] text-western-stone-warm underline underline-offset-4 decoration-western-border-strong transition-colors hover:text-western-green-deep"
+              >
+                Sem CNPJ? Veja as opções para a sua casa
+                <ChevronRight className="h-4 w-4" aria-hidden="true" />
+              </a>
+            </p>
+          </div>
+        </div>
 
         {/* Prova social perto da conversão (auditoria): quem já especifica
             Western. Reforça a decisão de se cadastrar. */}
