@@ -556,21 +556,25 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
             }
             className={`${actionCls} -mr-2 ${pulse ? "anim-settle" : ""}`}
           >
-            <ShoppingBag className="h-6 w-6" strokeWidth={1.75} />
+            {/* O badge ancora no ÍCONE, não na button. Antes era absolute
+                right-0 da button — mas a button é larga (tem o rótulo "Meu
+                carrinho"), então o número flutuava no canto direito, longe do
+                ícone: era o "desalinhado". Wrapper relative no ícone resolve. */}
+            <span className="relative inline-flex">
+              <ShoppingBag className="h-6 w-6" strokeWidth={1.75} />
+              {totalItems > 0 && (
+                <span
+                  className={`absolute -top-2 -right-2.5 min-w-[20px] h-[20px] px-1 inline-flex items-center justify-center rounded-full bg-western-cta text-western-cream text-[12px] font-bold leading-none tabular-nums transition-shadow ${
+                    pulse ? "ring-2 ring-western-gold/60 ring-offset-1 ring-offset-western-ivory" : ""
+                  }`}
+                >
+                  {totalItems}
+                </span>
+              )}
+            </span>
             {/* Em 360px o rótulo cheio estouraria a fileira — abaixo de sm, "Carrinho". */}
             <span className="sm:hidden">Carrinho</span>
             <span className="hidden sm:inline">Meu carrinho</span>
-            {totalItems > 0 && (
-              <span
-                className={`absolute top-0 right-0 min-w-[22px] h-[22px] px-1 inline-flex items-center justify-center rounded-full bg-western-cta text-western-cream text-[13px] font-bold tabular-nums transition-shadow ${
-                  pulse ? "ring-2 ring-western-gold/60 ring-offset-1 ring-offset-western-ivory" : ""
-                }`}
-              >
-                {/* O dígito senta acima da baseline (sobra de descender); um leve
-                    nudge pra baixo o centra opticamente no círculo. */}
-                <span className="block leading-none translate-y-[0.5px]">{totalItems}</span>
-              </span>
-            )}
           </button>
         </div>
       </div>

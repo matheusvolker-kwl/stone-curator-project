@@ -341,10 +341,15 @@ export default function ParaSuaCasa() {
               <Reveal key={c.titulo} variant="fade-up" delay={i * 70} duration={650}>
                 <article className="flex h-full flex-col bg-white rounded-2xl overflow-hidden border border-western-border-soft shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)]">
                   <div className="aspect-[4/3] overflow-hidden bg-western-cream-muted">
+                    {/* eager + dimensões: esta é a seção "o que você quer" — as
+                        4 fotos SÃO o conteúdo, e lazy deixava 3 caixas cinza
+                        (parecia quebrado). width/height reservam o espaço. */}
                     <img
                       src={c.img}
                       alt={c.titulo}
-                      loading="lazy"
+                      width={1100}
+                      height={825}
+                      loading="eager"
                       decoding="async"
                       className="w-full h-full object-cover"
                     />
@@ -624,7 +629,7 @@ export default function ParaSuaCasa() {
               <div className="md:col-span-5 p-6 pt-0 md:p-8 md:pl-0">
                 <p className="text-eyebrow">Visita ao ateliê</p>
                 <h3 className="display-md text-western-green-deep mt-3">
-                  Você pode vir sentar aqui.
+                  Venha conhecer o ateliê.
                 </h3>
                 <p className="mt-4 text-[17px] leading-[1.6] text-western-stone-warm">
                   O ateliê recebe com hora marcada. Dá pra pôr a mão na pedra, ver as peças montadas

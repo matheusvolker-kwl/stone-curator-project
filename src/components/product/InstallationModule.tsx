@@ -124,7 +124,7 @@ export function InstallationSection({
           {/* Header */}
           <p className="text-section-label mb-3">Instalação</p>
           <h2 id="instalacao-title" className="display-lg text-western-green-deep">
-            Instalação assistida
+            Como instalar
           </h2>
           <p className="text-body mt-3 max-w-[62ch]">{subtitle}</p>
 
