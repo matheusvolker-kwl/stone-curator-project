@@ -15,8 +15,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;650;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
-  <script type="module" crossorigin src="./assets/index-BC1UBSjW.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-K55vYmUL.css">
+  <script type="module" crossorigin src="./assets/index-C4YMzAxN.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-Em2c7MHw.css">
 </head>
 <body>
 
@@ -90,7 +90,8 @@
     <section class="spa" id="spa" aria-label="Lançamento 01 — Western Spa">
       <div class="container">
         <p class="eyebrow"><span class="eyebrow__rule"></span>Lançamento 01 · estreia no estande</p>
-        <h2 class="display spa__title">Western Spa.<br />Esculpido como pedra.<br />Leve como Western.</h2>
+        <h2 class="site__wordmark js-wordmark" id="spaWordmark">Western Spa.</h2>
+        <p class="display spa__subtitle">Esculpido como pedra.<br />Leve como Western.</p>
         <p class="section-lead">Uma concha monolítica de borda orgânica, degraus esculpidos e água aquecida
           com hidromassagem — a primeira peça da Western feita para você entrar dentro dela.</p>
       </div>
@@ -127,6 +128,25 @@
             <strong>5 acabamentos</strong><span>Pintados à mão no ateliê, peça por peça.</span>
           </li>
         </ul>
+
+        <div class="details" id="spaDetails" aria-label="Detalhes do Western Spa">
+          <figure class="details__tile">
+            <img src="./img/detalhe-borda.jpg" alt="Close da borda esculpida do Western Spa com lâmina d'água sobre a pintura à mão" loading="lazy" decoding="async" />
+            <figcaption><strong>Borda pintada à mão</strong><span>Seis fases, cinco pigmentos por camada.</span></figcaption>
+          </figure>
+          <figure class="details__tile">
+            <img src="./img/detalhe-jato.jpg" alt="Hidrojato de 50 mm injetando água com bolhas na parede de pedra, visto por baixo d'água" loading="lazy" decoding="async" />
+            <figcaption><strong>Hidro de 50 mm</strong><span>Seis pontos distribuídos no assento.</span></figcaption>
+          </figure>
+          <figure class="details__tile">
+            <img src="./img/detalhe-led.jpg" alt="LED subaquático em inox iluminando a textura da pedra ao entardecer" loading="lazy" decoding="async" />
+            <figcaption><strong>LED em inox 316</strong><span>Dois pontos, cor ao seu gosto.</span></figcaption>
+          </figure>
+          <figure class="details__tile">
+            <img src="./img/detalhe-degraus.jpg" alt="Degraus esculpidos molhados do Western Spa em ângulo baixo" loading="lazy" decoding="async" />
+            <figcaption><strong>Degraus esculpidos</strong><span>Acesso integrado à própria concha.</span></figcaption>
+          </figure>
+        </div>
       </div>
     </section>
 
@@ -239,7 +259,7 @@
       </div>
 
       <div class="container site__head">
-        <h2 class="site__wordmark" id="siteWordmark">Western Store.</h2>
+        <h2 class="site__wordmark js-wordmark" id="siteWordmark">Western Store.</h2>
         <p class="section-lead">A loja inteira, aberta como o ateliê: o novo <strong>westernstore.com.br</strong>
           entra no ar junto com a feira — catálogo completo com medida e peso reais de cada peça,
           preço de parceiro na hora e modelo 3D para o seu projeto.</p>
