@@ -159,12 +159,12 @@ export default function ComoComprar() {
           não pode ficar a duas rolagens de distância. */}
       <section className="surface-ivory pt-12 pb-10 md:pt-20 md:pb-12">
         <div className="container-western">
-          <div className="max-w-3xl">
+          <div className="mx-auto max-w-3xl text-center">
           <Reveal>
             <p className="text-eyebrow mb-3">Loja para profissionais</p>
-            <div className="w-10 h-[2px] bg-western-gold mb-6" aria-hidden />
+            <div className="w-10 h-[2px] bg-western-gold mb-6 mx-auto" aria-hidden />
             <h1 className="display-xl text-western-green-deep mb-4">Como comprar na Western</h1>
-            <p className="text-body max-w-[46ch]">
+            <p className="text-body max-w-[46ch] mx-auto">
               Loja exclusiva para profissionais com CNPJ —{" "}
               <strong className="font-semibold text-western-green-deep">
                 veja o preço de parceiro em 4 passos
@@ -173,7 +173,7 @@ export default function ComoComprar() {
             </p>
 
             <div className="mt-7">
-              <BlocoCta isPartner={isPartner} align="left" />
+              <BlocoCta isPartner={isPartner} align="center" />
             </div>
           </Reveal>
           </div>
@@ -185,7 +185,7 @@ export default function ComoComprar() {
           roubava ~100px de largura útil do texto em cada card. */}
       <section className="surface-ivory pb-12 md:pb-16">
         <div className="container-western">
-          <div className="max-w-5xl">
+          <div className="mx-auto max-w-4xl">
           <ol className="grid gap-4 md:grid-cols-2">
             {PASSOS.map((p, i) => (
               <Reveal
@@ -217,7 +217,7 @@ export default function ComoComprar() {
       {/* DÚVIDAS RÁPIDAS — bloco areia. Sem acordeão: são 3 respostas curtas, mostre. */}
       <section className="surface-ivory pb-12 md:pb-16">
         <div className="container-western">
-          <div className="max-w-3xl">
+          <div className="mx-auto max-w-3xl">
           <Reveal className="rounded-2xl surface-paper border border-western-border-soft px-6 py-7 md:px-9 md:py-9">
             <h2 className="text-eyebrow mb-5">Dúvidas rápidas</h2>
             <dl>

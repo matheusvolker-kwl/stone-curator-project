@@ -31,7 +31,7 @@ export default function UsageScenes({ collectionHandle, productTitle }: Props) {
       id="onde-usar"
       aria-label={`Onde usar — ${productTitle}`}
     >
-      <div className="max-w-5xl mx-auto px-6 md:px-8">
+      <div className="container-western">
         <header className="mb-8 md:mb-10 max-w-2xl">
           <p className="text-section-label mb-3">Onde usar</p>
           <h2 className="display-lg text-western-green-deep">Onde esta peça vai bem</h2>

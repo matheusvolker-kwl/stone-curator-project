@@ -144,7 +144,7 @@ export default function ProductTabs({
             <AccordionTrigger className={TRIGGER}>Especificações</AccordionTrigger>
             <AccordionContent className="pt-2 pb-10">
               <div className="grid md:grid-cols-12 gap-10 lg:gap-16">
-                <div className="md:col-span-5">
+                <div className="md:col-span-7">
                   <p className="text-section-label mb-5">Composição & material</p>
                   <ul className="space-y-5">
                     {COMPOSICAO.map((item) => (
@@ -170,7 +170,7 @@ export default function ProductTabs({
                   </Link>
                 </div>
 
-                <div className="md:col-span-7 space-y-10">
+                <div className="md:col-span-5 space-y-10">
                   {/* Ponteiro — quem procura medida aqui acha o caminho na hora,
                     * sem repetir número nenhum. */}
                   <a

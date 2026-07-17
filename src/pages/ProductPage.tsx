@@ -12,7 +12,6 @@ import {
   ArrowRight,
   Box,
   Lock,
-  MessageCircle,
   MapPin,
   ShieldCheck,
   FileText,
@@ -579,29 +578,20 @@ export default function ProductPage() {
                   <div className="flex-1 h-px bg-western-border-soft" />
                 </div>
 
-                <div className="space-y-4">
-                  <p className="text-body text-western-green-deep">
-                    É para a sua casa? A gente monta seu orçamento.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    {/* /orcamento redirecionava pra /contato — um fale-conosco
-                        genérico. Quem clica aqui acabou de bater no cadeado do
-                        preço: é dono de casa, e a porta dele é /para-sua-casa,
-                        que responde preço, prazo e "não tenho CNPJ". */}
-                    <Link to="/para-sua-casa" className={`${CTA_OUTLINE} w-full sm:w-auto`}>
-                      Peça um orçamento
-                    </Link>
-                    <a
-                      href={`https://wa.me/${BUSINESS.whatsappFabrica}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 min-h-control px-6 rounded-lg font-sans text-[16px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors"
-                    >
-                      <MessageCircle className="h-5 w-5" aria-hidden />
-                      Falar no WhatsApp
-                    </a>
-                  </div>
-                </div>
+                {/* Casa = off-ramp discreto, UM caminho só. Antes esta coluna
+                    empilhava 2 botões + 2 links de WhatsApp competindo com o card
+                    de parceiro (a ação primária). O dono da casa tem uma porta:
+                    /para-sua-casa, que responde preço, prazo e "não tenho CNPJ".
+                    O WhatsApp já vive na linha do pedido mínimo, acima. */}
+                <p className="text-body text-western-green-deep">
+                  É para a sua casa?{" "}
+                  <Link
+                    to="/para-sua-casa"
+                    className="font-semibold text-western-green-deep underline decoration-western-gold underline-offset-4 hover:decoration-2"
+                  >
+                    A gente monta seu orçamento
+                  </Link>
+                </p>
               </section>
             )}
 

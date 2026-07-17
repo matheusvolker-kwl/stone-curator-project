@@ -183,7 +183,10 @@ export default function SocialProof({
       className={
         full
           ? "grid grid-cols-3 gap-4 sm:grid-cols-6 md:gap-6"
-          : `grid grid-cols-3 ${tileGap} ${tierMax} mx-auto`
+          : /* align="left" ancora a grade ao trilho (sem mx-auto), pra os tiles
+               alinharem com o header à esquerda — senão a fileira flutua
+               centralizada e o header fica órfão à esquerda. */
+            `grid grid-cols-3 ${tileGap} ${tierMax} ${isLeft ? "" : "mx-auto"}`
       }
     >
       {pessoas.map(renderPessoa)}

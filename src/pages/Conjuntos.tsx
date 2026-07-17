@@ -65,17 +65,6 @@ const ALL_LEAVES: LeafMeta[] = TIPOS_ORDER.flatMap((tipo) =>
 
 const ALL_HANDLES = ALL_LEAVES.map((l) => l.handle);
 
-/**
- * Prova visual na dobra: um conjunto real ancorando o hero no desktop.
- * Usa o render já existente + o nome vindo do guideMap (nada hardcoded solto).
- */
-const FEATURED_HANDLE = "conjunto-piscina-noronha-completo";
-const FEATURED = {
-  handle: FEATURED_HANDLE,
-  render: conjuntoRenders[FEATURED_HANDLE],
-  nome: ALL_LEAVES.find((l) => l.handle === FEATURED_HANDLE)?.nome ?? "",
-};
-
 /** Conjuntos mostrados por local antes do "ver todos" (1 linha no desktop). */
 const PREVIEW_POR_TIPO = 3;
 
@@ -89,7 +78,7 @@ const NIVEL_ADJETIVO: Record<Nivel, string> = {
 };
 
 export default function Conjuntos() {
-  const { data: products, isLoading } = useQuery({
+  const { data: products } = useQuery({
     queryKey: ["conjuntos", "all-handles"],
     queryFn: () => fetchProductsByHandles(ALL_HANDLES),
     staleTime: 1000 * 60 * 5,
@@ -197,27 +186,11 @@ export default function Conjuntos() {
               </p>
             </div>
 
-            <div className="space-y-6">
-              {/* Prova visual na dobra — um conjunto real, não um skeleton */}
-              {FEATURED.render && (
-                <Link
-                  to={`/conjuntos/${FEATURED.handle}`}
-                  className="group relative block overflow-hidden rounded-2xl shadow-card"
-                >
-                  <div className="aspect-[4/3] bg-western-paper">
-                    <img
-                      src={FEATURED.render}
-                      alt={`Conjunto ${FEATURED.nome}`}
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                    />
-                  </div>
-                  <span className="absolute bottom-3 left-3 rounded-md bg-western-green-deep/90 px-3 py-1.5 font-sans text-[14px] font-semibold text-western-cream">
-                    Conjunto {FEATURED.nome} · piscina
-                  </span>
-                </Link>
-              )}
-
-              {/* Atalho guiado — o caminho de maior conversão para quem chega sem rumo */}
+            <div>
+              {/* Um único caminho à direita: o guia. A foto "featured" saiu —
+                  competia com este card, criava o vazio em L no desktop e
+                  empurrava o primeiro conjunto ~1 tela pra baixo no mobile. As
+                  fotos reais dos conjuntos já vêm no grid logo abaixo. */}
               <aside className="surface-forest rounded-2xl p-7 md:p-8">
                 <p className="text-eyebrow-dark mb-3">
                   Não sabe por onde começar?
@@ -271,18 +244,13 @@ export default function Conjuntos() {
             </button>
           </div>
 
-          {/* MAIN */}
+          {/* MAIN — a grade renderiza IMEDIATAMENTE: imagem vem de render local
+              (conjuntoRenders ?? nivelImage no card), preço tem fallback estático
+              e o GatedPrice já gateia o valor sozinho. Não há por que esconder
+              tudo atrás de um skeleton de página inteira esperando o Woo — era ele
+              a "parede cinza" que lia como bizarro. */}
           <main>
-            {isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="aspect-[4/5] rounded-lg bg-western-stone-warm/10 animate-pulse"
-                  />
-                ))}
-              </div>
-            ) : filtered.length === 0 ? (
+            {filtered.length === 0 ? (
               <div className="rounded-2xl border border-western-border-soft bg-white p-10 md:p-12 text-center">
                 <p className="display-md text-western-green-deep mb-3">
                   Nenhum conjunto nessa combinação.

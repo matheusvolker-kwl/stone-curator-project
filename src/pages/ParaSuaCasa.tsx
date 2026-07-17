@@ -242,9 +242,9 @@ export default function ParaSuaCasa() {
       <section className="relative isolate overflow-hidden flex items-center bg-western-green-deep min-h-[540px] md:min-h-[620px]">
         <img
           src={heroImg}
-          alt="Piscina de praia com borda de pedra artesanal Western"
-          width={1800}
-          height={1200}
+          alt="Piscina de praia com borda de pedra artesanal Western, jardim tropical e prainha"
+          width={2200}
+          height={1356}
           loading="eager"
           fetchPriority="high"
           decoding="async"
@@ -555,10 +555,12 @@ export default function ParaSuaCasa() {
       {/* 7 — PROVA SOCIAL ASPIRACIONAL */}
       <section className="surface-ivory section border-b border-western-border-soft">
         <div className="container-western">
-          <div className="mx-auto max-w-4xl">
+          <div className="max-w-4xl">
             <Reveal variant="fade-up" duration={750}>
               <SocialProof
                 interactive
+                align="left"
+                compact
                 eyebrow="Quem já tem uma"
                 /* "Nas casas de quem podia ter qualquer coisa" saiu: o dono
                    chamou de "grosseiro e marketing de baixo calão", e é. A

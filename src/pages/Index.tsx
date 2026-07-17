@@ -114,7 +114,7 @@ export default function Index() {
           <source media="(min-width: 768px)" srcSet={heroHome} width={1600} height={900} />
           <img
             src={heroHomeMobile}
-            alt="Piscina natural Western em Tapiraí — pedras e água cristalina na mata."
+            alt="Piscina natural no ateliê Western — cascatas sobre pedras artesanais e água cristalina."
             loading="eager"
             {...({ fetchpriority: "high" } as Record<string, string>)}
             decoding="async"
@@ -138,13 +138,17 @@ export default function Index() {
               "linear-gradient(180deg, hsl(var(--western-green-deep) / 0.95) 0%, hsl(var(--western-green-deep) / 0.92) 45%, hsl(var(--western-green-deep) / 0.55) 70%, hsl(var(--western-green-deep) / 0.08) 100%)",
           }}
         />
-        {/* Scrim desktop: horizontal — texto vive na metade esquerda */}
+        {/* Scrim desktop em DUAS camadas: forte na esquerda (onde vive o H1, a
+            subline e a régua) e um véu leve subindo da base (pra régua não perder
+            contraste sobre a pedra clara). O CENTRO-DIREITA fica livre — é onde a
+            piscina turquesa e as pedras aparecem. Antes um único gradiente de 0.66
+            no meio matava a foto: o hero inteiro lia como verde chapado. */}
         <div
           className="absolute inset-0 pointer-events-none hidden md:block"
           aria-hidden
           style={{
             background:
-              "linear-gradient(92deg, hsl(var(--western-green-deep) / 0.92) 0%, hsl(var(--western-green-deep) / 0.66) 48%, transparent 84%)",
+              "linear-gradient(180deg, transparent 42%, hsl(var(--western-green-deep) / 0.5) 100%), linear-gradient(100deg, hsl(var(--western-green-deep) / 0.85) 0%, hsl(var(--western-green-deep) / 0.48) 36%, transparent 64%)",
           }}
         />
         {/* Símbolo da marca como marca d'água (estático — o DS não usa parallax) */}

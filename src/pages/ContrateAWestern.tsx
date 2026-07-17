@@ -504,16 +504,16 @@ export default function ContrateAWestern() {
       {/* 6) PROVA SOCIAL — rostos + mural de marcas */}
       <section className="surface-paper section border-t border-western-border-soft">
         <div className="container-western">
-          <div className="mx-auto max-w-5xl">
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
               interactive
+              layout="row"
+              align="left"
               eyebrow="Quem confia na Western"
               titulo={<>Especificada por quem define o paisagismo brasileiro.</>}
               groups={["celebridades", "profissionais", "marcas"]}
             />
           </Reveal>
-          </div>
         </div>
       </section>
 

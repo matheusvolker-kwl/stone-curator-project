@@ -191,10 +191,13 @@ export function InstallationSection({
             <div className="space-y-8 md:col-span-7">
               <div>
                 <p className="text-section-label mb-4">{stepsLabel}</p>
+                {/* Todos os passos começam FECHADOS: o bloco vira uma lista de
+                    títulos escaneável (o dono pediu "menos massante"), e cada
+                    etapa abre sob demanda. O passo a passo detalhado mesmo vive
+                    no manual, que o botão abaixo entrega. */}
                 <Accordion
                   type="single"
                   collapsible
-                  defaultValue="step-0"
                   className="border-t border-western-border-soft"
                 >
                   {steps.map((s, i) => (
@@ -220,9 +223,8 @@ export function InstallationSection({
                   ))}
                 </Accordion>
                 <p className="text-meta mt-4">
-                  Resumo do Capítulo {chapter} · {chapterTitle}. O passo a passo completo,
-                  a ficha técnica com o peso de cada peça e os cuidados de manutenção estão
-                  no manual.
+                  Resumo do Capítulo {chapter}. O passo a passo completo e a manutenção
+                  estão no manual.
                 </p>
               </div>
 

@@ -178,7 +178,7 @@ export default function APedra() {
               É pedra de verdade.
               <br />
               <span className="inline-block text-western-bronze [text-wrap:balance]">
-                E faz o que pedra não faz.
+                Leve o bastante para carregar na mão.
               </span>
             </h1>
             <p className="text-quote text-western-cream-muted mt-5 max-w-[52ch] font-normal">
@@ -198,7 +198,7 @@ export default function APedra() {
           ================================================================== */}
       <section className="surface-paper section">
         <div className="container-western">
-          <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:gap-14 lg:items-start">
+          <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:gap-14 lg:items-center">
             <Reveal variant="fade-up" duration={700}>
               <div>
                 <p className="text-eyebrow mb-3">A origem</p>
@@ -236,7 +236,7 @@ export default function APedra() {
                   className="w-full aspect-[2/3] object-cover rounded-2xl"
                 />
                 <figcaption className="text-meta mt-4">
-                  Aproxime. É para isso que ela está aqui.
+                  Superfície real: laminação sedimentar, grão e mica.
                 </figcaption>
               </figure>
             </Reveal>
@@ -311,7 +311,6 @@ export default function APedra() {
                   <dt className="text-section-label text-western-green-deep">O caminhão.</dt>
                   <dd className="text-body mt-1.5">
                     Com cerca de 10% do peso, a mesma obra sai numa fração dos veículos. E do CO₂.
-                    Não é selo. É aritmética.
                   </dd>
                 </div>
               </dl>
@@ -414,11 +413,6 @@ export default function APedra() {
             </Reveal>
           </div>
 
-          <Reveal variant="fade-up" delay={80} duration={700}>
-            <p className="text-quote text-western-gold-soft mt-14 md:mt-16 max-w-[46ch]">
-              Uma pedra maciça de tonelada faz muitas coisas. Levantar não é uma delas.
-            </p>
-          </Reveal>
         </div>
       </section>
 
@@ -433,35 +427,34 @@ export default function APedra() {
               <p className="text-eyebrow mb-3">Endereços</p>
               <h2 className="display-lg text-western-green-deep">Onde a pedra foi.</h2>
               <p className="text-body mt-5">
-                Nada aqui é truque. É tudo a mesma causa: a peça é oca e pesa cerca de 10% — e por
-                isso ela chega em lugares que não recebem tonelada.
+                Tudo pela mesma causa: a peça é oca e pesa cerca de 10% — e por isso chega
+                em lugares que não recebem tonelada.
               </p>
             </div>
           </Reveal>
 
-          <div className="mt-12 md:mt-16 space-y-12 md:space-y-20">
+          {/* Tira densa de 2 colunas: os 4 endereços provam "chega onde não
+              recebe tonelada" — 2 imagens fortes por linha bastam. Antes eram 4
+              linhas full-width com space-y-20, ~4 telas só de endereço. */}
+          <div className="mt-12 md:mt-16 grid gap-x-12 gap-y-12 md:grid-cols-2 md:gap-y-16">
             {ENDERECOS.map(({ img, titulo, texto, meta, alt }, i) => (
-              <Reveal key={titulo} variant="fade-up" duration={700}>
-                <div
-                  className={`grid gap-6 md:grid-cols-[0.9fr_1fr] md:gap-12 md:items-start ${
-                    i % 2 === 1 ? "md:[&>figure]:order-2" : ""
-                  }`}
-                >
-                  <figure>
-                    <img
-                      src={img}
-                      alt={alt}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full max-w-[520px] aspect-[4/5] object-cover rounded-2xl"
-                    />
-                  </figure>
-                  <div>
-                    <h3 className="display-md text-western-green-deep">{titulo}</h3>
+              <Reveal key={titulo} variant="fade-up" duration={700} delay={(i % 2) * 80}>
+                <figure className="m-0">
+                  <img
+                    src={img}
+                    alt={alt}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full aspect-[4/5] object-cover rounded-2xl"
+                  />
+                  <figcaption className="mt-5">
+                    <h3 className="font-sans text-[22px] font-semibold leading-snug text-western-green-deep">
+                      {titulo}
+                    </h3>
                     <p className="text-body mt-2 max-w-[46ch]">{texto}</p>
-                    <p className="text-meta mt-4">{meta}</p>
-                  </div>
-                </div>
+                    <p className="text-meta mt-3">{meta}</p>
+                  </figcaption>
+                </figure>
               </Reveal>
             ))}
           </div>
@@ -592,7 +585,7 @@ export default function APedra() {
           ================================================================== */}
       <section className="surface-paper section border-t border-western-border-soft">
         <div className="container-western">
-          <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:gap-14 lg:items-start">
+          <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:gap-14 lg:items-center">
             <Reveal variant="fade-up" duration={700}>
               <div>
                 <p className="text-eyebrow mb-3">Resistência</p>
@@ -672,7 +665,7 @@ export default function APedra() {
           ================================================================== */}
       <section className="surface-ivory section border-t border-western-border-soft">
         <div className="container-western">
-          <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:gap-14 lg:items-start">
+          <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:gap-14 lg:items-center">
             <Reveal variant="fade-up" duration={700}>
               <div>
                 <p className="text-eyebrow mb-3">Quem faz</p>
@@ -773,11 +766,10 @@ export default function APedra() {
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="max-w-2xl">
-              <p className="text-eyebrow text-western-gold-soft mb-3">O último teste</p>
-              <h2 className="display-lg text-western-cream">Ponha lado a lado com a sua pedra.</h2>
+              <p className="text-eyebrow text-western-gold-soft mb-3">As amostras</p>
+              <h2 className="display-lg text-western-cream">Sinta a textura antes de escolher.</h2>
               <p className="text-quote font-normal text-western-cream-muted mt-4 max-w-[52ch]">
-                A Western Box leva os quatro acabamentos até a sua mesa. Decida com a mão, não com a
-                foto.
+                A Western Box leva os quatro acabamentos até a sua mesa.
               </p>
 
               <div className="mt-8 flex flex-col md:flex-row gap-3">

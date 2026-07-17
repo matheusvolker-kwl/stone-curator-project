@@ -84,13 +84,12 @@ export default function SobreAWestern() {
             </h2>
             <p className="text-body mt-4 max-w-[54ch]">
               Molde tirado da pedra real: mesma textura, mesma resistência, cerca de 10% do peso.
-              Leve, porém, é só o começo.
             </p>
             <p className="text-meta mt-3">Ateliê próprio em Cajamar, desde 1993.</p>
           </div>
         </Reveal>
 
-        <div className="mt-10 md:mt-14 grid gap-8 md:grid-cols-12 md:gap-12 md:items-center">
+        <div className="mt-10 md:mt-14 grid gap-8 md:grid-cols-12 md:gap-12 md:items-start">
           {/* Foto placeholder (ver import): escala real — pessoa de 1,70 m ao
               lado da peça. Nativa 4:5 (1080×1341); aspect-[4/5] não decapita a
               figura. A legenda fala do que ESTA foto mostra (escala), não de
@@ -121,7 +120,6 @@ export default function SobreAWestern() {
                 filete, em text-title-sm — tipograficamente menores de propósito,
                 para que a página tenha UM argumento principal e não três iguais. */}
             <div>
-              <p className="text-eyebrow mb-2">O que muda</p>
               <h3 className="display-md text-western-green-deep">
                 Você entrega o que desenhou.
               </h3>
@@ -156,31 +154,31 @@ export default function SobreAWestern() {
           </div>
         </Reveal>
 
-        {/* Bifurca profissional × casa — a AÇÃO principal é o cadastro (ver preços);
-            a casa é off-ramp discreto. Preservada verbatim. */}
+        {/* Bifurca profissional × casa — signpost discreto. O CTA cheio de
+            cadastro já vive no hero (uma tela acima) e volta em "Como comprar";
+            repeti-lo como botão preto aqui era insistência. Dois links bastam
+            para mandar cada público ao seu caminho. */}
         <Reveal variant="fade-up" duration={600}>
           <div className="mt-12 md:mt-16 border-t border-western-border-soft pt-8">
-            <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-[18px] font-semibold text-western-green-deep max-w-[22ch]">
                 Você é profissional, ou é para a sua casa?
               </p>
-              <div className="flex flex-col gap-2.5 md:items-end">
-                <div className="flex flex-col gap-3 md:flex-row md:items-center">
-                  <Link to="/parceiro/cadastro" className="btn-primary w-full md:w-auto">
-                    Criar cadastro · ver preços
-                    <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
-                  </Link>
-                  <Link
-                    to="/para-sua-casa"
-                    className="tap-target inline-flex items-center justify-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
-                  >
-                    É para a minha casa
-                    <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
-                  </Link>
-                </div>
-                <p className="text-meta md:text-right">
-                  Grátis · aprovação na hora · precisa de CNPJ
-                </p>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-8">
+                <Link
+                  to="/parceiro/cadastro"
+                  className="tap-target inline-flex items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+                >
+                  Sou profissional · ver preços
+                  <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                </Link>
+                <Link
+                  to="/para-sua-casa"
+                  className="tap-target inline-flex items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+                >
+                  É para a minha casa
+                  <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                </Link>
               </div>
             </div>
           </div>
