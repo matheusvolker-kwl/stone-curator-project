@@ -185,7 +185,9 @@ export default function APedra() {
               O molde sai de uma pedra real, no lugar onde ela está. O que muda é o que vem dentro.
             </p>
             <p className="text-meta text-western-cream-muted/80 mt-6 max-w-[52ch]">
-              As pedras desta foto foram moldadas de rocha real. E fabricados em Cajamar.
+              {/* "E fabricados em Cajamar" — concordância quebrada quando
+                  "matacões" virou "pedras" e a frase não foi relida. */}
+              As pedras desta foto foram moldadas de rocha real. E fabricadas em Cajamar.
             </p>
           </Reveal>
         </div>
