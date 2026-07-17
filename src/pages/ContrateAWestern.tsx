@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   MessageCircle,
   ArrowDown,
@@ -17,6 +18,7 @@ import {
   ShieldCheck,
   FileText,
   Lock,
+  ArrowRight,
 } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
@@ -318,6 +320,16 @@ export default function ContrateAWestern() {
             <p className="mt-8 text-[15px] leading-relaxed text-western-cream/80 max-w-lg mx-auto">
               Especificada nas obras de Neymar Jr. · Alex Hanazaki · Rosewood · Unique Garden
             </p>
+            {/* Os quatro nomes acima agora TÊM lastro clicável (o Hanazaki
+                ganhou obra em 2026-07); antes esta linha citava como prova um
+                rosto que o site não conseguia mostrar. */}
+            <Link
+              to="/inspiracoes"
+              className="tap-target mt-4 inline-flex items-center gap-1.5 font-sans text-base font-semibold text-western-gold-soft hover:text-western-cream transition-colors"
+            >
+              Ver as obras
+              <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+            </Link>
           </Reveal>
         </div>
       </section>
@@ -382,6 +394,20 @@ export default function ContrateAWestern() {
               ))}
             </div>
           </div>
+
+          {/* Esta página tinha 2 entradas e ZERO saídas internas: só wa.me. Quem
+              não clica no WhatsApp ficava preso — e os dois pontos onde ela mais
+              afirma sem provar (o card "Viabiliza o inviável" e a linha de obras
+              logo abaixo) são exatamente os que pedem a saída. */}
+          <Reveal variant="fade-up" delay={80} duration={650}>
+            <Link
+              to="/a-pedra"
+              className="tap-target mt-10 inline-flex items-center gap-1.5 font-sans text-base font-semibold text-western-cream hover:text-western-gold-soft transition-colors"
+            >
+              Por que a pedra pesa 10× menos
+              <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+            </Link>
+          </Reveal>
           </div>
         </div>
       </section>

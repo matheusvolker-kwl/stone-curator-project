@@ -38,10 +38,11 @@ import escalaSantaBarbara from "@/assets/escala/WEST-CSB.webp";
    cascata-santa-barbara, skuHandleMap.ts:13). O equivalente natural usa a MESMA
    conta da PDP (TamanhoReal.tsx:71 → peso × 10 = 2.800 kg), por isso "quase 3
    toneladas" — arredondado para fora, nunca para dentro.
-   ⚠ BLOQUEIO: o dono precisa cravar este peso antes de publicar. O mesmo CSB
-   aparece com 215 kg em pecasPlaceholder.ts:7 (arquivo sintético, não
-   renderizado) e o FAQ.tsx:30 repete os 215 como "uma cascata grande". A PDP lê
-   o peso da loja: home e PDP TÊM de mostrar o mesmo número. */
+   ✓ BLOQUEIO RESOLVIDO (2026-07): o aviso antigo aqui dizia que o FAQ repetia
+   "215 kg" e que o dono precisava cravar o peso. Conferido: 215 não existe mais
+   em lugar nenhum do src (nem no FAQ, nem no pecasPlaceholder). 280 kg está
+   alinhado em home, PDP, FAQ e /a-pedra. Comentário que mente sobre o estado do
+   código custa uma investigação inteira à próxima pessoa — custou duas a esta. */
 const PROVA = {
   peca: "Cascata Santa Bárbara",
   pesoKg: 280,

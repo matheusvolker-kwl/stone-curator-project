@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+
 interface Props {
   productTitle: string;
   pesoKg?: string | null;        // ex.: "74"
@@ -96,6 +99,17 @@ export default function ProductComparison({ productTitle, pesoKg, dimensoes }: P
         <p className="mt-10 italic text-sm text-western-stone-warm/85 max-w-xl">
           Resultado: projeto previsível, sem surpresa de obra — você decide a peça, a logística e o custo antes de qualquer caminhão sair da fábrica.
         </p>
+
+        {/* A CAUSA de todas as linhas acima (peso ×10, guindaste, alvará, 3D) é
+            da página do argumento, não da ficha da peça. Mesmo padrão de
+            TamanhoReal.tsx. Sem isto a tabela afirma tudo e não deixa sair. */}
+        <Link
+          to="/a-pedra"
+          className="tap-target mt-6 inline-flex items-center gap-1.5 font-sans text-base font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+        >
+          Por que a peça pesa isso
+          <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+        </Link>
       </div>
     </section>
   );

@@ -284,6 +284,32 @@
     letter-spacing: -0.01em;
   }
 
+  /**
+   * Números-argumento (280 kg / quase 3 t / +300 mil). Existe porque a escala
+   * display para em 48px e um número que a página inteira sustenta não pode ser
+   * MENOR que o h1 — era o defeito da /a-pedra v1 (42px hardcoded contra 48 do h1).
+   * Sobe até 6.5rem: é o maior elemento tipográfico do site, de propósito.
+   */
+  .display-stat {
+    @apply font-display;
+    font-size: clamp(3.25rem, 2rem + 6vw, 6.5rem);
+    font-weight: 650;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /**
+   * Citação/pull-quote. Apaga os text-[17px] md:text-[19px] que estavam
+   * copiados em 6 lugares da /a-pedra v1.
+   */
+  .text-quote {
+    @apply font-sans;
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
   /* Alvos de toque (40+ / mobile) */
   .tap-target {
     min-height: var(--tap-min);

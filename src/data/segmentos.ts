@@ -33,7 +33,7 @@ export const SEGMENTOS: Segmento[] = [
     intro:
       "A piscina que apaga a fronteira entre água e paisagem: lâmina orgânica, entrada de praia com profundidade zero, cascata como âncora e blowers que imitam a arrebentação. Água tratada por sal — sem cloro, sem olho ardendo.",
     galeria: galeriaDe("piscinas"),
-    obraSlugs: ["showroom-riviera", "casa-de-praia-tato", "tapirai", "modulo-15"],
+    obraSlugs: ["showroom-riviera", "casa-de-praia-tato", "tapirai", "modulo-15", "nigro-praia-suspensa", "faisal-piscina-grega"],
   },
   {
     id: "lagos",
@@ -51,7 +51,7 @@ export const SEGMENTOS: Segmento[] = [
     intro:
       "A âncora hídrica de quase todo projeto — o som, o movimento e o ponto alto. Nunca flutua: nasce de dentro do verde ou sobre uma base que a ergue para dar queda. Cerca de 10× mais leve, sobe até a cobertura sem guindaste.",
     galeria: galeriaDe("cascatas"),
-    obraSlugs: ["modulo-15", "showroom-riviera"],
+    obraSlugs: ["modulo-15", "showroom-riviera", "hanazaki-expo-revestir"],
   },
   {
     id: "jardins",
@@ -60,7 +60,7 @@ export const SEGMENTOS: Segmento[] = [
     intro:
       "A pedra como escultura e ponto focal, com ou sem água. Matacões plantados entre a vegetação, pisadas que conduzem o caminhar — afloramento que parece ter sempre estado ali. É o uso mais versátil, do quintal ao rooftop.",
     galeria: galeriaDe("jardins"),
-    obraSlugs: [],
+    obraSlugs: ["nigro-praia-suspensa", "jader-porto-belo"],
   },
   {
     id: "revestimentos",
@@ -69,7 +69,7 @@ export const SEGMENTOS: Segmento[] = [
     intro:
       "A pedra que veste ambientes: paredes, balcões, bares, lavabos e lobbies. A leveza viabiliza uma face de rocha bruta sem estrutura pesada — do balcão de sushi ao spa de alto padrão.",
     galeria: galeriaDe("revestimentos"),
-    obraSlugs: ["unique-garden", "rosewood"],
+    obraSlugs: ["unique-garden", "rosewood", "quadriplex-caverna", "faisal-piscina-grega"],
   },
   {
     id: "viveiros",
@@ -87,6 +87,6 @@ export const SEGMENTOS: Segmento[] = [
     intro:
       "Quando a pedra sai do paisagismo: mobiliário autoral e estrutura de arquitetura. Da base de mesa do escritório do Caíto Maia às árvores-pilar de sombra do Jader Almeida, num campo de golfe.",
     galeria: [],
-    obraSlugs: ["caito-maia", "jader-porto-belo"],
+    obraSlugs: ["caito-maia", "jader-porto-belo", "enora-jader-almeida", "quadriplex-caverna"],
   },
 ];

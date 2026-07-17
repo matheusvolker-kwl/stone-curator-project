@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   Accordion,
   AccordionItem,
@@ -157,6 +158,16 @@ export default function ProductTabs({
                       </li>
                     ))}
                   </ul>
+
+                  {/* A ficha AFIRMA oca/10×/perfurável e não prova. A prova, com
+                      a foto do furo em obra real, mora na página do argumento. */}
+                  <Link
+                    to="/a-pedra"
+                    className="tap-target mt-6 inline-flex items-center gap-1.5 font-sans text-base font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+                  >
+                    Como a pedra é feita por dentro
+                    <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+                  </Link>
                 </div>
 
                 <div className="md:col-span-7 space-y-10">

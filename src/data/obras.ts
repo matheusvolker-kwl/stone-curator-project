@@ -7,9 +7,18 @@
  * uma obra com skus vira card shop-the-look (adicionar ao orçamento); sem skus,
  * é inspiração/prova que roteia para consultoria — nunca com quantidade inventada.
  *
- * Imagens NÃO são importadas aqui (mantém o dado desacoplado e o build seguro
- * enquanto as fotos do Drive não passam pelo pipeline webp). O `coverKey` é
- * resolvido pela camada de imagem (imageIndex) quando o asset existir.
+ * Imagens NÃO são importadas aqui (mantém o dado desacoplado e o build seguro).
+ *
+ * ⚠ DECLARAR UMA OBRA SÃO 3 ARQUIVOS, NÃO 1 — nesta ordem:
+ *   1. obras.ts        — o dado (este arquivo).
+ *   2. obraImages.ts   — OBRA_COVER[slug]. **OBRIGATÓRIO, não cosmético**:
+ *      ObraPage.tsx:31 faz `if (!OBRA_COVER[slug]) return <Navigate to="/obras">`
+ *      e /obras redireciona para /inspiracoes. Obra sem cover = LINK MORTO que
+ *      devolve o usuário para a lista de onde ele saiu. Foi exatamente o que
+ *      aconteceu com jader-porto-belo até 2026-07.
+ *   3. segmentos.ts    — o slug em SEGMENTOS[n].obraSlugs, senão a obra não tem
+ *      entrada nenhuma.
+ * E, se a obra lastreia um rosto da prova social, socialProofLinks.ts.
  */
 import { skuToHandle } from "./skuHandleMap";
 
@@ -55,9 +64,17 @@ export interface Obra {
   ficha?: string[];
   skus?: ObraSku[];
   creditos?: string[];
-  /** chave de imagem resolvida pelo pipeline (imageIndex). Ausente até a foto chegar. */
+  /**
+   * ⚠ CAMPO MORTO — ninguém lê. O docblock antigo prometia que "coverKey é
+   * resolvido pela camada de imagem (imageIndex)": não é, e `imageIndex` não
+   * existe no repo. A resolução é por SLUG em OBRA_COVER (obraImages.ts). Quem
+   * preencheu isto achando que bastava criou link morto. Mantido só para não
+   * quebrar dados antigos; não use.
+   * @deprecated use OBRA_COVER[slug] em obraImages.ts
+   */
   coverKey?: string;
   video?: string;
+  /** @deprecated não consumido por ObraPage/Inspiracoes — não destaca nada hoje */
   destaque?: boolean;
   /** obra sob NDA — a guarda de UI esconde nome/detalhe */
   confidencial?: boolean;
@@ -246,6 +263,80 @@ export const OBRAS: Obra[] = [
       "A pedra vira estrutura de paisagem. Cada 'árvore' é um pilar revestido de pedra Western (o tronco) que recebe uma laje viva com paisagismo em cima (a copa). A leveza é o que viabiliza a presença de matacão maciço sem impor fundação e guindaste num campo aberto.",
     ficha: ["Campo de golfe · pontos de sombra", "Tronco: pilar revestido de pedra Western"],
     creditos: ["Arquitetura: Jader Almeida"],
+  },
+  // ── Obras novas (acervo 2026-07) — acendem rostos da prova social que
+  //    estavam sem lastro clicável. ⚠ snippet/conceito escritos a partir do que
+  //    a FOTO e o registro provam; o dono ainda não revisou o texto.
+  {
+    slug: "hanazaki-expo-revestir",
+    titulo: "Cascata assinada por Alex Hanazaki",
+    cliente: "Alex Hanazaki",
+    local: "Expo Revestir · 2017",
+    linguagens: ["cascata", "jardim"],
+    tipo: "sob-medida",
+    snippet:
+      "Espelho d'água, corten e blocos de pedra Western num estande de feira — montado e desmontado num pavilhão, onde pedra de tonelada não entra.",
+    conceito:
+      "Um dos paisagistas mais conhecidos do país assinou o estande, e a pedra Western fez o que a natural não faria num pavilhão: entrou, subiu e saiu. Blocos escalonados formam a borda do espelho d'água, em contraste com a massa retangular do corten.",
+    ficha: ["Expo Revestir · 2017", "Blocos de pedra Western + espelho d'água + corten"],
+    creditos: ["Paisagismo: Alex Hanazaki"],
+  },
+  {
+    slug: "faisal-piscina-grega",
+    titulo: "Piscina Grega",
+    cliente: "Marcelo Faisal",
+    local: "CasaCor · 2014",
+    linguagens: ["piscina", "revestimento"],
+    tipo: "sob-medida",
+    snippet:
+      "A piscina inteira revestida em pedra Western na CasaCor — parede elevada com luz rasante revelando a textura ao entardecer.",
+    conceito:
+      "Não é pedra de borda: é a piscina inteira revestida. A parede elevada em pedra Western recebe fita de LED rasante, e é a luz de raspão que faz a textura aparecer — a mesma textura que veio do molde de uma rocha real.",
+    ficha: ["CasaCor · 2014", "Piscina revestida em pedra Western"],
+    creditos: ["Paisagismo: Marcelo Faisal"],
+  },
+  {
+    slug: "enora-jader-almeida",
+    titulo: "A torre apoiada numa pedra",
+    cliente: "Enora",
+    estudio: "Jader Almeida",
+    local: "São Paulo · SP",
+    linguagens: ["mobiliario"],
+    tipo: "sob-medida",
+    snippet:
+      "A maquete do empreendimento, num showroom envidraçado em São Paulo, apoiada sobre um matacão Western como pedestal.",
+    conceito:
+      "O uso que ninguém adivinharia — e talvez a prova mais silenciosa de leveza do acervo: uma maquete grande de torre residencial repousa sobre um único matacão Western, num piso de porcelanato polido, num andar de showroom. Pedra maciça equivalente não sobe até ali.",
+    ficha: ["Showroom · São Paulo", "Matacão Western como base de maquete"],
+    creditos: ["Arquitetura: Jader Almeida"],
+  },
+  {
+    slug: "quadriplex-caverna",
+    titulo: "Uma caverna no 20º andar",
+    estudio: "Dama Arquitetura",
+    local: "São Paulo · SP",
+    linguagens: ["revestimento"],
+    tipo: "sob-medida",
+    snippet:
+      "Paredão de rocha do chão ao teto dentro de um apartamento em torre — com tom desenvolvido sob medida para o projeto.",
+    conceito:
+      "A pedra sai do jardim e vira arquitetura de interior: um paredão de rocha do chão ao teto na cabeceira, com fenda vertical abrindo para o closet. O tom foi desenvolvido para este projeto. Um revestimento de rocha natural com esta área não sobe num elevador nem seria aceito pela laje.",
+    ficha: ["Apartamento em torre · São Paulo", "Tom desenvolvido para o projeto"],
+    creditos: ["Arquitetura: Dama Arquitetura", "3ª imagem: render de projeto (não é fotografia)"],
+  },
+  {
+    slug: "nigro-praia-suspensa",
+    titulo: "Uma praia sobre a laje",
+    cliente: "Thiago Nigro",
+    estudio: "Genesis Ecossistemas",
+    linguagens: ["piscina", "jardim"],
+    tipo: "sob-medida",
+    snippet:
+      "Uma praia inteira de matacões montada sobre laje, numa encosta com vista de serra — onde não existe chão para receber tonelada.",
+    conceito:
+      "O argumento 'entra onde pedra não entra' no seu caso mais literal: areia, seixo e matacões formando uma praia sobre uma laje de concreto, encosta acima. É a leveza que torna a estrutura viável — e é na mesma obra que aparece a peça inclinada com a cavidade à mostra, mostrando de onde vem essa leveza.",
+    ficha: ["Praia de matacões sobre laje", "Execução: Genesis Ecossistemas"],
+    creditos: ["Execução: Genesis Ecossistemas"],
   },
   {
     slug: "unique-garden",

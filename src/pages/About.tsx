@@ -5,7 +5,6 @@ import Reveal from "@/components/shared/Reveal";
 import { ArrowRight, Layers, Mountain, Recycle, Hammer } from "lucide-react";
 import irmaosGruta from "@/assets/irmaos-botelho-gruta.webp";
 import heroObra from "@/assets/linguagens/piscina.webp";
-import projetoCascata from "@/assets/projetos/cover-cascata.webp";
 import { BUSINESS } from "@/config/business";
 
 const NUMEROS = [
@@ -131,9 +130,15 @@ export default function About() {
                 decoding="async"
                 className="w-full aspect-[16/10] md:aspect-[21/9] object-cover"
               />
+              {/* A tarja dizia "Desde 1996" colada na CIDADE — o que lê como
+                  "o ateliê existe desde 1996", e o ateliê é de 1993 (1996 é
+                  quando os irmãos assumiram). O próprio hero desta página diz
+                  "1993 — 2026 · 33 anos" duas telas acima, e a narrativa abaixo
+                  conta as duas datas certas. Uma legenda não comporta as duas:
+                  a data colada no lugar é a do lugar. */}
               <figcaption className="absolute bottom-4 left-4 md:bottom-6 md:left-6 max-w-[80%] rounded-lg bg-western-green-deep/90 px-4 py-3 md:px-5 md:py-4">
                 <p className="text-eyebrow text-western-gold-soft mb-1">
-                  {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · Desde 1996
+                  {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · ateliê desde 1993
                 </p>
                 <p className="font-sans font-semibold text-[17px] md:text-[19px] text-western-cream leading-tight">
                   Ricardo &amp; Luiz Carlos Botelho
@@ -233,6 +238,20 @@ export default function About() {
               </Reveal>
             ))}
           </div>
+
+          {/* Os pilares acima AFIRMAM a física (oca, leve, pisável, 10× menos) e
+              não a provam: a prova, com as fotos, mora em /a-pedra. Este é o
+              link que faltava — /sobre era a página que mais duplicava o
+              argumento e a única, junto do FAQ, que não apontava para ele. */}
+          <Reveal variant="fade-up" delay={80} duration={700}>
+            <Link
+              to="/a-pedra"
+              className="tap-target mt-10 inline-flex items-center gap-1.5 font-sans text-base font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+            >
+              Como a pedra é feita
+              <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+            </Link>
+          </Reveal>
         </div>
       </section>
 
@@ -312,16 +331,15 @@ export default function About() {
         </div>
       </section>
 
-      {/* CTA FINAL — faixa institucional escura */}
+      {/* CTA FINAL — faixa institucional escura.
+          ⚠ Esta faixa usava "projetos/cover-cascata.webp" como fundo a
+          opacity-25. Aquele arquivo NÃO é uma cascata: é o retrato de imprensa
+          do Caito Maia (rosto identificável, 900×600) — um rosto fantasma
+          encarando o leitor atrás do CTA. Com alt="" + aria-hidden nenhum
+          linter ou teste de a11y pegava; só o olho pegava. Uso de imagem de
+          terceiro em página comercial sugere endosso. Removido em 2026-07 aqui
+          e em /a-pedra. NÃO reintroduza fundo aqui sem ABRIR o arquivo. */}
       <section className="relative overflow-hidden surface-forest py-16 md:py-24">
-        <img
-          src={projetoCascata}
-          alt=""
-          aria-hidden
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-0 w-full h-full object-cover opacity-25"
-        />
         <div
           className="absolute inset-0 pointer-events-none"
           aria-hidden
