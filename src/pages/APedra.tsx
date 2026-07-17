@@ -93,23 +93,23 @@ const ENDERECOS = [
   {
     img: endLaje,
     titulo: "Uma laje sobre o vale.",
-    texto: "Uma praia inteira de matacões, montada sobre a laje — onde não existe chão.",
+    texto: "Uma praia inteira de pedras, montada sobre a laje — onde não existe chão.",
     meta: "Obra em andamento",
-    alt: "Vista de cima: praia de areia com matacões Western montada sobre uma laje de concreto, com o vale florestado logo atrás.",
+    alt: "Vista de cima: praia de areia com pedras Western montada sobre uma laje de concreto, com o vale florestado logo atrás.",
   },
   {
     img: endSubmersa,
     titulo: "Debaixo d'água.",
     texto: "Resiste a cloro, sol, chuva e variação térmica.",
     meta: "Peça submersa, com pátina de alga na linha da lâmina",
-    alt: "Matacões Western dentro de água limpa, com cáusticas de sol no fundo de areia e pátina de alga na linha da lâmina.",
+    alt: "Pedras Western dentro de água limpa, com cáusticas de sol no fundo de areia e pátina de alga na linha da lâmina.",
   },
   {
     img: endEnora,
     titulo: "De pedestal para uma torre.",
     texto: "A maquete do empreendimento apoiada numa pedra Western.",
     meta: "Enora · São Paulo · Jader Almeida",
-    alt: "Maquete de uma torre residencial apoiada sobre um matacão Western, em showroom.",
+    alt: "Maquete de uma torre residencial apoiada sobre uma pedra Western, em showroom.",
   },
 ];
 
@@ -134,7 +134,7 @@ export default function APedra() {
           <source media="(min-width: 768px)" srcSet={heroDesk} />
           <img
             src={heroMob}
-            alt="Matacões Western na linha d'água de uma piscina natural, com o fundo de seixos visível através da água limpa."
+            alt="Pedras Western na linha d'água de uma piscina natural, com o fundo de seixos visível através da água limpa."
             loading="eager"
             fetchPriority="high"
             decoding="async"
@@ -169,7 +169,7 @@ export default function APedra() {
               O molde sai de uma pedra real, no lugar onde ela está. O que muda é o que vem dentro.
             </p>
             <p className="text-meta text-western-cream-muted/80 mt-6 max-w-[52ch]">
-              Os matacões desta foto foram moldados de rocha real. E fabricados em Cajamar.
+              As pedras desta foto foram moldadas de rocha real. E fabricados em Cajamar.
             </p>
           </Reveal>
         </div>
@@ -303,13 +303,13 @@ export default function APedra() {
               <figure>
                 <img
                   src={descargaVan}
-                  alt="Dois homens tirando um matacão Western de dentro de uma van, na mão, sem guindaste."
+                  alt="Dois homens tirando uma pedra Western de dentro de uma van, na mão, sem guindaste."
                   loading="lazy"
                   decoding="async"
                   className="w-full aspect-[3/4] object-cover rounded-2xl"
                 />
                 <figcaption className="text-meta mt-4">
-                  Dois homens descarregam um matacão Western de uma van. Sem guindaste, sem cinta.
+                  Dois homens descarregam uma pedra Western de uma van. Sem guindaste, sem cinta.
                 </figcaption>
               </figure>
             </Reveal>
@@ -351,13 +351,13 @@ export default function APedra() {
               <figure>
                 <img
                   src={levezaDuasPessoas}
-                  alt="Duas mulheres de roupa de rua, uma descalça, carregando juntas um matacão Western pelo jardim, sorrindo."
+                  alt="Duas mulheres de roupa de rua, uma descalça, carregando juntas uma pedra Western pelo jardim, sorrindo."
                   loading="lazy"
                   decoding="async"
                   className="w-full max-w-[700px] aspect-[3/4] object-cover rounded-2xl"
                 />
                 <figcaption className="text-meta text-western-cream-muted/80 mt-4">
-                  Duas pessoas carregam um matacão Western na mão. Sem cinta, sem guindaste.
+                  Duas pessoas carregam uma pedra Western na mão. Sem cinta, sem guindaste.
                 </figcaption>
               </figure>
             </Reveal>
@@ -606,7 +606,7 @@ export default function APedra() {
                   <figure className="mt-10">
                     <img
                       src={perfuravel}
-                      alt="Funcionário Western de capacete furando um matacão com martelete em obra, para passagem de fiação. A peça ainda está crua, sem pintura."
+                      alt="Funcionário Western de capacete furando uma pedra com martelete em obra, para passagem de fiação. A peça ainda está crua, sem pintura."
                       loading="lazy"
                       decoding="async"
                       className="w-full max-w-[420px] aspect-[3/4] object-cover rounded-2xl"

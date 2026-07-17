@@ -68,7 +68,7 @@ const CAMINHOS = [
   {
     img: imgJardim,
     titulo: "Jardim de pedra",
-    desc: "Matacões que parecem ter nascido ali, com ou sem água. Do quintal ao terraço.",
+    desc: "Pedras que parecem ter nascido ali, com ou sem água. Do quintal ao terraço.",
     cta: "Quero um jardim assim",
     msg: "Olá! Quero um jardim com pedras Western.",
   },
@@ -80,19 +80,30 @@ const OBRAS_SONHO = [
     antes: obraTatoAntes,
     credito: "Tato (Falamansa)",
     titulo: "De piscina de pastilha a praia particular",
-    linha: "Uma piscina retangular azul virou um oásis: areia, matacão, fogo de chão e lago com carpas.",
+    linha: "Uma piscina retangular azul virou um oásis: areia, pedras, fogo de chão e lago com carpas.",
   },
   {
     img: obraEvandro,
     credito: "Evandro Mesquita",
-    titulo: "Ele levanta a pedra com as mãos",
-    linha: "É a prova de leveza: a mesma rocha que parece maciça pesa cerca de 10× menos — e por isso cabe em qualquer casa.",
+    /* A legenda anterior dizia "Ele levanta a pedra com as mãos · a prova de
+       leveza". ERA FALSO: na foto o Evandro está pulando numa boia-almofada da
+       piscina — não há pedra nenhuma nas mãos dele. Um agente olhou a imagem e
+       descreveu o que esperava ver. Numa página cujo trabalho é ser confiável,
+       inventar o que a foto mostra é o pior erro possível. Agora a legenda diz
+       só o que a foto prova: a cascata Western costurada ao riacho da casa. */
+    titulo: "A cascata que parece que sempre esteve ali",
+    linha: "Costurada a um riacho que já existia na casa — na casa do Evandro Mesquita, no Rio.",
   },
   {
     img: obraShowroom,
-    credito: "ShowRoom Riviera",
-    titulo: "Você pode visitar e sentir",
-    linha: "Cascata, prainha, blower, ofurô e som num só lugar — para você tocar antes de decidir.",
+    credito: "Riviera de São Lourenço",
+    /* Dizia "Você pode visitar e sentir · para você tocar antes de decidir".
+       FALSO desde que a obra foi entregue: a Riviera foi um projeto NOSSO, já
+       entregue — não é showroom aberto a visita. Convidar alguém a visitar um
+       lugar onde ele não pode entrar é o pior tipo de promessa. O showroom que
+       se visita hoje é o ateliê, em Cajamar (ver a seção do ateliê abaixo). */
+    titulo: "Uma praia inteira, do zero",
+    linha: "Cascata, prainha, blower, ofurô e som num só lugar — projetado e executado por nós.",
   },
 ];
 
@@ -516,7 +527,11 @@ export default function ParaSuaCasa() {
               <SocialProof
                 interactive
                 eyebrow="Quem já tem uma"
-                titulo={<>Nas casas de quem podia ter qualquer coisa.</>}
+                /* "Nas casas de quem podia ter qualquer coisa" saiu: o dono
+                   chamou de "grosseiro e marketing de baixo calão", e é. A
+                   frase vendia o dinheiro do cliente, não o trabalho da casa —
+                   e um produto que se sustenta não precisa disso. */
+                titulo={<>Quem já tem uma na própria casa.</>}
                 groups={["celebridades"]}
               />
             </Reveal>

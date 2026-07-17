@@ -58,9 +58,9 @@ export const SEGMENTOS: Segmento[] = [
     label: "Jardins",
     eyebrow: "Jardins & paisagismo",
     intro:
-      "A pedra como escultura e ponto focal, com ou sem água. Matacões plantados entre a vegetação, pisadas que conduzem o caminhar — afloramento que parece ter sempre estado ali. É o uso mais versátil, do quintal ao rooftop.",
+      "A pedra como escultura e ponto focal, com ou sem água. Pedras grandes plantadas entre a vegetação, pisadas que conduzem o caminhar — afloramento que parece ter sempre estado ali. É o uso mais versátil, do quintal ao rooftop.",
     galeria: galeriaDe("jardins"),
-    obraSlugs: ["nigro-praia-suspensa", "jader-porto-belo"],
+    obraSlugs: ["jader-porto-belo"],
   },
   {
     id: "revestimentos",

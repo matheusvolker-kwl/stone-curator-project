@@ -103,11 +103,11 @@ export const OBRAS: Obra[] = [
     destaque: true,
     soDepoimento: true,
     snippet:
-      "Uma piscina de pastilha azul virou um oásis de 2.000 m²: praia, boulder, lago com carpas e fogo de chão.",
+      "Uma piscina de pastilha azul virou um oásis de 2.000 m²: praia, pedras, lago com carpas e fogo de chão.",
     conceito:
       "Arquitetura moderna e reta de um lado; natureza rochosa e água viva do outro. O gesto central é a prainha — entrada de areia em curva que convida a entrar caminhando. Toda a pedra foi jogada ao fundo para a cascata trabalhar como âncora sonora.",
     menteDoCriador:
-      "Não assente a cascata (CLY) no chão: ela pede as 2× PM6 embaixo — as peças mais cúbicas e altas do jogo — para erguer e inclinar a queda. Ao redor, o maciço em escada de alturas: a PG10 (matacão largo de 2 m) deita como afloramento, a PG9 sobe atrás, a PG3 costura para as médias. As médias preenchem vãos e naturalizam o encontro pedra-vegetação-água. A PM7, comprida e chata, deita meio submersa como leito. A PB3 resolve a borda. E a PS vai escondida no jardim: o som existe, o equipamento não aparece.",
+      "Não assente a cascata (CLY) no chão: ela pede as 2× PM6 embaixo — as peças mais cúbicas e altas do jogo — para erguer e inclinar a queda. Ao redor, o maciço em escada de alturas: a PG10 (pedra larga de 2 m) deita como afloramento, a PG9 sobe atrás, a PG3 costura para as médias. As médias preenchem vãos e naturalizam o encontro pedra-vegetação-água. A PM7, comprida e chata, deita meio submersa como leito. A PB3 resolve a borda. E a PS vai escondida no jardim: o som existe, o equipamento não aparece.",
     ficha: ["JJ Arquitetura", "2.000 m² de área total", "Piscina 60 m² + lago 20 m²"],
     skus: [
       sku("CLY", 1, "Cascata Lajedo Yporanga", "âncora"),
@@ -137,7 +137,7 @@ export const OBRAS: Obra[] = [
     conceito:
       "O caso de ouro da mesclagem. Nas zonas críticas de casa de máquinas e manutenção, o peso da pedra natural comprometeria a engenharia — a solução foi distribuir pedras Western nessas regiões, preservando a unidade visual sem sobrecarga. Prova viva de que os dois universos convivem.",
     menteDoCriador:
-      "A parceria com a Genesis Ecossistemas — que trabalha pedra natural — permitiu uma resposta técnica à altura de uma escala incomum. A pedra Western entra como âncora de borda (PG9, matacão de proa) e degrau de espraiado (PG3), com a Champanheira (PC) como bar de gelo no convívio. O resto da margem é pedra natural da Genesis. Para o parceiro B2B, é o mapa de como mesclar sem perder venda de pedra natural.",
+      "A parceria com a Genesis Ecossistemas — que trabalha pedra natural — permitiu uma resposta técnica à altura de uma escala incomum. A pedra Western entra como âncora de borda (PG9, a pedra de proa) e degrau de espraiado (PG3), com a Champanheira (PC) como bar de gelo no convívio. O resto da margem é pedra natural da Genesis. Para o parceiro B2B, é o mapa de como mesclar sem perder venda de pedra natural.",
     ficha: ["Em parceria com Genesis Ecossistemas", "1.000+ m² de lago", "3 peças Western em zonas de carga crítica"],
     skus: [
       sku("PC", 1, "Pedra Champanheira", "funcional"),
@@ -149,16 +149,16 @@ export const OBRAS: Obra[] = [
   {
     slug: "showroom-riviera",
     titulo: "ShowRoom Riviera de São Lourenço",
-    cliente: "Western (vitrine)",
+    cliente: "Western",
     local: "Riviera de São Lourenço · SP",
     linguagens: ["piscina", "cascata"],
     tipo: "comprable",
     snippet:
-      "A vitrine que você visita e sente: piscina-praia de demonstração com cascata, blowers, ofurô e som — tudo num raio de poucos metros.",
+      "Uma piscina-praia completa do zero: cascata, blowers, ofurô e som — tudo num raio de poucos metros.",
     conceito:
       "Condensa tudo que uma piscina-praia Western sabe fazer. A lâmina é orgânica; a prainha branca antiderrapante entra na água com inclinação de praia real. A Cascata Santa Clara é a âncora, encostada no tropical. Os blowers são a arrebentação. A Pedra Sonora fica no deck, afastada da cascata para os sons não brigarem.",
     menteDoCriador:
-      "Para replicar em escala maior, paisagista: mantenha a lógica de camadas. Cascata como âncora encostada no verde, prainha inclinada como corpo, blowers como movimento, matacões como costura da margem (2× PM4 emoldurando + PM5 variando massa; PM2 chata como assento rente à água) e a pedra sonora como a camada sensorial que se descobre sentado.",
+      "Para replicar em escala maior, paisagista: mantenha a lógica de camadas. Cascata como âncora encostada no verde, prainha inclinada como corpo, blowers como movimento, pedras grandes costurando a margem (2× PM4 emoldurando + PM5 variando massa; PM2 chata como assento rente à água) e a pedra sonora como a camada sensorial que se descobre sentado.",
     ficha: ["Piscina-praia de demonstração", "Cascata + blowers + ofurô + som"],
     skus: [
       sku("CSC", 1, "Cascata Santa Clara", "âncora"),
@@ -218,7 +218,7 @@ export const OBRAS: Obra[] = [
     linguagens: ["lago", "cascata"],
     tipo: "comprable",
     snippet:
-      "A cascata nova parece que sempre esteve ali — costurada a um riacho natural existente. Evandro ergue o matacão com as próprias mãos: a prova de leveza.",
+      "A cascata nova parece que sempre esteve ali — costurada a um riacho natural que já existia na casa.",
     conceito:
       "A Western não fez uma cascata: fez uma mentira convincente. A piscina já existia e havia um riacho natural na propriedade — o trabalho foi fazer o novo parecer original. A CLY (Yporanga, estratificação horizontal) conversa com o leito do riacho, calibrada em base personalizada para a lâmina cair dentro do desenho existente.",
     menteDoCriador:
@@ -245,7 +245,7 @@ export const OBRAS: Obra[] = [
     snippet:
       "A pedra sai do paisagismo e vira mobiliário: uma base de mesa sob medida para o escritório do fundador da Chilli Beans.",
     conceito:
-      "A forma nasce do próprio matacão — face bruta, garimpada, com peso visual de rocha e leveza real de manuseio. Por ser réplica leve, a base é viável como pé de mesa num andar alto, sem guindaste, sem sobrecarregar a laje. A pedra deixa de emoldurar a água e passa a estruturar o objeto.",
+      "A forma nasce da própria pedra — face bruta, garimpada, com peso visual de rocha e leveza real de manuseio. Por ser réplica leve, a base é viável como pé de mesa num andar alto, sem guindaste, sem sobrecarregar a laje. A pedra deixa de emoldurar a água e passa a estruturar o objeto.",
     ficha: ["Peça única sob medida", "Escritório · São Paulo"],
     creditos: ["Design em parceria: Arbo Real"],
   },
@@ -260,7 +260,7 @@ export const OBRAS: Obra[] = [
     snippet:
       "Pontos de hidratação, sombra e descanso num campo de golfe (incl. o único iluminado para golfe noturno da América Latina): árvores-escultura de tronco em pedra Western e copa de laje viva.",
     conceito:
-      "A pedra vira estrutura de paisagem. Cada 'árvore' é um pilar revestido de pedra Western (o tronco) que recebe uma laje viva com paisagismo em cima (a copa). A leveza é o que viabiliza a presença de matacão maciço sem impor fundação e guindaste num campo aberto.",
+      "A pedra vira estrutura de paisagem. Cada 'árvore' é um pilar revestido de pedra Western (o tronco) que recebe uma laje viva com paisagismo em cima (a copa). A leveza é o que viabiliza a presença de rocha maciça sem impor fundação e guindaste num campo aberto.",
     ficha: ["Campo de golfe · pontos de sombra", "Tronco: pilar revestido de pedra Western"],
     creditos: ["Arquitetura: Jader Almeida"],
   },
@@ -304,10 +304,10 @@ export const OBRAS: Obra[] = [
     linguagens: ["mobiliario"],
     tipo: "sob-medida",
     snippet:
-      "A maquete do empreendimento, num showroom envidraçado em São Paulo, apoiada sobre um matacão Western como pedestal.",
+      "A maquete do empreendimento, num showroom envidraçado em São Paulo, apoiada sobre uma pedra Western como pedestal.",
     conceito:
-      "O uso que ninguém adivinharia — e talvez a prova mais silenciosa de leveza do acervo: uma maquete grande de torre residencial repousa sobre um único matacão Western, num piso de porcelanato polido, num andar de showroom. Pedra maciça equivalente não sobe até ali.",
-    ficha: ["Showroom · São Paulo", "Matacão Western como base de maquete"],
+      "O uso que ninguém adivinharia — e talvez a prova mais silenciosa de leveza do acervo: uma maquete grande de torre residencial repousa sobre uma única pedra Western, num piso de porcelanato polido, num andar de showroom. Pedra maciça equivalente não sobe até ali.",
+    ficha: ["Showroom · São Paulo", "Pedra Western como base de maquete"],
     creditos: ["Arquitetura: Jader Almeida"],
   },
   {
@@ -329,13 +329,13 @@ export const OBRAS: Obra[] = [
     titulo: "Uma praia sobre a laje",
     cliente: "Thiago Nigro",
     estudio: "Genesis Ecossistemas",
-    linguagens: ["piscina", "jardim"],
+    linguagens: ["piscina"],
     tipo: "sob-medida",
     snippet:
-      "Uma praia inteira de matacões montada sobre laje, numa encosta com vista de serra — onde não existe chão para receber tonelada.",
+      "Uma praia inteira de pedras montada sobre laje, numa encosta com vista de serra — onde não existe chão para receber tonelada.",
     conceito:
-      "O argumento 'entra onde pedra não entra' no seu caso mais literal: areia, seixo e matacões formando uma praia sobre uma laje de concreto, encosta acima. É a leveza que torna a estrutura viável — e é na mesma obra que aparece a peça inclinada com a cavidade à mostra, mostrando de onde vem essa leveza.",
-    ficha: ["Praia de matacões sobre laje", "Execução: Genesis Ecossistemas"],
+      "O argumento 'entra onde pedra não entra' no seu caso mais literal: areia, seixo e pedras grandes formando uma praia sobre uma laje de concreto, encosta acima. É a leveza que torna a estrutura viável — e é na mesma obra que aparece a peça inclinada com a cavidade à mostra, mostrando de onde vem essa leveza.",
+    ficha: ["Praia de pedras sobre laje", "Execução: Genesis Ecossistemas"],
     creditos: ["Execução: Genesis Ecossistemas"],
   },
   {
