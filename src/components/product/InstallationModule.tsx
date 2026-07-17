@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import ManualDownload from "@/components/product/ManualDownload";
+import { MANUAL_PDF_URL } from "@/data/installation";
 import type { InstallationConfig } from "@/data/installation";
 
 const ANCHOR_ID = "instalacao";
@@ -251,7 +252,7 @@ export function InstallationSection({
                     no NotFound — trocar o destino sem trocar a tag só mudaria o
                     endereço do mesmo 404. */}
                 <a
-                  href={guideUrl || "/manuais/manual-instalacao-western.pdf"}
+                  href={guideUrl || MANUAL_PDF_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-outline-forest w-full sm:w-auto"

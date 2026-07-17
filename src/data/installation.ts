@@ -163,7 +163,7 @@ const PEDRA: InstallationConfig = {
   chapterTitle: "Pedras avulsas e decorativas",
   manualPage: 8,
   manualUrl: manualPageUrl(8),
-  guideUrl: "/manuais/manual-instalacao-western.pdf",
+  guideUrl: `${MANUAL_PDF_URL}#page=8`,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -215,7 +215,7 @@ const PISADA: InstallationConfig = {
   chapterTitle: "Pisadas",
   manualPage: 12,
   manualUrl: manualPageUrl(12),
-  guideUrl: "/manuais/manual-instalacao-western.pdf",
+  guideUrl: `${MANUAL_PDF_URL}#page=12`,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -269,7 +269,7 @@ const ESPECIAL: InstallationConfig = {
   chapterTitle: "Produtos especiais",
   manualPage: 14,
   manualUrl: manualPageUrl(14),
-  guideUrl: "/manuais/manual-instalacao-western.pdf",
+  guideUrl: `${MANUAL_PDF_URL}#page=14`,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -328,7 +328,7 @@ const REVESTIMENTO: InstallationConfig = {
   chapterTitle: "Revestimentos",
   manualPage: 17,
   manualUrl: manualPageUrl(17),
-  guideUrl: "/manuais/manual-instalacao-western.pdf",
+  guideUrl: `${MANUAL_PDF_URL}#page=17`,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -387,7 +387,7 @@ const FONTE: InstallationConfig = {
   chapterTitle: "Fontes",
   manualPage: 19,
   manualUrl: manualPageUrl(19),
-  guideUrl: "/manuais/manual-instalacao-western.pdf",
+  guideUrl: `${MANUAL_PDF_URL}#page=19`,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -471,7 +471,7 @@ const CASCATA: InstallationConfig = {
   chapterTitle: "Cascatas",
   manualPage: 21,
   manualUrl: manualPageUrl(21),
-  guideUrl: "/manuais/manual-instalacao-western.pdf",
+  guideUrl: `${MANUAL_PDF_URL}#page=21`,
 };
 
 export const INSTALLATION_BY_TYPE: Record<InstallationType, InstallationConfig> = {
