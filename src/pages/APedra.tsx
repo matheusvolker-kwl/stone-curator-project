@@ -141,18 +141,34 @@ export default function APedra() {
             className="absolute inset-0 h-full w-full object-cover"
           />
         </picture>
-        {/* ⚠ O scrim é FORTE de propósito, e foi medido no browser. Com o
-            gradiente anterior (transparent 40% → 0.85) o h1 caía sobre a parte
-            CLARA da foto (a pedra iluminada) e a 2ª linha, em bronze, ficava
-            praticamente invisível nos dois viewports. Prova de realismo boa é
-            clara e contrastada — é justamente por isso que ela engole texto.
-            Se trocar a foto do hero, MEÇA de novo: não confie neste gradiente. */}
+        {/* ⚠ DOIS scrims, e o motivo importa.
+            O anterior era só o VERTICAL abaixo, com 0.10 no topo subindo até
+            0.96 embaixo: ele escurecia o rodapé — onde não há texto — e deixava
+            clara a faixa onde o h1 vive. Scrim ancorado embaixo protegendo texto
+            que não está lá. (É o mesmo erro que o hero da home cometeu e que já
+            foi corrigido lá: ancorar o gradiente no lado errado do assunto.)
+            O dono: "a cor da fonte não está dando leitura e a imagem hero está
+            estourada" — as duas queixas são a mesma.
+            Agora a proteção é HORIZONTAL: escura na coluna ESQUERDA, onde o
+            texto vive em QUALQUER altura, e limpa à direita, onde a pedra é o
+            assunto. Some a dependência de o texto estar no topo ou na base.
+            O vertical permanece, fraco, só para assentar o rodapé.
+            Prova de realismo boa é clara e contrastada — é exatamente por isso
+            que ela engole texto. Se trocar a foto, MEÇA de novo. */}
         <div
           className="absolute inset-0 pointer-events-none"
           aria-hidden
           style={{
             background:
-              "linear-gradient(180deg, hsl(var(--western-green-deep) / 0.10) 0%, hsl(var(--western-green-deep) / 0.28) 35%, hsl(var(--western-green-deep) / 0.78) 62%, hsl(var(--western-green-deep) / 0.96) 100%)",
+              "linear-gradient(100deg, hsl(var(--western-green-deep) / 0.94) 0%, hsl(var(--western-green-deep) / 0.88) 38%, hsl(var(--western-green-deep) / 0.55) 62%, hsl(var(--western-green-deep) / 0.12) 100%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          aria-hidden
+          style={{
+            background:
+              "linear-gradient(180deg, hsl(var(--western-green-deep) / 0.30) 0%, hsl(var(--western-green-deep) / 0.05) 45%, hsl(var(--western-green-deep) / 0.45) 100%)",
           }}
         />
         <div className="container-western relative h-full flex flex-col justify-end pb-10 md:pb-14">
