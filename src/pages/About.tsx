@@ -94,7 +94,7 @@ export default function About() {
       </section>
 
       {/* NÚMEROS — escala da operação */}
-      <section className="surface-ivory py-14 md:py-20 border-y border-western-border-soft">
+      <section className="surface-ivory section-tight border-y border-western-border-soft">
         <div className="container-western">
           <div className="mx-auto max-w-5xl">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-western-border-soft border border-western-border-soft rounded-2xl overflow-hidden">
@@ -114,7 +114,7 @@ export default function About() {
       </section>
 
       {/* IRMÃOS BOTELHO — 2ª geração: título + foto + narrativa */}
-      <section className="surface-paper py-14 md:py-20">
+      <section className="surface-paper section-tight">
         <div className="container-western">
           <Reveal variant="fade-up" duration={800}>
             <div className="max-w-3xl mb-8 md:mb-10">
@@ -204,7 +204,7 @@ export default function About() {
       </section>
 
       {/* CITAÇÃO — Ricardo Botelho */}
-      <section className="surface-ivory py-14 md:py-20 border-t border-western-border-soft">
+      <section className="surface-ivory section-tight border-t border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={800}>
             <div className="max-w-[760px] mx-auto text-center">
@@ -220,7 +220,7 @@ export default function About() {
       </section>
 
       {/* MÉTODO — 4 pilares */}
-      <section className="surface-paper py-14 md:py-20 border-t border-western-border-soft">
+      <section className="surface-paper section-tight border-t border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={750}>
             <div className="max-w-2xl mb-9 md:mb-12">
@@ -264,7 +264,7 @@ export default function About() {
 
       {/* OBRAS — a vitrine vive em /obras (por segmento). Aqui é só a
           ponte: nada de repetir a galeria numa segunda superfície. */}
-      <section className="surface-forest py-14 md:py-20 border-y border-western-gold/15">
+      <section className="surface-forest section-tight border-y border-western-gold/15">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="text-center max-w-2xl mx-auto">
@@ -288,7 +288,7 @@ export default function About() {
       </section>
 
       {/* PROVA SOCIAL — rostos + marcas */}
-      <section className="surface-ivory py-14 md:py-20">
+      <section className="surface-ivory section-tight">
         <div className="container-western">
           <div className="mx-auto max-w-5xl">
           <Reveal variant="fade-up" duration={800}>
@@ -305,7 +305,7 @@ export default function About() {
       </section>
 
       {/* VOCABULÁRIO DO ATELIÊ */}
-      <section className="surface-paper py-14 md:py-20 border-t border-western-border-soft">
+      <section className="surface-paper section-tight border-t border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={750}>
             <div className="max-w-2xl mb-8 md:mb-10">
@@ -346,7 +346,7 @@ export default function About() {
           linter ou teste de a11y pegava; só o olho pegava. Uso de imagem de
           terceiro em página comercial sugere endosso. Removido em 2026-07 aqui
           e em /a-pedra. NÃO reintroduza fundo aqui sem ABRIR o arquivo. */}
-      <section className="relative overflow-hidden surface-forest py-16 md:py-24">
+      <section className="relative overflow-hidden surface-forest section">
         <div
           className="absolute inset-0 pointer-events-none"
           aria-hidden

@@ -288,7 +288,7 @@ export default function Index() {
           primeiro, depois as linhas, e só então "o que você vai construir".
           (A antiga "barra de confiança" saiu daqui: repetia 10% do peso / garantia
           / reposição / 50 modelos, que a seção "O que é a Western Store" já diz.) */}
-      <section className="surface-paper py-16 md:py-24 border-t border-western-border-soft" id="produtos">
+      <section className="surface-paper section border-t border-western-border-soft" id="produtos">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
@@ -338,7 +338,7 @@ export default function Index() {
       </section>
 
       {/* 3b — Principais linhas (navegação por categoria) */}
-      <section className="surface-ivory py-16 md:py-24 border-t border-western-border-soft">
+      <section className="surface-ivory section border-t border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
@@ -377,7 +377,7 @@ export default function Index() {
       </section>
 
       {/* 3c — O que você vai construir? (intenção por aplicação → guia) */}
-      <section className="surface-paper py-16 md:py-24 border-t border-western-border-soft">
+      <section className="surface-paper section border-t border-western-border-soft">
         <div className="container-western">
           {/* O link do guia vive AQUI, no cabeçalho — os 5 tiles já levam todos
               para /guia-de-composicao. A antiga seção "Não sabe por onde começar"
@@ -421,7 +421,7 @@ export default function Index() {
       </section>
 
       {/* 5 — Western Box (porta de entrada, preço aberto) */}
-      <section className="surface-ivory py-16 md:py-24 border-y border-western-border-soft">
+      <section className="surface-ivory section border-y border-western-border-soft">
         <div className="container-western">
           <div className="grid md:grid-cols-2 gap-8 md:gap-14 items-center">
             <Reveal variant="fade-right" duration={700}>
@@ -477,7 +477,7 @@ export default function Index() {
       </section>
 
       {/* 6 — Veja em uso (projetos reais) */}
-      <section className="surface-paper py-16 md:py-24">
+      <section className="surface-paper section">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <p className="text-eyebrow mb-3">Veja em uso</p>
@@ -592,7 +592,7 @@ export default function Index() {
       </section>
 
       {/* 8 — Como comprar (4 passos) */}
-      <section className="surface-paper py-16 md:py-24" id="como-comprar">
+      <section className="surface-paper section" id="como-comprar">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <p className="text-eyebrow mb-3">Loja para profissionais</p>
@@ -635,7 +635,7 @@ export default function Index() {
           (Os clientes migraram para "Veja em uso" — eles não ilustram obras,
           eles SÃO obras. Os números e as marcas viraram a faixa de credencial
           da 2ª tela, colada no 1º pedido de CNPJ.) */}
-      <section className="surface-paper py-14 md:py-20 border-t border-western-border-soft">
+      <section className="surface-paper section-tight border-t border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
@@ -651,7 +651,7 @@ export default function Index() {
       </section>
 
       {/* 11 — Credenciamento B2B (o PEDIDO) */}
-      <section className="surface-forest py-16 md:py-24">
+      <section className="surface-forest section">
         <div className="container-western">
           <div className="grid md:grid-cols-2 gap-10 md:gap-14 items-center">
             <Reveal variant="fade-right" duration={750}>
