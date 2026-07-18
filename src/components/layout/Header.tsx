@@ -814,10 +814,13 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               {drawerLink("/contato", "Contato")}
               {drawerLink("/faq", "Perguntas frequentes")}
 
-              <p className="text-eyebrow mt-5 mb-1">Políticas</p>
-              {drawerLink("/politica-comercial", "Política comercial e de entrega")}
-              {drawerLink("/trocas-e-avarias", "Trocas e avarias")}
-              {drawerLink("/privacidade", "Privacidade")}
+              {/* AS POLÍTICAS SAÍRAM DAQUI (dono, 2026-07-18: "no menu lateral,
+                  tirar todas as Políticas. Vamos manter isso só no rodapé").
+                  Política comercial, trocas/avarias e privacidade seguem vivas
+                  em /politica-comercial, /trocas-e-avarias e /privacidade, todas
+                  linkadas no Footer — nenhum link morreu, nenhuma rota sumiu.
+                  Elas ocupavam o fim do drawer, que é território de navegação,
+                  não de contrato: quem abre o menu quer ir a algum lugar. */}
             </nav>
           </div>
         </SheetContent>
