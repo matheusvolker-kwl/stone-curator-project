@@ -266,8 +266,13 @@ export default function ContrateAWestern() {
         path="/contrate-a-western"
       />
 
-      {/* 1) HERO — foto real + overlay verde. CTA dourado porque o verde não teria contraste sobre a foto. */}
-      <section className="relative isolate overflow-hidden flex items-center min-h-[540px] md:min-h-[600px]">
+      {/* 1) HERO — foto real legível + texto no trilho esquerdo (padrão do site).
+          Antes: texto centrado + cobertor verde 84–95% — a foto morria e esta era
+          a única dobra centralizada do site. Agora: scrim DIRECIONAL (forte na
+          esquerda, onde o texto vive; limpo na direita, onde a cascata é o
+          assunto) + véu na base para a régua de confiança, que subiu para DENTRO
+          da dobra — o "por que confiar" aparece sem rolar. */}
+      <section className="relative isolate overflow-hidden flex flex-col min-h-[560px] md:min-h-[640px]">
         <img
           src={heroImg}
           alt="Piscina com cascata Western em projeto residencial"
@@ -277,72 +282,83 @@ export default function ContrateAWestern() {
           decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        {/* Scrim reforçado: a dobra tinha um vão claro no meio (via /72) onde a
-            linha de prova social caía sobre rocha/água claras e sumia — agora o
-            meio e a base seguram contraste. Screenshots 390 e 1280 confirmam. */}
-        <div className="absolute inset-0 bg-gradient-to-b from-western-green-deep/85 via-western-green-deep/84 to-western-green-deep/95" />
+        <div
+          className="absolute inset-0 pointer-events-none hidden md:block"
+          aria-hidden
+          style={{
+            background:
+              "linear-gradient(180deg, transparent 45%, hsl(var(--western-green-deep) / 0.62) 100%), linear-gradient(100deg, hsl(var(--western-green-deep) / 0.92) 0%, hsl(var(--western-green-deep) / 0.62) 42%, hsl(var(--western-green-deep) / 0.22) 68%, hsl(var(--western-green-deep) / 0.06) 100%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 pointer-events-none md:hidden"
+          aria-hidden
+          style={{
+            background:
+              "linear-gradient(180deg, hsl(var(--western-green-deep) / 0.94) 0%, hsl(var(--western-green-deep) / 0.82) 55%, hsl(var(--western-green-deep) / 0.60) 82%, hsl(var(--western-green-deep) / 0.78) 100%)",
+          }}
+        />
 
-        <div className="relative container-western py-16 md:py-28 max-w-3xl mx-auto text-center">
+        <div className="relative container-western flex-1 flex flex-col justify-center py-14 md:py-16">
           <Reveal variant="fade-up" duration={700}>
-            <p className="font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-gold-soft mb-4">
-              Serviços Western
-            </p>
-            <h1 className="display-xl text-western-cream">
-              Do projeto à obra,{" "}
-              <span className="text-western-gold-soft">a Western executa com você.</span>
-            </h1>
-            <p className="mt-5 text-[17px] md:text-[18px] leading-[1.6] text-western-cream/90 max-w-xl mx-auto">
-              Consultoria, projeto, render 3D e instalação com quem fabrica a pedra.
-              Viabilizamos cascatas, piscinas e paisagens que a pedra natural não permite
-              — mais leves, mais rápidas, com menos impacto.
-            </p>
+            <div className="max-w-2xl">
+              <p className="font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-gold-soft mb-4">
+                Serviços Western
+              </p>
+              <h1 className="display-xl text-western-cream">
+                Do projeto à obra,{" "}
+                <span className="text-western-gold-soft">a Western executa com você.</span>
+              </h1>
+              <p className="mt-5 text-[17px] md:text-[18px] leading-[1.6] text-western-cream/90 max-w-xl">
+                Consultoria, projeto, render 3D e instalação com quem fabrica a pedra. Os dois
+                primeiros passos são gratuitos — você só decide depois de conhecer.
+              </p>
 
-            <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
-              <button
-                type="button"
-                onClick={scrollToForm}
-                className="btn-gold w-full sm:w-auto"
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                <button
+                  type="button"
+                  onClick={scrollToForm}
+                  className="btn-gold w-full sm:w-auto"
+                >
+                  <ArrowDown className="h-5 w-5" />
+                  Agendar consultoria gratuita
+                </button>
+                <a
+                  href={waLink(WHATSAPP_MSG_DEFAULT)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-outline-cream w-full sm:w-auto"
+                >
+                  <MessageCircle className="h-5 w-5" />
+                  Falar no WhatsApp
+                </a>
+              </div>
+
+              <p className="mt-8 text-[15px] leading-relaxed text-western-cream/90 max-w-lg [text-shadow:0_1px_12px_hsl(var(--western-green-deep)/0.85)]">
+                Especificada nas obras de Neymar Jr. · Alex Hanazaki · Rosewood · Unique Garden
+              </p>
+              {/* Os quatro nomes acima TÊM lastro clicável (o Hanazaki ganhou
+                  obra em 2026-07); a linha nunca cita prova que o site não
+                  consegue mostrar. */}
+              <Link
+                to="/obras"
+                className="tap-target mt-4 inline-flex items-center gap-1.5 font-sans text-base font-semibold text-western-gold-soft hover:text-western-cream transition-colors"
               >
-                <ArrowDown className="h-5 w-5" />
-                Agendar consultoria gratuita
-              </button>
-              <a
-                href={waLink(WHATSAPP_MSG_DEFAULT)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-outline-cream w-full sm:w-auto"
-              >
-                <MessageCircle className="h-5 w-5" />
-                Falar no WhatsApp
-              </a>
+                Ver as obras
+                <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+              </Link>
             </div>
-
-            <p className="mt-8 text-[15px] leading-relaxed text-western-cream/90 max-w-lg mx-auto [text-shadow:0_1px_12px_hsl(var(--western-green-deep)/0.85)]">
-              Especificada nas obras de Neymar Jr. · Alex Hanazaki · Rosewood · Unique Garden
-            </p>
-            {/* Os quatro nomes acima agora TÊM lastro clicável (o Hanazaki
-                ganhou obra em 2026-07); antes esta linha citava como prova um
-                rosto que o site não conseguia mostrar. */}
-            <Link
-              to="/obras"
-              className="tap-target mt-4 inline-flex items-center gap-1.5 font-sans text-base font-semibold text-western-gold-soft hover:text-western-cream transition-colors"
-            >
-              Ver as obras
-              <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden />
-            </Link>
           </Reveal>
         </div>
-      </section>
 
-      {/* 2) BARRA DE CONFIANÇA */}
-      <section className="surface-paper border-b border-western-border-soft">
-        {/* Exceção declarada ao ritmo: faixa de credencial usa py-6, não .section. */}
-        <div className="container-western py-6">
-          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        {/* Régua de confiança dentro da dobra, sobre a foto — mesma gramática da
+            régua de provas do hero da home (2×2 no celular, 4 col no desktop). */}
+        <div className="relative container-western pb-8 md:pb-10">
+          <ul className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4 border-t border-western-cream/25 pt-6">
             {CONFIANCA.map((c) => (
               <li key={c.label} className="flex items-center gap-3">
-                <c.icon className="h-5 w-5 shrink-0 text-western-bronze" aria-hidden="true" />
-                <span className="font-sans text-[16px] font-medium text-western-green-deep">
+                <c.icon className="h-5 w-5 shrink-0 text-western-gold-soft" aria-hidden="true" />
+                <span className="font-sans text-[15px] md:text-[16px] font-medium text-western-cream">
                   {c.label}
                 </span>
               </li>
