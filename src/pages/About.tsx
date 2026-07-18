@@ -298,7 +298,7 @@ export default function About() {
                 Profissionais e marcas que assinam com a Western.
               </h2>
             </div>
-            <SocialProof interactive groups={["celebridades", "profissionais", "marcas"]} />
+            <SocialProof interactive layout="row" groups={["celebridades", "profissionais", "marcas"]} />
           </Reveal>
           </div>
         </div>

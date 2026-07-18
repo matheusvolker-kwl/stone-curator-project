@@ -556,21 +556,11 @@ export default function ProductPage() {
                   </div>
                 </div>
 
-                {/* Pedido mínimo colado ao gate (kit pdp.jsx:120) — seta a
-                 * expectativa comercial antes do cadastro. */}
-                <p className="mt-3 text-meta text-center">
-                  Pedido mínimo {BUSINESS.pedidoMinimoLabel} ·{" "}
-                  <a
-                    href={`https://wa.me/${BUSINESS.whatsappFabrica}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold text-western-green-deep underline decoration-western-gold underline-offset-4 hover:decoration-2"
-                  >
-                    fale no WhatsApp
-                  </a>
-                </p>
-
-                <div className="flex items-center gap-4 my-7">
+                {/* A linha "Pedido mínimo · fale no WhatsApp" saiu daqui (dono:
+                    "não agrega"): o pedido mínimo já vive na aba Entrega, e o
+                    WhatsApp tem o botão flutuante do site. O gate fica limpo:
+                    card de parceiro → "ou" → porta da casa. */}
+                <div className="flex items-center gap-4 mb-7 mt-6">
                   <div className="flex-1 h-px bg-western-border-soft" />
                   <span className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">
                     ou
@@ -581,8 +571,7 @@ export default function ProductPage() {
                 {/* Casa = off-ramp discreto, UM caminho só. Antes esta coluna
                     empilhava 2 botões + 2 links de WhatsApp competindo com o card
                     de parceiro (a ação primária). O dono da casa tem uma porta:
-                    /para-sua-casa, que responde preço, prazo e "não tenho CNPJ".
-                    O WhatsApp já vive na linha do pedido mínimo, acima. */}
+                    /para-sua-casa, que responde preço, prazo e "não tenho CNPJ". */}
                 <p className="text-body text-western-green-deep">
                   É para a sua casa?{" "}
                   <Link

@@ -552,25 +552,20 @@ export default function ParaSuaCasa() {
         </div>
       </section>
 
-      {/* 7 — PROVA SOCIAL ASPIRACIONAL */}
+      {/* 7 — PROVA SOCIAL ASPIRACIONAL — 1 grupo: o componente rende o SPLIT
+          editorial (cabeçalho à esquerda, rostos à direita), largura cheia do
+          trilho. Sem `compact`/wrapper estreito (o "left compact" deixava um
+          cluster pequeno flutuando à esquerda — o dono reprovou). */}
       <section className="surface-ivory section border-b border-western-border-soft">
         <div className="container-western">
-          <div className="max-w-4xl">
-            <Reveal variant="fade-up" duration={750}>
-              <SocialProof
-                interactive
-                align="left"
-                compact
-                eyebrow="Quem já tem uma"
-                /* "Nas casas de quem podia ter qualquer coisa" saiu: o dono
-                   chamou de "grosseiro e marketing de baixo calão", e é. A
-                   frase vendia o dinheiro do cliente, não o trabalho da casa —
-                   e um produto que se sustenta não precisa disso. */
-                titulo={<>Quem já tem uma na própria casa.</>}
-                groups={["celebridades"]}
-              />
-            </Reveal>
-          </div>
+          <Reveal variant="fade-up" duration={750}>
+            <SocialProof
+              interactive
+              eyebrow="Quem já tem uma"
+              titulo={<>Quem já tem uma na própria casa.</>}
+              groups={["celebridades"]}
+            />
+          </Reveal>
         </div>
       </section>
 
