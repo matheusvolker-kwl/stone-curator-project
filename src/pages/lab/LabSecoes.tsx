@@ -23,15 +23,23 @@ import { Link, useSearchParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 
-import APedraNumeroA from "./variantes/APedraNumeroA";
-import APedraNumeroB from "./variantes/APedraNumeroB";
-import APedraNumeroC from "./variantes/APedraNumeroC";
+/* Rodada 2 da seção do número. A rodada 1 (A/B/C) foi resolvida: o dono escolheu
+   a B, mandou aprimorar, e reprovou o refino por POLUIÇÃO — "pegue todo o
+   conteúdo e gere novas 3 opções". D/E/F carregam o mesmo inventário integral
+   (18 unidades) com três estratégias distintas de CARGA, não de enfeite.
+   A/B/C seguem no repo como histórico; saíram do lab para não confundir a
+   escolha com seis opções na mesa. */
+import APedraNumeroD from "./variantes/APedraNumeroD";
+import APedraNumeroE from "./variantes/APedraNumeroE";
+import APedraNumeroF from "./variantes/APedraNumeroF";
 import ContrateServicosA from "./variantes/ContrateServicosA";
 import ContrateServicosB from "./variantes/ContrateServicosB";
 import ContrateServicosC from "./variantes/ContrateServicosC";
 
 interface Variante {
-  letra: "A" | "B" | "C";
+  /* Aberto de propósito: as famílias estão em rodadas diferentes e não
+     compartilham letra (contrate está em A/B/C, a-pedra foi para D/E/F). */
+  letra: string;
   titulo: string;
   tese: string;
   sacrifica: string;
@@ -52,28 +60,28 @@ const FAMILIAS: Familia[] = [
     rotulo: "A pedra · o número",
     ondeVive: "/a-pedra",
     problema:
-      "O conteúdo é bom, a apresentação não. A coluna da direita empilha quatro assuntos sem relação (prova 3D, downloads, currículo do ateliê, link pra obras) — é gaveta. E a hierarquia das barras está invertida: a pedra natural, que é o ponto de comparação, ganha a barra maior e mais pesada.",
+      "Rodada 2. O conteúdo agora está completo e bom — são 18 unidades (o peso e o que ele resolve, o método do render, custo, oca, ambiente, assinatura). O problema não é mais o que dizer, é a CARGA: tudo empilhado numa seção só virou parede. As três abaixo carregam o mesmo inventário integral, com estratégias diferentes de densidade. Se uma delas tiver a mesma densidade da anterior com outra roupa, ela falhou.",
     variantes: [
       {
-        letra: "A",
-        titulo: "Uma régua só",
-        tese: "A comparação de peso vira o espetáculo da banda inteira; o resto desce como camadas de apoio, em ordem de utilidade.",
-        sacrifica: "Perde o confronto lado a lado — a prova 3D só aparece depois de rolar a régua. A seção fica mais alta.",
-        Componente: APedraNumeroA,
+        letra: "D",
+        titulo: "Uma coisa por vez",
+        tese: "A carga não some, ela se espalha: uma sequência vertical de momentos, cada um com uma ideia e ar em volta. Picos (o número, o par render/obra) alternam com vales num trilho fixo.",
+        sacrifica: "A seção fica bem mais alta; quem passa o olho rápido pode parar no meio.",
+        Componente: APedraNumeroD,
       },
       {
-        letra: "B",
-        titulo: "Duas provas, dois blocos limpos",
-        tese: "São dois argumentos independentes (medida e método) e cada um ganha um bloco com um assunto só. O currículo do ateliê vira rodapé.",
-        sacrifica: "É a mais contida das três — ganha ordem, não ganha impacto.",
-        Componente: APedraNumeroB,
+        letra: "E",
+        titulo: "Argumento × ficha",
+        tese: "Separa dois registros que se leem diferente: o que se LÊ fica curto e alto (o número, o par render/obra); o que se CONSULTA desce para uma ficha técnica que se escaneia, sem cartão e sem ícone.",
+        sacrifica: "Os oito argumentos que descem para a ficha perdem força retórica e viram dado.",
+        Componente: APedraNumeroE,
       },
       {
-        letra: "C",
-        titulo: "A foto é o argumento",
-        tese: "O par render × obra construída é a prova mais forte que a Western tem e hoje está espremido. Vira protagonista; o peso vira faixa de dados.",
-        sacrifica: "Aposta quase tudo na imagem — se a foto não convencer, a seção não tem plano B.",
-        Componente: APedraNumeroC,
+        letra: "F",
+        titulo: "Duas perguntas",
+        tese: "Reorganiza tudo como resposta às duas perguntas que o cliente faz de verdade: “dá para instalar no meu caso?” e “vou receber o que eu vi?”. Resposta se lê mais leve que afirmação solta.",
+        sacrifica: "O tom fica mais dialogado, menos editorial-silencioso.",
+        Componente: APedraNumeroF,
       },
     ],
   },
@@ -113,10 +121,15 @@ export default function LabSecoes() {
   const [params, setParams] = useSearchParams();
   const familiaKey = params.get("f") ?? FAMILIAS[0].key;
   const familia = FAMILIAS.find((f) => f.key === familiaKey) ?? FAMILIAS[0];
-  const [foco, setFoco] = useState<"todas" | "A" | "B" | "C">("todas");
+  const [foco, setFoco] = useState<string>("todas");
 
+  /* Se o foco não existe na família atual (trocou de família), cai para "todas"
+     em vez de mostrar tela vazia. */
+  const focoValido = foco === "todas" || familia.variantes.some((v) => v.letra === foco);
   const visiveis =
-    foco === "todas" ? familia.variantes : familia.variantes.filter((v) => v.letra === foco);
+    !focoValido || foco === "todas"
+      ? familia.variantes
+      : familia.variantes.filter((v) => v.letra === foco);
 
   const chip =
     "inline-flex h-11 items-center rounded-full border px-4 font-sans text-[15px] font-semibold transition-colors";
@@ -165,13 +178,16 @@ export default function LabSecoes() {
             </div>
 
             <div className="flex flex-wrap gap-2 md:ml-auto">
-              {(["todas", "A", "B", "C"] as const).map((k) => (
+              {/* Derivado da família: as letras mudam entre rodadas. */}
+              {["todas", ...familia.variantes.map((v) => v.letra)].map((k) => (
                 <button
                   key={k}
                   type="button"
                   onClick={() => setFoco(k)}
-                  aria-pressed={foco === k}
-                  className={`${chip} ${foco === k ? chipOn : chipOff}`}
+                  aria-pressed={(focoValido ? foco : "todas") === k}
+                  className={`${chip} ${
+                    (focoValido ? foco : "todas") === k ? chipOn : chipOff
+                  }`}
                 >
                   {k === "todas" ? "Todas" : k}
                 </button>

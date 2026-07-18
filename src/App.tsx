@@ -60,6 +60,7 @@ const AccountTracking = lazy(() => import("./pages/account/AccountTracking"));
 const AccountOrcamentos = lazy(() => import("./pages/account/AccountOrcamentos"));
 
 const LabSecoes = lazy(() => import("./pages/lab/LabSecoes.tsx"));
+const LabParaSuaCasa = lazy(() => import("./pages/lab/LabParaSuaCasa.tsx"));
 const Inspiracoes = lazy(() => import("./pages/Inspiracoes.tsx"));
 const ObraPage = lazy(() => import("./pages/ObraPage.tsx"));
 const ComoComprar = lazy(() => import("./pages/ComoComprar.tsx"));
@@ -192,6 +193,7 @@ const App = () => (
                         Não entra em menu nem em sitemap: só existe enquanto há
                         variante em julgamento, e sai do ar depois da escolha. */}
                     <Route path="/lab/secoes" element={<LabSecoes />} />
+                    <Route path="/lab/casa" element={<LabParaSuaCasa />} />
                     {/* Telas do V3 que faltavam no app */}
                     <Route path="/como-comprar" element={<ComoComprar />} />
                     <Route path="/para-sua-casa" element={<ParaSuaCasa />} />

@@ -445,28 +445,38 @@ export default function ParaSuaCasa() {
             </header>
           </Reveal>
 
-          <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {PASSOS.map((p, i) => (
-              <Reveal key={p.n} variant="fade-up" delay={i * 70} duration={650}>
-                <li
-                  className={`relative h-full bg-white rounded-lg p-6 border shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] ${
-                    p.gratis ? "border-western-gold/50" : "border-western-border-soft"
-                  }`}
-                >
-                  {p.gratis && (
-                    <span className="absolute -top-3 left-6 rounded-sm bg-western-gold px-2.5 py-1 font-sans text-[14px] font-semibold leading-none text-western-green-deep">
-                      Grátis
-                    </span>
-                  )}
-                  <span className="font-display text-[32px] leading-none text-western-bronze block mb-3">
-                    {p.n}
+          {/* MARKUP + LINHA DE BASE.
+              O <Reveal> estava entre o <ol> e o <li>, renderizando uma <div> ali
+              no meio — <ol> só admite <li> como filho. Além de inválido, o
+              wrapper quebrava a grade: cada cartão virava filho de um div, e os
+              títulos de 1 e 2 linhas faziam o corpo começar em alturas
+              diferentes (o mesmo defeito que o dono apontou no /contrate).
+              Agora o <li> é filho direto e os quatro dividem as MESMAS faixas
+              via grid-rows-subgrid: número, título e corpo alinhados. Onde não
+              há suporte a subgrid, degrada sem quebrar. */}
+          <ol className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:grid-rows-[auto_auto_1fr]">
+            {PASSOS.map((p) => (
+              <li
+                key={p.n}
+                className={`relative flex h-full flex-col gap-2 rounded-lg border bg-white p-6 shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] lg:row-span-3 lg:grid lg:grid-rows-subgrid lg:gap-0 ${
+                  p.gratis ? "border-western-gold/50" : "border-western-border-soft"
+                }`}
+              >
+                {p.gratis && (
+                  <span className="absolute -top-3 left-6 rounded-sm bg-western-gold px-2.5 py-1 font-sans text-[14px] font-semibold leading-none text-western-green-deep">
+                    Grátis
                   </span>
-                  <h3 className="font-sans font-semibold text-[17px] leading-snug text-western-green-deep mb-2">
-                    {p.t}
-                  </h3>
-                  <p className="text-[15px] leading-relaxed text-western-stone-warm">{p.d}</p>
-                </li>
-              </Reveal>
+                )}
+                <span className="block font-display text-[32px] leading-none text-western-bronze">
+                  {p.n}
+                </span>
+                <h3 className="font-sans font-semibold text-[17px] leading-snug text-western-green-deep lg:pt-3">
+                  {p.t}
+                </h3>
+                <p className="text-[15px] leading-relaxed text-western-stone-warm lg:pt-2">
+                  {p.d}
+                </p>
+              </li>
             ))}
           </ol>
         </div>
