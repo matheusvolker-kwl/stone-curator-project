@@ -72,7 +72,7 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
   const x10 = peso ? Math.round(peso * 10) : null;
 
   return (
-    <section className="surface-paper py-14 md:py-20 scroll-mt-24" id="tamanho">
+    <section className="surface-paper py-10 md:py-14 scroll-mt-24" id="tamanho">
       <div className="container-western">
         <header className="mb-9 md:mb-12 max-w-2xl">
           <p className="text-section-label mb-3">A leveza · Tamanho real</p>

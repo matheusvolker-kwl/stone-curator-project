@@ -366,6 +366,37 @@
     @apply py-14 md:py-20;
   }
 
+  /* === MODOS DE DENSIDADE — PALCO × BALCÃO (2026-07-18, decisão do dono) ===
+   * O site tem DOIS modos, e cada superfície declara o seu.
+   *
+   * PALCO (argumento) — existe pra CONVENCER. Heros, páginas de marca
+   * (/a-pedra, /para-sua-casa, /contrate, /sobre), seções de história.
+   * Escala editorial: display-lg/xl, .section, foto em coluna, display-stat.
+   * Nada muda no Palco.
+   *
+   * BALCÃO (ferramenta) — existe pra LER, DECIDIR e OPERAR. Carrinho e
+   * drawer, calculadoras, ficha da PDP, listagens (/produtos, /conjuntos),
+   * Minha conta, admin, formulários, modais. Regras:
+   *   · título de seção display-md NO MÁXIMO (h1 de página utilitária idem);
+   *     sem parágrafo de apoio — quando precisar, UMA linha text-meta.
+   *   · ritmo .section-balcao (py-10/12); dentro de cartões, p-4/p-5.
+   *   · texto corrido .text-body-balcao (15px/1.55); meta 13–14px
+   *     (14px segue o piso absoluto do público 40+ em texto essencial).
+   *   · controles 32–44px (stepper h-8, input/chip h-11); CTA principal h-12.
+   *   · thumbs 56–64px; ícone no lugar de rótulo quando o gesto é óbvio.
+   *   · ficha/stats de resultado em UMA linha ("a · b · c"), nunca em grid.
+   * Gabaritos: CartDrawer.tsx e CalculadoraQuantidade.tsx (18/07).
+   * Página mista (home, PDP): o hero e o argumento são Palco; a ferramenta
+   * embutida é Balcão. Evidência que motivou os modos: drawer com ~1,5 item
+   * visível, calculadora de 2 telas, /a-pedra com 25 telas. */
+  .section-balcao {
+    @apply py-10 md:py-12;
+  }
+  .text-body-balcao {
+    @apply font-sans text-[15px] leading-[1.55];
+    color: hsl(var(--western-stone-warm));
+  }
+
   .product-prose a {
     color: hsl(var(--western-gold));
     border-bottom: 1px solid hsl(var(--western-gold) / 0.4);

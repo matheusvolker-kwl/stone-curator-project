@@ -116,18 +116,18 @@ export default function ComposicaoCena({
 
   return (
     <section
-      className="surface-ivory section border-t border-western-border-soft"
+      className="surface-ivory py-10 md:py-14 border-t border-western-border-soft"
       aria-label={`Onde usar e composição — ${productTitle}`}
     >
       <div className="container-western">
         <header className="max-w-2xl">
-          <p className="text-eyebrow mb-3">Onde usar & composição</p>
-          <h2 className="display-lg text-western-green-deep">
+          <p className="text-eyebrow mb-2">Onde usar & composição</p>
+          <h2 className="display-md text-western-green-deep">
             Onde esta peça vai bem — e com quem.
           </h2>
         </header>
 
-        <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16">
+        <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:gap-14">
           {/* ESQUERDA — onde a peça vai (cenas, obras reais) */}
           <div>
             {usage && <p className="text-body max-w-[56ch]">{usageReframe(usage.agua)}</p>}

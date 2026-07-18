@@ -343,7 +343,7 @@ export default function ProductTabs({
   ];
 
   return (
-    <section className="surface-paper border-t border-western-border-soft py-14 md:py-20">
+    <section className="surface-paper border-t border-western-border-soft py-10 md:py-12">
       <div className="container-western">
         {/* DESKTOP — trilho editorial: tudo à vista, rótulo fixo à esquerda. */}
         <div className="hidden md:block">

@@ -116,14 +116,14 @@ export function InstallationSection({
   return (
     <section
       id={ANCHOR_ID}
-      className="surface-paper scroll-mt-24 border-t border-western-border-soft py-12 md:py-16"
+      className="surface-paper scroll-mt-24 border-t border-western-border-soft py-10 md:py-12"
       aria-labelledby="instalacao-title"
     >
       <div className="container-western">
         <div className="max-w-5xl">
           {/* Header */}
           <p className="text-section-label mb-3">Instalação</p>
-          <h2 id="instalacao-title" className="display-lg text-western-green-deep">
+          <h2 id="instalacao-title" className="display-md text-western-green-deep">
             Como instalar
           </h2>
           <p className="text-body mt-3 max-w-[62ch]">{subtitle}</p>

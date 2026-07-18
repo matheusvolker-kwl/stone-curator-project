@@ -320,10 +320,10 @@ export default function ConjuntoPage() {
                 <p className="text-eyebrow mb-4">
                   Sua sugestão · {nivelLabels[nivel]} para {faixa.toLowerCase()}
                 </p>
-                <h1 className="display-xl text-western-green-deep">
+                <h1 className="display-lg text-western-green-deep">
                   {leaf.nome}
                 </h1>
-                <div className="w-12 h-px bg-western-gold mt-6 mb-6" />
+                <div className="w-12 h-px bg-western-gold mt-4 mb-4" />
                 <p className="text-body max-w-[62ch]">
                   {leaf.subtitulo}. {nivelMeta[nivel].tagline}.
                 </p>
@@ -428,16 +428,17 @@ export default function ConjuntoPage() {
       </section>
 
       {/* ── O que vem no conjunto ───────────────────────────────────── */}
-      <section className="surface-paper border-t border-western-border-soft py-16 md:py-20">
+      {/* Balcão: a lista de peças é ferramenta de conferência. */}
+      <section className="surface-paper border-t border-western-border-soft section-balcao">
         <div className="container-western">
           <div className="max-w-3xl">
-            <p className="text-section-label mb-3">O que vem no conjunto</p>
-            <h2 className="display-lg text-western-green-deep">
+            <p className="text-section-label mb-2">O que vem no conjunto</p>
+            <h2 className="display-md text-western-green-deep">
               {totalPecas > 0
                 ? `${totalPecas} peças, uma leitura só.`
                 : "As peças desta composição."}
             </h2>
-            <p className="mt-4 text-body max-w-[62ch]">
+            <p className="mt-2 text-meta max-w-[62ch]">
               Cada peça é vendida avulsa — você vê exatamente o que leva. No próximo
               passo você ajusta quantidade e substituições.
             </p>
@@ -492,14 +493,14 @@ export default function ConjuntoPage() {
       </section>
 
       {/* ── Por que essa composição ─────────────────────────────────── */}
-      <section className="border-t border-western-border-soft py-16 md:py-20">
-        <div className="container-western grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-12">
+      <section className="border-t border-western-border-soft py-12 md:py-14">
+        <div className="container-western grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-10">
           <div>
             <p className="text-section-label mb-3">Por que essa composição</p>
-            <h2 className="display-lg text-western-green-deep">
+            <h2 className="display-md text-western-green-deep">
               {nivelMeta[nivel].tagline}.
             </h2>
-            <div className="w-12 h-px bg-western-gold mt-6 mb-6" />
+            <div className="w-12 h-px bg-western-gold mt-4 mb-4" />
             <p className="text-body max-w-[62ch]">
               Para {faixa.toLowerCase()} de {tipoLbl.toLowerCase()}, essa densidade
               equilibra presença e respiro. {nivelMeta[nivel].detalhe}
@@ -528,10 +529,10 @@ export default function ConjuntoPage() {
       <SocialProofBand />
 
       {/* ── Fecho racional ──────────────────────────────────────────── */}
-      <section className="border-t border-western-border-soft surface-paper py-16 md:py-20">
+      <section className="border-t border-western-border-soft surface-paper section-balcao">
         <div className="container-western">
-          <p className="text-section-label mb-6">Antes de decidir</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <p className="text-section-label mb-4">Antes de decidir</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             <Fact label="Área indicada" value={faixa} />
             <Fact label="Peças no conjunto" value={totalPecas ? `${totalPecas} peças` : "Sob curadoria"} />
             <Fact label="Frete" value="Calculado por destino" />

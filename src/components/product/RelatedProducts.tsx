@@ -69,7 +69,7 @@ export default function RelatedProducts({
 
   if (loading && related.length === 0 && sets.length === 0) {
     return (
-      <section className="py-14 md:py-20">
+      <section className="py-10 md:py-12">
         <div className="container-western">
           <header className="mb-10">
             <p className="text-eyebrow mb-4">Compõe bem com</p>
@@ -89,7 +89,7 @@ export default function RelatedProducts({
   }
 
   return (
-    <section className="py-14 md:py-20">
+    <section className="py-10 md:py-12">
       <div className="container-western">
         {related.length > 0 && (
           <>

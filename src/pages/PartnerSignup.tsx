@@ -292,7 +292,7 @@ export default function PartnerSignup() {
     const d = credResult.decisao;
     return (
       <div className="surface-ivory">
-        <div className="container-western py-16 md:py-24 max-w-2xl text-center">
+        <div className="container-western py-12 md:py-16 max-w-2xl text-center">
           {d === "aprovado" && <CheckCircle2 className="h-12 w-12 text-status-success mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
           {d === "analise" && <AlertTriangle className="h-12 w-12 text-status-warning mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
           {d === "reprovado" && <XCircle className="h-12 w-12 text-status-error mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
@@ -308,7 +308,7 @@ export default function PartnerSignup() {
 
           {d === "aprovado" && (
             <>
-              <h1 className="display-xl mb-6">Bem-vindo à Western Pro.</h1>
+              <h1 className="display-lg mb-6">Bem-vindo à Western Pro.</h1>
               <p className="text-body mb-10 mx-auto max-w-[46ch]">
                 Sua condição B2B já está liberada — o preço de parceiro, os modelos 3D
                 e as composições já aparecem pra você. Comece a montar seu pedido.
@@ -421,20 +421,21 @@ export default function PartnerSignup() {
         description="Cadastro gratuito para profissionais com CNPJ — arquitetos, paisagistas, laguistas, lojas e construtoras. Tabela comercial e modelos 3D liberados na hora."
         path="/parceiro/cadastro"
       />
-      <div className="container-western section">
+      {/* Balcão: cadastro é formulário — o primeiro campo tem que estar na dobra. */}
+      <div className="container-western py-10 md:py-14">
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 xl:gap-24 items-start">
           {/* Proposta enxuta — coluna esquerda, fixa no desktop */}
           <div className="lg:sticky lg:top-28">
-            <p className="text-eyebrow mb-5">Cadastro B2B · Aprovação imediata</p>
-            <div className="w-12 h-px bg-western-gold mb-8" />
-            <h1 className="display-xl mb-6">Solicite acesso de parceiro comercial.</h1>
-            <p className="text-body max-w-[42ch]">
+            <p className="text-eyebrow mb-3">Cadastro B2B · Aprovação imediata</p>
+            <div className="w-12 h-px bg-western-gold mb-5" />
+            <h1 className="display-md mb-3">Solicite acesso de parceiro comercial.</h1>
+            <p className="text-body-balcao max-w-[42ch]">
               Para profissionais e empresas com CNPJ ativo — arquitetos,
               paisagistas, laguistas, lojas e construtoras.
             </p>
-            <ul className="mt-8 space-y-3 hidden lg:block">
+            <ul className="mt-6 space-y-2.5 hidden lg:block">
               {PROPOSTA.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-body">
+                <li key={item} className="flex items-start gap-3 text-body-balcao">
                   <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-western-bronze" strokeWidth={2} aria-hidden="true" />
                   <span>{item}</span>
                 </li>

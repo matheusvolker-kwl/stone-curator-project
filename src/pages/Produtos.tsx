@@ -35,9 +35,10 @@ export default function Produtos() {
 
         {/* Cabeçalho enxuto: h1 + uma linha. A dobra é do produto, não do texto —
             a auditoria reprovou o parágrafo que explicava a própria página. */}
-        <div className="mb-6 max-w-3xl md:mb-8">
-          <h1 className="display-xl text-western-green-deep">Todas as peças.</h1>
-          <p className="text-body mt-3 max-w-[52ch]">
+        {/* Balcão: listagem é ferramenta — display-md + uma linha meta. */}
+        <div className="mb-5 max-w-3xl md:mb-6">
+          <h1 className="display-md text-western-green-deep">Todas as peças.</h1>
+          <p className="text-meta mt-1.5">
             Toda a coleção em uma vista. Filtre por tamanho, peso e preço.
           </p>
         </div>

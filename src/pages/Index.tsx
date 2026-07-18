@@ -110,7 +110,7 @@ export default function Index() {
             <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
               <div>
                 <p className="text-eyebrow mb-3">Os mais pedidos</p>
-                <h2 className="display-lg text-western-green-deep">Mais vendidos.</h2>
+                <h2 className="display-md text-western-green-deep">Mais vendidos.</h2>
               </div>
               <Link
                 to="/produtos"
@@ -402,7 +402,7 @@ export default function Index() {
             <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
               <div>
                 <p className="text-eyebrow mb-3">Navegue por linha</p>
-                <h2 className="display-lg text-western-green-deep">Principais linhas.</h2>
+                <h2 className="display-md text-western-green-deep">Principais linhas.</h2>
               </div>
               <Link
                 to="/linhas"
@@ -444,7 +444,7 @@ export default function Index() {
             <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
               <div>
                 <p className="text-eyebrow mb-3">Compre por projeto</p>
-                <h2 className="display-lg text-western-green-deep">O que você vai construir?</h2>
+                <h2 className="display-md text-western-green-deep">O que você vai construir?</h2>
               </div>
               <Link
                 to="/guia-de-composicao"
@@ -539,7 +539,7 @@ export default function Index() {
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <p className="text-eyebrow mb-3">Veja em uso</p>
-            <h2 className="display-lg text-western-green-deep mb-8 md:mb-12">
+            <h2 className="display-md text-western-green-deep mb-6 md:mb-8">
               Projetos reais, pedra Western.
             </h2>
           </Reveal>
@@ -570,7 +570,7 @@ export default function Index() {
           seções com o mesmo h2, o mesmo respiro e o mesmo bege, e por isso nada
           parecia importante. O argumento da empresa não pode respirar igual a
           um passo-a-passo. */}
-      <section className="surface-forest py-20 md:py-28 border-y border-western-gold/15">
+      <section className="surface-forest section border-y border-western-gold/15">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <p className={`${eyebrowDark} mb-3`}>Por que Western</p>
@@ -637,7 +637,7 @@ export default function Index() {
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <p className="text-eyebrow mb-3">Loja para profissionais</p>
-            <h2 className="display-lg text-western-green-deep mb-8 md:mb-12">
+            <h2 className="display-md text-western-green-deep mb-6 md:mb-8">
               Como comprar na Western.
             </h2>
           </Reveal>

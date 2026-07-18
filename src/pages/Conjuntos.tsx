@@ -180,16 +180,16 @@ export default function Conjuntos() {
           conjuntos aparecem já na dobra, e o "não sabe por onde começar?" vira
           ajuda para quem rolou e ficou indeciso. */}
       <header className="border-b border-western-border-soft">
-        <div className="container-western pt-8 pb-6 md:pt-12 md:pb-8">
+        {/* Balcão: listagem é ferramenta — display-md + uma linha meta. */}
+        <div className="container-western pt-6 pb-5 md:pt-8 md:pb-6">
           <div className="max-w-3xl">
-            <p className="text-eyebrow mb-3">Curadoria · Conjuntos</p>
-            <div className="w-12 h-px bg-western-gold mb-5" />
-            <h1 className="display-xl text-western-green-deep">
+            <p className="text-eyebrow mb-2">Curadoria · Conjuntos</p>
+            <h1 className="display-md text-western-green-deep">
               Conjuntos curados, prontos para projetar.
             </h1>
-            <p className="mt-4 text-body max-w-[56ch]">
+            <p className="mt-2 text-meta max-w-[56ch]">
               {ALL_LEAVES.length} composições organizadas pelo local de aplicação —
-              pedras, volumes e acabamentos já equilibrados pela curadoria Western.
+              pedras, volumes e acabamentos já equilibrados pela curadoria.
             </p>
           </div>
         </div>
@@ -267,15 +267,15 @@ export default function Conjuntos() {
                   return (
                     <Fragment key={tipo}>
                     <section>
-                      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 mb-8 pb-5 border-b border-western-border-soft">
+                      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 mb-6 pb-4 border-b border-western-border-soft">
                         <div>
-                          <p className="text-eyebrow mb-2">
+                          <p className="text-eyebrow mb-1.5">
                             Local de aplicação
                           </p>
-                          <h2 className="display-lg text-western-green-deep">
+                          <h2 className="display-md text-western-green-deep">
                             {tipoLabels[tipo]}
                           </h2>
-                          <p className="mt-3 text-body max-w-xl">
+                          <p className="mt-1.5 text-meta max-w-xl">
                             {TIPO_DESCRICAO[tipo]}
                           </p>
                         </div>

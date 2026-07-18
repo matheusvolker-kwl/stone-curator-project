@@ -130,10 +130,11 @@ export default function AccountLayout() {
         {/* ── Cabeçalho: quem é, em que nível está, e a saída ── */}
         <header className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
           <div className="min-w-0">
+            {/* Balcão: display-md — a conta é ferramenta, não palco. */}
             <p className="text-eyebrow mb-2">Minha conta</p>
-            <h1 className="display-lg text-western-green-deep break-words">{nome}</h1>
+            <h1 className="display-md text-western-green-deep break-words">{nome}</h1>
 
-            <div className="mt-4 flex flex-wrap items-center gap-2">
+            <div className="mt-3 flex flex-wrap items-center gap-2">
               {situacao === "erro" ? null : situacao === "carregando" ? (
                 <ChipEsqueleto />
               ) : situacao === "admin" ? (
@@ -175,7 +176,7 @@ export default function AccountLayout() {
         {/* ── HERÓI: o card de credenciamento ──
             Na visão geral ele aparece inteiro. Nas telas internas ele encolhe
             para uma faixa — mas um erro ou uma pendência NUNCA somem. */}
-        <div className="mt-8">
+        <div className="mt-6">
           {situacao === "erro" ? (
             <EstadoErro
               erro={erro}
@@ -193,7 +194,7 @@ export default function AccountLayout() {
         </div>
 
         {/* ── Navegação + conteúdo ── */}
-        <div className="mt-10 flex flex-col gap-8 md:flex-row lg:gap-12">
+        <div className="mt-8 flex flex-col gap-6 md:flex-row lg:gap-10">
           <aside className="flex-shrink-0 md:w-60">
             <nav
               ref={navRef}
