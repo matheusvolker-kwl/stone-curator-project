@@ -67,49 +67,57 @@ const PERFIS = [
   { value: "cliente-final", label: "Cliente final" },
 ];
 
-const DIFERENCIAIS = [
-  {
-    icon: Factory,
-    titulo: "Quem fabrica, executa",
-    desc: "Do molde à instalação — ninguém conhece a peça como a fábrica que a inventou.",
-  },
-  {
-    icon: Feather,
-    titulo: "Viabiliza o inviável",
-    desc: "Pedra até 10× mais leve permite cascatas e piscinas onde a pedra natural não aguenta: declives, lajes, estruturas críticas.",
-  },
-  {
-    icon: Eye,
-    titulo: "Render antes da obra",
-    desc: "Você e seu cliente aprovam o resultado em 3D antes de a primeira peça sair da fábrica.",
-  },
-  {
-    icon: Leaf,
-    titulo: "Equipe própria + baixo impacto",
-    desc: "Instalação por profissionais com 20+ anos de casa. Molde tirado da pedra real, com PET reciclado — zero extração.",
-  },
-];
-
-const SERVICOS = [
+/**
+ * ENTREGAS — a fusão de DIFERENCIAIS + SERVICOS (escolha do dono no lab, 2026-07-18).
+ *
+ * Antes eram DUAS seções vizinhas: "Um único parceiro que já resolveu o que
+ * ninguém tinha resolvido" e "Um único parceiro do conceito à entrega". As
+ * mesmas três palavras de abertura, o mesmo componente de cartão, quatro cada —
+ * e o conteúdo se sobrepunha ("Render antes da obra" × "Projeto & Render",
+ * "Quem fabrica, executa" × "Instalação").
+ *
+ * A alternativa C resolve por SUBTRAÇÃO: sobra uma seção. A entrega manda, e
+ * cada diferencial deixa de ser cartão irmão para virar a PROVA ancorada na
+ * entrega que ele sustenta. A página perde uma dobra inteira e ganha ritmo.
+ *
+ * Custo assumido: o argumento perde palco próprio — quem só passa o olho lê
+ * serviço, não diferencial. Foi a escolha consciente do dono.
+ */
+const ENTREGAS = [
   {
     icon: Sparkles,
     titulo: "Consultoria",
     desc: "Especificação, viabilidade técnica e orientação sobre acabamentos, quantidades e integração ao projeto.",
+    provaIcon: Feather,
+    prova:
+      "Pedra até 10× mais leve permite cascatas e piscinas onde a pedra natural não aguenta: declives, lajes, estruturas críticas.",
+    gratis: true,
   },
   {
     icon: PencilRuler,
     titulo: "Projeto & Render",
     desc: "Visualização 3D fotorrealista antes da obra — decida com segurança e alinhe expectativas com o cliente.",
+    provaIcon: Eye,
+    prova:
+      "Você e seu cliente aprovam o resultado em 3D antes de a primeira peça sair da fábrica.",
+    gratis: false,
   },
   {
     icon: HardHat,
     titulo: "Instalação",
     desc: "Execução pela equipe Western, com técnica apurada, fixação correta e acabamento integrado ao paisagismo.",
+    provaIcon: Leaf,
+    prova:
+      "Instalação por profissionais com 20+ anos de casa. Molde tirado da pedra real, com PET reciclado — zero extração.",
+    gratis: false,
   },
   {
     icon: LifeBuoy,
     titulo: "Acompanhamento",
     desc: "Suporte contínuo do conceito à entrega — logística, cronograma e ajustes finos no local da obra.",
+    provaIcon: Factory,
+    prova: "Do molde à instalação — ninguém conhece a peça como a fábrica que a inventou.",
+    gratis: false,
   },
 ];
 
@@ -187,10 +195,9 @@ const BENEFICIOS_CONSULTORIA = [
 ];
 
 // Classes compartilhadas — DS V3 (cantos suaves, 16px mínimo em UI, alvo 52px)
-const CARD =
-  "h-full bg-white border border-western-border-soft rounded-lg p-6 md:p-7 shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] hover:border-western-gold/50 transition-colors";
-const CARD_ICON =
-  "inline-flex h-12 w-12 items-center justify-center rounded-lg bg-western-paper border border-western-border-soft text-western-bronze mb-5";
+/* CARD e CARD_ICON morreram com a fusão das seções 3+4: o cartão-com-ícone era
+   justamente a "mesma roupa" que fazia as duas seções lerem igual. Sobraram só
+   o título e a descrição, que a lista de entregas e os passos reaproveitam. */
 const CARD_TITLE =
   "font-sans font-semibold text-[18px] leading-snug text-western-green-deep mb-2";
 const CARD_DESC = "text-spec leading-relaxed";
@@ -386,97 +393,132 @@ export default function ContrateAWestern() {
         </div>
       </section>
 
-      {/* 3) POR QUE A WESTERN */}
-      <section className="surface-ivory section">
-        <div className="container-western">
-          <div className="max-w-6xl">
-          <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
-            <Reveal variant="fade-up" duration={700} className="md:col-span-5">
-              <div>
-                <p className="text-eyebrow">Por que a Western</p>
-                <h2 className="display-lg text-western-green-deep mt-3">
-                  Um único parceiro que já resolveu o que ninguém tinha resolvido.
-                </h2>
-                <p className="mt-5 text-body">
-                  A Western é a fábrica e a executora. Isso significa custo, prazo,
-                  técnica e responsabilidade concentrados em um só time —
-                  do render 3D à peça posicionada em obra.
-                </p>
-                <div className="mt-8 aspect-[4/3] overflow-hidden rounded-xl">
-                  <img
-                    src={serraImg}
-                    alt="Equipe própria da Western instalando peças em obra"
-                    width={800}
-                    height={600}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-            </Reveal>
-
-            <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
-              {DIFERENCIAIS.map((d, i) => (
-                <Reveal key={d.titulo} variant="fade-up" delay={i * 70} duration={650}>
-                  <div className={CARD}>
-                    <span className={CARD_ICON}>
-                      <d.icon className="h-6 w-6" />
-                    </span>
-                    <h3 className={CARD_TITLE}>{d.titulo}</h3>
-                    <p className={CARD_DESC}>{d.desc}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-
-          {/* Esta página tinha 2 entradas e ZERO saídas internas: só wa.me. Quem
-              não clica no WhatsApp ficava preso — e os dois pontos onde ela mais
-              afirma sem provar (o card "Viabiliza o inviável" e a linha de obras
-              logo abaixo) são exatamente os que pedem a saída. */}
-          <Reveal variant="fade-up" delay={80} duration={650}>
-            {/* Era text-western-cream DENTRO de surface-ivory — texto claro
-                sobre fundo claro, link invisível (auditoria 2026-07-17).
-                Primeiro consumidor da classe nova .link-cta. */}
-            <Link
-              to="/a-pedra"
-              className="link-cta mt-10"
-            >
-              Por que a pedra pesa 10× menos
-              <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden />
-            </Link>
-          </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* 4) SERVIÇOS */}
+      {/* 3) O QUE FAZEMOS — antes eram DUAS seções (Por que a Western + Serviços)
+          e viraram uma (alternativa C do lab, escolha do dono). Ver o comentário
+          de ENTREGAS lá em cima para o diagnóstico completo. */}
       <section className="surface-paper section border-y border-western-border-soft">
         <div className="container-western">
           <div className="max-w-6xl">
-          <Reveal variant="fade-up" duration={700}>
-            <header className="text-center max-w-2xl mx-auto mb-12">
-              <p className="text-eyebrow">O que fazemos por você</p>
-              <h2 className="display-lg text-western-green-deep mt-3">
-                Um único parceiro do conceito à entrega
-              </h2>
-            </header>
-          </Reveal>
+            {/* MESMA RÉGUA: as duas colunas penduram do mesmo fio (border-t +
+                pt). Nada de coluna começando em altura diferente da outra. O pt
+                acompanha o py do <li> em cada faixa — com pt fixo, a partir de
+                md o eyebrow subiria 4px e a "mesma régua" deixaria de ser real. */}
+            <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
+              {/* — COLUNA DO ARGUMENTO (o que sobrou da antiga seção 3) — */}
+              <Reveal
+                variant="fade-up"
+                duration={700}
+                className="md:col-span-5 border-t border-western-border-soft pt-6 md:pt-7"
+              >
+                <div>
+                  <p className="text-eyebrow">O que fazemos por você</p>
+                  {/* Sem "Um único parceiro": a fórmula abria as DUAS seções. */}
+                  <h2 className="display-lg text-western-green-deep mt-3">
+                    A fábrica e a executora são o mesmo time.
+                  </h2>
+                  <p className="mt-5 text-body">
+                    Custo, prazo, técnica e responsabilidade não se dividem entre
+                    fornecedores — do render 3D à peça posicionada em obra. Cada entrega
+                    vem com a razão técnica que a sustenta.
+                  </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-            {SERVICOS.map((s, i) => (
-              <Reveal key={s.titulo} variant="fade-up" delay={i * 80} duration={650}>
-                <div className={CARD}>
-                  <span className={CARD_ICON}>
-                    <s.icon className="h-6 w-6" />
-                  </span>
-                  <h3 className={CARD_TITLE}>{s.titulo}</h3>
-                  <p className={CARD_DESC}>{s.desc}</p>
+                  {/* A foto é 800×1000 (retrato). Estava num aspect-[4/3] com
+                      object-cover, o que descartava 40% da altura e cortava o
+                      profissional (dono, 2026-07-18). Agora usa a proporção
+                      NATIVA: zero corte. E o corte era caro justamente aqui —
+                      o que a foto prova está nas bordas: a sala comum, as
+                      ferramentas no chão, o homem ajoelhado com as mãos na
+                      pedra. É a prova de que a peça entra sem guindaste. */}
+                  <div className="mt-8 aspect-[4/5] overflow-hidden rounded-xl">
+                    <img
+                      src={serraImg}
+                      alt="Profissional da Western ajoelhado posicionando com as mãos uma pedra artesanal dentro de uma sala, com nível e luvas no chão"
+                      width={800}
+                      height={1000}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {/* Esta página tinha 2 entradas e ZERO saídas internas: só
+                      wa.me. A saída fica colada na foto da equipe — é ali que o
+                      leitor pergunta "como se carrega isso na mão?". */}
+                  <Link to="/a-pedra" className="link-cta mt-4">
+                    Por que a pedra pesa 10× menos
+                    <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+                  </Link>
                 </div>
               </Reveal>
-            ))}
-          </div>
+
+              {/* — COLUNA DA ENTREGA —
+                  LEDGER, NÃO CARTÃO: uma coluna só, linhas separadas por fio.
+                  Mata o desalinhamento de linha de base por construção (não há
+                  dois cartões lado a lado para desalinhar) e o ritmo deixa de
+                  repetir os cartões da seção "Como funciona" logo abaixo. */}
+              <ol className="md:col-span-7 border-t border-b border-western-border-soft divide-y divide-western-border-soft">
+                {/* O <Reveal> NÃO entra entre o <ol> e o <li>: <ol> só admite
+                    <li> como filho, e o div extra do Reveal empurrava o fio de
+                    cima da lista 28px para fora da régua da coluna vizinha —
+                    dois fios horizontais desencontrados, lado a lado. A seção
+                    inteira já anima pela coluna da esquerda; a lista aparece
+                    como um bloco só, que é como um ledger deve se comportar. */}
+                {ENTREGAS.map((e) => (
+                  <li
+                    key={e.titulo}
+                    /* UM ÚNICO EIXO DE TEXTO: trilho fixo de 2.75rem para o
+                       ícone; título, descrição e prova compartilham a mesma
+                       margem esquerda, em desk e mobile. */
+                    className="grid grid-cols-[2.75rem_1fr] gap-x-4 sm:gap-x-5 py-6 md:py-7"
+                  >
+                      <span
+                        className={`inline-flex h-11 w-11 items-center justify-center rounded-lg bg-white border ${
+                          e.gratis
+                            ? "border-western-gold text-western-green-deep"
+                            : "border-western-border-strong text-western-bronze"
+                        }`}
+                      >
+                        <e.icon className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+                      </span>
+
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                          <h3 className={`${CARD_TITLE} mb-0`}>{e.titulo}</h3>
+                          {/* Mesma gramática da seção "Como funciona": dourado
+                              sólido = zero; fio + bronze = sob consulta. Nenhum
+                              item fica sem sinal de preço — deixar os pagos em
+                              branco já foi testado e reprovado pelo dono ("liam
+                              como preço escondido"). */}
+                          <span
+                            className={`rounded-sm px-2.5 py-1 font-sans text-[14px] font-semibold leading-none ${
+                              e.gratis
+                                ? "bg-western-gold text-western-green-deep"
+                                : "border border-western-border-strong bg-white text-western-bronze"
+                            }`}
+                          >
+                            {e.gratis ? "Grátis" : "Sob consulta"}
+                          </span>
+                        </div>
+
+                        <p className={`mt-2 ${CARD_DESC}`}>{e.desc}</p>
+
+                        {/* PROVA: o antigo cartão de diferencial, agora ancorado
+                            na entrega que ele sustenta. Régua dourada a 40% num
+                            fio = "isto é argumento, não é escopo contratável".
+                            O dourado SÓLIDO continua reservado a preço. */}
+                        <div className="mt-4 flex gap-3 rounded-r-lg border-l-2 border-western-gold/40 bg-western-ivory py-3 pl-4 pr-4">
+                          <e.provaIcon
+                            className="h-4 w-4 mt-[3px] shrink-0 text-western-bronze"
+                            strokeWidth={1.75}
+                            aria-hidden
+                          />
+                          <p className="text-meta leading-[1.55]">{e.prova}</p>
+                        </div>
+                      </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
           </div>
         </div>
       </section>
@@ -639,12 +681,19 @@ export default function ContrateAWestern() {
                 <p className="font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-gold-soft mb-3">
                   Consultoria inicial gratuita
                 </p>
-                <h2 className="display-lg text-western-cream">
-                  Comece com uma conversa{" "}
-                  <span className="text-western-gold-soft">grátis e sem compromisso.</span>
-                </h2>
+                {/* O FECHO (dono, 2026-07-18: "acho que é um CTA muito forte").
+                    "Vamos trabalhar juntos?" é convite de PARCERIA, não pedido de
+                    compra — e é isso que esta página oferece a um profissional.
+                    A pergunta vai no título; a promessa de custo zero desce para
+                    a linha de apoio, onde continua em dourado-suave (o acento de
+                    fundo escuro) e não some. */}
+                <h2 className="display-lg text-western-cream">Vamos trabalhar juntos?</h2>
                 <p className="mt-5 text-[16px] leading-[1.6] text-western-cream/85">
-                  Preencha o essencial —{" "}
+                  A conversa inicial é{" "}
+                  <span className="font-semibold text-western-gold-soft">
+                    grátis e sem compromisso
+                  </span>
+                  . Preencha o essencial —{" "}
                   <strong className="font-semibold text-western-cream">
                     só nome e WhatsApp
                   </strong>{" "}

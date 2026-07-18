@@ -4,10 +4,15 @@ import {
   Boxes,
   Truck,
   DoorOpen,
+  TrafficCone,
   Hammer,
+  Layers,
   MapPin,
   Paintbrush,
   Building2,
+  TrendingDown,
+  Cable,
+  Leaf,
   ArrowRight,
 } from "lucide-react";
 
@@ -15,32 +20,75 @@ import quadriplex3d from "@/assets/a-pedra/quadriplex-3d.webp";
 import quadriplexObra from "@/assets/a-pedra/quadriplex-obra.webp";
 
 /**
- * VARIANTE B — "duas provas, dois blocos limpos".
+ * VARIANTE B — refino 2 (dono escolheu a B e pediu para aprimorar).
  *
- * TESE: o bloco atual falha porque a coluna direita é uma gaveta — prova 3D,
- * estatística, currículo e link, quatro assuntos num invólucro só. Aqui são
- * DOIS blocos com UM assunto cada: MEDIDA (dourado — o físico, o que se pesa)
- * e MÉTODO (verde — o processo, o que se prevê). A cor e a borda de topo
- * codificam o TIPO de prova; não decoram. O currículo do ateliê sai do meio do
- * argumento e vira rodapé da seção, onde credencial pertence.
+ * O QUE MUDOU E POR QUÊ:
  *
- * A inversão de hierarquia das barras foi resolvida por UMA régua só: a régua
- * inteira é a pedra natural (contorno tracejado, sem tinta) e os 280 kg são o
- * único trecho PINTADO dentro dela, a 10% da largura. A proporção continua
- * verdadeira; o que muda é quem recebe tinta e quem recebe contorno.
+ * 1. OS DOIS PARÁGRAFOS DE RODAPÉ SAÍRAM. O dono: "não estão equivalentes,
+ *    com bom design e bem posicionados". Estava certo, e a causa era de
+ *    arquitetura, não de estilo: à esquerda vivia uma RESSALVA de preço e à
+ *    direita uma ESTATÍSTICA. Dois registros distintos no mesmo slot, e como os
+ *    cartões têm alturas de conteúdo diferentes, a última faixa do subgrid abria
+ *    um vazio antes deles. Custo e função viraram a terceira banda, que é onde
+ *    pertencem — nenhum dos dois é consequência do peso.
  *
- * SACRIFÍCIO: perde-se o impacto de dois display-stat empilhados — "quase 3 t"
- * desce a um rótulo de régua. A comparação fica menos teatral e mais métrica.
+ * 2. O PESO FICOU VISUAL POR CONTAGEM, não por barra. Uma barra longa lê como
+ *    DOMÍNIO: a pedra natural ocupava a régua inteira e vencia a seção. Uma
+ *    pilha lê como FARDO. Mesmo dado, retórica oposta, os dois honestos. Um
+ *    bloco = 280 kg: a Western tem UM, a pedra natural tem DEZ. Ninguém precisa
+ *    calcular — conta. E a linha de baixo transforma a razão em consequência
+ *    (na mão × guindaste), que é o que o cliente sente na obra.
+ *
+ * 3. OS TRÊS EIXOS FICARAM SEPARADOS. O dono resume assim: "não é só a pedra
+ *    leve — é muito mais". Então: MEDIDA (o que o peso resolve) e MÉTODO (ver
+ *    antes de existir) nos dois cartões; e uma banda de três para o que NÃO
+ *    decorre do peso — custo de obra, o oco como função, e o ambiente.
+ *
+ * SACRIFÍCIO: a seção ficou mais alta. Em troca, cada afirmação está no eixo
+ * certo e nenhuma sobra pendurada no fim de um cartão.
  */
 
-/** Consequências do peso — decompostas da frase única que existia no parágrafo. */
+/** Um bloco = 280 kg. Dez blocos ≈ 2.800 kg — a mesma peça em pedra natural. */
+const BLOCOS_PEDRA_NATURAL = 10;
+
+/** O que o PESO resolve. Tudo aqui é consequência direta de pesar 10× menos. */
 const CONSEQUENCIAS = [
   { icon: Truck, texto: "Desce de caminhão comum, na mão." },
   { icon: DoorOpen, texto: "Entra por onde as pessoas entram." },
+  {
+    icon: TrafficCone,
+    texto: "Sem travar a rua, sem guindaste, sem transtorno com vizinho.",
+  },
+  {
+    icon: Layers,
+    texto: "Peso que cabe em laje, apartamento, pavimento alto, cobertura e deck.",
+  },
   { icon: Hammer, texto: "Fixa com argamassa AC3 de loja de bairro." },
 ];
 
-/** Rodapé de credencial — sai do meio do argumento, vira assinatura da seção. */
+/** O que NÃO decorre do peso — os outros dois eixos, mais o custo de obra. */
+const OUTROS_EIXOS = [
+  {
+    icon: TrendingDown,
+    rotulo: "Custo",
+    texto:
+      "A peça em si não é mais barata que pedra natural. A obra é: instalação, transporte e mão de obra caem no mínimo 30%.",
+  },
+  {
+    icon: Cable,
+    rotulo: "Função",
+    texto:
+      "Oca por dentro — dá para esconder fio, caixa, bomba e o que mais a instalação pedir.",
+  },
+  {
+    icon: Leaf,
+    rotulo: "Ambiente",
+    texto:
+      "Molde tirado da pedra real, em composto mineral com PET reciclado. Zero extração.",
+  },
+];
+
+/** Rodapé de credencial — assinatura da seção, não prova. */
 const CREDENCIAL = [
   { icon: MapPin, texto: "Ateliê próprio em Cajamar/SP desde 1993" },
   { icon: Paintbrush, texto: "Pintado à mão, peça por peça" },
@@ -51,15 +99,13 @@ export default function APedraNumeroB() {
   return (
     <section className="surface-paper section border-t border-western-border-soft">
       <div className="container-western">
-        {/* Grade de 4 linhas compartilhadas: cabeçalho · título · prova · fecho.
-            Com grid-rows-subgrid os dois blocos usam a MESMA régua horizontal —
-            título de 1 linha e de 2 linhas não desalinham o corpo abaixo.
-            No mobile a grade desmonta e o ritmo volta pras margens (mt-*). */}
-        <div className="grid gap-y-8 lg:grid-cols-2 lg:gap-x-10 lg:gap-y-5 lg:grid-rows-[auto_auto_1fr_auto]">
+        {/* Três faixas compartilhadas: cabeçalho · título · corpo. A quarta
+            faixa (o "fecho") morreu junto com os parágrafos pendurados. */}
+        <div className="grid gap-y-8 lg:grid-cols-2 lg:gap-x-10 lg:gap-y-5 lg:grid-rows-[auto_auto_1fr]">
           {/* ============================================================
-              BLOCO 1 — MEDIDA (dourado). Assunto único: o peso.
+              BLOCO 1 — MEDIDA (dourado). Assunto único: o que o peso resolve.
               ============================================================ */}
-          <article className="rounded-xl border border-western-border-soft border-t-[3px] border-t-western-gold bg-white p-6 md:p-7 shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] lg:row-span-4 lg:grid lg:grid-rows-subgrid">
+          <article className="rounded-xl border border-western-border-soft border-t-[3px] border-t-western-gold bg-white p-6 md:p-7 shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] lg:row-span-3 lg:grid lg:grid-rows-subgrid">
             <header className="flex items-center gap-3">
               <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-western-gold/45 bg-western-gold/10 text-western-bronze">
                 <Scale className="h-5 w-5" strokeWidth={1.75} aria-hidden />
@@ -72,28 +118,59 @@ export default function APedraNumeroB() {
             </h2>
 
             <div className="mt-5 lg:mt-0 lg:self-start">
-              {/* Números na mesma linha de base: o herói em display-stat, o
-                  comparativo em corpo pequeno. A ênfase tipográfica é da
-                  Western; a régua abaixo mantém a escala real (10%). */}
-              <div className="flex items-baseline justify-between gap-4">
-                <p className="display-stat text-western-green-deep">280 kg</p>
-                <p className="text-title-sm text-western-stone-warm text-right">quase 3 t</p>
+              {/* ────────────────────────────────────────────────────────
+                  A CONTAGEM. Cada bloco é a MESMA unidade (280 kg), então a
+                  diferença não é de tamanho de desenho — é de quantidade de
+                  peça. O olho conta, não mede. A Western fica sozinha e
+                  inteira; a pedra natural vira pilha, e pilha lê como fardo.
+                  aria-hidden no desenho: a informação já está no texto ao
+                  lado, e dez blocos anunciados um a um seria ruído.
+                  ──────────────────────────────────────────────────────── */}
+              <p className="text-eyebrow mb-4">A mesma peça, nos dois materiais</p>
+
+              <div className="space-y-4">
+                <div>
+                  <div className="flex flex-wrap items-center gap-1.5" aria-hidden>
+                    <span className="h-8 w-8 rounded-[3px] bg-western-gold" />
+                  </div>
+                  <p className="mt-2 flex flex-wrap items-baseline gap-x-2">
+                    <span className="font-display text-[26px] leading-none text-western-green-deep">
+                      280 kg
+                    </span>
+                    <span className="text-meta text-western-bronze font-semibold">
+                      Western · 1 bloco
+                    </span>
+                  </p>
+                </div>
+
+                <div>
+                  <div className="flex flex-wrap items-center gap-1.5" aria-hidden>
+                    {Array.from({ length: BLOCOS_PEDRA_NATURAL }, (_, i) => (
+                      <span
+                        key={i}
+                        className="h-8 w-8 rounded-[3px] border border-western-border-strong bg-western-ivory"
+                      />
+                    ))}
+                  </div>
+                  <p className="mt-2 flex flex-wrap items-baseline gap-x-2">
+                    <span className="font-display text-[26px] leading-none text-western-stone-warm">
+                      quase 3 t
+                    </span>
+                    <span className="text-meta">Pedra natural · 10 blocos</span>
+                  </p>
+                </div>
               </div>
 
-              {/* A régua: o contorno tracejado é a pedra natural (100%); a tinta
-                  dourada é a Western (10%). Uma régua, duas leituras. */}
-              <div
-                className="mt-4 h-10 rounded-md border border-dashed border-western-border-strong bg-western-ivory p-1"
-                aria-hidden
-              >
-                <div className="h-full w-[10%] rounded-sm bg-western-gold" />
-              </div>
-              <div className="mt-2 flex items-start justify-between gap-4">
-                <p className="text-meta text-western-bronze font-semibold">Western</p>
-                <p className="text-meta text-right">Pedra natural</p>
-              </div>
               <p className="text-meta mt-3">
-                A maior cascata da linha × a mesma peça em pedra natural.
+                Cada bloco representa 280 kg — a maior cascata da linha. É a mesma peça,
+                nos dois materiais.
+              </p>
+
+              {/* A razão vira consequência: é aqui que o número encosta na obra. */}
+              <p className="mt-4 rounded-lg bg-western-ivory px-4 py-3 text-body">
+                Uma desce <span className="font-semibold text-western-green-deep">na mão</span>.
+                A outra pede{" "}
+                <span className="font-semibold text-western-green-deep">guindaste</span>.
               </p>
 
               <ul className="mt-6 space-y-3 border-t border-western-border-soft pt-5">
@@ -109,20 +186,12 @@ export default function APedraNumeroB() {
                 ))}
               </ul>
             </div>
-
-            {/* GUARDA DE CONTEÚDO: a PEÇA não é mais barata. A OBRA é. */}
-            <p className="text-body mt-6 lg:mt-0 max-w-[48ch]">
-              A peça em si não é mais barata que pedra natural. A obra é:{" "}
-              <span className="font-semibold text-western-green-deep">
-                instalação, transporte e mão de obra caem no mínimo 30%.
-              </span>
-            </p>
           </article>
 
           {/* ============================================================
-              BLOCO 2 — MÉTODO (verde). Assunto único: ver antes de comprar.
+              BLOCO 2 — MÉTODO (verde). Assunto único: ver antes de existir.
               ============================================================ */}
-          <article className="rounded-xl border border-western-border-soft border-t-[3px] border-t-western-cta bg-white p-6 md:p-7 shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] lg:row-span-4 lg:grid lg:grid-rows-subgrid">
+          <article className="rounded-xl border border-western-border-soft border-t-[3px] border-t-western-cta bg-white p-6 md:p-7 shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] lg:row-span-3 lg:grid lg:grid-rows-subgrid">
             <header className="flex items-center gap-3">
               <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-western-cta/25 bg-western-cta/[0.07] text-western-cta">
                 <Boxes className="h-5 w-5" strokeWidth={1.75} aria-hidden />
@@ -131,17 +200,15 @@ export default function APedraNumeroB() {
             </header>
 
             <h2 className="display-md text-western-green-deep mt-4 lg:mt-0 max-w-[24ch]">
-              O projeto aprovado antes de a peça existir.
+              O que você desenha é o que chega na obra.
             </h2>
 
             <div className="mt-5 lg:mt-0 lg:self-start">
               {/* Duas VISTAS do mesmo quarto (luz de render × luz de dia). A
                   legenda NOMEIA a âncora — sem ela o olho procura sozinho, não
-                  acha, e lê mismatch. RENDER NUNCA é apresentado como foto. */}
-              {/* Cada vista é uma <figure> ANINHADA com a sua própria legenda: um
-                  <figure> só admite UM <figcaption>. Três legendas soltas dentro
-                  do mesmo <figure> (como estava na /a-pedra v1) é markup inválido
-                  e o leitor de tela lê legenda errada na imagem errada. */}
+                  acha, e lê mismatch. RENDER NUNCA é apresentado como foto.
+                  Cada vista é uma <figure> aninhada com a sua legenda: um
+                  <figure> só admite UM <figcaption>. */}
               <figure className="overflow-hidden rounded-lg border border-western-border-soft">
                 <div className="grid grid-cols-2 gap-px bg-western-border-soft">
                   <figure className="bg-white">
@@ -162,7 +229,9 @@ export default function APedraNumeroB() {
                       decoding="async"
                       className="w-full aspect-square object-cover"
                     />
-                    <figcaption className="text-meta px-3 py-2.5">A obra construída · foto</figcaption>
+                    <figcaption className="text-meta px-3 py-2.5">
+                      A obra construída · foto
+                    </figcaption>
                   </figure>
                 </div>
                 <figcaption className="text-meta border-t border-western-border-soft px-3 py-2.5">
@@ -171,34 +240,65 @@ export default function APedraNumeroB() {
                 </figcaption>
               </figure>
 
-              {/* Mesma gramática do bloco de MEDIDA: fio + lista com ícone.
-                  Aqui o ícone é o do bloco (Boxes), porque o item É o método. */}
-              <ul className="mt-6 space-y-3 border-t border-western-border-soft pt-5">
-                <li className="flex items-start gap-3">
-                  <Boxes
-                    className="h-5 w-5 shrink-0 mt-0.5 text-western-cta"
-                    strokeWidth={1.75}
-                    aria-hidden
-                  />
-                  <span className="text-body">
-                    Toda peça tem bloco 3D no SketchUp — você monta a composição, valida com o
-                    cliente e só compra depois de aprovado.
-                  </span>
-                </li>
-              </ul>
-            </div>
+              {/* O ARGUMENTO DE FIDELIDADE (pedido do dono). O ponto não é
+                  "temos bloco 3D": é que a composição desenhada no CAD ou no
+                  SketchUp usa AS MESMAS peças que serão entregues — por isso o
+                  desenho e a obra se parecem tanto. Escrito como PERCURSO
+                  (desenha → apresenta → aprova → executa) porque é assim que
+                  quem projeta vive o processo. */}
+              <p className="text-body mt-6 border-t border-western-border-soft pt-5">
+                Toda peça tem bloco 3D no SketchUp. Você monta a composição no CAD ou no
+                SketchUp com as mesmas peças que vão ser entregues, apresenta, ajusta com o
+                cliente e só compra depois de aprovado.
+              </p>
+              <p className="text-body mt-3">
+                Como a peça desenhada{" "}
+                <span className="font-semibold text-western-green-deep">é</span> a peça
+                entregue, o render sai fiel ao resultado — e a execução vira montagem, não
+                improviso.
+              </p>
 
-            <p className="text-body mt-6 lg:mt-0 max-w-[48ch]">
-              Os blocos já saíram do ateliê para a mesa de quem projeta:{" "}
-              <span className="font-semibold text-western-green-deep">+300 mil downloads.</span>
-            </p>
+              <p className="text-meta mt-4">
+                Os blocos já saíram do ateliê para a mesa de quem projeta:{" "}
+                <span className="font-semibold text-western-green-deep">
+                  +300 mil downloads.
+                </span>
+              </p>
+            </div>
           </article>
         </div>
 
         {/* ============================================================
-            RODAPÉ — a credencial. Fora do argumento, sob os dois blocos:
-            é assinatura, não prova. A frase dos tons é declarativa, sem CTA
-            e sem bloco próprio (regra do dono).
+            TERCEIRA BANDA — "não é só a pedra leve".
+            Os três itens aqui NÃO são consequência do peso: custo de obra,
+            o oco como função, e o ambiente. Estavam pendurados no fim dos
+            cartões (o que o dono reprovou) ou não estavam em lugar nenhum.
+            Grade de três com subgrid: rótulo e texto começam na mesma altura.
+            ============================================================ */}
+        <div className="mt-10 rounded-xl border border-western-border-soft bg-white p-6 md:p-7">
+          <p className="text-eyebrow mb-5">Não é só a pedra ser leve</p>
+          <ul className="grid gap-6 md:grid-cols-3 md:gap-8 md:grid-rows-[auto_1fr]">
+            {OUTROS_EIXOS.map(({ icon: Icon, rotulo, texto }) => (
+              <li key={rotulo} className="md:row-span-2 md:grid md:grid-rows-subgrid md:gap-2">
+                <div className="flex items-center gap-2.5">
+                  <Icon
+                    className="h-5 w-5 shrink-0 text-western-bronze"
+                    strokeWidth={1.75}
+                    aria-hidden
+                  />
+                  <span className="font-sans text-[15px] font-semibold text-western-green-deep">
+                    {rotulo}
+                  </span>
+                </div>
+                <p className="mt-2 text-body md:mt-0">{texto}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* ============================================================
+            RODAPÉ — a credencial. Fora do argumento: é assinatura, não prova.
+            A frase dos tons é declarativa, sem CTA (regra do dono).
             ============================================================ */}
         <div className="mt-10 border-t border-western-border-soft pt-6">
           <ul className="grid gap-4 md:grid-cols-3 md:gap-6">

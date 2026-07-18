@@ -576,6 +576,20 @@ export default function ParaSuaCasa() {
       {/* 8 — O ATELIÊ */}
       <section className="surface-paper section border-b border-western-border-soft">
         <div className="container-western">
+          {/* SEQUÊNCIA DE DOIS BLOCOS — regrade (dono, 2026-07-18: "continuidade
+              esquisita e diagramação estranha").
+              O que estava errado era a GRADE, não o gosto:
+                · o primeiro bloco dividia 6/6 e o segundo 7/5, então as duas
+                  fotos terminavam em colunas diferentes e nada se alinhava;
+                · o primeiro tinha foto nua e o segundo foto em cartão — dois
+                  tratamentos do mesmo elemento, um embaixo do outro;
+                · os dois liam da mesma forma (foto à esquerda, texto à direita),
+                  então o olho percorria a mesma figura duas vezes;
+                · o painel de texto do segundo tinha pt-0 no celular (o eyebrow
+                  encostava na foto) e pl-0 no desktop.
+              Agora: MESMA régua 6/6 nos dois, lado da foto ALTERNADO (a leitura
+              muda sem a geometria mudar), e o cartão fica só no segundo — porque
+              ali ele significa algo: o primeiro é narrativa, o segundo é oferta. */}
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-center">
             <Reveal variant="fade-up" duration={700} className="md:col-span-6">
               <div className="aspect-[4/3] overflow-hidden rounded-xl">
@@ -613,21 +627,15 @@ export default function ParaSuaCasa() {
               esse que o convite oferece agora. A cidade vem do cadastro (BUSINESS),
               não da foto: nenhuma imagem prova onde o lugar fica. */}
           <Reveal variant="fade-up" delay={120} duration={700}>
-            <div className="mt-12 md:mt-16 grid md:grid-cols-12 gap-8 md:gap-10 items-center rounded-xl border border-western-border-soft bg-white overflow-hidden">
-              <div className="md:col-span-7">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img
-                    src={atelieVisita}
-                    alt="Deck de madeira do ateliê à beira de uma piscina de borda de praia com água turquesa. Um homem sentado na beira do deck, com os pés dentro da água, toca violão. Atrás, um pavilhão com pergolado de varas e a porta de vidro aberta; à direita, uma palmeira e pedra Western."
-                    width={1200}
-                    height={900}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              </div>
-              <div className="md:col-span-5 p-6 pt-0 md:p-8 md:pl-0">
+            {/* MESMA régua 6/6 do bloco de cima, com a foto do OUTRO lado.
+                No celular a ordem volta ao natural (foto e depois texto) via
+                order-*: a imagem apresenta o lugar antes do convite. */}
+            {/* A calha é a MESMA do bloco de cima (gap-10 md:gap-14). Com calhas
+                diferentes as duas fotos saíam com larguras diferentes (525 × 532
+                medidos) e a segunda parava 15px antes do trilho — o desencontro
+                que se via sem saber nomear. */}
+            <div className="mt-12 md:mt-16 grid md:grid-cols-12 gap-10 md:gap-14 items-center overflow-hidden rounded-xl border border-western-border-soft bg-white">
+              <div className="order-2 p-6 pt-0 md:order-1 md:col-span-6 md:p-8">
                 <p className="text-eyebrow">Visita ao ateliê</p>
                 <h3 className="display-md text-western-green-deep mt-3">
                   Venha conhecer o ateliê.
@@ -643,6 +651,22 @@ export default function ParaSuaCasa() {
                   <MapPin className="h-5 w-5" aria-hidden />
                   Agendar uma visita
                 </Link>
+              </div>
+              {/* A foto vai à borda do cartão (sem padding do lado de fora) e
+                  mantém o mesmo 4/3 do bloco de cima: mesma régua, mesma altura
+                  de imagem, leitura invertida. */}
+              <div className="order-1 md:order-2 md:col-span-6">
+                <div className="aspect-[4/3] overflow-hidden">
+                  <img
+                    src={atelieVisita}
+                    alt="Deck de madeira do ateliê à beira de uma piscina de borda de praia com água turquesa. Um homem sentado na beira do deck, com os pés dentro da água, toca violão. Atrás, um pavilhão com pergolado de varas e a porta de vidro aberta; à direita, uma palmeira e pedra Western."
+                    width={1200}
+                    height={900}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
               </div>
             </div>
           </Reveal>
