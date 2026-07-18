@@ -12,7 +12,7 @@ const NUMEROS = [
   { n: "33", l: "anos de operação ininterrupta" },
   { n: "50", l: "modelos fabricados em ateliê" },
   { n: "50", l: "selecionados no catálogo atual" },
-  { n: "+300", l: "projetos entregues pelo Brasil" },
+  { n: "+700", l: "obras entregues pelo Brasil" },
 ];
 
 const PILARES = [
@@ -42,7 +42,7 @@ const PILARES = [
     eyebrow: "ESG",
     titulo: "Biofilia industrializada",
     texto:
-      "Zero extração ambiental, plástico recuperado como armadura, logística leve. Um caminhão comum entrega o que pedra natural exigiria guindaste, alvará municipal e fechamento de via. Em qualquer matriz ESG séria, Western pontua melhor.",
+      "Zero extração ambiental, plástico recuperado como armadura, logística leve. Um caminhão comum entrega o que, em pedra natural, exigiria guindaste, alvará municipal e fechamento de via. Em qualquer matriz ESG séria, a Western pontua melhor.",
   },
 ];
 
@@ -67,9 +67,11 @@ export default function About() {
         <div className="container-western">
           <div className="grid gap-9 lg:grid-cols-[1.05fr_1fr] lg:gap-14 lg:items-center">
             <Reveal variant="fade-up" duration={800}>
-              <p className="text-eyebrow mb-3">A Western · 1993 — 2026</p>
+              <p className="text-eyebrow mb-3">
+                A Western · {BUSINESS.fundadaEm} — {new Date().getFullYear()}
+              </p>
               <h1 className="display-xl text-western-green-deep mb-5">
-                33 anos moldando<br />
+                {BUSINESS.anosOperacao} anos moldando<br />
                 <span className="text-western-bronze">pedra sem extrair pedra.</span>
               </h1>
               <p className="text-body md:text-[17px] max-w-[46ch]">
@@ -181,8 +183,11 @@ export default function About() {
             </Reveal>
             <Reveal variant="fade-up" delay={200} duration={750}>
               <p className="text-body">
-                Em 2026, são <strong className="text-western-green-deep font-semibold">33 anos
-                de ateliê ininterrupto</strong> em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie},
+                Em {new Date().getFullYear()}, são{" "}
+                <strong className="text-western-green-deep font-semibold">
+                  {BUSINESS.anosOperacao} anos de ateliê ininterrupto
+                </strong>{" "}
+                em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie},
                 com 50 modelos catalogados e um lugar firmado no paisagismo brasileiro de alto
                 padrão — uma operação familiar que atravessou três décadas sem trocar de mão,
                 de método ou de assinatura.
@@ -210,8 +215,8 @@ export default function About() {
             <div className="max-w-[760px] mx-auto text-center">
               <div className="w-[34px] h-[2px] bg-western-gold mx-auto mb-6" aria-hidden />
               <blockquote className="display-md text-western-green-deep leading-[1.32]">
-                "Não vendemos pedra. Oferecemos elemento autoral para o projeto — pintado à mão,
-                peça por peça, no nosso ateliê."
+                “Não vendemos pedra. Oferecemos elemento autoral para o projeto — pintado à mão,
+                peça por peça, no nosso ateliê.”
               </blockquote>
               <p className="text-eyebrow mt-6">Ricardo Botelho · Diretor de criação</p>
             </div>

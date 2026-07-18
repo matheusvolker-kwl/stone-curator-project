@@ -159,8 +159,8 @@ export default function Carrinho() {
       if (result.skipped > 0) {
         toast.warning("Algumas peças não puderam ser enviadas ao checkout", {
           description: `${result.skipped} ${
-            result.skipped === 1 ? "linha ficou" : "linhas ficaram"
-          } de fora. Revise sua composição ou fale no WhatsApp.`,
+            result.skipped === 1 ? "peça ficou" : "peças ficaram"
+          } de fora. Revise seu carrinho ou fale no WhatsApp.`,
           duration: 8000,
         });
       }
@@ -183,7 +183,7 @@ export default function Carrinho() {
       <>
         <Seo
           title="Meu carrinho · Western"
-          description="Revise as peças da sua composição e finalize seu pedido com a Western."
+          description="Revise as peças do seu carrinho e finalize seu pedido com a Western."
           path="/carrinho"
         />
         <main className="surface-ivory min-h-[70vh] py-12 md:py-16">
@@ -272,7 +272,7 @@ export default function Carrinho() {
     <>
       <Seo
         title="Meu carrinho · Western"
-        description="Revise as peças da sua composição, confira o subtotal e finalize seu pedido com a Western."
+        description="Revise as peças do seu carrinho, confira o subtotal e finalize seu pedido com a Western."
         path="/carrinho"
       />
 
@@ -316,8 +316,8 @@ export default function Carrinho() {
                       </p>
                       <p className="text-body-balcao mt-1">
                         {session
-                          ? "Assim que seu cadastro for aprovado, os valores aparecem aqui — sua composição fica guardada."
-                          : `Vendemos no atacado para profissionais com CNPJ, com pedido mínimo de ${BUSINESS.pedidoMinimoLabel} por composição. Os valores aparecem aqui assim que seu cadastro for aprovado — sua composição fica guardada.`}
+                          ? "Assim que seu cadastro for aprovado, os valores aparecem aqui — seu carrinho fica guardado."
+                          : `Vendemos no atacado para profissionais com CNPJ, com pedido mínimo de ${BUSINESS.pedidoMinimoLabel} por pedido. Os valores aparecem aqui assim que seu cadastro for aprovado — seu carrinho fica guardado.`}
                       </p>
                     </div>
                   </div>
@@ -414,7 +414,7 @@ export default function Carrinho() {
                           type="button"
                           onClick={() => removeItem(item.variantId)}
                           className="h-9 w-9 shrink-0 flex items-center justify-center rounded-md text-western-stone-warm hover:text-status-error hover:bg-western-paper transition-colors"
-                          aria-label={`Remover ${item.productTitle} do orçamento`}
+                          aria-label={`Remover ${item.productTitle} do carrinho`}
                         >
                           <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </button>
@@ -473,7 +473,7 @@ export default function Carrinho() {
                     <p className="mt-2.5 font-sans text-[15px] leading-snug text-western-green-deep">
                       Pedido mínimo de{" "}
                       <span className="font-semibold">{BUSINESS.pedidoMinimoLabel}</span> por
-                      composição.
+                      pedido.
                     </p>
                   )}
 
@@ -628,7 +628,7 @@ export default function Carrinho() {
                   </div>
 
                   <p className="text-meta mt-4 leading-normal">
-                    Produção em {BUSINESS.prazoProducaoLabel} após a confirmação do pedido.
+                    Produção em {BUSINESS.prazoProducaoLabel}.
                   </p>
                 </div>
               </Reveal>
@@ -672,7 +672,7 @@ export default function Carrinho() {
           <span className="font-sans text-[14px] font-semibold text-western-stone-warm">
             {showValues
               ? `Subtotal · ${totalQty} ${totalQty === 1 ? "peça" : "peças"}`
-              : `${totalQty} ${totalQty === 1 ? "peça" : "peças"} no orçamento`}
+              : `${totalQty} ${totalQty === 1 ? "peça" : "peças"} no carrinho`}
           </span>
           {showValues ? (
             <span className="font-sans text-[18px] font-bold tabular-nums leading-none text-western-green-deep">

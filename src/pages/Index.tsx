@@ -319,7 +319,7 @@ export default function Index() {
               {" · "}
               <b className="font-semibold text-western-cream">+300 mil</b> downloads no SketchUp
               {" · "}
-              <b className="font-semibold text-western-cream">33 anos</b> de ateliê
+              <b className="font-semibold text-western-cream">{BUSINESS.anosOperacao} anos</b> de ateliê
             </p>
           </div>
         </div>

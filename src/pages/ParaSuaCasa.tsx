@@ -155,7 +155,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "É sem cloro? Dá muito trabalho manter?",
-    a: "A água é tratada por salinização: o sal vira o agente que limpa a água, sem cloro, sem cheiro, sem olho ardendo. O sistema se auto-regula — por isso peixe e planta vivem no lago, e a piscina fica macia e transparente.",
+    a: "A água é tratada por salinização: o sal vira o agente que limpa a água, sem cloro, sem cheiro, sem olho ardendo. O sistema se autorregula — por isso peixe e planta vivem no lago, e a piscina fica macia e transparente.",
   },
   {
     q: "Não tenho empresa nem CNPJ. Consigo mesmo assim?",

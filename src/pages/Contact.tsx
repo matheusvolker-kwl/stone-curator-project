@@ -491,7 +491,7 @@ export default function Contact() {
               <h2 className="display-lg text-western-cream">Onde cada peça nasce.</h2>
               <p className="mt-5 max-w-md text-[16px] leading-[1.6] text-western-cream-muted">
                 Estamos em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}, na Grande São Paulo.
-                Receba arquitetos, paisagistas e clientes finais para conhecer os acabamentos
+                Recebemos arquitetos, paisagistas e clientes finais para conhecer os acabamentos
                 ao vivo e ver as peças em produção.
               </p>
               <Link to="/visitar" className="btn-gold mt-8 w-full sm:w-auto">

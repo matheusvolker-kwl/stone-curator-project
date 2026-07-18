@@ -97,7 +97,7 @@ export default function EmptyCartHints({ onNavigate }: Props) {
             <p className="flex-1 min-w-[180px] font-sans text-[15px] leading-normal text-western-stone-warm">
               Você tem{" "}
               <span className="font-semibold text-western-green-deep">{wishItems.length}</span>{" "}
-              {wishItems.length === 1 ? "peça favorita" : "peças favoritas"}. Trazer para a composição?
+              {wishItems.length === 1 ? "peça favorita" : "peças favoritas"}. Trazer para o carrinho?
             </p>
             <button
               type="button"

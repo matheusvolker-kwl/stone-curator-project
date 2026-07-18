@@ -620,8 +620,8 @@ function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: 
 
             {!cred.user_id && (
               <p className="rounded-lg border border-status-warning/35 bg-status-warning/[0.07] p-3 text-[15px] leading-[1.5] text-status-warning">
-                Cadastro sem conta vinculada — não é possível liberar o acesso. O cliente precisa se
-                cadastrar em /parceria primeiro.
+                Cadastro sem conta vinculada — não é possível liberar o acesso. O cliente precisa criar
+                a conta em /parceiro/cadastro primeiro.
               </p>
             )}
 

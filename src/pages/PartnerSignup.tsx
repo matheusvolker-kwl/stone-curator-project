@@ -311,7 +311,7 @@ export default function PartnerSignup() {
               <h1 className="display-lg mb-6">Bem-vindo à Western Pro.</h1>
               <p className="text-body mb-10 mx-auto max-w-[46ch]">
                 Sua condição B2B já está liberada — o preço de parceiro, os modelos 3D
-                e as composições já aparecem pra você. Comece a montar seu pedido.
+                e as composições já aparecem pra você. Comece a montar seu carrinho.
               </p>
               <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-center">
                 <Button asChild variant="outline" className="w-full sm:w-auto">

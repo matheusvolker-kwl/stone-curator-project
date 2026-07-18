@@ -24,7 +24,7 @@ interface Props {
   available: boolean;
 }
 
-export default function StickyBuyBarLab({
+export default function StickyBuyBar({
   triggerRef,
   productImage,
   productTitle,

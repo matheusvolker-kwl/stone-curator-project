@@ -58,7 +58,29 @@ export async function wooFetch<T = unknown>({ path, params, signal }: WooFetchOp
     const text = await res.text().catch(() => "");
     throw new Error(`woo-proxy ${res.status}: ${text.slice(0, 200)}`);
   }
-  return (await res.json()) as T;
+  const body = (await res.json()) as unknown;
+  /* A woo-proxy responde 200 com `{ error, fallback: true }` quando o Woo está
+   * fora do ar ou barrou a chamada (rate limit). Sem este guard, esse objeto
+   * seguia como se fosse a lista de produtos e a primeira operação de array
+   * estourava um TypeError ("products.filter is not a function") — a listagem e
+   * a PDP quebravam com tela branca em vez de cair no estado de erro.
+   * Lançar aqui é o que faz o React Query marcar isError e a UI reagir. */
+  if (isUpstreamFallback(body)) {
+    throw new WooUpstreamError(body.error ?? "catálogo indisponível");
+  }
+  return body as T;
+}
+
+/** Erro de upstream do catálogo — a UI pode distinguir de falha de rede. */
+export class WooUpstreamError extends Error {
+  constructor(message: string) {
+    super(`woo-proxy indisponível: ${message}`);
+    this.name = "WooUpstreamError";
+  }
+}
+
+function isUpstreamFallback(b: unknown): b is { error?: string; fallback: true } {
+  return typeof b === "object" && b !== null && (b as { fallback?: unknown }).fallback === true;
 }
 
 /**

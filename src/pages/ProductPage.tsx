@@ -35,7 +35,7 @@ import { getAplicadas } from "@/components/product/ProductInUse";
 import WishlistButton from "@/components/product/WishlistButton";
 import Reveal from "@/components/shared/Reveal";
 import { InstallationSection } from "@/components/product/InstallationModule";
-import StickyBuyBarLab from "@/components/product/lab/StickyBuyBarLab";
+import StickyBuyBar from "@/components/product/StickyBuyBar";
 import KitUpsell from "@/components/product/KitUpsell";
 import {
   getInstallationConfig,
@@ -720,7 +720,7 @@ export default function ProductPage() {
         </Reveal>
       </div>
 
-      <StickyBuyBarLab
+      <StickyBuyBar
         triggerRef={addBtnRef}
         productImage={images[0]?.url ?? null}
         productTitle={product.title}

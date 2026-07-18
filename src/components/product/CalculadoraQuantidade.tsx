@@ -204,7 +204,7 @@ export default function CalculadoraQuantidade({
                     {n > 0 ? (
                       <>
                         <span className="truncate">
-                          Usar {n} {unidade} no pedido
+                          Usar {n} {unidade} na compra
                         </span>
                         <ArrowRight className="h-5 w-5" aria-hidden />
                       </>

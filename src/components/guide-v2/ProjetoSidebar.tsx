@@ -222,7 +222,7 @@ function PanelBody({
                 <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
               ) : (
                 <>
-                  Finalizar orçamento <ExternalLink className="h-5 w-5" aria-hidden />
+                  Ir para o pagamento <ExternalLink className="h-5 w-5" aria-hidden />
                 </>
               )}
             </button>

@@ -4,7 +4,7 @@ import { useEffect, type RefObject } from "react";
  * Publica a altura de uma barra fixa inferior na CSS var --sticky-buy-bar-h.
  *
  * Overlays de rodapé (FAB do WhatsApp, pílula de lembrete) leem essa var para
- * subir ACIMA da barra em vez de cobrir o CTA. Antes só a StickyBuyBarLab (PDP)
+ * subir ACIMA da barra em vez de cobrir o CTA. Antes só a StickyBuyBar (PDP)
  * publicava — por isso o FAB cobria o botão nas barras fixas de Carrinho,
  * ConjuntoPage e Western Box. Zera na desmontagem.
  *

@@ -214,7 +214,7 @@ export default function QuoteLeadModal({
               <CheckCircle2 className="h-5 w-5 text-western-gold mt-0.5 flex-shrink-0" />
               <div className="text-sm text-western-green-deep">
                 <p className="font-medium mb-1">
-                  Composição salva {numero && <span className="tabular-nums text-[14px] text-western-gold">· Nº {numero}</span>}
+                  Orçamento salvo {numero && <span className="tabular-nums text-[14px] text-western-gold">· Nº {numero}</span>}
                 </p>
                 <p className="text-western-stone-warm leading-relaxed">
                   {isApproved
@@ -253,7 +253,7 @@ export default function QuoteLeadModal({
                   <p className="text-western-stone-warm leading-relaxed mt-2 text-[14px]">
                     {pdfBlob ? (
                       <>
-                        Quer guardar todas as suas composições?{" "}
+                        Quer guardar todos os seus orçamentos?{" "}
                         <Link
                           to="/parceiro/cadastro"
                           className="text-western-green-deep font-medium underline-offset-2 hover:underline"

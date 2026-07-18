@@ -14,6 +14,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { BUSINESS } from "@/config/business";
 import { useAuth } from "@/hooks/useAuth";
+import { usePartnerPricing } from "@/hooks/usePartnerPricing";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import EmptyCartHints from "@/components/cart/EmptyCartHints";
 
@@ -37,10 +38,18 @@ export default function CartDrawer({
   const { items, updateQuantity, removeItem } = useCartStore();
   const [quoteOpen, setQuoteOpen] = useState(false);
   const totalQty = items.reduce((s, i) => s + i.quantity, 0);
-  const subtotal = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
   const currency = items[0]?.price.currencyCode ?? "BRL";
 
   const { isApproved } = useAuth();
+  /* O desconto do tier PRECISA entrar aqui: a página do carrinho aplica
+   * (usePartnerPricing) e o drawer não aplicava — o mesmo carrinho mostrava dois
+   * valores diferentes para o parceiro, dependendo de onde ele olhasse.
+   * Fonte única do cálculo: preço da variante × quantidade × (1 − desconto). */
+  const { discountPct } = usePartnerPricing();
+  const lineTotal = (amount: string, qty: number) =>
+    parseFloat(amount) * qty * (1 - discountPct / 100);
+  const unitPrice = (amount: string) => parseFloat(amount) * (1 - discountPct / 100);
+  const subtotal = items.reduce((s, i) => s + lineTotal(i.price.amount, i.quantity), 0);
 
   // Pedido mínimo B2B — informativo (progresso no orçamento), nunca bloqueia o
   // checkout: a Western Box é vendida sem mínimo e sem cadastro.
@@ -111,7 +120,7 @@ export default function CartDrawer({
                       {isApproved ? (
                         <p className="font-sans text-[15px] font-bold tabular-nums text-western-green-deep whitespace-nowrap">
                           {formatBRL(
-                            parseFloat(item.price.amount) * item.quantity,
+                            lineTotal(item.price.amount, item.quantity),
                             item.price.currencyCode,
                           )}
                         </p>
@@ -125,7 +134,7 @@ export default function CartDrawer({
                     <p className="font-sans text-[13px] text-western-stone-warm mt-0.5 truncate">
                       {item.selectedOptions.map((o) => o.value).join(" · ")}
                       {isApproved && item.quantity > 1 && (
-                        <> · {formatBRL(item.price.amount, item.price.currencyCode)} / peça</>
+                        <> · {formatBRL(unitPrice(item.price.amount), item.price.currencyCode)} / peça</>
                       )}
                     </p>
 

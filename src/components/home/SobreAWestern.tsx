@@ -49,7 +49,7 @@ const PASSOS = [
     Icon: Feather,
     titulo: "Cerca de 10% do peso",
     corpo:
-      "Cascata Santa Bárbara: 280 kg. A mesma peça em pedra natural passaria de 3 toneladas.",
+      "Cascata Santa Bárbara: 280 kg. A mesma peça em pedra natural pesaria quase 3 toneladas.",
   },
   {
     Icon: Box,
@@ -105,7 +105,7 @@ export default function SobreAWestern() {
             </div>
             <div className="md:col-span-5 md:pb-1.5">
               <p className="text-body max-w-[44ch]">
-                Réplica autoral de pedra natural, feita à mão. Entenda em quatro passos por que ela
+                Réplica autoral de pedra natural, feita à mão. Entenda em seis passos por que ela
                 entra onde a rocha nunca entraria.
               </p>
               <p className="text-meta mt-3">Ateliê próprio em Cajamar, desde 1993.</p>

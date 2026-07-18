@@ -89,7 +89,7 @@ export default function KitUpsell({ product, variant }: Props) {
         >
           {added ? (
             <>
-              <Check className="h-3.5 w-3.5 text-western-gold" /> No pedido
+              <Check className="h-3.5 w-3.5 text-western-gold" /> No carrinho
             </>
           ) : (
             "Adicionar kit"

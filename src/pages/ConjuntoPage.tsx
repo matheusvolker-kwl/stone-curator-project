@@ -236,7 +236,7 @@ export default function ConjuntoPage() {
       });
       return;
     }
-    toast.success("Projeto salvo em Minha Conta › Composições.");
+    toast.success("Projeto salvo em Minha conta.");
   };
 
   const jsonLd = {

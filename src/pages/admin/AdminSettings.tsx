@@ -218,7 +218,7 @@ export default function AdminSettings() {
               {salvando
                 ? "Salvando…"
                 : sujos.length > 0
-                  ? `Salvar ${sujos.length} alteração${sujos.length > 1 ? "ões" : ""}`
+                  ? `Salvar ${sujos.length} ${sujos.length > 1 ? "alterações" : "alteração"}`
                   : "Salvar alterações"}
             </button>
           ) : undefined

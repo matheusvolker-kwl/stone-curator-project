@@ -111,7 +111,7 @@ export const useCartStore = create<CartStore>()(
         notifyCartChanged(
           opts?.silent
             ? undefined
-            : { toastLabel: "Adicionada ao orçamento", toastDescription: item.productTitle },
+            : { toastLabel: "Adicionada ao carrinho", toastDescription: item.productTitle },
         );
       },
 
@@ -143,7 +143,7 @@ export const useCartStore = create<CartStore>()(
                 toastLabel:
                   opts?.label ??
                   (newItems.length > 1
-                    ? `${newItems.length} peças adicionadas ao orçamento`
+                    ? `${newItems.length} peças adicionadas ao carrinho`
                     : `${totalQty > 1 ? `${totalQty} ` : ""}Adicionada ao orçamento`),
                 toastDescription: opts?.description,
               },
