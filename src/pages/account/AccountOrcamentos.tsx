@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Download, FileStack, Loader2 } from "lucide-react";
+import { Download, FileStack, Loader2, ShoppingBag } from "lucide-react";
 import { cdnImg, formatBRL } from "@/lib/catalog/client";
+import { buildCartItem, useCartStore } from "@/stores/cartStore";
+import { fetchProductsByHandlesHydrated } from "@/lib/datasource";
 import {
   EstadoErro,
   EstadoVazio,
@@ -34,6 +36,10 @@ interface PayloadItem {
   title?: string;
   image?: string | null;
   quantity?: number;
+  /** Guardados por summarizeItems desde 2026-07 — permitem recriar o carrinho. */
+  handle?: string;
+  variantId?: string;
+  options?: { name: string; value: string }[];
 }
 
 interface Lead {
@@ -208,6 +214,76 @@ export default function AccountOrcamentos() {
     }
   };
 
+  /* "Adicionar ao carrinho" — o retorno do orçamento (pedido do dono, 18/07):
+   * o parceiro acerta com o cliente dele e volta dias depois. Recriamos o
+   * carrinho RE-HIDRATANDO cada peça por handle no catálogo atual (preço de
+   * hoje, disponibilidade de hoje) e casando a variante por id — nunca clonando
+   * dados velhos do payload. Peça fora do ar não entra e é contada no aviso. */
+  const addItem = useCartStore((s) => s.addItem);
+  const [recriando, setRecriando] = useState<string | null>(null);
+
+  const adicionarAoCarrinho = async (it: Orcamento) => {
+    const pecas = (Array.isArray(it.payload?.items) ? it.payload!.items! : []) as PayloadItem[];
+    const compraveis = pecas.filter((p) => p.handle);
+    if (compraveis.length === 0) {
+      toast.error("Este orçamento é antigo e não guarda os dados das peças — monte pelo catálogo.");
+      return;
+    }
+    setRecriando(it.id);
+    try {
+      const handles = [...new Set(compraveis.map((p) => p.handle!))];
+      const produtos = await fetchProductsByHandlesHydrated(handles);
+      const porHandle = new Map(produtos.map((p) => [p.handle, p]));
+      let ok = 0;
+      let fora = 0;
+
+      for (const p of compraveis) {
+        const produto = porHandle.get(p.handle!);
+        if (!produto) {
+          fora++;
+          continue;
+        }
+        const variantes = produto.variants.edges.map((e) => e.node);
+        const porId = p.variantId ? variantes.find((v) => v.id === p.variantId) : undefined;
+        const porOpcoes =
+          !porId && p.options?.length
+            ? variantes.find((v) =>
+                p.options!.every((o) =>
+                  v.selectedOptions.some((s) => s.name === o.name && s.value === o.value),
+                ),
+              )
+            : undefined;
+        const variante = porId ?? porOpcoes;
+        if (!variante) {
+          fora++;
+          continue;
+        }
+        const item = buildCartItem(produto, variante.id, p.quantity ?? 1);
+        if (item) {
+          addItem(item, { silent: true });
+          ok++;
+        } else {
+          fora++;
+        }
+      }
+
+      if (ok > 0) {
+        toast.success(
+          `${ok} ${ok === 1 ? "peça adicionada" : "peças adicionadas"} ao carrinho` +
+            (fora > 0 ? ` · ${fora} ${fora === 1 ? "indisponível" : "indisponíveis"}` : "") +
+            ".",
+          { action: { label: "Ver", onClick: () => window.dispatchEvent(new CustomEvent("western:open-cart")) } },
+        );
+      } else {
+        toast.error("As peças deste orçamento não estão mais disponíveis no catálogo.");
+      }
+    } catch {
+      toast.error("Não consegui recriar o carrinho agora. Tente de novo em instantes.");
+    } finally {
+      setRecriando(null);
+    }
+  };
+
   const botaoPdf = (pdf: QuotePdf) => (
     <button
       type="button"
@@ -300,7 +376,14 @@ export default function AccountOrcamentos() {
 
                   <div className="flex flex-1 flex-col p-5">
                     <p className="text-meta">
-                      {it.payload?.numero ? `Nº ${it.payload.numero} · ` : ""}
+                      {it.payload?.numero && (
+                        <>
+                          <span className="font-semibold tracking-wide text-western-bronze">
+                            Nº {it.payload.numero}
+                          </span>
+                          {" · "}
+                        </>
+                      )}
                       <time dateTime={it.created_at} title={dataAbsoluta(it.created_at)}>
                         {dataRelativa(it.created_at)}
                       </time>
@@ -318,9 +401,24 @@ export default function AccountOrcamentos() {
                       <p className="text-meta mt-2 line-clamp-2">{it.payload.summary}</p>
                     )}
 
-                    <div className="mt-4 flex items-center justify-between gap-3 border-t border-western-border-soft pt-4">
+                    <div className="mt-4 space-y-3 border-t border-western-border-soft pt-4">
                       <StatusBadge status={status} label={ROTULO_CLIENTE[status]} />
-                      {it.pdf && botaoPdf(it.pdf)}
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => void adicionarAoCarrinho(it)}
+                          disabled={recriando === it.id}
+                          className="tap-target inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-western-cta px-4 text-[15px] font-semibold text-western-cream transition-colors hover:bg-western-green-deep disabled:opacity-50"
+                        >
+                          {recriando === it.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                          ) : (
+                            <ShoppingBag className="h-4 w-4" aria-hidden="true" />
+                          )}
+                          Adicionar ao carrinho
+                        </button>
+                        {it.pdf && botaoPdf(it.pdf)}
+                      </div>
                     </div>
                   </div>
                 </li>

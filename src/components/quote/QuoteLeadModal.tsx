@@ -106,7 +106,7 @@ export default function QuoteLeadModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (items.length === 0) {
-      toast.error("Adicione peças à composição antes de pedir orçamento.");
+      toast.error("Adicione peças ao carrinho antes de pedir o orçamento.");
       return;
     }
     const parsed = baseSchema.safeParse(form);
@@ -183,13 +183,13 @@ export default function QuoteLeadModal({
   })();
 
   const headerTitle =
-    title ?? (origem === "guia_composicao" ? "Baixar composição do projeto" : "Baixar sua composição");
+    title ?? (origem === "guia_composicao" ? "Baixar orçamento do projeto" : "Baixar seu orçamento");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-western-cream border-western-stone-warm/20">
         <DialogHeader>
-          <p className="text-eyebrow">Composição em PDF</p>
+          <p className="text-eyebrow">Orçamento em PDF</p>
           <DialogTitle className="font-display text-2xl text-western-green-deep">
             {success
               ? pdfBlob
@@ -201,10 +201,10 @@ export default function QuoteLeadModal({
             {success
               ? pdfBlob
                 ? "Baixe o PDF abaixo. Se quiser, fale com um vendedor pelo WhatsApp para tirar dúvidas."
-                : "Recebemos sua composição — nosso time comercial entra em contato em breve. Se preferir, fale agora pelo WhatsApp."
+                : "Recebemos seu orçamento — nosso time comercial entra em contato em breve. Se preferir, fale agora pelo WhatsApp."
               : isLogged
                 ? "Confirme seus dados e libere o PDF — também salvamos na sua conta."
-                : "Preencha rapidinho para liberar o PDF da sua composição."}
+                : "Preencha rapidinho para liberar o PDF do seu orçamento."}
           </DialogDescription>
         </DialogHeader>
 
@@ -235,10 +235,10 @@ export default function QuoteLeadModal({
                         .
                       </>
                     ) : pdfBlob ? (
-                      "Baixe o PDF abaixo para guardar sua composição."
+                      "Baixe o PDF abaixo para guardar seu orçamento."
                     ) : (
                       <>
-                        Sua composição ficou registrada em{" "}
+                        Seu orçamento ficou registrado em{" "}
                         <Link
                           to="/minha-conta/orcamentos"
                           className="text-western-green-deep font-medium underline-offset-2 hover:underline"
@@ -263,7 +263,7 @@ export default function QuoteLeadModal({
                         e elas ficam salvas pra sempre.
                       </>
                     ) : (
-                      "Recebemos sua composição — nosso time comercial entra em contato em breve pelo e-mail ou WhatsApp informado."
+                      "Recebemos seu orçamento — nosso time comercial entra em contato em breve pelo e-mail ou WhatsApp informado."
                     )}
                   </p>
                 )}
@@ -283,7 +283,7 @@ export default function QuoteLeadModal({
                 onClick={handleDownloadPdf}
                 className="w-full h-11 inline-flex items-center justify-center gap-2 border border-western-green-deep/30 text-western-green-deep hover:border-western-green-deep font-semibold text-[14px] uppercase tracking-[0.06em] transition-colors"
               >
-                <FileDown className="h-4 w-4" /> Baixar PDF da composição
+                <FileDown className="h-4 w-4" /> Baixar PDF do orçamento
               </button>
             )}
             <button
@@ -304,7 +304,7 @@ export default function QuoteLeadModal({
                   {form.empresa && <> · {form.empresa}</>}.
                   <br />
                   <span className="text-western-stone-warm">
-                    Sua composição vai ficar salva em{" "}
+                    Seu orçamento vai ficar salvo em{" "}
                     <Link
                       to="/minha-conta/orcamentos"
                       className="underline-offset-2 hover:underline"
@@ -324,7 +324,7 @@ export default function QuoteLeadModal({
                 >
                   Entre na sua conta
                 </Link>{" "}
-                para guardar suas composições.
+                para guardar seus orçamentos.
               </p>
             )}
 
@@ -428,13 +428,13 @@ export default function QuoteLeadModal({
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <>
-                  <FileDown className="h-4 w-4" /> {ctaLabel ?? "Liberar PDF"}
+                  <FileDown className="h-4 w-4" /> {ctaLabel ?? "Liberar o PDF do orçamento"}
                 </>
               )}
             </button>
 
             <p className="text-[14px] text-western-stone-warm text-center leading-relaxed">
-              Ao liberar o PDF, sua composição é salva no nosso painel — assim podemos te ajudar caso precise.
+              Ao liberar o PDF, seu orçamento fica salvo com a gente — assim o time pode te ajudar quando você voltar.
             </p>
           </form>
         )}

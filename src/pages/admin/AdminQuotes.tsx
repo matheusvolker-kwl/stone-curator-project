@@ -15,7 +15,7 @@ import {
   type QuoteThread,
   type QuotePayload,
 } from "@/components/admin/quoteTypes";
-import { formatBRL } from "@/lib/catalog/client";
+import { cdnImg, formatBRL } from "@/lib/catalog/client";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { toast } from "sonner";
 
@@ -293,12 +293,32 @@ export default function AdminQuotes() {
       {
         key: "itens",
         header: "Peças",
-        align: "right",
-        width: "90px",
+        width: "150px",
         sortable: true,
         ocultarNoMobile: true,
         sortValue: (r) => r.payload.items?.length ?? 0,
-        render: (r) => <span>{r.payload.items?.length ?? 0}</span>,
+        /* Miniaturas (pedido do dono, 18/07): o atendente reconhece o orçamento
+         * pela FOTO das peças, não pela contagem. Até 3 thumbs + contador. */
+        render: (r) => {
+          const itens = r.payload.items ?? [];
+          const fotos = itens.filter((i) => Boolean(i.image)).slice(0, 3);
+          return (
+            <span className="inline-flex items-center gap-1.5">
+              {fotos.map((i, idx) => (
+                <img
+                  key={idx}
+                  src={cdnImg(i.image ?? "", 96)}
+                  alt=""
+                  loading="lazy"
+                  className="h-8 w-8 rounded-md border border-western-border-soft bg-western-paper object-contain"
+                />
+              ))}
+              <span className="tabular-nums text-[15px] font-semibold">
+                {itens.length}
+              </span>
+            </span>
+          );
+        },
       },
       {
         key: "valor",

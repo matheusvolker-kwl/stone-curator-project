@@ -631,7 +631,7 @@ export default function Carrinho() {
                       className="w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg border border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper font-sans text-[16px] font-semibold transition-colors"
                     >
                       <Download className="h-5 w-5" aria-hidden="true" />
-                      Baixar composição (PDF)
+                      Baixar orçamento (PDF)
                     </button>
                   </div>
 
