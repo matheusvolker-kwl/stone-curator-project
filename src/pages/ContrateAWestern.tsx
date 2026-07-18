@@ -39,7 +39,11 @@ import FieldLabel from "@/components/forms/FieldLabel";
 import { onlyDigits, formatPhoneBR } from "@/lib/forms/br";
 
 // Imagens reais reaproveitadas do projeto (webp otimizadas)
-import heroImg from "@/assets/projetos-western/03_piscina-cascata.webp";
+/* Hero novo (escolha do dono, 18/07): "instalação em andamento" — a equipe
+   carregando a PP3 na mão com a Santa Bárbara já posicionada, golden hour,
+   sem céu estourado. Pipeline: cena produto-travada → 4K ByteDance → grão σ7. */
+import heroImg from "@/assets/contrate/hero-instalacao.webp";
+import heroImgMob from "@/assets/contrate/hero-instalacao-mob.webp";
 import serraImg from "@/assets/projetos-western/06_piscina-cascata-serra.webp";
 
 const WHATSAPP_MSG_DEFAULT =
@@ -273,15 +277,18 @@ export default function ContrateAWestern() {
           assunto) + véu na base para a régua de confiança, que subiu para DENTRO
           da dobra — o "por que confiar" aparece sem rolar. */}
       <section className="relative isolate overflow-hidden flex flex-col min-h-[560px] md:min-h-[640px]">
-        <img
-          src={heroImg}
-          alt="Piscina com cascata Western em projeto residencial"
-          width={1600}
-          height={1000}
-          loading="eager"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+        <picture>
+          <source media="(min-width: 768px)" srcSet={heroImg} width={2400} height={1350} />
+          <img
+            src={heroImgMob}
+            alt="Equipe Western instalando pedras na borda de uma piscina de praia em obra, ao entardecer"
+            width={1080}
+            height={1550}
+            loading="eager"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        </picture>
         <div
           className="absolute inset-0 pointer-events-none hidden md:block"
           aria-hidden
