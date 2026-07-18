@@ -180,29 +180,33 @@ function ObraLook({ obra, index }: { obra: Obra; index: number }) {
         <div className="mt-7">
           {comprable ? (
             <>
-              <button
-                type="button"
-                onClick={onAdd}
-                disabled={isLoading}
-                className="btn-primary w-full sm:w-auto"
-              >
-                {added ? (
-                  <>
-                    <Check className="h-5 w-5" /> Adicionada ao orçamento
-                  </>
-                ) : (
-                  <>
-                    <Plus className="h-5 w-5" /> Adicionar ao orçamento
-                  </>
-                )}
-              </button>
-              <div className="mt-4 flex items-center justify-between gap-4">
-                <GatedPrice amount={totalPreco} variant="block" className="text-price" />
+              {/* Preço em cima; abaixo as DUAS ações LADO A LADO. "Ver a obra"
+                  virou botão outline (não mais link de texto discreto), pareado
+                  com "Adicionar ao orçamento" — dono pediu mais visível/acessível
+                  e ao lado (2026-07-18). */}
+              <GatedPrice amount={totalPreco} variant="block" className="text-price" />
+              <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                <button
+                  type="button"
+                  onClick={onAdd}
+                  disabled={isLoading}
+                  className="btn-primary w-full sm:w-auto"
+                >
+                  {added ? (
+                    <>
+                      <Check className="h-5 w-5" /> Adicionada ao orçamento
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-5 w-5" /> Adicionar ao orçamento
+                    </>
+                  )}
+                </button>
                 <Link
                   to={`/obras/${obra.slug}`}
-                  className="tap-target inline-flex items-center gap-1.5 font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-bronze shrink-0"
+                  className="btn-outline-forest w-full sm:w-auto"
                 >
-                  Ver a obra <ArrowRight className="h-4 w-4" />
+                  Ver a obra <ArrowRight className="h-5 w-5" />
                 </Link>
               </div>
             </>

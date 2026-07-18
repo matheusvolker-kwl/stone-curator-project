@@ -57,8 +57,10 @@ export const CATALOG_SCENES: CatalogScene[] = [
   {
     key: "detalhes",
     titulo: "Detalhes",
-    descricao: "Acessórios, iluminação e fósseis para o arremate.",
-    handles: ["acessorios", "pedra-led", "fosseis-decorativos"],
+    // "pedra-led" saiu do índice de categorias (dono, 2026-07-18): é um PRODUTO,
+    // não uma categoria — continua acessível pela peça/busca, não como card aqui.
+    descricao: "Acessórios e fósseis para o arremate.",
+    handles: ["acessorios", "fosseis-decorativos"],
   },
 ];
 

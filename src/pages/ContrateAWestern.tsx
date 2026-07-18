@@ -44,7 +44,10 @@ import { onlyDigits, formatPhoneBR } from "@/lib/forms/br";
    sem céu estourado. Pipeline: cena produto-travada → 4K ByteDance → grão σ7. */
 import heroImg from "@/assets/contrate/hero-instalacao.webp";
 import heroImgMob from "@/assets/contrate/hero-instalacao-mob.webp";
-import serraImg from "@/assets/projetos-western/06_piscina-cascata-serra.webp";
+// Foto da seção "Por que a Western": a EQUIPE instalando (executora), não uma
+// cascata genérica — casa com "a fábrica e a executora, do render 3D à obra"
+// e com os cards de diferencial ao lado. Troca pedida pelo dono (2026-07-18).
+import serraImg from "@/assets/parceria-instalacao.webp";
 
 const WHATSAPP_MSG_DEFAULT =
   "Olá, Western! Quero agendar a consultoria gratuita para o meu projeto.";
@@ -393,7 +396,7 @@ export default function ContrateAWestern() {
                 <div className="mt-8 aspect-[4/3] overflow-hidden rounded-xl">
                   <img
                     src={serraImg}
-                    alt="Piscina com cascata Western em meio à serra"
+                    alt="Equipe própria da Western instalando peças em obra"
                     width={800}
                     height={600}
                     loading="lazy"

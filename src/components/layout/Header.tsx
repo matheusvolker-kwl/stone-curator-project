@@ -622,7 +622,11 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           {!session && (
             <Link
               to={PARTNER_INTENT.to}
-              className="ml-auto inline-flex items-center justify-center min-h-tap px-5 rounded-lg bg-western-cta text-western-cream text-[15px] font-semibold whitespace-nowrap hover:bg-western-green-deep transition-colors"
+              /* h-10 (não min-h-tap): o botão tinha só 4px de folga na barra e
+                 encostava no border-b do header (dono: "apertado entre as
+                 margens"). 40px dá 8px de respiro — a barra mantém a altura pelo
+                 Menu (min-h-tap), então nada de sticky se desloca. */
+              className="ml-auto inline-flex h-10 items-center justify-center px-5 rounded-lg bg-western-cta text-western-cream text-[15px] font-semibold whitespace-nowrap hover:bg-western-green-deep transition-colors"
             >
               {PARTNER_INTENT.label}
             </Link>
