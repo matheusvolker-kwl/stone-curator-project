@@ -113,10 +113,18 @@ export default function SobreAWestern() {
           </div>
         </Reveal>
 
-        {/* O PRODUTO COMO PALCO — PG3 ambientada na prainha. */}
+        {/* O PRODUTO COMO PALCO — PG3 ambientada na prainha.
+            V1 + estudo de foto (escolha do dono, 18/07):
+            · legenda ÚNICA — fato e link na MESMA linha (a dupla legenda lia
+              desorganizada no celular);
+            · mobile 3:2 (mais baixa que o 4:3 — a foto é palco, não dobra
+              inteira) e margens mais próximas do cabeçalho e da legenda;
+            · desktop segue panorâmica 21:9, mas com o vão acima reduzido pra
+              puxar os passos de volta pra dobra. Foco da foto mantido em
+              50%/62% (a pedra na areia é o assunto). */}
         <Reveal variant="fade-up" duration={700}>
-          <figure className="mt-10 md:mt-12">
-            <div className="relative overflow-hidden rounded-xl aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9]">
+          <figure className="mt-6 md:mt-8">
+            <div className="relative overflow-hidden rounded-xl aspect-[3/2] sm:aspect-[16/9] lg:aspect-[21/9]">
               <img
                 src={pg3Ambientada}
                 alt="Pedra Grande 3 — peça Western instalada na prainha de uma piscina de praia"
@@ -127,11 +135,16 @@ export default function SobreAWestern() {
                 className="absolute inset-0 h-full w-full object-cover object-[50%_62%]"
               />
             </div>
-            <figcaption className="mt-4 flex items-baseline justify-between gap-4">
-              <p className="text-body text-western-green-deep">
-                Pedra Grande 3, instalada na prainha — pisável, com a fiação escondida por dentro.
+            <figcaption className="mt-2.5">
+              <p className="text-meta">
+                Pedra Grande 3, instalada na prainha — pisável, com a fiação por dentro ·{" "}
+                <Link
+                  to="/linhas/pedras-grandes"
+                  className="font-semibold text-western-green-deep underline decoration-western-gold underline-offset-2 hover:decoration-2 transition-all"
+                >
+                  Ver no catálogo
+                </Link>
               </p>
-              <p className="text-meta shrink-0">Catálogo · Pedras Grandes</p>
             </figcaption>
           </figure>
         </Reveal>
@@ -140,7 +153,7 @@ export default function SobreAWestern() {
         <Reveal variant="fade-up" duration={650}>
           {/* 6 passos = 2 fileiras de 3 no desktop (4+2 desequilibra); 2 col no
               tablet; pilha no celular. */}
-          <ol className="mt-10 md:mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-12 border-t border-western-border-soft pt-8 md:pt-10">
+          <ol className="mt-8 md:mt-10 grid gap-7 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-10 border-t border-western-border-soft pt-7 md:pt-8">
             {PASSOS.map(({ Icon, titulo, corpo }, i) => (
               <li key={titulo}>
                 <div className="flex items-center gap-3">

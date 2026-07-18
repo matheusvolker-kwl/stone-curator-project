@@ -201,10 +201,11 @@ export default function SocialProof({
   );
 
   /* Marcas = WORDMARK tipográfico (decisão de marca: nunca logotipo).
-   * Sans semibold, ≥16px, opacidade cheia — legibilidade não depende de hover. */
+   * Dentro de pill (V1, 18/07) o wordmark desce pra 13.5–14.5px — a moldura
+   * compensa o tamanho; piso de leitura preservado. */
   const wordmarkFs = compact
-    ? { mobile: 16, desktop: 18 }
-    : { mobile: 17, desktop: 20 };
+    ? { mobile: 13.5, desktop: 14 }
+    : { mobile: 13.5, desktop: 14.5 };
   const renderMarca = (m: MarcaComLogo) => {
     const prova = interactive ? resolverProva(m.slug) : null;
     const wordmark = (
@@ -323,17 +324,19 @@ export default function SocialProof({
           <p className={`${isLeft ? "" : "text-center"} ${eyebrowCls} mb-6 md:mb-7`}>
             {SOCIAL_PROOF_LABELS.marcas}
           </p>
-          {/* Distribuição EVEN por grade: 8 wordmarks em 2 col (mobile) → 4 col
-              (desktop) = 4 linhas de 2 / 2 linhas de 4. Nunca o flex-wrap
-              esfarrapado com órfãos e larguras dançando. Alinha ao trilho quando
-              align="left". Nomes longos quebram no centro da célula (sem nowrap). */}
-          <ul
-            className={`grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4 md:gap-x-8 ${
-              isLeft ? "justify-items-start" : "justify-items-center"
-            }`}
-          >
+          {/* V1 (escolha do dono, 18/07): PILLS em wrap denso — as 8 marcas
+              viram um bloco só, metade da altura da antiga grade de 2/4
+              colunas. O pill dá moldura ao wordmark sem inventar logotipo. */}
+          <ul className={`flex flex-wrap gap-2 ${isLeft ? "" : "justify-center"}`}>
             {(SOCIAL_PROOF.marcas as readonly MarcaComLogo[]).map((m) => (
-              <li key={m.slug} className="flex items-center">
+              <li
+                key={m.slug}
+                className={`inline-flex items-center rounded-full border px-3.5 py-1.5 ${
+                  isDark
+                    ? "border-western-cream/25 bg-western-green-mid/30"
+                    : "border-western-border-soft bg-white"
+                }`}
+              >
                 {renderMarca(m)}
               </li>
             ))}

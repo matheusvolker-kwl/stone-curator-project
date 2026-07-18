@@ -309,27 +309,18 @@ export default function Index() {
                 50% é a distância do preço B2B para o preço B2C, e o tier corre em
                 cima dessa base. Mesma palavra para as duas quebraria a promessa
                 no primeiro login. */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 md:gap-x-8 gap-y-6 md:gap-y-0 mt-7 pt-5 border-t border-western-cream/20">
-              {[
-                { b: "50%", s: "abaixo do varejo, em média", destaque: true },
-                { b: "8", s: "linhas de produtos", destaque: false },
-                { b: "+300 mil", s: "downloads no SketchUp", destaque: false },
-                { b: "33 anos", s: "de ateliê", destaque: false },
-              ].map((x) => (
-                <div key={x.s}>
-                  <p
-                    className={`display-md tabular-nums ${
-                      x.destaque ? "text-western-gold-soft" : "text-western-cream"
-                    }`}
-                  >
-                    {x.b}
-                  </p>
-                  <p className="text-[14px] leading-[1.3] text-western-cream/70 mt-1.5 min-h-[2.6em]">
-                    {x.s}
-                  </p>
-                </div>
-              ))}
-            </div>
+            {/* V1 (escolha do dono, 18/07): a régua 2×2 virou UMA linha corrida
+                com separadores — desk e mobile. O hero fecha ~110px mais cedo
+                no celular e os números param de disputar com os CTAs. */}
+            <p className="mt-6 pt-4 border-t border-western-cream/20 font-sans text-[13px] md:text-[14px] leading-[1.8] text-western-cream/80 max-w-xl">
+              <b className="font-semibold text-western-gold-soft">50%</b> abaixo do varejo, em média
+              {" · "}
+              <b className="font-semibold text-western-cream">8</b> linhas de produtos
+              {" · "}
+              <b className="font-semibold text-western-cream">+300 mil</b> downloads no SketchUp
+              {" · "}
+              <b className="font-semibold text-western-cream">33 anos</b> de ateliê
+            </p>
           </div>
         </div>
       </section>
@@ -348,47 +339,34 @@ export default function Index() {
           estes números viviam na 11ª seção: a página cobrava o crédito muito
           antes de mostrar o extrato. Cento e vinte pixels resolvem o que uma
           reordenação inteira tentava resolver. */}
+      {/* V1 (escolha do dono, 18/07): duas linhas FIXAS — números numa linha
+          corrida; marcas numa fita horizontal rolável sem quebra (as 8, não 5).
+          No desktop as duas dividem a mesma linha: números à esquerda, fita à
+          direita ocupando o resto. Nada mais quebra em wrap solto. */}
       <section className="surface-paper border-y border-western-border-soft">
-        <div className="container-western py-6 md:py-7">
-          <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-5">
-            <div className="flex gap-8 md:gap-10">
-              {[
-                { n: "4,9", l: "no Google", stars: true },
-                { n: "+14 mil", l: "no Instagram", stars: false },
-                { n: "+700", l: "obras entregues", stars: false },
-              ].map((s) => (
-                <div key={s.l}>
-                  {/* estrelas NA LINHA do número: embaixo elas criavam uma 3ª
-                      linha só no "4,9" e desalinhavam os três da faixa. */}
-                  <div className="flex items-baseline gap-1.5">
-                    <p className="font-display text-[20px] md:text-[22px] leading-none text-western-green-deep tabular-nums">
-                      {s.n}
-                    </p>
-                    {s.stars && (
-                      <span className="text-[9px] tracking-[0.15em] text-western-gold" aria-hidden="true">
-                        ★★★★★
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-1.5 text-[13px] leading-snug text-western-stone-warm">{s.l}</p>
-                </div>
-              ))}
-            </div>
-            {/* Os wordmarks precisam de rótulo: soltos, oito nomes próprios não
-                dizem se são clientes, parceiros ou fornecedores. */}
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-western-stone-warm/55">
+        <div className="container-western py-4 md:py-5">
+          <div className="flex flex-col gap-2.5 md:flex-row md:items-center md:justify-between md:gap-10">
+            <p className="shrink-0 font-sans text-[13.5px] md:text-[14px] text-western-stone-warm whitespace-nowrap">
+              <b className="font-display text-[16px] md:text-[17px] text-western-green-deep tabular-nums">4,9</b>{" "}
+              <span className="text-[9px] tracking-[0.15em] text-western-gold" aria-hidden="true">★★★★★</span> no Google
+              {" · "}
+              <b className="font-display text-[16px] md:text-[17px] text-western-green-deep tabular-nums">+14 mil</b> no Instagram
+              {" · "}
+              <b className="font-display text-[16px] md:text-[17px] text-western-green-deep tabular-nums">+700</b> obras entregues
+            </p>
+            <div className="flex min-w-0 items-center gap-x-5 overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <span className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.1em] text-western-stone-warm/55">
                 Escolhida por
               </span>
-              <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 md:gap-x-8">
-              {SOCIAL_PROOF.marcas.slice(0, 5).map((m) => (
-                <li
-                  key={m.slug}
-                  className="font-sans text-[14px] md:text-[15px] font-semibold text-western-stone-warm/85"
-                >
-                  {m.nome}
-                </li>
-              ))}
+              <ul className="flex items-center gap-x-5 md:gap-x-6">
+                {SOCIAL_PROOF.marcas.map((m) => (
+                  <li
+                    key={m.slug}
+                    className="shrink-0 font-sans text-[13.5px] md:text-[14px] font-semibold text-western-stone-warm/85"
+                  >
+                    {m.nome}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
