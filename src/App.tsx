@@ -63,8 +63,6 @@ const Inspiracoes = lazy(() => import("./pages/Inspiracoes.tsx"));
 const ObraPage = lazy(() => import("./pages/ObraPage.tsx"));
 const ComoComprar = lazy(() => import("./pages/ComoComprar.tsx"));
 const ParaSuaCasa = lazy(() => import("./pages/ParaSuaCasa.tsx"));
-// LAB local (não publicar): comparação de versões do abaixo-da-compra da PDP
-const LabPdp = lazy(() => import("./pages/LabPdp.tsx"));
 const Carrinho = lazy(() => import("./pages/Carrinho.tsx"));
 const Linhas = lazy(() => import("./pages/Linhas.tsx"));
 const LinhaPage = lazy(() => import("./pages/LinhaPage.tsx"));
@@ -195,7 +193,7 @@ const App = () => (
                     <Route path="/conjuntos/:handle" element={<ConjuntoPage />} />
                     <Route path="/produtos" element={<Produtos />} />
                     <Route path="/produtos/:handle" element={<ProductPage />} />
-                    <Route path="/lab/produtos/:handle" element={<LabProductRedirect />} />
+                    <Route path="/lab/produtos/:handle" element={<LabProductRedirect />} />
                     <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
                     <Route path="/sobre" element={<About />} />
                     <Route path="/a-pedra" element={<APedra />} />
