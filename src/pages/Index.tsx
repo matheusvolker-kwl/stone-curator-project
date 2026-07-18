@@ -91,8 +91,70 @@ export default function Index() {
    * do hero trocam de missão (recompra > cadastro) e a faixa de credenciamento
    * some (pedir acesso a quem já tem acesso era ruído). Quem volta navega pelo
    * header; a home só precisa não ATRAPALHAR quem já é de casa. */
-  const { session, isApproved } = useAuth();
+  const { session, isApproved, empresa } = useAuth();
+  const isPartnerHome = !!session && isApproved;
   const cartCount = useCartStore((s) => s.items.reduce((n, i) => n + i.quantity, 0));
+
+  /* Vitrine extraída para renderização condicional: parceiro aprovado vê os
+   * Mais vendidos LOGO APÓS o hero (fase 2 da personalização); visitante segue
+   * com a narrativa completa (tecnologia → vitrine). */
+  const vitrineMaisVendidos = (
+    <>
+      {/* Mais vendidos (catálogo dinâmico). Ordem pedida pelo dono: best-sellers
+          primeiro, depois as linhas, e só então "o que você vai construir".
+          (A antiga "barra de confiança" saiu daqui: repetia 10% do peso / garantia
+          / reposição / 50 modelos, que a seção "O que é a Western Store" já diz.) */}
+      <section className="surface-paper section border-t border-western-border-soft" id="produtos">
+        <div className="container-western">
+          <Reveal variant="fade-up" duration={700}>
+            <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
+              <div>
+                <p className="text-eyebrow mb-3">Os mais pedidos</p>
+                <h2 className="display-lg text-western-green-deep">Mais vendidos.</h2>
+              </div>
+              <Link
+                to="/produtos"
+                className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
+              >
+                Ver catálogo completo <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+              </Link>
+            </div>
+          </Reveal>
+          {loadingFeatured && featured.length === 0 ? (
+            <div className={featuredTrack}>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className={`${featuredItem} space-y-3`}>
+                  <div className="aspect-square rounded-2xl bg-western-stone-warm/10 animate-pulse" />
+                  <div className="h-5 w-3/4 rounded-sm bg-western-stone-warm/10 animate-pulse" />
+                  <div className="h-4 w-1/3 rounded-sm bg-western-stone-warm/10 animate-pulse" />
+                </div>
+              ))}
+            </div>
+          ) : featured.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-western-border-strong p-10 text-center text-body">
+              Catálogo indisponível no momento. Tente recarregar em instantes.
+            </div>
+          ) : (
+            <div className={featuredTrack}>
+              {featured.slice(0, 8).map((p, i) => (
+                <Reveal
+                  key={p.node.id}
+                  className={featuredItem}
+                  variant="fade-up"
+                  delay={(i % 4) * 90}
+                  duration={650}
+                  distance={20}
+                >
+                  <ProductCard product={p.node} />
+                </Reveal>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+    </>
+  );
 
   return (
     <>
@@ -172,6 +234,11 @@ export default function Index() {
             no TOPO (items-start) e a foto respira na base; no desktop, centro. */}
         <div className="relative container-western w-full pt-14 pb-20 md:py-24">
           <div className="w-full max-w-2xl text-western-cream animate-fade-in-up">
+            {isPartnerHome && (
+              <p className="text-eyebrow text-western-gold-soft mb-3">
+                Bem-vindo de volta{empresa ? ` · ${empresa}` : ""}
+              </p>
+            )}
             <div className="w-12 h-px bg-western-gold mb-6" />
             <h1 className="display-xl text-western-cream">
               Natureza que ninguém acredita ser{" "}
@@ -267,63 +334,14 @@ export default function Index() {
         </div>
       </section>
 
+      {isPartnerHome && vitrineMaisVendidos}
+
       {/* 1b — Segmentação B2B×B2C inline (substitui o antigo modal de entrada).
           Uma porta só para "por onde começar": profissional (vê preço) ou casa. */}
       {/* 1 — O que é a Western Store (orientação p/ quem cai de paraquedas) */}
       <SobreAWestern />
 
-      {/* Mais vendidos (catálogo dinâmico). Ordem pedida pelo dono: best-sellers
-          primeiro, depois as linhas, e só então "o que você vai construir".
-          (A antiga "barra de confiança" saiu daqui: repetia 10% do peso / garantia
-          / reposição / 50 modelos, que a seção "O que é a Western Store" já diz.) */}
-      <section className="surface-paper section border-t border-western-border-soft" id="produtos">
-        <div className="container-western">
-          <Reveal variant="fade-up" duration={700}>
-            <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
-              <div>
-                <p className="text-eyebrow mb-3">Os mais pedidos</p>
-                <h2 className="display-lg text-western-green-deep">Mais vendidos.</h2>
-              </div>
-              <Link
-                to="/produtos"
-                className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
-              >
-                Ver catálogo completo <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
-              </Link>
-            </div>
-          </Reveal>
-          {loadingFeatured && featured.length === 0 ? (
-            <div className={featuredTrack}>
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className={`${featuredItem} space-y-3`}>
-                  <div className="aspect-square rounded-2xl bg-western-stone-warm/10 animate-pulse" />
-                  <div className="h-5 w-3/4 rounded-sm bg-western-stone-warm/10 animate-pulse" />
-                  <div className="h-4 w-1/3 rounded-sm bg-western-stone-warm/10 animate-pulse" />
-                </div>
-              ))}
-            </div>
-          ) : featured.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-western-border-strong p-10 text-center text-body">
-              Catálogo indisponível no momento. Tente recarregar em instantes.
-            </div>
-          ) : (
-            <div className={featuredTrack}>
-              {featured.slice(0, 8).map((p, i) => (
-                <Reveal
-                  key={p.node.id}
-                  className={featuredItem}
-                  variant="fade-up"
-                  delay={(i % 4) * 90}
-                  duration={650}
-                  distance={20}
-                >
-                  <ProductCard product={p.node} />
-                </Reveal>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+      {!isPartnerHome && vitrineMaisVendidos}
 
       {/* 2b — CREDENCIAL. Uma tira de ~120px que responde "quem são vocês para
           pedir o meu CNPJ?" — logo abaixo do primeiro pedido de cadastro. Antes
