@@ -13,6 +13,8 @@ import { SOCIAL_PROOF } from "@/data/socialProof";
 import { ArrowRight, Check, X } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { texturaPara } from "@/lib/acabamentoTexturas";
+import { useAuth } from "@/hooks/useAuth";
+import { useCartStore } from "@/stores/cartStore";
 import heroHome from "@/assets/hero-home.webp";
 import heroHomeMobile from "@/assets/hero-home-mobile.webp";
 import iconePedraBranco from "@/assets/icone-pedra-branco.png";
@@ -84,6 +86,13 @@ export default function Index() {
     queryKey: ["featured-products"],
     queryFn: () => fetchProducts(8),
   });
+
+  /* PERSONALIZAÇÃO FASE 1 (2026-07-18): logado, a home vira balcão — os CTAs
+   * do hero trocam de missão (recompra > cadastro) e a faixa de credenciamento
+   * some (pedir acesso a quem já tem acesso era ruído). Quem volta navega pelo
+   * header; a home só precisa não ATRAPALHAR quem já é de casa. */
+  const { session, isApproved } = useAuth();
+  const cartCount = useCartStore((s) => s.items.reduce((n, i) => n + i.quantity, 0));
 
   return (
     <>
@@ -177,12 +186,38 @@ export default function Index() {
                 verde — é a regra do V3 (verde é primário sobre fundo claro; sobre
                 foto/verde, o acento dourado assume). */}
             <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
-              <Link to="/parceiro/cadastro" className="btn-gold w-full sm:w-auto">
-                Criar cadastro · ver preços <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
-              </Link>
-              <Link to="/produtos" className="btn-outline-cream w-full sm:w-auto">
-                Ver catálogo
-              </Link>
+              {session ? (
+                cartCount > 0 ? (
+                  <>
+                    <Link to="/carrinho" className="btn-gold w-full sm:w-auto">
+                      Continuar meu carrinho ({cartCount}){" "}
+                      <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+                    </Link>
+                    <Link to="/produtos" className="btn-outline-cream w-full sm:w-auto">
+                      Ver catálogo
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/produtos" className="btn-gold w-full sm:w-auto">
+                      {isApproved ? "Ver catálogo · preços liberados" : "Ver catálogo"}{" "}
+                      <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+                    </Link>
+                    <Link to="/conjuntos" className="btn-outline-cream w-full sm:w-auto">
+                      Conjuntos prontos
+                    </Link>
+                  </>
+                )
+              ) : (
+                <>
+                  <Link to="/parceiro/cadastro" className="btn-gold w-full sm:w-auto">
+                    Criar cadastro · ver preços <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+                  </Link>
+                  <Link to="/produtos" className="btn-outline-cream w-full sm:w-auto">
+                    Ver catálogo
+                  </Link>
+                </>
+              )}
             </div>
             {/* Régua de provas. Era `flex flex-wrap` SEM breakpoint nenhum — o
                 layout no celular não era projetado, era emergente: a 375/390px
@@ -638,7 +673,9 @@ export default function Index() {
         </div>
       </section>
 
-      {/* 11 — Credenciamento B2B (o PEDIDO) */}
+      {/* 11 — Credenciamento B2B (o PEDIDO) — some para quem já tem sessão:
+          pedir acesso a quem já entrou era ruído de fim de página. */}
+      {!session && (
       <section className="surface-forest section">
         <div className="container-western">
           <div className="grid md:grid-cols-2 gap-10 md:gap-14 items-center">
@@ -676,6 +713,7 @@ export default function Index() {
           </div>
         </div>
       </section>
+      )}
 
       {/* 12 — Ricardo: a ASSINATURA da casa, por último. O credenciamento é o
           pedido; esta é o aperto de mão. Quem rolou até aqui e não clicou no

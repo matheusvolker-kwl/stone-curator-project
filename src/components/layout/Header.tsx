@@ -538,9 +538,14 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link to="/parceiro/login" aria-label="Entrar" className={`hidden md:inline-flex ${actionCls}`}>
+            <Link
+              to="/parceiro/login"
+              aria-label="Entrar para ver preços"
+              /* Em loja de preço gated, login É o preço — o rótulo diz o benefício. */
+              className={`hidden md:inline-flex ${actionCls}`}
+            >
               <User className="h-6 w-6" strokeWidth={1.75} />
-              Entrar
+              Entrar · ver preços
             </Link>
           )}
 
