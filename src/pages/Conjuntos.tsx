@@ -180,23 +180,24 @@ export default function Conjuntos() {
           conjuntos aparecem já na dobra, e o "não sabe por onde começar?" vira
           ajuda para quem rolou e ficou indeciso. */}
       <header className="border-b border-western-border-soft">
-        <div className="container-western py-10 md:py-14">
+        <div className="container-western pt-8 pb-6 md:pt-12 md:pb-8">
           <div className="max-w-3xl">
-            <p className="text-eyebrow mb-4">Curadoria · Conjuntos</p>
-            <div className="w-12 h-px bg-western-gold mb-6" />
+            <p className="text-eyebrow mb-3">Curadoria · Conjuntos</p>
+            <div className="w-12 h-px bg-western-gold mb-5" />
             <h1 className="display-xl text-western-green-deep">
               Conjuntos curados, prontos para projetar.
             </h1>
-            <p className="mt-5 text-body max-w-[60ch]">
+            <p className="mt-4 text-body max-w-[56ch]">
               {ALL_LEAVES.length} composições organizadas pelo local de aplicação —
-              piscinas, lagos, lagos híbridos e jardins. Cada conjunto reúne pedras,
-              volumes e acabamentos já equilibrados pela curadoria Western.
+              pedras, volumes e acabamentos já equilibrados pela curadoria Western.
             </p>
           </div>
         </div>
       </header>
 
-      <div className="container-western section">
+      {/* pt-6 (não `section`): o hero acima já espaçou + tem filete; o `section`
+          top somava ~104px de vão morto e empurrava os cards pra fora da dobra. */}
+      <div className="container-western pt-6 pb-16 md:pt-10 md:pb-24">
         <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-12">
           {/* SIDEBAR — desktop */}
           <aside className="hidden lg:block">
