@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import FinishSelector from "@/components/product/FinishSelector";
+import ComposicaoCena from "@/components/product/ComposicaoCena";
 import { useAuth } from "@/hooks/useAuth";
 import ProductGallery from "@/components/product/ProductGallery";
 import Seo, { SITE_URL } from "@/components/seo/Seo";
@@ -616,22 +617,70 @@ export default function ProductPage() {
         </div>
       </div>
 
+      {/* Chips-âncora (DS: página longa ganha âncoras; a barra fixa cobre a
+          compra — estas cobrem a LEITURA). */}
+      <nav
+        aria-label="Seções da página"
+        className="border-y border-western-border-soft surface-paper"
+      >
+        <div className="container-western">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide py-3">
+            {[
+              ["medidas", "Medidas e peso"],
+              ["onde-usar", "Onde usar"],
+              ["composicao", "Composição"],
+              ["descricao", "Descrição"],
+              ["instalacao", "Instalação"],
+              ["relacionados", "Relacionados"],
+            ].map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() =>
+                  document
+                    .getElementById(id)
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+                className="tap-target shrink-0 inline-flex items-center px-4 rounded-full border border-western-border-strong font-sans text-[15px] font-medium text-western-green-deep hover:border-western-green-deep transition-colors"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </nav>
+
       {/* A leveza — Tamanho real, logo após a decisão */}
-      <Reveal variant="fade-up">
-        <TamanhoReal
-          productTitle={product.title}
-          sku={sku || product.variants.edges[0]?.node?.sku}
-          dims={dims}
-          pesoKg={pesoKg}
-        />
-      </Reveal>
+      <div id="medidas" className="scroll-mt-24">
+        <Reveal variant="fade-up">
+          <TamanhoReal
+            productTitle={product.title}
+            sku={sku || product.variants.edges[0]?.node?.sku}
+            dims={dims}
+            pesoKg={pesoKg}
+          />
+        </Reveal>
+      </div>
 
       {/* A versatilidade — "onde usar". Vem colado à leveza: o Tamanho real
        * acabou de mostrar que a peça é leve, então "vai em qualquer cena, até
        * na cobertura" cai naturalmente. Liga com o Inspire-se. */}
-      <Reveal variant="fade-up">
-        <UsageScenes collectionHandle={collection?.handle} productTitle={product.title} />
-      </Reveal>
+      <div id="onde-usar" className="scroll-mt-24">
+        <Reveal variant="fade-up">
+          <UsageScenes collectionHandle={collection?.handle} productTitle={product.title} />
+        </Reveal>
+      </div>
+
+      {/* A cena — DS §11: a peça é ingrediente, o produto é a composição. */}
+      <div id="composicao" className="scroll-mt-24">
+        <Reveal variant="fade-up">
+          <ComposicaoCena
+            productHandle={product.handle}
+            productTitle={product.title}
+            collectionHandle={collection?.handle}
+          />
+        </Reveal>
+      </div>
 
       {/* A conta — quantas peças. Nasce da dúvida que o "Tamanho real" acabou de
        * abrir: "beleza, e quantas eu peço?". Só renderiza em revestimento e
@@ -650,26 +699,32 @@ export default function ProductPage() {
 
       {/* Below-the-fold — enxuto. Sem pesoKg/dims: medida e peso da peça não
        * entram aqui, moram só no bloco "Tamanho real" acima. */}
-      <ProductTabs
-        parsed={parsed}
-        fichaRows={fichaRows}
-        modelo3dValue={product.modelo3d?.value}
-        hideModelo3d
-      />
-      <InstallationSection config={installationConfig} />
+      <div id="descricao" className="scroll-mt-24">
+        <ProductTabs
+          parsed={parsed}
+          fichaRows={fichaRows}
+          modelo3dValue={product.modelo3d?.value}
+          hideModelo3d
+        />
+      </div>
+      <div id="instalacao" className="scroll-mt-24">
+        <InstallationSection config={installationConfig} />
+      </div>
       {/* "Veja em uso" absorvido pela galeria canônica (estúdio → ambiente → detalhe) */}
       <Reveal variant="fade-up">
         <SocialProofBand />
       </Reveal>
-      <Reveal variant="fade-up">
-        <RelatedProducts
-          collectionHandle={collection?.handle}
-          collectionTitle={collection?.title}
-          currentHandle={product.handle}
-          currentSku={sku || product.variants.edges[0]?.node?.sku}
-          productTitle={product.title}
-        />
-      </Reveal>
+      <div id="relacionados" className="scroll-mt-24">
+        <Reveal variant="fade-up">
+          <RelatedProducts
+            collectionHandle={collection?.handle}
+            collectionTitle={collection?.title}
+            currentHandle={product.handle}
+            currentSku={sku || product.variants.edges[0]?.node?.sku}
+            productTitle={product.title}
+          />
+        </Reveal>
+      </div>
 
       <StickyBuyBarLab
         triggerRef={addBtnRef}
