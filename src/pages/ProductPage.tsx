@@ -155,6 +155,20 @@ export default function ProductPage() {
     });
   }, [product?.handle, visibleOptions]);
 
+  /* TROCA DE PEÇA = ESTADO NOVO.
+   * A PDP é reaproveitada quando se navega de uma peça para outra (Relacionados,
+   * "quem combina", busca). Sem este reset, o estado da peça anterior seguia
+   * junto: a 6ª foto continuava selecionada numa peça de 3 fotos (a galeria
+   * quebrava em TypeError) e o acabamento escolhido antes vazava para uma peça
+   * que não o oferece — travando o CTA, porque a pré-seleção do Moledo não
+   * sobrescreve escolha existente. */
+  useEffect(() => {
+    setActiveImage(0);
+    setActiveOptions({});
+    setQty(1);
+    userTouchedOptions.current = false;
+  }, [handle]);
+
   useEffect(() => {
     if (!product) return;
     trackRecentlyViewed({

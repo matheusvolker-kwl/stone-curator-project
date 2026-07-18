@@ -59,7 +59,12 @@ export default function ProductGallery({
   );
 
   if (!images.length) return null;
-  const current = images[activeIndex];
+  /* Guarda de índice: se activeIndex apontar além do array (peça nova com menos
+   * fotos que a anterior), `current` viria undefined e `current.url` derrubava a
+   * PDP inteira em TypeError — sem ErrorBoundary, era tela branca. A causa raiz
+   * é resetada na ProductPage; isto aqui é a rede de segurança. */
+  const current = images[activeIndex] ?? images[0];
+  if (!current) return null;
 
   return (
     <>

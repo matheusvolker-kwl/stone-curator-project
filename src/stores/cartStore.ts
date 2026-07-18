@@ -170,6 +170,19 @@ export const useCartStore = create<CartStore>()(
       name: "western-cart",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ items: state.items }),
+      /* VERSÃO DE SCHEMA — o carrinho vive no localStorage do visitante e
+       * sobrevive a deploys. Linhas gravadas antes da migração para o Woo não
+       * têm wooParentProductId; elas atravessavam o checkout como "skipped" e o
+       * cliente perdia peças em silêncio, sem entender por quê.
+       * Ao subir a versão, descartamos só as linhas que o checkout não consegue
+       * enviar — o resto do carrinho é preservado. */
+      version: 2,
+      migrate: (persisted, from) => {
+        const state = persisted as { items?: CartItem[] } | undefined;
+        if (!state?.items) return { items: [] };
+        if (from >= 2) return state;
+        return { items: state.items.filter((i) => typeof i.wooParentProductId === "number") };
+      },
     },
   ),
 );
