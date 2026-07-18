@@ -12,6 +12,7 @@ import {
   ChevronRight,
   ArrowRight,
   MessageCircle,
+  Home,
 } from "lucide-react";
 import { useWishlist } from "@/hooks/useWishlist";
 import logoVerde from "@/assets/logo-horizontal-verde.png";
@@ -619,6 +620,18 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           </button>
           <span aria-hidden="true" className="mx-1 h-6 w-px bg-western-border-soft" />
 
+          {/* INÍCIO — porta de volta explícita (dono, 2026-07-18: "ao clicar no
+              logo a página às vezes não responde, ou demora muito"). A logo
+              continua levando pra home, mas ela é uma CONVENÇÃO, não uma
+              afordância: não parece clicável e não tem estado ativo. Um destino
+              nomeado resolve os dois — e o ícone dá o reconhecimento imediato
+              que o dono pediu ("ícones quando pudermos pra facilitar"). `end`
+              porque sem ele a rota "/" casa com tudo e o item nunca desliga. */}
+          <NavLink to="/" end className={navLinkCls}>
+            <Home className="mr-1.5 h-4 w-4" strokeWidth={1.75} aria-hidden />
+            Início
+          </NavLink>
+
           {/* "Catálogo" é o gatilho do mega-menu por cena (só desktop). */}
           <CatalogMegaMenu navLinkCls={navLinkCls} />
           {NAV_INTENTS.slice(1).map((item) => (
@@ -732,6 +745,13 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                   </>
                 )}
               </div>
+
+              {/* INÍCIO — primeira linha de navegação do drawer. No celular a
+                  logo fica no topo da barra e é alvo pequeno; quem está no meio
+                  de uma página funda precisa de uma volta NOMEADA. Sem ícone de
+                  propósito: nenhuma outra linha do drawer tem, e um ícone
+                  sozinho leria como erro, não como destaque. */}
+              {drawerLink("/", "Início", "A página inicial")}
 
               {/* 1. VENDER */}
               <p className="text-eyebrow mt-5 mb-1">Comprar</p>

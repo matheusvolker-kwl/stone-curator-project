@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   MessageCircle,
+  ClipboardCheck,
   ArrowDown,
   Sparkles,
   PencilRuler,
@@ -112,33 +113,41 @@ const SERVICOS = [
   },
 ];
 
+/* Cada passo carrega um ÍCONE (reconhecimento antes da leitura) e o sinal de
+   preço. O ícone é escolhido pelo GESTO do passo, não por enfeite: conversa,
+   leitura do projeto, ida ao terreno, render, obra. */
 const PASSOS = [
   {
     n: "1",
+    icon: MessageCircle,
     titulo: "Contato e apresentação",
     desc: "Você fala com a gente por WhatsApp ou pelo formulário. Rápido, direto, sem burocracia.",
     gratis: true,
   },
   {
     n: "2",
+    icon: ClipboardCheck,
     titulo: "Consultoria inicial gratuita",
     desc: "Nosso time entende o projeto e a compatibilidade com nossos produtos e serviços. Sem custo, sem compromisso.",
     gratis: true,
   },
   {
     n: "3",
+    icon: MapPin,
     titulo: "Visita ao local (se necessário)",
     desc: "Contratados os serviços, agendamos visita técnica para leitura precisa do terreno e das condições da obra.",
     gratis: false,
   },
   {
     n: "4",
+    icon: PencilRuler,
     titulo: "Projeto e render 3D",
     desc: "Montamos a composição, apresentamos o render fotorrealista e ajustamos até a aprovação final.",
     gratis: false,
   },
   {
     n: "5",
+    icon: HardHat,
     titulo: "Execução e instalação",
     desc: "Nossa equipe executa e entrega — do transporte à peça posicionada, integrada ao paisagismo.",
     gratis: false,
@@ -492,35 +501,73 @@ export default function ContrateAWestern() {
             </header>
           </Reveal>
 
-          <ol className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-5">
+          {/* ALINHAMENTO POR TRILHO COMPARTILHADO (dono, 2026-07-18: "problema
+              de alinhamento e diagramação").
+              A causa era estrutural: o título tem 1, 2 ou 3 linhas conforme a
+              largura, e a descrição começava onde o título terminasse — então o
+              passo 4 ("Projeto e render 3D", título curto) subia e quebrava a
+              fileira. Resolvido com `grid-rows-subgrid`: os 5 cartões passam a
+              dividir as MESMAS faixas de linha, então cabeçalho, título e corpo
+              começam na mesma altura em todos, em qualquer largura. Onde não há
+              suporte a subgrid, degrada para o comportamento antigo — nada
+              quebra, só deixa de alinhar.
+              O <Reveal> saiu de fora do <li>: ele era o item da grade e cortava
+              a herança das faixas. Agora quem anima é o conteúdo, por dentro. */}
+          <ol className="grid grid-cols-1 gap-4 md:grid-cols-5 md:grid-rows-[auto_auto_1fr] md:gap-5">
             {PASSOS.map((p, i) => (
-              <Reveal key={p.n} variant="fade-up" delay={i * 70} duration={650}>
-                <li
-                  className={`relative h-full bg-white rounded-lg p-6 border shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] ${
+              <li
+                key={p.n}
+                className={`relative flex flex-col gap-3 rounded-lg border bg-white p-6 shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] transition-colors md:row-span-3 md:grid md:grid-rows-subgrid md:gap-0 ${
+                  p.gratis
+                    ? "border-western-gold/50 hover:border-western-gold"
+                    : "border-western-border-soft hover:border-western-bronze/40"
+                } ${
+                  /* CONTINUIDADE: um fio atravessa a calha até o próximo cartão,
+                     na altura do miolo do cabeçalho. Neutro de propósito — quem
+                     classifica é a borda e o selo; o fio só diz "isto continua". */
+                  i < PASSOS.length - 1
+                    ? "md:after:absolute md:after:left-full md:after:top-[3.25rem] md:after:h-px md:after:w-5 md:after:bg-western-border-strong md:after:content-['']"
+                    : ""
+                }`}
+              >
+                {/* Todo passo carrega um sinal de preço: 1–2 grátis (dourado),
+                    3–5 "Sob consulta" (bronze neutro). Antes 3–5 ficavam em
+                    branco e liam como preço escondido — decisão do dono. */}
+                <span
+                  className={`absolute -top-3 left-6 rounded-sm px-2.5 py-1 font-sans text-[14px] font-semibold leading-none ${
                     p.gratis
-                      ? "border-western-gold/50"
-                      : "border-western-border-soft"
+                      ? "bg-western-gold text-western-green-deep"
+                      : "bg-western-paper border border-western-border-strong text-western-bronze"
                   }`}
                 >
-                  {/* Todo passo carrega um sinal de preço: 1–2 grátis (dourado),
-                      3–5 "Sob consulta" (bronze neutro). Antes 3–5 ficavam em
-                      branco e liam como preço escondido — decisão do dono. */}
-                  <span
-                    className={`absolute -top-3 left-6 rounded-sm px-2.5 py-1 font-sans text-[14px] font-semibold leading-none ${
-                      p.gratis
-                        ? "bg-western-gold text-western-green-deep"
-                        : "bg-western-paper border border-western-border-strong text-western-bronze"
-                    }`}
-                  >
-                    {p.gratis ? "Grátis" : "Sob consulta"}
-                  </span>
-                  <span className="font-display text-[32px] leading-none text-western-bronze block mb-3">
+                  {p.gratis ? "Grátis" : "Sob consulta"}
+                </span>
+
+                {/* FAIXA 1 — cabeçalho: o número dá a ORDEM, o ícone dá o GESTO.
+                    O quadrado do ícone herda a cor do estágio, então a leitura
+                    "onde para de ser grátis" acontece antes de ler qualquer
+                    palavra. */}
+                <div className="flex items-center justify-between">
+                  <span className="block font-display text-[32px] leading-none text-western-bronze">
                     {p.n}
                   </span>
-                  <h3 className={CARD_TITLE}>{p.titulo}</h3>
-                  <p className={CARD_DESC}>{p.desc}</p>
-                </li>
-              </Reveal>
+                  <span
+                    className={`inline-flex h-10 w-10 items-center justify-center rounded-lg border ${
+                      p.gratis
+                        ? "border-western-gold/40 bg-western-gold/10 text-western-green-deep"
+                        : "border-western-border-soft bg-western-paper text-western-bronze"
+                    }`}
+                  >
+                    <p.icon className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+                  </span>
+                </div>
+
+                {/* FAIXA 2 — título (a faixa que o subgrid equaliza). */}
+                <h3 className={`${CARD_TITLE} mb-0 md:pt-3`}>{p.titulo}</h3>
+
+                {/* FAIXA 3 — corpo. Começa na mesma altura nos 5 cartões. */}
+                <p className={`${CARD_DESC} md:pt-2`}>{p.desc}</p>
+              </li>
             ))}
           </ol>
           </div>
