@@ -20,8 +20,6 @@ import {
 import { BUSINESS } from "@/config/business";
 import FinishSelector from "@/components/product/FinishSelector";
 import ComposicaoCena from "@/components/product/ComposicaoCena";
-import ComposicaoCena from "@/components/product/ComposicaoCena";
-import ComposicaoCena from "@/components/product/ComposicaoCena";
 import { useAuth } from "@/hooks/useAuth";
 import ProductGallery from "@/components/product/ProductGallery";
 import Seo, { SITE_URL } from "@/components/seo/Seo";
