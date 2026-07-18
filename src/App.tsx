@@ -73,6 +73,8 @@ const ProductPage = lazy(() => import("./pages/ProductPage.tsx"));
 
 const About = lazy(() => import("./pages/About.tsx"));
 const APedra = lazy(() => import("./pages/APedra.tsx"));
+/* Apresentação interna da reconstrução. Fora do menu e do sitemap, noindex. */
+const Relatorio = lazy(() => import("./pages/Relatorio.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
 const WesternBoxPage = lazy(() => import("./pages/WesternBox.tsx"));
 
@@ -197,6 +199,7 @@ const App = () => (
                     <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
                     <Route path="/sobre" element={<About />} />
                     <Route path="/a-pedra" element={<APedra />} />
+                    <Route path="/relatorio" element={<Relatorio />} />
                     <Route path="/contato" element={<Contact />} />
                     <Route path="/western-box" element={<WesternBoxPage />} />
                     <Route path="/contrate-a-western" element={<ContrateAWestern />} />
