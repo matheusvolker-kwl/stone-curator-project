@@ -67,3 +67,28 @@ export const CATALOG_SCENES: CatalogScene[] = [
 export function isPedraHandle(h?: string | null): boolean {
   return !!h && PEDRAS_HANDLES.includes(h);
 }
+
+/**
+ * CATEGORIAS DE FILTRO (dono, 2026-07-18) — os chips do /produtos.
+ * O produto já chega com as coleções dele (`node.collections.edges`), então o
+ * filtro casa por handle; não precisa de camada de dados extra.
+ * As 3 categorias de pedra viram UM chip "Pedras" (tamanho continua sendo a
+ * régua, como manda a taxonomia acima).
+ */
+export interface ProductCategory {
+  key: string;
+  label: string;
+  /** handles de coleção do Woo que este chip representa */
+  handles: string[];
+}
+
+export const PRODUCT_CATEGORIES: ProductCategory[] = [
+  { key: "cascatas", label: "Cascatas", handles: ["cascatas"] },
+  { key: "fontes", label: "Fontes", handles: ["fontes-para-jardim"] },
+  { key: "bordas", label: "Pedras de borda", handles: ["pedras-de-borda"] },
+  { key: "pedras", label: "Pedras", handles: PEDRAS_HANDLES },
+  { key: "revestimentos", label: "Revestimentos", handles: ["revestimentos"] },
+  { key: "pisadas", label: "Pisadas", handles: ["pisadas"] },
+  { key: "acessorios", label: "Acessórios", handles: ["acessorios"] },
+  { key: "fosseis", label: "Fósseis", handles: ["fosseis-decorativos"] },
+];
