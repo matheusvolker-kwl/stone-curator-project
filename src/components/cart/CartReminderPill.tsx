@@ -19,7 +19,10 @@ export default function CartReminderPill({ cartOpen }: { cartOpen: boolean }) {
   const { pathname } = useLocation();
   const onCartPage = pathname === "/carrinho";
 
-  const [visible, setVisible] = useState(true);
+  /* Nasce escondida: na primeira dobra ela cobria o CTA do hero e duplicava o
+     badge do carrinho, que está visível no header. Só aparece depois que a
+     pessoa já rolou a página (e, como antes, some ao descer / volta ao subir). */
+  const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const lastY = useRef(0);
 
@@ -29,7 +32,8 @@ export default function CartReminderPill({ cartOpen }: { cartOpen: boolean }) {
       const y = window.scrollY;
       const goingDown = y > lastY.current + 4;
       const goingUp = y < lastY.current - 4;
-      if (goingDown && y > 80) setVisible(false);
+      if (y <= 320) setVisible(false);
+      else if (goingDown) setVisible(false);
       else if (goingUp) setVisible(true);
       lastY.current = y;
     };
