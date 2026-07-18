@@ -4,9 +4,9 @@ import { ArrowRight } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
 
-import heroDesk from "@/assets/a-pedra/hero-linha-dagua.webp";
-import heroMob from "@/assets/a-pedra/hero-linha-dagua-mob.webp";
-import moldeMacro from "@/assets/a-pedra/molde-macro.webp";
+import heroDesk from "@/assets/a-pedra/hero-obra-real.webp";
+import heroMob from "@/assets/a-pedra/hero-obra-real-mob.webp";
+import moldeMacro from "@/assets/a-pedra/molde-macro-close.webp";
 import descargaVan from "@/assets/a-pedra/descarga-van.webp";
 import levezaDuasPessoas from "@/assets/a-pedra/leveza-duas-pessoas.webp";
 import cascaInclinada from "@/assets/a-pedra/casca-inclinada.webp";
@@ -134,7 +134,7 @@ export default function APedra() {
           <source media="(min-width: 768px)" srcSet={heroDesk} />
           <img
             src={heroMob}
-            alt="Pedras Western na linha d'água de uma piscina natural, com o fundo de seixos visível através da água limpa."
+            alt="Obra real: cascata Western despejando numa piscina de praia turquesa, entre pedras Western e mata tropical."
             loading="eager"
             fetchPriority="high"
             decoding="async"
@@ -160,7 +160,7 @@ export default function APedra() {
           aria-hidden
           style={{
             background:
-              "linear-gradient(100deg, hsl(var(--western-green-deep) / 0.94) 0%, hsl(var(--western-green-deep) / 0.88) 38%, hsl(var(--western-green-deep) / 0.55) 62%, hsl(var(--western-green-deep) / 0.12) 100%)",
+              "linear-gradient(100deg, hsl(var(--western-green-deep) / 0.92) 0%, hsl(var(--western-green-deep) / 0.78) 40%, hsl(var(--western-green-deep) / 0.50) 64%, hsl(var(--western-green-deep) / 0.10) 100%)",
           }}
         />
         <div
@@ -171,8 +171,11 @@ export default function APedra() {
               "linear-gradient(180deg, hsl(var(--western-green-deep) / 0.30) 0%, hsl(var(--western-green-deep) / 0.05) 45%, hsl(var(--western-green-deep) / 0.45) 100%)",
           }}
         />
+        {/* SEM Reveal aqui de propósito: este é o LCP da página — a dobra abria
+            em branco esperando hidratação + fallback do observer. Hero pinta
+            junto com o primeiro paint; as revelações começam do S1 pra baixo. */}
         <div className="container-western relative h-full flex flex-col justify-end pb-10 md:pb-14">
-          <Reveal variant="fade-up" duration={700}>
+          <div>
             <p className="text-eyebrow text-western-gold-soft mb-3">A pedra Western</p>
             <h1 className="display-xl text-western-cream">
               É pedra de verdade.
@@ -185,11 +188,10 @@ export default function APedra() {
               O molde sai de uma pedra real, no lugar onde ela está. O que muda é o que vem dentro.
             </p>
             <p className="text-meta text-western-cream-muted/80 mt-6 max-w-[52ch]">
-              {/* "E fabricados em Cajamar" — concordância quebrada quando
-                  "matacões" virou "pedras" e a frase não foi relida. */}
+              {/* Foto de obra real (MODULO 15) — a prova abre a página. */}
               As pedras desta foto foram moldadas de rocha real. E fabricadas em Cajamar.
             </p>
-          </Reveal>
+          </div>
         </div>
       </section>
 
@@ -201,7 +203,7 @@ export default function APedra() {
           <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:gap-14 lg:items-center">
             <Reveal variant="fade-up" duration={700}>
               <div>
-                <p className="text-eyebrow mb-3">A origem</p>
+                <p className="text-eyebrow mb-3">01 · A origem</p>
                 <h2 className="display-lg text-western-green-deep">
                   Não imitamos a pedra. Tiramos o molde dela.
                 </h2>
@@ -230,13 +232,13 @@ export default function APedra() {
               <figure>
                 <img
                   src={moldeMacro}
-                  alt="Macro de uma pedra Western estratificada: laminação sedimentar fina, grão de areia e mica, com folhagem tropical desfocada ao fundo."
+                  alt="Close de uma pedra Western na prainha: grão de areia, sedimentos e vincos herdados da rocha original, com a água desfocada ao fundo."
                   loading="eager"
                   decoding="async"
                   className="w-full aspect-[2/3] object-cover rounded-2xl"
                 />
                 <figcaption className="text-meta mt-4">
-                  Superfície real: laminação sedimentar, grão e mica.
+                  Superfície real: grão, sedimentos e os vincos da rocha original.
                 </figcaption>
               </figure>
             </Reveal>
@@ -255,7 +257,7 @@ export default function APedra() {
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="max-w-[52ch]">
-              <p className="text-eyebrow mb-3">O número</p>
+              <p className="text-eyebrow mb-3">02 · O número</p>
               <h2 className="display-lg text-western-green-deep">
                 Tudo daqui pra frente é consequência de um número.
               </h2>
@@ -345,7 +347,7 @@ export default function APedra() {
           <div className="grid gap-10 lg:grid-cols-[0.95fr_1fr] lg:gap-14 lg:items-start">
             <Reveal variant="fade-up" duration={700}>
               <div>
-                <p className="text-eyebrow text-western-gold-soft mb-3">O avesso</p>
+                <p className="text-eyebrow text-western-gold-soft mb-3">03 · O avesso</p>
                 <h2 className="display-lg text-western-cream">A pedra levanta.</h2>
                 <p className="text-body text-western-cream-muted mt-5 max-w-[52ch]">
                   Cimento estrutural reforçado com fibra de fios de PET reciclado, formando uma
@@ -424,7 +426,7 @@ export default function APedra() {
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="max-w-[52ch]">
-              <p className="text-eyebrow mb-3">Endereços</p>
+              <p className="text-eyebrow mb-3">04 · Endereços</p>
               <h2 className="display-lg text-western-green-deep">Onde a pedra foi.</h2>
               <p className="text-body mt-5">
                 Tudo pela mesma causa: a peça é oca e pesa cerca de 10% — e por isso chega
@@ -473,7 +475,7 @@ export default function APedra() {
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="max-w-[52ch]">
-              <p className="text-eyebrow mb-3">O projeto antes da obra</p>
+              <p className="text-eyebrow mb-3">05 · O projeto antes da obra</p>
               <h2 className="display-lg text-western-green-deep">
                 O 3D não é catálogo. É a garantia de que o entregue é o vendido.
               </h2>
@@ -588,7 +590,7 @@ export default function APedra() {
           <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:gap-14 lg:items-center">
             <Reveal variant="fade-up" duration={700}>
               <div>
-                <p className="text-eyebrow mb-3">Resistência</p>
+                <p className="text-eyebrow mb-3">06 · Resistência</p>
                 <h2 className="display-lg text-western-green-deep">Pode pisar. Pode furar.</h2>
                 <p className="text-body mt-5 max-w-[52ch]">
                   Suporta uma pessoa em cima. Não é casca: é estrutura. Fura com furadeira comum
@@ -668,7 +670,7 @@ export default function APedra() {
           <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:gap-14 lg:items-center">
             <Reveal variant="fade-up" duration={700}>
               <div>
-                <p className="text-eyebrow mb-3">Quem faz</p>
+                <p className="text-eyebrow mb-3">07 · Quem faz</p>
                 <h2 className="display-lg text-western-green-deep">
                   Trinta e três anos, o mesmo ateliê, a mesma família.
                 </h2>
@@ -766,7 +768,7 @@ export default function APedra() {
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="max-w-2xl">
-              <p className="text-eyebrow text-western-gold-soft mb-3">As amostras</p>
+              <p className="text-eyebrow text-western-gold-soft mb-3">08 · As amostras</p>
               <h2 className="display-lg text-western-cream">Sinta a textura antes de escolher.</h2>
               <p className="text-quote font-normal text-western-cream-muted mt-4 max-w-[52ch]">
                 A Western Box leva os quatro acabamentos até a sua mesa.
