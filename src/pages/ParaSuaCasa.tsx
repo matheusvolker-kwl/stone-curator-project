@@ -1,6 +1,27 @@
-// /para-sua-casa — porta B2C (turnkey). Vende SONHO: mostra, não afirma.
-// Regra de cor travada nesta página: TODO CTA é dourado (relacionamento/WhatsApp).
-// O verde fica reservado à ação B2B "ver preço/cadastrar", que não existe aqui.
+/**
+ * /para-sua-casa — a porta B2C (turnkey: a Western projeta e executa).
+ *
+ * ESTA É A VERSÃO C DO LAB, ESCOLHIDA PELO DONO EM 2026-07-18.
+ * Tese: o desejo nasce de PROJEÇÃO. A página trabalha para o leitor trocar
+ * "que bonito" por "isso cabe na minha casa" — as obras entram como ESPELHO,
+ * não como vitrine. Por isso a aérea do Módulo 15 vem cedo (dá noção de terreno
+ * e de escala, que foto de perto esconde) e o arco do Conrado (croqui → render
+ * 3D → obra) entra como promessa de processo.
+ *
+ * ORDEM: sonho → escala → escolha do caminho → como isso vira obra → prova →
+ * pedido. O primeiro CTA só aparece depois de a pessoa ter escolhido um
+ * caminho; antes disso a página não pede nada. Era o pedido do dono: "vender
+ * forte o desejo antes de vir os ctas".
+ *
+ * SACRIFICA: o CTA de contato no hero (a primeira dobra só convida a descer) e
+ * a vitrine antiga de três obras, que sai em favor das duas entregas novas
+ * (Módulo 15 e Conrado) — a prova de nomes fica na faixa de prova social.
+ *
+ * REGRA DE LEGENDA (aprendida na revisão): toda legenda descreve O QUE ESTÁ NO
+ * QUADRO, não o que se espera ver. Uma revisão anterior pegou legendas que
+ * inventavam uma casa inexistente e trocavam as duas aéreas entre si. Numa
+ * página cujo argumento É a foto, legenda errada destrói o argumento.
+ */
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -18,7 +39,6 @@ import { toast } from "sonner";
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
 import SocialProof from "@/components/shared/SocialProof";
-import ObraCard from "@/components/shared/ObraCard";
 import {
   Accordion,
   AccordionItem,
@@ -38,87 +58,152 @@ import imgPiscina from "@/assets/linguagens/piscina-praia.webp";
 import imgLago from "@/assets/segmentos/lagos/02.webp";
 import imgCascata from "@/assets/segmentos/cascatas/01.webp";
 import imgJardim from "@/assets/segmentos/jardins/01.webp";
-import obraTato from "@/assets/obras/tato.webp";
-import obraEvandro from "@/assets/obras/evandro-leveza.webp";
-import obraShowroom from "@/assets/obras/showroom-2.webp";
-/* Sequência Conrado: desenho → 3D → obra entregue. Substitui o par
-   tapirai-render/tapirai-real, que a /a-pedra já tinha recusado por escrito —
-   o render era uma casa de tijolo de dois andares e a "real" um deck com
-   guarda-sóis: rotulados "projeto/entregue", o olho lia contradição bem na
-   promessa que a seção sustenta.
-   ⚠ O desenho e o 3D NÃO TÊM CASA — são só a parede de pedra e a água. Por isso
-   nenhuma legenda aqui diz "a mesma casa": diz "o mesmo projeto", que é o que dá
-   pra conferir a olho (a escada de lajes chatas à esquerda e a fileira de quedas
-   ao fundo se repetem nos três). */
-import conradoDesenho from "@/assets/obras/conrado-desenho.webp";
-import conrado3d from "@/assets/obras/conrado-3d.webp";
-import conradoObra from "@/assets/obras/conrado-obra.webp";
+
+/* MÓDULO 15 — piscina natural de praia. As seis verticais são 2:3 nativas
+   (1400×2100) e as duas aéreas 3:4 (1400×1867). Nenhuma delas é reenquadrada
+   fora da própria proporção nesta página. */
+import m15Cascata from "@/assets/obras/modulo15/01-cascata.webp";
+import m15Ampla from "@/assets/obras/modulo15/02-ampla.webp";
+import m15Praia from "@/assets/obras/modulo15/04-praia.webp";
+import m15Rede from "@/assets/obras/modulo15/06-rede.webp";
+import m15Aerea from "@/assets/obras/modulo15/07-aerea.webp";
+import m15AereaDeck from "@/assets/obras/modulo15/08-aerea-deck.webp";
+
+/* CONRADO · Vinhedo/SP — o arco completo da MESMA parede de cascatas.
+   Croqui é croqui, render é render, obra é obra: cada um é rotulado, e nenhum
+   render aparece como fotografia. É a rotulagem que faz o arco valer. */
+import conradoCroqui from "@/assets/obras/conrado/01-croqui.webp";
+import conradoRender from "@/assets/obras/conrado/02-render.webp";
+import conradoObra from "@/assets/obras/conrado/03-obra.webp";
+import conradoCascata from "@/assets/obras/conrado/04-cascata.webp";
+import conradoAmpla from "@/assets/obras/conrado/05-ampla.webp";
+import conradoEstar from "@/assets/obras/conrado/06-estar.webp";
+
 import atelieImg from "@/assets/irmaos-botelho-gruta.webp";
 import atelieVisita from "@/assets/visitar/atelie-hero.webp";
 
 const waLink = (msg: string) =>
   `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(msg)}`;
 
+/* As quatro verticais do Módulo 15. A legenda descreve o que se vê na foto —
+   não o conceito. min-h fixo no <figcaption> garante que as quatro linhas de
+   base coincidam mesmo quando uma legenda quebra em duas linhas. */
+const M15_FOTOS = [
+  {
+    img: m15Cascata,
+    alt: "Cascata caindo sobre pedra artesanal direto na água turquesa da piscina, com vegetação tropical em volta.",
+    legenda: "A cascata cai direto na água.",
+  },
+  {
+    img: m15Praia,
+    alt: "Borda de praia curva: a faixa de areia clara encontra o gramado e entra na água sem degrau.",
+    legenda: "A areia entra na água. Não tem degrau.",
+  },
+  {
+    img: m15Ampla,
+    /* CONFERIDO NA FOTO: não há casa nenhuma no quadro. O que aparece à
+       ESQUERDA é o guarda-corpo de VIDRO da piscina e um trecho de deck —
+       a legenda anterior inventava "a parede de vidro da casa". */
+    alt: "Vista ampla da piscina: guarda-corpo de vidro e um trecho de deck de madeira à esquerda, cascata sobre pedra ao fundo e palmeiras altas atrás.",
+    legenda: "O vidro deixa a mata à vista, do outro lado.",
+  },
+  {
+    img: m15Rede,
+    /* CONFERIDO NA FOTO: a rede está em PLENO SOL (sombra curta no gramado,
+       folhas contraluz) e NÃO há água no quadro. A legenda anterior errava as
+       duas coisas. */
+    alt: "Rede verde armada no gramado, ao sol, na frente de vegetação tropical densa e de um painel escuro.",
+    legenda: "Uma rede no gramado, em pleno sol.",
+  },
+];
+
+/* ⚠️ O NOME DO ARQUIVO "08-aerea-deck" ESTÁ ERRADO — fui eu que nomeei mal no
+   processamento. Conferido na foto: quem tem o deck e as espreguiçadeiras é a
+   07; a 08 é um CLOSE do raso, com duas pedras dentro da água e nenhum deck.
+   As legendas abaixo seguem a FOTO, não o nome do arquivo. */
+const M15_AEREAS = [
+  {
+    img: m15Aerea,
+    alt: "Vista aérea da piscina natural: o contorno curvo da água, a faixa de areia clara, o deck de madeira com espreguiçadeiras de um lado e o gramado do outro.",
+    legenda: "O desenho inteiro, visto de cima.",
+  },
+  {
+    img: m15AereaDeck,
+    alt: "Vista de cima do raso da piscina: a faixa de areia clara submersa e duas pedras artesanais dentro da água.",
+    legenda: "No raso, a areia continua por dentro da água.",
+  },
+];
+
+/* Os caminhos deixam de ser catálogo e viram PERGUNTA: cada cartão é uma
+   resposta possível a "qual desses é o seu?". Os textos são os da página atual. */
 const CAMINHOS = [
   {
     img: imgPiscina,
     titulo: "Piscina natural ou de praia",
     desc: "Entra caminhando pela areia, água por sal — sem cloro, sem olho ardendo. A gente projeta e executa por inteiro.",
-    cta: "Quero a minha piscina",
+    cta: "Esse é o meu",
     msg: "Olá! Quero uma piscina natural para a minha casa.",
+    alt: "Piscina de praia com borda de areia e pedra artesanal, cercada de vegetação.",
   },
   {
     img: imgLago,
     titulo: "Lago com carpas",
     desc: "Um espelho d'água vivo no seu jardim, com peixe e planta na mesma água — sem obra pesada.",
-    cta: "Quero um lago",
+    cta: "Esse é o meu",
     msg: "Olá! Quero um lago ornamental no meu jardim.",
+    alt: "Lago ornamental com pedras na borda e plantas aquáticas.",
   },
   {
     img: imgCascata,
     titulo: "Cascata no quintal",
     desc: "O som de água que transforma o fim de tarde. Tão leve que sobe até a laje ou a cobertura, sem guindaste.",
-    cta: "Quero uma cascata",
+    cta: "Esse é o meu",
     msg: "Olá! Quero uma cascata na minha casa.",
+    alt: "Cascata de pedra artesanal caindo entre plantas em um jardim.",
   },
   {
     img: imgJardim,
     titulo: "Jardim de pedra",
     desc: "Pedras que parecem ter nascido ali, com ou sem água. Do quintal ao terraço.",
-    cta: "Quero um jardim assim",
+    cta: "Esse é o meu",
     msg: "Olá! Quero um jardim com pedras Western.",
+    alt: "Jardim com blocos de pedra artesanal integrados ao paisagismo.",
   },
 ];
 
-const OBRAS_SONHO = [
+/* Arco do Conrado. Rótulo explícito em cada estágio.
+   Proporções nativas diferentes (croqui 2,24:1, render 16:9, obra 4:3). O
+   trilho é 16/9 — a mesma régua que a /para-sua-casa já usa nesta sequência:
+     · croqui: object-contain sobre paper (cover cortaria ~40% do desenho).
+       Em 16/9 sobra ~20% de papel em cima e embaixo, que lê como margem da
+       folha; num container 4/3 sobrava 58% e o cartão lia como slab vazio ao
+       lado dos outros dois.
+     · render: 1400×788 é 16/9 exato — entra sem corte nenhum.
+     · obra: 4:3 com cover, corte consciente de topo/base numa foto horizontal. */
+const ARCO = [
   {
-    img: obraTato,
-    credito: "Tato (Falamansa)",
-    titulo: "De piscina de pastilha a praia particular",
-    linha: "Uma piscina retangular azul virou um oásis: areia, pedras, fogo de chão e lago com carpas.",
+    n: "1",
+    label: "Croqui à mão",
+    img: conradoCroqui,
+    contain: true,
+    d: "O primeiro traço do projeto, a lápis.",
+    alt: "Croqui a lápis de uma parede de pedra: a queda d'água maior à esquerda, a fileira de quedas menores em cortina à direita e a água curvando em primeiro plano.",
   },
   {
-    img: obraEvandro,
-    credito: "Evandro Mesquita",
-    /* A legenda anterior dizia "Ele levanta a pedra com as mãos · a prova de
-       leveza". ERA FALSO: na foto o Evandro está pulando numa boia-almofada da
-       piscina — não há pedra nenhuma nas mãos dele. Um agente olhou a imagem e
-       descreveu o que esperava ver. Numa página cujo trabalho é ser confiável,
-       inventar o que a foto mostra é o pior erro possível. Agora a legenda diz
-       só o que a foto prova: a cascata Western costurada ao riacho da casa. */
-    titulo: "A cascata que parece que sempre esteve ali",
-    linha: "Costurada a um riacho que já existia na casa — na casa do Evandro Mesquita, no Rio.",
+    n: "2",
+    label: "Render 3D",
+    img: conradoRender,
+    contain: false,
+    d: "A mesma vista em 3D, para você ajustar.",
+    alt: "Render 3D da mesma parede de pedra: a queda maior à esquerda, a fileira de quedas em cortina à direita e a água turquesa na frente.",
   },
   {
-    img: obraShowroom,
-    credito: "Riviera de São Lourenço",
-    /* Dizia "Você pode visitar e sentir · para você tocar antes de decidir".
-       FALSO desde que a obra foi entregue: a Riviera foi um projeto NOSSO, já
-       entregue — não é showroom aberto a visita. Convidar alguém a visitar um
-       lugar onde ele não pode entrar é o pior tipo de promessa. O showroom que
-       se visita hoje é o ateliê, em Cajamar (ver a seção do ateliê abaixo). */
-    titulo: "Uma praia inteira, do zero",
-    linha: "Cascata, prainha, blower, ofurô e som num só lugar — projetado e executado por nós.",
+    n: "3",
+    label: "A obra construída",
+    img: conradoObra,
+    contain: false,
+    d: "Executada pela nossa equipe.",
+    alt: "Foto da obra pronta em dia de sol: a parede de pedra com a queda maior à esquerda, as quedas menores ao longo da borda e a piscina de água turquesa com entrada de areia.",
   },
 ];
 
@@ -163,15 +248,12 @@ const FAQ_ITEMS = [
   },
 ];
 
-/* Telefone e e-mail agora vêm de @/components/forms (PhoneInput/EmailInput) —
-   máscara e normalização vivem lá, não mais nesta página. CONTROL só veste os
-   campos de texto simples (nome, cidade, textarea), na mesma pele V3 que a
-   /agendar-visita e o /contato usam: fundo paper dentro do cartão branco. */
 const CONTROL =
   "h-control w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 font-sans text-[15px] text-western-green-deep placeholder:text-western-stone-warm/60 outline-none transition-colors focus:border-western-green-deep";
 
 export default function ParaSuaCasa() {
   const formRef = useRef<HTMLDivElement>(null);
+  const obrasRef = useRef<HTMLElement>(null);
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [email, setEmail] = useState("");
@@ -180,7 +262,10 @@ export default function ParaSuaCasa() {
   const [enviando, setEnviando] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
-  const scrollToForm = () => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  /* Só existe o scroll para as obras: nesta versão o hero não oferece caminho
+     para o formulário (o pedido vem depois das obras). O scrollToForm que
+     morava aqui não era chamado por ninguém. */
+  const scrollToObras = () => obrasRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -209,7 +294,7 @@ export default function ParaSuaCasa() {
       );
       if (!res.ok) throw new Error(res.error ?? "erro");
     } catch (err) {
-      console.warn("[para-sua-casa] falha ao gravar lead:", err);
+      console.warn("[para-sua-casa-c] falha ao gravar lead:", err);
     }
     const msg = [
       "Olá, Western! Vim pelo site e quero um projeto para a minha casa.",
@@ -238,11 +323,14 @@ export default function ParaSuaCasa() {
         path="/para-sua-casa"
       />
 
-      {/* 1 — HERO */}
+      {/* 1 — HERO: PERGUNTA, NÃO PEDIDO.
+          A primeira dobra não tem CTA de contato de propósito: nesta versão o
+          pedido só aparece depois de o leitor ter escolhido um caminho. O único
+          controle aqui desce para as obras. */}
       <section className="relative isolate overflow-hidden flex items-center bg-western-green-deep min-h-[540px] md:min-h-[620px]">
         <img
           src={heroImg}
-          alt="Piscina de praia com borda de pedra artesanal Western, jardim tropical e prainha"
+          alt="Piscina de praia com borda de pedra artesanal, faixa de areia entrando na água e jardim tropical em volta"
           width={2200}
           height={1356}
           loading="eager"
@@ -250,10 +338,6 @@ export default function ParaSuaCasa() {
           decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        {/* Scrims DIRECIONAIS (mesmo tratamento aprovado no /contrate): fortes
-            onde o texto vive, limpos onde a foto é o assunto — a piscina-praia
-            volta a aparecer. Antes o desktop ia de 100% a 93% até quase metade
-            da tela: a página que vende sonho abria como verde chapado. */}
         <div
           className="absolute inset-0 md:hidden"
           style={{
@@ -274,31 +358,22 @@ export default function ParaSuaCasa() {
         <div className="relative container-western py-16 md:py-24">
           <Reveal variant="fade-up" duration={700}>
             <div className="max-w-2xl">
-              <p className="font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-gold-soft mb-4">
+              <p className="text-eyebrow-dark mb-4">
                 Ateliê Western · para a sua casa · desde {BUSINESS.fundadaEm}
               </p>
               <h1 className="display-xl text-western-cream">
-                A sua casa pode ter a{" "}
-                <span className="text-western-gold-soft">sua praia.</span>
+                O que cabe no{" "}
+                <span className="text-western-gold-soft">seu quintal?</span>
               </h1>
-              <p className="mt-5 text-[16px] md:text-[17px] leading-[1.6] text-western-cream/90 max-w-xl">
-                Piscinas de praia, lagos e cascatas em pedra artesanal. A gente desenha em 3D, você
-                aprova, e o ateliê entrega pronto — do sonho ao primeiro mergulho.
+              <p className="mt-5 text-[16px] md:text-[17px] leading-[1.6] text-western-cream/90 max-w-prose">
+                Duas entregas recentes, do primeiro traço à água. Olhe com calma: é assim que a gente
+                vai olhar para a sua área.
               </p>
 
-              <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                <a
-                  href={waLink("Olá! Quero um projeto para a minha casa.")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-gold w-full sm:w-auto"
-                >
-                  <MessageCircle className="h-5 w-5" />
-                  Falar com o ateliê
-                </a>
-                <button type="button" onClick={scrollToForm} className="btn-outline-cream w-full sm:w-auto">
-                  <ArrowDown className="h-5 w-5" />
-                  Contar meu sonho
+              <div className="mt-8">
+                <button type="button" onClick={scrollToObras} className="btn-outline-cream w-full sm:w-auto">
+                  <ArrowDown className="h-5 w-5" aria-hidden="true" />
+                  Ver as duas obras
                 </button>
               </div>
 
@@ -310,58 +385,138 @@ export default function ParaSuaCasa() {
         </div>
       </section>
 
-      {/* 2 — BARRA DE CONFIANÇA */}
-      <section className="surface-paper border-b border-western-border-soft">
-        {/* Exceção de ritmo declarada: faixa de credencial usa py-6, não .section. */}
-        <div className="container-western py-6">
-          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-            {CONFIANCA.map((c) => (
-              <li key={c.label} className="flex items-center gap-3">
-                <c.icon className="h-5 w-5 shrink-0 text-western-bronze" aria-hidden="true" />
-                <span className="font-sans text-[15px] font-medium text-western-green-deep">
-                  {c.label}
-                </span>
+      {/* 2 — MÓDULO 15: O QUINTAL INTEIRO.
+          Verticais 2:3 nativas em fileira (2 colunas no celular, 4 no desktop) e,
+          logo abaixo, as duas aéreas 3:4 — é a aérea que dá a noção de terreno
+          que a foto de perto esconde. Nenhuma foto sai da própria proporção. */}
+      <section ref={obrasRef} className="surface-ivory section">
+        <div className="container-western">
+          <Reveal variant="fade-up" duration={700}>
+            <header className="max-w-prose-lg mb-10 md:mb-12">
+              <p className="text-eyebrow">Entrega recente · Módulo 15</p>
+              <h2 className="display-lg text-western-green-deep mt-3">
+                Isto aqui é um quintal.
+              </h2>
+              <p className="mt-4 text-body">
+                {/* "rede na sombra" saiu: a rede da foto está em pleno sol. O
+                    texto de abertura não pode prometer uma cena que a foto
+                    logo abaixo desmente. */}
+                Areia entrando na água, cascata sobre pedra artesanal, rede no gramado. A água é
+                tratada por sal — sem cloro, sem olho ardendo.
+              </p>
+            </header>
+          </Reveal>
+
+          <ul className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 list-none p-0 m-0">
+            {M15_FOTOS.map((f) => (
+              <li key={f.legenda}>
+                <figure className="m-0">
+                  <div className="aspect-[2/3] overflow-hidden rounded-xl bg-western-cream-muted">
+                    <img
+                      src={f.img}
+                      alt={f.alt}
+                      width={1400}
+                      height={2100}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  {/* min-h iguala a linha de base das quatro legendas mesmo
+                      quando uma delas quebra em duas linhas no celular. */}
+                  <figcaption className="mt-3 min-h-[3rem] text-[15px] leading-[1.5] text-western-stone-warm">
+                    {f.legenda}
+                  </figcaption>
+                </figure>
               </li>
             ))}
           </ul>
+
+          {/* A ESCALA. É aqui que o leitor troca "que bonito" por "quanto de
+              terreno isso pede" — a pergunta que ele faria sozinho, respondida
+              por imagem antes de virar texto. */}
+          <Reveal variant="fade-up" delay={80} duration={700}>
+            <div className="mt-14 md:mt-16 grid md:grid-cols-12 gap-8 md:gap-12 items-start">
+              <div className="md:col-span-4">
+                <p className="text-eyebrow">De cima</p>
+                <h3 className="display-md text-western-green-deep mt-3">
+                  O desenho inteiro, dentro do terreno.
+                </h3>
+                <p className="mt-4 text-body">
+                  É esta vista que a gente desenha primeiro: onde a água começa, por onde se entra
+                  caminhando, quanto de gramado sobra em volta. A sua área também vai ser lida assim,
+                  antes de qualquer obra.
+                </p>
+              </div>
+              <ul className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 list-none p-0 m-0">
+                {M15_AEREAS.map((a) => (
+                  <li key={a.legenda}>
+                    <figure className="m-0">
+                      <div className="aspect-[3/4] overflow-hidden rounded-xl bg-western-cream-muted">
+                        <img
+                          src={a.img}
+                          alt={a.alt}
+                          width={1400}
+                          height={1867}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <figcaption className="mt-3 min-h-[3rem] text-[15px] leading-[1.5] text-western-stone-warm">
+                        {a.legenda}
+                      </figcaption>
+                    </figure>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* 3 — AS LINGUAGENS DO SONHO (com foto) */}
-      <section className="surface-ivory section">
+      {/* 3 — QUAL DESSES É O SEU?
+          PRIMEIRO CTA DA PÁGINA. Vem aqui e não antes: o leitor acabou de ver
+          uma obra inteira e uma noção de terreno; agora ele se declara. O botão
+          fala pela pessoa ("Esse é o meu"), não pela empresa. */}
+      <section className="surface-paper section border-y border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
-            <header className="max-w-2xl mb-10 md:mb-12">
-              <p className="text-eyebrow">Por onde começar</p>
+            <header className="max-w-prose-lg mb-10 md:mb-12">
+              <p className="text-eyebrow">O seu caminho</p>
               <h2 className="display-lg text-western-green-deep mt-3">
-                Escolha o que mais parece com o seu sonho.
+                Qual desses é o seu?
               </h2>
-              <p className="mt-4 text-body">Cada caminho leva direto ao nosso time — sem formulário.</p>
+              <p className="mt-4 text-body">
+                Quatro formas de ter água em casa. Escolha a que mais parece com o que você imagina —
+                a conversa começa por ela, direto com o nosso time.
+              </p>
             </header>
           </Reveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {CAMINHOS.map((c, i) => (
-              <Reveal key={c.titulo} variant="fade-up" delay={i * 70} duration={650}>
-                <article className="flex h-full flex-col bg-white rounded-xl overflow-hidden border border-western-border-soft shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)]">
+              <Reveal key={c.titulo} variant="fade-up" delay={i * 70} duration={650} className="h-full">
+                <article className="flex h-full flex-col bg-white rounded-xl overflow-hidden border border-western-border-soft shadow-card">
                   <div className="aspect-[4/3] overflow-hidden bg-western-cream-muted">
-                    {/* eager + dimensões: esta é a seção "o que você quer" — as
-                        4 fotos SÃO o conteúdo, e lazy deixava 3 caixas cinza
-                        (parecia quebrado). width/height reservam o espaço. */}
+                    {/* eager: estas 4 fotos SÃO o conteúdo da seção de escolha;
+                        lazy deixava caixas cinza no meio da decisão. */}
                     <img
                       src={c.img}
-                      alt={c.titulo}
+                      alt={c.alt}
                       width={1100}
                       height={825}
                       loading="eager"
                       decoding="async"
-                      className="w-full h-full object-cover"
+                      className="h-full w-full object-cover"
                     />
                   </div>
                   <div className="flex flex-1 flex-col p-5 md:p-6">
-                    <h3 className="font-sans font-semibold text-[18px] leading-snug text-western-green-deep mb-2">
-                      {c.titulo}
-                    </h3>
+                    {/* min-h de duas linhas: sem isso o corpo dos quatro cartões
+                        começa em alturas diferentes (título de 1 × 2 linhas).
+                        48px = 2 × (18px × 1,3) do .text-title-sm — o mesmo
+                        número dos passos, que estava 50 aqui e 48 lá. */}
+                    <h3 className="text-title-sm min-h-[48px] mb-2">{c.titulo}</h3>
                     <p className="text-body flex-1">{c.desc}</p>
                     <a
                       href={waLink(c.msg)}
@@ -369,7 +524,7 @@ export default function ParaSuaCasa() {
                       rel="noopener noreferrer"
                       className="btn-gold mt-5 w-full"
                     >
-                      <MessageCircle className="h-5 w-5" />
+                      <MessageCircle className="h-5 w-5" aria-hidden="true" />
                       {c.cta}
                     </a>
                   </div>
@@ -380,153 +535,46 @@ export default function ParaSuaCasa() {
         </div>
       </section>
 
-      {/* 4 — VITRINE DE OBRAS REAIS */}
-      <section className="surface-paper section border-y border-western-border-soft">
-        <div className="container-western">
-          <Reveal variant="fade-up" duration={700}>
-            <header className="max-w-2xl mb-10 md:mb-12">
-              <p className="text-eyebrow">Veja o que já é real</p>
-              <h2 className="display-lg text-western-green-deep mt-3">
-                Isso existe. Foi entregue. Pode ser a sua casa.
-              </h2>
-            </header>
-          </Reveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {/* Card unificado (ObraCard, variant editorial). A miniatura "ANTES"
-                  saiu numa passada anterior: selo de UI a 96px não provava nada. */}
-              {OBRAS_SONHO.map((o, i) => (
-                <ObraCard
-                  key={o.titulo}
-                  variant="editorial"
-                  index={i}
-                  image={o.img}
-                  alt={o.titulo}
-                  eyebrow={o.credito}
-                  title={o.titulo}
-                  desc={o.linha}
-                />
-              ))}
-          </div>
-
-          {/* Primária dourada (WhatsApp) + saída interna para quem ainda quer
-              VER mais antes de falar: /obras é a galeria completa. Secundária
-              em .link-cta (verde, sobre paper) — nunca um segundo sólido. */}
-          <div className="mt-12 flex flex-col items-center gap-5">
-            <a
-              href={waLink("Olá! Vi as obras no site e quero uma assim na minha casa.")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-gold w-full sm:w-auto"
-            >
-              <MessageCircle className="h-5 w-5" />
-              Quero uma obra assim na minha casa
-            </a>
-            <Link to="/obras" className="link-cta">
-              Ver todas as obras
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 5 — COMO FUNCIONA */}
-      <section className="surface-ivory section">
-        <div className="container-western">
-          <Reveal variant="fade-up" duration={700}>
-            <header className="text-center max-w-2xl mx-auto mb-12">
-              <p className="text-eyebrow">Como funciona</p>
-              <h2 className="display-lg text-western-green-deep mt-3">Quatro passos até o mergulho</h2>
-              <p className="mt-4 text-body max-w-xl mx-auto">
-                Os dois primeiros são{" "}
-                <span className="font-semibold text-western-green-deep">grátis e sem compromisso</span>. Você
-                só decide seguir depois de conhecer.
-              </p>
-            </header>
-          </Reveal>
-
-          {/* MARKUP + LINHA DE BASE.
-              O <Reveal> estava entre o <ol> e o <li>, renderizando uma <div> ali
-              no meio — <ol> só admite <li> como filho. Além de inválido, o
-              wrapper quebrava a grade: cada cartão virava filho de um div, e os
-              títulos de 1 e 2 linhas faziam o corpo começar em alturas
-              diferentes (o mesmo defeito que o dono apontou no /contrate).
-              Agora o <li> é filho direto e os quatro dividem as MESMAS faixas
-              via grid-rows-subgrid: número, título e corpo alinhados. Onde não
-              há suporte a subgrid, degrada sem quebrar. */}
-          <ol className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:grid-rows-[auto_auto_1fr]">
-            {PASSOS.map((p) => (
-              <li
-                key={p.n}
-                className={`relative flex h-full flex-col gap-2 rounded-lg border bg-white p-6 shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)] lg:row-span-3 lg:grid lg:grid-rows-subgrid lg:gap-0 ${
-                  p.gratis ? "border-western-gold/50" : "border-western-border-soft"
-                }`}
-              >
-                {p.gratis && (
-                  <span className="absolute -top-3 left-6 rounded-sm bg-western-gold px-2.5 py-1 font-sans text-[14px] font-semibold leading-none text-western-green-deep">
-                    Grátis
-                  </span>
-                )}
-                <span className="block font-display text-[32px] leading-none text-western-bronze">
-                  {p.n}
-                </span>
-                <h3 className="font-sans font-semibold text-[17px] leading-snug text-western-green-deep lg:pt-3">
-                  {p.t}
-                </h3>
-                <p className="text-[15px] leading-relaxed text-western-stone-warm lg:pt-2">
-                  {p.d}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* 6 — DO DESENHO À OBRA (desenho do Ricardo → 3D → obra entregue) */}
+      {/* 4 — O ARCO DO CONRADO: A PROMESSA DE PROCESSO.
+          Depois de escolher um caminho, a pergunta natural é "e como isso vira
+          real na minha casa?". O arco responde com a mesma vista em três
+          estágios, cada um rotulado pelo que é. */}
       <section className="surface-forest section">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
-            <div className="max-w-[62ch]">
-              <p className="font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-gold-soft mb-4">
-                Do desenho à obra
-              </p>
+            <div className="max-w-prose-lg">
+              <p className="text-eyebrow-dark mb-4">Conrado · Vinhedo/SP</p>
               <h2 className="display-lg text-western-cream">
-                Você não aprova{" "}
-                <span className="text-western-gold-soft">no escuro.</span>
+                O seu também{" "}
+                <span className="text-western-gold-soft">começa a lápis.</span>
               </h2>
               <p className="mt-5 text-[16px] leading-[1.6] text-western-cream/85">
-                Começa a lápis, na mão do nosso projetista. Vira 3D para você ajustar até ficar do seu
-                jeito. E só então a obra começa. De 10 a 25 dias para o projeto, e atendemos todo o Brasil.
+                A parede de cascatas do Conrado, nos três estágios: o croqui à mão, o render 3D e a
+                obra construída — o mesmo enquadramento nas três. O projeto 3D fica pronto em 10 a 25
+                dias úteis, e você ajusta antes de a obra começar.
               </p>
             </div>
           </Reveal>
 
           <Reveal variant="fade-up" delay={90} duration={700}>
             <ol className="mt-10 md:mt-12 grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 list-none p-0">
-              {[
-                { img: conradoDesenho, n: "1", label: "O desenho à mão", d: "O primeiro traço do projeto, a lápis.",
-                  alt: "Desenho a lápis de uma parede de pedra com uma queda d'água grande à esquerda, uma fileira de quedas menores em cortina à direita e um lago curvando em primeiro plano." },
-                { img: conrado3d, n: "2", label: "O projeto 3D", d: "O mesmo desenho, para você aprovar.",
-                  alt: "Projeto em 3D da mesma parede de pedra: a queda maior à esquerda, a fileira de quedas em cortina à direita e a água turquesa na frente." },
-                { img: conradoObra, n: "3", label: "A obra entregue", d: "Executada pela nossa equipe.",
-                  alt: "Foto da obra pronta em dia de sol: a parede de pedra cor de ocre com a queda maior à esquerda, as quedas menores ao longo da borda e a piscina de água turquesa com patamar de areia." },
-              ].map((x) => (
+              {ARCO.map((x) => (
                 <li key={x.n}>
                   <figure className="m-0">
-                    <div className="aspect-[16/9] overflow-hidden rounded-[12px] bg-western-green-mid/30 ring-1 ring-western-gold/20">
+                    <div className="aspect-[16/9] overflow-hidden rounded-xl ring-1 ring-western-gold/20 bg-western-paper">
                       <img
                         src={x.img}
                         alt={x.alt}
                         loading="lazy"
                         decoding="async"
-                        className="w-full h-full object-cover"
+                        className={`h-full w-full ${x.contain ? "object-contain" : "object-cover"}`}
                       />
                     </div>
                     <figcaption className="mt-3">
                       <span className="font-sans text-[14px] font-semibold text-western-gold-soft tabular-nums">
                         {x.n} · {x.label}
                       </span>
-                      <span className="mt-1 block text-[15px] leading-[1.5] text-western-cream/75">
+                      <span className="mt-1 block min-h-[3rem] text-[15px] leading-[1.5] text-western-cream/75">
                         {x.d}
                       </span>
                     </figcaption>
@@ -537,25 +585,19 @@ export default function ParaSuaCasa() {
           </Reveal>
 
           <Reveal variant="fade-up" delay={140} duration={700}>
-            {/* Diz ao leitor exatamente o que conferir — e só o que as três imagens
-                sustentam de verdade. O desenho e o 3D não têm casa nenhuma, então
-                "o mesmo projeto" é o limite do que dá pra afirmar aqui. */}
-            <p className="mt-8 max-w-[68ch] text-[15px] leading-[1.6] text-western-cream/70">
-              As três são o mesmo projeto: repare na escada de pedras chatas descendo até a água, à
-              esquerda, e na fileira de quedas ao fundo.
+            <p className="mt-6 max-w-prose-lg text-[15px] leading-[1.6] text-western-cream/70">
+              Repare na queda maior à esquerda e na fileira de quedas menores ao lado: é a mesma
+              composição no papel, na tela e na obra.
             </p>
-            {/* Primária dourada (WhatsApp) + saída interna para entender a
-                tecnologia antes de decidir: /a-pedra conta como a pedra é
-                feita. Sobre verde → .link-cta-dark (creme), não um 2º sólido. */}
             <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-x-6 gap-y-4">
               <a
-                href={waLink("Olá! Quero ver o meu projeto em 3D.")}
+                href={waLink("Olá! Quero ver a minha área em 3D antes da obra.")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-gold w-full sm:w-auto"
               >
-                <MessageCircle className="h-5 w-5" />
-                Quero ver o meu em 3D
+                <MessageCircle className="h-5 w-5" aria-hidden="true" />
+                Quero ver a minha em 3D
               </a>
               <Link to="/a-pedra" className="link-cta-dark">
                 Como a pedra é feita
@@ -566,11 +608,152 @@ export default function ParaSuaCasa() {
         </div>
       </section>
 
-      {/* 7 — PROVA SOCIAL ASPIRACIONAL — 1 grupo: o componente rende o SPLIT
-          editorial (cabeçalho à esquerda, rostos à direita), largura cheia do
-          trilho. Sem `compact`/wrapper estreito (o "left compact" deixava um
-          cluster pequeno flutuando à esquerda — o dono reprovou). */}
-      <section className="surface-ivory section border-b border-western-border-soft">
+      {/* 5 — CONRADO ENTREGUE: O DESFECHO DO ARCO.
+          A ampla 4:3 ocupa o trilho inteiro (é o pagamento da promessa da seção
+          anterior) e as duas verticais 3:4 vêm abaixo, na mesma régua. */}
+      <section className="surface-paper section border-b border-western-border-soft">
+        <div className="container-western">
+          <Reveal variant="fade-up" duration={700}>
+            <header className="max-w-prose-lg mb-8 md:mb-10">
+              <p className="text-eyebrow">Depois da obra</p>
+              <h2 className="display-lg text-western-green-deep mt-3">
+                E, no fim, é isto que fica.
+              </h2>
+            </header>
+          </Reveal>
+
+          <Reveal variant="fade-up" delay={60} duration={700}>
+            <figure className="m-0">
+              <div className="aspect-[4/3] overflow-hidden rounded-xl bg-western-cream-muted">
+                <img
+                  src={conradoAmpla}
+                  alt="Vista ampla da piscina do Conrado: a parede de cascatas ao fundo, palmeiras, puffs na borda e piso de pedra em volta da água."
+                  width={1400}
+                  height={1050}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              {/* A legenda descreve a foto e para no que a página sustenta.
+                  Dizia "a piscina, o piso de pedra e o paisagismo — tudo
+                  projetado e executado por nós": o escopo do paisagismo (as
+                  palmeiras, o plantio) não está em lugar nenhum do material —
+                  era autoria assumida por dedução a partir da imagem. */}
+              <figcaption className="mt-3 text-[15px] leading-[1.5] text-western-stone-warm">
+                A parede de cascatas, a água e o piso de pedra em volta — a mesma vista do croqui,
+                agora em uso.
+              </figcaption>
+            </figure>
+          </Reveal>
+
+          <Reveal variant="fade-up" delay={110} duration={700}>
+            <ul className="mt-6 md:mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 list-none p-0 m-0">
+              {[
+                {
+                  img: conradoCascata,
+                  alt: "A cascata do Conrado em detalhe, caindo pela parede de pedra artesanal, com a casa moderna ao fundo.",
+                  legenda: "A cascata de perto, com a casa atrás.",
+                },
+                {
+                  img: conradoEstar,
+                  alt: "Área de estar ao lado da piscina, com palmeiras, paisagismo e pedra artesanal em volta.",
+                  legenda: "A área de estar, do lado de fora da água.",
+                },
+              ].map((f) => (
+                <li key={f.legenda}>
+                  <figure className="m-0">
+                    {/* 3/4, não 2/3: as duas verticais do Conrado são 1400×1867
+                        (0,75), enquanto as do Módulo 15 são 1400×2100 (0,667).
+                        Estavam num container 2/3 declarando height={2100} — a
+                        proporção errada cortava faixa da foto e o width/height
+                        mentia a intrínseca para o browser. */}
+                    <div className="aspect-[3/4] overflow-hidden rounded-xl bg-western-cream-muted">
+                      <img
+                        src={f.img}
+                        alt={f.alt}
+                        width={1400}
+                        height={1867}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <figcaption className="mt-3 min-h-[3rem] text-[15px] leading-[1.5] text-western-stone-warm">
+                      {f.legenda}
+                    </figcaption>
+                  </figure>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+
+          <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-x-6 gap-y-4">
+            <a
+              href={waLink("Olá! Vi as obras no site e quero uma assim na minha casa.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-gold w-full sm:w-auto"
+            >
+              <MessageCircle className="h-5 w-5" aria-hidden="true" />
+              Quero uma assim na minha casa
+            </a>
+            <Link to="/obras" className="link-cta">
+              Ver todas as obras
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 6 — COMO FUNCIONA */}
+      <section className="surface-ivory section">
+        <div className="container-western">
+          <Reveal variant="fade-up" duration={700}>
+            <header className="max-w-prose-lg mb-10 md:mb-12">
+              <p className="text-eyebrow">Como funciona</p>
+              <h2 className="display-lg text-western-green-deep mt-3">
+                Do primeiro "oi" ao primeiro mergulho
+              </h2>
+              <p className="mt-4 text-body">
+                Os dois primeiros passos são{" "}
+                <span className="font-semibold text-western-green-deep">grátis e sem compromisso</span>.
+                Você só decide seguir depois de conhecer.
+              </p>
+            </header>
+          </Reveal>
+
+          {/* Reveal fica FORA do <ol>: wrapper entre lista e item é markup
+              inválido e desalinha a grade. */}
+          <Reveal variant="fade-up" delay={80} duration={700}>
+            <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 list-none p-0 m-0">
+              {PASSOS.map((p) => (
+                <li
+                  key={p.n}
+                  className={`relative h-full bg-white rounded-lg p-6 border shadow-card ${
+                    p.gratis ? "border-western-gold/50" : "border-western-border-soft"
+                  }`}
+                >
+                  {p.gratis && (
+                    <span className="absolute -top-3 left-6 rounded-sm bg-western-gold px-2.5 py-1 font-sans text-[14px] font-semibold leading-none text-western-green-deep">
+                      Grátis
+                    </span>
+                  )}
+                  <span className="font-display text-[32px] leading-none text-western-bronze block mb-3">
+                    {p.n}
+                  </span>
+                  {/* min-h de 2 linhas: alinha o início do corpo nos 4 cartões. */}
+                  <h3 className="text-title-sm min-h-[48px] mb-2">{p.t}</h3>
+                  <p className="text-[15px] leading-relaxed text-western-stone-warm">{p.d}</p>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* 7 — PROVA SOCIAL */}
+      <section className="surface-paper section border-y border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
@@ -583,23 +766,11 @@ export default function ParaSuaCasa() {
         </div>
       </section>
 
-      {/* 8 — O ATELIÊ */}
-      <section className="surface-paper section border-b border-western-border-soft">
+      {/* 8 — O ATELIÊ + O CONVITE.
+          Mesma régua 6/6 nos dois blocos, com o lado da foto alternado: a
+          leitura muda sem a geometria mudar. */}
+      <section className="surface-ivory section">
         <div className="container-western">
-          {/* SEQUÊNCIA DE DOIS BLOCOS — regrade (dono, 2026-07-18: "continuidade
-              esquisita e diagramação estranha").
-              O que estava errado era a GRADE, não o gosto:
-                · o primeiro bloco dividia 6/6 e o segundo 7/5, então as duas
-                  fotos terminavam em colunas diferentes e nada se alinhava;
-                · o primeiro tinha foto nua e o segundo foto em cartão — dois
-                  tratamentos do mesmo elemento, um embaixo do outro;
-                · os dois liam da mesma forma (foto à esquerda, texto à direita),
-                  então o olho percorria a mesma figura duas vezes;
-                · o painel de texto do segundo tinha pt-0 no celular (o eyebrow
-                  encostava na foto) e pl-0 no desktop.
-              Agora: MESMA régua 6/6 nos dois, lado da foto ALTERNADO (a leitura
-              muda sem a geometria mudar), e o cartão fica só no segundo — porque
-              ali ele significa algo: o primeiro é narrativa, o segundo é oferta. */}
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-center">
             <Reveal variant="fade-up" duration={700} className="md:col-span-6">
               <div className="aspect-[4/3] overflow-hidden rounded-xl">
@@ -623,48 +794,36 @@ export default function ParaSuaCasa() {
                 <p className="mt-5 text-body">
                   Mais de {BUSINESS.anosOperacao} anos reproduzindo rocha natural pedra a pedra — obras
                   reais em casas, sítios e pousadas Brasil afora, entregues por equipe própria, com
-                  garantia de {BUSINESS.garantiaLabel}. Aqui não é catálogo distante: é gente que atende,
-                  projeta e executa.
+                  garantia de {BUSINESS.garantiaLabel}. Aqui não é catálogo distante: é gente que
+                  atende, projeta e executa.
                 </p>
               </div>
             </Reveal>
           </div>
 
-          {/* O CONVITE VERDADEIRO.
-              O convite anterior mandava a pessoa visitar a Riviera de São Lourenço —
-              e a Riviera é uma obra NOSSA já entregue, que não recebe visita. Já saiu.
-              O showroom que existe e recebe gente com hora marcada é o ateliê, e é
-              esse que o convite oferece agora. A cidade vem do cadastro (BUSINESS),
-              não da foto: nenhuma imagem prova onde o lugar fica. */}
           <Reveal variant="fade-up" delay={120} duration={700}>
-            {/* MESMA régua 6/6 do bloco de cima, com a foto do OUTRO lado.
-                No celular a ordem volta ao natural (foto e depois texto) via
-                order-*: a imagem apresenta o lugar antes do convite. */}
-            {/* A calha é a MESMA do bloco de cima (gap-10 md:gap-14). Com calhas
-                diferentes as duas fotos saíam com larguras diferentes (525 × 532
-                medidos) e a segunda parava 15px antes do trilho — o desencontro
-                que se via sem saber nomear. */}
             <div className="mt-12 md:mt-16 grid md:grid-cols-12 gap-10 md:gap-14 items-center overflow-hidden rounded-xl border border-western-border-soft bg-white">
               <div className="order-2 p-6 pt-0 md:order-1 md:col-span-6 md:p-8">
                 <p className="text-eyebrow">Visita ao ateliê</p>
+                {/* Era "venha pôr a mão na pedra" — o dono riu da frase, e com
+                    razão: a imagem física soa esquisita fora do contexto de quem
+                    já conhece o ateliê. O convite continua de baixa pressão
+                    ("antes de decidir") sem a figura estranha. */}
                 <h3 className="display-md text-western-green-deep mt-3">
-                  Venha conhecer o ateliê.
+                  Antes de decidir, venha ver de perto.
                 </h3>
                 <p className="mt-4 text-[16px] leading-[1.6] text-western-stone-warm">
-                  O ateliê recebe com hora marcada. Dá pra pôr a mão na pedra, ver as peças montadas
-                  em escala e conversar com quem produz — antes de decidir qualquer coisa.
+                  O ateliê recebe com hora marcada. Dá pra ver as peças montadas em escala e
+                  conversar com quem produz.
                 </p>
                 <p className="mt-4 text-[15px] leading-[1.6] text-western-stone-warm">
                   {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · {BUSINESS.horarioAtelie}
                 </p>
                 <Link to="/visitar" className="btn-gold mt-7 w-full sm:w-auto">
-                  <MapPin className="h-5 w-5" aria-hidden />
+                  <MapPin className="h-5 w-5" aria-hidden="true" />
                   Agendar uma visita
                 </Link>
               </div>
-              {/* A foto vai à borda do cartão (sem padding do lado de fora) e
-                  mantém o mesmo 4/3 do bloco de cima: mesma régua, mesma altura
-                  de imagem, leitura invertida. */}
               <div className="order-1 md:order-2 md:col-span-6">
                 <div className="aspect-[4/3] overflow-hidden">
                   <img
@@ -684,11 +843,11 @@ export default function ParaSuaCasa() {
       </section>
 
       {/* 9 — FAQ */}
-      <section className="surface-ivory section">
+      <section className="surface-paper section border-t border-western-border-soft">
         <div className="container-western">
           <div className="mx-auto max-w-3xl">
             <Reveal variant="fade-up" duration={700}>
-              <header className="text-center mb-10">
+              <header className="mb-10">
                 <p className="text-eyebrow">Perguntas frequentes</p>
                 <h2 className="display-lg text-western-green-deep mt-3">
                   As dúvidas de quem está começando
@@ -707,7 +866,7 @@ export default function ParaSuaCasa() {
                     value={`item-${i}`}
                     className="border-b border-western-border-soft last:border-b-0 px-5 md:px-7"
                   >
-                    <AccordionTrigger className="text-left font-sans font-semibold text-[16px] md:text-[17px] text-western-green-deep hover:no-underline py-5 min-h-[var(--tap-min)]">
+                    <AccordionTrigger className="text-left font-sans font-semibold text-[16px] md:text-[17px] text-western-green-deep hover:no-underline py-5 min-h-tap">
                       {item.q}
                     </AccordionTrigger>
                     <AccordionContent className="text-western-stone-warm text-[16px] leading-[1.6] pb-6">
@@ -721,25 +880,42 @@ export default function ParaSuaCasa() {
         </div>
       </section>
 
-      {/* 10 — FECHAMENTO + CAPTURA */}
+      {/* 10 — FAIXA DE CREDENCIAL.
+          Desceu do topo para cá de propósito: nesta versão a credencial não
+          disputa com a primeira dobra, ela sustenta o pedido que vem logo
+          abaixo. Exceção de ritmo declarada: py-6, não .section. */}
+      <section className="surface-ivory border-y border-western-border-soft">
+        <div className="container-western py-6">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 list-none p-0 m-0">
+            {CONFIANCA.map((c) => (
+              <li key={c.label} className="flex items-center gap-3">
+                <c.icon className="h-5 w-5 shrink-0 text-western-bronze" aria-hidden="true" />
+                <span className="font-sans text-[15px] font-medium text-western-green-deep">
+                  {c.label}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* 11 — FECHAMENTO + CAPTURA */}
       <section ref={formRef} id="contato" className="surface-forest section">
         <div className="container-western">
           <div className="max-w-5xl mx-auto">
             <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
               <Reveal variant="fade-up" duration={700} className="md:col-span-5">
                 <div>
-                  <p className="font-sans font-semibold text-[14px] uppercase tracking-[0.06em] text-western-gold-soft mb-3">
-                    Sem compromisso
-                  </p>
+                  <p className="text-eyebrow-dark mb-3">Sem compromisso</p>
                   <h2 className="display-lg text-western-cream">
-                    Conte o seu sonho.{" "}
+                    Agora conte da sua área.{" "}
                     <span className="text-western-gold-soft">A gente mostra o caminho.</span>
                   </h2>
                   <p className="mt-5 text-[16px] leading-[1.6] text-western-cream/85">
                     Só <strong className="font-semibold text-western-cream">nome e WhatsApp</strong> são
                     obrigatórios. Ao enviar, abrimos o WhatsApp com a sua mensagem já pronta.
                   </p>
-                  <ul className="mt-7 space-y-3">
+                  <ul className="mt-7 space-y-3 list-none p-0">
                     {["A gente escuta a sua ideia", "Vê a viabilidade na sua área", "Passa uma estimativa real"].map(
                       (b) => (
                         <li key={b} className="flex gap-3 text-[15px] leading-relaxed text-western-cream/85">
@@ -755,7 +931,7 @@ export default function ParaSuaCasa() {
                     rel="noopener noreferrer"
                     className="tap-target mt-7 inline-flex items-center gap-2 text-[15px] font-semibold text-western-gold-soft underline underline-offset-4 decoration-western-gold/50 hover:decoration-western-gold-soft"
                   >
-                    <MessageCircle className="h-5 w-5" />
+                    <MessageCircle className="h-5 w-5" aria-hidden="true" />
                     Prefere só conversar? Chama no WhatsApp
                   </a>
                 </div>
@@ -768,24 +944,31 @@ export default function ParaSuaCasa() {
                   noValidate
                 >
                   <div>
-                    <FieldLabel htmlFor="pc-nome" required>Nome</FieldLabel>
-                    <input id="pc-nome" required value={nome} onChange={(e) => setNome(e.target.value)} autoComplete="name" className={CONTROL} />
+                    <FieldLabel htmlFor="pcc-nome" required>Nome</FieldLabel>
+                    <input id="pcc-nome" required value={nome} onChange={(e) => setNome(e.target.value)} autoComplete="name" className={CONTROL} />
                   </div>
                   <div>
-                    <FieldLabel htmlFor="pc-tel" required>WhatsApp</FieldLabel>
-                    <PhoneInput id="pc-tel" name="telefone" value={telefone} onChange={setTelefone} required />
+                    <FieldLabel htmlFor="pcc-tel" required>WhatsApp</FieldLabel>
+                    <PhoneInput id="pcc-tel" name="telefone" value={telefone} onChange={setTelefone} required />
                   </div>
                   <div>
-                    <FieldLabel htmlFor="pc-email" optional>E-mail</FieldLabel>
-                    <EmailInput id="pc-email" value={email} onChange={setEmail} />
+                    <FieldLabel htmlFor="pcc-email" optional>E-mail</FieldLabel>
+                    <EmailInput id="pcc-email" value={email} onChange={setEmail} />
                   </div>
                   <div>
-                    <FieldLabel htmlFor="pc-cidade" optional>Cidade</FieldLabel>
-                    <input id="pc-cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} autoComplete="address-level2" placeholder="Cidade / UF" className={CONTROL} />
+                    <FieldLabel htmlFor="pcc-cidade" optional>Cidade</FieldLabel>
+                    <input id="pcc-cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} autoComplete="address-level2" placeholder="Cidade / UF" className={CONTROL} />
                   </div>
                   <div className="md:col-span-2">
-                    <FieldLabel htmlFor="pc-msg" optional>Conte o seu sonho</FieldLabel>
-                    <textarea id="pc-msg" rows={4} value={mensagem} onChange={(e) => setMensagem(e.target.value)} placeholder="Uma piscina de praia no quintal? Um lago com carpas? Conta pra gente." className="w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 py-3 font-sans text-[15px] leading-[1.6] text-western-green-deep placeholder:text-western-stone-warm/60 outline-none transition-colors focus:border-western-green-deep resize-none" />
+                    <FieldLabel htmlFor="pcc-msg" optional>Conte da sua área</FieldLabel>
+                    <textarea
+                      id="pcc-msg"
+                      rows={4}
+                      value={mensagem}
+                      onChange={(e) => setMensagem(e.target.value)}
+                      placeholder="Quintal, terraço, sítio? Tem gramado, deck, desnível? Conta pra gente."
+                      className="w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 py-3 font-sans text-[15px] leading-[1.6] text-western-green-deep placeholder:text-western-stone-warm/60 outline-none transition-colors focus:border-western-green-deep resize-none"
+                    />
                   </div>
                   <div className="md:col-span-2">
                     <TurnstileWidget onToken={setCaptchaToken} onExpire={() => setCaptchaToken(null)} />
@@ -794,13 +977,13 @@ export default function ParaSuaCasa() {
                     <button type="submit" disabled={enviando} className="btn-gold w-full sm:w-auto">
                       {enviando ? (
                         <>
-                          <Loader2 className="h-5 w-5 animate-spin" />
+                          <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
                           Enviando…
                         </>
                       ) : (
                         <>
-                          <Send className="h-5 w-5" />
-                          Contar meu sonho
+                          <Send className="h-5 w-5" aria-hidden="true" />
+                          Falar sobre a minha área
                         </>
                       )}
                     </button>

@@ -781,8 +781,12 @@ export default function ParaSuaCasaC() {
             <div className="mt-12 md:mt-16 grid md:grid-cols-12 gap-10 md:gap-14 items-center overflow-hidden rounded-xl border border-western-border-soft bg-white">
               <div className="order-2 p-6 pt-0 md:order-1 md:col-span-6 md:p-8">
                 <p className="text-eyebrow">Visita ao ateliê</p>
+                {/* Era "venha pôr a mão na pedra" — o dono riu da frase, e com
+                    razão: a imagem física soa esquisita fora do contexto de quem
+                    já conhece o ateliê. O convite continua de baixa pressão
+                    ("antes de decidir") sem a figura estranha. */}
                 <h3 className="display-md text-western-green-deep mt-3">
-                  Antes de decidir, venha pôr a mão na pedra.
+                  Antes de decidir, venha ver de perto.
                 </h3>
                 <p className="mt-4 text-[16px] leading-[1.6] text-western-stone-warm">
                   O ateliê recebe com hora marcada. Dá pra ver as peças montadas em escala e
