@@ -59,6 +59,7 @@ const AccountPreferences = lazy(() => import("./pages/account/AccountPreferences
 const AccountTracking = lazy(() => import("./pages/account/AccountTracking"));
 const AccountOrcamentos = lazy(() => import("./pages/account/AccountOrcamentos"));
 
+const LabSecoes = lazy(() => import("./pages/lab/LabSecoes.tsx"));
 const Inspiracoes = lazy(() => import("./pages/Inspiracoes.tsx"));
 const ObraPage = lazy(() => import("./pages/ObraPage.tsx"));
 const ComoComprar = lazy(() => import("./pages/ComoComprar.tsx"));
@@ -187,6 +188,10 @@ const App = () => (
                     <Route path="/obras/:slug" element={<ObraPage />} />
                     <Route path="/inspiracoes" element={<RedirectObras />} />
                     <Route path="/inspiracao" element={<RedirectObras />} />
+                    {/* LAB — bancada interna de decisão do dono, com noindex.
+                        Não entra em menu nem em sitemap: só existe enquanto há
+                        variante em julgamento, e sai do ar depois da escolha. */}
+                    <Route path="/lab/secoes" element={<LabSecoes />} />
                     {/* Telas do V3 que faltavam no app */}
                     <Route path="/como-comprar" element={<ComoComprar />} />
                     <Route path="/para-sua-casa" element={<ParaSuaCasa />} />
