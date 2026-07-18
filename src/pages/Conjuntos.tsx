@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { fetchProductsByHandles } from "@/lib/datasource";
@@ -127,6 +127,12 @@ export default function Conjuntos() {
     return map;
   }, [filtered]);
 
+  // Primeira categoria com resultado — a faixa do guia entra LOGO APÓS ela, para
+  // o cliente ver conjuntos na 1ª dobra antes do "não sabe por onde começar?".
+  const primeiroTipoComResultado = TIPOS_ORDER.find(
+    (t) => (grouped.get(t)?.length ?? 0) > 0,
+  );
+
   const toggleTipo = (t: Tipo) => {
     setTiposSel((prev) => {
       const next = new Set(prev);
@@ -168,45 +174,24 @@ export default function Conjuntos() {
         description="Composições prontas organizadas pelo local de aplicação — piscinas, lagos, lagos híbridos e jardins. Pedras, volumes e acabamentos já equilibrados."
         path="/conjuntos"
       />
-      {/* HERO */}
+      {/* HERO — compacto, coluna única. O card do guia SAIU daqui (o dono:
+          "demora muito na 1ª dobra até ver que tem produtos"): ele desce para
+          uma faixa logo após a primeira categoria de conjuntos. Assim os
+          conjuntos aparecem já na dobra, e o "não sabe por onde começar?" vira
+          ajuda para quem rolou e ficou indeciso. */}
       <header className="border-b border-western-border-soft">
-        <div className="container-western section-tight">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-16 items-start">
-            <div className="max-w-3xl">
-              <p className="text-eyebrow mb-4">Curadoria · Conjuntos</p>
-              <div className="w-12 h-px bg-western-gold mb-7" />
-              <h1 className="display-xl text-western-green-deep">
-                Conjuntos curados, prontos para projetar.
-              </h1>
-              <p className="mt-6 text-body max-w-[60ch]">
-                {ALL_LEAVES.length} composições organizadas pelo local de aplicação —
-                piscinas, lagos, lagos híbridos e jardins. Cada conjunto reúne
-                pedras, volumes e acabamentos já equilibrados pela curadoria
-                Western.
-              </p>
-            </div>
-
-            <div>
-              {/* Um único caminho à direita: o guia. A foto "featured" saiu —
-                  competia com este card, criava o vazio em L no desktop e
-                  empurrava o primeiro conjunto ~1 tela pra baixo no mobile. As
-                  fotos reais dos conjuntos já vêm no grid logo abaixo. */}
-              <aside className="surface-forest rounded-2xl p-7 md:p-8">
-                <p className="text-eyebrow-dark mb-3">
-                  Não sabe por onde começar?
-                </p>
-                <p className="display-md text-western-cream">
-                  Responda 3 perguntas e veja os conjuntos certos para o seu
-                  projeto.
-                </p>
-                <Link
-                  to="/guia-de-composicao"
-                  className="btn-gold mt-7 w-full sm:w-auto"
-                >
-                  Abrir o guia <ArrowRight className="h-5 w-5" />
-                </Link>
-              </aside>
-            </div>
+        <div className="container-western py-10 md:py-14">
+          <div className="max-w-3xl">
+            <p className="text-eyebrow mb-4">Curadoria · Conjuntos</p>
+            <div className="w-12 h-px bg-western-gold mb-6" />
+            <h1 className="display-xl text-western-green-deep">
+              Conjuntos curados, prontos para projetar.
+            </h1>
+            <p className="mt-5 text-body max-w-[60ch]">
+              {ALL_LEAVES.length} composições organizadas pelo local de aplicação —
+              piscinas, lagos, lagos híbridos e jardins. Cada conjunto reúne pedras,
+              volumes e acabamentos já equilibrados pela curadoria Western.
+            </p>
           </div>
         </div>
       </header>
@@ -279,7 +264,8 @@ export default function Conjuntos() {
                     : items.slice(0, PREVIEW_POR_TIPO);
                   const ocultos = items.length - visiveis.length;
                   return (
-                    <section key={tipo}>
+                    <Fragment key={tipo}>
+                    <section>
                       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 mb-8 pb-5 border-b border-western-border-soft">
                         <div>
                           <p className="text-eyebrow mb-2">
@@ -329,6 +315,27 @@ export default function Conjuntos() {
                         </button>
                       )}
                     </section>
+                    {/* Faixa do guia — desce pra cá (logo após a 1ª categoria):
+                        conjuntos aparecem primeiro, ajuda depois. */}
+                    {tipo === primeiroTipoComResultado && (
+                      <aside className="surface-forest rounded-2xl p-6 md:p-8">
+                        <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                          <div className="max-w-xl">
+                            <p className="text-eyebrow-dark mb-2">Não sabe por onde começar?</p>
+                            <p className="display-md text-western-cream">
+                              Responda 3 perguntas e veja os conjuntos certos para o seu projeto.
+                            </p>
+                          </div>
+                          <Link
+                            to="/guia-de-composicao"
+                            className="btn-gold w-full shrink-0 sm:w-auto"
+                          >
+                            Abrir o guia <ArrowRight className="h-5 w-5" />
+                          </Link>
+                        </div>
+                      </aside>
+                    )}
+                    </Fragment>
                   );
                 })}
               </div>
