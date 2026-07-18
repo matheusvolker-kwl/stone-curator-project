@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf";
+import { ensureBrandFonts, PDF_FONTS } from "./brandFonts";
 import autoTable from "jspdf-autotable";
 import { formatBRL } from "@/lib/catalog/client";
 import type { CartItem } from "@/stores/cartStore";
@@ -35,13 +36,17 @@ export interface PdfOptions {
   validadeDias?: number;
 }
 
-const GREEN: [number, number, number] = [27, 50, 41];
-const GOLD: [number, number, number] = [184, 146, 79];
-const GOLD_SOFT: [number, number, number] = [232, 218, 178];
-const CREAM: [number, number, number] = [248, 243, 230];
+const GREEN: [number, number, number] = [15, 41, 24]; // --western-green-deep #0F2918
+const GOLD: [number, number, number] = [166, 135, 100]; // --western-gold #A68764
+const GOLD_SOFT: [number, number, number] = [203, 178, 137]; // gold-soft #CBB289
+const CREAM: [number, number, number] = [242, 237, 226]; // texto sobre verde #F2EDE2
+const WASH: [number, number, number] = [240, 232, 218]; // lavagem areia #F0E8DA
 const STONE: [number, number, number] = [110, 102, 90];
-const STONE_LINE: [number, number, number] = [220, 214, 200];
-const INK: [number, number, number] = [27, 50, 41];
+const STONE_LINE: [number, number, number] = [231, 223, 206]; // hairline #E7DFCE
+const INK: [number, number, number] = [15, 41, 24];
+
+let SANS = "helvetica";
+let DISPLAY = "helvetica";
 
 function shortId(): string {
   return Math.random().toString(36).slice(2, 7).toUpperCase();
@@ -110,13 +115,13 @@ function drawHeader(
   } else {
     // Fallback tipográfico
     doc.setTextColor(...CREAM);
-    doc.setFont("helvetica", "bold");
+    doc.setFont(DISPLAY, "bold");
     doc.setFontSize(22);
     doc.text("WESTERN", 48, 60, { charSpace: 4 });
   }
 
   // Tagline (sob o logo)
-  doc.setFont("helvetica", "normal");
+  doc.setFont(SANS, "normal");
   doc.setFontSize(7);
   doc.setTextColor(...GOLD_SOFT);
   doc.text(
@@ -134,7 +139,7 @@ function drawHeader(
   // Eyebrow + data
   doc.setFontSize(8);
   doc.setTextColor(...GOLD);
-  doc.text(`COMPOSIÇÃO DE ORÇAMENTO  ·  Nº ${numero}`, 48, 118, { charSpace: 1.2 });
+  doc.text(`ORÇAMENTO WESTERN  ·  Nº ${numero}`, 48, 118, { charSpace: 1.2 });
 
   const dataStr = new Date().toLocaleString("pt-BR", {
     day: "2-digit",
@@ -200,22 +205,22 @@ function drawFooter(
   }
 
   doc.setTextColor(...CREAM);
-  doc.setFont("helvetica", "bold");
+  doc.setFont(SANS, "bold");
   doc.setFontSize(7.5);
   doc.text("WESTERN  ·  ATELIÊ", textX, footerY + 30, { charSpace: 1.4 });
-  doc.setFont("helvetica", "normal");
+  doc.setFont(SANS, "normal");
   doc.setFontSize(8);
   doc.setTextColor(...GOLD_SOFT);
   doc.text(BUSINESS.enderecoAtelieCompleto, textX, footerY + 44);
 
   doc.setTextColor(...CREAM);
-  doc.setFont("helvetica", "bold");
+  doc.setFont(SANS, "bold");
   doc.setFontSize(7.5);
   doc.text("CONTATO", pageWidth - margin, footerY + 30, {
     align: "right",
     charSpace: 1.4,
   });
-  doc.setFont("helvetica", "normal");
+  doc.setFont(SANS, "normal");
   doc.setFontSize(8);
   doc.setTextColor(...GOLD_SOFT);
   doc.text(
@@ -242,22 +247,22 @@ function drawClientCard(
 ): number {
   const margin = 48;
   const cardH = 92;
-  doc.setFillColor(...CREAM);
+  doc.setFillColor(...WASH);
   doc.rect(margin, y, pageWidth - margin * 2, cardH, "F");
   doc.setFillColor(...GOLD);
   doc.rect(margin, y, 3, cardH, "F");
 
   doc.setTextColor(...GOLD);
-  doc.setFont("helvetica", "bold");
+  doc.setFont(SANS, "bold");
   doc.setFontSize(7.5);
   doc.text("CLIENTE", margin + 18, y + 20, { charSpace: 1.5 });
 
   doc.setTextColor(...INK);
-  doc.setFont("helvetica", "bold");
+  doc.setFont(SANS, "bold");
   doc.setFontSize(12);
   doc.text(cliente.nome || "—", margin + 18, y + 38);
 
-  doc.setFont("helvetica", "normal");
+  doc.setFont(SANS, "normal");
   doc.setFontSize(9.5);
   doc.setTextColor(...STONE);
   if (cliente.empresa) doc.text(cliente.empresa, margin + 18, y + 54);
@@ -265,11 +270,11 @@ function drawClientCard(
 
   const colX = pageWidth / 2 + 10;
   doc.setTextColor(...GOLD);
-  doc.setFont("helvetica", "bold");
+  doc.setFont(SANS, "bold");
   doc.setFontSize(7.5);
   doc.text("CONTATO", colX, y + 20, { charSpace: 1.5 });
 
-  doc.setFont("helvetica", "normal");
+  doc.setFont(SANS, "normal");
   doc.setFontSize(9.5);
   doc.setTextColor(...INK);
   let cy = y + 38;
@@ -290,6 +295,9 @@ export async function gerarOrcamentoPdf({
   validadeDias = 15,
 }: PdfOptions): Promise<jsPDF> {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const hasBrandFonts = await ensureBrandFonts(doc);
+  SANS = hasBrandFonts ? PDF_FONTS.sans : "helvetica";
+  DISPLAY = hasBrandFonts ? PDF_FONTS.display : "helvetica";
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 48;
@@ -302,18 +310,34 @@ export async function gerarOrcamentoPdf({
 
   let y = 158;
 
+  // Título display (Archivo) — o documento se apresenta na voz da marca.
+  doc.setFont(DISPLAY, "normal");
+  doc.setFontSize(23);
+  doc.setTextColor(...INK);
+  doc.text("Seu orçamento Western.", margin, y);
+  doc.setFont(SANS, "normal");
+  doc.setFontSize(9.5);
+  doc.setTextColor(...STONE);
+  const pecasCount = items.reduce((n, i) => n + i.quantity, 0);
+  doc.text(
+    `${pecasCount} ${pecasCount === 1 ? "peça" : "peças"} · válido por ${validadeDias} dias · produção em ${BUSINESS.prazoProducaoLabel}`,
+    margin,
+    y + 16,
+  );
+  y += 40;
+
   if (cliente && (cliente.nome || cliente.email || cliente.telefone)) {
     y = drawClientCard(doc, pageWidth, y, cliente) + 24;
   }
 
   if (projeto && (projeto.conjuntoNome || projeto.acabamento)) {
     const cardH = 56;
-    doc.setFillColor(...CREAM);
+    doc.setFillColor(...WASH);
     doc.rect(margin, y, pageWidth - margin * 2, cardH, "F");
     doc.setFillColor(...GOLD);
     doc.rect(margin, y, 3, cardH, "F");
     doc.setTextColor(...GOLD);
-    doc.setFont("helvetica", "bold");
+    doc.setFont(SANS, "bold");
     doc.setFontSize(7.5);
     doc.text(
       projeto.modo === "consulta" ? "PROJETO DO GUIA · SOB CONSULTA" : "PROJETO DO GUIA · CURADO",
@@ -322,10 +346,10 @@ export async function gerarOrcamentoPdf({
       { charSpace: 1.5 },
     );
     doc.setTextColor(...INK);
-    doc.setFont("helvetica", "bold");
+    doc.setFont(SANS, "bold");
     doc.setFontSize(11);
     doc.text(projeto.conjuntoNome || "—", margin + 18, y + 34);
-    doc.setFont("helvetica", "normal");
+    doc.setFont(SANS, "normal");
     doc.setFontSize(9);
     doc.setTextColor(...STONE);
     const ctxBits: string[] = [];
@@ -338,7 +362,7 @@ export async function gerarOrcamentoPdf({
 
   // Eyebrow seção
   doc.setTextColor(...GOLD);
-  doc.setFont("helvetica", "bold");
+  doc.setFont(SANS, "bold");
   doc.setFontSize(7.5);
   doc.text("COMPOSIÇÃO", margin, y, { charSpace: 1.5 });
   doc.setDrawColor(...GOLD);
@@ -373,7 +397,7 @@ export async function gerarOrcamentoPdf({
     margin: { left: margin, right: margin, top: 150, bottom: 80 },
     theme: "plain",
     styles: {
-      font: "helvetica",
+      font: SANS,
       fontSize: 9.5,
       cellPadding: { top: 10, bottom: 10, left: 12, right: 12 },
       textColor: INK,
@@ -422,11 +446,12 @@ export async function gerarOrcamentoPdf({
     doc.line(pageWidth - margin - 240, cursorY, pageWidth - margin, cursorY);
     cursorY += 18;
 
-    doc.setFont("helvetica", "bold");
+    doc.setFont(SANS, "bold");
     doc.setFontSize(7.5);
     doc.setTextColor(...GOLD);
     doc.text("SUBTOTAL", pageWidth - margin - 240, cursorY, { charSpace: 1.5 });
 
+    doc.setFont(DISPLAY, "normal");
     doc.setFontSize(20);
     doc.setTextColor(...GREEN);
     doc.text(formatBRL(subtotal, currency), pageWidth - margin, cursorY + 4, {
@@ -434,7 +459,7 @@ export async function gerarOrcamentoPdf({
     });
     cursorY += 26;
 
-    doc.setFont("helvetica", "normal");
+    doc.setFont(SANS, "normal");
     doc.setFontSize(8);
     doc.setTextColor(...STONE);
     doc.text(
@@ -445,15 +470,15 @@ export async function gerarOrcamentoPdf({
     );
     cursorY += 24;
   } else {
-    doc.setFillColor(...CREAM);
+    doc.setFillColor(...WASH);
     doc.rect(margin, cursorY - 14, pageWidth - margin * 2, 38, "F");
     doc.setFillColor(...GOLD);
     doc.rect(margin, cursorY - 14, 3, 38, "F");
-    doc.setFont("helvetica", "bold");
+    doc.setFont(SANS, "bold");
     doc.setFontSize(8);
     doc.setTextColor(...GOLD);
     doc.text("VALORES", margin + 18, cursorY, { charSpace: 1.5 });
-    doc.setFont("helvetica", "normal");
+    doc.setFont(SANS, "normal");
     doc.setFontSize(9.5);
     doc.setTextColor(...INK);
     doc.text(
@@ -466,18 +491,18 @@ export async function gerarOrcamentoPdf({
 
   if (cliente?.mensagem) {
     cursorY += 8;
-    doc.setFillColor(...CREAM);
+    doc.setFillColor(...WASH);
     const msgLines = doc.splitTextToSize(cliente.mensagem, pageWidth - margin * 2 - 28);
     const boxH = 30 + msgLines.length * 13;
     doc.rect(margin, cursorY, pageWidth - margin * 2, boxH, "F");
     doc.setFillColor(...GOLD);
     doc.rect(margin, cursorY, 3, boxH, "F");
 
-    doc.setFont("helvetica", "bold");
+    doc.setFont(SANS, "bold");
     doc.setFontSize(7.5);
     doc.setTextColor(...GOLD);
     doc.text("OBSERVAÇÕES DO CLIENTE", margin + 18, cursorY + 18, { charSpace: 1.5 });
-    doc.setFont("helvetica", "normal");
+    doc.setFont(SANS, "normal");
     doc.setFontSize(9.5);
     doc.setTextColor(...INK);
     doc.text(msgLines, margin + 18, cursorY + 34);
@@ -491,12 +516,12 @@ export async function gerarOrcamentoPdf({
     doc.line(margin, cursorY, pageWidth - margin, cursorY);
     cursorY += 16;
 
-    doc.setFont("helvetica", "bold");
+    doc.setFont(SANS, "bold");
     doc.setFontSize(7.5);
     doc.setTextColor(...GOLD);
     doc.text("CONDIÇÕES", margin, cursorY, { charSpace: 1.5 });
     cursorY += 14;
-    doc.setFont("helvetica", "normal");
+    doc.setFont(SANS, "normal");
     doc.setFontSize(9);
     doc.setTextColor(...STONE);
     const cond = [
