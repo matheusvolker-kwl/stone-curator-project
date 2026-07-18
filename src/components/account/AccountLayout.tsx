@@ -38,7 +38,7 @@ const items = [
   { to: "/minha-conta", label: "Visão geral", icon: LayoutDashboard, end: true },
   { to: "/minha-conta/pedidos", label: "Meus pedidos", icon: ShoppingBag },
   { to: "/minha-conta/rastreio", label: "Rastreio", icon: Truck },
-  { to: "/minha-conta/composicoes", label: "Composições", icon: FileStack },
+  { to: "/minha-conta/orcamentos", label: "Meus orçamentos", icon: FileStack },
   { to: "/minha-conta/perfil", label: "Meu perfil", icon: User },
 ];
 

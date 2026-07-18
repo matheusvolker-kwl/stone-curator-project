@@ -183,7 +183,7 @@ export default function AccountIndex() {
           Onde estão minhas coisas
         </h2>
 
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
           <Tile
             to="/minha-conta/pedidos"
             icone={ShoppingBag}
@@ -197,16 +197,10 @@ export default function AccountIndex() {
             valor={numeroOuTraco(contagens?.aCaminho)}
           />
           <Tile
-            to="/minha-conta/composicoes"
-            icone={Boxes}
-            rotulo="Composições em conversa"
-            valor={numeroOuTraco(contagens?.composicoes)}
-          />
-          <Tile
             to="/minha-conta/orcamentos"
             icone={FileText}
-            rotulo="Orçamentos salvos"
-            valor={numeroOuTraco(contagens?.orcamentos)}
+            rotulo="Meus orçamentos"
+            valor={numeroOuTraco(contagens?.composicoes)}
           />
         </div>
       </section>

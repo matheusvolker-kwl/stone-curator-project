@@ -351,7 +351,7 @@ export function CredenciamentoTab() {
             { key: "decididos", label: "Decididos", count: carregando || erro ? undefined : porStatus.decididos.length },
           ]}
           ativa={tab}
-          onChange={setTab}
+          onChange={(k) => setTab(k as "pendentes" | "decididos")}
         />
 
         <div className="relative ml-auto min-w-[240px] flex-1 md:max-w-sm">

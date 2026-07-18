@@ -174,7 +174,7 @@ export default function AccountTracking() {
           { key: "todos", label: "Todos", count: carregando ? undefined : rows.length },
         ]}
         ativa={aba}
-        onChange={setAba}
+        onChange={(k) => setAba(k as Aba)}
       />
 
       <DataTable

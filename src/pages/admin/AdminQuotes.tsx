@@ -29,19 +29,27 @@ interface Orcamento {
   payload: QuotePayload;
 }
 
-/** Status aceitos vindos da URL (os tiles-fila do dashboard fazem deep link). */
+/** Status aceitos vindos da URL (os tiles-fila do dashboard fazem deep link).
+ * BUG corrigido (2026-07-18): a lista antiga usava "em_andamento"/"respondido",
+ * que NÃO existem no enum — o deep link abria a fila filtrada por um status
+ * impossível e a tela entregava lista vazia. Aliases antigos seguem mapeados. */
 const STATUS_DA_URL: readonly QuoteStatus[] = [
   "novo",
-  "em_andamento",
-  "respondido",
+  "em_atendimento",
+  "proposta_enviada",
   "fechado",
 ] as const;
 
+const ALIAS_STATUS_LEGADO: Record<string, QuoteStatus> = {
+  em_andamento: "em_atendimento",
+  respondido: "proposta_enviada",
+};
+
 function statusInicialDaUrl(params: URLSearchParams): "all" | QuoteStatus {
   const s = params.get("status");
-  return s && (STATUS_DA_URL as readonly string[]).includes(s)
-    ? (s as QuoteStatus)
-    : "all";
+  if (!s) return "all";
+  if ((STATUS_DA_URL as readonly string[]).includes(s)) return s as QuoteStatus;
+  return ALIAS_STATUS_LEGADO[s] ?? "all";
 }
 
 export default function AdminQuotes() {

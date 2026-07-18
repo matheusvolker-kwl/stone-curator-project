@@ -50,14 +50,14 @@ const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
 const AccountLayout = lazy(() => import("@/components/account/AccountLayout"));
 const AccountIndex = lazy(() => import("./pages/account/AccountIndex"));
 const AccountProfile = lazy(() => import("./pages/account/AccountProfile"));
-const AccountQuotes = lazy(() => import("./pages/account/AccountQuotes"));
+
 const AccountOrders = lazy(() => import("./pages/account/AccountOrders"));
 const AccountSketches = lazy(() => import("./pages/account/AccountSketches"));
 const AccountFavorites = lazy(() => import("./pages/account/AccountFavorites"));
 const AccountSamples = lazy(() => import("./pages/account/AccountSamples"));
 const AccountPreferences = lazy(() => import("./pages/account/AccountPreferences"));
 const AccountTracking = lazy(() => import("./pages/account/AccountTracking"));
-const AccountCompositions = lazy(() => import("./pages/account/AccountCompositions"));
+const AccountOrcamentos = lazy(() => import("./pages/account/AccountOrcamentos"));
 
 const Inspiracoes = lazy(() => import("./pages/Inspiracoes.tsx"));
 const ObraPage = lazy(() => import("./pages/ObraPage.tsx"));
@@ -218,10 +218,11 @@ const App = () => (
                     >
                       <Route index element={<AccountIndex />} />
                       <Route path="perfil" element={<AccountProfile />} />
-                      <Route path="orcamentos" element={<AccountQuotes />} />
+                      <Route path="orcamentos" element={<AccountOrcamentos />} />
                       <Route path="pedidos" element={<AccountOrders />} />
                       <Route path="rastreio" element={<AccountTracking />} />
-                      <Route path="composicoes" element={<AccountCompositions />} />
+                      {/* Fundida em /minha-conta/orcamentos (2026-07-18): eram duas telas para o mesmo evento */}
+                      <Route path="composicoes" element={<Navigate to="/minha-conta/orcamentos" replace />} />
                       <Route path="sketches" element={<AccountSketches />} />
                       <Route path="favoritos" element={<AccountFavorites />} />
                       <Route path="amostras" element={<AccountSamples />} />

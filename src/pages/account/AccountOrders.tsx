@@ -818,7 +818,7 @@ export default function AccountOrders() {
           { key: "todos", label: "Todos", count: carregando ? undefined : orders.length },
         ]}
         ativa={aba}
-        onChange={setAba}
+        onChange={(k) => setAba(k as Aba)}
       />
 
       <DataTable

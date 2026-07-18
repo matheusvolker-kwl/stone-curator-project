@@ -982,7 +982,7 @@ export default function AdminPedidos() {
             { key: "todos", label: "Todos", count: carregando || erro ? undefined : contagens.todos },
           ]}
           ativa={aba}
-          onChange={setAba}
+          onChange={(k) => setAba(k as "ativos" | "todos" | "concluidos")}
         />
 
         <div className="relative ml-auto min-w-[240px] flex-1 md:max-w-sm">

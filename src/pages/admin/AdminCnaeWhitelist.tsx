@@ -241,7 +241,7 @@ export default function AdminCnaeWhitelist() {
           { key: "laranja", label: "Laranja", count: carregando || erro ? undefined : contagens.laranja },
         ]}
         ativa={filtro}
-        onChange={setFiltro}
+        onChange={(k) => setFiltro(k as "todos" | Faixa)}
         className="mb-4"
       />
 
