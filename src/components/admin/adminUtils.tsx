@@ -21,7 +21,7 @@ export function downloadCSV(filename: string, content: string) {
 }
 
 export function chipCls(active: boolean) {
-  return `tap-target inline-flex items-center rounded-lg px-4 text-[16px] font-semibold border transition-colors ${
+  return `tap-target inline-flex items-center rounded-lg px-4 text-[15px] font-semibold border transition-colors ${
     active
       ? "border-western-cta/40 text-western-green-deep bg-western-cta/[0.08]"
       : "border-western-border-soft text-western-stone-warm hover:border-western-cta/50 hover:text-western-green-deep"
@@ -33,7 +33,7 @@ export function KV({ k, v }: { k: string; v: string | null | undefined }) {
   return (
     <div className="flex gap-3">
       <dt className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze w-32 flex-shrink-0 pt-1">{k}</dt>
-      <dd className="text-[16px] text-western-green-deep flex-1 break-words">{v}</dd>
+      <dd className="text-[15px] text-western-green-deep flex-1 break-words">{v}</dd>
     </div>
   );
 }

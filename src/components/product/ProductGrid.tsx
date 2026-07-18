@@ -183,7 +183,7 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
             </span>
           )}
         </span>
-        <span aria-hidden="true" className="text-[20px] leading-none text-western-stone-warm">
+        <span aria-hidden="true" className="text-[18px] leading-none text-western-stone-warm">
           {filtersOpen ? "−" : "+"}
         </span>
       </button>
@@ -205,7 +205,7 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
               onChange={(e) => update("q", e.target.value || null)}
               placeholder="Nome ou código"
               aria-label="Buscar peça por nome ou código"
-              className="h-control w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper pl-12 pr-4 font-sans text-[16px] text-western-green-deep transition-colors placeholder:text-western-stone-warm focus:border-western-cta focus:outline-none"
+              className="h-control w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper pl-12 pr-4 font-sans text-[15px] text-western-green-deep transition-colors placeholder:text-western-stone-warm focus:border-western-cta focus:outline-none"
             />
           </div>
         </div>
@@ -244,7 +244,7 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
             <button
               type="button"
               onClick={clearFilters}
-              className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-cta underline underline-offset-4 decoration-western-gold hover:text-western-green-deep"
+              className="tap-target inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-cta underline underline-offset-4 decoration-western-gold hover:text-western-green-deep"
             >
               <X className="h-4 w-4" /> Limpar filtros
             </button>
@@ -264,20 +264,20 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
             value={sort || undefined}
             onValueChange={(v) => update("sort", v || null)}
           >
-            <SelectTrigger className="h-control w-[200px] rounded-lg border-[1.5px] border-western-border-strong bg-white px-4 font-sans text-[16px] font-semibold text-western-green-deep">
+            <SelectTrigger className="h-control w-[200px] rounded-lg border-[1.5px] border-western-border-strong bg-white px-4 font-sans text-[15px] font-semibold text-western-green-deep">
               <SelectValue placeholder="Ordenar" />
             </SelectTrigger>
             <SelectContent className="rounded-lg">
-              <SelectItem value="az" className="text-[16px]">Nome A–Z</SelectItem>
-              <SelectItem value="za" className="text-[16px]">Nome Z–A</SelectItem>
-              <SelectItem value="price-asc" className="text-[16px]">Menor preço</SelectItem>
-              <SelectItem value="price-desc" className="text-[16px]">Maior preço</SelectItem>
+              <SelectItem value="az" className="text-[15px]">Nome A–Z</SelectItem>
+              <SelectItem value="za" className="text-[15px]">Nome Z–A</SelectItem>
+              <SelectItem value="price-asc" className="text-[15px]">Menor preço</SelectItem>
+              <SelectItem value="price-desc" className="text-[15px]">Maior preço</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 xl:grid-cols-3">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
@@ -303,7 +303,7 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 xl:grid-cols-3">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
             {filtered.map((p) => (
               <ProductCard key={p.node.id} product={p.node} />
             ))}

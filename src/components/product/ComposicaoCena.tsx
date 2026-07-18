@@ -149,7 +149,7 @@ export default function ComposicaoCena({
                         key={t}
                         to={`/obras?seg=${t}`}
                         aria-label={`Ver obras de ${s.label.toLowerCase()}`}
-                        className="group tap-target inline-flex items-center gap-2.5 rounded-full border border-western-border-strong bg-white px-5 text-[16px] font-semibold text-western-green-deep transition-colors hover:border-western-green-deep hover:bg-western-paper"
+                        className="group tap-target inline-flex items-center gap-2.5 rounded-full border border-western-border-strong bg-white px-5 text-[15px] font-semibold text-western-green-deep transition-colors hover:border-western-green-deep hover:bg-western-paper"
                       >
                         <Icon className="h-5 w-5 text-western-cta" aria-hidden="true" />
                         {s.label}
@@ -183,7 +183,7 @@ export default function ComposicaoCena({
                         className="group tap-target flex items-center justify-between gap-4 rounded-xl border border-western-border-soft bg-white px-5 py-3.5 transition-colors hover:border-western-border-strong"
                       >
                         <span>
-                          <span className="block font-sans text-[16px] font-semibold text-western-green-deep">
+                          <span className="block font-sans text-[15px] font-semibold text-western-green-deep">
                             {info?.nome ?? h.replace(/^conjunto-/, "").replace(/-/g, " ")}
                           </span>
                           <span className="block text-meta mt-0.5">

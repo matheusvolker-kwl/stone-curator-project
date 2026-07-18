@@ -26,7 +26,7 @@ export default function Produtos() {
       <div className="container-western pb-14 pt-6 md:pb-20 md:pt-10">
         <Link
           to="/linhas"
-          className="tap-target -ml-1 mb-3 inline-flex items-center gap-2 px-1 font-sans text-[16px] font-semibold text-western-cta transition-colors hover:text-western-green-deep"
+          className="tap-target -ml-1 mb-3 inline-flex items-center gap-2 px-1 font-sans text-[15px] font-semibold text-western-cta transition-colors hover:text-western-green-deep"
         >
           {/* O menu agora chama /linhas de "Catálogo" — o caminho de volta tem
               que usar a mesma palavra, senão o visitante não reconhece de onde veio. */}
@@ -71,7 +71,7 @@ export default function Produtos() {
             funila quem já navegou o catálogo para montar a composição pronta.
             Convive com a saída B2C logo abaixo (peça banda mais leve, verde). */}
         <Reveal variant="fade-up">
-          <div className="mt-16 flex flex-col gap-6 rounded-2xl border border-western-border-strong bg-western-cream px-6 py-8 md:mt-20 md:flex-row md:items-center md:justify-between md:gap-10 md:px-10 md:py-10">
+          <div className="mt-16 flex flex-col gap-6 rounded-xl border border-western-border-strong bg-western-cream px-6 py-8 md:mt-20 md:flex-row md:items-center md:justify-between md:gap-10 md:px-10 md:py-10">
             <div className="max-w-xl">
               <p className="text-eyebrow mb-3">Guia de composição</p>
               <p className="display-md text-western-green-deep">
@@ -97,7 +97,7 @@ export default function Produtos() {
             página que responde isso. */}
         <Link
           to="/para-sua-casa"
-          className="group mt-6 flex flex-col gap-6 rounded-2xl bg-western-green-deep px-6 py-8 text-western-cream transition-colors hover:bg-western-green-mid md:mt-8 md:flex-row md:items-center md:justify-between md:gap-10 md:px-10 md:py-10"
+          className="group mt-6 flex flex-col gap-6 rounded-xl bg-western-green-deep px-6 py-8 text-western-cream transition-colors hover:bg-western-green-mid md:mt-8 md:flex-row md:items-center md:justify-between md:gap-10 md:px-10 md:py-10"
         >
           <div className="max-w-xl">
             <p className="mb-3 font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft">

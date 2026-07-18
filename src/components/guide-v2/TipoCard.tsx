@@ -59,7 +59,7 @@ export default function TipoCard({ value, label, microcopy, image, selected, onS
           selected ? "border-western-cta/30 bg-western-ivory" : "border-western-border-soft"
         )}
       >
-        <span className="font-sans text-[20px] font-semibold leading-tight text-western-green-deep">
+        <span className="font-sans text-[18px] font-semibold leading-tight text-western-green-deep">
           {label}
         </span>
         {microcopy && (

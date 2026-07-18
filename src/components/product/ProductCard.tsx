@@ -82,7 +82,7 @@ export default function ProductCard({ product }: Props) {
       onMouseEnter={prefetch}
       onFocus={prefetch}
       onTouchStart={prefetch}
-      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-western-border-soft bg-white shadow-[0_2px_10px_-6px_hsl(var(--western-stone-dark)/0.25)] transition-shadow duration-200 hover:shadow-[0_14px_30px_-16px_hsl(var(--western-stone-dark)/0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-cta focus-visible:ring-offset-2"
+      className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-western-border-soft bg-white shadow-[0_2px_10px_-6px_hsl(var(--western-stone-dark)/0.25)] transition-shadow duration-200 hover:shadow-[0_14px_30px_-16px_hsl(var(--western-stone-dark)/0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-cta focus-visible:ring-offset-2"
     >
       {/* Favoritar: só no desktop, no hover, ancorado no canto do CARD.
           No mobile ele encavalava a foto (duas caixas brancas se fundindo) e
@@ -118,7 +118,7 @@ export default function ProductCard({ product }: Props) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-3 md:p-5">
+      <div className="flex flex-1 flex-col gap-2 p-3 md:p-4">
         {/* Linha + código da peça: 14px (o badge de 12px sobre a foto morreu). */}
         {(linha || code) && (
           <p className="text-meta flex flex-wrap items-center gap-x-1.5">
@@ -132,7 +132,7 @@ export default function ProductCard({ product }: Props) {
 
         {/* Nome: 2–3 linhas, altura reservada. "Cascata Lajedo Boreal" e
             "Cascata Lajedo Yporanga" TÊM que sair diferentes na grade. */}
-        <h3 className="font-sans text-[17px] font-semibold leading-[1.3] text-western-green-deep line-clamp-3 min-h-[44px] break-words group-hover:underline group-hover:decoration-western-gold group-hover:underline-offset-4 md:text-[20px] md:leading-[1.25] md:line-clamp-2 md:min-h-[50px]">
+        <h3 className="font-sans text-[16px] font-semibold leading-[1.3] text-western-green-deep line-clamp-3 min-h-[44px] break-words group-hover:underline group-hover:decoration-western-gold group-hover:underline-offset-4 md:text-[18px] md:leading-[1.25] md:line-clamp-2 md:min-h-[50px]">
           {product.title}
         </h3>
 
@@ -161,30 +161,28 @@ export default function ProductCard({ product }: Props) {
           </span>
         </div>
 
-        <div className="mt-auto flex flex-col gap-2.5 border-t border-western-border-soft pt-3">
+        {/* MODELO B: preço (ou gate) e CTA dividem a MESMA linha — informação
+            alinhada, um degrau a menos de altura por card. */}
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-x-2.5 gap-y-2 border-t border-western-border-soft pt-2.5">
           {isApproved ? (
             <GatedPrice
               amount={product.priceRange.minVariantPrice.amount}
               currency={product.priceRange.minVariantPrice.currencyCode}
-              className="font-sans text-[20px] font-bold tabular-nums text-western-green-deep"
+              className="font-sans text-[17px] font-bold tabular-nums text-western-green-deep"
               linked={false}
             />
           ) : (
-            /* O gate é INFORMAÇÃO, não botão: sem borda, sem cara de CTA, sem
-               roubar o clique do card. Mas o TEXTO enquadra como VALOR (há um
-               preço de atacado a destravar), não como "bloqueado" — por isso
-               bronze, não cinza. O caminho de cadastro continua na PDP. */
-            <p className="flex items-start gap-1.5 font-sans text-[14px] font-semibold leading-snug text-western-bronze">
-              <Lock className="mt-[2px] h-4 w-4 shrink-0" aria-hidden="true" />
+            /* O gate é INFORMAÇÃO, não botão — bronze, sem cara de CTA. */
+            <p className="flex min-w-0 items-start gap-1.5 font-sans text-[13.5px] font-semibold leading-snug text-western-bronze">
+              <Lock className="mt-[2px] h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               <span>
-                {session ? "Preço liberado após a aprovação" : "Preço de parceiro no cadastro"}
+                {session ? "Preço após aprovação" : "Preço no cadastro"}
               </span>
             </p>
           )}
 
-          {/* CTA primário do card: VERDE, 52px, raio 10px, largura total, uma
-              linha. É um <span> de propósito — quem clica é o <Link> do card. */}
-          <span className="inline-flex min-h-control w-full items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-western-cta px-3 font-sans text-[16px] font-semibold text-western-cream transition-colors group-hover:bg-western-green-deep md:px-5">
+          {/* CTA compacto — quem clica é o <Link> do card. */}
+          <span className="inline-flex h-10 flex-1 min-w-[128px] items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-western-cta px-3.5 font-sans text-[14px] font-semibold text-western-cream transition-colors group-hover:bg-western-green-deep">
             Ver a peça
             <ArrowRight
               className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5"

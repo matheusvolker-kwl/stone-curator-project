@@ -176,7 +176,7 @@ export default function CartDrawer({
                 </span>
               </span>
               {isApproved ? (
-                <span className="font-sans text-[22px] font-bold tabular-nums text-western-green-deep leading-none">
+                <span className="font-sans text-[20px] font-bold tabular-nums text-western-green-deep leading-none">
                   {formatBRL(subtotal, currency)}
                 </span>
               ) : (
@@ -214,7 +214,7 @@ export default function CartDrawer({
             <Link
               to="/carrinho"
               onClick={() => onOpenChange(false)}
-              className="group flex w-full items-center justify-center gap-2 h-12 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold [&_svg]:size-5 transition-colors"
+              className="group flex w-full items-center justify-center gap-2 h-12 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[15px] font-semibold [&_svg]:size-5 transition-colors"
             >
               Ir para o carrinho
               <ArrowRight className="transition-transform motion-safe:group-hover:translate-x-0.5" />

@@ -9,7 +9,7 @@ import Reveal from "@/components/shared/Reveal";
  *
  * O ganho não é menos código (são 2 usos) — é ENFORCEMENT por construção: alt
  * obrigatório (o tipo exige), lazy + decoding async, proporção, placeholder
- * cream-muted, rounded-2xl. O próximo card de obra nasce correto. Foi a
+ * cream-muted, rounded-xl. O próximo card de obra nasce correto. Foi a
  * duplicação manual de exatamente estas coisas que gerou os bugs de capa/alt/
  * crop que esta sessão caçou.
  *
@@ -54,7 +54,7 @@ export default function ObraCard({
     >
       <figure className={editorial ? "h-full flex flex-col" : "group"}>
         <div
-          className={`relative overflow-hidden rounded-2xl bg-western-cream-muted ${
+          className={`relative overflow-hidden rounded-xl bg-western-cream-muted ${
             editorial ? "aspect-[4/5]" : "aspect-[4/3]"
           }`}
         >
@@ -73,7 +73,7 @@ export default function ObraCard({
         {editorial ? (
           <figcaption className="mt-4">
             {eyebrow && <p className="text-eyebrow">{eyebrow}</p>}
-            <h3 className="font-sans text-[19px] font-semibold text-western-green-deep leading-snug mt-1.5">
+            <h3 className="font-sans text-[17px] font-semibold text-western-green-deep leading-snug mt-1.5">
               {title}
             </h3>
             {desc && (
@@ -82,7 +82,7 @@ export default function ObraCard({
           </figcaption>
         ) : (
           <figcaption className="mt-3">
-            <p className="font-sans text-[17px] font-semibold text-western-green-deep leading-snug">
+            <p className="font-sans text-[16px] font-semibold text-western-green-deep leading-snug">
               {title}
             </p>
             {desc && <p className="text-[14px] leading-snug text-western-stone-warm mt-1">{desc}</p>}

@@ -118,7 +118,7 @@ export default function CartCrossSell({
                 <Link
                   to={`/produtos/${node.handle}`}
                   onClick={onNavigate}
-                  className="block truncate font-sans text-[17px] font-semibold leading-snug text-western-green-deep hover:text-western-cta transition-colors"
+                  className="block truncate font-sans text-[16px] font-semibold leading-snug text-western-green-deep hover:text-western-cta transition-colors"
                 >
                   {node.title}
                 </Link>
@@ -137,7 +137,7 @@ export default function CartCrossSell({
                   type="button"
                   onClick={() => handleQuickAdd(node.handle)}
                   disabled={isAdding}
-                  className="flex-shrink-0 min-h-tap px-4 inline-flex items-center justify-center gap-2 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors disabled:opacity-45"
+                  className="flex-shrink-0 min-h-tap px-4 inline-flex items-center justify-center gap-2 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[15px] font-semibold transition-colors disabled:opacity-45"
                   aria-label={`Adicionar ${node.title}`}
                 >
                   {isAdding ? (
@@ -152,7 +152,7 @@ export default function CartCrossSell({
                 <Link
                   to={`/produtos/${node.handle}`}
                   onClick={onNavigate}
-                  className="flex-shrink-0 min-h-tap px-4 inline-flex items-center justify-center gap-1.5 rounded-lg border border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper font-sans text-[16px] font-semibold transition-colors"
+                  className="flex-shrink-0 min-h-tap px-4 inline-flex items-center justify-center gap-1.5 rounded-lg border border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper font-sans text-[15px] font-semibold transition-colors"
                 >
                   Ver peça <ArrowRight className="h-5 w-5" />
                 </Link>

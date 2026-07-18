@@ -203,14 +203,14 @@ export default function Carrinho() {
               <div className="mt-8 grid gap-3">
                 <Link
                   to="/produtos"
-                  className="inline-flex w-full items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
+                  className="inline-flex w-full items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[15px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
                 >
                   Ver catálogo
                   <ArrowRight className="h-5 w-5" />
                 </Link>
                 <Link
                   to="/western-box"
-                  className="inline-flex w-full items-center justify-center gap-2 min-h-control px-7 rounded-lg border border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper font-sans text-[16px] font-semibold transition-colors"
+                  className="inline-flex w-full items-center justify-center gap-2 min-h-control px-7 rounded-lg border border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper font-sans text-[15px] font-semibold transition-colors"
                 >
                   Conhecer a Western Box
                 </Link>
@@ -219,7 +219,7 @@ export default function Carrinho() {
                 href={WHATS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="tap-target inline-flex items-center justify-center gap-2 mt-6 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+                className="tap-target inline-flex items-center justify-center gap-2 mt-6 font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
               >
                 <MessageCircle className="h-5 w-5 text-western-bronze" />
                 Dúvidas? Falar com o ateliê
@@ -281,7 +281,7 @@ export default function Carrinho() {
           {/* Cabeçalho */}
           <Link
             to="/produtos"
-            className="tap-target inline-flex items-center gap-2 -ml-1 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+            className="tap-target inline-flex items-center gap-2 -ml-1 font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
             Continuar comprando
@@ -325,7 +325,7 @@ export default function Carrinho() {
               )}
 
               {/* Linhas do orçamento */}
-              <ul className="rounded-2xl border border-western-border-soft bg-white px-5 md:px-6">
+              <ul className="rounded-xl border border-western-border-soft bg-white px-5 md:px-6">
                 {items.map((item, idx) => (
                   <li
                     key={item.variantId}
@@ -348,12 +348,12 @@ export default function Carrinho() {
                     </Link>
 
                     <div className="flex-1 min-w-0">
-                      {/* No mobile a linha EMPILHA (nome em cima, preço embaixo). Lado a
-                       * lado, o chip do gate era flex-shrink-0 e espremia a coluna do
-                       * nome até ~2ch — "Pedra Média 5" quebrava uma letra por linha. */}
-                      <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between md:gap-5">
-                        <div className="min-w-0">
-                          <h2 className="font-sans text-[16px] font-semibold leading-snug text-western-green-deep">
+                      {/* MODELO B: linha ÚNICA no desktop — nome · stepper · total ·
+                          remover, tudo alinhado na mesma régua. No mobile o nome
+                          ocupa a 1ª linha e os controles descem juntos pra 2ª. */}
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 md:flex-nowrap">
+                        <div className="min-w-0 flex-1 basis-full md:basis-auto">
+                          <h2 className="font-sans text-[15px] font-semibold leading-snug text-western-green-deep truncate">
                             <Link
                               to={`/produtos/${item.productHandle}`}
                               className="hover:text-western-cta transition-colors"
@@ -361,71 +361,62 @@ export default function Carrinho() {
                               {item.productTitle}
                             </Link>
                           </h2>
-                          {item.selectedOptions.length > 0 && (
-                            <p className="font-sans text-[13.5px] text-western-stone-warm mt-0.5">
-                              {item.selectedOptions.map((o) => o.value).join(" · ")}
-                            </p>
-                          )}
-                          {item.sku && (
-                            <p className="text-meta mt-0.5 break-words">Ref. {item.sku}</p>
-                          )}
+                          <p className="font-sans text-[13px] text-western-stone-warm mt-0.5 truncate">
+                            {item.selectedOptions.map((o) => o.value).join(" · ")}
+                            {item.sku && <> · Ref. {item.sku}</>}
+                          </p>
                         </div>
 
-                        <div className="md:flex-shrink-0 md:text-right">
-                          {showValues ? (
-                            <>
-                              <p className="font-sans text-[17px] font-bold tabular-nums leading-tight text-western-green-deep whitespace-nowrap">
-                                {formatBRL(lineTotal(item), item.price.currencyCode)}
-                              </p>
-                              {item.quantity > 1 && (
-                                <p className="font-sans text-[13.5px] text-western-stone-warm mt-0.5 whitespace-nowrap">
-                                  {formatBRL(unitPrice(item), item.price.currencyCode)} / peça
-                                </p>
-                              )}
-                            </>
-                          ) : (
-                            /* O gate aqui é INFORMAÇÃO, não porta: a única porta da
-                             * página é o CTA do resumo. Antes eram 3 chips-link
-                             * "Ver preço de parceiro" competindo com ele. */
-                            <p className="inline-flex items-center gap-1.5 font-sans text-[14px] font-semibold text-western-bronze whitespace-nowrap">
-                              <Lock className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-                              Preço de parceiro
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Quantidade + remover */}
-                      <div className="flex items-center gap-3 mt-2.5 flex-wrap">
-                        <div className="inline-flex items-center rounded-lg border border-western-border-strong bg-white overflow-hidden">
+                        <div className="inline-flex shrink-0 items-center rounded-lg border border-western-border-strong bg-white overflow-hidden">
                           <button
                             type="button"
                             onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
-                            className="h-10 w-10 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+                            className="h-9 w-9 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
                             aria-label={`Diminuir quantidade de ${item.productTitle}`}
                           >
-                            <Minus className="h-4 w-4" aria-hidden="true" />
+                            <Minus className="h-3.5 w-3.5" aria-hidden="true" />
                           </button>
-                          <span className="px-1.5 font-sans text-[15px] font-semibold min-w-[2.5ch] text-center tabular-nums text-western-green-deep">
+                          <span className="px-1.5 font-sans text-[14px] font-semibold min-w-[2.5ch] text-center tabular-nums text-western-green-deep">
                             {item.quantity}
                           </span>
                           <button
                             type="button"
                             onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                            className="h-10 w-10 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+                            className="h-9 w-9 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
                             aria-label={`Aumentar quantidade de ${item.productTitle}`}
                           >
-                            <Plus className="h-4 w-4" aria-hidden="true" />
+                            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                           </button>
+                        </div>
+
+                        <div className="shrink-0 text-right min-w-[96px]">
+                          {showValues ? (
+                            <>
+                              <p className="font-sans text-[15px] font-bold tabular-nums leading-tight text-western-green-deep whitespace-nowrap">
+                                {formatBRL(lineTotal(item), item.price.currencyCode)}
+                              </p>
+                              {item.quantity > 1 && (
+                                <p className="font-sans text-[13px] text-western-stone-warm whitespace-nowrap">
+                                  {formatBRL(unitPrice(item), item.price.currencyCode)} / peça
+                                </p>
+                              )}
+                            </>
+                          ) : (
+                            /* O gate é INFORMAÇÃO, não porta — a porta é o CTA do resumo. */
+                            <p className="inline-flex items-center gap-1.5 font-sans text-[13.5px] font-semibold text-western-bronze whitespace-nowrap">
+                              <Lock className="h-3.5 w-3.5 flex-shrink-0" aria-hidden="true" />
+                              Preço de parceiro
+                            </p>
+                          )}
                         </div>
 
                         <button
                           type="button"
                           onClick={() => removeItem(item.variantId)}
-                          className="tap-target inline-flex items-center gap-1.5 px-2 font-sans text-[14px] font-semibold text-status-error hover:underline"
+                          className="h-9 w-9 shrink-0 flex items-center justify-center rounded-md text-western-stone-warm hover:text-status-error hover:bg-western-paper transition-colors"
                           aria-label={`Remover ${item.productTitle} do orçamento`}
                         >
-                          <Trash2 className="h-4 w-4" aria-hidden="true" /> Remover
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </button>
                       </div>
                     </div>
@@ -453,7 +444,7 @@ export default function Carrinho() {
             {/* ============ COLUNA DIREITA — resumo ============ */}
             <aside className="lg:sticky lg:top-28">
               <Reveal variant="fade" duration={500}>
-                <div className="rounded-2xl border border-western-border-soft surface-paper p-5">
+                <div className="rounded-xl border border-western-border-soft surface-paper p-5">
                   <p className="text-eyebrow">Resumo</p>
 
                   <div className="mt-3 flex items-baseline justify-between gap-3">
@@ -465,11 +456,11 @@ export default function Carrinho() {
                       </span>
                     </span>
                     {showValues ? (
-                      <span className="font-sans text-[22px] font-bold tabular-nums leading-none text-western-green-deep">
+                      <span className="font-sans text-[20px] font-bold tabular-nums leading-none text-western-green-deep">
                         {formatBRL(subtotal, currency)}
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 font-sans text-[16px] font-semibold text-western-bronze">
+                      <span className="inline-flex items-center gap-1.5 font-sans text-[15px] font-semibold text-western-bronze">
                         <Lock className="h-4 w-4" aria-hidden="true" /> Parceiro
                       </span>
                     )}
@@ -578,7 +569,7 @@ export default function Carrinho() {
                         type="button"
                         onClick={handleCheckout}
                         disabled={isLoading || checkoutLoading}
-                        className="group w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 disabled:opacity-45 disabled:cursor-not-allowed"
+                        className="group w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[15px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 disabled:opacity-45 disabled:cursor-not-allowed"
                       >
                         {isLoading || checkoutLoading ? (
                           <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
@@ -595,7 +586,7 @@ export default function Carrinho() {
                     ) : (
                       <Link
                         to={ctaTo}
-                        className="group w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
+                        className="group w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[15px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
                       >
                         {ctaLabel}
                         <ArrowRight
@@ -620,7 +611,7 @@ export default function Carrinho() {
                     {!showValues && !session && (
                       <Link
                         to="/parceiro/login"
-                        className="tap-target w-full inline-flex items-center justify-center font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta underline underline-offset-4 decoration-western-border-strong transition-colors"
+                        className="tap-target w-full inline-flex items-center justify-center font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-cta underline underline-offset-4 decoration-western-border-strong transition-colors"
                       >
                         Já sou parceiro · entrar
                       </Link>
@@ -629,7 +620,7 @@ export default function Carrinho() {
                     <button
                       type="button"
                       onClick={() => setQuoteOpen(true)}
-                      className="w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg border border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper font-sans text-[16px] font-semibold transition-colors"
+                      className="w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg border border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper font-sans text-[15px] font-semibold transition-colors"
                     >
                       <Download className="h-5 w-5" aria-hidden="true" />
                       Baixar orçamento (PDF)
@@ -654,7 +645,7 @@ export default function Carrinho() {
           <div className="mt-10 lg:mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-western-border-soft pt-6">
             <Link
               to="/produtos"
-              className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+              className="tap-target inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
             >
               <ArrowLeft className="h-5 w-5" aria-hidden="true" />
               Continuar comprando
@@ -663,7 +654,7 @@ export default function Carrinho() {
               href={WHATS_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+              className="tap-target inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
             >
               <MessageCircle className="h-5 w-5 text-western-bronze" aria-hidden="true" />
               Dúvidas? Falar com o ateliê
@@ -684,7 +675,7 @@ export default function Carrinho() {
               : `${totalQty} ${totalQty === 1 ? "peça" : "peças"} no orçamento`}
           </span>
           {showValues ? (
-            <span className="font-sans text-[20px] font-bold tabular-nums leading-none text-western-green-deep">
+            <span className="font-sans text-[18px] font-bold tabular-nums leading-none text-western-green-deep">
               {formatBRL(subtotal, currency)}
             </span>
           ) : (
@@ -698,7 +689,7 @@ export default function Carrinho() {
             type="button"
             onClick={handleCheckout}
             disabled={isLoading || checkoutLoading}
-            className="w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 disabled:opacity-45 disabled:cursor-not-allowed"
+            className="w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[15px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 disabled:opacity-45 disabled:cursor-not-allowed"
           >
             {isLoading || checkoutLoading ? (
               <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
@@ -712,7 +703,7 @@ export default function Carrinho() {
         ) : (
           <Link
             to={ctaTo}
-            className="w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
+            className="w-full inline-flex items-center justify-center gap-2 min-h-control px-7 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[15px] font-semibold transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100"
           >
             {ctaLabel}
             <ArrowRight className="h-5 w-5" aria-hidden="true" />

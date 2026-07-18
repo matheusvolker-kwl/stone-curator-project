@@ -41,7 +41,7 @@ const FORMAS_PAGAMENTO = [
 ];
 
 const INPUT_CLS =
-  "h-control rounded-sm border-western-border-strong bg-white text-[16px] text-western-green-deep";
+  "h-control rounded-sm border-western-border-strong bg-white text-[15px] text-western-green-deep";
 
 interface EditableItem extends QuotePayloadItem {
   /** key local pra render */
@@ -678,7 +678,7 @@ export default function AdminQuoteDetail() {
               <DropdownMenuContent align="end" className="rounded-lg">
                 <DropdownMenuItem
                   onClick={() => setConfirmarExclusao(true)}
-                  className="text-[16px] font-semibold text-status-error focus:bg-status-error/10 focus:text-status-error"
+                  className="text-[15px] font-semibold text-status-error focus:bg-status-error/10 focus:text-status-error"
                 >
                   <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" />
                   Apagar orçamento
@@ -692,14 +692,14 @@ export default function AdminQuoteDetail() {
       <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
         {/* ══════════ COLUNA DIREITA (no mobile vem primeiro): CARD DE AÇÃO ══════════ */}
         <aside className="order-1 space-y-6 lg:order-2 lg:sticky lg:top-6">
-          <section className="rounded-2xl border border-western-cta/30 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+          <section className="rounded-xl border border-western-cta/30 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
             <div className="mb-4 flex items-center justify-between gap-3">
               <p className="text-eyebrow">Próximo passo</p>
               <StatusBadge status={thread.status} />
             </div>
 
             <h2 className="display-md text-western-green-deep">{passo.titulo}</h2>
-            <p className="text-body mt-2 text-[16px]">{passo.descricao}</p>
+            <p className="text-body mt-2 text-[15px]">{passo.descricao}</p>
 
             {/* O número que importa ao lado do botão */}
             <div className="mt-5 rounded-lg bg-western-paper px-4 py-3">
@@ -707,7 +707,7 @@ export default function AdminQuoteDetail() {
                 <span className="text-sublabel">
                   {jaVendida ? "Valor da venda" : "Total da proposta"}
                 </span>
-                <span className="text-[22px] font-bold tabular-nums text-western-green-deep">
+                <span className="text-[20px] font-bold tabular-nums text-western-green-deep">
                   {jaVendida && thread.valor_final != null
                     ? formatBRL(Number(thread.valor_final), "BRL")
                     : formatBRL(total, "BRL")}
@@ -797,7 +797,7 @@ export default function AdminQuoteDetail() {
                       aria-hidden="true"
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="text-[16px] text-western-green-deep">{e.rotulo}</p>
+                      <p className="text-[15px] text-western-green-deep">{e.rotulo}</p>
                       <CelulaData valor={e.data} className="text-meta" />
                     </div>
                   </li>
@@ -807,7 +807,7 @@ export default function AdminQuoteDetail() {
           </section>
 
           {/* Notas internas + status */}
-          <section className="rounded-2xl border border-western-border-soft bg-white p-5">
+          <section className="rounded-xl border border-western-border-soft bg-white p-5">
             <p className="text-eyebrow mb-3">Acompanhamento</p>
 
             <Label htmlFor="status-orcamento" className="text-sublabel mb-1.5 block">
@@ -819,7 +819,7 @@ export default function AdminQuoteDetail() {
               </SelectTrigger>
               <SelectContent>
                 {STATUS_OPTIONS.map((s) => (
-                  <SelectItem key={s} value={s} className="text-[16px]">
+                  <SelectItem key={s} value={s} className="text-[15px]">
                     {QUOTE_STATUS_LABEL[s]}
                   </SelectItem>
                 ))}
@@ -834,7 +834,7 @@ export default function AdminQuoteDetail() {
               value={notas}
               onChange={(e) => setNotas(e.target.value)}
               rows={5}
-              className="rounded-sm border-western-border-strong bg-white text-[16px]"
+              className="rounded-sm border-western-border-strong bg-white text-[15px]"
               placeholder="Ligações, contexto, próximos passos…"
             />
             <button
@@ -856,7 +856,7 @@ export default function AdminQuoteDetail() {
         {/* ══════════ COLUNA ESQUERDA: o trabalho ══════════ */}
         <div className="order-2 min-w-0 space-y-8 lg:order-1">
           {/* Cliente */}
-          <section className="rounded-2xl border border-western-border-soft bg-white p-5">
+          <section className="rounded-xl border border-western-border-soft bg-white p-5">
             <p className="text-eyebrow mb-4">Cliente</p>
             <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
               <Campo rotulo="Nome" valor={lead.nome} />
@@ -869,7 +869,7 @@ export default function AdminQuoteDetail() {
             {lead.mensagem && (
               <div className="mt-5 rounded-lg bg-western-paper p-4">
                 <p className="text-eyebrow mb-2">Mensagem do cliente</p>
-                <p className="whitespace-pre-wrap text-[17px] leading-[1.6] text-western-green-deep">
+                <p className="whitespace-pre-wrap text-[16px] leading-[1.6] text-western-green-deep">
                   {lead.mensagem}
                 </p>
               </div>
@@ -877,7 +877,7 @@ export default function AdminQuoteDetail() {
           </section>
 
           {/* Editor da proposta */}
-          <section className="rounded-2xl border border-western-border-soft bg-white p-5">
+          <section className="rounded-xl border border-western-border-soft bg-white p-5">
             <p className="text-eyebrow mb-1">Proposta</p>
             <h2 className="display-md text-western-green-deep mb-5">
               Edite as peças, aplique desconto e gere o PDF
@@ -887,7 +887,7 @@ export default function AdminQuoteDetail() {
             <div className="mb-5 space-y-3">
               {items.length === 0 && (
                 <div className="rounded-lg border border-dashed border-western-border-strong bg-western-paper p-6 text-center">
-                  <p className="text-body text-[16px]">
+                  <p className="text-body text-[15px]">
                     Nenhuma peça na proposta. Inclua abaixo.
                   </p>
                 </div>
@@ -899,13 +899,13 @@ export default function AdminQuoteDetail() {
                   className="rounded-lg border border-western-border-soft p-3 md:grid md:grid-cols-[1fr_auto_150px_auto] md:items-center md:gap-3"
                 >
                   <div className="min-w-0 space-y-2">
-                    <p className="text-[17px] font-semibold text-western-green-deep">{it.title}</p>
+                    <p className="text-[16px] font-semibold text-western-green-deep">{it.title}</p>
                     <Input
                       value={it.acabamento ?? ""}
                       onChange={(e) => updateItem(it._key, { acabamento: e.target.value })}
                       placeholder="Acabamento / cor"
                       aria-label={`Acabamento de ${it.title}`}
-                      className="h-tap rounded-sm border-western-border-strong text-[16px]"
+                      className="h-tap rounded-sm border-western-border-strong text-[15px]"
                     />
                   </div>
 
@@ -919,7 +919,7 @@ export default function AdminQuoteDetail() {
                       >
                         <Minus className="h-4 w-4" aria-hidden="true" />
                       </button>
-                      <span className="w-12 text-center text-[17px] font-semibold tabular-nums text-western-green-deep">
+                      <span className="w-12 text-center text-[16px] font-semibold tabular-nums text-western-green-deep">
                         {it.quantity}
                       </span>
                       <button
@@ -947,7 +947,7 @@ export default function AdminQuoteDetail() {
                     <BRLInput
                       value={it.unitPrice}
                       onChange={(n) => updateItem(it._key, { unitPrice: n })}
-                      className="h-tap w-full rounded-sm border-western-border-strong text-right text-[16px] tabular-nums"
+                      className="h-tap w-full rounded-sm border-western-border-strong text-right text-[15px] tabular-nums"
                       placeholder="R$ 0,00"
                     />
                   </div>
@@ -964,14 +964,14 @@ export default function AdminQuoteDetail() {
                   onChange={(e) => setNewItemTitle(e.target.value)}
                   placeholder="Nome da peça"
                   aria-label="Nome da peça"
-                  className="h-tap rounded-sm border-western-border-strong bg-white text-[16px]"
+                  className="h-tap rounded-sm border-western-border-strong bg-white text-[15px]"
                 />
                 <Input
                   value={newItemAcabamento}
                   onChange={(e) => setNewItemAcabamento(e.target.value)}
                   placeholder="Acabamento (cor)"
                   aria-label="Acabamento da peça"
-                  className="h-tap rounded-sm border-western-border-strong bg-white text-[16px]"
+                  className="h-tap rounded-sm border-western-border-strong bg-white text-[15px]"
                 />
                 <Input
                   type="number"
@@ -980,13 +980,13 @@ export default function AdminQuoteDetail() {
                   onChange={(e) => setNewItemQty(e.target.value)}
                   placeholder="Qtd"
                   aria-label="Quantidade"
-                  className="h-tap rounded-sm border-western-border-strong bg-white text-right text-[16px] tabular-nums"
+                  className="h-tap rounded-sm border-western-border-strong bg-white text-right text-[15px] tabular-nums"
                 />
                 <BRLInput
                   value={newItemPrice}
                   onChange={(n) => setNewItemPrice(n)}
                   placeholder="R$ 0,00"
-                  className="h-tap rounded-sm border-western-border-strong bg-white text-right text-[16px] tabular-nums"
+                  className="h-tap rounded-sm border-western-border-strong bg-white text-right text-[15px] tabular-nums"
                 />
                 <button type="button" onClick={addItem} className="btn-outline-forest tap-target px-4">
                   <Plus className="h-4 w-4" aria-hidden="true" />
@@ -1012,7 +1012,7 @@ export default function AdminQuoteDetail() {
                   <SelectTrigger id="forma-pgto" className={INPUT_CLS}><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {FORMAS_PAGAMENTO.map((f) => (
-                      <SelectItem key={f} value={f} className="text-[16px]">{f}</SelectItem>
+                      <SelectItem key={f} value={f} className="text-[15px]">{f}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -1031,9 +1031,9 @@ export default function AdminQuoteDetail() {
                 <Select value={jurosLabel} onValueChange={(v) => setJurosLabel(v as typeof jurosLabel)}>
                   <SelectTrigger id="juros" className={INPUT_CLS}><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="nao_informar" className="text-[16px]">Não informar</SelectItem>
-                    <SelectItem value="sem_juros" className="text-[16px]">Sem juros</SelectItem>
-                    <SelectItem value="com_juros" className="text-[16px]">Com juros</SelectItem>
+                    <SelectItem value="nao_informar" className="text-[15px]">Não informar</SelectItem>
+                    <SelectItem value="sem_juros" className="text-[15px]">Sem juros</SelectItem>
+                    <SelectItem value="com_juros" className="text-[15px]">Com juros</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -1057,7 +1057,7 @@ export default function AdminQuoteDetail() {
                 value={observacoes}
                 onChange={(e) => setObservacoes(e.target.value)}
                 rows={2}
-                className="rounded-sm border-western-border-strong bg-white text-[16px]"
+                className="rounded-sm border-western-border-strong bg-white text-[15px]"
                 placeholder="Ex.: Frete por conta da Western até Cajamar/SP."
               />
             </div>
@@ -1071,24 +1071,24 @@ export default function AdminQuoteDetail() {
             {/* Totais */}
             <div className="mb-5 border-t border-western-border-soft pt-5">
               <dl className="ml-auto grid max-w-sm grid-cols-2 gap-y-2">
-                <dt className="text-[16px] text-western-stone-warm">Subtotal</dt>
-                <dd className="text-right text-[16px] tabular-nums text-western-green-deep">
+                <dt className="text-[15px] text-western-stone-warm">Subtotal</dt>
+                <dd className="text-right text-[15px] tabular-nums text-western-green-deep">
                   {formatBRL(subtotal, "BRL")}
                 </dd>
 
                 {discountValue > 0 && (
                   <>
-                    <dt className="text-[16px] text-western-stone-warm tabular-nums">
+                    <dt className="text-[15px] text-western-stone-warm tabular-nums">
                       Desconto ({discountPct}%)
                     </dt>
-                    <dd className="text-right text-[16px] font-semibold tabular-nums text-western-bronze">
+                    <dd className="text-right text-[15px] font-semibold tabular-nums text-western-bronze">
                       − {formatBRL(discountValue, "BRL")}
                     </dd>
                   </>
                 )}
 
                 <dt className="text-sublabel mt-2 border-t border-western-border-soft pt-3">Total</dt>
-                <dd className="mt-2 border-t border-western-border-soft pt-3 text-right text-[26px] font-bold leading-none tabular-nums text-western-green-deep">
+                <dd className="mt-2 border-t border-western-border-soft pt-3 text-right text-[22px] font-bold leading-none tabular-nums text-western-green-deep">
                   {formatBRL(total, "BRL")}
                 </dd>
 
@@ -1132,7 +1132,7 @@ export default function AdminQuoteDetail() {
 
           {/* Histórico de propostas — erro aqui NÃO vira "nenhuma proposta". */}
           {(erroPropostas || proposals.length > 0) && (
-            <section className="rounded-2xl border border-western-border-soft bg-white p-5">
+            <section className="rounded-xl border border-western-border-soft bg-white p-5">
               <p className="text-eyebrow mb-4">Propostas enviadas</p>
 
               {erroPropostas ? (
@@ -1152,7 +1152,7 @@ export default function AdminQuoteDetail() {
                       <div className="flex min-w-0 items-center gap-3">
                         <FileText className="h-5 w-5 flex-shrink-0 text-western-bronze" aria-hidden="true" />
                         <div className="min-w-0">
-                          <p className="text-[17px] font-semibold text-western-green-deep">
+                          <p className="text-[16px] font-semibold text-western-green-deep">
                             Nº {p.numero}
                             <span className="ml-2 tabular-nums">{formatBRL(Number(p.total), "BRL")}</span>
                             {Number(p.discount_pct) > 0 && (
@@ -1208,12 +1208,12 @@ export default function AdminQuoteDetail() {
           )}
 
           {/* Fechar venda */}
-          <section className="rounded-2xl border border-status-success/25 bg-status-success/[0.04] p-5">
+          <section className="rounded-xl border border-status-success/25 bg-status-success/[0.04] p-5">
             <div className="mb-1 flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-status-success" aria-hidden="true" />
               <p className="text-eyebrow text-status-success">Fechar venda</p>
             </div>
-            <p className="text-body mb-5 text-[16px]">
+            <p className="text-body mb-5 text-[15px]">
               Marca este orçamento como pago e registra como a venda foi fechada.
             </p>
 
@@ -1224,7 +1224,7 @@ export default function AdminQuoteDetail() {
                   <SelectTrigger id="venda-forma" className={INPUT_CLS}><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {FORMAS_PAGAMENTO.map((f) => (
-                      <SelectItem key={f} value={f} className="text-[16px]">{f}</SelectItem>
+                      <SelectItem key={f} value={f} className="text-[15px]">{f}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -1254,7 +1254,7 @@ export default function AdminQuoteDetail() {
               onChange={(e) => setSaleObs(e.target.value)}
               rows={2}
               aria-label="Observações da venda"
-              className="mb-4 rounded-sm border-western-border-strong bg-white text-[16px]"
+              className="mb-4 rounded-sm border-western-border-strong bg-white text-[15px]"
               placeholder="Observações da venda (opcional)"
             />
 
@@ -1273,7 +1273,7 @@ export default function AdminQuoteDetail() {
             </button>
 
             {thread.pago_em && (
-              <p className="mt-4 flex flex-wrap items-center gap-1.5 text-[16px] font-semibold tabular-nums text-status-success">
+              <p className="mt-4 flex flex-wrap items-center gap-1.5 text-[15px] font-semibold tabular-nums text-status-success">
                 <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                 Vendido em {dataAbsoluta(thread.pago_em)}
                 {thread.valor_final != null && ` · ${formatBRL(Number(thread.valor_final), "BRL")}`}
@@ -1284,14 +1284,14 @@ export default function AdminQuoteDetail() {
           </section>
 
           {/* Pedido original (o que o cliente pediu, antes de qualquer edição) */}
-          <section className="rounded-2xl border border-western-border-soft bg-white p-5">
+          <section className="rounded-xl border border-western-border-soft bg-white p-5">
             <p className="text-eyebrow mb-4">Pedido original do cliente</p>
             <div className="mb-3 flex items-baseline justify-between gap-3">
-              <span className="text-[16px] tabular-nums text-western-stone-warm">
+              <span className="text-[15px] tabular-nums text-western-stone-warm">
                 {payload?.items?.length ?? 0}{" "}
                 {payload?.items?.length === 1 ? "peça" : "peças"}
               </span>
-              <span className="text-[17px] font-semibold tabular-nums text-western-green-deep">
+              <span className="text-[16px] font-semibold tabular-nums text-western-green-deep">
                 {payload?.subtotal
                   ? formatBRL(payload.subtotal, payload.currency || "BRL")
                   : "—"}
@@ -1301,10 +1301,10 @@ export default function AdminQuoteDetail() {
               <ul className="divide-y divide-western-border-soft">
                 {payload.items.map((i, idx) => (
                   <li key={idx} className="flex justify-between gap-4 py-2">
-                    <span className="min-w-0 break-words text-[16px] text-western-green-deep">
+                    <span className="min-w-0 break-words text-[15px] text-western-green-deep">
                       <span className="tabular-nums">{i.quantity}×</span> {i.title}
                     </span>
-                    <span className="flex-shrink-0 text-[16px] tabular-nums text-western-stone-warm">
+                    <span className="flex-shrink-0 text-[15px] tabular-nums text-western-stone-warm">
                       {formatBRL(i.unitPrice * i.quantity, "BRL")}
                     </span>
                   </li>
@@ -1361,7 +1361,7 @@ function Campo({ rotulo, valor, numerica }: { rotulo: string; valor?: string | n
     <div className="min-w-0">
       <dt className="text-sublabel">{rotulo}</dt>
       <dd
-        className={`mt-0.5 break-words text-[16px] text-western-green-deep ${numerica ? "tabular-nums" : ""}`}
+        className={`mt-0.5 break-words text-[15px] text-western-green-deep ${numerica ? "tabular-nums" : ""}`}
       >
         {valor || "—"}
       </dd>

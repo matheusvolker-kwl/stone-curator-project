@@ -167,7 +167,7 @@ export default function AccountLayout() {
               await signOut();
               navigate("/", { replace: true });
             }}
-            className="tap-target inline-flex flex-shrink-0 items-center gap-2 self-start rounded-lg px-4 text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-status-error"
+            className="tap-target inline-flex flex-shrink-0 items-center gap-2 self-start rounded-lg px-4 text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-status-error"
           >
             <LogOut className="h-4 w-4" aria-hidden="true" /> Sair
           </button>
@@ -207,7 +207,7 @@ export default function AccountLayout() {
                   to={it.to}
                   end={it.end}
                   className={({ isActive }) =>
-                    `tap-target flex-shrink-0 inline-flex items-center gap-3 whitespace-nowrap rounded-lg border px-4 text-[16px] transition-colors md:w-full ${
+                    `tap-target flex-shrink-0 inline-flex items-center gap-3 whitespace-nowrap rounded-lg border px-4 text-[15px] transition-colors md:w-full ${
                       isActive
                         ? "border-western-border-soft bg-white font-semibold text-western-green-deep"
                         : "border-transparent text-western-stone-warm hover:bg-western-paper hover:text-western-green-deep"
@@ -411,7 +411,7 @@ function FaixaStatus({ situacao }: { situacao: Situacao }) {
       className="flex items-center justify-between gap-4 rounded-lg border px-4 py-3 transition-colors hover:bg-western-paper"
       style={{ borderColor: `${tom}55`, backgroundColor: `${tom}0F` }}
     >
-      <span className="text-[16px] font-semibold" style={{ color: tom }}>
+      <span className="text-[15px] font-semibold" style={{ color: tom }}>
         {texto[situacao]}
       </span>
       <ArrowRight className="h-4 w-4 flex-shrink-0" style={{ color: tom }} aria-hidden="true" />
@@ -431,7 +431,7 @@ const TOM_CARD: Record<string, string> = {
 };
 
 function Card({ tom, children }: { tom: keyof typeof TOM_CARD; children: React.ReactNode }) {
-  return <section className={`rounded-2xl border p-6 md:p-8 ${TOM_CARD[tom]}`}>{children}</section>;
+  return <section className={`rounded-xl border p-6 md:p-8 ${TOM_CARD[tom]}`}>{children}</section>;
 }
 
 function Dado({
@@ -447,7 +447,7 @@ function Dado({
     <div className="min-w-0">
       <p className="text-eyebrow mb-1">{rotulo}</p>
       <p
-        className={`text-[20px] font-semibold leading-tight text-western-green-deep ${
+        className={`text-[18px] font-semibold leading-tight text-western-green-deep ${
           numerico ? "tabular-nums" : ""
         }`}
       >
@@ -478,7 +478,7 @@ function ChipEsqueleto() {
 function HeroEsqueleto() {
   return (
     <div
-      className="rounded-2xl border border-western-border-soft bg-white p-6 md:p-8"
+      className="rounded-xl border border-western-border-soft bg-white p-6 md:p-8"
       aria-busy="true"
       aria-live="polite"
     >

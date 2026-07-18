@@ -80,14 +80,14 @@ const NA_CAIXA = [
 
 /* DS V3: gatilho do acordeão é UI, não display — sans semibold 20px, alvo 56px. */
 const TRIGGER =
-  "font-sans text-[18px] md:text-[20px] font-semibold text-western-green-deep " +
+  "font-sans text-[17px] md:text-[18px] font-semibold text-western-green-deep " +
   "py-5 min-h-[56px] hover:no-underline";
 
 const ITEM = "border-western-border-soft";
 
 /* Linha de ficha (dt/dd) — 16px mínimo de UI, hairline suave. */
 const ROW =
-  "flex justify-between gap-6 border-b border-western-border-soft py-3.5 font-sans text-[16px]";
+  "flex justify-between gap-6 border-b border-western-border-soft py-3.5 font-sans text-[15px]";
 
 export default function ProductTabs({
   parsed,
@@ -120,7 +120,7 @@ export default function ProductTabs({
             {parsed.aplicacoes.map((a) => (
               <li key={a} className="flex gap-3 items-start">
                 <Check className="h-5 w-5 text-western-bronze mt-0.5 shrink-0" aria-hidden />
-                <span className="font-sans text-[16px] leading-relaxed text-western-green-deep">
+                <span className="font-sans text-[15px] leading-relaxed text-western-green-deep">
                   {a}
                 </span>
               </li>
@@ -138,10 +138,10 @@ export default function ProductTabs({
         <ul className="space-y-5">
           {COMPOSICAO.map((item) => (
             <li key={item.label}>
-              <p className="font-sans font-semibold text-[16px] text-western-green-deep mb-1">
+              <p className="font-sans font-semibold text-[15px] text-western-green-deep mb-1">
                 {item.label}
               </p>
-              <p className="font-sans text-[16px] leading-relaxed text-western-stone-warm">
+              <p className="font-sans text-[15px] leading-relaxed text-western-stone-warm">
                 {item.text}
               </p>
             </li>
@@ -167,7 +167,7 @@ export default function ProductTabs({
           onClick={scrollToTamanho}
           className="group flex items-center justify-between gap-4 min-h-control rounded-lg border border-western-border-soft bg-western-cream px-5 py-4 transition-colors hover:border-western-green-deep"
         >
-          <span className="font-sans text-[16px] text-western-green-deep">
+          <span className="font-sans text-[15px] text-western-green-deep">
             <span className="font-semibold">Medidas e peso da peça</span>{" "}
             <span className="text-western-stone-warm">— veja Tamanho real</span>
           </span>
@@ -200,7 +200,7 @@ export default function ProductTabs({
               {parsed.observacoes.map((o, i) => (
                 <li key={i}>
                   {o.label && (
-                    <p className="font-sans font-semibold text-[16px] text-western-green-deep mb-1">
+                    <p className="font-sans font-semibold text-[15px] text-western-green-deep mb-1">
                       {o.label}
                     </p>
                   )}
@@ -229,7 +229,7 @@ export default function ProductTabs({
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex w-full sm:w-auto items-center justify-center gap-2 min-h-control px-6 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors"
+            className="inline-flex w-full sm:w-auto items-center justify-center gap-2 min-h-control px-6 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[15px] font-semibold transition-colors"
           >
             <Download className="h-5 w-5" aria-hidden />
             {isProductSpecific ? "Baixar modelo 3D (.skp)" : "Abrir no 3D Warehouse"}
@@ -243,7 +243,7 @@ export default function ProductTabs({
           {SKETCHUP_INCLUI.map((it) => (
             <li key={it} className="flex gap-3 items-start">
               <Check className="h-5 w-5 text-western-bronze mt-0.5 shrink-0" aria-hidden />
-              <span className="font-sans text-[16px] leading-relaxed text-western-stone-warm">
+              <span className="font-sans text-[15px] leading-relaxed text-western-stone-warm">
                 {it}
               </span>
             </li>
@@ -270,7 +270,7 @@ export default function ProductTabs({
               },
             ].map((row) => (
               <div key={row.k}>
-                <dt className="font-sans font-semibold text-[16px] text-western-green-deep mb-1">
+                <dt className="font-sans font-semibold text-[15px] text-western-green-deep mb-1">
                   {row.k}
                 </dt>
                 <dd className="text-body">{row.v}</dd>
@@ -310,7 +310,7 @@ export default function ProductTabs({
 
       <div className="md:col-span-5">
         <p className="text-section-label mb-4">O que vem na caixa</p>
-        <div className="rounded-2xl border border-western-border-soft bg-western-cream px-5 py-6 md:px-7 md:py-7">
+        <div className="rounded-xl border border-western-border-soft bg-western-cream px-5 py-6 md:px-7 md:py-7">
           <ul className="space-y-5">
             {NA_CAIXA.map(({ Icon, title, desc }) => (
               <li key={title} className="flex gap-3">
@@ -320,7 +320,7 @@ export default function ProductTabs({
                   aria-hidden="true"
                 />
                 <div>
-                  <p className="font-sans font-semibold text-[16px] text-western-green-deep leading-snug">
+                  <p className="font-sans font-semibold text-[15px] text-western-green-deep leading-snug">
                     {title}
                   </p>
                   <p className="font-sans text-[14px] text-western-stone-warm leading-relaxed mt-1">

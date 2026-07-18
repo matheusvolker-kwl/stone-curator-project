@@ -103,7 +103,7 @@ export default function CalculadoraQuantidade({
           </h2>
         </header>
 
-        <div className="rounded-2xl border border-western-border-soft bg-white p-4 md:p-5">
+        <div className="rounded-xl border border-western-border-soft bg-white p-4 md:p-5">
           <div className="grid md:grid-cols-[1fr_1.15fr] gap-4 md:gap-6 items-stretch">
             {/* Entrada — uma pergunta por vez */}
             <div className="min-w-0 md:py-1">
@@ -125,7 +125,7 @@ export default function CalculadoraQuantidade({
                     if (/^\d{0,5}([.,]\d{0,2})?$/.test(v)) setRaw(v);
                   }}
                   placeholder="0"
-                  className="h-full flex-1 min-w-0 bg-transparent px-3.5 rounded-l-lg font-sans text-[18px] font-semibold tabular-nums text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none"
+                  className="h-full flex-1 min-w-0 bg-transparent px-3.5 rounded-l-lg font-sans text-[17px] font-semibold tabular-nums text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none"
                 />
                 <span
                   aria-hidden
@@ -177,7 +177,7 @@ export default function CalculadoraQuantidade({
                 <span className="font-sans text-[40px] leading-none font-bold tabular-nums text-white">
                   {n > 0 ? n : "—"}
                 </span>
-                <span className="font-sans text-[17px] font-semibold text-western-cream">
+                <span className="font-sans text-[16px] font-semibold text-western-cream">
                   {n > 0 ? unidade : unidadePlural}
                 </span>
               </p>

@@ -25,11 +25,11 @@ export default function FechamentoLegal({
   waLabel: string;
 }) {
   return (
-    <section className="surface-forest mt-16 rounded-2xl px-6 py-12 text-center md:px-12 md:py-14">
+    <section className="surface-forest mt-16 rounded-xl px-6 py-12 text-center md:px-12 md:py-14">
       <h2 className="display-md mx-auto max-w-xl !mb-3 !mt-0 !text-[1.625rem] !text-western-cream md:!text-[1.875rem]">
         {titulo}
       </h2>
-      <p className="mx-auto mb-8 max-w-lg text-[17px] leading-[1.6] text-western-cream/80">{apoio}</p>
+      <p className="mx-auto mb-8 max-w-lg text-[16px] leading-[1.6] text-western-cream/80">{apoio}</p>
       <div className="mx-auto flex max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center">
         {/* Dourado: único CTA da faixa escura, onde o verde não teria contraste. */}
         <a

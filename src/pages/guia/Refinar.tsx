@@ -342,7 +342,7 @@ export default function GuiaRefinar() {
                     href={whatsHref}
                     target="_blank"
                     rel="noreferrer"
-                    className="tap-target inline-flex items-center justify-center gap-2 px-2 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-bronze transition-colors"
+                    className="tap-target inline-flex items-center justify-center gap-2 px-2 font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-bronze transition-colors"
                   >
                     <MessageCircle className="h-4 w-4" aria-hidden /> Falar com consultor
                   </a>

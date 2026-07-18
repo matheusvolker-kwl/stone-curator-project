@@ -66,13 +66,13 @@ export function EstadoVazio({ titulo, mensagem, acao, icone: Icone = Inbox, clas
     <div
       className={cn(
         "flex flex-col items-center justify-center text-center",
-        "rounded-2xl border border-dashed border-western-border-strong bg-western-paper",
+        "rounded-xl border border-dashed border-western-border-strong bg-western-paper",
         "px-6 py-14",
         className,
       )}
     >
       <Icone className="h-7 w-7 text-western-stone-warm/50" aria-hidden="true" />
-      <p className="mt-4 font-display text-[20px] font-semibold text-western-green-deep">{titulo}</p>
+      <p className="mt-4 font-display text-[18px] font-semibold text-western-green-deep">{titulo}</p>
       {mensagem && <p className="text-body mt-2 max-w-md">{mensagem}</p>}
       {acao && <div className="mt-6">{acao}</div>}
     </div>
@@ -121,7 +121,7 @@ export function EstadoErro({ erro, onRetry, titulo = "Não consegui carregar", c
     <div
       role="alert"
       className={cn(
-        "rounded-2xl border border-status-error/35 bg-status-error/[0.06]",
+        "rounded-xl border border-status-error/35 bg-status-error/[0.06]",
         compacto ? "p-4" : "px-6 py-8",
         className,
       )}
@@ -130,7 +130,7 @@ export function EstadoErro({ erro, onRetry, titulo = "Não consegui carregar", c
         <AlertTriangle className="h-5 w-5 flex-shrink-0 text-status-error mt-0.5" aria-hidden="true" />
 
         <div className="flex-1 min-w-0">
-          <p className={cn("font-semibold text-status-error", compacto ? "text-[16px]" : "text-[17px]")}>{titulo}</p>
+          <p className={cn("font-semibold text-status-error", compacto ? "text-[15px]" : "text-[16px]")}>{titulo}</p>
 
           {/* A mensagem REAL do erro. É isto que evita o dono ficar cego. */}
           <p className="text-[15px] leading-[1.5] text-western-stone-dark/85 mt-1 break-words">{msg}</p>
@@ -145,7 +145,7 @@ export function EstadoErro({ erro, onRetry, titulo = "Não consegui carregar", c
               onClick={onRetry}
               className={cn(
                 "tap-target mt-4 inline-flex items-center justify-center gap-2 rounded-lg px-5",
-                "border border-status-error/50 text-status-error font-semibold text-[16px]",
+                "border border-status-error/50 text-status-error font-semibold text-[15px]",
                 "hover:bg-status-error/10 transition-colors",
               )}
             >

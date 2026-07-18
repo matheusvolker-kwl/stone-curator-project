@@ -56,7 +56,7 @@ export default function AutoralProductModal({ item, selected, qty, onClose, onTo
         }
       }}
     >
-      <DialogContent className="w-[calc(100%-24px)] max-w-[580px] gap-0 overflow-hidden rounded-2xl border-0 bg-western-ivory p-0 [&>button:last-child]:hidden">
+      <DialogContent className="w-[calc(100%-24px)] max-w-[580px] gap-0 overflow-hidden rounded-xl border-0 bg-western-ivory p-0 [&>button:last-child]:hidden">
         {item && (
           <>
             {/* Fechar — 48px, o mínimo de toque do sistema */}
@@ -90,7 +90,7 @@ export default function AutoralProductModal({ item, selected, qty, onClose, onTo
                 {/* Archivo 650 — só aqui, porque é o único título ≥22px do modal.
                     Utilities explícitas: as classes-base do DialogTitle (text-lg)
                     vivem em @layer utilities e venceriam um `.display-md`. */}
-                <DialogTitle className="mt-2 pr-14 text-left font-display text-[22px] font-[650] leading-tight tracking-[-0.01em] text-western-green-deep md:text-[26px]">
+                <DialogTitle className="mt-2 pr-14 text-left font-display text-[20px] font-[650] leading-tight tracking-[-0.01em] text-western-green-deep md:text-[22px]">
                   {item.nome}
                 </DialogTitle>
 
@@ -103,7 +103,7 @@ export default function AutoralProductModal({ item, selected, qty, onClose, onTo
                       <p className="text-eyebrow">Preço de parceiro</p>
                       <Link
                         to={session ? "/minha-conta" : "/parceiro/login"}
-                        className="tap-target -ml-1 mt-0.5 inline-flex items-center gap-1.5 rounded-lg px-1 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 transition-colors hover:text-western-cta"
+                        className="tap-target -ml-1 mt-0.5 inline-flex items-center gap-1.5 rounded-lg px-1 font-sans text-[15px] font-semibold text-western-green-deep underline underline-offset-4 transition-colors hover:text-western-cta"
                       >
                         Acessar para ver o preço
                       </Link>
@@ -129,7 +129,7 @@ export default function AutoralProductModal({ item, selected, qty, onClose, onTo
                         >
                           <Minus className="h-4 w-4" aria-hidden />
                         </button>
-                        <span className="font-sans text-[16px] font-semibold tabular-nums text-western-green-deep">
+                        <span className="font-sans text-[15px] font-semibold tabular-nums text-western-green-deep">
                           {qty} no projeto
                         </span>
                         <button
@@ -169,7 +169,7 @@ export default function AutoralProductModal({ item, selected, qty, onClose, onTo
                       type="button"
                       onClick={() => setShowMais((v) => !v)}
                       aria-expanded={showMais}
-                      className="tap-target -ml-2 inline-flex items-center gap-2 rounded-lg px-2 font-sans text-[16px] font-semibold text-western-green-deep transition-colors hover:text-western-cta"
+                      className="tap-target -ml-2 inline-flex items-center gap-2 rounded-lg px-2 font-sans text-[15px] font-semibold text-western-green-deep transition-colors hover:text-western-cta"
                     >
                       <ChevronDown
                         className={cn("h-4 w-4 transition-transform", showMais && "rotate-180")}

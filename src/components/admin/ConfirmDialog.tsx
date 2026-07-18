@@ -31,11 +31,11 @@ export function ConfirmDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="rounded-2xl border border-western-border-soft">
+      <AlertDialogContent className="rounded-xl border border-western-border-soft">
         <AlertDialogHeader>
-          <AlertDialogTitle className="font-display text-[20px] text-western-green-deep">{title}</AlertDialogTitle>
+          <AlertDialogTitle className="font-display text-[18px] text-western-green-deep">{title}</AlertDialogTitle>
           {description && (
-            <AlertDialogDescription className="text-[16px] text-western-stone-warm whitespace-pre-line">
+            <AlertDialogDescription className="text-[15px] text-western-stone-warm whitespace-pre-line">
               {description}
             </AlertDialogDescription>
           )}
@@ -46,13 +46,13 @@ export function ConfirmDialog({
               value={typed}
               onChange={(e) => setTyped(e.target.value)}
               placeholder={requireTextPlaceholder ?? `Digite ${requireText}`}
-              className="h-12 rounded-lg text-[16px]"
+              className="h-12 rounded-lg text-[15px]"
               autoFocus
             />
           </div>
         )}
         <AlertDialogFooter>
-          <AlertDialogCancel className="tap-target rounded-lg text-[16px] font-semibold">
+          <AlertDialogCancel className="tap-target rounded-lg text-[15px] font-semibold">
             {cancelLabel}
           </AlertDialogCancel>
           <AlertDialogAction
@@ -61,7 +61,7 @@ export function ConfirmDialog({
               if (!canConfirm) { e.preventDefault(); return; }
               onConfirm();
             }}
-            className={`tap-target rounded-lg text-[16px] font-semibold ${
+            className={`tap-target rounded-lg text-[15px] font-semibold ${
               danger
                 ? "bg-status-error text-white hover:bg-[#992e26]"
                 : "bg-western-cta text-white hover:bg-western-cta/90"

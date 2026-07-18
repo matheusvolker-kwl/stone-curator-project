@@ -48,7 +48,7 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
         </div>
 
         <div className="flex-1 min-w-0">
-          <h4 className="font-sans text-[18px] md:text-[20px] font-semibold text-western-green-deep leading-snug break-words">
+          <h4 className="font-sans text-[17px] md:text-[18px] font-semibold text-western-green-deep leading-snug break-words">
             {peca.nome}
           </h4>
           {papel && (
@@ -67,7 +67,7 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
           <GatedPrice
             amount={peca.preco}
             variant="hidden"
-            className="font-sans text-[17px] font-semibold tabular-nums text-western-green-deep mt-2"
+            className="font-sans text-[16px] font-semibold tabular-nums text-western-green-deep mt-2"
           />
         </div>
       </div>
@@ -84,7 +84,7 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
           </button>
           <span
             key={pulse ?? peca.qty}
-            className="w-12 text-center font-sans text-[16px] font-semibold tabular-nums text-western-green-deep animate-fade-in"
+            className="w-12 text-center font-sans text-[15px] font-semibold tabular-nums text-western-green-deep animate-fade-in"
           >
             {peca.qty}
           </span>
@@ -99,7 +99,7 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
         </div>
 
         {confirm ? (
-          <div className="inline-flex items-center gap-3 font-sans text-[16px]">
+          <div className="inline-flex items-center gap-3 font-sans text-[15px]">
             <span className="text-western-stone-warm">Remover?</span>
             <button
               type="button"
@@ -120,7 +120,7 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
           <button
             type="button"
             onClick={() => setConfirm(true)}
-            className="tap-target inline-flex items-center font-sans text-[16px] text-western-stone-warm hover:text-destructive transition-colors"
+            className="tap-target inline-flex items-center font-sans text-[15px] text-western-stone-warm hover:text-destructive transition-colors"
           >
             Remover
           </button>

@@ -92,7 +92,7 @@ function GradeCarregando() {
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true" aria-live="polite">
       <span className="sr-only">Carregando orçamentos…</span>
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="rounded-2xl border border-western-border-soft bg-white overflow-hidden">
+        <div key={i} className="rounded-xl border border-western-border-soft bg-white overflow-hidden">
           <div className="h-28 bg-western-border-soft/60 animate-pulse" />
           <div className="p-5 space-y-3">
             <div className="h-3 w-1/3 rounded-sm bg-western-border-soft animate-pulse" />
@@ -345,7 +345,7 @@ export default function AccountOrcamentos() {
               return (
                 <li
                   key={it.id}
-                  className="flex flex-col overflow-hidden rounded-2xl border border-western-border-soft bg-white"
+                  className="flex flex-col overflow-hidden rounded-xl border border-western-border-soft bg-white"
                 >
                   {/* Faixa visual das peças — é assim que o parceiro reconhece o orçamento. */}
                   <div className="flex h-28 items-stretch gap-px bg-western-border-soft">
@@ -395,7 +395,7 @@ export default function AccountOrcamentos() {
                       {qtdPecas === 1 ? "peça" : "peças"}
                     </h3>
 
-                    <p className="text-price mt-1 text-[24px]">{formatBRL(subtotal)}</p>
+                    <p className="text-price mt-1 text-[20px]">{formatBRL(subtotal)}</p>
 
                     {it.payload?.summary && (
                       <p className="text-meta mt-2 line-clamp-2">{it.payload.summary}</p>
@@ -429,11 +429,11 @@ export default function AccountOrcamentos() {
           {orfaos.length > 0 && (
             <section className="mt-8" aria-label="Outros PDFs de orçamento">
               <h2 className="text-eyebrow mb-3">Outros PDFs de orçamento</h2>
-              <ul className="divide-y divide-western-border-soft rounded-2xl border border-western-border-soft bg-white">
+              <ul className="divide-y divide-western-border-soft rounded-xl border border-western-border-soft bg-white">
                 {orfaos.map((p) => (
                   <li key={p.id} className="flex items-center justify-between gap-4 px-5 py-4">
                     <div>
-                      <p className="font-sans text-[16px] font-semibold text-western-green-deep">
+                      <p className="font-sans text-[15px] font-semibold text-western-green-deep">
                         {p.items_count} {p.items_count === 1 ? "peça" : "peças"}
                         {p.subtotal > 0 ? ` · ${formatBRL(p.subtotal, "BRL")}` : ""}
                       </p>

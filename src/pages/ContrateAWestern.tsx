@@ -180,13 +180,13 @@ const CARD =
 const CARD_ICON =
   "inline-flex h-12 w-12 items-center justify-center rounded-lg bg-western-paper border border-western-border-soft text-western-bronze mb-5";
 const CARD_TITLE =
-  "font-sans font-semibold text-[20px] leading-snug text-western-green-deep mb-2";
+  "font-sans font-semibold text-[18px] leading-snug text-western-green-deep mb-2";
 const CARD_DESC = "text-spec leading-relaxed";
 // Nome / perfil / mensagem: pele V3 local (52px, cantos 10px, tipo 16px, fundo
 // paper sobre a carta branca). WhatsApp e e-mail usam PhoneInput/EmailInput
 // compartilhados, que já trazem esta mesma pele — nada de máscara própria aqui.
 const CONTROL =
-  "w-full rounded-lg bg-western-paper border-[1.5px] border-western-border-strong px-4 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-green-deep focus:outline-none transition-colors";
+  "w-full rounded-lg bg-western-paper border-[1.5px] border-western-border-strong px-4 text-[15px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-green-deep focus:outline-none transition-colors";
 const FIELD_H = "h-control";
 
 export default function ContrateAWestern() {
@@ -316,7 +316,7 @@ export default function ContrateAWestern() {
                 Do projeto à obra,{" "}
                 <span className="text-western-gold-soft">a Western executa com você.</span>
               </h1>
-              <p className="mt-5 text-[17px] md:text-[18px] leading-[1.6] text-western-cream/90 max-w-xl">
+              <p className="mt-5 text-[16px] md:text-[17px] leading-[1.6] text-western-cream/90 max-w-xl">
                 Consultoria, projeto, render 3D e instalação com quem fabrica a pedra. Os dois
                 primeiros passos são gratuitos — você só decide depois de conhecer.
               </p>
@@ -365,7 +365,7 @@ export default function ContrateAWestern() {
             {CONFIANCA.map((c) => (
               <li key={c.label} className="flex items-center gap-3">
                 <c.icon className="h-5 w-5 shrink-0 text-western-gold-soft" aria-hidden="true" />
-                <span className="font-sans text-[15px] md:text-[16px] font-medium text-western-cream">
+                <span className="font-sans text-[15px] md:text-[15px] font-medium text-western-cream">
                   {c.label}
                 </span>
               </li>
@@ -390,7 +390,7 @@ export default function ContrateAWestern() {
                   técnica e responsabilidade concentrados em um só time —
                   do render 3D à peça posicionada em obra.
                 </p>
-                <div className="mt-8 aspect-[4/3] overflow-hidden rounded-2xl">
+                <div className="mt-8 aspect-[4/3] overflow-hidden rounded-xl">
                   <img
                     src={serraImg}
                     alt="Piscina com cascata Western em meio à serra"
@@ -557,7 +557,7 @@ export default function ContrateAWestern() {
             <Accordion
               type="single"
               collapsible
-              className="bg-white border border-western-border-soft rounded-2xl overflow-hidden"
+              className="bg-white border border-western-border-soft rounded-xl overflow-hidden"
             >
               {FAQ_ITEMS.map((item, i) => (
                 <AccordionItem
@@ -565,10 +565,10 @@ export default function ContrateAWestern() {
                   value={`item-${i}`}
                   className="border-b border-western-border-soft last:border-b-0 px-5 md:px-7"
                 >
-                  <AccordionTrigger className="text-left font-sans font-semibold text-[17px] md:text-[18px] text-western-green-deep hover:no-underline py-5 min-h-[var(--tap-min)]">
+                  <AccordionTrigger className="text-left font-sans font-semibold text-[16px] md:text-[17px] text-western-green-deep hover:no-underline py-5 min-h-[var(--tap-min)]">
                     {item.q}
                   </AccordionTrigger>
-                  <AccordionContent className="text-western-stone-warm text-[17px] leading-[1.6] pb-6">
+                  <AccordionContent className="text-western-stone-warm text-[16px] leading-[1.6] pb-6">
                     {item.a}
                   </AccordionContent>
                 </AccordionItem>
@@ -593,7 +593,7 @@ export default function ContrateAWestern() {
                   Comece com uma conversa{" "}
                   <span className="text-western-gold-soft">grátis e sem compromisso.</span>
                 </h2>
-                <p className="mt-5 text-[17px] leading-[1.6] text-western-cream/85">
+                <p className="mt-5 text-[16px] leading-[1.6] text-western-cream/85">
                   Preencha o essencial —{" "}
                   <strong className="font-semibold text-western-cream">
                     só nome e WhatsApp
@@ -606,7 +606,7 @@ export default function ContrateAWestern() {
                   {BENEFICIOS_CONSULTORIA.map((b) => (
                     <li
                       key={b}
-                      className="flex gap-3 text-[16px] leading-relaxed text-western-cream/85"
+                      className="flex gap-3 text-[15px] leading-relaxed text-western-cream/85"
                     >
                       <Check
                         className="h-5 w-5 shrink-0 mt-0.5 text-western-gold-soft"
@@ -621,7 +621,7 @@ export default function ContrateAWestern() {
                   href={waLink(WHATSAPP_MSG_CONSULTOR)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="tap-target mt-7 inline-flex items-center gap-2 text-[16px] font-semibold text-western-gold-soft underline underline-offset-4 decoration-western-gold/50 hover:decoration-western-gold-soft"
+                  className="tap-target mt-7 inline-flex items-center gap-2 text-[15px] font-semibold text-western-gold-soft underline underline-offset-4 decoration-western-gold/50 hover:decoration-western-gold-soft"
                 >
                   <MessageCircle className="h-5 w-5" />
                   Prefere WhatsApp? Falar com consultor
@@ -632,7 +632,7 @@ export default function ContrateAWestern() {
             <Reveal variant="fade-up" delay={100} duration={700} className="md:col-span-7">
               <form
                 onSubmit={handleSubmit}
-                className="bg-white border border-western-border-soft rounded-2xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
+                className="bg-white border border-western-border-soft rounded-xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
                 noValidate
               >
                 <div className="md:col-span-1">

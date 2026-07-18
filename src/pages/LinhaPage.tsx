@@ -85,7 +85,7 @@ export default function LinhaPage() {
         {/* Volta para o índice de linhas — alvo de toque cheio */}
         <Link
           to="/linhas"
-          className="tap-target -ml-2 mb-6 inline-flex items-center gap-2 px-2 font-sans text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep md:mb-8"
+          className="tap-target -ml-2 mb-6 inline-flex items-center gap-2 px-2 font-sans text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep md:mb-8"
         >
           <ChevronLeft className="h-5 w-5" aria-hidden="true" /> Todas as categorias
         </Link>

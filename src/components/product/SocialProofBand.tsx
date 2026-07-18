@@ -22,7 +22,7 @@ export default function SocialProofBand() {
           {marcas.map((m) => (
             <li
               key={m.slug}
-              className="font-display text-[16px] md:text-[18px] leading-tight text-center text-western-green-deep/70 hover:text-western-green-deep transition-colors"
+              className="font-display text-[15px] md:text-[17px] leading-tight text-center text-western-green-deep/70 hover:text-western-green-deep transition-colors"
             >
               {m.nome}
             </li>

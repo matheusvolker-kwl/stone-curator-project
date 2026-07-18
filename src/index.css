@@ -71,7 +71,7 @@
     --western-border-strong: 40 25% 73%; /* #C9C0AD */
     --western-cta: 140 38% 17%;          /* #1B3C26 — CTA primário É VERDE no V3 */
     --tap-min: 48px;                     /* alvo mínimo de toque (público 40+) */
-    --control-h: 52px;                   /* altura padrão de botão/input */
+    --control-h: 48px;                   /* altura padrão de botão/input (Modelo B) */
 
     /* Paleta de status — oficializa a "paleta fantasma" que o site já usava em
      * hex hardcoded (erro 128×, aviso 41×, sucesso 33× — auditoria 2026-07-17).
@@ -245,8 +245,10 @@
     color: hsl(var(--western-stone-warm));
   }
 
+  /* MODELO B (18/07, escolha do dono no lab de escala): corpo 16/1.55.
+   * Toda a escala tipográfica desceu um degrau coordenado — ver display-*. */
   .text-body {
-    @apply font-sans text-[17px] leading-[1.6];
+    @apply font-sans text-[16px] leading-[1.55];
     color: hsl(var(--western-stone-warm));
   }
 
@@ -254,15 +256,17 @@
   .text-price {
     @apply font-sans tabular-nums;
     color: hsl(var(--western-green-deep));
-    font-size: clamp(1.75rem, 3vw, 2.125rem);
+    font-size: clamp(1.4rem, 2.4vw, 1.65rem);
     line-height: 1.1;
     font-weight: 700;
   }
 
   /* Escala display do V3 — Archivo 650, contida de propósito */
+  /* Escala display do MODELO B — um degrau abaixo da V3 original, coordenada
+   * com body 16 / ui 15 / title-sm 18 / controle 48. */
   .display-xl {
     @apply font-display;
-    font-size: clamp(1.875rem, 1.2rem + 2.6vw, 3rem);
+    font-size: clamp(1.7rem, 1.1rem + 2.2vw, 2.6rem);
     font-weight: 650;
     line-height: 1.15;
     letter-spacing: -0.01em;
@@ -270,7 +274,7 @@
   }
   .display-lg {
     @apply font-display;
-    font-size: clamp(1.625rem, 1.15rem + 1.8vw, 2.375rem);
+    font-size: clamp(1.45rem, 1.05rem + 1.5vw, 2rem);
     font-weight: 650;
     line-height: 1.15;
     letter-spacing: -0.01em;
@@ -278,7 +282,7 @@
   }
   .display-md {
     @apply font-display;
-    font-size: clamp(1.375rem, 1.15rem + 1vw, 1.75rem);
+    font-size: clamp(1.22rem, 1.05rem + 0.8vw, 1.5rem);
     font-weight: 650;
     line-height: 1.15;
     letter-spacing: -0.01em;
@@ -292,7 +296,7 @@
    */
   .display-stat {
     @apply font-display;
-    font-size: clamp(3.25rem, 2rem + 6vw, 6.5rem);
+    font-size: clamp(2.85rem, 1.8rem + 5.2vw, 5.5rem);
     font-weight: 650;
     line-height: 0.95;
     letter-spacing: -0.03em;
@@ -321,10 +325,10 @@
    * nome — a causa nº 1 do drift: ninguém desobedece um sistema; as pessoas
    * improvisam quando a classe de que precisam não existe. */
   .text-ui {
-    @apply font-sans text-[16px] leading-[1.4];
+    @apply font-sans text-[15px] leading-[1.4];
   }
   .text-title-sm {
-    @apply font-sans text-[20px] leading-[1.3] font-semibold;
+    @apply font-sans text-[18px] leading-[1.3] font-semibold;
     color: hsl(var(--western-green-deep));
   }
 
@@ -359,11 +363,12 @@
   /* === RITMO VERTICAL — 2 níveis nomeados (decisão do dono, 2026-07-17) ===
    * .section = padrão do site; .section-tight = PDP interna e seções de apoio.
    * Qualquer outro ritmo é exceção DECLARADA em comentário, nunca deriva. */
+  /* Ritmos do MODELO B: um degrau abaixo em todas as faixas. */
   .section {
-    @apply py-16 md:py-24;
+    @apply py-12 md:py-[4.5rem];
   }
   .section-tight {
-    @apply py-14 md:py-20;
+    @apply py-10 md:py-14;
   }
 
   /* === MODOS DE DENSIDADE — PALCO × BALCÃO (2026-07-18, decisão do dono) ===
@@ -390,7 +395,7 @@
    * embutida é Balcão. Evidência que motivou os modos: drawer com ~1,5 item
    * visível, calculadora de 2 telas, /a-pedra com 25 telas. */
   .section-balcao {
-    @apply py-10 md:py-12;
+    @apply py-8 md:py-10;
   }
   .text-body-balcao {
     @apply font-sans text-[15px] leading-[1.55];

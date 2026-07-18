@@ -50,7 +50,7 @@ export default function EmailInput({
         spellCheck={false}
         aria-invalid={!!error}
         aria-describedby={describedBy}
-        className={`h-control w-full rounded-lg border-[1.5px] bg-western-paper px-4 font-sans text-[16px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 focus:outline-none transition-colors ${
+        className={`h-control w-full rounded-lg border-[1.5px] bg-western-paper px-4 font-sans text-[15px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 focus:outline-none transition-colors ${
           readOnly ? "opacity-70 cursor-not-allowed " : ""
         }${
           error

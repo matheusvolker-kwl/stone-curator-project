@@ -109,7 +109,7 @@ export default function StickyBuyBarLab({
               </div>
             )}
             <div className="min-w-0">
-              <p className="font-sans text-[17px] font-semibold text-western-green-deep truncate leading-tight">
+              <p className="font-sans text-[16px] font-semibold text-western-green-deep truncate leading-tight">
                 {productTitle}
               </p>
               {selectedFinish && (
@@ -121,7 +121,7 @@ export default function StickyBuyBarLab({
           {isApproved ? (
             <>
               {priceLabel && (
-                <span className="font-sans text-[20px] font-bold text-western-green-deep flex-shrink-0 tabular-nums">
+                <span className="font-sans text-[18px] font-bold text-western-green-deep flex-shrink-0 tabular-nums">
                   {priceLabel}
                 </span>
               )}
@@ -133,7 +133,7 @@ export default function StickyBuyBarLab({
                 >
                   <Minus className="h-4 w-4" />
                 </button>
-                <span className="px-3 font-sans text-[16px] font-semibold min-w-[2ch] text-center tabular-nums text-western-green-deep">
+                <span className="px-3 font-sans text-[15px] font-semibold min-w-[2ch] text-center tabular-nums text-western-green-deep">
                   {qty}
                 </span>
                 <button
@@ -191,11 +191,11 @@ export default function StickyBuyBarLab({
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="font-sans text-[16px] font-semibold text-western-green-deep truncate leading-tight">
+              <p className="font-sans text-[15px] font-semibold text-western-green-deep truncate leading-tight">
                 {productTitle}
               </p>
               {isApproved && priceLabel && (
-                <p className="font-sans text-[17px] font-bold text-western-green-deep tabular-nums leading-tight mt-0.5">
+                <p className="font-sans text-[16px] font-bold text-western-green-deep tabular-nums leading-tight mt-0.5">
                   {priceLabel}
                 </p>
               )}
@@ -209,7 +209,7 @@ export default function StickyBuyBarLab({
                 >
                   <Minus className="h-4 w-4" />
                 </button>
-                <span className="px-1.5 font-sans text-[16px] font-semibold min-w-[2ch] text-center tabular-nums text-western-green-deep">
+                <span className="px-1.5 font-sans text-[15px] font-semibold min-w-[2ch] text-center tabular-nums text-western-green-deep">
                   {qty}
                 </span>
                 <button

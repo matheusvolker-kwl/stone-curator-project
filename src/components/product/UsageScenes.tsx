@@ -50,7 +50,7 @@ export default function UsageScenes({ collectionHandle, productTitle }: Props) {
                     key={t}
                     to={`/obras?seg=${t}`}
                     aria-label={`Ver obras de ${s.label.toLowerCase()}`}
-                    className="group tap-target inline-flex items-center gap-2.5 rounded-full border border-western-border-strong bg-white px-5 text-[16px] font-semibold text-western-green-deep transition-colors hover:border-western-green-deep hover:bg-western-paper"
+                    className="group tap-target inline-flex items-center gap-2.5 rounded-full border border-western-border-strong bg-white px-5 text-[15px] font-semibold text-western-green-deep transition-colors hover:border-western-green-deep hover:bg-western-paper"
                   >
                     <Icon className="h-5 w-5 text-western-cta" aria-hidden="true" />
                     {s.label}
@@ -78,7 +78,7 @@ export default function UsageScenes({ collectionHandle, productTitle }: Props) {
         {projetos.length === 0 && (
           <Link
             to="/obras"
-            className="group mt-6 inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-cta transition-colors hover:text-western-green-deep"
+            className="group mt-6 inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-cta transition-colors hover:text-western-green-deep"
           >
             Dúvidas de como usar? Veja as obras entregues
             <ArrowRight

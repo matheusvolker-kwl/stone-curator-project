@@ -52,7 +52,7 @@ export default function FavoritosCompartilhados() {
 
         {handles.length === 0 ? (
           /* Vazio nunca é beco sem saída: cartão do sistema + CTA verde */
-          <div className="rounded-2xl border border-western-border-soft bg-white p-8 text-center md:p-12">
+          <div className="rounded-xl border border-western-border-soft bg-white p-8 text-center md:p-12">
             <Heart
               className="mx-auto mb-4 h-8 w-8 text-western-stone-warm/50"
               aria-hidden="true"
@@ -76,7 +76,7 @@ export default function FavoritosCompartilhados() {
             ))}
           </div>
         ) : products.length === 0 ? (
-          <div className="rounded-2xl border border-western-border-soft bg-white p-8 text-center md:p-12">
+          <div className="rounded-xl border border-western-border-soft bg-white p-8 text-center md:p-12">
             <p className="text-body mb-6">
               Nenhuma peça encontrada para esta seleção.
             </p>

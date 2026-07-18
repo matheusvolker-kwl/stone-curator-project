@@ -293,7 +293,7 @@ export default function ConjuntoPage() {
           {/* Coluna esquerda: render + título */}
           <div className="min-w-0">
             <Reveal variant="fade-up" duration={750}>
-              <div className="relative aspect-[4/3] rounded-2xl bg-western-paper overflow-hidden shadow-[0_44px_64px_-32px_hsl(var(--western-stone-dark)/0.5)] group">
+              <div className="relative aspect-[4/3] rounded-xl bg-western-paper overflow-hidden shadow-[0_44px_64px_-32px_hsl(var(--western-stone-dark)/0.5)] group">
                 <button
                   type="button"
                   onClick={() => setLightboxOpen(true)}
@@ -309,7 +309,7 @@ export default function ConjuntoPage() {
                 <span className="absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-md bg-western-cream/90 px-3 py-1.5 font-sans text-[14px] font-semibold text-western-green-deep pointer-events-none">
                   <Maximize2 className="h-4 w-4" /> Ampliar
                 </span>
-                <p className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-western-green-deep/95 via-western-green-deep/70 to-transparent px-5 py-5 md:px-7 font-sans text-[15px] md:text-[16px] text-western-cream leading-snug pointer-events-none">
+                <p className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-western-green-deep/95 via-western-green-deep/70 to-transparent px-5 py-5 md:px-7 font-sans text-[15px] md:text-[15px] text-western-cream leading-snug pointer-events-none">
                   Uma composição possível. No próximo passo você adapta cada peça ao seu espaço.
                 </p>
               </div>
@@ -339,7 +339,7 @@ export default function ConjuntoPage() {
 
           {/* Rail sticky à direita */}
           <aside className="lg:sticky lg:top-24">
-            <div className="rounded-2xl bg-white border border-western-border-soft p-6 md:p-7 shadow-[0_24px_44px_-30px_hsl(var(--western-stone-dark)/0.35)]">
+            <div className="rounded-xl bg-white border border-western-border-soft p-6 md:p-7 shadow-[0_24px_44px_-30px_hsl(var(--western-stone-dark)/0.35)]">
               <p className="text-eyebrow mb-3">Para {faixa.toLowerCase()}</p>
               {isSugestao && (
                 <div className="mb-4 inline-flex items-center gap-2 rounded-md bg-western-gold/15 px-3 py-2 font-sans text-[14px] font-semibold text-western-bronze">
@@ -389,14 +389,14 @@ export default function ConjuntoPage() {
                 <button
                   type="button"
                   onClick={() => setQuoteOpen(true)}
-                  className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-stone-warm hover:text-western-green-deep hover:underline underline-offset-4 transition-colors"
+                  className="tap-target inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-stone-warm hover:text-western-green-deep hover:underline underline-offset-4 transition-colors"
                 >
                   <Download className="h-5 w-5" /> Baixar proposta (PDF)
                 </button>
                 <button
                   type="button"
                   onClick={onSalvarProjeto}
-                  className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-stone-warm hover:text-western-green-deep hover:underline underline-offset-4 transition-colors"
+                  className="tap-target inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-stone-warm hover:text-western-green-deep hover:underline underline-offset-4 transition-colors"
                 >
                   <Bookmark className="h-5 w-5" /> Salvar projeto
                 </button>
@@ -404,15 +404,15 @@ export default function ConjuntoPage() {
 
               <div className="mt-6 pt-5 border-t border-western-border-soft">
                 <ul className="space-y-3">
-                  <li className="flex items-start gap-2.5 font-sans text-[16px] leading-snug text-western-green-deep">
+                  <li className="flex items-start gap-2.5 font-sans text-[15px] leading-snug text-western-green-deep">
                     <Check className="h-5 w-5 text-western-gold mt-0.5 flex-shrink-0" />
                     {totalPecas || leaf.preco > 0 ? `${totalPecas} ${totalPecas === 1 ? "peça" : "peças"} na composição` : "Composição curada"}
                   </li>
-                  <li className="flex items-start gap-2.5 font-sans text-[16px] leading-snug text-western-green-deep">
+                  <li className="flex items-start gap-2.5 font-sans text-[15px] leading-snug text-western-green-deep">
                     <Truck className="h-5 w-5 text-western-gold mt-0.5 flex-shrink-0" />
                     Produção {BUSINESS.prazoProducaoLabel} · frete calculado por destino
                   </li>
-                  <li className="flex items-start gap-2.5 font-sans text-[16px] leading-snug text-western-green-deep">
+                  <li className="flex items-start gap-2.5 font-sans text-[15px] leading-snug text-western-green-deep">
                     <ShieldCheck className="h-5 w-5 text-western-gold mt-0.5 flex-shrink-0" />
                     Garantia de {BUSINESS.garantiaLabel}
                   </li>
@@ -478,10 +478,10 @@ export default function ConjuntoPage() {
                       </span>
                     </div>
                     <div className="flex flex-1 flex-col p-4">
-                      <h3 className="font-sans text-[17px] font-semibold tracking-normal leading-snug text-western-green-deep line-clamp-2">
+                      <h3 className="font-sans text-[16px] font-semibold tracking-normal leading-snug text-western-green-deep line-clamp-2">
                         {p.title}
                       </h3>
-                      <div className="mt-auto pt-3 font-sans text-[16px] font-semibold tabular-nums text-western-green-deep">
+                      <div className="mt-auto pt-3 font-sans text-[15px] font-semibold tabular-nums text-western-green-deep">
                         {/* dentro do <Link> do card — sem <a> aninhado */}
                         <GatedPrice amount={p.unitPrice} suffix="/ un." linked={false} />
                       </div>
@@ -513,7 +513,7 @@ export default function ConjuntoPage() {
           </div>
           <aside className="border-l-2 border-western-gold pl-6 py-2 self-start">
             <p className="text-eyebrow mb-3">Do ateliê</p>
-            <p className="font-sans text-[19px] font-medium leading-relaxed text-western-green-deep">
+            <p className="font-sans text-[17px] font-medium leading-relaxed text-western-green-deep">
               “Cada conjunto é uma partitura — a Western entrega as peças já em
               conversa. Você personaliza a partir de uma base que funciona.”
             </p>
@@ -549,7 +549,7 @@ export default function ConjuntoPage() {
         <div className="mt-8 text-center">
           <Link
             to={backToCaminhos}
-            className="tap-target inline-flex items-center justify-center gap-2 font-sans text-[16px] font-semibold text-western-stone-warm hover:text-western-green-deep hover:underline underline-offset-4 transition-colors"
+            className="tap-target inline-flex items-center justify-center gap-2 font-sans text-[15px] font-semibold text-western-stone-warm hover:text-western-green-deep hover:underline underline-offset-4 transition-colors"
           >
             ← Voltar aos {hasContext ? "três caminhos" : "conjuntos"}
           </Link>
@@ -564,11 +564,11 @@ export default function ConjuntoPage() {
         <div className="flex items-center justify-between gap-4 mb-2">
           <GatedPrice
             amount={totalPreco || leaf.preco}
-            className="font-sans text-[20px] font-semibold tabular-nums text-western-green-deep"
+            className="font-sans text-[18px] font-semibold tabular-nums text-western-green-deep"
           />
           <Link
             to={refinarHref}
-            className="tap-target inline-flex items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4"
+            className="tap-target inline-flex items-center gap-1.5 font-sans text-[15px] font-semibold text-western-green-deep underline underline-offset-4"
           >
             Personalizar <ArrowRight className="h-4 w-4" />
           </Link>
@@ -636,7 +636,7 @@ function Fact({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <p className="text-eyebrow mb-2">{label}</p>
-      <p className="font-sans text-[18px] font-semibold tracking-normal leading-snug text-western-green-deep">
+      <p className="font-sans text-[17px] font-semibold tracking-normal leading-snug text-western-green-deep">
         {value}
       </p>
     </div>

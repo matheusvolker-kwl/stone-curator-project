@@ -216,7 +216,7 @@ export default function Conjuntos() {
 
           {/* MOBILE — botão de abrir filtros */}
           <div className="lg:hidden mb-6 flex items-center justify-between gap-4">
-            <p className="font-sans text-[16px] text-western-stone-warm">
+            <p className="font-sans text-[15px] text-western-stone-warm">
               {filtered.length}{" "}
               {filtered.length === 1 ? "conjunto" : "conjuntos"}
             </p>
@@ -237,7 +237,7 @@ export default function Conjuntos() {
               a "parede cinza" que lia como bizarro. */}
           <main>
             {filtered.length === 0 ? (
-              <div className="rounded-2xl border border-western-border-soft bg-white p-10 md:p-12 text-center">
+              <div className="rounded-xl border border-western-border-soft bg-white p-10 md:p-12 text-center">
                 <p className="display-md text-western-green-deep mb-3">
                   Nenhum conjunto nessa combinação.
                 </p>
@@ -319,7 +319,7 @@ export default function Conjuntos() {
                     {/* Faixa do guia — desce pra cá (logo após a 1ª categoria):
                         conjuntos aparecem primeiro, ajuda depois. */}
                     {tipo === primeiroTipoComResultado && (
-                      <aside className="surface-forest rounded-2xl p-6 md:p-8">
+                      <aside className="surface-forest rounded-xl p-6 md:p-8">
                         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
                           <div className="max-w-xl">
                             <p className="text-eyebrow-dark mb-2">Não sabe por onde começar?</p>
@@ -420,7 +420,7 @@ function FilterPanel({
   return (
     <div className="lg:sticky lg:top-24 space-y-8">
       <div className="hidden lg:flex items-center justify-between gap-3 pb-4 border-b border-western-border-soft">
-        <p className="font-sans text-[16px] text-western-stone-warm">
+        <p className="font-sans text-[15px] text-western-stone-warm">
           {totalResults}{" "}
           {totalResults === 1 ? "resultado" : "resultados"}
         </p>
@@ -469,7 +469,7 @@ function FilterPanel({
                     onChange={() => onToggleTipo(t)}
                     className="sr-only"
                   />
-                  <span className="font-sans text-[16px] text-western-green-deep">
+                  <span className="font-sans text-[15px] text-western-green-deep">
                     {tipoLabels[t]}
                   </span>
                 </label>
@@ -491,7 +491,7 @@ function FilterPanel({
                 type="button"
                 aria-pressed={active}
                 onClick={() => onToggleTamanho(t)}
-                className={`tap-target inline-flex items-center justify-center rounded-full border px-5 font-sans text-[16px] font-semibold transition-colors ${
+                className={`tap-target inline-flex items-center justify-center rounded-full border px-5 font-sans text-[15px] font-semibold transition-colors ${
                   active
                     ? "bg-western-green-deep text-western-cream border-western-green-deep"
                     : "bg-white border-western-border-strong text-western-green-deep hover:border-western-green-deep"
@@ -520,7 +520,7 @@ function FilterPanel({
           />
           <div className="flex items-center justify-between gap-3 font-sans text-[14px] tabular-nums text-western-stone-warm">
             <span>{formatPreco(PRECO_MIN_GLOBAL)}</span>
-            <span className="text-[16px] font-semibold text-western-green-deep">
+            <span className="text-[15px] font-semibold text-western-green-deep">
               {formatPreco(precoMax)}
             </span>
           </div>
@@ -585,7 +585,7 @@ function ConjuntoCard({ leaf, shopify, preco, img }: CardProps) {
         <p className="text-eyebrow">
           Composição {NIVEL_ADJETIVO[leaf.nivel]}
         </p>
-        <h3 className="font-sans text-[20px] font-semibold tracking-normal leading-snug text-western-green-deep">
+        <h3 className="font-sans text-[18px] font-semibold tracking-normal leading-snug text-western-green-deep">
           {leaf.nome}
         </h3>
         <p className="text-meta line-clamp-2">
@@ -596,7 +596,7 @@ function ConjuntoCard({ leaf, shopify, preco, img }: CardProps) {
           <GatedPrice
             amount={String(preco)}
             currency="BRL"
-            className="font-sans text-[20px] font-semibold tabular-nums text-western-green-deep"
+            className="font-sans text-[18px] font-semibold tabular-nums text-western-green-deep"
             linked={false}
           />
           <span className="inline-flex items-center gap-1.5 font-sans text-[14px] font-semibold text-western-bronze group-hover:text-western-green-deep transition-colors">

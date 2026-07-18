@@ -195,7 +195,7 @@ export default function GuiaContexto() {
 
             {/* Retrato — desktop. Borda direita no rail = borda direita dos cards. */}
             <figure className="hidden lg:block lg:col-span-5 m-0">
-              <div className="relative overflow-hidden rounded-2xl border border-western-border-soft aspect-[4/3]">
+              <div className="relative overflow-hidden rounded-xl border border-western-border-soft aspect-[4/3]">
                 <img
                   src={ricardoAtelie}
                   alt="Ricardo Western, fundador, no ateliê de Cajamar"
@@ -339,7 +339,7 @@ export default function GuiaContexto() {
                   {s.n}
                 </span>
                 <div>
-                  <h3 className="font-sans text-[20px] font-semibold text-western-green-deep leading-snug">
+                  <h3 className="font-sans text-[18px] font-semibold text-western-green-deep leading-snug">
                     {s.t}
                   </h3>
                   <p className="text-body mt-2">{s.d}</p>

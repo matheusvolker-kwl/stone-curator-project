@@ -116,7 +116,7 @@ export default function SobreAWestern() {
         {/* O PRODUTO COMO PALCO — PG3 ambientada na prainha. */}
         <Reveal variant="fade-up" duration={700}>
           <figure className="mt-10 md:mt-12">
-            <div className="relative overflow-hidden rounded-2xl aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9]">
+            <div className="relative overflow-hidden rounded-xl aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9]">
               <img
                 src={pg3Ambientada}
                 alt="Pedra Grande 3 — peça Western instalada na prainha de uma piscina de praia"
@@ -170,7 +170,7 @@ export default function SobreAWestern() {
             </Link>
             <Link
               to="/a-pedra"
-              className="tap-target inline-flex items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+              className="tap-target inline-flex items-center gap-1.5 font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
             >
               Como a pedra é feita
               <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
@@ -193,7 +193,7 @@ export default function SobreAWestern() {
                 <Link
                   key={to}
                   to={to}
-                  className="group tap-target flex flex-col rounded-2xl border border-western-border-soft bg-white p-6 md:p-7 shadow-[0_18px_36px_-30px_hsl(var(--western-stone-dark)/0.22)] transition-all duration-200 hover:-translate-y-0.5 hover:border-western-border-strong hover:shadow-[0_26px_48px_-28px_hsl(var(--western-stone-dark)/0.30)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold-soft focus-visible:ring-offset-2 focus-visible:ring-offset-western-paper"
+                  className="group tap-target flex flex-col rounded-xl border border-western-border-soft bg-white p-6 md:p-7 shadow-[0_18px_36px_-30px_hsl(var(--western-stone-dark)/0.22)] transition-all duration-200 hover:-translate-y-0.5 hover:border-western-border-strong hover:shadow-[0_26px_48px_-28px_hsl(var(--western-stone-dark)/0.30)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold-soft focus-visible:ring-offset-2 focus-visible:ring-offset-western-paper"
                 >
                   <div className="flex items-center gap-4">
                     <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-western-cream text-western-green-deep">
@@ -202,7 +202,7 @@ export default function SobreAWestern() {
                     <h4 className="text-title-sm">{titulo}</h4>
                   </div>
                   <p className="text-body mt-4 max-w-[34ch]">{desc}</p>
-                  <span className="mt-5 inline-flex items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep transition-colors group-hover:text-western-cta">
+                  <span className="mt-5 inline-flex items-center gap-1.5 font-sans text-[15px] font-semibold text-western-green-deep transition-colors group-hover:text-western-cta">
                     {acao}
                     <ArrowRight
                       className="h-5 w-5 transition-transform group-hover:translate-x-0.5"

@@ -72,7 +72,7 @@ export default function About() {
                 33 anos moldando<br />
                 <span className="text-western-bronze">pedra sem extrair pedra.</span>
               </h1>
-              <p className="text-body md:text-[19px] max-w-[46ch]">
+              <p className="text-body md:text-[17px] max-w-[46ch]">
                 Fundada em São Paulo em 1993, a Western é a única fábrica brasileira que opera
                 ininterruptamente — há três décadas — a tecnologia de pedra artesanal em composto
                 mineral trazida do Arizona. Da Disney às piscinas do Neymar; de Cobasi ao Unique
@@ -86,7 +86,7 @@ export default function About() {
                 alt="Projeto Western — piscina com cascata de pedra artesanal"
                 loading="eager"
                 decoding="async"
-                className="w-full aspect-[16/10] lg:aspect-[4/5] object-cover rounded-2xl shadow-[0_30px_60px_-40px_hsl(var(--western-stone-dark)/0.45)]"
+                className="w-full aspect-[16/10] lg:aspect-[4/5] object-cover rounded-xl shadow-[0_30px_60px_-40px_hsl(var(--western-stone-dark)/0.45)]"
               />
             </Reveal>
           </div>
@@ -97,11 +97,11 @@ export default function About() {
       <section className="surface-ivory section-tight border-y border-western-border-soft">
         <div className="container-western">
           <div className="mx-auto max-w-5xl">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-western-border-soft border border-western-border-soft rounded-2xl overflow-hidden">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-western-border-soft border border-western-border-soft rounded-xl overflow-hidden">
               {NUMEROS.map((s, i) => (
               <Reveal key={s.l} variant="fade-up" delay={i * 80} duration={650} distance={20}>
                 <div className="bg-white h-full p-6 md:p-8 text-center">
-                  <p className="font-display text-[34px] md:text-[46px] leading-none tracking-[-0.02em] text-western-green-deep tabular-nums">
+                  <p className="font-display text-[30px] md:text-[46px] leading-none tracking-[-0.02em] text-western-green-deep tabular-nums">
                     {s.n}
                   </p>
                   <p className="text-meta mt-2 leading-snug">{s.l}</p>
@@ -129,7 +129,7 @@ export default function About() {
           </Reveal>
 
           <Reveal variant="fade-up" delay={120} duration={900}>
-            <figure className="relative overflow-hidden rounded-2xl">
+            <figure className="relative overflow-hidden rounded-xl">
               <img
                 src={irmaosGruta}
                 alt="Ricardo e Luiz Carlos Botelho entre formações de pedra Western, com cascata ao fundo"
@@ -147,7 +147,7 @@ export default function About() {
                 <p className="text-eyebrow text-western-gold-soft mb-1">
                   {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · ateliê desde 1993
                 </p>
-                <p className="font-sans font-semibold text-[17px] md:text-[19px] text-western-cream leading-tight">
+                <p className="font-sans font-semibold text-[16px] md:text-[17px] text-western-cream leading-tight">
                   Ricardo &amp; Luiz Carlos Botelho
                 </p>
               </figcaption>
@@ -194,7 +194,7 @@ export default function About() {
               <div className="pt-5 border-t border-western-border-soft flex items-center flex-wrap gap-3">
                 <span className="text-eyebrow">2ª geração</span>
                 <span className="text-western-border-strong" aria-hidden>·</span>
-                <span className="text-[16px] font-semibold text-western-green-deep">
+                <span className="text-[15px] font-semibold text-western-green-deep">
                   Ricardo &amp; Luiz Carlos Botelho
                 </span>
               </div>
@@ -234,7 +234,7 @@ export default function About() {
           <div className="grid md:grid-cols-2 gap-4 md:gap-5">
             {PILARES.map(({ Icon, eyebrow, titulo, texto }, i) => (
               <Reveal key={titulo} variant="fade-up" delay={i * 100} duration={700} distance={24}>
-                <article className="h-full bg-white border border-western-border-soft rounded-2xl p-6 md:p-8">
+                <article className="h-full bg-white border border-western-border-soft rounded-xl p-6 md:p-8">
                   <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-western-paper mb-5">
                     <Icon className="h-6 w-6 text-western-bronze" strokeWidth={1.75} />
                   </span>
@@ -275,7 +275,7 @@ export default function About() {
               <h2 className="display-lg text-western-cream">
                 De piscinas de celebridades a endereços icônicos.
               </h2>
-              <p className="font-sans text-[17px] leading-[1.6] text-western-cream/85 mt-4 mb-8">
+              <p className="font-sans text-[16px] leading-[1.6] text-western-cream/85 mt-4 mb-8">
                 A ideia por trás de cada obra, as fotos do que já foi entregue e as peças que
                 compõem cada cena.
               </p>
@@ -314,7 +314,7 @@ export default function About() {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-western-border-soft border border-western-border-soft rounded-2xl overflow-hidden">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-western-border-soft border border-western-border-soft rounded-xl overflow-hidden">
             {VOCABULARIO.map((p, i) => (
               <Reveal key={p.de} variant="fade-up" delay={i * 90} duration={650} distance={18}>
                 <div className="bg-white h-full p-5 md:p-6">
@@ -361,7 +361,7 @@ export default function About() {
             <h2 className="display-lg text-western-cream mb-5">
               Conheça o ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
             </h2>
-            <p className="text-[17px] md:text-[19px] leading-[1.6] text-western-cream-muted max-w-xl mx-auto mb-8">
+            <p className="text-[16px] md:text-[17px] leading-[1.6] text-western-cream-muted max-w-xl mx-auto mb-8">
               Visita guiada com Ricardo ou Luiz Carlos, repertório completo de acabamentos na mão e
               apresentação técnica para o seu próximo projeto.
             </p>

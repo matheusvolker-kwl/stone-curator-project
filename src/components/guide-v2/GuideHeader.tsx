@@ -45,7 +45,7 @@ export default function GuideHeader({ breadcrumb, step }: Props) {
         </Link>
 
         <span aria-hidden className="hidden md:block w-px h-8 bg-western-border-strong" />
-        <span className="hidden md:inline lg:hidden font-sans text-[17px] font-semibold text-western-green-deep truncate">
+        <span className="hidden md:inline lg:hidden font-sans text-[16px] font-semibold text-western-green-deep truncate">
           Monte seu projeto
         </span>
 

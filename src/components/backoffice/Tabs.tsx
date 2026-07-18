@@ -55,7 +55,7 @@ export function Tabs<K extends string>({ abas, ativa, onChange, className }: Pro
             onClick={() => onChange(aba.key)}
             className={cn(
               "tap-target inline-flex flex-shrink-0 items-center gap-2 rounded-sm px-4",
-              "text-[16px] font-semibold transition-colors",
+              "text-[15px] font-semibold transition-colors",
               selecionada
                 ? "bg-white text-western-green-deep shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
                 : "text-western-stone-warm hover:text-western-green-deep",

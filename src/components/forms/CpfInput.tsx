@@ -31,7 +31,7 @@ export default function CpfInput({ value, onChange, onBlur, id, name, required, 
         required={required}
         aria-invalid={!!finalError}
         aria-describedby={describedBy}
-        className={`h-control w-full bg-transparent border px-3.5 rounded-sm text-[16px] text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none transition-colors ${
+        className={`h-control w-full bg-transparent border px-3.5 rounded-sm text-[15px] text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none transition-colors ${
           finalError
             ? "border-red-700/60"
             : "border-western-stone-warm/30 focus:border-western-gold"

@@ -32,7 +32,7 @@ function GradeCarregando() {
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3" aria-busy="true" aria-live="polite">
       <span className="sr-only">Carregando favoritos…</span>
       {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="overflow-hidden rounded-2xl border border-western-border-soft bg-white">
+        <div key={i} className="overflow-hidden rounded-xl border border-western-border-soft bg-white">
           <div className="aspect-square animate-pulse bg-western-border-soft/50" />
           <div className="space-y-2 p-4">
             <div className="h-3 w-4/5 animate-pulse rounded-sm bg-western-border-soft" />
@@ -137,7 +137,7 @@ export default function AccountFavorites() {
           {items.map((it) => (
             <li
               key={it.id}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-western-border-soft bg-white transition-colors hover:border-western-gold/60"
+              className="group flex flex-col overflow-hidden rounded-xl border border-western-border-soft bg-white transition-colors hover:border-western-gold/60"
             >
               <Link
                 to={`/produtos/${it.product_handle}`}
@@ -160,7 +160,7 @@ export default function AccountFavorites() {
               <div className="flex flex-1 flex-col gap-2 p-4">
                 <Link
                   to={`/produtos/${it.product_handle}`}
-                  className="line-clamp-2 text-[16px] font-semibold text-western-green-deep transition-colors hover:text-western-cta"
+                  className="line-clamp-2 text-[15px] font-semibold text-western-green-deep transition-colors hover:text-western-cta"
                 >
                   {it.product_title ?? it.product_handle}
                 </Link>

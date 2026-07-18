@@ -168,7 +168,7 @@ const FAQ_ITEMS = [
    campos de texto simples (nome, cidade, textarea), na mesma pele V3 que a
    /agendar-visita e o /contato usam: fundo paper dentro do cartão branco. */
 const CONTROL =
-  "h-control w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 font-sans text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 outline-none transition-colors focus:border-western-green-deep";
+  "h-control w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 font-sans text-[15px] text-western-green-deep placeholder:text-western-stone-warm/60 outline-none transition-colors focus:border-western-green-deep";
 
 export default function ParaSuaCasa() {
   const formRef = useRef<HTMLDivElement>(null);
@@ -281,7 +281,7 @@ export default function ParaSuaCasa() {
                 A sua casa pode ter a{" "}
                 <span className="text-western-gold-soft">sua praia.</span>
               </h1>
-              <p className="mt-5 text-[17px] md:text-[19px] leading-[1.6] text-western-cream/90 max-w-xl">
+              <p className="mt-5 text-[16px] md:text-[17px] leading-[1.6] text-western-cream/90 max-w-xl">
                 Piscinas de praia, lagos e cascatas em pedra artesanal. A gente desenha em 3D, você
                 aprova, e o ateliê entrega pronto — do sonho ao primeiro mergulho.
               </p>
@@ -318,7 +318,7 @@ export default function ParaSuaCasa() {
             {CONFIANCA.map((c) => (
               <li key={c.label} className="flex items-center gap-3">
                 <c.icon className="h-5 w-5 shrink-0 text-western-bronze" aria-hidden="true" />
-                <span className="font-sans text-[16px] font-medium text-western-green-deep">
+                <span className="font-sans text-[15px] font-medium text-western-green-deep">
                   {c.label}
                 </span>
               </li>
@@ -343,7 +343,7 @@ export default function ParaSuaCasa() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {CAMINHOS.map((c, i) => (
               <Reveal key={c.titulo} variant="fade-up" delay={i * 70} duration={650}>
-                <article className="flex h-full flex-col bg-white rounded-2xl overflow-hidden border border-western-border-soft shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)]">
+                <article className="flex h-full flex-col bg-white rounded-xl overflow-hidden border border-western-border-soft shadow-[0_10px_30px_-24px_hsl(var(--western-stone-dark)/0.5)]">
                   <div className="aspect-[4/3] overflow-hidden bg-western-cream-muted">
                     {/* eager + dimensões: esta é a seção "o que você quer" — as
                         4 fotos SÃO o conteúdo, e lazy deixava 3 caixas cinza
@@ -359,7 +359,7 @@ export default function ParaSuaCasa() {
                     />
                   </div>
                   <div className="flex flex-1 flex-col p-5 md:p-6">
-                    <h3 className="font-sans font-semibold text-[20px] leading-snug text-western-green-deep mb-2">
+                    <h3 className="font-sans font-semibold text-[18px] leading-snug text-western-green-deep mb-2">
                       {c.titulo}
                     </h3>
                     <p className="text-body flex-1">{c.desc}</p>
@@ -461,10 +461,10 @@ export default function ParaSuaCasa() {
                   <span className="font-display text-[32px] leading-none text-western-bronze block mb-3">
                     {p.n}
                   </span>
-                  <h3 className="font-sans font-semibold text-[19px] leading-snug text-western-green-deep mb-2">
+                  <h3 className="font-sans font-semibold text-[17px] leading-snug text-western-green-deep mb-2">
                     {p.t}
                   </h3>
-                  <p className="text-[16px] leading-relaxed text-western-stone-warm">{p.d}</p>
+                  <p className="text-[15px] leading-relaxed text-western-stone-warm">{p.d}</p>
                 </li>
               </Reveal>
             ))}
@@ -484,7 +484,7 @@ export default function ParaSuaCasa() {
                 Você não aprova{" "}
                 <span className="text-western-gold-soft">no escuro.</span>
               </h2>
-              <p className="mt-5 text-[17px] leading-[1.6] text-western-cream/85">
+              <p className="mt-5 text-[16px] leading-[1.6] text-western-cream/85">
                 Começa a lápis, na mão do nosso projetista. Vira 3D para você ajustar até ficar do seu
                 jeito. E só então a obra começa. De 10 a 25 dias para o projeto, e atendemos todo o Brasil.
               </p>
@@ -578,7 +578,7 @@ export default function ParaSuaCasa() {
         <div className="container-western">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-center">
             <Reveal variant="fade-up" duration={700} className="md:col-span-6">
-              <div className="aspect-[4/3] overflow-hidden rounded-2xl">
+              <div className="aspect-[4/3] overflow-hidden rounded-xl">
                 <img
                   src={atelieImg}
                   alt="Equipe do ateliê Western trabalhando em uma gruta de pedra artesanal"
@@ -613,7 +613,7 @@ export default function ParaSuaCasa() {
               esse que o convite oferece agora. A cidade vem do cadastro (BUSINESS),
               não da foto: nenhuma imagem prova onde o lugar fica. */}
           <Reveal variant="fade-up" delay={120} duration={700}>
-            <div className="mt-12 md:mt-16 grid md:grid-cols-12 gap-8 md:gap-10 items-center rounded-2xl border border-western-border-soft bg-white overflow-hidden">
+            <div className="mt-12 md:mt-16 grid md:grid-cols-12 gap-8 md:gap-10 items-center rounded-xl border border-western-border-soft bg-white overflow-hidden">
               <div className="md:col-span-7">
                 <div className="aspect-[4/3] overflow-hidden">
                   <img
@@ -632,11 +632,11 @@ export default function ParaSuaCasa() {
                 <h3 className="display-md text-western-green-deep mt-3">
                   Venha conhecer o ateliê.
                 </h3>
-                <p className="mt-4 text-[17px] leading-[1.6] text-western-stone-warm">
+                <p className="mt-4 text-[16px] leading-[1.6] text-western-stone-warm">
                   O ateliê recebe com hora marcada. Dá pra pôr a mão na pedra, ver as peças montadas
                   em escala e conversar com quem produz — antes de decidir qualquer coisa.
                 </p>
-                <p className="mt-4 text-[16px] leading-[1.6] text-western-stone-warm">
+                <p className="mt-4 text-[15px] leading-[1.6] text-western-stone-warm">
                   {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · {BUSINESS.horarioAtelie}
                 </p>
                 <Link to="/visitar" className="btn-gold mt-7 w-full sm:w-auto">
@@ -665,7 +665,7 @@ export default function ParaSuaCasa() {
               <Accordion
                 type="single"
                 collapsible
-                className="bg-white border border-western-border-soft rounded-2xl overflow-hidden"
+                className="bg-white border border-western-border-soft rounded-xl overflow-hidden"
               >
                 {FAQ_ITEMS.map((item, i) => (
                   <AccordionItem
@@ -673,10 +673,10 @@ export default function ParaSuaCasa() {
                     value={`item-${i}`}
                     className="border-b border-western-border-soft last:border-b-0 px-5 md:px-7"
                   >
-                    <AccordionTrigger className="text-left font-sans font-semibold text-[17px] md:text-[18px] text-western-green-deep hover:no-underline py-5 min-h-[var(--tap-min)]">
+                    <AccordionTrigger className="text-left font-sans font-semibold text-[16px] md:text-[17px] text-western-green-deep hover:no-underline py-5 min-h-[var(--tap-min)]">
                       {item.q}
                     </AccordionTrigger>
-                    <AccordionContent className="text-western-stone-warm text-[17px] leading-[1.6] pb-6">
+                    <AccordionContent className="text-western-stone-warm text-[16px] leading-[1.6] pb-6">
                       {item.a}
                     </AccordionContent>
                   </AccordionItem>
@@ -701,14 +701,14 @@ export default function ParaSuaCasa() {
                     Conte o seu sonho.{" "}
                     <span className="text-western-gold-soft">A gente mostra o caminho.</span>
                   </h2>
-                  <p className="mt-5 text-[17px] leading-[1.6] text-western-cream/85">
+                  <p className="mt-5 text-[16px] leading-[1.6] text-western-cream/85">
                     Só <strong className="font-semibold text-western-cream">nome e WhatsApp</strong> são
                     obrigatórios. Ao enviar, abrimos o WhatsApp com a sua mensagem já pronta.
                   </p>
                   <ul className="mt-7 space-y-3">
                     {["A gente escuta a sua ideia", "Vê a viabilidade na sua área", "Passa uma estimativa real"].map(
                       (b) => (
-                        <li key={b} className="flex gap-3 text-[16px] leading-relaxed text-western-cream/85">
+                        <li key={b} className="flex gap-3 text-[15px] leading-relaxed text-western-cream/85">
                           <Check className="h-5 w-5 shrink-0 mt-0.5 text-western-gold-soft" aria-hidden="true" />
                           <span>{b}</span>
                         </li>
@@ -719,7 +719,7 @@ export default function ParaSuaCasa() {
                     href={waLink("Olá! Ainda estou na dúvida, queria conversar sobre um projeto para a minha casa.")}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="tap-target mt-7 inline-flex items-center gap-2 text-[16px] font-semibold text-western-gold-soft underline underline-offset-4 decoration-western-gold/50 hover:decoration-western-gold-soft"
+                    className="tap-target mt-7 inline-flex items-center gap-2 text-[15px] font-semibold text-western-gold-soft underline underline-offset-4 decoration-western-gold/50 hover:decoration-western-gold-soft"
                   >
                     <MessageCircle className="h-5 w-5" />
                     Prefere só conversar? Chama no WhatsApp
@@ -730,7 +730,7 @@ export default function ParaSuaCasa() {
               <Reveal variant="fade-up" delay={100} duration={700} className="md:col-span-7">
                 <form
                   onSubmit={handleSubmit}
-                  className="bg-white border border-western-border-soft rounded-2xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
+                  className="bg-white border border-western-border-soft rounded-xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-5"
                   noValidate
                 >
                   <div>
@@ -751,7 +751,7 @@ export default function ParaSuaCasa() {
                   </div>
                   <div className="md:col-span-2">
                     <FieldLabel htmlFor="pc-msg" optional>Conte o seu sonho</FieldLabel>
-                    <textarea id="pc-msg" rows={4} value={mensagem} onChange={(e) => setMensagem(e.target.value)} placeholder="Uma piscina de praia no quintal? Um lago com carpas? Conta pra gente." className="w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 py-3 font-sans text-[16px] leading-[1.6] text-western-green-deep placeholder:text-western-stone-warm/60 outline-none transition-colors focus:border-western-green-deep resize-none" />
+                    <textarea id="pc-msg" rows={4} value={mensagem} onChange={(e) => setMensagem(e.target.value)} placeholder="Uma piscina de praia no quintal? Um lago com carpas? Conta pra gente." className="w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 py-3 font-sans text-[15px] leading-[1.6] text-western-green-deep placeholder:text-western-stone-warm/60 outline-none transition-colors focus:border-western-green-deep resize-none" />
                   </div>
                   <div className="md:col-span-2">
                     <TurnstileWidget onToken={setCaptchaToken} onExpire={() => setCaptchaToken(null)} />

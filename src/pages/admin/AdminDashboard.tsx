@@ -255,7 +255,7 @@ export default function AdminDashboard() {
       <section aria-label="Números">
         <h2 className="text-eyebrow mb-4">Resumo</h2>
 
-        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-western-border-soft bg-western-border-soft md:grid-cols-3 xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-western-border-soft bg-western-border-soft md:grid-cols-3 xl:grid-cols-6">
           <Numero
             rotulo="Caixa de entrada"
             valor={String(n.inboxTotal)}
@@ -313,7 +313,7 @@ export default function AdminDashboard() {
           <h2 className="text-eyebrow">Pedidos recentes</h2>
           <Link
             to="/admin/pedidos"
-            className="inline-flex items-center gap-1 text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
+            className="inline-flex items-center gap-1 text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
           >
             Ver todos <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
@@ -379,7 +379,7 @@ function TileFila({
 
   if (carregando) {
     return (
-      <div className="rounded-2xl border border-western-border-soft bg-white p-5" aria-busy="true">
+      <div className="rounded-xl border border-western-border-soft bg-white p-5" aria-busy="true">
         <div className="h-4 w-2/3 animate-pulse rounded-sm bg-western-border-soft" />
         <div className="mt-5 h-9 w-16 animate-pulse rounded-sm bg-western-border-soft" />
         <div className="mt-4 h-3 w-1/2 animate-pulse rounded-sm bg-western-border-soft/60" />
@@ -392,14 +392,14 @@ function TileFila({
     return (
       <div
         role="alert"
-        className="flex flex-col rounded-2xl border border-status-error/35 bg-status-error/[0.06] p-5"
+        className="flex flex-col rounded-xl border border-status-error/35 bg-status-error/[0.06] p-5"
       >
         <div className="flex items-center gap-2 text-status-error">
           <AlertTriangle className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
           <span className="text-[14px] font-semibold uppercase tracking-[0.06em]">{fila.rotulo}</span>
         </div>
 
-        <p className="mt-3 text-[17px] font-semibold text-status-error">Não consegui carregar</p>
+        <p className="mt-3 text-[16px] font-semibold text-status-error">Não consegui carregar</p>
         <p className="mt-1 line-clamp-3 break-words text-[14px] leading-[1.5] text-western-stone-dark/85">
           {mensagemDeErro(erro)}
         </p>
@@ -408,7 +408,7 @@ function TileFila({
         <button
           type="button"
           onClick={onRetry}
-          className="tap-target mt-4 inline-flex items-center justify-center gap-2 self-start rounded-lg border border-status-error/50 px-4 text-[16px] font-semibold text-status-error transition-colors hover:bg-status-error/10"
+          className="tap-target mt-4 inline-flex items-center justify-center gap-2 self-start rounded-lg border border-status-error/50 px-4 text-[15px] font-semibold text-status-error transition-colors hover:bg-status-error/10"
         >
           <RefreshCw className="h-4 w-4" aria-hidden="true" />
           Tentar de novo
@@ -423,7 +423,7 @@ function TileFila({
     <Link
       to={fila.to}
       className={cn(
-        "group flex flex-col rounded-2xl border bg-white p-5 transition-colors",
+        "group flex flex-col rounded-xl border bg-white p-5 transition-colors",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-western-gold",
         pendente
           ? "border-western-cta/30 hover:border-western-cta"
@@ -437,7 +437,7 @@ function TileFila({
 
       <p
         className={cn(
-          "mt-3 font-display text-[34px] font-[650] leading-none tabular-nums",
+          "mt-3 font-display text-[30px] font-[650] leading-none tabular-nums",
           pendente ? "text-western-green-deep" : "text-western-stone-warm/60",
         )}
       >
@@ -447,7 +447,7 @@ function TileFila({
 
       <span
         className={cn(
-          "mt-4 inline-flex items-center gap-1 text-[16px] font-semibold transition-colors",
+          "mt-4 inline-flex items-center gap-1 text-[15px] font-semibold transition-colors",
           pendente ? "text-western-cta" : "text-western-stone-warm",
         )}
       >
@@ -479,12 +479,12 @@ function Numero({
       {carregando ? (
         <div className="mt-3 h-6 w-20 animate-pulse rounded-sm bg-western-border-soft" />
       ) : erro ? (
-        <p className="mt-2 inline-flex items-center gap-1.5 text-[17px] font-semibold text-status-error">
+        <p className="mt-2 inline-flex items-center gap-1.5 text-[16px] font-semibold text-status-error">
           <AlertTriangle className="h-4 w-4" aria-hidden="true" />
           não carregou
         </p>
       ) : (
-        <p className="mt-2 text-[24px] font-semibold leading-tight tabular-nums text-western-green-deep">{valor}</p>
+        <p className="mt-2 text-[20px] font-semibold leading-tight tabular-nums text-western-green-deep">{valor}</p>
       )}
 
       {!carregando && !erro && nota && <p className="text-meta mt-1">{nota}</p>}

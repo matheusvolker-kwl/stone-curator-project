@@ -59,7 +59,7 @@ export default function AcabamentoCard({ value, index, selected, onSelect }: Pro
 
       <div className="mt-auto min-w-0">
         <span className="text-eyebrow block tabular-nums">{String(index).padStart(2, "0")}</span>
-        <span className="mt-1 block font-sans text-[20px] font-semibold leading-tight text-western-green-deep">
+        <span className="mt-1 block font-sans text-[18px] font-semibold leading-tight text-western-green-deep">
           {meta.label}
         </span>
 

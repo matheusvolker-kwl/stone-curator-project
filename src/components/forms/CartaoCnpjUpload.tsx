@@ -60,7 +60,7 @@ export default function CartaoCnpjUpload({ userId, onUploaded, disabled }: Props
         type="button"
         disabled={disabled || uploading}
         onClick={() => inputRef.current?.click()}
-        className="w-full h-control rounded-sm border border-western-border-strong hover:border-western-green-deep transition-colors flex items-center justify-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep disabled:opacity-50"
+        className="w-full h-control rounded-sm border border-western-border-strong hover:border-western-green-deep transition-colors flex items-center justify-center gap-2 font-sans text-[15px] font-semibold text-western-green-deep disabled:opacity-50"
       >
         {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : filename ? <FileCheck2 className="h-5 w-5 text-western-bronze" /> : <Upload className="h-5 w-5" />}
         {uploading ? "Enviando…" : filename ?? "Enviar Cartão CNPJ"}

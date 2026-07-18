@@ -271,7 +271,7 @@ export default function FAQ() {
                 <p className="text-eyebrow mb-3">{g.eyebrow}</p>
                 <h2 className="display-md text-western-green-deep mb-5">{g.titulo}</h2>
 
-                <ul className="rounded-2xl border border-western-border-soft bg-white overflow-hidden">
+                <ul className="rounded-xl border border-western-border-soft bg-white overflow-hidden">
                   {g.itens.map((it, ii) => {
                     const id = `${gi}-${ii}`;
                     const aberto = open === id;
@@ -287,7 +287,7 @@ export default function FAQ() {
                           aria-controls={`faq-a-${id}`}
                           className="tap-target group flex w-full items-start justify-between gap-4 px-5 py-5 text-left md:px-7 hover:bg-western-paper transition-colors"
                         >
-                          <span className="font-sans text-[17px] md:text-[18px] font-semibold leading-snug text-western-green-deep group-hover:text-western-cta transition-colors">
+                          <span className="font-sans text-[16px] md:text-[17px] font-semibold leading-snug text-western-green-deep group-hover:text-western-cta transition-colors">
                             {it.q}
                           </span>
                           <ChevronDown
@@ -334,7 +334,7 @@ export default function FAQ() {
             <h2 className="display-md text-western-cream mx-auto max-w-lg">
               Não encontrou o que procurava?
             </h2>
-            <p className="mx-auto mt-4 max-w-xl font-sans text-[17px] leading-[1.6] text-western-cream-muted">
+            <p className="mx-auto mt-4 max-w-xl font-sans text-[16px] leading-[1.6] text-western-cream-muted">
               Receba os 4 acabamentos e sinta a pedra na mão — o valor volta como crédito no primeiro pedido. Ou fale direto com a fábrica.
             </p>
 

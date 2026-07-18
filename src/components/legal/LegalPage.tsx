@@ -58,17 +58,17 @@ export default function LegalPage({
         <div
           className={[
             // Corpo: 17px/1.6 herdado pelos filhos.
-            "font-sans text-[17px] leading-[1.6] text-western-stone-warm",
+            "font-sans text-[15px] leading-[1.55] text-western-stone-warm",
 
             // h2 — display Archivo 650, só aqui porque ≥22px (24→28px).
-            "[&_h2]:font-display [&_h2]:font-[650] [&_h2]:text-[1.5rem] md:[&_h2]:text-[1.75rem]",
+            "[&_h2]:font-display [&_h2]:font-[650] [&_h2]:text-[1.3rem] md:[&_h2]:text-[1.5rem]",
             "[&_h2]:leading-[1.15] [&_h2]:tracking-[-0.01em] [&_h2]:text-western-green-deep",
             "[&>h2]:mt-12 [&>h2]:mb-3",
 
             // h3 — sans semibold 20px. Era mono 12px dourado: ilegível e fora do V3.
             // tracking-normal zera o letter-spacing de display que o @layer base
             // aplica em h1–h5 (só faz sentido no Archivo, não numa sans de leitura).
-            "[&_h3]:font-sans [&_h3]:text-[1.25rem] [&_h3]:font-semibold [&_h3]:leading-[1.3]",
+            "[&_h3]:font-sans [&_h3]:text-[1.1rem] [&_h3]:font-semibold [&_h3]:leading-[1.3]",
             "[&_h3]:tracking-normal [&_h3]:text-western-green-deep",
             "[&>h3]:mt-8 [&>h3]:mb-2",
 

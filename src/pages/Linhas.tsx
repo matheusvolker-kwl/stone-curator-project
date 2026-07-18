@@ -33,7 +33,7 @@ function LinhaCard({ c }: { c: LinhaCardData }) {
   const cover = LINHA_COVER_OVERRIDES[c.coverKey];
   return (
     <Link to={c.to} className="group block">
-      <div className="frame-product mb-3 aspect-[4/3] overflow-hidden rounded-2xl sm:mb-4">
+      <div className="frame-product mb-3 aspect-[4/3] overflow-hidden rounded-xl sm:mb-4">
         {cover ? (
           <img
             src={cover.url}
@@ -60,7 +60,7 @@ function LinhaCard({ c }: { c: LinhaCardData }) {
         )}
       </div>
 
-      <h3 className="font-sans text-[20px] font-semibold leading-snug text-western-green-deep transition-colors group-hover:text-western-bronze">
+      <h3 className="font-sans text-[18px] font-semibold leading-snug text-western-green-deep transition-colors group-hover:text-western-bronze">
         {c.title}
       </h3>
       {c.count > 0 && (
@@ -193,7 +193,7 @@ export default function Linhas() {
               <button
                 type="button"
                 onClick={() => setParams(new URLSearchParams(), { replace: true })}
-                className="tap-target mt-4 -ml-1 inline-flex items-center gap-2 px-1 font-sans text-[16px] font-semibold text-western-green-deep transition-colors hover:text-western-bronze"
+                className="tap-target mt-4 -ml-1 inline-flex items-center gap-2 px-1 font-sans text-[15px] font-semibold text-western-green-deep transition-colors hover:text-western-bronze"
               >
                 <X className="h-5 w-5" aria-hidden="true" /> Limpar busca
               </button>
@@ -238,7 +238,7 @@ export default function Linhas() {
                     <ArrowRight className="h-5 w-5 text-western-cta" aria-hidden="true" />
                   </span>
                   <span className="min-w-0">
-                    <span className="block font-sans text-[17px] font-semibold text-western-green-deep">
+                    <span className="block font-sans text-[16px] font-semibold text-western-green-deep">
                       {a.label}
                     </span>
                     <span className="text-meta">{a.desc}</span>
@@ -267,7 +267,7 @@ export default function Linhas() {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="aspect-[4/3] animate-pulse rounded-2xl bg-western-stone-warm/10"
+                className="aspect-[4/3] animate-pulse rounded-xl bg-western-stone-warm/10"
               />
             ))}
           </div>
@@ -292,7 +292,7 @@ export default function Linhas() {
                   <div className="mb-6 md:mb-8 max-w-2xl">
                     <h2
                       id={`cena-${scene.key}`}
-                      className="font-display text-[26px] md:text-[30px] font-semibold text-western-green-deep"
+                      className="font-display text-[22px] md:text-[30px] font-semibold text-western-green-deep"
                     >
                       {scene.titulo}
                     </h2>
@@ -308,7 +308,7 @@ export default function Linhas() {
                 {/* Faixa do guia — desce pra depois da 1ª cena (dono: produto
                     primeiro). "Montar no guia" saiu do cabeçalho pra cá. */}
                 {i === 0 && (
-                  <aside className="surface-forest rounded-2xl p-6 md:p-8">
+                  <aside className="surface-forest rounded-xl p-6 md:p-8">
                     <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
                       <div className="max-w-xl">
                         <p className="text-eyebrow-dark mb-2">Não sabe por onde começar?</p>
@@ -332,7 +332,7 @@ export default function Linhas() {
         )}
 
         {/* Faixa institucional — verde escuro pontual; aqui o dourado é o acento certo */}
-        <section className="surface-forest mt-14 rounded-2xl px-6 py-8 md:mt-20 md:px-10 md:py-10">
+        <section className="surface-forest mt-14 rounded-xl px-6 py-8 md:mt-20 md:px-10 md:py-10">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="max-w-xl">
               <p className="mb-3 font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft">

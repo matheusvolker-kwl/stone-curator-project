@@ -184,7 +184,7 @@ function StickyBuyBar({ anchorRefs }: { anchorRefs: React.RefObject<HTMLElement>
           <div className="container-western py-3">
             <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
               <div className="flex items-baseline gap-3">
-                <span className="font-sans text-[22px] font-bold tabular-nums leading-none text-western-green-deep">
+                <span className="font-sans text-[20px] font-bold tabular-nums leading-none text-western-green-deep">
                   {PRICE_LABEL}
                 </span>
                 <span className="text-meta">Cashback 100% · sem cadastro</span>
@@ -220,7 +220,7 @@ function QtyStepper({ qty, setQty }: { qty: number; setQty: (n: number) => void 
       >
         <Minus className="h-5 w-5" />
       </button>
-      <span className="min-w-[3ch] px-2 text-center font-sans text-[18px] font-semibold tabular-nums text-western-green-deep">
+      <span className="min-w-[3ch] px-2 text-center font-sans text-[17px] font-semibold tabular-nums text-western-green-deep">
         {qty}
       </span>
       <button
@@ -290,7 +290,7 @@ function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLElement> }) 
                   </button>
                 ))}
               </div>
-              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-western-border-soft bg-western-ivory">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-western-border-soft bg-western-ivory">
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={active}
@@ -312,7 +312,7 @@ function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLElement> }) 
                 {GALLERY.map((g, i) => (
                   <div
                     key={i}
-                    className="aspect-[4/5] w-[86%] shrink-0 snap-center overflow-hidden rounded-2xl border border-western-border-soft bg-western-ivory"
+                    className="aspect-[4/5] w-[86%] shrink-0 snap-center overflow-hidden rounded-xl border border-western-border-soft bg-western-ivory"
                   >
                     <img
                       src={g.src}
@@ -504,7 +504,7 @@ export default function WesternBox() {
         <div className="container-western">
           <div className="grid items-center gap-10 md:grid-cols-12 md:gap-16">
             <div className="md:col-span-6">
-              <div className="aspect-[4/5] overflow-hidden rounded-2xl border border-western-border-soft bg-western-ivory">
+              <div className="aspect-[4/5] overflow-hidden rounded-xl border border-western-border-soft bg-western-ivory">
                 <img
                   src={boxAberta}
                   alt="Western Box aberta exibindo as quatro amostras e o catálogo"
@@ -531,7 +531,7 @@ export default function WesternBox() {
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-western-green-deep">
                       <Check className="h-4 w-4 text-western-cream" aria-hidden />
                     </span>
-                    <span className="font-sans text-[17px] font-semibold text-western-stone-dark">
+                    <span className="font-sans text-[16px] font-semibold text-western-stone-dark">
                       {item}
                     </span>
                   </li>
@@ -569,7 +569,7 @@ export default function WesternBox() {
                     onMouseLeave={() => setHoveredCard(null)}
                     aria-pressed={isActive}
                     className={cn(
-                      "group w-full overflow-hidden rounded-2xl border bg-white text-left transition-colors duration-200",
+                      "group w-full overflow-hidden rounded-xl border bg-white text-left transition-colors duration-200",
                       isActive
                         ? "border-[1.5px] border-western-green-deep shadow-[0_18px_40px_-28px_rgba(35,28,20,0.45)]"
                         : "border-western-border-soft hover:border-western-border-strong",
@@ -600,7 +600,7 @@ export default function WesternBox() {
                         <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">
                           {String(i + 1).padStart(2, "0")} · {hovered ? "Em peça PB3" : "Textura"}
                         </p>
-                        <p className="mt-1 font-sans text-[20px] font-semibold text-western-green-deep">
+                        <p className="mt-1 font-sans text-[18px] font-semibold text-western-green-deep">
                           {a.nome}
                         </p>
                       </div>
@@ -618,7 +618,7 @@ export default function WesternBox() {
             </div>
 
             <div className="md:col-span-5 md:sticky md:top-28">
-              <div className="rounded-2xl border border-western-border-soft bg-white p-6 md:p-8">
+              <div className="rounded-xl border border-western-border-soft bg-white p-6 md:p-8">
                 <p className="text-eyebrow">Em destaque</p>
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -693,7 +693,7 @@ export default function WesternBox() {
                 <span className="display-md w-10 shrink-0 tabular-nums text-western-bronze">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="font-sans text-[17px] leading-[1.6] text-western-stone-dark">
+                <span className="font-sans text-[16px] leading-[1.6] text-western-stone-dark">
                   {item}
                 </span>
               </li>
@@ -707,7 +707,7 @@ export default function WesternBox() {
         <div className="container-western">
           <div className="grid items-center gap-10 md:grid-cols-12 md:gap-16">
             <div className="md:col-span-6 md:order-2">
-              <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-western-border-soft bg-western-paper">
+              <div className="aspect-[4/3] overflow-hidden rounded-xl border border-western-border-soft bg-western-paper">
                 <img
                   src={catalogo}
                   alt="Catálogo oficial Western Pools"
@@ -755,7 +755,7 @@ export default function WesternBox() {
           <h2 className="display-md mt-3 max-w-xl text-western-cream">
             de volta como crédito na sua primeira compra.
           </h2>
-          <p className="mt-6 max-w-xl font-sans text-[17px] leading-[1.6] text-western-cream/85">
+          <p className="mt-6 max-w-xl font-sans text-[16px] leading-[1.6] text-western-cream/85">
             Os {PRICE_LABEL} investidos na Western Box voltam integralmente como crédito. Na
             prática, você conhece nossos materiais sem perder esse investimento.
           </p>
@@ -775,7 +775,7 @@ export default function WesternBox() {
             {PARA_QUEM.map((p) => (
               <span
                 key={p}
-                className="inline-flex items-center rounded-full border border-western-border-strong bg-white px-5 py-3 font-sans text-[16px] font-semibold text-western-green-deep"
+                className="inline-flex items-center rounded-full border border-western-border-strong bg-white px-5 py-3 font-sans text-[15px] font-semibold text-western-green-deep"
               >
                 {p}
               </span>
@@ -795,7 +795,7 @@ export default function WesternBox() {
             <h2 className="display-md mt-3 text-western-green-deep">
               Envio, conteúdo e cashback.
             </h2>
-            <div className="mt-8 hidden aspect-[4/5] overflow-hidden rounded-2xl border border-western-border-soft md:block">
+            <div className="mt-8 hidden aspect-[4/5] overflow-hidden rounded-xl border border-western-border-soft md:block">
               <img
                 src={boxFechada}
                 alt="Western Box fechada com selo da marca"
@@ -808,7 +808,7 @@ export default function WesternBox() {
           <div className="md:col-span-7">
             <Accordion type="single" collapsible defaultValue="envio" className="w-full">
               <AccordionItem value="envio" className="border-b border-western-border-soft">
-                <AccordionTrigger className="py-5 text-left font-sans text-[20px] font-semibold text-western-green-deep hover:no-underline">
+                <AccordionTrigger className="py-5 text-left font-sans text-[18px] font-semibold text-western-green-deep hover:no-underline">
                   Envio e prazo
                 </AccordionTrigger>
                 <AccordionContent className="text-body pb-5">
@@ -817,7 +817,7 @@ export default function WesternBox() {
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="conteudo" className="border-b border-western-border-soft">
-                <AccordionTrigger className="py-5 text-left font-sans text-[20px] font-semibold text-western-green-deep hover:no-underline">
+                <AccordionTrigger className="py-5 text-left font-sans text-[18px] font-semibold text-western-green-deep hover:no-underline">
                   O que vem na caixa
                 </AccordionTrigger>
                 <AccordionContent className="text-body pb-5">
@@ -829,7 +829,7 @@ export default function WesternBox() {
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="cashback" className="border-b border-western-border-soft">
-                <AccordionTrigger className="py-5 text-left font-sans text-[20px] font-semibold text-western-green-deep hover:no-underline">
+                <AccordionTrigger className="py-5 text-left font-sans text-[18px] font-semibold text-western-green-deep hover:no-underline">
                   Como funciona o cashback de 100%
                 </AccordionTrigger>
                 <AccordionContent className="text-body pb-5">
@@ -839,7 +839,7 @@ export default function WesternBox() {
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="duvidas" className="border-b border-western-border-soft">
-                <AccordionTrigger className="py-5 text-left font-sans text-[20px] font-semibold text-western-green-deep hover:no-underline">
+                <AccordionTrigger className="py-5 text-left font-sans text-[18px] font-semibold text-western-green-deep hover:no-underline">
                   Preciso de cadastro ou CNPJ?
                 </AccordionTrigger>
                 <AccordionContent className="text-body pb-5">
@@ -849,8 +849,8 @@ export default function WesternBox() {
               </AccordionItem>
             </Accordion>
 
-            <div className="mt-8 rounded-2xl border border-western-border-soft bg-white p-6">
-              <p className="font-sans text-[20px] font-semibold leading-snug text-western-green-deep">
+            <div className="mt-8 rounded-xl border border-western-border-soft bg-white p-6">
+              <p className="font-sans text-[18px] font-semibold leading-snug text-western-green-deep">
                 Ficou em dúvida sobre o acabamento ideal?
               </p>
               <p className="text-body mt-2">
@@ -905,7 +905,7 @@ export default function WesternBox() {
             href={WHATSAPP_URL}
             target="_blank"
             rel="noreferrer"
-            className="tap-target mt-6 inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-cream underline underline-offset-4 transition-colors hover:text-western-gold-soft"
+            className="tap-target mt-6 inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-cream underline underline-offset-4 transition-colors hover:text-western-gold-soft"
           >
             <MessageCircle className="h-5 w-5" aria-hidden />
             Falar com um consultor no WhatsApp

@@ -268,7 +268,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 <ArrowRight className="h-5 w-5 text-western-cta" aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[16px] font-semibold text-western-green-deep">
+                <p className="truncate text-[15px] font-semibold text-western-green-deep">
                   {a.label}
                 </p>
                 <p className="truncate text-[14px] text-western-stone-warm">{a.desc}</p>
@@ -308,7 +308,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                   />
                 )}
               </div>
-              <span className="text-[16px] font-medium text-western-green-deep truncate">
+              <span className="text-[15px] font-medium text-western-green-deep truncate">
                 {c.title}
               </span>
             </li>
@@ -350,7 +350,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[16px] font-medium text-western-green-deep truncate">
+                <p className="text-[15px] font-medium text-western-green-deep truncate">
                   {node.title}
                 </p>
                 {price && isApproved && (
@@ -372,7 +372,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
     "relative inline-flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-tap px-2 rounded-sm text-[14px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors";
 
   const navLinkCls = ({ isActive }: { isActive: boolean }) =>
-    `inline-flex items-center min-h-tap px-3 xl:px-3.5 text-[16px] font-medium whitespace-nowrap border-b-2 transition-colors ${
+    `inline-flex items-center min-h-tap px-3 xl:px-3.5 text-[15px] font-medium whitespace-nowrap border-b-2 transition-colors ${
       isActive
         ? "border-western-gold text-western-green-deep font-semibold"
         : "border-transparent text-western-green-deep hover:border-western-gold"
@@ -380,7 +380,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
 
   /* Linha do drawer — Balcão: 48px de alvo (≥ tap-min), rótulo 16px. */
   const rowCls =
-    "flex items-center justify-between gap-3 w-full min-h-[48px] py-1.5 text-left border-b border-western-border-soft text-[16px] font-medium text-western-green-deep hover:text-western-cta transition-colors";
+    "flex items-center justify-between gap-3 w-full min-h-[48px] py-1.5 text-left border-b border-western-border-soft text-[15px] font-medium text-western-green-deep hover:text-western-cta transition-colors";
 
   const drawerLink = (to: string, label: string, sub?: string) => (
     <Link key={`${to}-${label}`} to={to} className={rowCls} onClick={() => setMenuOpen(false)}>
@@ -449,7 +449,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               type="search"
               placeholder="Buscar linha, peça, código…"
               aria-label="Buscar no catálogo"
-              className="flex-1 min-w-0 bg-transparent outline-none text-[16px] text-western-green-deep placeholder:text-western-stone-warm/70"
+              className="flex-1 min-w-0 bg-transparent outline-none text-[15px] text-western-green-deep placeholder:text-western-stone-warm/70"
               role="combobox"
               aria-expanded={suggestOpen}
               aria-controls="d-search-suggestions"
@@ -498,7 +498,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-64">
                 <div className="px-2 py-2">
-                  <p className="text-[16px] font-semibold text-western-cream truncate">
+                  <p className="text-[15px] font-semibold text-western-cream truncate">
                     {contaLabel}
                   </p>
                   <p className="text-[14px] text-western-cream/70">
@@ -506,11 +506,11 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                   </p>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-[16px] py-2.5" onClick={() => navigate("/minha-conta")}>
+                <DropdownMenuItem className="text-[15px] py-2.5" onClick={() => navigate("/minha-conta")}>
                   <User className="h-4 w-4 mr-2" /> Minha conta
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="text-[16px] py-2.5"
+                  className="text-[15px] py-2.5"
                   onClick={() => navigate("/minha-conta/favoritos")}
                 >
                   <Heart className="h-4 w-4 mr-2" /> Favoritos
@@ -521,13 +521,13 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                   )}
                 </DropdownMenuItem>
                 {isAdmin && (
-                  <DropdownMenuItem className="text-[16px] py-2.5" onClick={() => navigate("/admin")}>
+                  <DropdownMenuItem className="text-[15px] py-2.5" onClick={() => navigate("/admin")}>
                     <ShieldCheck className="h-4 w-4 mr-2" /> Painel admin
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  className="text-[16px] py-2.5"
+                  className="text-[15px] py-2.5"
                   onClick={async () => {
                     await signOut();
                     navigate("/", { replace: true });
@@ -602,7 +602,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
             type="button"
             onClick={() => setMenuOpen(true)}
             aria-label="Abrir menu completo"
-            className="-ml-3 inline-flex items-center gap-2 min-h-tap px-3 text-[16px] font-medium text-western-green-deep border-b-2 border-transparent hover:border-western-gold transition-colors"
+            className="-ml-3 inline-flex items-center gap-2 min-h-tap px-3 text-[15px] font-medium text-western-green-deep border-b-2 border-transparent hover:border-western-gold transition-colors"
           >
             <Menu className="h-5 w-5" strokeWidth={1.75} />
             Menu
@@ -622,7 +622,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           {!session && (
             <Link
               to={PARTNER_INTENT.to}
-              className="ml-auto inline-flex items-center justify-center min-h-tap px-5 rounded-lg bg-western-cta text-western-cream text-[16px] font-semibold whitespace-nowrap hover:bg-western-green-deep transition-colors"
+              className="ml-auto inline-flex items-center justify-center min-h-tap px-5 rounded-lg bg-western-cta text-western-cream text-[15px] font-semibold whitespace-nowrap hover:bg-western-green-deep transition-colors"
             >
               {PARTNER_INTENT.label}
             </Link>
@@ -668,7 +668,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                     >
                       <User className="h-6 w-6 shrink-0 text-western-cta" strokeWidth={1.75} />
                       <span className="min-w-0 flex-1">
-                        <span className="block text-[16px] font-semibold text-western-green-deep">
+                        <span className="block text-[15px] font-semibold text-western-green-deep">
                           Minha conta
                         </span>
                         <span className="block text-[14px] font-normal text-western-stone-warm truncate">
@@ -705,7 +705,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                     <Link
                       to="/parceiro/cadastro"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center justify-center w-full min-h-control px-5 rounded-lg bg-western-cta text-western-cream text-[16px] font-semibold hover:bg-western-green-deep transition-colors"
+                      className="flex items-center justify-center w-full min-h-control px-5 rounded-lg bg-western-cta text-western-cream text-[15px] font-semibold hover:bg-western-green-deep transition-colors"
                     >
                       Seja parceiro
                     </Link>
@@ -810,7 +810,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               onKeyDown={handleSearchKeyDown}
               type="search"
               placeholder="Buscar linha, peça, código…"
-              className="flex-1 min-w-0 bg-transparent outline-none text-[16px] text-western-green-deep placeholder:text-western-stone-warm/70"
+              className="flex-1 min-w-0 bg-transparent outline-none text-[15px] text-western-green-deep placeholder:text-western-stone-warm/70"
               role="combobox"
               aria-expanded={suggestOpen}
               aria-controls="m-search-suggestions"

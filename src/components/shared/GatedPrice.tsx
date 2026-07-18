@@ -43,11 +43,11 @@ const CHIP_BASE =
 
 const CHIP_SIZE: Record<"inline" | "badge" | "block", string> = {
   // Padrão da vitrine: cards de peça/conjunto, barra fixa.
-  inline: "min-h-tap px-3.5 py-2 text-[16px]",
+  inline: "min-h-tap px-3.5 py-2 text-[15px]",
   // Compacto (selo sobre foto/lista densa) — 14px é o mínimo permitido.
   badge: "min-h-tap px-3 py-1.5 text-[14px] rounded-sm gap-1.5",
   // Slot de preço da PDP/composição: ocupa a largura do bloco, altura de controle.
-  block: "min-h-control w-full justify-center px-5 py-3 text-[16px]",
+  block: "min-h-control w-full justify-center px-5 py-3 text-[15px]",
 };
 
 /** Só o <a> ganha afordância de hover/foco; o <span> é inerte por definição. */

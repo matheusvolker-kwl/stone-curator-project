@@ -107,14 +107,14 @@ export default function Index() {
       <section className="surface-paper section border-t border-western-border-soft" id="produtos">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
-            <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
+            <div className="flex items-end justify-between mb-5 md:mb-6 flex-wrap gap-4">
               <div>
-                <p className="text-eyebrow mb-3">Os mais pedidos</p>
+                <p className="text-eyebrow mb-2">Os mais pedidos</p>
                 <h2 className="display-md text-western-green-deep">Mais vendidos.</h2>
               </div>
               <Link
                 to="/produtos"
-                className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
+                className="tap-target inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
               >
                 Ver catálogo completo <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
               </Link>
@@ -124,14 +124,14 @@ export default function Index() {
             <div className={featuredTrack}>
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className={`${featuredItem} space-y-3`}>
-                  <div className="aspect-square rounded-2xl bg-western-stone-warm/10 animate-pulse" />
+                  <div className="aspect-square rounded-xl bg-western-stone-warm/10 animate-pulse" />
                   <div className="h-5 w-3/4 rounded-sm bg-western-stone-warm/10 animate-pulse" />
                   <div className="h-4 w-1/3 rounded-sm bg-western-stone-warm/10 animate-pulse" />
                 </div>
               ))}
             </div>
           ) : featured.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-western-border-strong p-10 text-center text-body">
+            <div className="rounded-xl border border-dashed border-western-border-strong p-10 text-center text-body">
               Catálogo indisponível no momento. Tente recarregar em instantes.
             </div>
           ) : (
@@ -244,7 +244,7 @@ export default function Index() {
               Natureza que ninguém acredita ser{" "}
               <span className="text-western-gold-soft">obra.</span>
             </h1>
-            <p className="text-[17px] md:text-[19px] leading-[1.6] text-western-cream/85 max-w-md mt-5 mb-6">
+            <p className="text-[16px] md:text-[17px] leading-[1.6] text-western-cream/85 max-w-md mt-5 mb-6">
               Cascatas, pedras e revestimentos artesanais — até 10× mais leves — para projetos e profissionais.
             </p>
 
@@ -309,7 +309,7 @@ export default function Index() {
                 50% é a distância do preço B2B para o preço B2C, e o tier corre em
                 cima dessa base. Mesma palavra para as duas quebraria a promessa
                 no primeiro login. */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 md:gap-x-8 gap-y-7 md:gap-y-0 mt-10 pt-7 border-t border-western-cream/20">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 md:gap-x-8 gap-y-6 md:gap-y-0 mt-7 pt-5 border-t border-western-cream/20">
               {[
                 { b: "50%", s: "abaixo do varejo, em média", destaque: true },
                 { b: "8", s: "linhas de produtos", destaque: false },
@@ -361,7 +361,7 @@ export default function Index() {
                   {/* estrelas NA LINHA do número: embaixo elas criavam uma 3ª
                       linha só no "4,9" e desalinhavam os três da faixa. */}
                   <div className="flex items-baseline gap-1.5">
-                    <p className="font-display text-[22px] md:text-[26px] leading-none text-western-green-deep tabular-nums">
+                    <p className="font-display text-[20px] md:text-[22px] leading-none text-western-green-deep tabular-nums">
                       {s.n}
                     </p>
                     {s.stars && (
@@ -406,7 +406,7 @@ export default function Index() {
               </div>
               <Link
                 to="/linhas"
-                className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
+                className="tap-target inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
               >
                 Ver todas as linhas <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
               </Link>
@@ -416,7 +416,7 @@ export default function Index() {
             {LINHAS_HOME.map((l, i) => (
               <Reveal key={l.handle} variant="fade-up" delay={(i % 4) * 80} duration={620} distance={18}>
                 <Link to={`/linhas/${l.handle}`} className="group block">
-                  <div className="relative overflow-hidden rounded-2xl aspect-[4/3] bg-western-cream-muted">
+                  <div className="relative overflow-hidden rounded-xl aspect-[4/3] bg-western-cream-muted">
                     <img
                       src={l.cover}
                       alt={l.label}
@@ -424,7 +424,7 @@ export default function Index() {
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
-                  <h3 className="mt-3 font-sans text-[18px] font-semibold text-western-green-deep transition-colors group-hover:text-western-bronze">
+                  <h3 className="mt-3 font-sans text-[17px] font-semibold text-western-green-deep transition-colors group-hover:text-western-bronze">
                     {l.label}
                   </h3>
                 </Link>
@@ -448,7 +448,7 @@ export default function Index() {
               </div>
               <Link
                 to="/guia-de-composicao"
-                className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
+                className="tap-target inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
               >
                 Responda 3 perguntas <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
               </Link>
@@ -458,7 +458,7 @@ export default function Index() {
             {TILES.map((t, i) => (
               <Reveal key={t.nome} variant="fade-up" delay={(i % 4) * 80} duration={600} distance={18}>
                 <Link to="/guia-de-composicao" className="group block">
-                  <div className="relative overflow-hidden rounded-2xl aspect-[4/5] bg-western-cream-muted">
+                  <div className="relative overflow-hidden rounded-xl aspect-[4/5] bg-western-cream-muted">
                     <img
                       src={t.img}
                       alt={t.nome}
@@ -467,7 +467,7 @@ export default function Index() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-western-green-deep/90 via-western-green-deep/25 to-transparent" />
                     <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
-                      <p className="font-sans text-[20px] font-semibold text-western-cream leading-snug">{t.nome}</p>
+                      <p className="font-sans text-[18px] font-semibold text-western-cream leading-snug">{t.nome}</p>
                       <p className="text-[14px] text-western-cream/80 mt-1 leading-snug">{t.desc}</p>
                     </div>
                   </div>
@@ -483,7 +483,7 @@ export default function Index() {
         <div className="container-western">
           <div className="grid md:grid-cols-2 gap-8 md:gap-14 items-center">
             <Reveal variant="fade-right" duration={700}>
-              <div className="grid grid-cols-2 gap-px rounded-2xl overflow-hidden bg-western-border-soft">
+              <div className="grid grid-cols-2 gap-px rounded-xl overflow-hidden bg-western-border-soft">
                 {ACABAMENTOS.map((a) => (
                   <div
                     key={a.nome}
@@ -502,7 +502,7 @@ export default function Index() {
                       aria-hidden
                       className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/55 via-black/15 to-transparent"
                     />
-                    <span className="relative font-sans text-[16px] font-semibold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]">
+                    <span className="relative font-sans text-[15px] font-semibold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]">
                       {a.nome}
                     </span>
                   </div>
@@ -580,7 +580,7 @@ export default function Index() {
           </Reveal>
           <div className="grid md:grid-cols-2 gap-4 md:gap-6">
             <Reveal variant="fade-up" duration={650}>
-              <div className="rounded-2xl border border-western-cream/15 bg-western-green-mid/20 p-7 md:p-9 h-full">
+              <div className="rounded-xl border border-western-cream/15 bg-western-green-mid/20 p-7 md:p-9 h-full">
                 <p className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/50 mb-6">
                   Pedra natural
                 </p>
@@ -591,7 +591,7 @@ export default function Index() {
                     "Variedade limitada ao que a natureza deu",
                     "Obra pesada, mais tempo e custo",
                   ].map((t) => (
-                    <li key={t} className="flex gap-3 items-start text-[17px] leading-[1.5] text-western-cream/55">
+                    <li key={t} className="flex gap-3 items-start text-[16px] leading-[1.5] text-western-cream/55">
                       <X className="h-5 w-5 text-western-cream/35 mt-0.5 shrink-0" strokeWidth={1.75} />
                       {t}
                     </li>
@@ -600,7 +600,7 @@ export default function Index() {
               </div>
             </Reveal>
             <Reveal variant="fade-up" delay={100} duration={650}>
-              <div className="rounded-2xl border border-western-gold/50 bg-western-green-mid/50 ring-1 ring-western-gold/20 p-7 md:p-9 h-full">
+              <div className="rounded-xl border border-western-gold/50 bg-western-green-mid/50 ring-1 ring-western-gold/20 p-7 md:p-9 h-full">
                 <p className={`${eyebrowDark} mb-6`}>Pedra Western</p>
                 <ul className="space-y-4">
                   {/* A CAUSA (≈10% do peso) e a PROVA (reprodução fiel) subiram
@@ -617,7 +617,7 @@ export default function Index() {
                     "50 modelos, formatos para cada cena",
                     "Fixa com argamassa AC3 — sem sistema proprietário",
                   ].map((t) => (
-                    <li key={t} className="flex gap-3 items-start text-[17px] leading-[1.5] text-western-cream">
+                    <li key={t} className="flex gap-3 items-start text-[16px] leading-[1.5] text-western-cream">
                       <Check className="h-5 w-5 text-western-gold-soft mt-0.5 shrink-0" strokeWidth={1.75} />
                       {t}
                     </li>
@@ -626,7 +626,7 @@ export default function Index() {
               </div>
             </Reveal>
           </div>
-          <p className="mt-9 max-w-xl text-[16px] text-western-cream/70">
+          <p className="mt-9 max-w-xl text-[15px] text-western-cream/70">
             Mesma leitura de pedra natural, sem a obra pesada. Ateliê próprio desde 1993.
           </p>
         </div>
@@ -650,12 +650,12 @@ export default function Index() {
             ].map((s, i) => (
               <Reveal key={s.n} variant="fade-up" delay={i * 80} duration={600} distance={16}>
                 <div className="flex gap-4 items-start">
-                  <span className="font-sans text-[20px] font-semibold text-western-bronze bg-white border border-western-border-soft rounded-lg w-12 h-12 flex items-center justify-center shrink-0">
+                  <span className="font-sans text-[18px] font-semibold text-western-bronze bg-white border border-western-border-soft rounded-lg w-12 h-12 flex items-center justify-center shrink-0">
                     {s.n}
                   </span>
                   <div>
-                    <p className="font-sans text-[17px] font-semibold text-western-green-deep mb-1">{s.t}</p>
-                    <p className="text-[16px] leading-[1.5] text-western-stone-warm">{s.d}</p>
+                    <p className="font-sans text-[16px] font-semibold text-western-green-deep mb-1">{s.t}</p>
+                    <p className="text-[15px] leading-[1.5] text-western-stone-warm">{s.d}</p>
                   </div>
                 </div>
               </Reveal>
@@ -665,7 +665,7 @@ export default function Index() {
             <Link to="/parceiro/cadastro" className="btn-primary w-full sm:w-auto">
               Criar cadastro grátis <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
             </Link>
-            <span className="text-[16px] text-western-stone-warm">Leva menos de 2 minutos · precisa de CNPJ</span>
+            <span className="text-[15px] text-western-stone-warm">Leva menos de 2 minutos · precisa de CNPJ</span>
           </div>
         </div>
       </section>
@@ -703,7 +703,7 @@ export default function Index() {
                 <h2 className="display-lg text-western-cream mb-6">
                   Tabela de preços, condições e modelos 3D liberados após o cadastro.
                 </h2>
-                <p className="text-[17px] leading-[1.6] text-western-cream/80 max-w-md mb-9">
+                <p className="text-[16px] leading-[1.6] text-western-cream/80 max-w-md mb-9">
                   Atendemos profissionais e empresas com CNPJ ativo — de arquitetos e paisagistas a laguistas,
                   jardineiros, garden centers, lojas e construtoras.
                 </p>
@@ -714,7 +714,7 @@ export default function Index() {
               </div>
             </Reveal>
             <Reveal variant="fade-left" delay={120} duration={750}>
-              <div className="grid grid-cols-2 gap-px rounded-2xl overflow-hidden bg-western-gold/20">
+              <div className="grid grid-cols-2 gap-px rounded-xl overflow-hidden bg-western-gold/20">
                 {[
                   { eyebrow: "Pedido mínimo", t: BUSINESS.pedidoMinimoLabel },
                   { eyebrow: "Garantia", t: BUSINESS.garantiaLabel },

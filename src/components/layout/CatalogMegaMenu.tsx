@@ -112,7 +112,7 @@ export default function CatalogMegaMenu({
 
       {open && (
         <div className="absolute left-0 top-full z-50 pt-3">
-          <div className="w-[720px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-western-border-soft bg-white shadow-[0_20px_50px_-12px_rgba(23,32,24,0.28)]">
+          <div className="w-[720px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-western-border-soft bg-white shadow-[0_20px_50px_-12px_rgba(23,32,24,0.28)]">
             <div className="grid grid-cols-4 gap-x-6 gap-y-2 p-6">
               {CATALOG_SCENES.map((scene) => (
                 <div key={scene.key}>
@@ -122,7 +122,7 @@ export default function CatalogMegaMenu({
                       <li key={h}>
                         <Link
                           to={toFor(h)}
-                          className="-mx-2 block rounded-[8px] px-2 py-2 font-sans text-[16px] text-western-green-deep transition-colors hover:bg-western-paper hover:text-western-bronze"
+                          className="-mx-2 block rounded-[8px] px-2 py-2 font-sans text-[15px] text-western-green-deep transition-colors hover:bg-western-paper hover:text-western-bronze"
                         >
                           {titleFor(h)}
                         </Link>

@@ -76,7 +76,7 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
   return (
     <article
       className={cn(
-        "relative h-full bg-white rounded-2xl flex flex-col overflow-hidden transition-shadow duration-300",
+        "relative h-full bg-white rounded-xl flex flex-col overflow-hidden transition-shadow duration-300",
         highlight
           ? "border-2 border-western-gold shadow-[0_28px_48px_-30px_hsl(var(--western-stone-dark)/0.35)]"
           : "border border-western-border-soft shadow-[0_18px_36px_-30px_hsl(var(--western-stone-dark)/0.3)] hover:shadow-[0_26px_44px_-30px_hsl(var(--western-stone-dark)/0.38)]"
@@ -113,7 +113,7 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
             {resumo.map((r, i) => (
               <li
                 key={i}
-                className="flex items-baseline justify-between gap-3 font-sans text-[16px] text-western-stone-warm"
+                className="flex items-baseline justify-between gap-3 font-sans text-[15px] text-western-stone-warm"
               >
                 <span className="truncate">{r.nome}</span>
                 <span className="font-semibold tabular-nums text-western-green-deep flex-shrink-0">
@@ -122,7 +122,7 @@ export default function ComposicaoCard({ conjunto, nivel, image, highlight, refi
               </li>
             ))}
             {extras > 0 && (
-              <li className="pt-1 font-sans text-[16px] text-western-stone-warm">
+              <li className="pt-1 font-sans text-[15px] text-western-stone-warm">
                 + {extras} outra{extras > 1 ? "s" : ""} peça{extras > 1 ? "s" : ""}
               </li>
             )}

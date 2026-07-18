@@ -50,7 +50,7 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
           }}
           aria-label={selected ? `Adicionar mais uma unidade de ${item.nome}` : `Adicionar ${item.nome} ao projeto`}
           className={cn(
-            "absolute top-2 right-2 inline-flex h-12 items-center justify-center gap-1.5 rounded-lg font-sans text-[16px] font-semibold tabular-nums transition-colors",
+            "absolute top-2 right-2 inline-flex h-12 items-center justify-center gap-1.5 rounded-lg font-sans text-[15px] font-semibold tabular-nums transition-colors",
             selected
               ? "anim-settle min-w-tap px-3 bg-western-cta text-western-cream"
               : "w-12 bg-white text-western-green-deep border border-western-border-strong hover:bg-western-cta hover:text-western-cream hover:border-western-cta"
@@ -67,7 +67,7 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
       </div>
 
       <div className="flex flex-col flex-1 px-4 py-3.5 border-t border-western-border-soft">
-        <h4 className="font-sans text-[17px] font-semibold text-western-green-deep leading-snug line-clamp-2">
+        <h4 className="font-sans text-[16px] font-semibold text-western-green-deep leading-snug line-clamp-2">
           {item.nome}
         </h4>
 
@@ -76,7 +76,7 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
           <GatedPrice
             amount={item.preco}
             variant="hidden"
-            className="font-sans text-[17px] font-semibold tabular-nums text-western-green-deep flex-shrink-0"
+            className="font-sans text-[16px] font-semibold tabular-nums text-western-green-deep flex-shrink-0"
           />
         </div>
 
@@ -93,7 +93,7 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
             >
               <Minus className="h-4 w-4" aria-hidden />
             </button>
-            <span className="font-sans text-[16px] font-semibold tabular-nums text-western-green-deep">
+            <span className="font-sans text-[15px] font-semibold tabular-nums text-western-green-deep">
               {currentQty} no projeto
             </span>
             <button

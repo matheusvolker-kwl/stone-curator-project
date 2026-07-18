@@ -23,7 +23,7 @@ function LegalNav({ atual }: { atual: string }) {
             key={p.to}
             to={p.to}
             aria-current={ativa ? "page" : undefined}
-            className={`tap-target inline-flex items-center rounded-full border px-5 font-sans text-[16px] font-semibold !no-underline transition-colors ${
+            className={`tap-target inline-flex items-center rounded-full border px-5 font-sans text-[15px] font-semibold !no-underline transition-colors ${
               ativa
                 ? "border-western-cta bg-western-cta text-western-cream"
                 : "border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper"
@@ -47,7 +47,7 @@ export default function PoliticaComercial() {
     <LegalPage eyebrow="Política comercial e de entrega" titulo="Como compramos, vendemos e entregamos." atualizadoEm="maio de 2026" seoPath="/politica-comercial" seoTitle="Política comercial e de entrega — Western" seoDescription="Regras B2B da Western: pedido mínimo, pagamento, credenciamento, retirada no ateliê e envio por transportadora.">
       <LegalNav atual="/politica-comercial" />
 
-      <p className="text-[19px] leading-[1.6] text-western-green-deep">
+      <p className="text-[17px] leading-[1.6] text-western-green-deep">
         O catálogo Western Pools com preço de atacado opera no canal B2B, atendendo profissionais
         e empresas do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a
         laguistas, jardineiros, garden centers, lojas e construtoras. O acesso à tabela de preços,

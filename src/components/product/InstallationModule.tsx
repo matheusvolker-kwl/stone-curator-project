@@ -44,7 +44,7 @@ export function InstallationTrustStrip({
       <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-western-bronze/10 text-western-bronze">
         <Check className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
       </span>
-      <span className="font-sans text-[16px] font-semibold text-western-green-deep">
+      <span className="font-sans text-[15px] font-semibold text-western-green-deep">
         Guia de instalação
       </span>
       <span className="font-sans text-[14px] text-western-stone-warm">
@@ -53,7 +53,7 @@ export function InstallationTrustStrip({
       <a
         href={`#${ANCHOR_ID}`}
         onClick={scrollToInstallation}
-        className="ml-auto inline-flex min-h-tap items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep underline-offset-4 transition-colors hover:underline"
+        className="ml-auto inline-flex min-h-tap items-center gap-1.5 font-sans text-[15px] font-semibold text-western-green-deep underline-offset-4 transition-colors hover:underline"
       >
         Ver como
         <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -136,7 +136,7 @@ export function InstallationSection({
                   O que importa: o tipo de sistema e o suporte que acompanha. */}
               <div className="rounded-lg border border-western-border-soft bg-western-cream p-5">
                 <p className="text-sublabel mb-2">Tipo de instalação</p>
-                <p className="font-sans text-[17px] font-semibold text-western-green-deep">
+                <p className="font-sans text-[16px] font-semibold text-western-green-deep">
                   {levelLabel}
                 </p>
                 <p className="text-body mt-2 text-[15px]">
@@ -149,7 +149,7 @@ export function InstallationSection({
                 {facts.map((f) => (
                   <li key={f.label} className="bg-western-cream px-3 py-4 text-center">
                     <p className="text-sublabel mb-2">{f.label}</p>
-                    <p className="font-sans text-[16px] leading-snug text-western-green-deep">
+                    <p className="font-sans text-[15px] leading-snug text-western-green-deep">
                       {f.value}
                     </p>
                   </li>
@@ -161,7 +161,7 @@ export function InstallationSection({
 
               {/* Avisos que valem ouro — impermeabilização, cura, elétrica, bomba */}
               {warnings.length > 0 && (
-                <div className="rounded-2xl border border-western-border-strong bg-western-ivory p-5">
+                <div className="rounded-xl border border-western-border-strong bg-western-ivory p-5">
                   <p className="text-sublabel mb-4">Antes de começar</p>
                   <ul className="space-y-5">
                     {warnings.map((w) => (
@@ -172,10 +172,10 @@ export function InstallationSection({
                           aria-hidden="true"
                         />
                         <div>
-                          <p className="font-sans text-[17px] font-semibold text-western-green-deep">
+                          <p className="font-sans text-[16px] font-semibold text-western-green-deep">
                             {w.title}
                           </p>
-                          <p className="mt-1 font-sans text-[16px] leading-relaxed text-western-stone-warm">
+                          <p className="mt-1 font-sans text-[15px] leading-relaxed text-western-stone-warm">
                             {w.text}
                           </p>
                         </div>
@@ -207,15 +207,15 @@ export function InstallationSection({
                     >
                       <AccordionTrigger className="gap-4 py-4 text-left hover:no-underline">
                         <span className="flex min-w-0 items-baseline gap-3">
-                          <span className="font-sans text-[16px] font-semibold tabular-nums text-western-bronze">
+                          <span className="font-sans text-[15px] font-semibold tabular-nums text-western-bronze">
                             {String(i + 1).padStart(2, "0")}
                           </span>
-                          <span className="font-sans text-[17px] font-semibold text-western-green-deep">
+                          <span className="font-sans text-[16px] font-semibold text-western-green-deep">
                             {s.title}
                           </span>
                         </span>
                       </AccordionTrigger>
-                      <AccordionContent className="pb-5 pl-10 pr-2 font-sans text-[17px] leading-relaxed text-western-stone-warm">
+                      <AccordionContent className="pb-5 pl-10 pr-2 font-sans text-[16px] leading-relaxed text-western-stone-warm">
                         {s.text}
                       </AccordionContent>
                     </AccordionItem>

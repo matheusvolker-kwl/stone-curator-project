@@ -156,7 +156,7 @@ function BlocoCta({
         <ArrowRight className="h-5 w-5" aria-hidden />
       </Link>
       <p className="text-meta mt-3">Leva menos de 2 minutos · precisa de CNPJ</p>
-      <p className="text-[16px] mt-4 text-western-stone-warm">
+      <p className="text-[15px] mt-4 text-western-stone-warm">
         Já é parceiro?{" "}
         <Link
           to="/parceiro/login"
@@ -212,7 +212,7 @@ export default function ComoComprar() {
             </Reveal>
 
             <Reveal delay={90} className="md:col-span-5">
-              <div className="rounded-2xl border border-western-border-soft bg-white p-6 md:p-8 shadow-[0_12px_40px_-24px_rgba(126,98,64,0.35)]">
+              <div className="rounded-xl border border-western-border-soft bg-white p-6 md:p-8 shadow-[0_12px_40px_-24px_rgba(126,98,64,0.35)]">
                 <BlocoCta isPartner={isPartner} align="left" />
               </div>
             </Reveal>
@@ -246,7 +246,7 @@ export default function ComoComprar() {
                         />
                       )}
                       <span
-                        className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-western-green-deep font-sans text-[17px] font-bold tabular-nums text-western-cream"
+                        className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-western-green-deep font-sans text-[16px] font-bold tabular-nums text-western-cream"
                         aria-hidden
                       >
                         {p.n}
@@ -268,7 +268,7 @@ export default function ComoComprar() {
             </div>
 
             <aside className="lg:col-span-5">
-              <div className="rounded-2xl surface-paper border border-western-border-soft p-6 md:p-8 lg:sticky lg:top-24">
+              <div className="rounded-xl surface-paper border border-western-border-soft p-6 md:p-8 lg:sticky lg:top-24">
                 <h2 className="text-eyebrow mb-5">Dúvidas rápidas</h2>
                 <dl className="space-y-4">
                   {DUVIDAS.map((d, i) => (
@@ -276,7 +276,7 @@ export default function ComoComprar() {
                       key={d.q}
                       className={i === 0 ? "" : "border-t border-western-border-soft pt-4"}
                     >
-                      <dt className="mb-1 text-[17px] font-semibold leading-snug text-western-green-deep">
+                      <dt className="mb-1 text-[16px] font-semibold leading-snug text-western-green-deep">
                         {d.q}
                       </dt>
                       <dd className="text-spec">{d.a}</dd>
@@ -299,7 +299,7 @@ export default function ComoComprar() {
               <h2 className="display-md text-western-cream mb-2">
                 Pronto para ver o preço de parceiro?
               </h2>
-              <p className="max-w-[42ch] text-[16px] text-western-cream/80">
+              <p className="max-w-[42ch] text-[15px] text-western-cream/80">
                 Cadastro grátis, aprovação na hora. Precisa apenas do CNPJ.
               </p>
               <p className="mt-5 text-[13px] leading-relaxed text-western-cream/70">
@@ -333,7 +333,7 @@ export default function ComoComprar() {
                   href={whatsappHref}
                   target="_blank"
                   rel="noreferrer"
-                  className="tap-target inline-flex items-center gap-2 text-[16px] text-western-cream/80 transition-colors hover:text-western-cream"
+                  className="tap-target inline-flex items-center gap-2 text-[15px] text-western-cream/80 transition-colors hover:text-western-cream"
                 >
                   <MessageCircle className="h-[18px] w-[18px] shrink-0" aria-hidden />
                   Prefere conversar antes? Falar no WhatsApp

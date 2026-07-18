@@ -174,7 +174,7 @@ export default function ProductPage() {
       <div className="surface-ivory">
         <div className="container-western py-24 md:py-32">
           <div className="grid md:grid-cols-2 gap-12">
-            <div className="aspect-square rounded-2xl bg-western-stone-warm/10 animate-pulse" />
+            <div className="aspect-square rounded-xl bg-western-stone-warm/10 animate-pulse" />
             <div className="space-y-4">
               <div className="h-12 w-2/3 rounded-lg bg-western-stone-warm/10 animate-pulse" />
               <div className="h-5 w-1/3 rounded-sm bg-western-stone-warm/10 animate-pulse" />
@@ -192,7 +192,7 @@ export default function ProductPage() {
           <h1 className="display-lg text-western-green-deep">Peça não encontrada</h1>
           <Link
             to="/linhas"
-            className="mt-8 inline-flex items-center justify-center min-h-control px-6 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors"
+            className="mt-8 inline-flex items-center justify-center min-h-control px-6 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[15px] font-semibold transition-colors"
           >
             Voltar para linhas
           </Link>
@@ -401,7 +401,7 @@ export default function ProductPage() {
                                   }));
                                 }}
                                 aria-pressed={selected}
-                                className={`tap-target inline-flex items-center justify-center px-5 rounded-full border font-sans text-[16px] transition-colors ${
+                                className={`tap-target inline-flex items-center justify-center px-5 rounded-full border font-sans text-[15px] transition-colors ${
                                   selected
                                     ? "border-western-gold bg-western-gold/10 text-western-green-deep font-semibold"
                                     : "border-western-border-strong text-western-green-deep font-medium hover:border-western-green-deep"
@@ -433,7 +433,7 @@ export default function ProductPage() {
                       >
                         −
                       </button>
-                      <span className="px-3 font-sans font-semibold text-[16px] min-w-[2ch] text-center tabular-nums">
+                      <span className="px-3 font-sans font-semibold text-[15px] min-w-[2ch] text-center tabular-nums">
                         {qty}
                       </span>
                       <button
@@ -457,7 +457,7 @@ export default function ProductPage() {
                     ref={addBtnRef as React.RefObject<HTMLButtonElement>}
                     onClick={handleAdd}
                     disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
-                    className={`group mt-4 w-full h-control px-6 rounded-lg font-sans text-[16px] font-semibold normal-case tracking-normal transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 ${
+                    className={`group mt-4 w-full h-control px-6 rounded-lg font-sans text-[15px] font-semibold normal-case tracking-normal transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 ${
                       acabPending
                         ? "bg-western-stone-warm/20 text-western-green-deep/70 hover:bg-western-stone-warm/25 disabled:opacity-100"
                         : "bg-western-cta text-western-cream hover:bg-western-green-deep disabled:opacity-45"
@@ -550,7 +550,7 @@ export default function ProductPage() {
             ) : (
               /* Gate de preço — política comercial B2B (visitante nunca vê preço) */
               <section className="mt-8" aria-label="Acesso de parceiro">
-                <div className="rounded-2xl border border-western-border-soft bg-western-paper p-6 md:p-7">
+                <div className="rounded-xl border border-western-border-soft bg-western-paper p-6 md:p-7">
                   <span className="inline-flex items-center gap-2 mb-5 rounded-full border border-western-border-soft bg-white px-3.5 py-1.5">
                     <Lock className="h-4 w-4 text-western-bronze" aria-hidden />
                     <span className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">

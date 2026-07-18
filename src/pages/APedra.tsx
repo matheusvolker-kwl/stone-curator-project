@@ -270,7 +270,7 @@ export default function APedra() {
               {/* Duas VISTAS do mesmo quarto (luz de render × luz de dia). A
                   legenda NOMEIA a âncora (espelho + biombo + paredão) — sem
                   ela o olho procura sozinho, não acha, e lê mismatch. */}
-              <figure className="bg-white border border-western-border-soft rounded-2xl overflow-hidden">
+              <figure className="bg-white border border-western-border-soft rounded-xl overflow-hidden">
                 <div className="grid grid-cols-2 gap-px bg-western-border-soft">
                   <div className="bg-white">
                     <img

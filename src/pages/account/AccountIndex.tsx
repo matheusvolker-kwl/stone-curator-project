@@ -214,7 +214,7 @@ export default function AccountIndex() {
           {totalPedidos > 0 && !erro && (
             <Link
               to="/minha-conta/pedidos"
-              className="inline-flex items-center gap-1 text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+              className="inline-flex items-center gap-1 text-[15px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
             >
               Ver todos
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -280,21 +280,21 @@ export default function AccountIndex() {
         <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
           <Link
             to="/minha-conta/perfil"
-            className="tap-target inline-flex items-center gap-2 text-[16px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
+            className="tap-target inline-flex items-center gap-2 text-[15px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
           >
             <ClipboardList className="h-4 w-4" aria-hidden="true" />
             Dados da empresa
           </Link>
           <Link
             to="/minha-conta/preferencias"
-            className="tap-target inline-flex items-center gap-2 text-[16px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
+            className="tap-target inline-flex items-center gap-2 text-[15px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
           >
             <Settings className="h-4 w-4" aria-hidden="true" />
             Configurações da conta
           </Link>
           <Link
             to="/contato"
-            className="tap-target inline-flex items-center gap-2 text-[16px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
+            className="tap-target inline-flex items-center gap-2 text-[15px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
           >
             <LifeBuoy className="h-4 w-4" aria-hidden="true" />
             Falar com a equipe
@@ -341,7 +341,7 @@ function HeroAprovado() {
   ].filter((v): v is string => v !== null);
 
   return (
-    <section className="surface-forest rounded-2xl p-6 md:p-8">
+    <section className="surface-forest rounded-xl p-6 md:p-8">
       <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold">
         Credenciamento
       </p>
@@ -361,7 +361,7 @@ function HeroAprovado() {
                 <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/60">
                   Seu nível
                 </p>
-                <p className="mt-1 text-[20px] font-semibold text-western-cream">
+                <p className="mt-1 text-[18px] font-semibold text-western-cream">
                   {TIER_LABEL[tier as Tier] ?? tier}
                 </p>
               </div>
@@ -370,7 +370,7 @@ function HeroAprovado() {
                 <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/60">
                   Desconto
                 </p>
-                <p className="mt-1 text-[20px] font-semibold tabular-nums text-western-gold">
+                <p className="mt-1 text-[18px] font-semibold tabular-nums text-western-gold">
                   {discountPct}% em toda a linha
                 </p>
               </div>
@@ -417,7 +417,7 @@ function HeroPendente({ pendingReason }: { pendingReason: string | null }) {
   const precisaAgir = !!pendingReason;
 
   return (
-    <section className="rounded-2xl border border-status-warning/35 bg-status-warning/[0.06] p-6 md:p-8">
+    <section className="rounded-xl border border-status-warning/35 bg-status-warning/[0.06] p-6 md:p-8">
       <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-status-warning">
         Credenciamento
       </p>
@@ -432,7 +432,7 @@ function HeroPendente({ pendingReason }: { pendingReason: string | null }) {
           <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-status-warning">
             O que falta
           </p>
-          <p className="mt-1.5 text-[17px] leading-[1.6] text-western-stone-dark">{pendingReason}</p>
+          <p className="mt-1.5 text-[16px] leading-[1.6] text-western-stone-dark">{pendingReason}</p>
         </div>
       ) : (
         <p className="text-body mt-3 max-w-2xl">
@@ -477,7 +477,7 @@ function HeroPendente({ pendingReason }: { pendingReason: string | null }) {
 
 function HeroRecusado() {
   return (
-    <section className="rounded-2xl border border-status-error/35 bg-status-error/[0.06] p-6 md:p-8">
+    <section className="rounded-xl border border-status-error/35 bg-status-error/[0.06] p-6 md:p-8">
       <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-status-error">
         Credenciamento
       </p>
@@ -507,7 +507,7 @@ function HeroRecusado() {
 
 function HeroCancelado() {
   return (
-    <section className="rounded-2xl border border-western-border-strong bg-western-paper p-6 md:p-8">
+    <section className="rounded-xl border border-western-border-strong bg-western-paper p-6 md:p-8">
       <p className="text-eyebrow">Credenciamento</p>
 
       <h2 className="display-md mt-3 text-western-green-deep">Conta cancelada</h2>
@@ -528,7 +528,7 @@ function HeroCancelado() {
 
 function HeroAdmin() {
   return (
-    <section className="surface-forest rounded-2xl p-6 md:p-8">
+    <section className="surface-forest rounded-xl p-6 md:p-8">
       <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold">
         Acesso interno
       </p>
@@ -539,7 +539,7 @@ function HeroAdmin() {
             <ShieldCheck className="h-6 w-6 flex-shrink-0 text-western-gold" aria-hidden="true" />
             Você é administrador
           </h2>
-          <p className="mt-2 text-[17px] leading-[1.6] text-western-cream/75">
+          <p className="mt-2 text-[16px] leading-[1.6] text-western-cream/75">
             Esta é a visão do parceiro. A operação — credenciamentos, pedidos e orçamentos — fica no
             painel administrativo.
           </p>
@@ -582,7 +582,7 @@ function PassoCredenciamento({
       >
         {estado === "feito" ? <PackageCheck className="h-4 w-4" /> : numero}
       </span>
-      <span className={`text-[16px] ${texto}`}>{rotulo}</span>
+      <span className={`text-[15px] ${texto}`}>{rotulo}</span>
     </li>
   );
 }
@@ -613,7 +613,7 @@ function Tile({
   return (
     <Link
       to={to}
-      className="tap-target group flex flex-col justify-between rounded-2xl border border-western-border-soft bg-white p-4 transition-colors hover:border-western-green-deep/40 md:p-5"
+      className="tap-target group flex flex-col justify-between rounded-xl border border-western-border-soft bg-white p-4 transition-colors hover:border-western-green-deep/40 md:p-5"
     >
       <div className="flex items-start justify-between gap-2">
         <Icone className="h-5 w-5 text-western-bronze" aria-hidden="true" />
@@ -625,7 +625,7 @@ function Tile({
 
       <div className="mt-4">
         <p
-          className={`text-[28px] font-semibold leading-none tabular-nums ${
+          className={`text-[24px] font-semibold leading-none tabular-nums ${
             desconhecido ? "text-western-stone-warm/40" : "text-western-green-deep"
           }`}
         >
@@ -651,14 +651,14 @@ function Atalho({
   return (
     <Link
       to={to}
-      className="group flex items-start gap-3.5 rounded-2xl border border-western-border-soft bg-white p-5 transition-colors hover:border-western-green-deep/40"
+      className="group flex items-start gap-3.5 rounded-xl border border-western-border-soft bg-white p-5 transition-colors hover:border-western-green-deep/40"
     >
       <span className="mt-0.5 inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-western-paper">
         <Icone className="h-5 w-5 text-western-bronze" aria-hidden="true" />
       </span>
 
       <span className="min-w-0">
-        <span className="flex items-center gap-1.5 text-[17px] font-semibold text-western-green-deep">
+        <span className="flex items-center gap-1.5 text-[16px] font-semibold text-western-green-deep">
           {titulo}
           <ArrowRight
             className="h-4 w-4 flex-shrink-0 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100"

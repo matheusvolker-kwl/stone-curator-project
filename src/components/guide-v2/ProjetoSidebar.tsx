@@ -101,7 +101,7 @@ function PanelBody({
   };
 
   return (
-    <div className="rounded-2xl border border-western-border-soft bg-white overflow-hidden shadow-[0_24px_44px_-32px_hsl(var(--western-stone-dark)/0.35)]">
+    <div className="rounded-xl border border-western-border-soft bg-white overflow-hidden shadow-[0_24px_44px_-32px_hsl(var(--western-stone-dark)/0.35)]">
       <div className="h-[3px] bg-western-gold" />
 
       <div className="p-6 flex flex-col gap-5">
@@ -128,7 +128,7 @@ function PanelBody({
             {pecas.map((p) => (
               <li
                 key={p.id}
-                className="flex justify-between gap-3 font-sans text-[16px] text-western-stone-warm"
+                className="flex justify-between gap-3 font-sans text-[15px] text-western-stone-warm"
               >
                 <span className="truncate">{p.nome}</span>
                 <span className="font-semibold tabular-nums text-western-green-deep flex-shrink-0">
@@ -145,7 +145,7 @@ function PanelBody({
                 {extras.map((e) => (
                   <li
                     key={e.id}
-                    className="flex justify-between gap-3 font-sans text-[16px] text-western-stone-warm"
+                    className="flex justify-between gap-3 font-sans text-[15px] text-western-stone-warm"
                   >
                     <span className="truncate">{e.nome}</span>
                     <span className="font-semibold tabular-nums text-western-green-deep flex-shrink-0">
@@ -161,7 +161,7 @@ function PanelBody({
             <button
               type="button"
               onClick={onResetBase}
-              className="tap-target mt-3 inline-flex items-center font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 hover:text-western-bronze transition-colors"
+              className="tap-target mt-3 inline-flex items-center font-sans text-[15px] font-semibold text-western-green-deep underline underline-offset-4 hover:text-western-bronze transition-colors"
             >
               Voltar à composição original
             </button>
@@ -171,12 +171,12 @@ function PanelBody({
         {isApproved ? (
           <>
             <div className="border-t border-western-border-soft pt-5 space-y-2">
-              <div className="flex justify-between font-sans text-[16px] text-western-stone-warm">
+              <div className="flex justify-between font-sans text-[15px] text-western-stone-warm">
                 <span>Subtotal composição</span>
                 <span className="tabular-nums">{formatPreco(subBase)}</span>
               </div>
               {subExtras > 0 && (
-                <div className="flex justify-between font-sans text-[16px] text-western-stone-warm">
+                <div className="flex justify-between font-sans text-[15px] text-western-stone-warm">
                   <span>Peças adicionais</span>
                   <span className="tabular-nums">{formatPreco(subExtras)}</span>
                 </div>
@@ -248,7 +248,7 @@ function PanelBody({
             type="button"
             onClick={handleSalvar}
             disabled={salvando}
-            className="tap-target self-center font-sans text-[16px] text-western-stone-warm underline underline-offset-4 hover:text-western-green-deep transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="tap-target self-center font-sans text-[15px] text-western-stone-warm underline underline-offset-4 hover:text-western-green-deep transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {salvando ? "Salvando…" : "Salvar projeto e decidir depois"}
           </button>
@@ -300,7 +300,7 @@ export default function ProjetoSidebar(props: Props) {
           >
             <span className="text-left min-w-0">
               <span className="block text-eyebrow">Seu projeto</span>
-              <span className="block font-sans text-[18px] font-semibold tabular-nums text-western-green-deep truncate">
+              <span className="block font-sans text-[17px] font-semibold tabular-nums text-western-green-deep truncate">
                 {isApproved ? formatPreco(total) : "Preço para parceiros"}
               </span>
             </span>

@@ -195,7 +195,7 @@ export default function AccountProfile() {
     return (
       <div>
         <PageHeader eyebrow="Minha conta" titulo="Dados da empresa" />
-        <div className="rounded-2xl border border-western-border-soft bg-white">
+        <div className="rounded-xl border border-western-border-soft bg-white">
           <EstadoCarregando linhas={8} />
         </div>
       </div>
@@ -358,7 +358,7 @@ export default function AccountProfile() {
             value={form.estado}
             onChange={(e) => set("estado", e.target.value)}
             aria-invalid={!!errors.estado}
-            className="h-control w-full rounded-sm border border-western-border-strong bg-white px-3 text-[16px] text-western-green-deep transition-colors focus:border-western-green-deep focus:outline-none"
+            className="h-control w-full rounded-sm border border-western-border-strong bg-white px-3 text-[15px] text-western-green-deep transition-colors focus:border-western-green-deep focus:outline-none"
           >
             <option value="">—</option>
             {UF_LIST.map((uf) => <option key={uf} value={uf}>{uf}</option>)}
@@ -382,12 +382,12 @@ export default function AccountProfile() {
 
       {/* Confirmação: salvar aqui tem consequência comercial. Nunca por acidente. */}
       <AlertDialog open={confirmarOpen} onOpenChange={setConfirmarOpen}>
-        <AlertDialogContent className="rounded-2xl">
+        <AlertDialogContent className="rounded-xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="display-md text-western-green-deep">
               {eraAprovado ? "Isto envia a sua empresa para reanálise" : "Confirmar alterações"}
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-[17px] leading-[1.6] text-western-stone-warm">
+            <AlertDialogDescription className="text-[16px] leading-[1.6] text-western-stone-warm">
               {eraAprovado ? (
                 <>
                   Ao salvar, o seu credenciamento volta para a fila de análise e o{" "}
@@ -421,7 +421,7 @@ export default function AccountProfile() {
 }
 
 const INPUT_CLS =
-  "h-control rounded-sm border-western-border-strong bg-white px-3 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/50 focus-visible:border-western-green-deep focus-visible:ring-0 focus-visible:ring-offset-0";
+  "h-control rounded-sm border-western-border-strong bg-white px-3 text-[15px] text-western-green-deep placeholder:text-western-stone-warm/50 focus-visible:border-western-green-deep focus-visible:ring-0 focus-visible:ring-offset-0";
 
 function Field({
   label, id, error, full, children,

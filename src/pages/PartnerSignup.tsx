@@ -59,7 +59,7 @@ const INITIAL: Form = {
  * de 1.5px — o público 40+ precisa VER o campo. Erro em sans 14px semibold,
  * nunca mono/caixa-alta de 10px. CTA primário é VERDE e full-width no mobile. */
 const CONTROL =
-  "h-control w-full rounded-lg border-[1.5px] bg-western-paper px-4 font-sans text-[16px] md:text-[16px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 transition-colors focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0";
+  "h-control w-full rounded-lg border-[1.5px] bg-western-paper px-4 font-sans text-[15px] md:text-[15px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 transition-colors focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0";
 const CONTROL_OK = "border-western-border-strong focus:border-western-green-deep";
 const CONTROL_ERR = "border-status-error focus:border-status-error";
 
@@ -526,7 +526,7 @@ export default function PartnerSignup() {
                 <div>
                   <FieldLabel htmlFor="instagram" optional>Instagram</FieldLabel>
                   <div className="flex items-stretch h-control overflow-hidden rounded-lg border-[1.5px] border-western-border-strong bg-western-paper transition-colors focus-within:border-western-green-deep">
-                    <span className="px-4 flex items-center font-sans text-[16px] font-medium text-western-stone-warm border-r border-western-border-soft select-none">
+                    <span className="px-4 flex items-center font-sans text-[15px] font-medium text-western-stone-warm border-r border-western-border-soft select-none">
                       @
                     </span>
                     <input
@@ -535,7 +535,7 @@ export default function PartnerSignup() {
                       onChange={(e) => set("instagram", e.target.value.replace(/^@/, ""))}
                       placeholder="seuestudio"
                       autoComplete="off"
-                      className="flex-1 min-w-0 bg-transparent px-4 outline-none font-sans text-[16px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60"
+                      className="flex-1 min-w-0 bg-transparent px-4 outline-none font-sans text-[15px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60"
                     />
                   </div>
                 </div>
@@ -626,7 +626,7 @@ export default function PartnerSignup() {
                     aria-describedby={errors.aceite ? "aceite-error" : undefined}
                     className="mt-0.5 h-6 w-6 flex-shrink-0 rounded-sm accent-western-cta"
                   />
-                  <span className="font-sans text-[16px] leading-relaxed text-western-stone-warm">
+                  <span className="font-sans text-[15px] leading-relaxed text-western-stone-warm">
                     Li e concordo com a{" "}
                     <Link
                       to="/politica-comercial"
@@ -680,7 +680,7 @@ export default function PartnerSignup() {
             </>
           )}
 
-          <p className="font-sans text-[16px] text-western-stone-warm text-center pt-4">
+          <p className="font-sans text-[15px] text-western-stone-warm text-center pt-4">
             Já é parceiro?{" "}
             <Link
               to="/parceiro/login"

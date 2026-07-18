@@ -145,7 +145,7 @@ export default function SocialProof({
                 A seta é a afordância de "tem obra atrás" — visível também no
                 toque (no celular não existe hover para revelar). */}
             <p
-              className={`mt-3 text-center font-sans text-[16px] font-semibold leading-snug ${captionColor} ${
+              className={`mt-3 text-center font-sans text-[15px] font-semibold leading-snug ${captionColor} ${
                 prova ? "transition-colors group-hover:text-western-gold-soft" : ""
               }`}
             >

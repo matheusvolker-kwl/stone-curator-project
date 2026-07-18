@@ -286,7 +286,7 @@ function Navegacao({
                       onClick={onNavegar}
                       aria-current={ativo ? "page" : undefined}
                       className={cn(
-                        "tap-target relative flex items-center gap-3 rounded-lg py-2 pl-4 pr-3 text-[16px] transition-colors",
+                        "tap-target relative flex items-center gap-3 rounded-lg py-2 pl-4 pr-3 text-[15px] transition-colors",
                         ativo
                           ? "bg-western-cream font-semibold text-western-green-deep"
                           : "text-western-stone-dark hover:bg-western-cream/60 hover:text-western-green-deep",
@@ -339,7 +339,7 @@ function Navegacao({
         <Link
           to="/"
           onClick={onNavegar}
-          className="tap-target flex items-center gap-3 rounded-lg px-3 text-[16px] text-western-stone-dark transition-colors hover:bg-western-cream/60 hover:text-western-green-deep"
+          className="tap-target flex items-center gap-3 rounded-lg px-3 text-[15px] text-western-stone-dark transition-colors hover:bg-western-cream/60 hover:text-western-green-deep"
         >
           <ExternalLink className="h-[18px] w-[18px] flex-shrink-0" aria-hidden="true" />
           Ver a loja
@@ -491,7 +491,7 @@ export default function AdminLayout() {
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
             <Link
               to="/"
-              className="tap-target hidden items-center gap-2 rounded-lg px-3 text-[16px] text-western-stone-dark transition-colors hover:bg-western-paper hover:text-western-green-deep sm:inline-flex"
+              className="tap-target hidden items-center gap-2 rounded-lg px-3 text-[15px] text-western-stone-dark transition-colors hover:bg-western-paper hover:text-western-green-deep sm:inline-flex"
             >
               <ExternalLink className="h-[18px] w-[18px]" aria-hidden="true" />
               Ver a loja
@@ -508,7 +508,7 @@ export default function AdminLayout() {
                 {iniciais}
               </span>
               <div className="hidden min-w-0 leading-tight sm:block">
-                <p className="max-w-[180px] truncate text-[16px] font-semibold text-western-green-deep">{nome}</p>
+                <p className="max-w-[180px] truncate text-[15px] font-semibold text-western-green-deep">{nome}</p>
                 <p className="max-w-[180px] truncate text-[14px] text-western-stone-warm">
                   {user?.email ?? "Administrador"}
                 </p>
@@ -518,7 +518,7 @@ export default function AdminLayout() {
             <button
               type="button"
               onClick={sair}
-              className="tap-target inline-flex items-center justify-center gap-2 rounded-lg border border-western-border-strong px-3 text-[16px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
+              className="tap-target inline-flex items-center justify-center gap-2 rounded-lg border border-western-border-strong px-3 text-[15px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
             >
               <LogOut className="h-[18px] w-[18px]" aria-hidden="true" />
               <span className="hidden sm:inline">Sair</span>

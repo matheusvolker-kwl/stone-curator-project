@@ -67,7 +67,7 @@ const schema = z.object({
 });
 
 const CONTROL =
-  "h-control rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-green-deep";
+  "h-control rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 text-[15px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-green-deep";
 const CONTROL_ERR = "border-status-error";
 
 export interface ManualDownloadProps {
@@ -204,7 +204,7 @@ export default function ManualDownload({
           href={manualPageUrl(page)}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex min-h-tap items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep underline-offset-4 hover:underline"
+          className="inline-flex min-h-tap items-center gap-1.5 font-sans text-[15px] font-semibold text-western-green-deep underline-offset-4 hover:underline"
         >
           Abrir no Capítulo {chapter} · {chapterTitle}
           <ExternalLink className="h-4 w-4" aria-hidden="true" />

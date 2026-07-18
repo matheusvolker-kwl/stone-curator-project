@@ -92,7 +92,7 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
           }
         >
           {img && (
-            <figure className="relative m-0 overflow-hidden rounded-2xl border border-western-border-soft bg-western-cream-muted">
+            <figure className="relative m-0 overflow-hidden rounded-xl border border-western-border-soft bg-western-cream-muted">
               <img
                 src={img}
                 alt={`Pessoa de 1,70 m ao lado de ${productTitle} — referência de tamanho real`}
@@ -119,7 +119,7 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
                 <div className="flex flex-wrap items-end gap-x-8 gap-y-5 mb-4">
                   {cells.map((d) => (
                     <div key={d.label} className="flex flex-col leading-none">
-                      <span className="font-sans text-[34px] font-bold tracking-tight tabular-nums text-western-green-deep">
+                      <span className="font-sans text-[30px] font-bold tracking-tight tabular-nums text-western-green-deep">
                         {d.v}
                       </span>
                       <span className="mt-2 font-sans text-[14px] text-western-stone-warm">
@@ -138,9 +138,9 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
                 <div className="flex flex-wrap items-center gap-x-7 gap-y-4">
                   <div>
                     <p className="font-sans text-[14px] text-western-stone-warm mb-1">Western</p>
-                    <p className="font-sans text-[28px] font-bold leading-none tabular-nums text-western-green-deep">
+                    <p className="font-sans text-[24px] font-bold leading-none tabular-nums text-western-green-deep">
                       {peso}
-                      <span className="text-[16px] font-normal text-western-stone-warm ml-1">
+                      <span className="text-[15px] font-normal text-western-stone-warm ml-1">
                         kg
                       </span>
                     </p>
@@ -149,9 +149,9 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
                     <p className="font-sans text-[14px] text-western-stone-warm mb-1 max-w-[24ch]">
                       Pedra natural do mesmo tamanho
                     </p>
-                    <p className="font-sans text-[28px] font-semibold leading-none tabular-nums text-western-stone-warm">
+                    <p className="font-sans text-[24px] font-semibold leading-none tabular-nums text-western-stone-warm">
                       ≈{x10?.toLocaleString("pt-BR")}
-                      <span className="text-[16px] font-normal ml-1">kg</span>
+                      <span className="text-[15px] font-normal ml-1">kg</span>
                     </p>
                   </div>
                   <span className="inline-flex items-center rounded-full border border-western-border-strong bg-white px-4 py-2 font-sans text-[14px] font-semibold text-western-green-deep">
@@ -159,7 +159,7 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
                   </span>
                 </div>
 
-                <p className="mt-6 flex items-center gap-2 font-sans text-[17px] font-semibold text-western-green-deep">
+                <p className="mt-6 flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep">
                   <svg
                     width="20"
                     height="20"
@@ -184,7 +184,7 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
                 <p className="mt-4">
                   <Link
                     to="/a-pedra"
-                    className="tap-target inline-flex items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+                    className="tap-target inline-flex items-center gap-1.5 font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
                   >
                     Por que ela pesa 10% →
                   </Link>

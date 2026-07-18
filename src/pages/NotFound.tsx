@@ -33,7 +33,7 @@ export default function NotFound() {
         </h1>
         <p className="text-body mt-5">
           O caminho{" "}
-          <code className="break-all rounded-sm border border-western-border-soft bg-western-paper px-1.5 py-0.5 font-sans text-[16px] text-western-green-deep">
+          <code className="break-all rounded-sm border border-western-border-soft bg-western-paper px-1.5 py-0.5 font-sans text-[15px] text-western-green-deep">
             {location.pathname}
           </code>{" "}
           não foi encontrado. Talvez você esteja procurando por:
@@ -45,7 +45,7 @@ export default function NotFound() {
             <li key={s.to} className="border-b border-western-border-soft last:border-b-0">
               <Link
                 to={s.to}
-                className="tap-target group flex items-center justify-between gap-4 px-5 py-4 font-sans text-[20px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper hover:text-western-bronze"
+                className="tap-target group flex items-center justify-between gap-4 px-5 py-4 font-sans text-[18px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper hover:text-western-bronze"
               >
                 <span>{s.label}</span>
                 <ArrowRight

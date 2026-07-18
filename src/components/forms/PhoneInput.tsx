@@ -36,7 +36,7 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(function PhoneInput(
             : "border-western-border-strong focus-within:border-western-green-deep"
         } ${className ?? ""}`}
       >
-        <span className="px-4 flex items-center font-sans text-[16px] font-medium text-western-stone-warm border-r border-western-border-soft select-none">
+        <span className="px-4 flex items-center font-sans text-[15px] font-medium text-western-stone-warm border-r border-western-border-soft select-none">
           +55
         </span>
         <IMaskInput
@@ -62,7 +62,7 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(function PhoneInput(
           readOnly={readOnly}
           aria-invalid={!!error}
           aria-describedby={describedBy}
-          className={`flex-1 min-w-0 bg-transparent px-4 outline-none font-sans text-[16px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 ${readOnly ? "opacity-70 cursor-not-allowed" : ""}`}
+          className={`flex-1 min-w-0 bg-transparent px-4 outline-none font-sans text-[15px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 ${readOnly ? "opacity-70 cursor-not-allowed" : ""}`}
         />
       </div>
       {error && (

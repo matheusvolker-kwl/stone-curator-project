@@ -82,7 +82,7 @@ export default function ObraPage() {
                 type="button"
                 onClick={() => setZoom(ativa)}
                 aria-label={`Ampliar foto de ${obra.titulo}`}
-                className="group frame-product rounded-2xl overflow-hidden aspect-[4/3] block w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2"
+                className="group frame-product rounded-xl overflow-hidden aspect-[4/3] block w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-offset-2"
               >
                 <img
                   src={galeria[ativa] ?? OBRA_COVER[slug]}
@@ -154,10 +154,10 @@ export default function ObraPage() {
               <Reveal variant="fade-up">
                 <Accordion type="single" collapsible className="mt-8 border-t border-b border-western-border-soft">
                   <AccordionItem value="mente" className="border-0">
-                    <AccordionTrigger className="text-left font-sans font-semibold text-[17px] text-western-green-deep hover:no-underline py-5">
+                    <AccordionTrigger className="text-left font-sans font-semibold text-[16px] text-western-green-deep hover:no-underline py-5">
                       A mente do criador — como esta obra foi pensada
                     </AccordionTrigger>
-                    <AccordionContent className="text-western-stone-warm text-[16px] leading-[1.65] pb-6 max-w-[64ch]">
+                    <AccordionContent className="text-western-stone-warm text-[15px] leading-[1.65] pb-6 max-w-[64ch]">
                       {obra.menteDoCriador}
                     </AccordionContent>
                   </AccordionItem>
@@ -199,12 +199,12 @@ export default function ObraPage() {
                         {s.handle ? (
                           <Link
                             to={`/produtos/${s.handle}`}
-                            className="font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-bronze hover:underline underline-offset-4 transition-colors"
+                            className="font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-bronze hover:underline underline-offset-4 transition-colors"
                           >
                             {s.nome}
                           </Link>
                         ) : (
-                          <span className="font-sans text-[16px] font-semibold text-western-green-deep">
+                          <span className="font-sans text-[15px] font-semibold text-western-green-deep">
                             {s.nome}
                           </span>
                         )}

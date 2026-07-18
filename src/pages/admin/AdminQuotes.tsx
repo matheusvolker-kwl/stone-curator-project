@@ -268,7 +268,7 @@ export default function AdminQuotes() {
         numerica: true,
         sortable: true,
         sortValue: (r) => numeroDe(r),
-        render: (r) => <span className="text-[16px] font-semibold tabular-nums">{numeroDe(r)}</span>,
+        render: (r) => <span className="text-[15px] font-semibold tabular-nums">{numeroDe(r)}</span>,
       },
       {
         key: "cliente",
@@ -382,7 +382,7 @@ export default function AdminQuotes() {
             onChange={(e) => setQ(e.target.value)}
             placeholder="Buscar nome, empresa, e-mail, nº…"
             aria-label="Buscar orçamentos"
-            className="h-control rounded-sm border-western-border-strong bg-white pl-11 text-[16px] placeholder:text-western-stone-warm/70"
+            className="h-control rounded-sm border-western-border-strong bg-white pl-11 text-[15px] placeholder:text-western-stone-warm/70"
           />
         </div>
       </div>
@@ -425,7 +425,7 @@ export default function AdminQuotes() {
                 type="button"
                 onClick={() => setConfirmarExclusao(true)}
                 disabled={arquivando || excluindo}
-                className="tap-target inline-flex items-center justify-center gap-2 rounded-lg border border-status-error/50 px-4 text-[16px] font-semibold text-status-error transition-colors hover:bg-status-error/10 disabled:opacity-45"
+                className="tap-target inline-flex items-center justify-center gap-2 rounded-lg border border-status-error/50 px-4 text-[15px] font-semibold text-status-error transition-colors hover:bg-status-error/10 disabled:opacity-45"
               >
                 {excluindo ? (
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
