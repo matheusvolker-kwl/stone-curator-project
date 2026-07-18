@@ -378,9 +378,9 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         : "border-transparent text-western-green-deep hover:border-western-gold"
     }`;
 
-  /* Linha do drawer — 56px de alvo, hairline, chevron. */
+  /* Linha do drawer — Balcão: 48px de alvo (≥ tap-min), rótulo 16px. */
   const rowCls =
-    "flex items-center justify-between gap-3 w-full min-h-[56px] py-2 text-left border-b border-western-border-soft text-[17px] font-medium text-western-green-deep hover:text-western-cta transition-colors";
+    "flex items-center justify-between gap-3 w-full min-h-[48px] py-1.5 text-left border-b border-western-border-soft text-[16px] font-medium text-western-green-deep hover:text-western-cta transition-colors";
 
   const drawerLink = (to: string, label: string, sub?: string) => (
     <Link key={`${to}-${label}`} to={to} className={rowCls} onClick={() => setMenuOpen(false)}>
@@ -664,11 +664,11 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                     <Link
                       to="/minha-conta"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-3 w-full min-h-[64px] px-4 rounded-lg bg-western-paper border border-western-border-soft hover:border-western-cta transition-colors"
+                      className="flex items-center gap-3 w-full min-h-[56px] px-4 rounded-lg bg-western-paper border border-western-border-soft hover:border-western-cta transition-colors"
                     >
                       <User className="h-6 w-6 shrink-0 text-western-cta" strokeWidth={1.75} />
                       <span className="min-w-0 flex-1">
-                        <span className="block text-[17px] font-semibold text-western-green-deep">
+                        <span className="block text-[16px] font-semibold text-western-green-deep">
                           Minha conta
                         </span>
                         <span className="block text-[14px] font-normal text-western-stone-warm truncate">
@@ -705,7 +705,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                     <Link
                       to="/parceiro/cadastro"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center justify-center w-full min-h-control px-5 rounded-lg bg-western-cta text-western-cream text-[17px] font-semibold hover:bg-western-green-deep transition-colors"
+                      className="flex items-center justify-center w-full min-h-control px-5 rounded-lg bg-western-cta text-western-cream text-[16px] font-semibold hover:bg-western-green-deep transition-colors"
                     >
                       Seja parceiro
                     </Link>
@@ -720,7 +720,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               </div>
 
               {/* 1. VENDER */}
-              <p className="text-eyebrow mt-7 mb-1">Comprar</p>
+              <p className="text-eyebrow mt-5 mb-1">Comprar</p>
               {/* "8 linhas" é a CONTAGEM OFICIAL (decisão do dono, 2026-07-17):
                   é o que o hero diz e o que a página /linhas mostra em cards.
                   O site dizia 8, 9 e 11 em três lugares — acabou. */}
@@ -738,7 +738,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               {drawerLink("/como-comprar", "Como comprar", "Preço de parceiro em 4 passos")}
 
               {/* 2. CONFIAR */}
-              <p className="text-eyebrow mt-7 mb-1">Decidir</p>
+              <p className="text-eyebrow mt-5 mb-1">Decidir</p>
               {drawerLink("/guia-de-composicao", "Guia de composição", "Monte seu projeto em 3 passos")}
               {drawerLink("/obras", "Obras", "Obras e projetos reais")}
 
@@ -747,15 +747,15 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                   COM CNPJ procurando projeto 3D pulava o grupo inteiro. Decisão
                   das duas portas (dono, 2026-07-17): /contrate-a-western é a
                   porta de serviços B2B; /para-sua-casa é a B2C. */}
-              <p className="text-eyebrow mt-7 mb-1">Serviços</p>
+              <p className="text-eyebrow mt-5 mb-1">Serviços</p>
               {drawerLink("/contrate-a-western", "Contrate a Western", "Projeto 3D, consultoria e execução — com o seu projeto")}
 
               {/* 3. CAPTAR — a rampa B2C. Rotulada pela PERGUNTA do visitante
                   ("não tenho CNPJ"), para o B2B pular e o B2C achar. */}
-              <p className="text-eyebrow mt-7 mb-1">Sem CNPJ?</p>
+              <p className="text-eyebrow mt-5 mb-1">Sem CNPJ?</p>
               {drawerLink("/para-sua-casa", "Para sua casa", "A Western executa pra você")}
 
-              <p className="text-eyebrow mt-7 mb-1">Ateliê</p>
+              <p className="text-eyebrow mt-5 mb-1">Ateliê</p>
               {/* "A pedra" vem ANTES de "Sobre": quem chega frio pergunta o que
                   é a peça antes de perguntar quem a fabrica. Desde 2026-07-17
                   ela também está no nav principal (decisão do dono) — aqui é o
@@ -780,7 +780,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               {drawerLink("/contato", "Contato")}
               {drawerLink("/faq", "Perguntas frequentes")}
 
-              <p className="text-eyebrow mt-7 mb-1">Políticas</p>
+              <p className="text-eyebrow mt-5 mb-1">Políticas</p>
               {drawerLink("/politica-comercial", "Política comercial e de entrega")}
               {drawerLink("/trocas-e-avarias", "Trocas e avarias")}
               {drawerLink("/privacidade", "Privacidade")}

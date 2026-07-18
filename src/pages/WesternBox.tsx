@@ -469,7 +469,7 @@ export default function WesternBox() {
       <ProductTop topBuyRef={topBuyRef} />
 
       {/* 2. POR QUE EXISTE */}
-      <section className="section surface-ivory">
+      <section className="py-12 md:py-16 surface-ivory">
         <div className="container-western">
           <Reveal variant="fade-up" duration={500}>
             <p className="text-eyebrow">Por que existe</p>
@@ -500,7 +500,7 @@ export default function WesternBox() {
       </section>
 
       {/* 3. O QUE ACOMPANHA */}
-      <section className="section surface-paper">
+      <section className="py-12 md:py-16 surface-paper">
         <div className="container-western">
           <div className="grid items-center gap-10 md:grid-cols-12 md:gap-16">
             <div className="md:col-span-6">
@@ -518,7 +518,7 @@ export default function WesternBox() {
                 <p className="text-eyebrow">O que acompanha</p>
               </Reveal>
               <Reveal variant="fade-up" delay={80} duration={500}>
-                <h2 className="display-lg mt-4 text-western-green-deep">
+                <h2 className="display-md mt-3 text-western-green-deep">
                   Tudo para especificar com segurança.
                 </h2>
               </Reveal>
@@ -543,11 +543,11 @@ export default function WesternBox() {
       </section>
 
       {/* 4. OS QUATRO ACABAMENTOS */}
-      <section className="section surface-ivory">
+      <section className="py-12 md:py-16 surface-ivory">
         <div className="container-western">
           <div className="mb-10 max-w-2xl md:mb-14">
             <p className="text-eyebrow">Os quatro acabamentos</p>
-            <h2 className="display-lg mt-4 text-western-green-deep">
+            <h2 className="display-md mt-3 text-western-green-deep">
               A assinatura Western, em quatro temperamentos.
             </h2>
           </div>
@@ -676,11 +676,11 @@ export default function WesternBox() {
       </section>
 
       {/* 7. FERRAMENTA DE ESPECIFICAÇÃO */}
-      <section className="section surface-paper">
+      <section className="py-12 md:py-16 surface-paper">
         <div className="container-western grid gap-10 md:grid-cols-12 md:gap-14">
           <div className="md:col-span-5">
             <p className="text-eyebrow">Mais do que amostras</p>
-            <h2 className="display-lg mt-4 text-western-green-deep">
+            <h2 className="display-md mt-3 text-western-green-deep">
               Uma ferramenta de especificação.
             </h2>
           </div>
@@ -703,7 +703,7 @@ export default function WesternBox() {
       </section>
 
       {/* 8. CATÁLOGO */}
-      <section className="section surface-ivory">
+      <section className="py-12 md:py-16 surface-ivory">
         <div className="container-western">
           <div className="grid items-center gap-10 md:grid-cols-12 md:gap-16">
             <div className="md:col-span-6 md:order-2">
@@ -718,7 +718,7 @@ export default function WesternBox() {
             </div>
             <div className="md:col-span-6 md:order-1">
               <p className="text-eyebrow">Catálogo Western Pools</p>
-              <h2 className="display-lg mt-4 text-western-green-deep">
+              <h2 className="display-md mt-3 text-western-green-deep">
                 Inspiração e técnica, em um único material.
               </h2>
               <p className="text-body mt-6 max-w-md">
@@ -736,7 +736,7 @@ export default function WesternBox() {
       </section>
 
       {/* 9. CASHBACK 100% — faixa escura pontual */}
-      <section className="section surface-forest relative overflow-hidden">
+      <section className="py-12 md:py-16 surface-forest relative overflow-hidden">
         <img
           src={lifestyle}
           alt=""
@@ -752,7 +752,7 @@ export default function WesternBox() {
           <p className="mt-4 font-display text-[clamp(3rem,8vw,3.5rem)] leading-none tabular-nums tracking-[-0.01em] text-western-gold">
             100<span className="text-western-gold-soft">%</span>
           </p>
-          <h2 className="display-lg mt-4 max-w-xl text-western-cream">
+          <h2 className="display-md mt-3 max-w-xl text-western-cream">
             de volta como crédito na sua primeira compra.
           </h2>
           <p className="mt-6 max-w-xl font-sans text-[17px] leading-[1.6] text-western-cream/85">
@@ -763,11 +763,11 @@ export default function WesternBox() {
       </section>
 
       {/* 10. PARA QUEM É */}
-      <section className="section surface-paper">
+      <section className="py-12 md:py-16 surface-paper">
         <div className="container-western">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-eyebrow">Para quem é</p>
-            <h2 className="display-lg mt-4 text-western-green-deep">
+            <h2 className="display-md mt-3 text-western-green-deep">
               Feita para quem decide com critério.
             </h2>
           </div>
@@ -788,11 +788,11 @@ export default function WesternBox() {
       </section>
 
       {/* 11. ENVIO, CONTEÚDO E CASHBACK — acordeão */}
-      <section className="section surface-ivory border-t border-western-border-soft">
+      <section className="py-12 md:py-16 surface-ivory border-t border-western-border-soft">
         <div className="container-western grid gap-10 md:grid-cols-12 md:gap-16">
           <div className="md:col-span-5">
             <p className="text-eyebrow">Sem letras miúdas</p>
-            <h2 className="display-lg mt-4 text-western-green-deep">
+            <h2 className="display-md mt-3 text-western-green-deep">
               Envio, conteúdo e cashback.
             </h2>
             <div className="mt-8 hidden aspect-[4/5] overflow-hidden rounded-2xl border border-western-border-soft md:block">
