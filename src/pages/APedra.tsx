@@ -4,10 +4,12 @@ import { ArrowRight } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
 
-/* Hero = MACRO DA PEDRA (dono, 2026-07-18): a obra-real de antes não comunicava
-   o assunto da página (a pedra) e, com dois scrims empilhados, mal se via.
-   A textura em close É o argumento de "É pedra de verdade". */
-import heroPedra from "@/assets/projetos-western/02_pedra-detalhe.webp";
+/* Hero = A PEDRA em close, na borda da piscina (dono, 2026-07-18). A obra-real
+   de antes não comunicava o assunto da página; a primeira troca (02_pedra-detalhe)
+   tinha só 733px e borrava esticada. Esta vem do molde-macro upscalado por IA
+   (1600×1200 → 4096×3072, ByteDance) e recortado em faixa wide: 2400×1348.
+   A peça É o argumento de "É pedra de verdade". */
+import heroPedra from "@/assets/a-pedra/hero-pedra-macro.webp";
 import moldeMacro from "@/assets/a-pedra/molde-macro-close.webp";
 import cascaInclinada from "@/assets/a-pedra/casca-inclinada.webp";
 import ocoGas2009 from "@/assets/a-pedra/oco-gas-2009.webp";
@@ -133,7 +135,7 @@ export default function APedra() {
       <section className="relative h-[70vh] md:h-[56vh] w-full overflow-hidden">
         <img
           src={heroPedra}
-          alt="Macro da pedra Western: laminação, grão e mica herdados da rocha real."
+          alt="Pedra Western na borda de uma piscina, sobre areia clara — textura e grão herdados da rocha real."
           loading="eager"
           fetchPriority="high"
           decoding="async"
@@ -148,7 +150,7 @@ export default function APedra() {
           aria-hidden
           style={{
             background:
-              "linear-gradient(180deg, transparent 34%, hsl(var(--western-green-deep) / 0.45) 70%, hsl(var(--western-green-deep) / 0.88) 100%)",
+              "linear-gradient(180deg, transparent 28%, hsl(var(--western-green-deep) / 0.58) 58%, hsl(var(--western-green-deep) / 0.93) 100%)",
           }}
         />
         <div
@@ -156,7 +158,7 @@ export default function APedra() {
           aria-hidden
           style={{
             background:
-              "linear-gradient(100deg, hsl(var(--western-green-deep) / 0.55) 0%, hsl(var(--western-green-deep) / 0.22) 45%, transparent 75%)",
+              "linear-gradient(100deg, hsl(var(--western-green-deep) / 0.80) 0%, hsl(var(--western-green-deep) / 0.42) 42%, transparent 72%)",
           }}
         />
         <div className="container-western relative h-full flex flex-col justify-end pb-10">
@@ -165,7 +167,10 @@ export default function APedra() {
             <h1 className="display-xl text-western-cream">
               É pedra de verdade.
               <br />
-              <span className="inline-block text-western-bronze [text-wrap:balance]">
+              {/* gold-soft, NÃO bronze: sobre foto/verde o acento do DS é o
+                  dourado claro (o eyebrow acima já usa). O bronze é acento de
+                  fundo CLARO — sobre a pedra clara ficava ilegível (dono). */}
+              <span className="inline-block text-western-gold-soft [text-wrap:balance]">
                 Leve o bastante para carregar na mão.
               </span>
             </h1>
