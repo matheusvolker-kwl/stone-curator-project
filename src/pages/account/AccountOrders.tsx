@@ -805,9 +805,16 @@ export default function AccountOrders() {
   return (
     <div>
       <PageHeader
-        eyebrow="Pedidos"
+        eyebrow="Meus pedidos"
         titulo="Produção e entrega"
         subtitulo="Acompanhe cada pedido em tempo real — fila do ateliê, produção, conferência e liberação para retirada ou envio."
+        /* Rastreio saiu do menu (arquitetura 2026-07-18) e virou sub-destino
+           daqui — códigos e transportadora a um clique de quem acompanha. */
+        acao={
+          <Link to="/minha-conta/rastreio" className="btn-outline-forest tap-target">
+            Rastreio e códigos
+          </Link>
+        }
       />
 
       <Tabs

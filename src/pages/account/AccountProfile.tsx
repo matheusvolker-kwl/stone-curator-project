@@ -248,9 +248,15 @@ export default function AccountProfile() {
   return (
     <div>
       <PageHeader
-        eyebrow="Minha conta"
+        eyebrow="Meu perfil"
         titulo="Dados da empresa"
         subtitulo="É com estes dados que emitimos nota, calculamos o frete e liberamos o seu preço de parceiro."
+        /* Preferências saiu do menu (arquitetura 2026-07-18) e mora aqui dentro. */
+        acao={
+          <Link to="/minha-conta/preferencias" className="btn-outline-forest tap-target">
+            Preferências
+          </Link>
+        }
       />
 
       {eraAprovado && (

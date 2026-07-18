@@ -309,8 +309,8 @@ export default function AccountOrcamentos() {
         /* UMA ação primária por tela: no vazio, quem leva o CTA é o estado vazio. */
         acao={
           !carregando && !erro && items.length > 0 ? (
-            <Link to="/guia-de-composicao" className="btn-primary tap-target">
-              Montar nova composição
+            <Link to="/linhas" className="btn-primary tap-target">
+              Ver produtos
             </Link>
           ) : undefined
         }
@@ -326,8 +326,8 @@ export default function AccountOrcamentos() {
           titulo="Nenhum orçamento ainda"
           mensagem="Monte o carrinho e envie para orçamento — a conversa com o ateliê e o PDF aparecem aqui automaticamente."
           acao={
-            <Link to="/produtos" className="btn-primary tap-target">
-              Ver o catálogo
+            <Link to="/linhas" className="btn-primary tap-target">
+              Ver produtos
             </Link>
           }
         />

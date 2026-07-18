@@ -507,7 +507,7 @@ export default function ProductPage() {
                     <span>Garantia {BUSINESS.garantiaLabel}</span>
                     <span className="opacity-40">·</span>
                     <span>
-                      Instala fácil — nível {installationConfig.level} ·{" "}
+                      Instalação guiada, passo a passo ·{" "}
                       <a
                         href="#instalacao"
                         onClick={(e) => {

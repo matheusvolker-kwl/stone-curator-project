@@ -4,7 +4,7 @@ import {
   LayoutDashboard,
   User,
   ShoppingBag,
-  Truck,
+  Heart,
   FileStack,
   LogOut,
   ShieldCheck,
@@ -31,14 +31,15 @@ import { BUSINESS } from "@/config/business";
  * "Tentar de novo", nunca um silencioso "cadastro não localizado".
  */
 
-// Itens visíveis no menu do cliente. A lógica de tier/desconto/orçamentos/
-// sketches/favoritos/amostras/preferências continua existindo (rotas ativas e
-// tabelas intocadas) — apenas escondemos do menu enquanto o foco é o pedido.
+// Menu do cliente (arquitetura aprovada pelo dono, 2026-07-18): um substantivo
+// por tela. Rastreio virou sub-destino de Meus pedidos (link no cabeçalho da
+// página); Preferências mora dentro de Meu perfil; Sketches/Amostras foram
+// aposentadas; Favoritos volta ao menu — é o "guardar pra depois" oficial.
 const items = [
   { to: "/minha-conta", label: "Visão geral", icon: LayoutDashboard, end: true },
-  { to: "/minha-conta/pedidos", label: "Meus pedidos", icon: ShoppingBag },
-  { to: "/minha-conta/rastreio", label: "Rastreio", icon: Truck },
   { to: "/minha-conta/orcamentos", label: "Meus orçamentos", icon: FileStack },
+  { to: "/minha-conta/pedidos", label: "Meus pedidos", icon: ShoppingBag },
+  { to: "/minha-conta/favoritos", label: "Favoritos", icon: Heart },
   { to: "/minha-conta/perfil", label: "Meu perfil", icon: User },
 ];
 

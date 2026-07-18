@@ -52,9 +52,9 @@ const AccountIndex = lazy(() => import("./pages/account/AccountIndex"));
 const AccountProfile = lazy(() => import("./pages/account/AccountProfile"));
 
 const AccountOrders = lazy(() => import("./pages/account/AccountOrders"));
-const AccountSketches = lazy(() => import("./pages/account/AccountSketches"));
+
 const AccountFavorites = lazy(() => import("./pages/account/AccountFavorites"));
-const AccountSamples = lazy(() => import("./pages/account/AccountSamples"));
+
 const AccountPreferences = lazy(() => import("./pages/account/AccountPreferences"));
 const AccountTracking = lazy(() => import("./pages/account/AccountTracking"));
 const AccountOrcamentos = lazy(() => import("./pages/account/AccountOrcamentos"));
@@ -63,6 +63,8 @@ const Inspiracoes = lazy(() => import("./pages/Inspiracoes.tsx"));
 const ObraPage = lazy(() => import("./pages/ObraPage.tsx"));
 const ComoComprar = lazy(() => import("./pages/ComoComprar.tsx"));
 const ParaSuaCasa = lazy(() => import("./pages/ParaSuaCasa.tsx"));
+// LAB local (não publicar): comparação de versões do abaixo-da-compra da PDP
+const LabPdp = lazy(() => import("./pages/LabPdp.tsx"));
 const Carrinho = lazy(() => import("./pages/Carrinho.tsx"));
 const Linhas = lazy(() => import("./pages/Linhas.tsx"));
 const LinhaPage = lazy(() => import("./pages/LinhaPage.tsx"));
@@ -193,7 +195,7 @@ const App = () => (
                     <Route path="/conjuntos/:handle" element={<ConjuntoPage />} />
                     <Route path="/produtos" element={<Produtos />} />
                     <Route path="/produtos/:handle" element={<ProductPage />} />
-                    <Route path="/lab/produtos/:handle" element={<LabProductRedirect />} />
+                    <Route path="/lab/produtos/:handle" element={<LabProductRedirect />} />
                     <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
                     <Route path="/sobre" element={<About />} />
                     <Route path="/a-pedra" element={<APedra />} />
@@ -223,9 +225,10 @@ const App = () => (
                       <Route path="rastreio" element={<AccountTracking />} />
                       {/* Fundida em /minha-conta/orcamentos (2026-07-18): eram duas telas para o mesmo evento */}
                       <Route path="composicoes" element={<Navigate to="/minha-conta/orcamentos" replace />} />
-                      <Route path="sketches" element={<AccountSketches />} />
+                      {/* Aposentadas (2026-07-18, dono): sem usuário nem admin */}
+                      <Route path="sketches" element={<Navigate to="/minha-conta" replace />} />
                       <Route path="favoritos" element={<AccountFavorites />} />
-                      <Route path="amostras" element={<AccountSamples />} />
+                      <Route path="amostras" element={<Navigate to="/minha-conta" replace />} />
                       <Route path="preferencias" element={<AccountPreferences />} />
                     </Route>
                     <Route

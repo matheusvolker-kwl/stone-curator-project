@@ -131,17 +131,16 @@ export function InstallationSection({
           <div className="mt-10 grid gap-10 md:grid-cols-12 md:gap-12">
             {/* Coluna esquerda — Selo nível + fatos + reassurance */}
             <div className="space-y-8 md:col-span-5">
-              {/* Selo de nível */}
+              {/* Tipo de instalação — SEM escala de nível (dono, 2026-07-18):
+                  "nível 4 de 4" sugeria dificuldade a quem não conhece a régua.
+                  O que importa: o tipo de sistema e o suporte que acompanha. */}
               <div className="rounded-lg border border-western-border-soft bg-western-cream p-5">
-                <p className="text-sublabel mb-3">Nível de instalação</p>
-                <div className="flex items-center justify-between gap-4">
-                  <LevelBars level={level} />
-                  <span className="font-sans text-[14px] font-semibold tabular-nums text-western-stone-warm">
-                    {level} de 4
-                  </span>
-                </div>
-                <p className="mt-3 font-sans text-[17px] font-semibold text-western-green-deep">
+                <p className="text-sublabel mb-2">Tipo de instalação</p>
+                <p className="font-sans text-[17px] font-semibold text-western-green-deep">
                   {levelLabel}
+                </p>
+                <p className="text-body mt-2 text-[15px]">
+                  Manual passo a passo incluso — e o time Western acompanha quando precisar.
                 </p>
               </div>
 
