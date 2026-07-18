@@ -2,13 +2,22 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { conjuntoComposicao } from "@/data/conjuntoComposicao";
 import { guideMap } from "@/data/guideMap";
+import {
+  usageForCollection,
+  usageReframe,
+  PROJETO_SCENES,
+  PROJETO_ORDER,
+} from "@/lib/usage/scenes";
 
 /**
- * "Uma peça não faz uma cena" — bloco de composição da PDP (DS §11).
- * O produto da Western é a COMPOSIÇÃO; a peça é ingrediente. Este bloco dá o
- * próximo passo por PAPEL (destaque/volume/preenchimento/…): receita
- * complementar em linguagem humana + guia + os conjuntos prontos em que a
- * peça aparece. Guardrail anti-poluição: UM bloco, UM próximo passo.
+ * "ONDE USAR & COMPOSIÇÃO" — o FECHO da PDP (fusão pedida pelo dono, 18/07).
+ * "Onde usar" e "Uma peça não faz uma cena" falavam quase da mesma coisa em
+ * duas seções com meia página vazia cada. Agora é UMA seção, por último de
+ * propósito: os dois assuntos têm botões que tiram o cliente da PDP (obras,
+ * guia, conjuntos) — expandir é o passo DEPOIS de decidir, não antes.
+ *
+ * Esquerda = onde a peça vai bem (cenas + obras reais). Direita = com quem ela
+ * vai (papel na cena, receita humana, conjuntos prontos). DS §11.
  */
 
 type Papel =
@@ -32,16 +41,15 @@ function papelDaLinha(collectionHandle?: string): Papel {
 }
 
 const PAPEL_LABEL: Record<Papel, string> = {
-  destaque: "Destaque da cena",
-  volume: "Volume da cena",
-  preenchimento: "Preenchimento da cena",
-  borda: "Borda da cena",
-  revestimento: "Revestimento da cena",
-  piso: "Piso da cena",
-  funcional: "Peça funcional",
+  destaque: "destaque da cena",
+  volume: "volume da cena",
+  preenchimento: "preenchimento da cena",
+  borda: "borda da cena",
+  revestimento: "revestimento da cena",
+  piso: "piso da cena",
+  funcional: "peça funcional",
 };
 
-/* Receita complementar em linguagem humana (nunca "7–11 peças"). */
 const RECEITA: Record<Papel, string> = {
   destaque:
     "Ela é a âncora — o olho chega primeiro nela. Complete a cena com 2 ou 3 pedras médias fazendo volume e 4 a 6 pequenas costurando o caminho da água.",
@@ -97,56 +105,85 @@ export default function ComposicaoCena({
   collectionHandle?: string;
 }) {
   const papel = papelDaLinha(collectionHandle);
+  const usage = usageForCollection(collectionHandle ?? undefined);
+  const projetos = usage ? PROJETO_ORDER.filter((t) => usage.projetos.includes(t)) : [];
   const conjuntos = Object.entries(conjuntoComposicao)
     .filter(([, pecas]) => pecas.some((p) => p.handle === productHandle))
     .map(([handle]) => handle)
-    .slice(0, 4);
+    .slice(0, 3);
 
-  /* Ênfase por papel (DS §11): quem preenche/dá volume compra MAIS certo em
-     composição (guia primário); destaque/revestimento seguram-se sozinhos
-     (guia como caminho secundário, sem roubar o CTA de compra). */
   const guiaPrimario = papel === "volume" || papel === "preenchimento" || papel === "borda";
 
   return (
     <section
-      className="surface-paper section border-t border-western-border-soft"
-      aria-label="Composição da cena"
+      className="surface-ivory section border-t border-western-border-soft"
+      aria-label={`Onde usar e composição — ${productTitle}`}
     >
       <div className="container-western">
-        <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-7">
-            <p className="text-eyebrow mb-3">Composição</p>
-            <h2 className="display-md text-western-green-deep">Uma peça não faz uma cena.</h2>
-            <p className="text-body mt-4 max-w-[54ch]">{RECEITA[papel]}</p>
-            <p className="text-meta mt-4">
-              {productTitle} · papel na cena: {PAPEL_LABEL[papel].toLowerCase()}
-            </p>
+        <header className="max-w-2xl">
+          <p className="text-eyebrow mb-3">Onde usar & composição</p>
+          <h2 className="display-lg text-western-green-deep">
+            Onde esta peça vai bem — e com quem.
+          </h2>
+        </header>
 
-            <div className="mt-7 flex flex-col sm:flex-row sm:items-center gap-4">
-              <Link
-                to="/guia-de-composicao"
-                className={`${guiaPrimario ? "btn-primary" : "btn-outline-forest"} w-full sm:w-auto`}
-              >
-                Montar uma composição com esta peça
-                <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
-              </Link>
-            </div>
+        <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16">
+          {/* ESQUERDA — onde a peça vai (cenas, obras reais) */}
+          <div>
+            {usage && <p className="text-body max-w-[56ch]">{usageReframe(usage.agua)}</p>}
+            {usage && usage.tambem.length > 0 && (
+              <p className="text-body mt-4 max-w-[56ch]">
+                <span className="font-semibold text-western-green-deep">Também fica lindo em: </span>
+                {usage.tambem.join(" · ")}.
+              </p>
+            )}
+            {projetos.length > 0 && (
+              <div className="mt-6">
+                <p className="text-eyebrow mb-3">Ver projetos reais</p>
+                <div className="flex flex-wrap gap-3">
+                  {projetos.map((t) => {
+                    const s = PROJETO_SCENES[t];
+                    const Icon = s.icon;
+                    return (
+                      <Link
+                        key={t}
+                        to={`/obras?seg=${t}`}
+                        aria-label={`Ver obras de ${s.label.toLowerCase()}`}
+                        className="group tap-target inline-flex items-center gap-2.5 rounded-full border border-western-border-strong bg-white px-5 text-[16px] font-semibold text-western-green-deep transition-colors hover:border-western-green-deep hover:bg-western-paper"
+                      >
+                        <Icon className="h-5 w-5 text-western-cta" aria-hidden="true" />
+                        {s.label}
+                        <ArrowRight
+                          className="h-4 w-4 text-western-bronze transition-transform motion-safe:group-hover:translate-x-0.5"
+                          aria-hidden="true"
+                        />
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
-          {conjuntos.length > 0 && (
-            <div className="lg:col-span-5">
-              <p className="text-eyebrow mb-4">Aparece nestes conjuntos</p>
-              <ul className="space-y-3">
+          {/* DIREITA — com quem ela vai (papel, receita, conjuntos) */}
+          <div>
+            <p className="text-body max-w-[54ch]">{RECEITA[papel]}</p>
+            <p className="text-meta mt-3">
+              {productTitle} · papel na cena: {PAPEL_LABEL[papel]}
+            </p>
+
+            {conjuntos.length > 0 && (
+              <ul className="mt-6 space-y-3">
                 {conjuntos.map((h) => {
                   const info = CONJUNTO_LABEL[h];
                   return (
                     <li key={h}>
                       <Link
                         to={`/conjuntos/${h}`}
-                        className="group tap-target flex items-center justify-between gap-4 rounded-xl border border-western-border-soft bg-white px-5 py-4 transition-colors hover:border-western-border-strong"
+                        className="group tap-target flex items-center justify-between gap-4 rounded-xl border border-western-border-soft bg-white px-5 py-3.5 transition-colors hover:border-western-border-strong"
                       >
                         <span>
-                          <span className="block font-sans text-[17px] font-semibold text-western-green-deep">
+                          <span className="block font-sans text-[16px] font-semibold text-western-green-deep">
                             {info?.nome ?? h.replace(/^conjunto-/, "").replace(/-/g, " ")}
                           </span>
                           <span className="block text-meta mt-0.5">
@@ -164,8 +201,16 @@ export default function ComposicaoCena({
                   );
                 })}
               </ul>
-            </div>
-          )}
+            )}
+
+            <Link
+              to="/guia-de-composicao"
+              className={`${guiaPrimario ? "btn-primary" : "btn-outline-forest"} mt-6 w-full sm:w-auto`}
+            >
+              Montar uma composição com esta peça
+              <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+            </Link>
+          </div>
         </div>
       </div>
     </section>

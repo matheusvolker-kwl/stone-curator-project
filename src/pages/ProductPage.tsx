@@ -20,6 +20,8 @@ import {
 import { BUSINESS } from "@/config/business";
 import FinishSelector from "@/components/product/FinishSelector";
 import ComposicaoCena from "@/components/product/ComposicaoCena";
+import ComposicaoCena from "@/components/product/ComposicaoCena";
+import ComposicaoCena from "@/components/product/ComposicaoCena";
 import { useAuth } from "@/hooks/useAuth";
 import ProductGallery from "@/components/product/ProductGallery";
 import Seo, { SITE_URL } from "@/components/seo/Seo";
@@ -28,7 +30,6 @@ import BackToTop from "@/components/shared/BackToTop";
 import ProductTabs from "@/components/product/ProductTabs";
 import { trackRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import TamanhoReal from "@/components/product/TamanhoReal";
-import UsageScenes from "@/components/product/UsageScenes";
 import CalculadoraQuantidade from "@/components/product/CalculadoraQuantidade";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import SocialProofBand from "@/components/product/SocialProofBand";
@@ -627,10 +628,9 @@ export default function ProductPage() {
           <div className="flex gap-2 overflow-x-auto scrollbar-hide py-3">
             {[
               ["medidas", "Medidas e peso"],
-              ["onde-usar", "Onde usar"],
-              ["composicao", "Composição"],
-              ["descricao", "Descrição"],
+              ["ficha", "Ficha da peça"],
               ["instalacao", "Instalação"],
+              ["cena", "Onde usar & composição"],
               ["relacionados", "Relacionados"],
             ].map(([id, label]) => (
               <button
@@ -650,7 +650,26 @@ export default function ProductPage() {
         </div>
       </nav>
 
-      {/* A leveza — Tamanho real, logo após a decisão */}
+      {/* ORDEM DA JORNADA (dono, 2026-07-18): calcular → confiar → aprofundar
+       * → expandir por último (o que tem botão pra fora da PDP fecha a página). */}
+
+      {/* A conta — PRIMEIRA coisa após a compra nos produtos que a usam
+       * (revestimento/pisada): o cliente calcula a quantidade antes de tudo. */}
+      <div id="quantidade" className="scroll-mt-24">
+        <Reveal variant="fade-up">
+          <CalculadoraQuantidade
+            key={product.handle}
+            handle={product.handle}
+            isApproved={isApproved}
+            onUseQuantity={(n) => {
+              setQty(n);
+              addBtnRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }}
+          />
+        </Reveal>
+      </div>
+
+      {/* A leveza — Tamanho real */}
       <div id="medidas" className="scroll-mt-24">
         <Reveal variant="fade-up">
           <TamanhoReal
@@ -662,44 +681,9 @@ export default function ProductPage() {
         </Reveal>
       </div>
 
-      {/* A versatilidade — "onde usar". Vem colado à leveza: o Tamanho real
-       * acabou de mostrar que a peça é leve, então "vai em qualquer cena, até
-       * na cobertura" cai naturalmente. Liga com o Inspire-se. */}
-      <div id="onde-usar" className="scroll-mt-24">
-        <Reveal variant="fade-up">
-          <UsageScenes collectionHandle={collection?.handle} productTitle={product.title} />
-        </Reveal>
-      </div>
-
-      {/* A cena — DS §11: a peça é ingrediente, o produto é a composição. */}
-      <div id="composicao" className="scroll-mt-24">
-        <Reveal variant="fade-up">
-          <ComposicaoCena
-            productHandle={product.handle}
-            productTitle={product.title}
-            collectionHandle={collection?.handle}
-          />
-        </Reveal>
-      </div>
-
-      {/* A conta — quantas peças. Nasce da dúvida que o "Tamanho real" acabou de
-       * abrir: "beleza, e quantas eu peço?". Só renderiza em revestimento e
-       * pisada (peças com regra física de quantidade). */}
-      <Reveal variant="fade-up">
-        <CalculadoraQuantidade
-          key={product.handle}
-          handle={product.handle}
-          isApproved={isApproved}
-          onUseQuantity={(n) => {
-            setQty(n);
-            addBtnRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-          }}
-        />
-      </Reveal>
-
-      {/* Below-the-fold — enxuto. Sem pesoKg/dims: medida e peso da peça não
-       * entram aqui, moram só no bloco "Tamanho real" acima. */}
-      <div id="descricao" className="scroll-mt-24">
+      {/* Ficha da peça (híbrido: trilho no desktop, acordeão no mobile) —
+       * Descrição · Especificações · Entrega, logo abaixo da leveza. */}
+      <div id="ficha" className="scroll-mt-24">
         <ProductTabs
           parsed={parsed}
           fichaRows={fichaRows}
@@ -709,6 +693,18 @@ export default function ProductPage() {
       </div>
       <div id="instalacao" className="scroll-mt-24">
         <InstallationSection config={installationConfig} />
+      </div>
+
+      {/* Onde usar & composição — FUNDIDAS, por último de propósito: os dois
+       * assuntos têm botões que tiram o cliente da PDP (obras, guia, conjuntos). */}
+      <div id="cena" className="scroll-mt-24">
+        <Reveal variant="fade-up">
+          <ComposicaoCena
+            productHandle={product.handle}
+            productTitle={product.title}
+            collectionHandle={collection?.handle}
+          />
+        </Reveal>
       </div>
       {/* "Veja em uso" absorvido pela galeria canônica (estúdio → ambiente → detalhe) */}
       <Reveal variant="fade-up">
