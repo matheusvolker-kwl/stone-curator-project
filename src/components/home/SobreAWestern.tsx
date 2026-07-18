@@ -1,5 +1,15 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Feather, Fingerprint, HardHat, Home, Recycle, ShoppingBag } from "lucide-react";
+import {
+  ArrowRight,
+  Box,
+  Feather,
+  Fingerprint,
+  HardHat,
+  Home,
+  Paintbrush,
+  Recycle,
+  ShoppingBag,
+} from "lucide-react";
 import Reveal from "@/components/shared/Reveal";
 import pg3Ambientada from "@/assets/tecnologia/pg3-ambientada.webp";
 
@@ -30,10 +40,22 @@ const PASSOS = [
       "Casca de composto mineral de alta resistência, armada com fibra de PET. A peça nasce oca.",
   },
   {
+    Icon: Paintbrush,
+    titulo: "Seis camadas de pintura",
+    corpo:
+      "Aplicadas à mão antes da entrega. E o tempo trabalha a favor: a cor ganha pátina e a peça fica cada vez mais parecida com a rocha.",
+  },
+  {
     Icon: Feather,
     titulo: "Cerca de 10% do peso",
     corpo:
       "Cascata Santa Bárbara: 280 kg. A mesma peça em pedra natural passaria de 3 toneladas.",
+  },
+  {
+    Icon: Box,
+    titulo: "Bloco 3D no SketchUp",
+    corpo:
+      "Cada peça tem seu modelo 3D. Você projeta com a peça exata e o cliente aprova o que vai receber — antes da obra.",
   },
   {
     Icon: ShoppingBag,
@@ -116,7 +138,9 @@ export default function SobreAWestern() {
 
         {/* OS 4 PASSOS — a didática, na ordem em que a peça nasce. */}
         <Reveal variant="fade-up" duration={650}>
-          <ol className="mt-10 md:mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10 border-t border-western-border-soft pt-8 md:pt-10">
+          {/* 6 passos = 2 fileiras de 3 no desktop (4+2 desequilibra); 2 col no
+              tablet; pilha no celular. */}
+          <ol className="mt-10 md:mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-12 border-t border-western-border-soft pt-8 md:pt-10">
             {PASSOS.map(({ Icon, titulo, corpo }, i) => (
               <li key={titulo}>
                 <div className="flex items-center gap-3">
