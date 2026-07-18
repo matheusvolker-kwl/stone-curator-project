@@ -1,48 +1,45 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, HardHat, Home } from "lucide-react";
+import { ArrowRight, Feather, Fingerprint, HardHat, Home, Recycle, ShoppingBag } from "lucide-react";
 import Reveal from "@/components/shared/Reveal";
-/* PLACEHOLDER (dono, 2026-07-17): foto de escala 1,70 m. Trocar só este import
-   e a legenda quando a foto definitiva vier. */
-import escalaSantaBarbara from "@/assets/escala/WEST-CSB.webp";
+import pg3Ambientada from "@/assets/tecnologia/pg3-ambientada.webp";
 
 /**
- * "A tecnologia Western" — 2ª seção da home. REDIAGRAMAÇÃO (2026-07-18):
- * o conteúdo segue o aprovado (o quê / pra quem / o que muda), mas agora numa
- * ÚNICA composição de 12 colunas em vez de 4 bandas empilhadas:
- *   - Cabeçalho em 2 colunas (headline 7 / apoio 5, alinhados pela base) —
- *     mata a meia-tela vazia à direita do display.
- *   - Corpo em 2 colunas que se ESTICAM juntas (items-stretch): foto-âncora de
- *     escala à esquerda; à direita os TRÊS fatos com o MESMO tratamento
- *     tipográfico (número bronze + título + corpo), hairlines entre eles,
- *     distribuídos pela altura da foto (justify-between) — margens de topo e
- *     base alinhadas com a figura.
- *   - Bifurcação na mesma gramática: pergunta na coluna esquerda (4) e as duas
- *     portas à direita (8) — não é mais uma 4ª banda solta.
- * Ícones de apoio saíram (eram um 3º padrão visual); a numeração 01–03 conversa
- * com o "Como comprar" (1–4) e os passos da PDP. Mobile: pilha única —
- * headline → apoio → foto → fatos → portas (~2,5 telas, antes ~5).
+ * "A tecnologia Western" — 2ª seção da home, formato "linha de produção"
+ * (V1 escolhida pelo dono no lab, 2026-07-18). Função: quem desceu do hero
+ * entende O QUE a Western faz, POR QUE faz sentido e percebe que PODE COMPRAR
+ * aqui — didático, escaneável, com o produto aplicado como palco.
+ *   - Cabeçalho em 2 colunas (headline 7 / apoio 5, base alinhada).
+ *   - Foto panorâmica da PG3 ambientada (o produto na prainha) — a prova
+ *     visual de que "isso aqui vira obra de verdade".
+ *   - 4 passos numerados com ícones, na ordem em que a peça nasce:
+ *     molde real → mineral + PET (oca) → ~10% do peso → pronta pra obra.
+ *   - Fecho com CTA de catálogo (a ponte pra loja) + bifurcação de sempre.
  */
 
-const FATOS: { titulo: string; corpo: React.ReactNode }[] = [
+const PASSOS = [
   {
-    titulo: "Você entrega o que desenhou.",
+    Icon: Fingerprint,
+    titulo: "Molde da pedra real",
     corpo:
-      "Tem bloco no SketchUp. Você mostra ao cliente na tela e entrega aquilo — sem içamento, sem empilhamento, sem surpresa na hora da obra.",
+      "O molde nasce de uma rocha natural, no lugar onde ela está. Fissuras, veios e textura vêm dela.",
   },
   {
-    titulo: "Entra onde a pedra não entra.",
+    Icon: Recycle,
+    titulo: "Mineral + PET reciclado",
     corpo:
-      "Sacada, laje, cobertura, obra pronta. Sobe pela escada, cabe no elevador, apoia onde a pedra natural nunca subiria.",
+      "Casca de composto mineral de alta resistência, armada com fibra de PET. A peça nasce oca.",
   },
   {
-    titulo: "O peso, em número.",
-    corpo: (
-      <>
-        Cascata Santa Bárbara: <span className="font-semibold text-western-green-deep">280 kg</span>.
-        A mesma peça em pedra natural passaria de{" "}
-        <span className="font-semibold text-western-green-deep">quase 3 toneladas</span>.
-      </>
-    ),
+    Icon: Feather,
+    titulo: "Cerca de 10% do peso",
+    corpo:
+      "Cascata Santa Bárbara: 280 kg. A mesma peça em pedra natural passaria de 3 toneladas.",
+  },
+  {
+    Icon: ShoppingBag,
+    titulo: "Pronta, do ateliê pra obra",
+    corpo:
+      "Pisável, perfurável, esconde a fiação. Produzida em 15 dias úteis e enviada pro Brasil todo.",
   },
 ];
 
@@ -73,8 +70,7 @@ export default function SobreAWestern() {
       aria-label="A tecnologia Western"
     >
       <div className="container-western">
-        {/* CABEÇALHO — headline à esquerda, apoio à direita, base alinhada.
-            O parágrafo de apoio ocupa a meia-tela que antes ficava vazia. */}
+        {/* CABEÇALHO — headline à esquerda, apoio à direita, base alinhada. */}
         <Reveal variant="fade-up" duration={650}>
           <div className="grid gap-4 md:grid-cols-12 md:gap-12 lg:gap-16 md:items-end">
             <div className="md:col-span-7">
@@ -87,83 +83,78 @@ export default function SobreAWestern() {
             </div>
             <div className="md:col-span-5 md:pb-1.5">
               <p className="text-body max-w-[44ch]">
-                Molde tirado da pedra real: mesma textura, mesma resistência, cerca de 10% do peso.
+                Réplica autoral de pedra natural, feita à mão. Entenda em quatro passos por que ela
+                entra onde a rocha nunca entraria.
               </p>
               <p className="text-meta mt-3">Ateliê próprio em Cajamar, desde 1993.</p>
             </div>
           </div>
         </Reveal>
 
-        {/* CORPO — foto-âncora + 3 fatos no mesmo tratamento. As duas colunas
-            se esticam juntas: topo do fato 01 alinha com o topo da foto, o link
-            fecha na base (margens alinhadas, nada flutuando). */}
-        <div className="mt-10 md:mt-14 grid gap-10 md:grid-cols-12 md:gap-12 lg:gap-16 md:items-stretch">
-          {/* A COLUNA DOS FATOS define a altura da linha; a foto preenche essa
-              altura com object-cover (nada de justify-between esticando os
-              fatos — os vãos entre hairlines ficavam maiores que o conteúdo). */}
-          <Reveal variant="fade-up" duration={700} className="md:col-span-5">
-            <figure className="h-full flex flex-col">
-              <div className="relative flex-1 overflow-hidden rounded-2xl aspect-[4/3] md:aspect-auto">
-                <img
-                  src={escalaSantaBarbara}
-                  alt="Peça Western ao lado de uma pessoa de 1,70 m, num jardim — referência de tamanho real."
-                  width={1080}
-                  height={1341}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              </div>
-              <figcaption className="mt-4 flex items-baseline justify-between gap-4">
-                <p className="text-body text-western-green-deep">
-                  Tamanho real, ao lado de uma pessoa de 1,70 m.
-                </p>
-                <p className="text-meta shrink-0">Escala verdadeira</p>
-              </figcaption>
-            </figure>
-          </Reveal>
+        {/* O PRODUTO COMO PALCO — PG3 ambientada na prainha. */}
+        <Reveal variant="fade-up" duration={700}>
+          <figure className="mt-10 md:mt-12">
+            <div className="relative overflow-hidden rounded-2xl aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9]">
+              <img
+                src={pg3Ambientada}
+                alt="Pedra Grande 3 — peça Western instalada na prainha de uma piscina de praia"
+                width={2000}
+                height={1500}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover object-[50%_62%]"
+              />
+            </div>
+            <figcaption className="mt-4 flex items-baseline justify-between gap-4">
+              <p className="text-body text-western-green-deep">
+                Pedra Grande 3, instalada na prainha — pisável, com a fiação escondida por dentro.
+              </p>
+              <p className="text-meta shrink-0">Catálogo · Pedras Grandes</p>
+            </figcaption>
+          </figure>
+        </Reveal>
 
-          <Reveal variant="fade-up" delay={100} duration={700} className="md:col-span-7">
-            <div className="flex flex-col gap-7">
-              {FATOS.map(({ titulo, corpo }, i) => (
-                <div
-                  key={titulo}
-                  className={
-                    i === 0
-                      ? "grid grid-cols-[2.75rem_1fr] gap-x-4"
-                      : "grid grid-cols-[2.75rem_1fr] gap-x-4 border-t border-western-border-soft pt-7"
-                  }
-                >
+        {/* OS 4 PASSOS — a didática, na ordem em que a peça nasce. */}
+        <Reveal variant="fade-up" duration={650}>
+          <ol className="mt-10 md:mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10 border-t border-western-border-soft pt-8 md:pt-10">
+            {PASSOS.map(({ Icon, titulo, corpo }, i) => (
+              <li key={titulo}>
+                <div className="flex items-center gap-3">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-western-cream text-western-green-deep">
+                    <Icon className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                  </span>
                   <span
-                    className="font-sans text-[14px] font-semibold tracking-[0.06em] text-western-bronze pt-1.5"
+                    className="font-sans text-[14px] font-semibold tracking-[0.06em] text-western-bronze"
                     aria-hidden="true"
                   >
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <div>
-                    <h3 className="text-title-sm text-western-green-deep">{titulo}</h3>
-                    <p className="text-body mt-2 max-w-[52ch]">{corpo}</p>
-                  </div>
                 </div>
-              ))}
+                <h3 className="text-title-sm text-western-green-deep mt-4">{titulo}</h3>
+                <p className="text-body mt-2">{corpo}</p>
+              </li>
+            ))}
+          </ol>
+        </Reveal>
 
-              <div className="grid grid-cols-[2.75rem_1fr] gap-x-4 border-t border-western-border-soft pt-6">
-                <span aria-hidden="true" />
-                <Link
-                  to="/a-pedra"
-                  className="tap-target inline-flex w-fit items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
-                >
-                  Como a pedra é feita
-                  <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
-                </Link>
-              </div>
-            </div>
-          </Reveal>
-        </div>
+        {/* FECHO — a ponte pra loja + rota de aprofundamento. */}
+        <Reveal variant="fade-up" duration={600}>
+          <div className="mt-10 md:mt-12 flex flex-col sm:flex-row sm:items-center gap-4 border-t border-western-border-soft pt-8">
+            <Link to="/produtos" className="btn-primary w-full sm:w-auto">
+              Ver o catálogo completo
+              <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+            </Link>
+            <Link
+              to="/a-pedra"
+              className="tap-target inline-flex items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+            >
+              Como a pedra é feita
+              <ArrowRight className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+            </Link>
+          </div>
+        </Reveal>
 
-        {/* BIFURCAÇÃO profissional × casa — mesma gramática de 12 colunas:
-            pergunta à esquerda, as duas portas à direita. Deixou de ser uma
-            banda extra centrada em si mesma. */}
+        {/* BIFURCAÇÃO profissional × casa — pergunta à esquerda, portas à direita. */}
         <Reveal variant="fade-up" duration={600}>
           <div className="mt-12 md:mt-16 border-t border-western-border-soft pt-8 md:pt-10 grid gap-6 lg:grid-cols-12 lg:gap-16">
             <div className="lg:col-span-4">
