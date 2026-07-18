@@ -112,28 +112,48 @@ export default function ProductPage() {
   }, [product, activeOptions, visibleOptions, allOptionsSelected]);
 
   /**
-   * Galeria canônica (C-refinado): estúdio (capa Woo) → ambiente (aplicada) →
-   * detalhe (aplicada _close) → demais fotos do Woo. A foto de escala vive
-   * SÓ no bloco Tamanho real.
+   * Galeria canônica: AMBIENTE (aplicada) abre → estúdio (capa Woo) →
+   * detalhe (aplicada _close) → demais fotos do Woo. O herói é a peça em
+   * projeto real (DS: prova antes da forma); o estúdio vem em seguida para
+   * leitura de silhueta. A foto de escala vive SÓ no bloco Tamanho real.
    */
   const galleryImages = useMemo(() => {
     if (!product) return [];
     const wooImages = product.images.edges.map((e) => e.node);
     const aplicadas = getAplicadas(product.variants.edges[0]?.node?.sku);
-    const extras: { url: string; altText: string | null }[] = [];
-    if (aplicadas.ambiente)
-      extras.push({ url: aplicadas.ambiente, altText: `${product.title} aplicado em projeto real` });
-    if (aplicadas.close)
-      extras.push({ url: aplicadas.close, altText: `${product.title} — detalhe do acabamento` });
-    if (extras.length === 0) return wooImages;
-    return [...wooImages.slice(0, 1), ...extras, ...wooImages.slice(1)];
+    const ambiente = aplicadas.ambiente
+      ? [{ url: aplicadas.ambiente, altText: `${product.title} aplicado em projeto real` }]
+      : [];
+    const close = aplicadas.close
+      ? [{ url: aplicadas.close, altText: `${product.title} — detalhe do acabamento` }]
+      : [];
+    if (ambiente.length === 0 && close.length === 0) return wooImages;
+    return [...ambiente, ...wooImages.slice(0, 1), ...close, ...wooImages.slice(1)];
   }, [product]);
 
+  /* Pular para a foto da variante SÓ quando a troca veio do usuário — no load,
+   * com o acabamento pré-selecionado, o salto atropelaria o ambiente que abre
+   * a galeria. */
+  const userTouchedOptions = useRef(false);
   useEffect(() => {
     if (!product || !variant?.image?.url) return;
+    if (!userTouchedOptions.current) return;
     const idx = galleryImages.findIndex((img) => img.url === variant.image!.url);
     if (idx >= 0) setActiveImage(idx);
   }, [variant?.image?.url, product, galleryImages]);
+
+  /* DS: Moledo é o best-seller e vem PRÉ-SELECIONADO — o CTA nasce destravado.
+   * Só age quando ainda não há escolha (nunca sobrescreve o usuário). */
+  useEffect(() => {
+    if (!product) return;
+    const acab = visibleOptions.find((o) => /acabament/i.test(o.name));
+    if (!acab) return;
+    setActiveOptions((prev) => {
+      if (prev[acab.name]) return prev;
+      const moledo = acab.values.find((v) => /moledo/i.test(v));
+      return moledo ? { ...prev, [acab.name]: moledo } : prev;
+    });
+  }, [product?.handle, visibleOptions]);
 
   useEffect(() => {
     if (!product) return;
@@ -352,9 +372,10 @@ export default function ProductPage() {
                       <FinishSelector
                         values={acabOption.values}
                         selected={activeOptions[acabOption.name] ?? null}
-                        onSelect={(val) =>
-                          setActiveOptions((prev) => ({ ...prev, [acabOption.name]: val }))
-                        }
+                        onSelect={(val) => {
+                          userTouchedOptions.current = true;
+                          setActiveOptions((prev) => ({ ...prev, [acabOption.name]: val }));
+                        }}
                       />
                     </div>
                   </div>
@@ -372,12 +393,13 @@ export default function ProductPage() {
                             return (
                               <button
                                 key={val}
-                                onClick={() =>
+                                onClick={() => {
+                                  userTouchedOptions.current = true;
                                   setActiveOptions((prev) => ({
                                     ...prev,
                                     [option.name]: val,
-                                  }))
-                                }
+                                  }));
+                                }}
                                 aria-pressed={selected}
                                 className={`tap-target inline-flex items-center justify-center px-5 rounded-full border font-sans text-[16px] transition-colors ${
                                   selected
