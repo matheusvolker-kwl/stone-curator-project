@@ -272,58 +272,6 @@ export default function Index() {
       {/* 1 — O que é a Western Store (orientação p/ quem cai de paraquedas) */}
       <SobreAWestern />
 
-      {/* 2b — CREDENCIAL. Uma tira de ~120px que responde "quem são vocês para
-          pedir o meu CNPJ?" — logo abaixo do primeiro pedido de cadastro. Antes
-          estes números viviam na 11ª seção: a página cobrava o crédito muito
-          antes de mostrar o extrato. Cento e vinte pixels resolvem o que uma
-          reordenação inteira tentava resolver. */}
-      <section className="surface-paper border-y border-western-border-soft">
-        <div className="container-western py-6 md:py-7">
-          <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-5">
-            <div className="flex gap-8 md:gap-10">
-              {[
-                { n: "4,9", l: "no Google", stars: true },
-                { n: "+14 mil", l: "no Instagram", stars: false },
-                { n: "+700", l: "obras entregues", stars: false },
-              ].map((s) => (
-                <div key={s.l}>
-                  {/* estrelas NA LINHA do número: embaixo elas criavam uma 3ª
-                      linha só no "4,9" e desalinhavam os três da faixa. */}
-                  <div className="flex items-baseline gap-1.5">
-                    <p className="font-display text-[22px] md:text-[26px] leading-none text-western-green-deep tabular-nums">
-                      {s.n}
-                    </p>
-                    {s.stars && (
-                      <span className="text-[9px] tracking-[0.15em] text-western-gold" aria-hidden="true">
-                        ★★★★★
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-1.5 text-[13px] leading-snug text-western-stone-warm">{s.l}</p>
-                </div>
-              ))}
-            </div>
-            {/* Os wordmarks precisam de rótulo: soltos, oito nomes próprios não
-                dizem se são clientes, parceiros ou fornecedores. */}
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-western-stone-warm/55">
-                Escolhida por
-              </span>
-              <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 md:gap-x-8">
-              {SOCIAL_PROOF.marcas.slice(0, 5).map((m) => (
-                <li
-                  key={m.slug}
-                  className="font-sans text-[14px] md:text-[15px] font-semibold text-western-stone-warm/85"
-                >
-                  {m.nome}
-                </li>
-              ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Mais vendidos (catálogo dinâmico). Ordem pedida pelo dono: best-sellers
           primeiro, depois as linhas, e só então "o que você vai construir".
           (A antiga "barra de confiança" saiu daqui: repetia 10% do peso / garantia
@@ -374,6 +322,58 @@ export default function Index() {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* 2b — CREDENCIAL. Uma tira de ~120px que responde "quem são vocês para
+          pedir o meu CNPJ?" — logo abaixo do primeiro pedido de cadastro. Antes
+          estes números viviam na 11ª seção: a página cobrava o crédito muito
+          antes de mostrar o extrato. Cento e vinte pixels resolvem o que uma
+          reordenação inteira tentava resolver. */}
+      <section className="surface-paper border-y border-western-border-soft">
+        <div className="container-western py-6 md:py-7">
+          <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-5">
+            <div className="flex gap-8 md:gap-10">
+              {[
+                { n: "4,9", l: "no Google", stars: true },
+                { n: "+14 mil", l: "no Instagram", stars: false },
+                { n: "+700", l: "obras entregues", stars: false },
+              ].map((s) => (
+                <div key={s.l}>
+                  {/* estrelas NA LINHA do número: embaixo elas criavam uma 3ª
+                      linha só no "4,9" e desalinhavam os três da faixa. */}
+                  <div className="flex items-baseline gap-1.5">
+                    <p className="font-display text-[22px] md:text-[26px] leading-none text-western-green-deep tabular-nums">
+                      {s.n}
+                    </p>
+                    {s.stars && (
+                      <span className="text-[9px] tracking-[0.15em] text-western-gold" aria-hidden="true">
+                        ★★★★★
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1.5 text-[13px] leading-snug text-western-stone-warm">{s.l}</p>
+                </div>
+              ))}
+            </div>
+            {/* Os wordmarks precisam de rótulo: soltos, oito nomes próprios não
+                dizem se são clientes, parceiros ou fornecedores. */}
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-western-stone-warm/55">
+                Escolhida por
+              </span>
+              <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 md:gap-x-8">
+              {SOCIAL_PROOF.marcas.slice(0, 5).map((m) => (
+                <li
+                  key={m.slug}
+                  className="font-sans text-[14px] md:text-[15px] font-semibold text-western-stone-warm/85"
+                >
+                  {m.nome}
+                </li>
+              ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 
