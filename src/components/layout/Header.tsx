@@ -489,14 +489,24 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               (a empresa passa a ser o cabeçalho de dentro do menu, onde ela
               informa sem roubar o rótulo). Deslogado: "Entrar". */}
           {session ? (
-            <DropdownMenu>
+            /* modal={false}: sem a trava de scroll do Radix (que, em header
+               sticky, causava o salto ao abrir). onCloseAutoFocus preventDefault:
+               impede o Radix de re-focar o gatilho sticky ao fechar — era esse
+               re-foco que rolava a página pro topo ("corre pra cima", dono
+               2026-07-18). Foco volta pro body; a11y de teclado preservada no
+               essencial (o menu ainda navega por seta ao abrir). */
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <button aria-label="Minha conta" className={`hidden md:inline-flex ${actionCls}`}>
                   <User className="h-6 w-6" strokeWidth={1.75} />
                   Minha conta
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64">
+              <DropdownMenuContent
+                align="end"
+                className="w-64"
+                onCloseAutoFocus={(e) => e.preventDefault()}
+              >
                 <div className="px-2 py-2">
                   <p className="text-[15px] font-semibold text-western-cream truncate">
                     {contaLabel}

@@ -4,8 +4,10 @@ import { ArrowRight } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
 
-import heroDesk from "@/assets/a-pedra/hero-obra-real.webp";
-import heroMob from "@/assets/a-pedra/hero-obra-real-mob.webp";
+/* Hero = MACRO DA PEDRA (dono, 2026-07-18): a obra-real de antes não comunicava
+   o assunto da página (a pedra) e, com dois scrims empilhados, mal se via.
+   A textura em close É o argumento de "É pedra de verdade". */
+import heroPedra from "@/assets/projetos-western/02_pedra-detalhe.webp";
 import moldeMacro from "@/assets/a-pedra/molde-macro-close.webp";
 import cascaInclinada from "@/assets/a-pedra/casca-inclinada.webp";
 import ocoGas2009 from "@/assets/a-pedra/oco-gas-2009.webp";
@@ -129,23 +131,24 @@ export default function APedra() {
           onde o texto vive, limpo à direita onde a pedra é o assunto.
           ================================================================== */}
       <section className="relative h-[70vh] md:h-[56vh] w-full overflow-hidden">
-        <picture>
-          <source media="(min-width: 768px)" srcSet={heroDesk} />
-          <img
-            src={heroMob}
-            alt="Obra real: cascata Western despejando numa piscina de praia turquesa, entre pedras Western e mata tropical."
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        </picture>
+        <img
+          src={heroPedra}
+          alt="Macro da pedra Western: laminação, grão e mica herdados da rocha real."
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        {/* Scrim redesenhado (dono: "não dá leitura"): antes eram dois gradientes
+            empilhados (0.92→0.78→0.50 na horizontal + 0.30/0.45 na vertical) que
+            escureciam o quadro TODO. Agora protege só onde o texto vive — o
+            rodapé — e uma tinta leve à esquerda; o resto da pedra fica visível. */}
         <div
           className="absolute inset-0 pointer-events-none"
           aria-hidden
           style={{
             background:
-              "linear-gradient(100deg, hsl(var(--western-green-deep) / 0.92) 0%, hsl(var(--western-green-deep) / 0.78) 40%, hsl(var(--western-green-deep) / 0.50) 64%, hsl(var(--western-green-deep) / 0.10) 100%)",
+              "linear-gradient(180deg, transparent 34%, hsl(var(--western-green-deep) / 0.45) 70%, hsl(var(--western-green-deep) / 0.88) 100%)",
           }}
         />
         <div
@@ -153,7 +156,7 @@ export default function APedra() {
           aria-hidden
           style={{
             background:
-              "linear-gradient(180deg, hsl(var(--western-green-deep) / 0.30) 0%, hsl(var(--western-green-deep) / 0.05) 45%, hsl(var(--western-green-deep) / 0.45) 100%)",
+              "linear-gradient(100deg, hsl(var(--western-green-deep) / 0.55) 0%, hsl(var(--western-green-deep) / 0.22) 45%, transparent 75%)",
           }}
         />
         <div className="container-western relative h-full flex flex-col justify-end pb-10">
