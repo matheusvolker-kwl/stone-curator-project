@@ -250,11 +250,15 @@ export default function ParaSuaCasa() {
           decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
         />
+        {/* Scrims DIRECIONAIS (mesmo tratamento aprovado no /contrate): fortes
+            onde o texto vive, limpos onde a foto é o assunto — a piscina-praia
+            volta a aparecer. Antes o desktop ia de 100% a 93% até quase metade
+            da tela: a página que vende sonho abria como verde chapado. */}
         <div
           className="absolute inset-0 md:hidden"
           style={{
             background:
-              "linear-gradient(to bottom, hsl(var(--western-green-deep) / 0.92), hsl(var(--western-green-deep) / 0.8) 45%, hsl(var(--western-green-deep) / 0.94))",
+              "linear-gradient(to bottom, hsl(var(--western-green-deep) / 0.94) 0%, hsl(var(--western-green-deep) / 0.84) 48%, hsl(var(--western-green-deep) / 0.55) 78%, hsl(var(--western-green-deep) / 0.72) 100%)",
           }}
           aria-hidden="true"
         />
@@ -262,7 +266,7 @@ export default function ParaSuaCasa() {
           className="absolute inset-0 hidden md:block"
           style={{
             background:
-              "linear-gradient(to right, hsl(var(--western-green-deep)) 0%, hsl(var(--western-green-deep) / 0.93) 46%, hsl(var(--western-green-deep) / 0.55) 68%, hsl(var(--western-green-deep) / 0.12) 100%)",
+              "linear-gradient(180deg, transparent 55%, hsl(var(--western-green-deep) / 0.50) 100%), linear-gradient(100deg, hsl(var(--western-green-deep) / 0.92) 0%, hsl(var(--western-green-deep) / 0.62) 42%, hsl(var(--western-green-deep) / 0.20) 68%, hsl(var(--western-green-deep) / 0.05) 100%)",
           }}
           aria-hidden="true"
         />
