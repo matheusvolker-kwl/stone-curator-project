@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Western · templates de story</title>
+<style>
+  @font-face{font-family:'SourceSans';src:url('fontes/sourcesans3-400.ttf') format('truetype');font-weight:400}
+  @font-face{font-family:'SourceSans';src:url('fontes/sourcesans3-600.ttf') format('truetype');font-weight:600}
+  @font-face{font-family:'SourceSans';src:url('fontes/sourcesans3-700.ttf') format('truetype');font-weight:700}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#888}
+  /* 1080×1920. As faixas de 0–288px e 1536–1920px ficam atrás da interface
+     do Instagram — nada de texto ou marca dentro delas. */
+  .pagina{position:relative;width:1080px;height:1920px;overflow:hidden;background:#2C3A31;
+          font-family:'SourceSans',sans-serif;color:#fff;margin:0 auto 24px}
+  .fundo{position:absolute;inset:0;background:#2C3A31}
+  .veu{position:absolute;left:0;width:1080px;background:#14201A;opacity:.45}
+  .fio{position:absolute;width:2px;background:rgba(255,255,255,.85)}
+  .circ{position:absolute;width:20px;height:20px;border:2px solid rgba(255,255,255,.85);border-radius:50%}
+  .nota{position:absolute;left:146px;font-size:24px;opacity:.55}
+</style>
+</head>
+<body>
+
+<!-- ============ 1. Gancho ============ -->
+<div class="pagina" data-document-role="page" data-label="Story 1 · gancho">
+  <div class="fundo"></div>
+  <div class="veu" style="top:1120px;height:800px"></div>
+
+  <div class="circ" style="left:100px;top:1180px"></div>
+  <div class="fio" style="left:108px;top:1206px;height:290px"></div>
+
+  <div style="position:absolute;left:146px;top:1198px;width:800px;font-size:38px;
+              font-weight:700;line-height:1.22">
+    Uma área externa não precisa<br>de mais espaço. Precisa de propósito.
+  </div>
+  <div style="position:absolute;left:146px;top:1330px;width:800px;font-size:38px;
+              font-weight:400;line-height:1.22">
+    Em Atibaia, os proprietários não queriam<br>só uma piscina praia em casa. Queriam que<br>o quintal inteiro tivesse identidade.
+  </div>
+  <div class="nota" style="top:1560px">Troque o fundo por uma foto vertical da obra</div>
+</div>
+
+<!-- ============ 2. Desenvolvimento ============ -->
+<div class="pagina" data-document-role="page" data-label="Story 2 · desenvolvimento">
+  <div class="fundo"></div>
+  <div class="veu" style="top:0;height:760px"></div>
+
+  <div style="position:absolute;left:146px;top:322px;width:800px;font-size:38px;line-height:1.22">
+    As <b>pedras artesanais</b> compõem<br>a cascata e o jardim, e a piscina praia<br>recebeu revestimento Cristal Pool.
+  </div>
+  <div style="position:absolute;left:146px;top:520px;width:800px;font-size:38px;line-height:1.22">
+    O <b>paisagismo tropical</b> fecha o conjunto:<br>cada detalhe foi desenhado para parecer<br>que sempre esteve ali.
+  </div>
+
+  <div class="fio" style="left:108px;top:322px;height:340px"></div>
+  <div class="circ" style="left:100px;top:672px"></div>
+  <div class="nota" style="top:1560px">Troque o fundo por uma foto vertical da obra</div>
+</div>
+
+<!-- ============ 3. Chamada ============ -->
+<div class="pagina" data-document-role="page" data-label="Story 3 · chamada">
+  <div class="fundo"></div>
+  <div class="veu" style="top:0;height:700px"></div>
+  <div class="veu" style="top:1250px;height:670px"></div>
+
+  <div style="position:absolute;left:0;top:322px;width:1080px;text-align:center;
+              font-size:38px;font-weight:600;line-height:1.22">
+    Traga o seu projeto para o nosso time<br>e veja o que a pedra pode fazer.
+  </div>
+
+  <div style="position:absolute;left:50%;transform:translateX(-50%);top:1027px;
+              background:#fff;color:#1a1a1a;border-radius:26px;padding:24px 54px;
+              font-size:44px">Linklist.ai</div>
+
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:390px;width:324px">
+    <img src="brand/logo-branco.png" alt="Western" style="width:100%;display:block">
+  </div>
+  <div class="nota" style="top:1600px;left:0;width:1080px;text-align:center">
+    O sticker de link é colocado no app do Instagram, não na arte
+  </div>
+</div>
+
+</body>
+</html>
