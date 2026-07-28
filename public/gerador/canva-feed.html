@@ -4,134 +4,129 @@
 <meta charset="utf-8">
 <title>Western · templates de feed</title>
 <style>
-  @font-face{font-family:'Archivo';src:url('fontes/archivo-600.ttf') format('truetype');font-weight:600}
-  @font-face{font-family:'Archivo';src:url('fontes/archivo-700.ttf') format('truetype');font-weight:700}
-  @font-face{font-family:'SourceSans';src:url('fontes/sourcesans3-400.ttf') format('truetype');font-weight:400}
-  @font-face{font-family:'SourceSans';src:url('fontes/sourcesans3-600.ttf') format('truetype');font-weight:600}
-  @font-face{font-family:'SourceSans';src:url('fontes/sourcesans3-700.ttf') format('truetype');font-weight:700}
+  @font-face{font-family:'Archivo';src:url('https://feat-arquitetura-site.stone-curator-project.pages.dev/gerador/fontes/archivo-600.ttf') format('truetype');font-weight:600}
+  @font-face{font-family:'Archivo';src:url('https://feat-arquitetura-site.stone-curator-project.pages.dev/gerador/fontes/archivo-700.ttf') format('truetype');font-weight:700}
+  @font-face{font-family:'SourceSans';src:url('https://feat-arquitetura-site.stone-curator-project.pages.dev/gerador/fontes/sourcesans3-400.ttf') format('truetype');font-weight:400}
+  @font-face{font-family:'SourceSans';src:url('https://feat-arquitetura-site.stone-curator-project.pages.dev/gerador/fontes/sourcesans3-600.ttf') format('truetype');font-weight:600}
+  @font-face{font-family:'SourceSans';src:url('https://feat-arquitetura-site.stone-curator-project.pages.dev/gerador/fontes/sourcesans3-700.ttf') format('truetype');font-weight:700}
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:#888}
+  /* Tudo posicionado em absoluto: o importador do Canva traduz isso em
+     elementos soltos e editáveis. Fluxo (inline-block, flex) chega torto. */
   .pagina{position:relative;width:1080px;height:1350px;overflow:hidden;
           background:#0D341F;font-family:'SourceSans',sans-serif;color:#fff;margin:0 auto 24px}
-  .fio{position:absolute;width:2px;background:rgba(255,255,255,.6)}
-  .circ{position:absolute;width:18px;height:18px;border:2px solid rgba(255,255,255,.6);
-        border-radius:50%}
-  .olho{font-size:22px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#C7AF81}
-  .wordmark{position:absolute;left:50%;transform:translateX(-50%);bottom:74px;width:324px}
-  .wordmark img{width:100%;display:block}
-  .rotulo{font-size:19px;color:rgba(255,255,255,.96)}
-  .regua{position:absolute;height:1px;background:rgba(255,255,255,.16)}
+  .fio{position:absolute;width:2px;background:#9AA79F}
+  .regua{position:absolute;height:1px;background:#33513F}
+  .olho{position:absolute;font-size:22px;font-weight:600;letter-spacing:.15em;
+        text-transform:uppercase;color:#C7AF81;white-space:nowrap}
+  .tom{position:absolute;width:238px;height:238px}
+  .tomRot{position:absolute;font-size:19px;white-space:nowrap}
 </style>
 </head>
 <body>
 
 <!-- ============ 1. Verde — paleta e chamada ============ -->
 <div class="pagina" data-document-role="page" data-label="Verde · paleta e chamada">
-  <div class="fio" style="left:539px;top:0;height:79px"></div>
-  <div class="circ" style="left:531px;top:88px"></div>
+  <div class="fio" style="left:539px;top:0;height:80px"></div>
+  <svg style="position:absolute;left:530px;top:86px" width="20" height="20" viewBox="0 0 20 20">
+    <circle cx="10" cy="10" r="9" fill="none" stroke="#9AA79F" stroke-width="2"/></svg>
 
-  <div style="position:absolute;top:200px;left:0;width:1080px;text-align:center">
-    <span style="font-size:46px;font-weight:400">O seu </span><span
-      style="font-size:70px;font-style:italic;font-family:Georgia,serif">/tom</span>
-  </div>
-  <div style="position:absolute;top:283px;left:0;width:1080px;text-align:center;
-              font-size:30px;opacity:.92">ainda não existe? A gente desenvolve</div>
+  <div style="position:absolute;left:340px;top:176px;width:400px;text-align:right;font-size:46px">O seu</div>
+  <div style="position:absolute;left:548px;top:160px;width:300px;font-size:70px;
+              font-style:italic;font-family:Georgia,serif">/tom</div>
+  <div style="position:absolute;left:0;top:268px;width:1080px;text-align:center;font-size:30px">
+    ainda não existe? A gente desenvolve</div>
 
-  <div style="position:absolute;left:173px;top:365px;width:734px">
-    <div style="position:relative;width:238px;height:238px;background:#D8CEBE;display:inline-block;margin:3px">
-      <span class="rotulo" style="position:absolute;left:16px;bottom:18px;color:#2b2b2b">Quartzo</span></div>
-    <div style="position:relative;width:238px;height:238px;background:#C6A268;display:inline-block;margin:3px">
-      <span class="rotulo" style="position:absolute;left:16px;bottom:18px">Arenito</span></div>
-    <div style="position:relative;width:238px;height:238px;background:#B09274;display:inline-block;margin:3px">
-      <span class="rotulo" style="position:absolute;left:16px;bottom:18px">Moledo</span></div>
-    <div style="position:relative;width:238px;height:238px;background:#8C8C87;display:inline-block;margin:3px">
-      <span class="rotulo" style="position:absolute;left:16px;bottom:18px">Granito</span></div>
-    <div style="position:relative;width:238px;height:238px;background:#3B3C3E;display:inline-block;margin:3px">
-      <span class="rotulo" style="position:absolute;left:16px;bottom:18px">Carbono</span></div>
-    <div style="position:relative;width:238px;height:238px;border:2px dashed rgba(198,162,104,.75);
-                display:inline-block;margin:3px;text-align:center">
-      <div style="position:absolute;left:0;top:88px;width:100%;color:#C7AF81;font-size:17px;
-                  font-weight:600;line-height:1.5">◆<br>SEU TOM<br>SOB MEDIDA</div></div>
-  </div>
+  <div class="tom" style="left:176px;top:365px;background:#D8CEBE"></div>
+  <div class="tomRot" style="left:194px;top:562px;color:#2E2E2C">Quartzo</div>
+  <div class="tom" style="left:421px;top:365px;background:#C6A268"></div>
+  <div class="tomRot" style="left:439px;top:562px">Arenito</div>
+  <div class="tom" style="left:666px;top:365px;background:#B09274"></div>
+  <div class="tomRot" style="left:684px;top:562px">Moledo</div>
+  <div class="tom" style="left:176px;top:610px;background:#8C8C87"></div>
+  <div class="tomRot" style="left:194px;top:807px">Granito</div>
+  <div class="tom" style="left:421px;top:610px;background:#3B3C3E"></div>
+  <div class="tomRot" style="left:439px;top:807px">Carbono</div>
+  <div class="tom" style="left:666px;top:610px;border:2px dashed #8A7550"></div>
+  <div style="position:absolute;left:666px;top:690px;width:238px;text-align:center;
+              color:#C7AF81;font-size:17px;font-weight:600;line-height:1.55">
+    ◆<br>SEU TOM<br>SOB MEDIDA</div>
 
-  <div style="position:absolute;top:1035px;left:0;width:1080px;text-align:center;font-size:27px;line-height:1.33">
-    Acesse o link da bio e fale com o nosso time<br>de arquitetos para solicitar seu projeto 3D
-  </div>
-  <div class="wordmark"><img src="brand/logo-branco.png" alt="Western"></div>
+  <div style="position:absolute;left:0;top:940px;width:1080px;text-align:center;
+              font-size:27px;line-height:1.33">
+    Acesse o link da bio e fale com o nosso time<br>de arquitetos para solicitar seu projeto 3D</div>
+
+  <img src="https://feat-arquitetura-site.stone-curator-project.pages.dev/gerador/brand/logo-branco.png"
+       alt="Western" style="position:absolute;left:378px;top:1150px;width:324px">
 </div>
 
 <!-- ============ 2. Verde — declaração ============ -->
 <div class="pagina" data-document-role="page" data-label="Verde · declaração">
-  <div class="circ" style="left:76px;top:322px"></div>
-  <div class="fio" style="left:84px;top:348px;height:300px"></div>
+  <svg style="position:absolute;left:74px;top:320px" width="20" height="20" viewBox="0 0 20 20">
+    <circle cx="10" cy="10" r="9" fill="none" stroke="#9AA79F" stroke-width="2"/></svg>
+  <div class="fio" style="left:83px;top:348px;height:300px"></div>
 
-  <div class="olho" style="position:absolute;left:119px;top:330px">Piscina natural</div>
-  <div style="position:absolute;left:119px;top:392px;width:850px;font-family:'Archivo',sans-serif;
+  <div class="olho" style="left:119px;top:328px">Piscina natural</div>
+  <div style="position:absolute;left:119px;top:392px;width:860px;font-family:'Archivo',sans-serif;
               font-weight:600;font-size:58px;line-height:1.18">
-    A água não é tratada<br>para parecer limpa.<br>Ela é limpa.
-  </div>
-  <div style="position:absolute;left:119px;top:640px;width:842px;font-size:29px;
-              line-height:1.45;opacity:.86">
-    Filtragem biológica com pedra e planta. Sem cloro, sem cheiro, sem olho ardendo.
-  </div>
-  <div class="wordmark"><img src="brand/logo-branco.png" alt="Western"></div>
+    A água não é tratada<br>para parecer limpa.<br>Ela é limpa.</div>
+  <div style="position:absolute;left:119px;top:646px;width:842px;font-size:29px;line-height:1.45">
+    Filtragem biológica com pedra e planta. Sem cloro, sem cheiro, sem olho ardendo.</div>
+
+  <img src="https://feat-arquitetura-site.stone-curator-project.pages.dev/gerador/brand/logo-branco.png"
+       alt="Western" style="position:absolute;left:378px;top:1150px;width:324px">
 </div>
 
 <!-- ============ 3. Ficha técnica ============ -->
 <div class="pagina" data-document-role="page" data-label="Ficha técnica">
-  <div class="fio" style="left:94px;top:121px;height:60px"></div>
-  <div class="circ" style="left:86px;top:182px"></div>
+  <div class="fio" style="left:94px;top:120px;height:62px"></div>
+  <svg style="position:absolute;left:85px;top:182px" width="20" height="20" viewBox="0 0 20 20">
+    <circle cx="10" cy="10" r="9" fill="none" stroke="#9AA79F" stroke-width="2"/></svg>
 
-  <div class="olho" style="position:absolute;left:130px;top:250px">Ficha técnica</div>
-  <div style="position:absolute;left:130px;top:340px;font-family:'Archivo',sans-serif;
+  <div class="olho" style="left:130px;top:248px">Ficha técnica</div>
+  <div style="position:absolute;left:130px;top:326px;width:860px;font-family:'Archivo',sans-serif;
               font-weight:600;font-size:60px">Nome da obra</div>
 
   <div class="regua" style="left:130px;top:480px;width:820px"></div>
-  <div style="position:absolute;left:130px;top:506px;font-size:19px;font-weight:600;
-              letter-spacing:.1em;color:#C7AF81">LOCAL</div>
-  <div style="position:absolute;left:130px;top:544px;font-size:30px">Cidade, UF</div>
+  <div class="olho" style="left:130px;top:504px;font-size:19px;letter-spacing:.1em">Local</div>
+  <div style="position:absolute;left:130px;top:542px;width:820px;font-size:30px">Cidade, UF</div>
 
   <div class="regua" style="left:130px;top:620px;width:820px"></div>
-  <div style="position:absolute;left:130px;top:646px;font-size:19px;font-weight:600;
-              letter-spacing:.1em;color:#C7AF81">SEGMENTO</div>
-  <div style="position:absolute;left:130px;top:684px;font-size:30px">Piscina natural</div>
+  <div class="olho" style="left:130px;top:644px;font-size:19px;letter-spacing:.1em">Segmento</div>
+  <div style="position:absolute;left:130px;top:682px;width:820px;font-size:30px">Piscina natural</div>
 
   <div class="regua" style="left:130px;top:760px;width:820px"></div>
-  <div style="position:absolute;left:130px;top:786px;font-size:19px;font-weight:600;
-              letter-spacing:.1em;color:#C7AF81">O QUE É</div>
-  <div style="position:absolute;left:130px;top:824px;width:820px;font-size:30px;line-height:1.33">
+  <div class="olho" style="left:130px;top:784px;font-size:19px;letter-spacing:.1em">O que é</div>
+  <div style="position:absolute;left:130px;top:822px;width:820px;font-size:30px;line-height:1.33">
     Descrição curta do que foi executado na obra</div>
 
   <div class="regua" style="left:130px;top:940px;width:820px"></div>
-  <div style="position:absolute;left:130px;top:966px;font-size:19px;font-weight:600;
-              letter-spacing:.1em;color:#C7AF81">DETALHE</div>
-  <div style="position:absolute;left:130px;top:1004px;font-size:30px">Medida, prazo ou número de peças</div>
+  <div class="olho" style="left:130px;top:964px;font-size:19px;letter-spacing:.1em">Detalhe</div>
+  <div style="position:absolute;left:130px;top:1002px;width:820px;font-size:30px">
+    Medida, prazo ou número de peças</div>
 
-  <div style="position:absolute;left:130px;top:1140px;font-size:24px;color:rgba(255,255,255,.7)">
+  <div style="position:absolute;left:130px;top:1100px;width:820px;font-size:24px;color:#A9B5AC">
     @parceiro, @parceiro</div>
-  <div class="wordmark"><img src="brand/logo-branco.png" alt="Western"></div>
+  <img src="https://feat-arquitetura-site.stone-curator-project.pages.dev/gerador/brand/logo-branco.png"
+       alt="Western" style="position:absolute;left:378px;top:1180px;width:324px">
 </div>
 
 <!-- ============ 4. Capa tipográfica ============ -->
-<div class="pagina" data-document-role="page" data-label="Capa tipográfica"
-     style="background:#1E2A22">
-  <div style="position:absolute;left:0;top:0;width:1080px;height:1350px;background:#2C3A31"></div>
-  <div style="position:absolute;left:0;bottom:0;width:1080px;height:620px;background:#16211A;opacity:.55"></div>
+<div class="pagina" data-document-role="page" data-label="Capa tipográfica" style="background:#2C3A31">
+  <div style="position:absolute;left:0;top:730px;width:1080px;height:620px;background:#16211A"></div>
 
-  <div class="circ" style="left:53px;top:912px"></div>
-  <div class="fio" style="left:61px;top:938px;height:250px"></div>
+  <svg style="position:absolute;left:51px;top:906px" width="20" height="20" viewBox="0 0 20 20">
+    <circle cx="10" cy="10" r="9" fill="none" stroke="#D8DCD7" stroke-width="2"/></svg>
+  <div class="fio" style="left:60px;top:934px;height:250px;background:#D8DCD7"></div>
 
-  <div style="position:absolute;left:95px;top:938px;width:900px;font-family:'Archivo',sans-serif;
+  <div style="position:absolute;left:95px;top:920px;width:900px;font-family:'Archivo',sans-serif;
               font-weight:700;font-size:76px;line-height:1.06;text-transform:uppercase">
-    É pedra,<br>mas é feita<br>por gente
-  </div>
-  <div style="position:absolute;left:95px;top:1215px;font-size:26px;opacity:.9">
-    Troque este fundo por uma foto da obra
-  </div>
-  <div style="position:absolute;right:54px;top:54px;width:67px">
-    <img src="brand/logo-branco.png" alt="Western"
-         style="width:274px;max-width:none;margin-left:0;clip-path:inset(0 76% 0 0)">
-  </div>
+    É pedra,<br>mas é feita<br>por gente</div>
+  <div style="position:absolute;left:95px;top:1215px;width:860px;font-size:26px;color:#C3CCC5">
+    Troque este fundo por uma foto da obra</div>
+
+  <img src="https://feat-arquitetura-site.stone-curator-project.pages.dev/gerador/brand/logo-branco.png"
+       alt="Western" style="position:absolute;left:892px;top:54px;width:130px">
 </div>
 
 </body>
