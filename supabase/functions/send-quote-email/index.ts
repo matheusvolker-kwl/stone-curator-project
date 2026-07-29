@@ -1,5 +1,5 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
-import { sendEmail, brandedEmailHtml } from '../_shared/email.ts';
+import { sendEmail, brandedEmailHtml, BRAND } from '../_shared/email.ts';
 
 function firstName(n?: string | null) {
   if (!n) return '';
@@ -28,14 +28,16 @@ Deno.serve(async (req) => {
     const hi = firstName(nome);
     const bodyHtml = `
       <p style="margin:0 0 14px;">Olá${hi ? `, ${hi}` : ''},</p>
-      <p style="margin:0 0 14px;">Recebemos sua composição. O PDF do orçamento está em anexo neste e-mail.</p>
+      <p style="margin:0 0 14px;">Recebemos seu orçamento. O PDF está anexo neste e-mail — e guardado na sua conta, para você voltar quando quiser.</p>
       <p style="margin:0;">Nosso time comercial entra em contato em breve para dar sequência ao atendimento e alinhar os próximos passos.</p>
     `;
 
     const html = brandedEmailHtml({
       eyebrow: `Orçamento Nº ${numero}`,
-      heading: 'Sua composição foi recebida',
+      heading: 'Seu orçamento chegou.',
       bodyHtml,
+      ctaLabel: 'Acompanhar meus orçamentos',
+      ctaUrl: `${BRAND.siteUrl}/minha-conta/orcamentos`,
     });
 
     const result = await sendEmail({

@@ -39,7 +39,7 @@ export default function PasswordField({
           placeholder={placeholder}
           required={required}
           autoComplete={autoComplete}
-          className={`h-12 w-full bg-transparent border px-3 pr-11 rounded-none text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none transition-colors ${
+          className={`h-control w-full bg-transparent border px-3.5 pr-11 rounded-sm text-[15px] text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none transition-colors ${
             error
               ? "border-red-700/60"
               : "border-western-stone-warm/30 focus:border-western-gold"
@@ -67,7 +67,7 @@ export default function PasswordField({
               />
             ))}
           </div>
-          <div className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.16em]">
+          <div className="flex flex-wrap gap-x-3 gap-y-1 text-[14px] font-semibold uppercase tracking-[0.06em]">
             <Rule ok={s.rules.has8} label="8+ caracteres" />
             <Rule ok={s.rules.hasNumber} label="número" />
             <Rule ok={s.rules.hasUpper} label="maiúscula" />
@@ -77,7 +77,7 @@ export default function PasswordField({
       )}
 
       {error && (
-        <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">
+        <p className="mt-1.5 text-[14px] font-semibold text-status-error">
           {error}
         </p>
       )}

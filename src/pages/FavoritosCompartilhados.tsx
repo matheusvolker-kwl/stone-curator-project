@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Helmet } from "react-helmet-async";
-import { Heart } from "lucide-react";
+import { Heart, ArrowRight } from "lucide-react";
 import { fetchProductsByHandles } from "@/lib/datasource";
-import { cdnImg } from "@/lib/catalog/client";
+import ProductCard from "@/components/product/ProductCard";
+import Seo from "@/components/seo/Seo";
 
 export default function FavoritosCompartilhados() {
   const [params] = useSearchParams();
@@ -32,65 +32,68 @@ export default function FavoritosCompartilhados() {
 
   return (
     <div className="surface-ivory min-h-[60vh]">
-      <Helmet>
-        <title>Seleção compartilhada — Western</title>
-        <meta name="robots" content="noindex, nofollow" />
-      </Helmet>
+      {/* noindex: conteúdo parametrizado por link. O Seo ainda emite title/og —
+          é o que o WhatsApp mostra quando a seleção é compartilhada. */}
+      <Seo
+        title="Seleção compartilhada — Western"
+        description="Uma seleção de peças do catálogo Western enviada por alguém. Veja cada peça e monte o seu próprio orçamento."
+        path="/favoritos-compartilhados"
+        noindex
+      />
       <div className="container-western py-10 md:py-16">
-        <div className="max-w-3xl mb-10 md:mb-14">
+        <header className="mb-10 max-w-2xl md:mb-14">
           <p className="text-eyebrow mb-4">Seleção compartilhada</p>
-          <div className="w-12 h-px bg-western-gold mb-6" />
-          <h1 className="font-display text-4xl md:text-5xl text-western-green-deep leading-[1.05]">
-            Pedras selecionadas
-          </h1>
-          <p className="mt-5 text-western-stone-warm leading-relaxed">
-            Uma seleção enviada por alguém. Explore cada peça e monte o seu próprio orçamento.
+          <h1 className="display-lg text-western-green-deep">Peças selecionadas</h1>
+          <p className="text-body mt-5 max-w-[46ch]">
+            Uma seleção enviada por alguém. Explore cada peça e monte o seu próprio
+            orçamento.
           </p>
-        </div>
+        </header>
 
         {handles.length === 0 ? (
-          <div className="border border-dashed border-western-stone-warm/30 p-10 text-center bg-white">
-            <Heart className="h-8 w-8 text-western-stone-warm/40 mx-auto mb-4" />
-            <p className="text-western-stone-warm">Nenhum item na seleção.</p>
+          /* Vazio nunca é beco sem saída: cartão do sistema + CTA verde */
+          <div className="rounded-xl border border-western-border-soft bg-white p-8 text-center md:p-12">
+            <Heart
+              className="mx-auto mb-4 h-8 w-8 text-western-stone-warm/50"
+              aria-hidden="true"
+            />
+            <p className="text-body mb-6">Nenhuma peça nesta seleção.</p>
+            <Link to="/produtos" className="btn-primary w-full sm:w-auto">
+              Ver o catálogo
+              <ArrowRight className="h-5 w-5" aria-hidden="true" />
+            </Link>
           </div>
         ) : isLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6" aria-hidden="true">
+          <div
+            className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4"
+            aria-hidden="true"
+          >
             {Array.from({ length: Math.min(handles.length, 8) }).map((_, i) => (
-              <div key={i} className="aspect-square bg-western-paper animate-pulse" />
+              <div
+                key={i}
+                className="aspect-square animate-pulse rounded-lg bg-western-stone-warm/10"
+              />
             ))}
           </div>
         ) : products.length === 0 ? (
-          <p className="text-western-stone-warm">Nenhuma pedra encontrada para esta seleção.</p>
+          <div className="rounded-xl border border-western-border-soft bg-white p-8 text-center md:p-12">
+            <p className="text-body mb-6">
+              Nenhuma peça encontrada para esta seleção.
+            </p>
+            <Link to="/produtos" className="btn-primary w-full sm:w-auto">
+              Ver o catálogo
+              <ArrowRight className="h-5 w-5" aria-hidden="true" />
+            </Link>
+          </div>
         ) : (
-          <ul className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {products.map((p) => {
-              const img = p.images.edges[0]?.node;
-              return (
-                <li key={p.id}>
-                  <Link
-                    to={`/produtos/${p.handle}`}
-                    className="group block border border-transparent hover:border-western-gold/60 transition-colors bg-white"
-                  >
-                    <div className="aspect-square bg-western-paper overflow-hidden">
-                      {img && (
-                        <img
-                          src={cdnImg(img.url, 400)}
-                          alt={img.altText ?? p.title}
-                          loading="lazy"
-                          decoding="async"
-                          className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.04]"
-                        />
-                      )}
-                    </div>
-                    <div className="px-3 py-3">
-                      <p className="font-display text-base text-western-green-deep leading-tight line-clamp-2">
-                        {p.title}
-                      </p>
-                    </div>
-                  </Link>
-                </li>
-              );
-            })}
+          /* Reaproveita o ProductCard já migrado: card V3 + preço gated (B2B).
+             `grid` no <li> faz o card esticar em largura e altura (linhas alinhadas). */
+          <ul className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+            {products.map((p) => (
+              <li key={p.id} className="grid">
+                <ProductCard product={p} />
+              </li>
+            ))}
           </ul>
         )}
       </div>

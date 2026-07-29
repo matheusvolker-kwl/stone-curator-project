@@ -1,16 +1,33 @@
-import SocialProof from "@/components/shared/SocialProof";
+import { SOCIAL_PROOF, type MarcaComLogo } from "@/data/socialProof";
 
-/** Faixa de prova social (PDP e afins) — bloco único, modo compacto. */
+/**
+ * PDP: prova social ENXUTA — só uma faixa fina de wordmarks (não clona o bloco da home).
+ * Benchmark (2026-07-14): na PDP a prova social pesada empurra o CTA e dilui; use 1 faixa
+ * curta e específica. O grid de rostos + números fica só na HOME.
+ */
 export default function SocialProofBand() {
+  const marcas = (SOCIAL_PROOF.marcas as readonly MarcaComLogo[]).slice(0, 6);
+  if (!marcas.length) return null;
+
   return (
-    <section className="surface-forest py-14 md:py-20 border-y border-western-gold/15">
-      <div className="container-western max-w-5xl">
-        <SocialProof
-          variant="dark"
-          compact
-          eyebrow="Quem confia na Western"
-          groups={["celebridades", "profissionais", "marcas"]}
-        />
+    <section className="bg-white border-y border-western-stone-warm/12 py-8 md:py-10">
+      {/* GRID de colunas fixas em vez de flex-wrap: 6 marcas ÷ (2 no mobile, 3 no
+          desktop) dão sempre LINHAS CHEIAS — nunca o 4+2 que deixava Cristal Pool
+          e Genesis órfãos numa 2ª linha. Nenhuma marca cortada. */}
+      <div className="container-western max-w-4xl text-center">
+        <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold mb-6">
+          Especificado e revendido por
+        </p>
+        <ul className="grid grid-cols-2 sm:grid-cols-3 items-center justify-items-center gap-x-6 gap-y-5">
+          {marcas.map((m) => (
+            <li
+              key={m.slug}
+              className="font-display text-[15px] md:text-[17px] leading-tight text-center text-western-green-deep/70 hover:text-western-green-deep transition-colors"
+            >
+              {m.nome}
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

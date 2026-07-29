@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { Heart, ArrowRight, Loader2, Plus } from "lucide-react";
+import { Heart, ArrowRight, Loader2 } from "lucide-react";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useAuth } from "@/hooks/useAuth";
@@ -35,8 +35,9 @@ export default function EmptyCartHints({ onNavigate }: Props) {
         if (!variant) continue;
         const item = buildCartItem(product, variant.id, 1);
         if (!item) continue;
-        // eslint-disable-next-line no-await-in-loop
-        await addItem(item);
+        // Lote silencioso: sem toast por item — só o toast-resumo abaixo (antes
+        // 5 favoritos geravam 6 toasts empilhados).
+        addItem(item, { silent: true });
         added += 1;
       }
       if (added > 0) {
@@ -57,20 +58,28 @@ export default function EmptyCartHints({ onNavigate }: Props) {
     const hints = [
       { to: "/guia-de-composicao", label: "Guia de composição", desc: "Monte seu conjunto passo a passo" },
       { to: "/conjuntos", label: "Conjuntos prontos", desc: "Combinações já pensadas para começar" },
-      { to: "/contrate-a-western", label: "Pedir um orçamento", desc: "Projeto residencial ou sem CNPJ" },
+      { to: "/para-sua-casa", label: "Pedir um orçamento", desc: "Projeto residencial ou sem CNPJ" },
     ];
     return (
       <div className="mt-10">
-        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mb-3">Por onde começar</p>
-        <ul className="space-y-2">
+        <p className="text-eyebrow mb-3">Por onde começar</p>
+        <ul className="space-y-2.5">
           {hints.map((h) => (
             <li key={h.to}>
-              <Link to={h.to} onClick={onNavigate} className="group flex items-center justify-between gap-3 p-3 border border-western-gold/15 hover:border-western-gold/40 transition-colors bg-western-green-deep/30">
+              <Link
+                to={h.to}
+                onClick={onNavigate}
+                className="group flex items-center justify-between gap-3 min-h-[64px] p-4 rounded-lg border border-western-border-soft bg-white hover:border-western-border-strong transition-colors"
+              >
                 <span className="min-w-0">
-                  <span className="block font-display text-sm text-western-cream group-hover:text-western-gold-soft transition-colors">{h.label}</span>
-                  <span className="block text-[12px] text-western-cream-muted truncate">{h.desc}</span>
+                  <span className="block font-sans text-[16px] font-semibold leading-snug text-western-green-deep group-hover:text-western-cta transition-colors">
+                    {h.label}
+                  </span>
+                  <span className="block font-sans text-[14px] text-western-stone-warm truncate mt-0.5">
+                    {h.desc}
+                  </span>
                 </span>
-                <ArrowRight className="h-4 w-4 text-western-cream-muted group-hover:text-western-gold-soft transition-colors shrink-0" />
+                <ArrowRight className="h-5 w-5 text-western-bronze shrink-0" />
               </Link>
             </li>
           ))}
@@ -83,26 +92,24 @@ export default function EmptyCartHints({ onNavigate }: Props) {
     <div className="mt-10 space-y-8">
       {showWishlist && (
         <section>
-          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mb-3">
-            Seus favoritos
-          </p>
-          <div className="border border-western-gold/20 bg-western-green-deep/30 p-4 flex items-center justify-between gap-3">
-            <p className="text-sm text-western-cream-muted leading-relaxed">
+          <p className="text-eyebrow mb-3">Seus favoritos</p>
+          <div className="rounded-lg border border-western-border-soft bg-western-paper p-4 flex flex-wrap items-center justify-between gap-3">
+            <p className="flex-1 min-w-[180px] font-sans text-[15px] leading-normal text-western-stone-warm">
               Você tem{" "}
-              <span className="text-western-cream font-medium">{wishItems.length}</span>{" "}
-              {wishItems.length === 1 ? "peça favorita" : "peças favoritas"}. Trazer para a composição?
+              <span className="font-semibold text-western-green-deep">{wishItems.length}</span>{" "}
+              {wishItems.length === 1 ? "peça favorita" : "peças favoritas"}. Trazer para o carrinho?
             </p>
             <button
               type="button"
               onClick={handleAddAllFavorites}
               disabled={loadingAll}
-              className="flex-shrink-0 h-10 px-3 inline-flex items-center gap-1.5 border border-western-gold/40 text-western-cream hover:bg-western-gold hover:text-western-green-deep hover:border-western-gold font-mono text-[10px] uppercase tracking-[0.22em] transition-colors disabled:opacity-50"
+              className="flex-shrink-0 min-h-tap px-4 inline-flex items-center justify-center gap-2 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[15px] font-semibold transition-colors disabled:opacity-45"
             >
               {loadingAll ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
+                <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
                 <>
-                  <Heart className="h-3 w-3" /> Adicionar todos
+                  <Heart className="h-5 w-5" /> Adicionar todos
                 </>
               )}
             </button>
@@ -112,19 +119,17 @@ export default function EmptyCartHints({ onNavigate }: Props) {
 
       {showRecents && (
         <section>
-          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mb-3">
-            Você viu recentemente
-          </p>
-          <ul className="space-y-2">
+          <p className="text-eyebrow mb-3">Você viu recentemente</p>
+          <ul className="space-y-2.5">
             {recents.slice(0, 4).map((r) => (
               <li
                 key={r.handle}
-                className="flex items-center gap-3 p-2 border border-western-gold/15 hover:border-western-gold/40 transition-colors bg-western-green-deep/30"
+                className="flex items-center gap-3 p-3 rounded-lg border border-western-border-soft bg-white hover:border-western-border-strong transition-colors"
               >
                 <Link
                   to={`/produtos/${r.handle}`}
                   onClick={onNavigate}
-                  className="frame-gallery w-12 h-12 flex-shrink-0 bg-western-paper"
+                  className="w-14 h-14 flex-shrink-0 overflow-hidden rounded-sm bg-western-paper border border-western-border-soft"
                 >
                   {r.image && (
                     <img
@@ -138,17 +143,17 @@ export default function EmptyCartHints({ onNavigate }: Props) {
                 <Link
                   to={`/produtos/${r.handle}`}
                   onClick={onNavigate}
-                  className="flex-1 min-w-0 font-display text-sm text-western-cream hover:text-western-gold-soft transition-colors truncate"
+                  className="flex-1 min-w-0 truncate font-sans text-[16px] font-semibold leading-snug text-western-green-deep hover:text-western-cta transition-colors"
                 >
                   {r.title}
                 </Link>
                 <Link
                   to={`/produtos/${r.handle}`}
                   onClick={onNavigate}
-                  className="text-western-cream-muted hover:text-western-gold-soft transition-colors"
+                  className="tap-target flex-shrink-0 inline-flex items-center justify-center rounded-lg text-western-bronze hover:text-western-cta hover:bg-western-paper transition-colors"
                   aria-label={`Ver ${r.title}`}
                 >
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-5 w-5" />
                 </Link>
               </li>
             ))}

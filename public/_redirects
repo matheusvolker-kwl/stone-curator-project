@@ -1,0 +1,6 @@
+# Atalhos das landings da Expolazer 2026.
+# O convite mora em /expolazer2026/convite/, mas o link divulgado é curto.
+# Sem 404.html no projeto, o fallback SPA automático do Pages segue valendo
+# para todas as rotas não listadas aqui.
+/convite /expolazer2026/convite/ 301
+/convite/ /expolazer2026/convite/ 301

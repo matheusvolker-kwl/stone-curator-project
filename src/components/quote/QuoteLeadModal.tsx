@@ -106,7 +106,7 @@ export default function QuoteLeadModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (items.length === 0) {
-      toast.error("Adicione peças à composição antes de pedir orçamento.");
+      toast.error("Adicione peças ao carrinho antes de pedir o orçamento.");
       return;
     }
     const parsed = baseSchema.safeParse(form);
@@ -183,13 +183,13 @@ export default function QuoteLeadModal({
   })();
 
   const headerTitle =
-    title ?? (origem === "guia_composicao" ? "Baixar composição do projeto" : "Baixar sua composição");
+    title ?? (origem === "guia_composicao" ? "Baixar orçamento do projeto" : "Baixar seu orçamento");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-western-cream border-western-stone-warm/20">
         <DialogHeader>
-          <p className="text-eyebrow">Composição em PDF</p>
+          <p className="text-eyebrow">Orçamento em PDF</p>
           <DialogTitle className="font-display text-2xl text-western-green-deep">
             {success
               ? pdfBlob
@@ -201,10 +201,10 @@ export default function QuoteLeadModal({
             {success
               ? pdfBlob
                 ? "Baixe o PDF abaixo. Se quiser, fale com um vendedor pelo WhatsApp para tirar dúvidas."
-                : "Recebemos sua composição — nosso time comercial entra em contato em breve. Se preferir, fale agora pelo WhatsApp."
+                : "Recebemos seu orçamento — nosso time comercial entra em contato em breve. Se preferir, fale agora pelo WhatsApp."
               : isLogged
                 ? "Confirme seus dados e libere o PDF — também salvamos na sua conta."
-                : "Preencha rapidinho para liberar o PDF da sua composição."}
+                : "Preencha rapidinho para liberar o PDF do seu orçamento."}
           </DialogDescription>
         </DialogHeader>
 
@@ -214,7 +214,7 @@ export default function QuoteLeadModal({
               <CheckCircle2 className="h-5 w-5 text-western-gold mt-0.5 flex-shrink-0" />
               <div className="text-sm text-western-green-deep">
                 <p className="font-medium mb-1">
-                  Composição salva {numero && <span className="font-mono text-xs text-western-gold">· Nº {numero}</span>}
+                  Orçamento salvo {numero && <span className="tabular-nums text-[14px] text-western-gold">· Nº {numero}</span>}
                 </p>
                 <p className="text-western-stone-warm leading-relaxed">
                   {isApproved
@@ -222,7 +222,7 @@ export default function QuoteLeadModal({
                     : "Os preços serão confirmados pelo vendedor após validação do cadastro."}
                 </p>
                 {isLogged ? (
-                  <p className="text-western-stone-warm leading-relaxed mt-2 text-xs">
+                  <p className="text-western-stone-warm leading-relaxed mt-2 text-[14px]">
                     {pdfBlob && pdfStored ? (
                       <>
                         O PDF também ficou disponível em{" "}
@@ -235,10 +235,10 @@ export default function QuoteLeadModal({
                         .
                       </>
                     ) : pdfBlob ? (
-                      "Baixe o PDF abaixo para guardar sua composição."
+                      "Baixe o PDF abaixo para guardar seu orçamento."
                     ) : (
                       <>
-                        Sua composição ficou registrada em{" "}
+                        Seu orçamento ficou registrado em{" "}
                         <Link
                           to="/minha-conta/orcamentos"
                           className="text-western-green-deep font-medium underline-offset-2 hover:underline"
@@ -250,10 +250,10 @@ export default function QuoteLeadModal({
                     )}
                   </p>
                 ) : (
-                  <p className="text-western-stone-warm leading-relaxed mt-2 text-xs">
+                  <p className="text-western-stone-warm leading-relaxed mt-2 text-[14px]">
                     {pdfBlob ? (
                       <>
-                        Quer guardar todas as suas composições?{" "}
+                        Quer guardar todos os seus orçamentos?{" "}
                         <Link
                           to="/parceiro/cadastro"
                           className="text-western-green-deep font-medium underline-offset-2 hover:underline"
@@ -263,7 +263,7 @@ export default function QuoteLeadModal({
                         e elas ficam salvas pra sempre.
                       </>
                     ) : (
-                      "Recebemos sua composição — nosso time comercial entra em contato em breve pelo e-mail ou WhatsApp informado."
+                      "Recebemos seu orçamento — nosso time comercial entra em contato em breve pelo e-mail ou WhatsApp informado."
                     )}
                   </p>
                 )}
@@ -273,7 +273,7 @@ export default function QuoteLeadModal({
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full h-12 inline-flex items-center justify-center gap-2 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] transition-colors"
+              className="w-full h-12 inline-flex items-center justify-center gap-2 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-semibold text-[14px] uppercase tracking-[0.06em] transition-colors"
             >
               <MessageCircle className="h-4 w-4" /> Falar com vendedor agora
             </a>
@@ -281,15 +281,15 @@ export default function QuoteLeadModal({
               <button
                 type="button"
                 onClick={handleDownloadPdf}
-                className="w-full h-11 inline-flex items-center justify-center gap-2 border border-western-green-deep/30 text-western-green-deep hover:border-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+                className="w-full h-11 inline-flex items-center justify-center gap-2 border border-western-green-deep/30 text-western-green-deep hover:border-western-green-deep font-semibold text-[14px] uppercase tracking-[0.06em] transition-colors"
               >
-                <FileDown className="h-4 w-4" /> Baixar PDF da composição
+                <FileDown className="h-4 w-4" /> Baixar PDF do orçamento
               </button>
             )}
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="w-full h-10 text-western-stone-warm hover:text-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
+              className="w-full h-10 text-western-stone-warm hover:text-western-green-deep font-semibold text-[14px] uppercase tracking-[0.06em] transition-colors"
             >
               Fechar
             </button>
@@ -299,12 +299,12 @@ export default function QuoteLeadModal({
             {isLogged ? (
               <div className="flex items-start gap-3 p-3 bg-western-green-deep/5 border border-western-green-deep/15">
                 <UserCheck className="h-4 w-4 text-western-green-deep mt-0.5 flex-shrink-0" />
-                <div className="text-xs text-western-green-deep leading-relaxed">
+                <div className="text-[14px] text-western-green-deep leading-relaxed">
                   Enviando como <strong>{form.nome || user?.email}</strong>
                   {form.empresa && <> · {form.empresa}</>}.
                   <br />
                   <span className="text-western-stone-warm">
-                    Sua composição vai ficar salva em{" "}
+                    Seu orçamento vai ficar salvo em{" "}
                     <Link
                       to="/minha-conta/orcamentos"
                       className="underline-offset-2 hover:underline"
@@ -316,7 +316,7 @@ export default function QuoteLeadModal({
                 </div>
               </div>
             ) : (
-              <p className="text-xs text-western-stone-warm leading-relaxed -mt-1">
+              <p className="text-[14px] text-western-stone-warm leading-relaxed -mt-1">
                 Já é parceiro?{" "}
                 <Link
                   to="/parceiro/login"
@@ -324,7 +324,7 @@ export default function QuoteLeadModal({
                 >
                   Entre na sua conta
                 </Link>{" "}
-                para guardar suas composições.
+                para guardar seus orçamentos.
               </p>
             )}
 
@@ -340,7 +340,7 @@ export default function QuoteLeadModal({
                       className="rounded-none mt-1"
                       placeholder="Seu nome completo"
                     />
-                    {errors.nome && <p className="text-xs text-red-600 mt-1">{errors.nome}</p>}
+                    {errors.nome && <p className="text-[14px] font-semibold text-status-error mt-1">{errors.nome}</p>}
                   </div>
                   <div>
                     <Label className="text-spec text-western-stone-warm">Empresa</Label>
@@ -359,7 +359,7 @@ export default function QuoteLeadModal({
                     <div className="mt-1">
                       <EmailInput value={form.email} onChange={handleChange("email")} />
                     </div>
-                    {errors.email && <p className="text-xs text-red-600 mt-1">{errors.email}</p>}
+                    {errors.email && <p className="text-[14px] font-semibold text-status-error mt-1">{errors.email}</p>}
                   </div>
                   <div>
                     <Label className="text-spec text-western-stone-warm">WhatsApp *</Label>
@@ -368,7 +368,7 @@ export default function QuoteLeadModal({
                       onChange={handleChange("telefone")}
                       className="rounded-none mt-1"
                     />
-                    {errors.telefone && <p className="text-xs text-red-600 mt-1">{errors.telefone}</p>}
+                    {errors.telefone && <p className="text-[14px] font-semibold text-status-error mt-1">{errors.telefone}</p>}
                   </div>
                 </div>
 
@@ -393,7 +393,7 @@ export default function QuoteLeadModal({
                   onChange={handleChange("telefone")}
                   className="rounded-none mt-1"
                 />
-                {errors.telefone && <p className="text-xs text-red-600 mt-1">{errors.telefone}</p>}
+                {errors.telefone && <p className="text-[14px] font-semibold text-status-error mt-1">{errors.telefone}</p>}
               </div>
             )}
 
@@ -422,19 +422,19 @@ export default function QuoteLeadModal({
             <button
               type="submit"
               disabled={submitting}
-              className="w-full h-12 inline-flex items-center justify-center gap-2 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] transition-colors disabled:opacity-50"
+              className="w-full h-12 inline-flex items-center justify-center gap-2 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-semibold text-[14px] uppercase tracking-[0.06em] transition-colors disabled:opacity-50"
             >
               {submitting ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <>
-                  <FileDown className="h-4 w-4" /> {ctaLabel ?? "Liberar PDF"}
+                  <FileDown className="h-4 w-4" /> {ctaLabel ?? "Liberar o PDF do orçamento"}
                 </>
               )}
             </button>
 
-            <p className="text-[10.5px] text-western-stone-warm text-center leading-relaxed">
-              Ao liberar o PDF, sua composição é salva no nosso painel — assim podemos te ajudar caso precise.
+            <p className="text-[14px] text-western-stone-warm text-center leading-relaxed">
+              Ao liberar o PDF, seu orçamento fica salvo com a gente — assim o time pode te ajudar quando você voltar.
             </p>
           </form>
         )}

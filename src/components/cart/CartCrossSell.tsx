@@ -71,21 +71,16 @@ export default function CartCrossSell({
       }
       const item = buildCartItem(product, variant.id, 1);
       if (!item) return;
-      await addItem(item);
-      toast.success("Peça adicionada à composição", {
-        description: product.title,
-        position: "top-right",
-      });
+      // Toast único (com "Ver") vive no cartStore — sem segundo toast aqui.
+      addItem(item);
     } finally {
       setAdding(null);
     }
   };
 
   return (
-    <div className="px-5 md:px-8 py-6 border-t border-western-gold/15">
-      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-western-gold-soft mb-4">
-        Combina com sua composição
-      </p>
+    <div className="px-5 md:px-8 py-6 surface-paper border-t border-western-border-soft">
+      <p className="text-eyebrow mb-4">Combina com sua composição</p>
       <ul className="space-y-3">
         {suggestions.map((p) => {
           // p é um ShopifyProductNode parcial (vem do collection query)
@@ -103,12 +98,12 @@ export default function CartCrossSell({
           return (
             <li
               key={node.id}
-              className="flex items-center gap-3 p-2.5 border border-western-gold/15 hover:border-western-gold/40 transition-colors bg-western-green-deep/30"
+              className="flex items-center gap-3 p-3 rounded-lg border border-western-border-soft bg-white hover:border-western-border-strong transition-colors"
             >
               <Link
                 to={`/produtos/${node.handle}`}
                 onClick={onNavigate}
-                className="frame-gallery w-14 h-14 flex-shrink-0 bg-western-paper"
+                className="w-16 h-16 flex-shrink-0 overflow-hidden rounded-sm bg-western-paper border border-western-border-soft"
               >
                 {img && (
                   <img
@@ -123,32 +118,33 @@ export default function CartCrossSell({
                 <Link
                   to={`/produtos/${node.handle}`}
                   onClick={onNavigate}
-                  className="font-display text-sm text-western-cream hover:text-western-gold-soft transition-colors block truncate leading-tight"
+                  className="block truncate font-sans text-[16px] font-semibold leading-snug text-western-green-deep hover:text-western-cta transition-colors"
                 >
                   {node.title}
                 </Link>
                 {isApproved && minPrice ? (
-                  <p className="text-spec text-western-cream-muted text-xs mt-0.5">
+                  <p className="font-sans text-[14px] text-western-stone-warm mt-0.5">
                     a partir de {formatBRL(minPrice.amount, minPrice.currencyCode)}
                   </p>
                 ) : (
-                  <p className="text-spec text-western-cream-muted text-xs mt-0.5">
+                  <p className="font-sans text-[14px] text-western-stone-warm mt-0.5">
                     Ver detalhes da peça
                   </p>
                 )}
               </div>
               {isApproved ? (
                 <button
+                  type="button"
                   onClick={() => handleQuickAdd(node.handle)}
                   disabled={isAdding}
-                  className="h-9 px-3 inline-flex items-center gap-1.5 border border-western-gold/40 text-western-cream hover:bg-western-gold hover:text-western-green-deep hover:border-western-gold font-mono text-[10px] uppercase tracking-[0.22em] transition-colors disabled:opacity-50 flex-shrink-0"
+                  className="flex-shrink-0 min-h-tap px-4 inline-flex items-center justify-center gap-2 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[15px] font-semibold transition-colors disabled:opacity-45"
                   aria-label={`Adicionar ${node.title}`}
                 >
                   {isAdding ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
+                    <Loader2 className="h-5 w-5 animate-spin" />
                   ) : (
                     <>
-                      <Plus className="h-3 w-3" /> Adicionar
+                      <Plus className="h-5 w-5" /> Adicionar
                     </>
                   )}
                 </button>
@@ -156,9 +152,9 @@ export default function CartCrossSell({
                 <Link
                   to={`/produtos/${node.handle}`}
                   onClick={onNavigate}
-                  className="h-9 px-3 inline-flex items-center gap-1 text-western-cream-muted hover:text-western-gold-soft font-mono text-[10px] uppercase tracking-[0.22em] transition-colors flex-shrink-0"
+                  className="flex-shrink-0 min-h-tap px-4 inline-flex items-center justify-center gap-1.5 rounded-lg border border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper font-sans text-[15px] font-semibold transition-colors"
                 >
-                  Ver peça <ArrowRight className="h-3 w-3" />
+                  Ver peça <ArrowRight className="h-5 w-5" />
                 </Link>
               )}
             </li>

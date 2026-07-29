@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { submitSecureLead } from "@/lib/leads";
 import TurnstileWidget from "@/components/security/TurnstileWidget";
 import { BUSINESS } from "@/config/business";
-import { Loader2, MapPin, Trash2, Plus } from "lucide-react";
+import { Loader2, MapPin, Trash2, Plus, ArrowRight } from "lucide-react";
 import {
   Popover, PopoverContent, PopoverTrigger,
 } from "@/components/ui/popover";
@@ -21,10 +21,57 @@ import EmailInput from "@/components/forms/EmailInput";
 import FieldLabel from "@/components/forms/FieldLabel";
 import { phoneBRSchema, emailSchema, UF_LIST, normalizeText, focusFirstInvalid } from "@/lib/forms/br";
 import { z } from "zod";
-import { useRef } from "react";
+import Seo from "@/components/seo/Seo";
+import atelieHero from "@/assets/visitar/atelie-hero.webp";
+import atelieReuniao from "@/assets/visitar/atelie-reuniao.webp";
+import atelieEstar from "@/assets/visitar/atelie-estar.webp";
+import atelieCascata from "@/assets/visitar/atelie-cascata.webp";
 
 const PERFIS = ["Arquiteto", "Paisagista", "Cliente final", "Lojista", "Construtora", "Outro"];
 const HORARIOS = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00"];
+
+/* Cada alt abaixo foi escrito OLHANDO o arquivo, não a expectativa. As três são
+ * fotos noturnas de celular do mesmo lugar da hero (o teto de varas, o deck e a
+ * parede verde de samambaias se repetem e amarram as quatro).
+ * Ficou de fora, de propósito, a foto do interior da sala de reunião: sobre a
+ * mesa há lata de energético, copos plásticos, notebook, um nível de pedreiro e
+ * um ring light no tripé. Lê "escritório em dia de trabalho", não showroom. */
+const ATELIE_FOTOS = [
+  {
+    img: atelieCascata,
+    alt: "À noite: uma cascata de pedra Western despejando água numa piscina iluminada de azul, com palmeiras iluminadas ao fundo e o deck de madeira em primeiro plano.",
+  },
+  {
+    img: atelieReuniao,
+    alt: "À noite: o deck coberto por um teto de varas, com uma parede verde de samambaias iluminada e, atrás do vidro, a sala de reunião com mesa redonda branca apoiada numa base de pedra bruta.",
+  },
+  {
+    img: atelieEstar,
+    alt: "À noite: um sofá creme no deck, encostado na parede verde de samambaias iluminada, com a parede de pedra recebendo luz rasante e a piscina azul em primeiro plano.",
+  },
+];
+
+/* DS V3 — pele dos campos.
+ * 52px de altura (--control-h), cantos 10px, texto 16px (mínimo de UI), borda
+ * visível de 1.5px (o público 40+ precisa VER o campo) e fundo claro e quente.
+ * Erros em sans 14px semibold — nunca mono, nunca 10px caixa-alta. */
+const CONTROL =
+  "h-control rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 text-[15px] md:text-[15px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-green-deep";
+const CONTROL_ERR = "border-[1.5px] border-status-error";
+const SELECT =
+  "h-control w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 font-sans text-[15px] text-western-green-deep outline-none transition-colors focus:border-western-green-deep";
+
+/* Os campos compartilhados (EmailInput/PhoneInput) já nascem V3; estas classes
+ * só reforçam a borda de erro/normal quando este formulário controla o estado. */
+const PHONE_FX = "[&_p]:!font-sans [&_p]:!text-[14px] [&_p]:!normal-case [&_p]:!tracking-normal";
+
+function FieldError({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="mt-2 font-sans text-[14px] font-semibold leading-snug text-status-error">
+      {children}
+    </p>
+  );
+}
 
 interface Slot { date: Date | null; hora: string }
 
@@ -134,20 +181,25 @@ export default function AgendarVisita() {
   if (done) {
     return (
       <div className="surface-ivory">
-        <div className="container-western py-32 max-w-2xl text-center">
-          <MapPin className="h-10 w-10 text-western-gold mx-auto mb-6" />
+        <div className="container-western py-24 md:py-32">
+          <div className="mx-auto max-w-2xl text-center">
+          <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-western-paper">
+            <MapPin className="h-7 w-7 text-western-bronze" strokeWidth={1.75} aria-hidden />
+          </div>
           <p className="text-eyebrow mb-6">Visita solicitada</p>
-          <div className="w-12 h-px bg-western-gold mx-auto mb-8" />
-          <h1 className="font-display text-4xl md:text-5xl text-western-green-deep leading-tight mb-6">
+          <div className="mx-auto mb-8 h-px w-12 bg-western-gold" />
+          <h1 className="display-xl mb-6 text-western-green-deep">
             Recebemos sua solicitação.
           </h1>
-          <p className="text-western-stone-warm leading-relaxed mb-10">
+          <p className="mx-auto mb-10 max-w-[54ch] text-[16px] leading-[1.6] text-western-stone-warm">
             Em até 1 dia útil retornamos pelo WhatsApp confirmando a melhor data
             entre as que você sugeriu.
           </p>
-          <Link to="/" className="link-underline text-western-gold font-mono text-xs uppercase tracking-[0.22em]">
+          <Link to="/" className="btn-primary w-full sm:w-auto">
             Voltar ao catálogo
+            <ArrowRight className="h-5 w-5" aria-hidden />
           </Link>
+          </div>
         </div>
       </div>
     );
@@ -155,101 +207,197 @@ export default function AgendarVisita() {
 
   return (
     <div className="surface-ivory">
-      <div className="container-western py-20 md:py-28 max-w-2xl">
+      <Seo
+        title="Visita ao ateliê Western — agende e conheça o showroom"
+        description={`O showroom do ateliê recebe com hora marcada em ${BUSINESS.cidadeAtelie}/${BUSINESS.ufAtelie}: ponha a mão na pedra, veja as peças montadas em escala e converse com quem produz.`}
+        path="/visitar"
+      />
+      <div className="container-western py-16 md:py-24">
+        {/* O showroom que se visita é ESTE — o ateliê. O antigo convite mandava a
+            pessoa à Riviera de São Lourenço, que é obra nossa já entregue e não
+            recebe visita; saiu do site. Esta página era só um formulário: quem
+            chegava tinha que aceitar no escuro que valia a viagem. Agora ela
+            mostra o lugar antes de pedir a agenda.
+            ⚠ Nenhuma destas fotos prova em que cidade o lugar fica — a cidade sai
+            de BUSINESS, e nunca de uma legenda dizendo que a foto a comprova. */}
+        <div className="mx-auto max-w-4xl">
+          <figure className="m-0 mb-10 md:mb-14">
+            <div className="aspect-[4/3] overflow-hidden rounded-xl">
+              <img
+                src={atelieHero}
+                alt="Deck de madeira do ateliê à beira de uma piscina de borda de praia com água turquesa. Um homem sentado na beira do deck, com os pés dentro da água, toca violão. Atrás, um pavilhão com pergolado de varas e a porta de vidro aberta; à direita, uma palmeira e pedra Western."
+                width={1400}
+                height={1050}
+                fetchPriority="high"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
+            </div>
+          </figure>
+        </div>
+
+        <div className="mx-auto max-w-2xl">
         <p className="text-eyebrow mb-5">Visita ao ateliê</p>
-        <div className="w-12 h-px bg-western-gold mb-8" />
-        <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05] mb-6">
+        <div className="mb-8 h-px w-12 bg-western-gold" />
+        <h1 className="display-xl mb-6 text-western-green-deep">
           Conheça onde a pedra nasce.
         </h1>
-        <p className="text-western-stone-warm text-lg leading-relaxed mb-4">
+        <p className="mb-4 text-[16px] leading-[1.6] text-western-stone-warm md:text-[17px]">
           Recebemos arquitetos, paisagistas e clientes finais com hora marcada — para você
           tocar nos quatro acabamentos, ver as composições montadas em escala e
           conversar com quem produz.
         </p>
-        <p className="text-spec text-western-stone-warm mb-12 uppercase tracking-[0.18em]">
-          {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · {BUSINESS.horarioAtelie} · Retirada gratuita
+        {/* enderecoAtelieCompleto já traz "Cajamar/SP" — por isso a linha de
+            horário não repete a cidade, como fazia quando não havia endereço. */}
+        <p className="mb-2 text-[15px] leading-[1.6] text-western-stone-warm">
+          {BUSINESS.enderecoAtelieCompleto}
         </p>
+        <p className="mb-12 text-[15px] leading-[1.6] text-western-stone-warm">
+          {BUSINESS.horarioAtelie} · Retirada gratuita
+        </p>
+        </div>
 
-        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
+        <div className="mx-auto mb-12 max-w-4xl">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3 list-none p-0">
+            {ATELIE_FOTOS.map((f) => (
+              <li key={f.img}>
+                <div className="aspect-[4/3] overflow-hidden rounded-lg">
+                  <img
+                    src={f.img}
+                    alt={f.alt}
+                    width={900}
+                    height={675}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="mx-auto max-w-2xl">
+
+        <form
+          ref={formRef}
+          onSubmit={handleSubmit}
+          className="space-y-6 rounded-xl border border-western-border-soft bg-white p-6 shadow-[0_24px_60px_-32px_rgba(30,40,25,0.28)] md:p-9"
+          noValidate
+        >
           <div>
-            <FieldLabel htmlFor="nome">Nome</FieldLabel>
-            <Input id="nome" value={f.nome} onChange={(e) => set("nome", e.target.value)} required
-              className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-            {errors.nome && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.nome}</p>}
+            <FieldLabel htmlFor="nome" required>Nome</FieldLabel>
+            <Input
+              id="nome"
+              value={f.nome}
+              onChange={(e) => set("nome", e.target.value)}
+              required
+              aria-invalid={!!errors.nome}
+              className={cn(CONTROL, errors.nome && CONTROL_ERR)}
+            />
+            {errors.nome && <FieldError>{errors.nome}</FieldError>}
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-5">
+          <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <FieldLabel htmlFor="email">E-mail</FieldLabel>
+              <FieldLabel htmlFor="email" required>E-mail</FieldLabel>
               <EmailInput id="email" value={f.email} onChange={(v) => set("email", v)} required error={errors.email} />
             </div>
-            <div>
-              <FieldLabel htmlFor="telefone">Telefone (WhatsApp)</FieldLabel>
+            <div className={PHONE_FX}>
+              <FieldLabel htmlFor="telefone" required>Telefone (WhatsApp)</FieldLabel>
               <PhoneInput id="telefone" value={f.telefone} onChange={(v) => set("telefone", v)} required error={errors.telefone} />
             </div>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-5">
+          <div className="grid gap-6 sm:grid-cols-2">
             <div>
               <FieldLabel htmlFor="perfil">Perfil</FieldLabel>
-              <select id="perfil" value={f.perfil} onChange={(e) => set("perfil", e.target.value)}
-                className="h-12 w-full bg-transparent border border-western-stone-warm/30 px-3 rounded-none text-western-green-deep focus:outline-none focus:border-western-gold">
+              <select
+                id="perfil"
+                value={f.perfil}
+                onChange={(e) => set("perfil", e.target.value)}
+                className={SELECT}
+              >
                 {PERFIS.map((p) => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
             <div>
               <FieldLabel htmlFor="empresa" optional>Empresa / estúdio</FieldLabel>
-              <Input id="empresa" value={f.empresa} onChange={(e) => set("empresa", e.target.value)}
-                className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+              <Input
+                id="empresa"
+                value={f.empresa}
+                onChange={(e) => set("empresa", e.target.value)}
+                className={CONTROL}
+              />
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-3 gap-4 md:gap-5">
             <div className="col-span-2">
-              <FieldLabel htmlFor="cidade">Cidade de origem</FieldLabel>
-              <Input id="cidade" value={f.cidade} onChange={(e) => set("cidade", e.target.value)} required
-                className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-              {errors.cidade && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.cidade}</p>}
+              <FieldLabel htmlFor="cidade" required>Cidade de origem</FieldLabel>
+              <Input
+                id="cidade"
+                value={f.cidade}
+                onChange={(e) => set("cidade", e.target.value)}
+                required
+                aria-invalid={!!errors.cidade}
+                className={cn(CONTROL, errors.cidade && CONTROL_ERR)}
+              />
+              {errors.cidade && <FieldError>{errors.cidade}</FieldError>}
             </div>
             <div>
-              <FieldLabel htmlFor="estado">UF</FieldLabel>
-              <select id="estado" value={f.estado} onChange={(e) => set("estado", e.target.value)} required
-                className="h-12 w-full bg-transparent border border-western-stone-warm/30 px-3 rounded-none text-western-green-deep focus:outline-none focus:border-western-gold">
+              <FieldLabel htmlFor="estado" required>UF</FieldLabel>
+              <select
+                id="estado"
+                value={f.estado}
+                onChange={(e) => set("estado", e.target.value)}
+                required
+                aria-invalid={!!errors.estado}
+                className={cn(SELECT, "px-3", errors.estado && "border-status-error")}
+              >
                 <option value="" disabled>—</option>
                 {UF_LIST.map((uf) => <option key={uf} value={uf}>{uf}</option>)}
               </select>
-              {errors.estado && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.estado}</p>}
+              {errors.estado && <FieldError>{errors.estado}</FieldError>}
             </div>
           </div>
 
           <div>
-            <FieldLabel htmlFor="pessoas">Quantas pessoas vêm?</FieldLabel>
-            <Input id="pessoas" type="number" min={1} max={10} value={f.pessoas} onChange={(e) => set("pessoas", parseInt(e.target.value || "1", 10))} required
-              className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold w-32" />
+            <FieldLabel htmlFor="pessoas" required>Quantas pessoas vêm?</FieldLabel>
+            <Input
+              id="pessoas"
+              type="number"
+              min={1}
+              max={10}
+              value={f.pessoas}
+              onChange={(e) => set("pessoas", parseInt(e.target.value || "1", 10))}
+              required
+              className={cn(CONTROL, "w-32")}
+            />
           </div>
 
-          <div className="pt-4 border-t border-western-stone-warm/15">
+          <div className="border-t border-western-border-soft pt-6">
             <FieldLabel hint="Sugira até 3 opções de data e horário (Seg–Sex). Confirmamos a melhor por WhatsApp.">
               Datas preferidas
             </FieldLabel>
             <div className="space-y-3">
               {f.slots.map((slot, i) => (
-                <div key={i} className="grid grid-cols-[1fr_auto_auto] gap-3 items-center">
+                <div key={i} className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
                         type="button"
                         variant="outline"
                         className={cn(
-                          "h-11 justify-start text-left font-normal border-western-stone-warm/30 rounded-none bg-transparent text-western-green-deep hover:border-western-gold hover:bg-transparent",
-                          !slot.date && "text-western-stone-warm/60"
+                          "h-control w-full justify-start rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 text-[15px] font-normal text-western-green-deep hover:border-western-green-deep hover:bg-western-paper sm:flex-1",
+                          !slot.date && "text-western-stone-warm",
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        <CalendarIcon className="mr-2 h-5 w-5" strokeWidth={1.75} aria-hidden />
                         {slot.date ? format(slot.date, "EEE, dd 'de' MMM", { locale: ptBR }) : "Escolher data"}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
+                    <PopoverContent className="w-auto rounded-lg p-0" align="start">
                       <Calendar
                         mode="single"
                         selected={slot.date ?? undefined}
@@ -261,24 +409,28 @@ export default function AgendarVisita() {
                       />
                     </PopoverContent>
                   </Popover>
-                  <select
-                    value={slot.hora}
-                    onChange={(e) => updateSlot(i, { hora: e.target.value })}
-                    className="h-11 bg-transparent border border-western-stone-warm/30 px-3 rounded-none text-western-green-deep focus:outline-none focus:border-western-gold"
-                  >
-                    <option value="">Horário</option>
-                    {HORARIOS.map((h) => <option key={h} value={h}>{h}</option>)}
-                  </select>
-                  {f.slots.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => set("slots", f.slots.filter((_, idx) => idx !== i))}
-                      className="h-11 w-11 flex items-center justify-center text-western-stone-warm hover:text-red-700"
-                      aria-label="Remover"
+
+                  <div className="flex items-center gap-3">
+                    <select
+                      value={slot.hora}
+                      onChange={(e) => updateSlot(i, { hora: e.target.value })}
+                      aria-label={`Horário da opção ${i + 1}`}
+                      className={cn(SELECT, "flex-1 sm:w-[140px] sm:flex-none")}
                     >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  )}
+                      <option value="">Horário</option>
+                      {HORARIOS.map((h) => <option key={h} value={h}>{h}</option>)}
+                    </select>
+                    {f.slots.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => set("slots", f.slots.filter((_, idx) => idx !== i))}
+                        className="tap-target flex h-control w-[52px] flex-shrink-0 items-center justify-center rounded-lg border border-western-border-soft text-western-stone-warm transition-colors hover:border-status-error hover:text-status-error"
+                        aria-label={`Remover opção ${i + 1}`}
+                      >
+                        <Trash2 className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -286,9 +438,10 @@ export default function AgendarVisita() {
               <button
                 type="button"
                 onClick={() => set("slots", [...f.slots, { date: null, hora: "" }])}
-                className="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold hover:text-western-green-deep"
+                className="tap-target mt-3 inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-green-deep transition-colors hover:text-western-cta"
               >
-                <Plus className="h-3 w-3" /> Adicionar outra opção
+                <Plus className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+                Adicionar outra opção
               </button>
             )}
           </div>
@@ -301,18 +454,29 @@ export default function AgendarVisita() {
               onChange={(e) => set("projeto", e.target.value)}
               placeholder="Residencial, hotelaria, comercial — conte um pouco do escopo."
               rows={3}
-              className="bg-transparent border-western-stone-warm/30 rounded-none text-western-green-deep focus-visible:border-western-gold"
+              className="min-h-[120px] rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 py-3 text-[16px] leading-[1.6] text-western-green-deep placeholder:text-western-stone-warm/60 focus-visible:border-western-green-deep focus-visible:ring-0"
             />
           </div>
 
-          <label className="flex items-start gap-3 cursor-pointer">
-            <input type="checkbox" checked={f.aceite} onChange={(e) => set("aceite", e.target.checked)}
-              className="mt-1 h-4 w-4 accent-western-gold flex-shrink-0" />
-            <span className="text-spec text-western-stone-warm leading-relaxed">
-              Concordo com a <Link to="/privacidade" className="link-underline text-western-gold">política de privacidade</Link>.
+          <label className="flex cursor-pointer items-start gap-3">
+            <input
+              type="checkbox"
+              checked={f.aceite}
+              onChange={(e) => set("aceite", e.target.checked)}
+              className="mt-1 h-5 w-5 flex-shrink-0 accent-western-cta"
+            />
+            <span className="text-[15px] leading-[1.6] text-western-stone-warm">
+              Concordo com a{" "}
+              <Link
+                to="/privacidade"
+                className="font-semibold text-western-green-deep underline decoration-western-gold underline-offset-2"
+              >
+                política de privacidade
+              </Link>
+              .
             </span>
           </label>
-          {errors.aceite && <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.aceite}</p>}
+          {errors.aceite && <FieldError>{errors.aceite}</FieldError>}
 
           <TurnstileWidget
             onToken={setCaptchaToken}
@@ -320,14 +484,19 @@ export default function AgendarVisita() {
             className="mt-4"
           />
 
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full h-12 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
-          >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Solicitar visita"}
+          {/* CTA primário = verde, full-width no mobile. */}
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
+                Enviando…
+              </>
+            ) : (
+              "Solicitar visita"
+            )}
           </Button>
         </form>
+        </div>
       </div>
     </div>
   );

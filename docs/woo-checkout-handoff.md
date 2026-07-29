@@ -165,3 +165,94 @@ checkout de visitante — nunca bloquear a compra por causa do ticket.
 - Edge function (emissão, JWT obrigatório): `checkout-ticket-create`
 - Edge function (troca, Bearer obrigatório): `checkout-ticket-redeem`
 - Secret: `WESTERN_CHECKOUT_EXCHANGE_KEY`
+
+---
+
+## 6. Extensão pendente: `bundle_config` (kits "Leve 3, −10%")
+
+**Status (2026-07-14): app pronto, mu-plugin PENDENTE. Flag `KIT_UPSELL_ENABLED`
+em `src/data/kits.ts` fica `false` até esta extensão ser deployada.**
+
+Os kits (#2347–2357) são Product Bundles cujo item embrulhado é um produto
+**variável** (acabamento). Teste real no endpoint (2026-07-14): a linha
+`{product_id: 2347, kind: "bundle"}` chega ao checkout com erro
+*"Pedra LED não tem algumas opções obrigatórias"* e subtotal R$ 0 — o
+add-to-cart de bundle precisa da configuração da variação. (O caminho atual
+funciona para os bundles de acabamento WEST-*-M/A/G/Q porque eles embrulham
+produtos simples — as caixas CX.)
+
+### Novo campo opcional na linha
+
+```json
+{
+  "product_id": 2347,
+  "variation_id": null,
+  "attributes": [],
+  "quantity": 1,
+  "kind": "bundle",
+  "bundle_config": [
+    {
+      "bundled_item_id": 36,
+      "quantity": 3,
+      "variation_id": 930,
+      "attributes": [{ "slug": "acabamento", "value": "Moledo" }]
+    }
+  ]
+}
+```
+
+### Mudança no mu-plugin (aditiva — nada muda sem `bundle_config`)
+
+No ponto onde a linha `kind === "bundle"` é adicionada ao carrinho, usar a API
+oficial do Product Bundles quando `bundle_config` estiver presente:
+
+```php
+if ( $line['kind'] === 'bundle' && ! empty( $line['bundle_config'] ) && function_exists( 'WC_PB' ) ) {
+    $config = array();
+    foreach ( $line['bundle_config'] as $bc ) {
+        $item_config = array( 'quantity' => max( 1, (int) $bc['quantity'] ) );
+        if ( ! empty( $bc['variation_id'] ) ) {
+            $item_config['variation_id'] = (int) $bc['variation_id'];
+        }
+        if ( ! empty( $bc['attributes'] ) ) {
+            $attrs = array();
+            foreach ( $bc['attributes'] as $a ) {
+                // WC espera as chaves como attribute_{slug-sanitizado}
+                $slug = sanitize_title( $a['slug'] );
+                $attrs[ 'attribute_' . $slug ] = sanitize_title( $a['value'] );
+            }
+            $item_config['attributes'] = $attrs;
+        }
+        $config[ (int) $bc['bundled_item_id'] ] = $item_config;
+    }
+    $added = WC_PB()->cart->add_bundle_to_cart(
+        (int) $line['product_id'],
+        max( 1, (int) $line['quantity'] ),
+        $config
+    );
+    if ( is_wp_error( $added ) ) {
+        // degradar graciosamente: pula a linha (não bloquear o restante do carrinho)
+        error_log( 'western-handoff bundle_config: ' . $added->get_error_message() );
+    }
+    continue; // linha tratada — não cair no add_to_cart plano
+}
+```
+
+Atenção ao formato dos `attributes`: se a variação usar atributo GLOBAL
+(taxonomia `pa_acabamento`), a chave vira `attribute_pa_acabamento` e o valor é
+o slug do termo; se for atributo local do produto ("Acabamento"), a chave é
+`attribute_acabamento` e o valor é o texto da opção. Confirmar no produto real
+qual dos dois formatos os bases usam (checar `attributes[].id` — 0 = local) e,
+na dúvida, montar o config só com `variation_id` (o app SEMPRE envia o
+`variation_id` resolvido — com ele o WC resolve os atributos sozinho via
+`wc_get_product_variation_attributes`).
+
+### Como testar depois do deploy
+
+```
+node scratchpad/test-handoff.cjs   # caso 3 deve mostrar "Kit Pedra LED" com preço > 0
+```
+
+Depois: flipar `KIT_UPSELL_ENABLED = true` em `src/data/kits.ts` e validar o
+fluxo completo (PDP → upsell → carrinho → Finalizar compra → checkout Woo com
+kit precificado com −10%).

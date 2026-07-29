@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Lock, Unlock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,7 +16,45 @@ interface Props {
   variant?: "inline" | "badge" | "block" | "hidden";
   /** Texto custom para o fallback */
   lockedLabel?: string;
+  /**
+   * false quando o componente vive dentro de um ancestral clicável (ex.:
+   * ProductCard, que é um <Link>) — o fallback vira <span> para não aninhar
+   * <a> dentro de <a>.
+   */
+  linked?: boolean;
 }
+
+/* === Chip do gate B2B (V3) =================================================
+ * É o elemento que TODO visitante vê na vitrine, então ele segue as regras de
+ * texto do V3 e não as de "legenda decorativa":
+ *   - Source Sans 3 semibold, sentence case. Nunca mono, nunca caixa-alta 10px.
+ *   - 16px (UI) nas variantes de compra; 14px é o piso absoluto (badge).
+ *   - Verde-escuro sobre marfim + borda visível → contraste AA+ para 40+.
+ *   - Alvo de toque ≥48px (52px na variante block, altura padrão de controle).
+ *   - Raios do sistema: 6px em badge, 10px no resto. Sem cantos vivos.
+ * Repouso igual em todas as variantes (identidade única de chip) e hover que
+ * preenche de verde — sem virar um segundo CTA primário concorrendo com o
+ * botão verde da página. Utilities explícitas de propósito: classes de
+ * @layer components perderiam para as utilities dos consumidores.
+ * ========================================================================== */
+const CHIP_BASE =
+  "inline-flex items-center gap-2 font-sans font-semibold rounded-lg " +
+  "border border-western-border-strong bg-western-ivory text-western-green-deep";
+
+const CHIP_SIZE: Record<"inline" | "badge" | "block", string> = {
+  // Padrão da vitrine: cards de peça/conjunto, barra fixa.
+  inline: "min-h-tap px-3.5 py-2 text-[15px]",
+  // Compacto (selo sobre foto/lista densa) — 14px é o mínimo permitido.
+  badge: "min-h-tap px-3 py-1.5 text-[14px] rounded-sm gap-1.5",
+  // Slot de preço da PDP/composição: ocupa a largura do bloco, altura de controle.
+  block: "min-h-control w-full justify-center px-5 py-3 text-[15px]",
+};
+
+/** Só o <a> ganha afordância de hover/foco; o <span> é inerte por definição. */
+const CHIP_INTERACTIVE =
+  "transition-colors duration-200 hover:border-western-cta hover:bg-western-cta " +
+  "hover:text-western-cream focus-visible:outline-none focus-visible:ring-2 " +
+  "focus-visible:ring-western-cta focus-visible:ring-offset-2";
 
 /**
  * Renderiza o preço para parceiros aprovados (com desconto do tier aplicado)
@@ -28,9 +67,27 @@ export default function GatedPrice({
   className,
   variant = "inline",
   lockedLabel,
+  linked = true,
 }: Props) {
   const { isApproved, session } = useAuth();
   const { discountPct } = usePartnerPricing();
+  const guardRef = useRef<HTMLAnchorElement>(null);
+
+  // Guarda de dev: o fallback do gate é um <a>. Se o componente vive dentro de
+  // um card clicável (ProductCard, ConjuntoCard...), quem chama TEM que passar
+  // linked={false} — senão vira <a> dentro de <a> (HTML inválido; o React
+  // reclama e o clique fica ambíguo). Já aconteceu 3×; a trava avisa na hora.
+  useEffect(() => {
+    if (!import.meta.env.DEV || !linked || isApproved) return;
+    const anchor = guardRef.current?.parentElement?.closest("a");
+    if (anchor) {
+      // eslint-disable-next-line no-console
+      console.error(
+        "[GatedPrice] está dentro de um <a> (%s) e vai aninhar links. Passe linked={false}.",
+        anchor.getAttribute("href") ?? "sem href",
+      );
+    }
+  }, [linked, isApproved]);
 
   if (isApproved) {
     const base = typeof amount === "number" ? amount : parseFloat(amount);
@@ -46,12 +103,19 @@ export default function GatedPrice({
     return (
       <span className={`${className ?? ""} inline-flex flex-wrap items-baseline gap-x-2 gap-y-0.5`}>
         {hasDiscount && (
-          <span className="opacity-50 line-through text-[0.78em] font-normal">
+          // Proporcional ao preço, mas travado no piso de 14px: o consumidor
+          // pode montar este bloco em 16px (card relacionado) e 0.78em cairia
+          // para ~12px. Cor sólida em vez de opacity — opacidade quebra o AA.
+          <span className="text-[length:max(14px,0.78em)] font-normal text-western-stone-warm line-through">
             {formatBRL(base, currency)}
           </span>
         )}
         <span>{formatBRL(final, currency)}</span>
-        {suffix && <span className="opacity-60">{suffix}</span>}
+        {suffix && (
+          <span className="text-[length:max(14px,0.8em)] font-normal text-western-stone-warm">
+            {suffix}
+          </span>
+        )}
       </span>
     );
   }
@@ -62,34 +126,24 @@ export default function GatedPrice({
   const to = session ? "/minha-conta" : "/parceiro/cadastro";
   const Icon = session ? Lock : Unlock;
 
-  if (variant === "badge") {
-    return (
-      <Link
-        to={to}
-        className="inline-flex items-center gap-1 font-mono text-[9px] uppercase tracking-[0.16em] px-1.5 py-0.5 border border-western-stone-warm/25 text-western-stone-warm hover:text-western-gold hover:border-western-gold/60 transition-colors"
-      >
-        <Icon className="h-2.5 w-2.5" /> {label}
-      </Link>
-    );
-  }
+  const sizeClass = CHIP_SIZE[variant];
+  // 20px = ícone inline do DS; na badge (14px) acompanha o texto.
+  const iconClass = variant === "badge" ? "h-4 w-4 shrink-0" : "h-5 w-5 shrink-0";
 
-  if (variant === "block") {
-    return (
-      <Link
-        to={to}
-        className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-gold transition-colors"
-      >
-        <Icon className="h-3.5 w-3.5" /> {label}
-      </Link>
-    );
+  const content = (
+    <>
+      <Icon className={iconClass} aria-hidden="true" />
+      <span>{label}</span>
+    </>
+  );
+
+  if (!linked) {
+    return <span className={`${CHIP_BASE} ${sizeClass}`}>{content}</span>;
   }
 
   return (
-    <Link
-      to={to}
-      className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm/80 hover:text-western-gold transition-colors"
-    >
-      <Icon className="h-3 w-3" /> {label}
+    <Link to={to} className={`${CHIP_BASE} ${sizeClass} ${CHIP_INTERACTIVE}`} ref={guardRef}>
+      {content}
     </Link>
   );
 }

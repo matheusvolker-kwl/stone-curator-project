@@ -12,26 +12,24 @@ export function LoadError({ message, onRetry, compact, className }: Props) {
   return (
     <div
       role="alert"
-      className={`border border-red-400/60 bg-red-50 text-red-800 ${compact ? "p-3" : "p-5"} ${className ?? ""}`}
+      className={`rounded-xl border border-status-error/35 bg-status-error/[0.06] text-western-stone-dark ${compact ? "p-3" : "p-5"} ${className ?? ""}`}
     >
       <div className="flex items-start gap-3">
-        <AlertTriangle className={`${compact ? "h-4 w-4 mt-0.5" : "h-5 w-5 mt-0.5"} flex-shrink-0`} />
+        <AlertTriangle className={`${compact ? "h-5 w-5 mt-0.5" : "h-6 w-6 mt-0.5"} flex-shrink-0 text-status-error`} />
         <div className="flex-1 min-w-0">
-          <p className={`font-mono uppercase tracking-[0.18em] ${compact ? "text-[10px]" : "text-[11px]"} text-red-800`}>
+          <p className={`font-semibold text-status-error ${compact ? "text-[15px]" : "text-[16px]"}`}>
             Falha ao carregar
           </p>
-          <p className={`${compact ? "text-xs mt-0.5" : "text-sm mt-1"}`}>
+          <p className={`text-[15px] leading-[1.5] text-western-stone-dark/85 ${compact ? "mt-0.5" : "mt-1"}`}>
             {message ?? "Não foi possível carregar. Tentar de novo."}
           </p>
           {onRetry && (
             <button
               type="button"
               onClick={onRetry}
-              className={`mt-2 inline-flex items-center gap-1.5 font-mono uppercase tracking-[0.18em] ${
-                compact ? "text-[10px]" : "text-[11px]"
-              } border border-red-700/50 text-red-800 hover:bg-red-100 px-3 py-1.5`}
+              className="tap-target mt-3 inline-flex items-center gap-2 rounded-lg border border-status-error/50 px-5 text-[15px] font-semibold text-status-error hover:bg-status-error/[0.1] transition-colors"
             >
-              <RefreshCw className="h-3 w-3" /> Tentar de novo
+              <RefreshCw className="h-4 w-4" /> Tentar de novo
             </button>
           )}
         </div>

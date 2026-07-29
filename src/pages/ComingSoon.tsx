@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import DustCanvas from "@/components/DustCanvas";
-import logoAsset from "@/assets/coming-soon-logo.png.asset.json";
+import Seo from "@/components/seo/Seo";
+import logoAsset from "@/assets/coming-soon-logo.png";
 
 /**
  * Página de pré-lançamento — tela cheia, fora do SiteLayout.
@@ -82,6 +83,11 @@ export default function ComingSoon() {
           "radial-gradient(ellipse at center, #1C140D 0%, #120D08 45%, #0E0B08 100%)",
       }}
     >
+      <Seo
+        title="Western Store — lançamento em breve"
+        description="A loja B2B de pedras artesanais Western está em preparação. Ateliê em Cajamar/SP desde 1993."
+        path="/"
+      />
       {/* Film grain */}
       <svg
         aria-hidden="true"
@@ -130,7 +136,7 @@ export default function ComingSoon() {
         <div className="relative cs-logo-reveal" style={{ willChange: "transform, filter, opacity" }}>
           <img
             ref={logoRef}
-            src={logoAsset.url}
+            src={logoAsset}
             alt="WESTERN STORE"
             draggable={false}
             className="cs-logo-backlit"

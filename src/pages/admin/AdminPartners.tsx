@@ -1,933 +1,1259 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Check, X, Phone, Search, Download, Eye, Save, ShieldCheck, LayoutGrid, Table as TableIcon, ExternalLink, ShieldX, ChevronsUpDown, Trash2 } from "lucide-react";
+import {
+  Check, ChevronsUpDown, Download, ExternalLink, Instagram, Globe,
+  Loader2, MessageCircle, Save, Search, ShieldCheck, ShieldX, Trash2, X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
 } from "@/components/ui/sheet";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { toCSV, downloadCSV, KV, TIERS, TIER_LABEL, TIER_BADGE_CLS, type Partner, type Tier } from "@/components/admin/adminUtils";
+import {
+  DataTable, type Coluna, EstadoErro, StatusBadge, Tabs, PageHeader, CelulaData,
+} from "@/components/backoffice";
+import { toCSV, downloadCSV, TIERS, TIER_LABEL, type Partner, type Tier } from "@/components/admin/adminUtils";
 import { CredenciamentoTab } from "./AdminCredenciamentos";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
-import { LoadError } from "@/components/admin/LoadError";
+import { cn } from "@/lib/utils";
 
-function StatusChip({ status }: { status: Partner["status"] }) {
-  const map = {
-    pending: { label: "Em análise", cls: "border-western-stone-warm/40 text-western-stone-warm" },
-    approved: { label: "Aprovado", cls: "border-green-700/40 text-green-800 bg-green-50" },
-    rejected: { label: "Recusado", cls: "border-red-700/40 text-red-700 bg-red-50" },
-    cancelled: { label: "Cancelada", cls: "border-slate-500/40 text-slate-700 bg-slate-100" },
-  };
-  const m = map[status] ?? map.pending;
+/**
+ * PARCEIROS — lista → detalhe.
+ *
+ * A lista é a mesma <DataTable/> do resto do backoffice (4 estados, ordenação,
+ * seleção). O detalhe é uma tela de duas colunas: dados à esquerda, CARD DE AÇÃO
+ * fixo à direita — o card responde "qual é o próximo passo com este parceiro?".
+ *
+ * O detalhe vive em `?id=` (mesma rota, sem mexer no App.tsx), então é linkável
+ * e sobrevive a um F5.
+ *
+ * Nada de "0 silencioso": toda query guarda o erro cru e a tela mostra a mensagem
+ * real. Contagem desconhecida fica `undefined` — nunca 0.
+ */
+
+type Aba = "credenciamento" | "ativos";
+type FiltroStatus = "all" | Partner["status"];
+
+const STATUS_ORDEM: Partner["status"][] = ["pending", "approved", "rejected", "cancelled"];
+const STATUS_ROTULO: Record<Partner["status"], string> = {
+  pending: "Em análise",
+  approved: "Aprovados",
+  rejected: "Recusados",
+  cancelled: "Cancelados",
+};
+
+/* Nível é um atributo comercial, não um status — badge próprio, dessaturado. */
+const NIVEL_CLS: Record<Tier, string> = {
+  light: "border-western-border-strong bg-western-paper text-western-stone-warm",
+  gold: "border-western-gold/45 bg-western-gold/10 text-western-bronze",
+  platinum: "border-western-bronze/35 bg-western-bronze/[0.07] text-western-bronze",
+  partner: "border-western-cta/35 bg-western-cta/[0.07] text-western-cta",
+};
+
+function NivelBadge({ tier }: { tier: Tier }) {
   return (
-    <span className={`inline-flex items-center px-2.5 py-1 border font-mono text-[10px] uppercase tracking-[0.18em] ${m.cls}`}>
-      {m.label}
+    <span
+      className={cn(
+        "inline-flex items-center whitespace-nowrap rounded-sm border px-2.5 py-1",
+        "text-[14px] font-semibold leading-none",
+        NIVEL_CLS[tier] ?? NIVEL_CLS.light,
+      )}
+    >
+      {TIER_LABEL[tier] ?? tier}
     </span>
   );
 }
 
-export default function AdminPartners() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const rawTab = searchParams.get("tab");
-  const tab: "credenciamento" | "ativos" = rawTab === "ativos" ? "ativos" : "credenciamento";
-
-  const [counts, setCounts] = useState<{ cred: number; partners: number }>({ cred: 0, partners: 0 });
-  const [countsError, setCountsError] = useState(false);
-
-  const loadCounts = async () => {
-    try {
-      const [c, p] = await Promise.all([
-        supabase.from("credenciamentos").select("id", { count: "exact", head: true }).eq("status_manual", "pendente"),
-        supabase.from("partner_profiles").select("id", { count: "exact", head: true }).eq("status", "pending"),
-      ]);
-      if (c.error) throw c.error;
-      if (p.error) throw p.error;
-      setCounts({ cred: c.count ?? 0, partners: p.count ?? 0 });
-      setCountsError(false);
-    } catch {
-      setCountsError(true);
-    }
-  };
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => { if (!cancelled) await loadCounts(); })();
-    return () => { cancelled = true; };
-  }, [tab]);
-
-  return (
-    <div>
-      <p className="text-eyebrow mb-3">Parceiros</p>
-      <div className="w-12 h-px bg-western-gold mb-6" />
-      <h1 className="font-display text-3xl mb-2">Programa Western Pro</h1>
-      <p className="text-western-stone-warm mb-8">Analise credenciamentos, gerencie parceiros ativos e ajuste tier, descontos e permissões.</p>
-
-      {countsError && (
-        <div className="mb-6">
-          <LoadError message="Não foi possível carregar as contagens de pendências." onRetry={loadCounts} compact />
-        </div>
-      )}
-
-
-
-      <Tabs
-        value={tab}
-        onValueChange={(v) => {
-          const next = new URLSearchParams(searchParams);
-          next.set("tab", v);
-          setSearchParams(next, { replace: true });
-        }}
-      >
-        <TabsList className="mb-6 rounded-none bg-western-paper border border-western-stone-warm/20 h-auto p-1">
-          <TabsTrigger value="credenciamento" className="rounded-none font-mono text-[11px] uppercase tracking-[0.18em] data-[state=active]:bg-western-gold/15 data-[state=active]:text-western-green-deep">
-            Credenciamento
-            {counts.cred > 0 && (
-              <span className="ml-2 inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full bg-western-gold text-western-green-deep text-[9px] font-bold tabular-nums">
-                {counts.cred > 99 ? "99+" : counts.cred}
-              </span>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="ativos" className="rounded-none font-mono text-[11px] uppercase tracking-[0.18em] data-[state=active]:bg-western-gold/15 data-[state=active]:text-western-green-deep">
-            Ativos
-            {counts.partners > 0 && (
-              <span className="ml-2 inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full bg-western-gold text-western-green-deep text-[9px] font-bold tabular-nums">
-                {counts.partners > 99 ? "99+" : counts.partners}
-              </span>
-            )}
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="credenciamento" className="mt-0">
-          <CredenciamentoTab />
-        </TabsContent>
-        <TabsContent value="ativos" className="mt-0">
-          <AtivosTab
-            onGoToCredenciamento={() => {
-              const next = new URLSearchParams(searchParams);
-              next.set("tab", "credenciamento");
-              setSearchParams(next, { replace: true });
-            }}
-          />
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
+/** Só formata o telefone que já existe. Não inventa DDI/DDD. */
+function linkWhatsApp(telefone: string | null): string | null {
+  if (!telefone) return null;
+  const digitos = telefone.replace(/\D/g, "");
+  if (digitos.length < 10) return null;
+  const comDDI = digitos.length <= 11 ? `55${digitos}` : digitos;
+  return `https://wa.me/${comDDI}`;
 }
 
-function AtivosTab({ onGoToCredenciamento }: { onGoToCredenciamento: () => void }) {
-  const [partners, setPartners] = useState<Partner[]>([]);
-  const [adminIds, setAdminIds] = useState<Set<string>>(new Set());
-  const [tierDefaults, setTierDefaults] = useState<Record<string, number>>({});
-  const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState<"all" | Partner["status"]>("all");
-  const [segmentFilter, setSegmentFilter] = useState<string>("all");
-  const [ufFilter, setUfFilter] = useState<string>("all");
-  const [q, setQ] = useState("");
-  const [drawer, setDrawer] = useState<Partner | null>(null);
-  const [layout, setLayout] = useState<"cards" | "table">("cards");
-  const [loadError, setLoadError] = useState(false);
-  const [pendingStatus, setPendingStatus] = useState<{ p: Partner; status: Partner["status"] } | null>(null);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [confirmRevokeOpen, setConfirmRevokeOpen] = useState(false);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-  const [pendingDelete, setPendingDelete] = useState<Partner | null>(null);
-  const [tierChangeOpen, setTierChangeOpen] = useState(false);
-  const [bulkTier, setBulkTier] = useState<Tier>("light");
-  const [confirmTierOpen, setConfirmTierOpen] = useState(false);
-  const [bulkBusy, setBulkBusy] = useState(false);
+function linkSite(site: string | null): string | null {
+  if (!site) return null;
+  return /^https?:\/\//i.test(site) ? site : `https://${site}`;
+}
 
-  const load = async () => {
-    setLoading(true);
-    try {
-      const [pr, rr, tdr] = await Promise.all([
-        supabase.from("partner_profiles").select("*").order("created_at", { ascending: false }),
-        supabase.from("user_roles").select("user_id, role").eq("role", "admin"),
-        supabase.from("tier_defaults").select("tier, discount_pct"),
-      ]);
-      if (pr.error) throw pr.error;
-      if (rr.error) throw rr.error;
-      if (tdr.error) throw tdr.error;
-      setPartners((pr.data as Partner[]) ?? []);
-      setAdminIds(new Set(((rr.data ?? []) as Array<{ user_id: string }>).map((r) => r.user_id)));
-      const map: Record<string, number> = {};
-      ((tdr.data ?? []) as Array<{ tier: string; discount_pct: number }>).forEach((t) => { map[t.tier] = t.discount_pct; });
-      setTierDefaults(map);
-      setLoadError(false);
-    } catch {
-      setLoadError(true);
-    }
-    setLoading(false);
-  };
-  useEffect(() => { load(); }, []);
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Página
+ * ═══════════════════════════════════════════════════════════════════════════ */
 
-  const segments = useMemo(() => Array.from(new Set(partners.map((p) => p.segmento).filter(Boolean))) as string[], [partners]);
-  const ufs = useMemo(() => Array.from(new Set(partners.map((p) => p.estado).filter(Boolean))) as string[], [partners]);
+export default function AdminPartners() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const aba: Aba = searchParams.get("tab") === "ativos" ? "ativos" : "credenciamento";
+  const detalheId = searchParams.get("id");
 
-  const filtered = useMemo(() => partners.filter((p) => {
-    if (layout === "table" && p.status !== "approved") return false;
-    if (layout === "cards" && statusFilter !== "all" && p.status !== statusFilter) return false;
-    if (segmentFilter !== "all" && p.segmento !== segmentFilter) return false;
-    if (ufFilter !== "all" && p.estado !== ufFilter) return false;
-    if (q) {
-      const hay = [p.nome, p.empresa, p.cnpj, p.cidade].filter(Boolean).join(" ").toLowerCase();
-      if (!hay.includes(q.toLowerCase())) return false;
-    }
-    return true;
-  }), [partners, statusFilter, segmentFilter, ufFilter, q, layout]);
+  const [contagens, setContagens] = useState<{ cred?: number; parceiros?: number }>({});
+  const [erroContagens, setErroContagens] = useState<unknown>(null);
 
-  const tableRows = useMemo(() => {
-    if (layout !== "table") return filtered;
-    return [...filtered].sort((a, b) => (a.empresa ?? "").localeCompare(b.empresa ?? "", "pt-BR"));
-  }, [filtered, layout]);
-
-  const setStatus = async (p: Partner, status: Partner["status"]) => {
-    const approvedAt = status === "approved" ? new Date().toISOString() : null;
-    const { error } = await supabase
-      .from("partner_profiles")
-      .update({ status, approved_at: approvedAt } as never)
-      .eq("id", p.id);
-    if (error) { toast.error("Não foi possível atualizar.", { description: error.message }); return; }
-    toast.success(status === "approved" ? "Parceiro aprovado." : status === "rejected" ? "Acesso negado." : "Status atualizado.");
-    load();
-  };
-
-  /** Wrapper que confirma quando a mudança REVOGA um parceiro já aprovado. */
-  const requestSetStatus = async (p: Partner, status: Partner["status"]) => {
-    if (p.status === "approved" && status !== "approved") {
-      setPendingStatus({ p, status });
+  const carregarContagens = useCallback(async () => {
+    setErroContagens(null);
+    const [c, p] = await Promise.all([
+      supabase.from("credenciamentos").select("id", { count: "exact", head: true }).eq("status_manual", "pendente"),
+      supabase.from("partner_profiles").select("id", { count: "exact", head: true }),
+    ]);
+    /* Um 403 aqui NÃO pode virar "0 pendentes". Sem número > número errado. */
+    if (c.error || p.error) {
+      setErroContagens(c.error ?? p.error);
+      setContagens({});
       return;
     }
-    await setStatus(p, status);
+    setContagens({ cred: c.count ?? 0, parceiros: p.count ?? 0 });
+  }, []);
+
+  useEffect(() => { carregarContagens(); }, [carregarContagens]);
+
+  const irPara = (proxima: Aba) => {
+    const next = new URLSearchParams(searchParams);
+    next.set("tab", proxima);
+    next.delete("id");
+    setSearchParams(next, { replace: true });
   };
 
-  // ── Multi-seleção (qualquer status) ────────────────────────────────────
-  useEffect(() => { setSelectedIds(new Set()); }, [statusFilter, segmentFilter, ufFilter, q, layout]);
-
-  const selectableRows = useMemo(() => filtered, [filtered]);
-  const selectableIds = useMemo(() => selectableRows.map((p) => p.id), [selectableRows]);
-  const allSelected = selectableIds.length > 0 && selectableIds.every((id) => selectedIds.has(id));
-  const someSelected = selectableIds.some((id) => selectedIds.has(id));
-  const indeterminate = someSelected && !allSelected;
-
-  const toggleOne = (id: string) =>
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
-      return next;
-    });
-  const toggleAll = () =>
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (allSelected) selectableIds.forEach((id) => next.delete(id));
-      else selectableIds.forEach((id) => next.add(id));
-      return next;
-    });
-  const clearSelection = () => setSelectedIds(new Set());
-
-  const selectedRows = useMemo(
-    () => partners.filter((p) => selectedIds.has(p.id)),
-    [partners, selectedIds]
-  );
-  const selectedApprovedRows = useMemo(
-    () => selectedRows.filter((p) => p.status === "approved"),
-    [selectedRows]
-  );
-
-  const handleBulkExport = () => {
-    if (selectedRows.length === 0) return;
-    downloadCSV(
-      `parceiros-selecionados-${new Date().toISOString().slice(0, 10)}.csv`,
-      toCSV(selectedRows as unknown as Record<string, unknown>[])
-    );
-    toast.success(`${selectedRows.length} parceiro(s) exportados.`);
+  const abrirDetalhe = (id: string) => {
+    const next = new URLSearchParams(searchParams);
+    next.set("tab", "ativos");
+    next.set("id", id);
+    setSearchParams(next);
   };
 
-  const handleBulkRevoke = async () => {
-    if (selectedApprovedRows.length === 0) { setConfirmRevokeOpen(false); return; }
-    setBulkBusy(true);
-    const results = await Promise.allSettled(
-      selectedApprovedRows.map((p) =>
-        supabase.from("partner_profiles").update({ status: "rejected", approved_at: null } as never).eq("id", p.id)
-      )
-    );
-    const ok = results.filter((x) => x.status === "fulfilled" && !(x as PromiseFulfilledResult<{ error: unknown }>).value.error).length;
-    const fail = results.length - ok;
-    setBulkBusy(false);
-    setConfirmRevokeOpen(false);
-    toast.success(`Acesso revogado de ${ok} parceiro(s).`, fail ? { description: `${fail} falharam.` } : undefined);
-    clearSelection();
-    await load();
+  const fecharDetalhe = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete("id");
+    setSearchParams(next);
   };
 
-  const handleBulkTierChange = async () => {
-    if (selectedApprovedRows.length === 0) { setConfirmTierOpen(false); return; }
-    setBulkBusy(true);
-    const results = await Promise.allSettled(
-      selectedApprovedRows.map((p) =>
-        supabase.from("partner_profiles").update({ tier: bulkTier } as never).eq("id", p.id)
-      )
-    );
-    const ok = results.filter((x) => x.status === "fulfilled" && !(x as PromiseFulfilledResult<{ error: unknown }>).value.error).length;
-    const fail = results.length - ok;
-    setBulkBusy(false);
-    setConfirmTierOpen(false);
-    setTierChangeOpen(false);
-    toast.success(`${ok} parceiro(s) movidos para ${TIER_LABEL[bulkTier]}.`, fail ? { description: `${fail} falharam.` } : undefined);
-    clearSelection();
-    await load();
-  };
-
-  const handleBulkDelete = async () => {
-    if (selectedRows.length === 0) { setConfirmDeleteOpen(false); return; }
-    setBulkBusy(true);
-    // Remove user_roles primeiro (evita órfãos) e depois partner_profiles
-    const userIds = selectedRows.map((p) => p.user_id);
-    await supabase.from("user_roles").delete().in("user_id", userIds);
-    const results = await Promise.allSettled(
-      selectedRows.map((p) => supabase.from("partner_profiles").delete().eq("id", p.id))
-    );
-    const ok = results.filter((x) => x.status === "fulfilled" && !(x as PromiseFulfilledResult<{ error: unknown }>).value.error).length;
-    const fail = results.length - ok;
-    setBulkBusy(false);
-    setConfirmDeleteOpen(false);
-    toast.success(`${ok} cadastro(s) excluído(s).`, fail ? { description: `${fail} falharam.` } : undefined);
-    clearSelection();
-    await load();
-  };
-
-  const handleDeleteOne = async () => {
-    if (!pendingDelete) return;
-    const p = pendingDelete;
-    setPendingDelete(null);
-    await supabase.from("user_roles").delete().eq("user_id", p.user_id);
-    const { error } = await supabase.from("partner_profiles").delete().eq("id", p.id);
-    if (error) { toast.error("Erro ao excluir.", { description: error.message }); return; }
-    toast.success("Cadastro excluído.");
-    await load();
-  };
-
-  if (loading) return <div className="py-20 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-western-gold" /></div>;
-  if (loadError) {
+  /* ── DETALHE (lista → detalhe, mesma rota) ── */
+  if (detalheId) {
     return (
-      <div className="py-6">
-        <LoadError message="Não foi possível carregar a lista de parceiros." onRetry={load} />
-      </div>
+      <ParceiroDetalhe
+        id={detalheId}
+        onVoltar={fecharDetalhe}
+        onMudou={carregarContagens}
+        onIrParaCredenciamento={() => irPara("credenciamento")}
+      />
     );
   }
 
   return (
-    <div className={selectedIds.size > 0 ? "pb-24 md:pb-0" : ""}>
+    <div>
+      <PageHeader
+        eyebrow="Programa Western Pro"
+        titulo="Parceiros"
+        subtitulo="Analise credenciamentos, gerencie parceiros ativos e ajuste nível, desconto e permissões."
+      />
 
-      <div className="flex flex-wrap items-center gap-3 mb-4">
-        <div className="inline-flex border border-western-stone-warm/25">
-          <button
-            onClick={() => setLayout("cards")}
-            className={`h-9 px-3 font-mono text-[10px] uppercase tracking-[0.18em] inline-flex items-center gap-1.5 ${layout === "cards" ? "bg-western-gold/15 text-western-green-deep" : "text-western-stone-warm"}`}
-          >
-            <LayoutGrid className="h-3.5 w-3.5" /> Cards
-          </button>
-          <button
-            onClick={() => setLayout("table")}
-            className={`h-9 px-3 font-mono text-[10px] uppercase tracking-[0.18em] inline-flex items-center gap-1.5 border-l border-western-stone-warm/25 ${layout === "table" ? "bg-western-gold/15 text-western-green-deep" : "text-western-stone-warm"}`}
-          >
-            <TableIcon className="h-3.5 w-3.5" /> Tabela
-          </button>
-        </div>
-        {layout === "table" && (
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">Apenas aprovados</span>
-        )}
-      </div>
-
-      {layout === "cards" && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          {(["pending", "approved", "rejected", "cancelled", "all"] as const).map((s) => (
-            <button
-              key={s}
-              onClick={() => setStatusFilter(s)}
-              className={`h-9 px-4 font-mono text-[11px] uppercase tracking-[0.18em] border transition-colors ${
-                statusFilter === s
-                  ? "border-western-gold text-western-green-deep bg-western-gold/10"
-                  : "border-western-stone-warm/25 text-western-stone-warm hover:border-western-gold/60"
-              }`}
-            >
-              {s === "all" ? "Todos" : s === "pending" ? "Pendentes" : s === "approved" ? "Aprovados" : s === "rejected" ? "Recusados" : "Canceladas"}
-            </button>
-          ))}
-        </div>
+      {erroContagens && (
+        <EstadoErro
+          compacto
+          className="mb-6"
+          titulo="Não consegui contar as pendências"
+          erro={erroContagens}
+          onRetry={carregarContagens}
+        />
       )}
 
-      <div className="flex flex-wrap gap-3 mb-6 items-center">
-        <div className="relative flex-1 min-w-[220px] max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-western-stone-warm" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nome, empresa, CNPJ, cidade…" className="h-10 pl-9 rounded-none border-western-stone-warm/25" />
+      <Tabs
+        className="mb-6"
+        abas={[
+          { key: "credenciamento", label: "Credenciamento", count: contagens.cred },
+          { key: "ativos", label: "Parceiros", count: contagens.parceiros },
+        ]}
+        ativa={aba}
+        onChange={(k) => irPara(k as Aba)}
+      />
+
+      {aba === "credenciamento" ? (
+        <CredenciamentoTab />
+      ) : (
+        <ListaParceiros onAbrir={abrirDetalhe} onMudou={carregarContagens} />
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Dados (compartilhados por lista e detalhe)
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/** Percentual efetivo: override individual, senão o padrão do nível. */
+function descontoEfetivo(p: Partner, padroes: Record<string, number>) {
+  const padrao = padroes[p.tier] ?? null;
+  const usado = p.discount_override ?? padrao;
+  return { padrao, usado, personalizado: p.discount_override != null };
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * LISTA
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+function ListaParceiros({
+  onAbrir, onMudou,
+}: {
+  onAbrir: (id: string) => void;
+  onMudou: () => void;
+}) {
+  const [parceiros, setParceiros] = useState<Partner[]>([]);
+  const [padroesTier, setPadroesTier] = useState<Record<string, number>>({});
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<unknown>(null);
+
+  const [filtroStatus, setFiltroStatus] = useState<FiltroStatus>("all");
+  const [filtroSegmento, setFiltroSegmento] = useState("all");
+  const [filtroUf, setFiltroUf] = useState("all");
+  const [busca, setBusca] = useState("");
+
+  const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
+  const [ocupado, setOcupado] = useState(false);
+  const [nivelEmLote, setNivelEmLote] = useState<Tier>("light");
+  const [abrirNivelLote, setAbrirNivelLote] = useState(false);
+  const [confirmarNivel, setConfirmarNivel] = useState(false);
+  const [confirmarRevogar, setConfirmarRevogar] = useState(false);
+  const [confirmarExcluir, setConfirmarExcluir] = useState(false);
+
+  const carregar = useCallback(async () => {
+    setCarregando(true);
+    setErro(null);
+    const [pr, tdr] = await Promise.all([
+      supabase.from("partner_profiles").select("*").order("created_at", { ascending: false }),
+      supabase.from("tier_defaults").select("tier, discount_pct"),
+    ]);
+    /* O erro é guardado CRU e mostrado. Nunca `data ?? []` em cima de um erro. */
+    if (pr.error) {
+      setErro(pr.error);
+      setCarregando(false);
+      return;
+    }
+    setParceiros((pr.data as Partner[]) ?? []);
+
+    /* tier_defaults é acessório: se falhar, a lista ainda vale — mas o desconto
+     * padrão vira "—" em vez de mentir um percentual. */
+    const mapa: Record<string, number> = {};
+    if (!tdr.error) {
+      ((tdr.data ?? []) as Array<{ tier: string; discount_pct: number }>).forEach((t) => {
+        mapa[t.tier] = t.discount_pct;
+      });
+    }
+    setPadroesTier(mapa);
+    setCarregando(false);
+  }, []);
+
+  useEffect(() => { carregar(); }, [carregar]);
+
+  const segmentos = useMemo(
+    () => Array.from(new Set(parceiros.map((p) => p.segmento).filter(Boolean))) as string[],
+    [parceiros],
+  );
+  const ufs = useMemo(
+    () => Array.from(new Set(parceiros.map((p) => p.estado).filter(Boolean))) as string[],
+    [parceiros],
+  );
+
+  const porStatus = useMemo(() => {
+    const c: Record<string, number> = {};
+    parceiros.forEach((p) => { c[p.status] = (c[p.status] ?? 0) + 1; });
+    return c;
+  }, [parceiros]);
+
+  const filtrados = useMemo(() => parceiros.filter((p) => {
+    if (filtroStatus !== "all" && p.status !== filtroStatus) return false;
+    if (filtroSegmento !== "all" && p.segmento !== filtroSegmento) return false;
+    if (filtroUf !== "all" && p.estado !== filtroUf) return false;
+    if (busca) {
+      const alvo = [p.nome, p.empresa, p.cnpj, p.cidade].filter(Boolean).join(" ").toLowerCase();
+      if (!alvo.includes(busca.toLowerCase())) return false;
+    }
+    return true;
+  }), [parceiros, filtroStatus, filtroSegmento, filtroUf, busca]);
+
+  /* Mudou o filtro → a seleção antiga não faz mais sentido. */
+  useEffect(() => { setSelecionados(new Set()); }, [filtroStatus, filtroSegmento, filtroUf, busca]);
+
+  const linhasSelecionadas = useMemo(
+    () => parceiros.filter((p) => selecionados.has(p.id)),
+    [parceiros, selecionados],
+  );
+  const aprovadosSelecionados = useMemo(
+    () => linhasSelecionadas.filter((p) => p.status === "approved"),
+    [linhasSelecionadas],
+  );
+
+  const colunas = useMemo<ReadonlyArray<Coluna<Partner>>>(() => [
+    {
+      key: "empresa",
+      header: "Empresa",
+      principalNoMobile: true,
+      sortable: true,
+      sortValue: (p) => p.empresa ?? p.nome ?? "",
+      render: (p) => (
+        <div className="min-w-0">
+          <p className="truncate font-semibold text-western-green-deep">{p.empresa || p.nome || "—"}</p>
+          <p className="truncate text-[14px] text-western-stone-warm">
+            {[p.nome, p.cnpj].filter(Boolean).join(" · ") || "sem CNPJ"}
+          </p>
         </div>
-        <Select value={segmentFilter} onValueChange={setSegmentFilter}>
-          <SelectTrigger className="h-10 w-[180px] rounded-none border-western-stone-warm/25"><SelectValue placeholder="Segmento" /></SelectTrigger>
+      ),
+    },
+    {
+      key: "status",
+      header: "Status",
+      width: "150px",
+      sortable: true,
+      render: (p) => <StatusBadge status={p.status} />,
+    },
+    {
+      key: "tier",
+      header: "Nível",
+      width: "190px",
+      sortable: true,
+      render: (p) => (p.status === "approved" ? <NivelBadge tier={p.tier} /> : <span className="text-meta">—</span>),
+    },
+    {
+      key: "desconto",
+      header: "Desconto",
+      align: "right",
+      width: "130px",
+      sortable: true,
+      sortValue: (p) => descontoEfetivo(p, padroesTier).usado,
+      render: (p) => {
+        if (p.status !== "approved") return <span className="text-meta">—</span>;
+        const { usado, personalizado } = descontoEfetivo(p, padroesTier);
+        if (usado == null) return <span className="text-meta">—</span>;
+        return (
+          <span className={cn("font-semibold", personalizado && "text-western-bronze")}>
+            {usado}%{personalizado ? " *" : ""}
+          </span>
+        );
+      },
+    },
+    {
+      key: "local",
+      header: "Cidade/UF",
+      width: "170px",
+      sortable: true,
+      sortValue: (p) => p.cidade ?? "",
+      ocultarNoMobile: true,
+      render: (p) => [p.cidade, p.estado].filter(Boolean).join("/") || "—",
+    },
+    {
+      key: "created_at",
+      header: "Entrou",
+      align: "right",
+      width: "140px",
+      sortable: true,
+      render: (p) => <CelulaData valor={p.created_at} />,
+    },
+  ], [padroesTier]);
+
+  /* ── Ações em massa (regras de negócio idênticas às de antes) ── */
+
+  const exportarSelecionados = (ids: string[]) => {
+    const linhas = parceiros.filter((p) => ids.includes(p.id));
+    if (!linhas.length) return;
+    downloadCSV(
+      `parceiros-selecionados-${new Date().toISOString().slice(0, 10)}.csv`,
+      toCSV(linhas as unknown as Record<string, unknown>[]),
+    );
+    toast.success(`${linhas.length} parceiro(s) exportados.`);
+  };
+
+  const revogarEmLote = async () => {
+    if (!aprovadosSelecionados.length) { setConfirmarRevogar(false); return; }
+    setOcupado(true);
+    const res = await Promise.all(
+      aprovadosSelecionados.map((p) =>
+        supabase.from("partner_profiles").update({ status: "rejected", approved_at: null } as never).eq("id", p.id),
+      ),
+    );
+    const falhas = res.filter((r) => r.error);
+    setOcupado(false);
+    setConfirmarRevogar(false);
+    if (falhas.length) {
+      toast.error(`${falhas.length} de ${res.length} não foram revogados.`, {
+        description: falhas[0].error?.message,
+      });
+    } else {
+      toast.success(`Acesso revogado de ${res.length} parceiro(s).`);
+    }
+    setSelecionados(new Set());
+    await carregar();
+    onMudou();
+  };
+
+  const mudarNivelEmLote = async () => {
+    if (!aprovadosSelecionados.length) { setConfirmarNivel(false); return; }
+    setOcupado(true);
+    const res = await Promise.all(
+      aprovadosSelecionados.map((p) =>
+        supabase.from("partner_profiles").update({ tier: nivelEmLote } as never).eq("id", p.id),
+      ),
+    );
+    const falhas = res.filter((r) => r.error);
+    setOcupado(false);
+    setConfirmarNivel(false);
+    setAbrirNivelLote(false);
+    if (falhas.length) {
+      toast.error(`${falhas.length} de ${res.length} não mudaram de nível.`, {
+        description: falhas[0].error?.message,
+      });
+    } else {
+      toast.success(`${res.length} parceiro(s) movidos para ${TIER_LABEL[nivelEmLote]}.`);
+    }
+    setSelecionados(new Set());
+    await carregar();
+  };
+
+  const excluirEmLote = async () => {
+    if (!linhasSelecionadas.length) { setConfirmarExcluir(false); return; }
+    setOcupado(true);
+    /* Papéis primeiro (evita admin órfão), depois o perfil. */
+    const idsUsuarios = linhasSelecionadas.map((p) => p.user_id);
+    const papeis = await supabase.from("user_roles").delete().in("user_id", idsUsuarios);
+    const res = await Promise.all(
+      linhasSelecionadas.map((p) => supabase.from("partner_profiles").delete().eq("id", p.id)),
+    );
+    const falhas = res.filter((r) => r.error);
+    setOcupado(false);
+    setConfirmarExcluir(false);
+    if (falhas.length) {
+      toast.error(`${falhas.length} de ${res.length} não foram excluídos.`, {
+        description: falhas[0].error?.message,
+      });
+    } else if (papeis.error) {
+      /* Antes este erro era engolido — e sobrava papel de admin sem perfil. */
+      toast.warning(`${res.length} cadastro(s) excluído(s), mas os papéis de acesso não foram removidos.`, {
+        description: papeis.error.message,
+      });
+    } else {
+      toast.success(`${res.length} cadastro(s) excluído(s).`);
+    }
+    setSelecionados(new Set());
+    await carregar();
+    onMudou();
+  };
+
+  return (
+    <div>
+      {/* ── Filtros ── */}
+      <div className="mb-4 flex flex-wrap gap-2">
+        <ChipStatus ativo={filtroStatus === "all"} onClick={() => setFiltroStatus("all")} rotulo="Todos" contagem={parceiros.length} />
+        {STATUS_ORDEM.map((s) => (
+          <ChipStatus
+            key={s}
+            ativo={filtroStatus === s}
+            onClick={() => setFiltroStatus(s)}
+            rotulo={STATUS_ROTULO[s]}
+            contagem={porStatus[s] ?? 0}
+          />
+        ))}
+      </div>
+
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <div className="relative min-w-[240px] max-w-md flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-western-stone-warm" aria-hidden="true" />
+          <Input
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            placeholder="Nome, empresa, CNPJ, cidade…"
+            aria-label="Buscar parceiro"
+            className="h-control rounded-sm border-western-border-strong pl-10 text-[15px]"
+          />
+        </div>
+
+        <Select value={filtroSegmento} onValueChange={setFiltroSegmento}>
+          <SelectTrigger className="h-control w-[200px] rounded-sm border-western-border-strong text-[15px]" aria-label="Segmento">
+            <SelectValue placeholder="Segmento" />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os segmentos</SelectItem>
-            {segments.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+            {segmentos.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
           </SelectContent>
         </Select>
-        <Select value={ufFilter} onValueChange={setUfFilter}>
-          <SelectTrigger className="h-10 w-[120px] rounded-none border-western-stone-warm/25"><SelectValue placeholder="UF" /></SelectTrigger>
+
+        <Select value={filtroUf} onValueChange={setFiltroUf}>
+          <SelectTrigger className="h-control w-[130px] rounded-sm border-western-border-strong text-[15px]" aria-label="UF">
+            <SelectValue placeholder="UF" />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas UFs</SelectItem>
             {ufs.map((u) => <SelectItem key={u} value={u}>{u}</SelectItem>)}
           </SelectContent>
         </Select>
-        <Button onClick={() => downloadCSV(`parceiros-${new Date().toISOString().slice(0,10)}.csv`, toCSV(filtered as unknown as Record<string,unknown>[]))} variant="outline" className="h-10 rounded-none border-western-stone-warm/25 font-mono text-[11px] uppercase tracking-[0.18em]">
-          <Download className="h-3.5 w-3.5 mr-2" /> CSV
-        </Button>
+
+        <button
+          type="button"
+          onClick={() => downloadCSV(
+            `parceiros-${new Date().toISOString().slice(0, 10)}.csv`,
+            toCSV(filtrados as unknown as Record<string, unknown>[]),
+          )}
+          disabled={!filtrados.length}
+          className="btn-outline-forest"
+        >
+          <Download className="h-4 w-4" aria-hidden="true" />
+          Exportar CSV
+        </button>
       </div>
 
-      {selectableRows.length > 0 && (
-        <div className="flex items-center gap-3 mb-3 px-3 py-2 border border-western-stone-warm/20 bg-western-paper/60">
-          <Checkbox
-            checked={allSelected ? true : indeterminate ? "indeterminate" : false}
-            onCheckedChange={toggleAll}
-            aria-label="Selecionar todos no filtro"
-          />
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-western-stone-warm">
-            Selecionar todos no filtro ({selectableRows.length})
-            {selectedIds.size > 0 && ` · ${selectedIds.size} selecionado(s)`}
-          </span>
-        </div>
+      <DataTable
+        linhas={filtrados}
+        getId={(p) => p.id}
+        colunas={colunas}
+        isLoading={carregando}
+        error={erro}
+        onRetry={carregar}
+        onRowClick={(p) => onAbrir(p.id)}
+        vazio={
+          parceiros.length === 0
+            ? {
+                titulo: "Nenhum parceiro cadastrado",
+                mensagem: "Quando alguém se cadastrar no Programa Western Pro, aparece aqui.",
+              }
+            : {
+                titulo: "Nenhum parceiro neste filtro",
+                mensagem: "Ajuste o status, o segmento ou a busca para ver outros cadastros.",
+              }
+        }
+        selecao={{
+          selecionados,
+          onChange: setSelecionados,
+          barra: (ids) => (
+            <>
+              <Button
+                onClick={() => exportarSelecionados(ids)}
+                disabled={ocupado}
+                variant="outline"
+                className="tap-target rounded-lg border-western-border-strong text-[15px] font-semibold"
+              >
+                <Download className="mr-2 h-4 w-4" aria-hidden="true" /> Exportar
+              </Button>
+              <Button
+                onClick={() => setAbrirNivelLote(true)}
+                disabled={ocupado || aprovadosSelecionados.length === 0}
+                variant="outline"
+                title={aprovadosSelecionados.length === 0 ? "Selecione ao menos um parceiro aprovado" : undefined}
+                className="tap-target rounded-lg border-western-border-strong text-[15px] font-semibold"
+              >
+                <ChevronsUpDown className="mr-2 h-4 w-4" aria-hidden="true" />
+                Mudar nível
+                {aprovadosSelecionados.length > 0 && aprovadosSelecionados.length !== ids.length
+                  ? ` (${aprovadosSelecionados.length})`
+                  : ""}
+              </Button>
+              <Button
+                onClick={() => setConfirmarRevogar(true)}
+                disabled={ocupado || aprovadosSelecionados.length === 0}
+                title={aprovadosSelecionados.length === 0 ? "Selecione ao menos um parceiro aprovado" : undefined}
+                className="tap-target rounded-lg bg-status-error text-[15px] font-semibold text-white hover:bg-[#8f2c25]"
+              >
+                <ShieldX className="mr-2 h-4 w-4" aria-hidden="true" />
+                Revogar acesso
+                {aprovadosSelecionados.length > 0 && aprovadosSelecionados.length !== ids.length
+                  ? ` (${aprovadosSelecionados.length})`
+                  : ""}
+              </Button>
+              <Button
+                onClick={() => setConfirmarExcluir(true)}
+                disabled={ocupado}
+                variant="ghost"
+                className="tap-target rounded-lg text-[15px] font-semibold text-status-error hover:bg-status-error/10"
+              >
+                <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" /> Excluir
+              </Button>
+            </>
+          ),
+        }}
+      />
+
+      {filtrados.some((p) => p.status === "approved" && p.discount_override != null) && (
+        <p className="text-meta mt-3">* Desconto personalizado — sobrescreve o padrão do nível.</p>
       )}
 
-      {layout === "cards" ? (
-        <div className="space-y-3">
-          {filtered.length === 0 && <p className="text-western-stone-warm py-10 text-center">Nenhum parceiro nesse filtro.</p>}
-          {filtered.map((p) => {
-            const pm = (p.payment_methods ?? {}) as { boleto?: boolean; kit_gratis?: boolean };
-            const isAdminUser = adminIds.has(p.user_id);
-            const hasCred = !!p.credenciamento_id;
-            const selected = selectedIds.has(p.id);
-            return (
-              <div key={p.id} className={`border bg-white p-5 ${selected ? "border-western-gold bg-western-gold/5" : "border-western-stone-warm/20"}`}>
-                <div className="flex flex-wrap items-start justify-between gap-4 mb-3">
-                  <div className="flex items-start gap-3 flex-1 min-w-0">
-                    <div className="pt-1" onClick={(e) => e.stopPropagation()}>
-                      <Checkbox
-                        checked={selected}
-                        onCheckedChange={() => toggleOne(p.id)}
-                        aria-label={`Selecionar ${p.empresa ?? p.nome ?? ""}`}
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="font-display text-xl text-western-green-deep">{p.empresa || "—"}</h3>
-                      <p className="text-spec text-western-stone-warm mt-1">
-                        {[p.nome, p.cargo, p.segmento, [p.cidade, p.estado].filter(Boolean).join("/")].filter(Boolean).join(" · ")}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <StatusChip status={p.status} />
-                    {p.status === "approved" && (
-                      <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] ${TIER_BADGE_CLS[p.tier as Tier]}`}>
-                        {TIER_LABEL[p.tier as Tier]}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="grid sm:grid-cols-2 gap-x-6 gap-y-1 text-xs text-western-stone-warm mb-4">
-                  {p.cnpj && <span>CNPJ: {p.cnpj}</span>}
-                  {p.telefone && <span className="inline-flex items-center gap-1"><Phone className="h-3 w-3" /> {p.telefone}</span>}
-                  {p.instagram && <span>@{p.instagram.replace(/^@/, "")}</span>}
-                  {p.site && <span>{p.site}</span>}
-                  <span>Cadastro: {new Date(p.created_at).toLocaleDateString("pt-BR")}</span>
-                  {p.status === "approved" && (() => {
-                    const tierPct = tierDefaults[p.tier] ?? null;
-                    const usedPct = p.discount_override ?? tierPct;
-                    const label = p.discount_override != null
-                      ? `Desconto: ${p.discount_override}% (personalizado)`
-                      : tierPct != null
-                        ? `Desconto: ${tierPct}% (padrão ${TIER_LABEL[p.tier as Tier]})`
-                        : `Desconto: padrão ${TIER_LABEL[p.tier as Tier]}`;
-                    return (
-                      <span>
-                        {label}
-                        {pm.boleto ? " · Boleto" : ""}{pm.kit_gratis ? " · Kit grátis" : ""}{isAdminUser ? " · Admin" : ""}
-                        {usedPct == null ? "" : ""}
-                      </span>
-                    );
-                  })()}
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {hasCred && p.status !== "approved" && p.status !== "cancelled" ? (
-                    <button
-                      onClick={onGoToCredenciamento}
-                      className="h-9 px-4 border border-western-gold/60 text-western-green-deep hover:bg-western-gold/10 font-mono text-[11px] uppercase tracking-[0.2em] inline-flex items-center gap-1"
-                    >
-                      <ExternalLink className="h-3.5 w-3.5 mr-1" /> Analisar no Credenciamento
-                    </button>
-                  ) : (
-                    <>
-                      {!hasCred && p.status !== "approved" && p.status !== "cancelled" && (
-                        <Button onClick={() => requestSetStatus(p, "approved")} className="h-9 px-4 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-[11px] uppercase tracking-[0.2em] rounded-none">
-                          <Check className="h-3.5 w-3.5 mr-1" /> Aprovar
-                        </Button>
-                      )}
-                      {!hasCred && p.status !== "rejected" && p.status !== "cancelled" && (
-                        <Button onClick={() => requestSetStatus(p, "rejected")} variant="outline" className="h-9 px-4 border-western-stone-warm/30 text-western-stone-warm hover:border-red-700 hover:text-red-700 font-mono text-[11px] uppercase tracking-[0.2em] rounded-none">
-                          <X className="h-3.5 w-3.5 mr-1" /> Recusar
-                        </Button>
-                      )}
-                    </>
-                  )}
-                  {p.status !== "pending" && (
-                    <Button onClick={() => requestSetStatus(p, "pending")} variant="ghost" className="h-9 px-4 text-western-stone-warm hover:text-western-green-deep font-mono text-[11px] uppercase tracking-[0.2em] rounded-none">
-                      Reverter
-                    </Button>
-                  )}
-                  <Button onClick={() => setDrawer(p)} variant="ghost" className="h-9 px-4 text-western-stone-warm hover:text-western-green-deep font-mono text-[11px] uppercase tracking-[0.2em] rounded-none ml-auto">
-                    <Eye className="h-3.5 w-3.5 mr-1" /> {p.status === "approved" ? "Detalhes & Tier" : "Detalhes"}
-                  </Button>
-                  <Button onClick={() => setPendingDelete(p)} variant="ghost" className="h-9 px-3 text-red-700 hover:bg-red-50 font-mono text-[11px] uppercase tracking-[0.2em] rounded-none">
-                    <Trash2 className="h-3.5 w-3.5 mr-1" /> Excluir
-                  </Button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="overflow-x-auto border border-western-stone-warm/20 bg-white">
-          <table className="w-full text-sm">
-            <thead className="bg-western-paper text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm">
-              <tr>
-                <th className="px-3 py-3 w-10">
-                  <Checkbox
-                    checked={allSelected ? true : indeterminate ? "indeterminate" : false}
-                    onCheckedChange={toggleAll}
-                    disabled={selectableIds.length === 0}
-                    aria-label="Selecionar todos"
-                  />
-                </th>
-                <th className="text-left px-4 py-3">Empresa</th>
-                <th className="text-left px-4 py-3">Tier</th>
-                <th className="text-left px-4 py-3">Desconto</th>
-                <th className="text-left px-4 py-3">Boleto</th>
-                <th className="text-left px-4 py-3">Kit</th>
-                <th className="text-left px-4 py-3">Admin</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {tableRows.length === 0 && (
-                <tr><td colSpan={8} className="px-4 py-10 text-center text-western-stone-warm">Nenhum parceiro aprovado.</td></tr>
-              )}
-              {tableRows.map((p) => {
-                const pm = (p.payment_methods ?? {}) as { boleto?: boolean; kit_gratis?: boolean };
-                const isAdminUser = adminIds.has(p.user_id);
-                const selected = selectedIds.has(p.id);
-                return (
-                  <tr key={p.id} className={`border-t border-western-stone-warm/10 hover:bg-western-paper/50 ${selected ? "bg-western-gold/5" : ""}`}>
-                    <td className="px-3 py-3 align-top" onClick={(e) => e.stopPropagation()}>
-                      <Checkbox
-                        checked={selected}
-                        onCheckedChange={() => toggleOne(p.id)}
-                        aria-label={`Selecionar ${p.empresa ?? ""}`}
-                      />
-                    </td>
-                    <td className="px-4 py-3">
-                      <p className="font-medium text-western-green-deep">{p.empresa || "—"}</p>
-                      <p className="text-xs text-western-stone-warm">{[p.nome, p.cnpj].filter(Boolean).join(" · ")}</p>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.18em] ${TIER_BADGE_CLS[p.tier as Tier]}`}>
-                        {TIER_LABEL[p.tier as Tier]}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 font-mono">{p.discount_override != null ? `${p.discount_override}% *` : "—"}</td>
-                    <td className="px-4 py-3">{pm.boleto ? "Sim" : "—"}</td>
-                    <td className="px-4 py-3">{pm.kit_gratis ? "Sim" : "—"}</td>
-                    <td className="px-4 py-3">{isAdminUser && <ShieldCheck className="h-4 w-4 text-western-gold" />}</td>
-                    <td className="px-4 py-3 text-right">
-                      <button onClick={() => setDrawer(p)} className="inline-flex items-center gap-1 text-xs font-mono uppercase tracking-[0.18em] text-western-stone-warm hover:text-western-gold">
-                        <Eye className="h-3.5 w-3.5" /> Editar
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          <p className="px-4 py-2 text-[10px] text-western-stone-warm">* Desconto personalizado (sobrescreve o padrão do nível).</p>
-        </div>
-      )}
-
-      {selectedIds.size > 0 && (
-        <div className="fixed md:sticky bottom-0 md:bottom-4 left-0 right-0 md:left-auto md:right-auto z-30 md:mt-4 border-t md:border border-western-stone-warm/30 bg-western-cream md:bg-white shadow-lg md:shadow-md">
-          <div className="flex flex-wrap items-center gap-3 px-4 py-3">
-            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-western-green-deep">
-              {selectedIds.size} selecionado(s)
-            </span>
-            <div className="flex-1" />
-            <Button
-              onClick={handleBulkExport}
-              disabled={bulkBusy}
-              variant="outline"
-              className="h-9 rounded-none border-western-stone-warm/30 font-mono text-[11px] uppercase tracking-[0.18em]"
-            >
-              <Download className="h-3.5 w-3.5 mr-2" /> Exportar (CSV)
-            </Button>
-            <Button
-              onClick={() => setTierChangeOpen(true)}
-              disabled={bulkBusy || selectedApprovedRows.length === 0}
-              variant="outline"
-              title={selectedApprovedRows.length === 0 ? "Selecione ao menos um parceiro aprovado" : undefined}
-              className="h-9 rounded-none border-western-stone-warm/30 font-mono text-[11px] uppercase tracking-[0.18em]"
-            >
-              <ChevronsUpDown className="h-3.5 w-3.5 mr-2" /> Mudar nível{selectedApprovedRows.length > 0 && selectedApprovedRows.length !== selectedIds.size ? ` (${selectedApprovedRows.length})` : ""}
-            </Button>
-            <Button
-              onClick={() => setConfirmRevokeOpen(true)}
-              disabled={bulkBusy || selectedApprovedRows.length === 0}
-              title={selectedApprovedRows.length === 0 ? "Selecione ao menos um parceiro aprovado" : undefined}
-              className="h-9 rounded-none bg-red-700 text-white hover:bg-red-800 font-mono text-[11px] uppercase tracking-[0.18em] disabled:opacity-50"
-            >
-              <ShieldX className="h-3.5 w-3.5 mr-2" /> Revogar acesso{selectedApprovedRows.length > 0 && selectedApprovedRows.length !== selectedIds.size ? ` (${selectedApprovedRows.length})` : ""}
-            </Button>
-            <Button
-              onClick={() => setConfirmDeleteOpen(true)}
-              disabled={bulkBusy}
-              className="h-9 rounded-none bg-red-800 text-white hover:bg-red-900 font-mono text-[11px] uppercase tracking-[0.18em]"
-            >
-              <Trash2 className="h-3.5 w-3.5 mr-2" /> Excluir cadastro
-            </Button>
-            <Button
-              onClick={clearSelection}
-              disabled={bulkBusy}
-              variant="ghost"
-              className="h-9 rounded-none font-mono text-[11px] uppercase tracking-[0.18em] text-western-stone-warm"
-            >
-              <X className="h-3.5 w-3.5 mr-1" /> Limpar
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Modal: escolher nível em lote */}
-      <Sheet open={tierChangeOpen} onOpenChange={(o) => { if (!o) setTierChangeOpen(false); }}>
+      {/* Escolha do nível em lote */}
+      <Sheet open={abrirNivelLote} onOpenChange={setAbrirNivelLote}>
         <SheetContent className="w-full sm:max-w-md">
           <SheetHeader>
-            <SheetTitle>Mudar nível de {selectedIds.size} parceiro(s)</SheetTitle>
-            <SheetDescription>Todos os parceiros selecionados passarão para o nível escolhido. Descontos personalizados individuais são mantidos.</SheetDescription>
+            <SheetTitle>Mudar o nível de {aprovadosSelecionados.length} parceiro(s)</SheetTitle>
+            <SheetDescription>
+              Só parceiros aprovados mudam de nível. Descontos personalizados individuais são mantidos.
+            </SheetDescription>
           </SheetHeader>
-          <div className="mt-6 space-y-4">
+
+          <div className="mt-6 space-y-5">
             <div>
               <Label className="text-eyebrow mb-2 block">Novo nível</Label>
-              <Select value={bulkTier} onValueChange={(v) => setBulkTier(v as Tier)}>
-                <SelectTrigger className="h-11 rounded-none border-western-stone-warm/25"><SelectValue /></SelectTrigger>
+              <Select value={nivelEmLote} onValueChange={(v) => setNivelEmLote(v as Tier)}>
+                <SelectTrigger className="h-control rounded-sm border-western-border-strong text-[15px]">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {TIERS.map((t) => <SelectItem key={t} value={t}>{TIER_LABEL[t]}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex gap-2 pt-4">
-              <Button
-                onClick={() => setTierChangeOpen(false)}
-                variant="outline"
-                className="flex-1 h-11 rounded-none font-mono text-[11px] uppercase tracking-[0.18em]"
-              >
+
+            <div className="flex gap-3 pt-2">
+              <button type="button" onClick={() => setAbrirNivelLote(false)} className="btn-outline-forest flex-1">
                 Cancelar
-              </Button>
-              <Button
-                onClick={() => setConfirmTierOpen(true)}
-                className="flex-1 h-11 rounded-none bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-[11px] uppercase tracking-[0.18em]"
-              >
+              </button>
+              <button type="button" onClick={() => setConfirmarNivel(true)} className="btn-primary flex-1">
                 Aplicar
-              </Button>
+              </button>
             </div>
           </div>
         </SheetContent>
       </Sheet>
 
       <ConfirmDialog
-        open={confirmTierOpen}
-        onOpenChange={setConfirmTierOpen}
-        title={`Mudar ${selectedIds.size} parceiro(s) para ${TIER_LABEL[bulkTier]}?`}
-        description="Os padrões de desconto do novo nível passam a valer imediatamente para todos os selecionados."
-        confirmLabel={bulkBusy ? "Aplicando…" : "Aplicar"}
-        onConfirm={handleBulkTierChange}
+        open={confirmarNivel}
+        onOpenChange={setConfirmarNivel}
+        title={`Mudar ${aprovadosSelecionados.length} parceiro(s) para ${TIER_LABEL[nivelEmLote]}?`}
+        description="Os padrões de desconto do novo nível passam a valer imediatamente."
+        confirmLabel={ocupado ? "Aplicando…" : "Aplicar"}
+        onConfirm={mudarNivelEmLote}
       />
 
       <ConfirmDialog
-        open={confirmRevokeOpen}
-        onOpenChange={setConfirmRevokeOpen}
-        title={`Revogar o acesso de ${selectedApprovedRows.length} parceiro(s)?`}
+        open={confirmarRevogar}
+        onOpenChange={setConfirmarRevogar}
+        title={`Revogar o acesso de ${aprovadosSelecionados.length} parceiro(s)?`}
         description="Eles perdem imediatamente o acesso ao Programa Western Pro e ao catálogo de atacado. Você pode reverter individualmente depois."
-        confirmLabel={bulkBusy ? "Revogando…" : "Revogar acesso"}
+        confirmLabel={ocupado ? "Revogando…" : "Revogar acesso"}
         danger
-        onConfirm={handleBulkRevoke}
+        onConfirm={revogarEmLote}
       />
 
       <ConfirmDialog
-        open={confirmDeleteOpen}
-        onOpenChange={setConfirmDeleteOpen}
-        title={`Excluir ${selectedIds.size} cadastro(s) de parceiro?`}
-        description={`Isto apaga permanentemente o perfil, as configurações de tier e o papel de admin (se houver) de ${selectedIds.size} parceiro(s). A ação NÃO pode ser desfeita. Digite EXCLUIR para confirmar.`}
-        confirmLabel={bulkBusy ? "Excluindo…" : "Excluir cadastros"}
+        open={confirmarExcluir}
+        onOpenChange={setConfirmarExcluir}
+        title={`Excluir ${linhasSelecionadas.length} cadastro(s) de parceiro?`}
+        description={`Isto apaga permanentemente o perfil, as configurações de nível e o papel de admin (se houver) de ${linhasSelecionadas.length} parceiro(s). A ação NÃO pode ser desfeita. Digite EXCLUIR para confirmar.`}
+        confirmLabel={ocupado ? "Excluindo…" : "Excluir cadastros"}
         danger
         requireText="EXCLUIR"
-        onConfirm={handleBulkDelete}
-      />
-
-      <ConfirmDialog
-        open={!!pendingDelete}
-        onOpenChange={(o) => { if (!o) setPendingDelete(null); }}
-        title="Excluir cadastro deste parceiro?"
-        description={`Isto apaga permanentemente o perfil de ${pendingDelete?.empresa || pendingDelete?.nome || ""}. Não pode ser desfeito.`}
-        confirmLabel="Excluir"
-        danger
-        onConfirm={handleDeleteOne}
-      />
-
-      <PartnerDrawer
-        partner={drawer}
-        isAdmin={drawer ? adminIds.has(drawer.user_id) : false}
-        onClose={() => setDrawer(null)}
-        onSaved={load}
-        onStatus={requestSetStatus}
-      />
-
-      <ConfirmDialog
-        open={!!pendingStatus}
-        onOpenChange={(o) => { if (!o) setPendingStatus(null); }}
-        title={
-          pendingStatus?.status === "rejected"
-            ? "Revogar acesso do parceiro?"
-            : pendingStatus?.status === "cancelled"
-              ? "Cancelar parceiro?"
-              : "Reverter para em análise?"
-        }
-        description={`Isto revoga o acesso do parceiro ${
-          pendingStatus?.p.empresa || pendingStatus?.p.nome || ""
-        } ao Programa Western Pro. Confirmar?`}
-        confirmLabel={pendingStatus?.status === "rejected" ? "Revogar acesso" : "Confirmar"}
-        danger
-        onConfirm={async () => {
-          if (!pendingStatus) return;
-          const { p, status } = pendingStatus;
-          setPendingStatus(null);
-          await setStatus(p, status);
-        }}
+        onConfirm={excluirEmLote}
       />
     </div>
   );
 }
 
-function PartnerDrawer({
-  partner, isAdmin, onClose, onSaved, onStatus,
+function ChipStatus({
+  ativo, onClick, rotulo, contagem,
 }: {
-  partner: Partner | null;
-  isAdmin: boolean;
-  onClose: () => void;
-  onSaved: () => void;
-  onStatus: (p: Partner, status: Partner["status"]) => Promise<void>;
+  ativo: boolean;
+  onClick: () => void;
+  rotulo: string;
+  contagem: number;
 }) {
-  const [tier, setTier] = useState<Tier>("light");
-  const [discount, setDiscount] = useState<string>("");
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={ativo}
+      className={cn(
+        "tap-target inline-flex items-center gap-2 rounded-sm border px-4 text-[15px] font-semibold transition-colors",
+        ativo
+          ? "border-western-cta bg-western-cta/[0.08] text-western-green-deep"
+          : "border-western-border-strong text-western-stone-warm hover:border-western-green-deep hover:text-western-green-deep",
+      )}
+    >
+      {rotulo}
+      <span className="tabular-nums text-western-stone-warm">{contagem}</span>
+    </button>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * DETALHE — dados à esquerda, CARD DE AÇÃO à direita
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+function ParceiroDetalhe({
+  id, onVoltar, onMudou, onIrParaCredenciamento,
+}: {
+  id: string;
+  onVoltar: () => void;
+  onMudou: () => void;
+  onIrParaCredenciamento: () => void;
+}) {
+  const [parceiro, setParceiro] = useState<Partner | null>(null);
+  const [ehAdmin, setEhAdmin] = useState(false);
+  const [padroesTier, setPadroesTier] = useState<Record<string, number>>({});
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<unknown>(null);
+
+  /* Formulário (só vale para aprovado) */
+  const [nivel, setNivel] = useState<Tier>("light");
+  const [desconto, setDesconto] = useState("");
   const [boleto, setBoleto] = useState(false);
-  const [parcelas, setParcelas] = useState<string>("1");
+  const [parcelas, setParcelas] = useState("1");
   const [kit, setKit] = useState(false);
   const [admin, setAdmin] = useState(false);
-  const [confirmAdmin, setConfirmAdmin] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [confirmarAdmin, setConfirmarAdmin] = useState(false);
+  const [salvando, setSalvando] = useState(false);
 
-  useEffect(() => {
-    if (!partner) return;
-    setTier(partner.tier as Tier);
-    setDiscount(partner.discount_override != null ? String(partner.discount_override) : "");
-    const pm = (partner.payment_methods ?? {}) as { boleto?: boolean; parcelas_max?: number; kit_gratis?: boolean };
+  const [statusPendente, setStatusPendente] = useState<Partner["status"] | null>(null);
+  const [confirmarExcluir, setConfirmarExcluir] = useState(false);
+
+  const carregar = useCallback(async () => {
+    setCarregando(true);
+    setErro(null);
+
+    const { data, error } = await supabase.from("partner_profiles").select("*").eq("id", id).maybeSingle();
+    if (error) { setErro(error); setCarregando(false); return; }
+    if (!data) { setParceiro(null); setCarregando(false); return; }
+
+    const p = data as Partner;
+    setParceiro(p);
+
+    const [papeis, padroes] = await Promise.all([
+      supabase.from("user_roles").select("user_id").eq("role", "admin").eq("user_id", p.user_id),
+      supabase.from("tier_defaults").select("tier, discount_pct"),
+    ]);
+
+    /* Se não dá para saber se é admin, não afirme que NÃO é: bloqueia o toggle. */
+    if (papeis.error) { setErro(papeis.error); setCarregando(false); return; }
+
+    const admGravado = ((papeis.data ?? []) as Array<{ user_id: string }>).length > 0;
+    setEhAdmin(admGravado);
+
+    const mapa: Record<string, number> = {};
+    if (!padroes.error) {
+      ((padroes.data ?? []) as Array<{ tier: string; discount_pct: number }>).forEach((t) => {
+        mapa[t.tier] = t.discount_pct;
+      });
+    }
+    setPadroesTier(mapa);
+
+    /* Reidrata o formulário com o que está no banco. */
+    setNivel(p.tier);
+    setDesconto(p.discount_override != null ? String(p.discount_override) : "");
+    const pm = (p.payment_methods ?? {}) as { boleto?: boolean; parcelas_max?: number; kit_gratis?: boolean };
     setBoleto(!!pm.boleto);
     setParcelas(String(pm.parcelas_max ?? 1));
     setKit(!!pm.kit_gratis);
-    setAdmin(isAdmin);
-  }, [partner, isAdmin]);
+    setAdmin(admGravado);
 
-  if (!partner) return null;
-  const isApproved = partner.status === "approved";
+    setCarregando(false);
+  }, [id]);
 
-  const save = async () => {
-    setSaving(true);
+  useEffect(() => { carregar(); }, [carregar]);
+
+  const aplicarStatus = async (status: Partner["status"]) => {
+    if (!parceiro) return;
+    const approvedAt = status === "approved" ? new Date().toISOString() : null;
+    const { error } = await supabase
+      .from("partner_profiles")
+      .update({ status, approved_at: approvedAt } as never)
+      .eq("id", parceiro.id);
+    if (error) { toast.error("Não foi possível atualizar.", { description: error.message }); return; }
+    toast.success(
+      status === "approved" ? "Parceiro aprovado." : status === "rejected" ? "Acesso negado." : "Status atualizado.",
+    );
+    await carregar();
+    onMudou();
+  };
+
+  /** Rebaixar quem já está aprovado é destrutivo → confirma. */
+  const pedirStatus = async (status: Partner["status"]) => {
+    if (parceiro?.status === "approved" && status !== "approved") {
+      setStatusPendente(status);
+      return;
+    }
+    await aplicarStatus(status);
+  };
+
+  const salvar = async () => {
+    if (!parceiro) return;
+    setSalvando(true);
+
     const payment_methods = {
       boleto,
       parcelas_max: Math.max(1, Math.min(12, parseInt(parcelas, 10) || 1)),
       kit_gratis: kit,
     };
-    const discount_override = discount.trim() === "" ? null : Math.max(0, Math.min(100, parseFloat(discount)));
+    const discount_override = desconto.trim() === ""
+      ? null
+      : Math.max(0, Math.min(100, parseFloat(desconto)));
+
     const { error } = await supabase
       .from("partner_profiles")
-      .update({ tier, discount_override, payment_methods } as never)
-      .eq("id", partner.id);
-    if (error) { toast.error("Erro ao salvar.", { description: error.message }); setSaving(false); return; }
+      .update({ tier: nivel, discount_override, payment_methods } as never)
+      .eq("id", parceiro.id);
+    if (error) { toast.error("Erro ao salvar.", { description: error.message }); setSalvando(false); return; }
 
-    if (admin && !isAdmin) {
-      await supabase.from("user_roles").upsert({ user_id: partner.user_id, role: "admin" }, { onConflict: "user_id,role" });
-    } else if (!admin && isAdmin) {
-      await supabase.from("user_roles").delete().eq("user_id", partner.user_id).eq("role", "admin");
+    /* Papel de admin — o erro aqui era engolido antes; agora aparece. */
+    let erroPapel: { message: string } | null = null;
+    if (admin && !ehAdmin) {
+      const r = await supabase.from("user_roles").upsert(
+        { user_id: parceiro.user_id, role: "admin" },
+        { onConflict: "user_id,role" },
+      );
+      erroPapel = r.error;
+    } else if (!admin && ehAdmin) {
+      const r = await supabase.from("user_roles").delete().eq("user_id", parceiro.user_id).eq("role", "admin");
+      erroPapel = r.error;
     }
 
-    toast.success("Configurações atualizadas.");
-    setSaving(false);
-    onSaved();
+    setSalvando(false);
+    if (erroPapel) {
+      toast.error("Configurações salvas, mas o acesso de admin NÃO mudou.", { description: erroPapel.message });
+    } else {
+      toast.success("Configurações atualizadas.");
+    }
+    await carregar();
   };
 
-  return (
-    <Sheet open={!!partner} onOpenChange={(o) => !o && onClose()}>
-      <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
-        <SheetHeader>
-          <SheetTitle>{partner.empresa || "Parceiro"}</SheetTitle>
-          <SheetDescription>{partner.nome}</SheetDescription>
-        </SheetHeader>
+  const excluir = async () => {
+    if (!parceiro) return;
+    setConfirmarExcluir(false);
+    const papeis = await supabase.from("user_roles").delete().eq("user_id", parceiro.user_id);
+    const { error } = await supabase.from("partner_profiles").delete().eq("id", parceiro.id);
+    if (error) { toast.error("Erro ao excluir.", { description: error.message }); return; }
+    if (papeis.error) {
+      toast.warning("Cadastro excluído, mas os papéis de acesso não foram removidos.", {
+        description: papeis.error.message,
+      });
+    } else {
+      toast.success("Cadastro excluído.");
+    }
+    onMudou();
+    onVoltar();
+  };
 
-        <div className="mt-6 space-y-4 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-western-stone-warm w-32 flex-shrink-0">Status</span>
-            <StatusChip status={partner.status} />
-          </div>
-          <KV k="Responsável" v={[partner.nome, partner.cargo].filter(Boolean).join(" · ") || "—"} />
-          <KV k="CNPJ" v={partner.cnpj} />
-          <KV k="Segmento" v={partner.segmento} />
-          <KV k="Telefone" v={partner.telefone} />
-          <KV k="Site" v={partner.site} />
-          <KV k="Instagram" v={partner.instagram} />
-          <div className="pt-4 border-t border-western-stone-warm/15">
-            <p className="text-eyebrow mb-3">Endereço</p>
-            <KV k="CEP" v={partner.cep} />
-            <KV k="Logradouro" v={[partner.endereco, partner.numero].filter(Boolean).join(", ")} />
-            <KV k="Complemento" v={partner.complemento} />
-            <KV k="Bairro" v={partner.bairro} />
-            <KV k="Cidade/UF" v={[partner.cidade, partner.estado].filter(Boolean).join("/")} />
-          </div>
-          {partner.cancellation_reason && (
-            <div className="pt-4 border-t border-western-stone-warm/15">
-              <p className="text-eyebrow mb-2">Motivo do cancelamento</p>
-              <p className="text-western-green-deep whitespace-pre-wrap">{partner.cancellation_reason}</p>
-              {partner.cancelled_at && <p className="text-xs text-western-stone-warm mt-2">em {new Date(partner.cancelled_at).toLocaleString("pt-BR")}</p>}
-            </div>
+  const voltar = { to: "/admin/parceiros?tab=ativos", label: "Parceiros" };
+
+  if (carregando) {
+    return (
+      <div>
+        <PageHeader voltar={voltar} titulo="Carregando…" />
+        <div className="flex justify-center py-20">
+          <Loader2 className="h-6 w-6 animate-spin text-western-cta" aria-label="Carregando" />
+        </div>
+      </div>
+    );
+  }
+
+  if (erro) {
+    return (
+      <div>
+        <PageHeader voltar={voltar} titulo="Parceiro" />
+        <EstadoErro erro={erro} onRetry={carregar} />
+      </div>
+    );
+  }
+
+  if (!parceiro) {
+    return (
+      <div>
+        <PageHeader voltar={voltar} titulo="Parceiro não encontrado" />
+        <div className="rounded-xl border border-dashed border-western-border-strong bg-western-paper px-6 py-14 text-center">
+          <p className="font-display text-[18px] font-semibold text-western-green-deep">
+            Este cadastro não existe mais
+          </p>
+          <p className="text-body mx-auto mt-2 max-w-md">
+            Ele pode ter sido excluído. Volte à lista para ver os parceiros atuais.
+          </p>
+          <button type="button" onClick={onVoltar} className="btn-primary mt-6">Voltar à lista</button>
+        </div>
+      </div>
+    );
+  }
+
+  const p = parceiro;
+  const aprovado = p.status === "approved";
+  const temCred = !!p.credenciamento_id;
+  const decidirNoCredenciamento = temCred && p.status !== "approved" && p.status !== "cancelled";
+  const { padrao, usado, personalizado } = descontoEfetivo(p, padroesTier);
+  const whatsapp = linkWhatsApp(p.telefone);
+  const site = linkSite(p.site);
+
+  /* O próximo passo, em uma frase. É o que o card de ação responde. */
+  const proximoPasso = decidirNoCredenciamento
+    ? "Este cadastro veio de um credenciamento — a decisão é tomada lá, com a análise de CNPJ."
+    : p.status === "pending"
+      ? "Cadastro aguardando sua decisão. Aprovar libera o preço de atacado."
+      : p.status === "approved"
+        ? "Parceiro ativo. Ajuste o nível, o desconto e as condições de pagamento."
+        : p.status === "rejected"
+          ? "Acesso negado. Você pode reverter para análise a qualquer momento."
+          : "Parceiro cancelado. Reverter para análise reabre o cadastro.";
+
+  return (
+    <div>
+      <PageHeader
+        voltar={voltar}
+        eyebrow="Parceiro"
+        titulo={p.empresa || p.nome || "Parceiro"}
+        subtitulo={[p.nome, p.cargo, p.segmento].filter(Boolean).join(" · ") || undefined}
+      />
+
+      <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
+        {/* ── ESQUERDA: os dados ── */}
+        <div className="space-y-8">
+          <Bloco titulo="Identificação">
+            <Campo rotulo="Empresa" valor={p.empresa} />
+            <Campo rotulo="CNPJ" valor={p.cnpj} numerico />
+            <Campo rotulo="Responsável" valor={[p.nome, p.cargo].filter(Boolean).join(" · ")} />
+            <Campo rotulo="Segmento" valor={p.segmento} />
+            <Campo rotulo="Newsletter" valor={p.newsletter_opt_in ? "Aceita receber" : "Não aceita"} />
+          </Bloco>
+
+          <Bloco titulo="Contato">
+            <Campo rotulo="Telefone" valor={p.telefone} numerico />
+            <Campo rotulo="Instagram" valor={p.instagram ? `@${p.instagram.replace(/^@/, "")}` : null} />
+            <Campo rotulo="Site" valor={p.site} />
+          </Bloco>
+
+          <Bloco titulo="Endereço">
+            <Campo rotulo="CEP" valor={p.cep} numerico />
+            <Campo rotulo="Logradouro" valor={[p.endereco, p.numero].filter(Boolean).join(", ")} />
+            <Campo rotulo="Complemento" valor={p.complemento} />
+            <Campo rotulo="Bairro" valor={p.bairro} />
+            <Campo rotulo="Cidade/UF" valor={[p.cidade, p.estado].filter(Boolean).join("/")} />
+          </Bloco>
+
+          {p.cancellation_reason && (
+            <Bloco titulo="Motivo do cancelamento">
+              <p className="whitespace-pre-wrap text-[16px] leading-[1.6] text-western-green-deep">
+                {p.cancellation_reason}
+              </p>
+              {p.cancelled_at && (
+                <p className="text-meta mt-2">
+                  Cancelado <CelulaData valor={p.cancelled_at} />
+                </p>
+              )}
+            </Bloco>
           )}
+
+          {/* Linha do tempo */}
+          <Bloco titulo="Linha do tempo">
+            <Campo rotulo="Cadastro" valor={null}>
+              <CelulaData valor={p.created_at} className="text-[15px] text-western-green-deep" />
+            </Campo>
+            {p.approved_at && (
+              <Campo rotulo="Aprovado" valor={null}>
+                <CelulaData valor={p.approved_at} className="text-[15px] text-western-green-deep" />
+              </Campo>
+            )}
+            {p.cancelled_at && (
+              <Campo rotulo="Cancelado" valor={null}>
+                <CelulaData valor={p.cancelled_at} className="text-[15px] text-western-green-deep" />
+              </Campo>
+            )}
+          </Bloco>
+
+          {/* Zona sensível — separada, no fim, nunca perto do botão primário. */}
+          <div className="rounded-xl border border-status-error/30 bg-status-error/[0.04] p-5">
+            <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-status-error">Ação irreversível</p>
+            <p className="text-body mt-2">
+              Excluir apaga o perfil, as configurações de nível e o papel de admin deste parceiro. Não dá para desfazer.
+            </p>
+            <button
+              type="button"
+              onClick={() => setConfirmarExcluir(true)}
+              className="tap-target mt-4 inline-flex items-center gap-2 rounded-lg border border-status-error/50 px-5 text-[15px] font-semibold text-status-error transition-colors hover:bg-status-error/10"
+            >
+              <Trash2 className="h-4 w-4" aria-hidden="true" />
+              Excluir cadastro
+            </button>
+          </div>
         </div>
 
-        {!isApproved ? (
-          <div className="mt-6 border-t border-western-stone-warm/15 pt-6 space-y-3">
-            <p className="text-eyebrow">Aprovação</p>
-            <p className="text-xs text-western-stone-warm">As configurações de tier, desconto e permissões só ficam disponíveis após aprovar o cadastro.</p>
-            <div className="flex gap-2">
-              {partner.status !== "cancelled" && (
-                <Button onClick={async () => { await onStatus(partner, "approved"); onClose(); }} className="flex-1 h-11 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-[11px] uppercase tracking-[0.2em] rounded-none">
-                  <Check className="h-3.5 w-3.5 mr-1" /> Aprovar
-                </Button>
-              )}
-              {partner.status !== "rejected" && partner.status !== "cancelled" && (
-                <Button onClick={async () => { await onStatus(partner, "rejected"); onClose(); }} variant="outline" className="flex-1 h-11 border-western-stone-warm/30 text-western-stone-warm hover:border-red-700 hover:text-red-700 font-mono text-[11px] uppercase tracking-[0.2em] rounded-none">
-                  <X className="h-3.5 w-3.5 mr-1" /> Recusar
-                </Button>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="mt-6 border-t border-western-stone-warm/15 pt-6 space-y-6">
-            <div>
-              <p className="text-eyebrow mb-1">Programa Western Pro</p>
-              <p className="text-xs text-western-stone-warm">Defina o nível e ajustes individuais deste parceiro.</p>
+        {/* ── DIREITA: o card de ação (fixo) ── */}
+        <aside className="lg:sticky lg:top-6 lg:self-start">
+          <div className="rounded-xl border border-western-border-strong bg-white p-6">
+            <div className="flex items-center justify-between gap-3">
+              <StatusBadge status={p.status} />
+              {aprovado && <NivelBadge tier={p.tier} />}
             </div>
 
-            <div>
-              <Label className="text-eyebrow mb-2 block">Nível</Label>
-              <Select value={tier} onValueChange={(v) => setTier(v as Tier)}>
-                <SelectTrigger className="h-11 rounded-none border-western-stone-warm/25"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {TIERS.map((t) => <SelectItem key={t} value={t}>{TIER_LABEL[t]}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-western-stone-warm mt-2">O nível define os padrões de desconto, boleto e parcelas (configuráveis em Configurações).</p>
-            </div>
+            <p className="text-body mt-4">{proximoPasso}</p>
 
-            <div>
-              <Label className="text-eyebrow mb-2 block">Desconto personalizado (%) — opcional</Label>
-              <Input
-                type="number" min={0} max={100} step="0.5"
-                value={discount}
-                onChange={(e) => setDiscount(e.target.value)}
-                placeholder="Vazio = usa o padrão do nível"
-                className="h-11 rounded-none border-western-stone-warm/25"
-              />
-            </div>
-
-            <div className="flex items-center justify-between border-t border-western-stone-warm/15 pt-4">
-              <div>
-                <Label className="text-sm">Liberar boleto</Label>
-                <p className="text-xs text-western-stone-warm">Cliente pode finalizar com boleto bancário.</p>
+            {/* Desconto real em vigor */}
+            {aprovado && (
+              <div className="mt-5 rounded-lg border border-western-border-soft bg-western-paper p-4">
+                <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">
+                  Desconto em vigor
+                </p>
+                <p className="mt-1 text-[20px] font-semibold tabular-nums text-western-green-deep">
+                  {usado == null ? "—" : `${usado}%`}
+                </p>
+                <p className="text-meta mt-1">
+                  {usado == null
+                    ? "Não consegui ler o padrão do nível."
+                    : personalizado
+                      ? `personalizado (padrão do nível: ${padrao == null ? "—" : `${padrao}%`})`
+                      : `padrão do ${TIER_LABEL[p.tier]}`}
+                </p>
               </div>
-              <Switch checked={boleto} onCheckedChange={setBoleto} />
-            </div>
+            )}
 
-            <div>
-              <Label className="text-eyebrow mb-2 block">Parcelas máximas</Label>
-              <Input
-                type="number" min={1} max={12}
-                value={parcelas}
-                onChange={(e) => setParcelas(e.target.value)}
-                className="h-11 rounded-none border-western-stone-warm/25"
-              />
-            </div>
-
-            <div className="flex items-center justify-between border-t border-western-stone-warm/15 pt-4">
-              <div>
-                <Label className="text-sm">Kit de amostras grátis</Label>
-                <p className="text-xs text-western-stone-warm">Aprovação imediata sem custo.</p>
+            {/* Contatos diretos */}
+            {(whatsapp || site || p.instagram) && (
+              <div className="mt-5 flex flex-wrap gap-2">
+                {whatsapp && (
+                  <a
+                    href={whatsapp}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="tap-target inline-flex items-center gap-2 rounded-lg border border-western-border-strong px-4 text-[15px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
+                  >
+                    <MessageCircle className="h-4 w-4" aria-hidden="true" /> WhatsApp
+                  </a>
+                )}
+                {site && (
+                  <a
+                    href={site}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="tap-target inline-flex items-center gap-2 rounded-lg border border-western-border-strong px-4 text-[15px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
+                  >
+                    <Globe className="h-4 w-4" aria-hidden="true" /> Site
+                  </a>
+                )}
+                {p.instagram && (
+                  <a
+                    href={`https://instagram.com/${p.instagram.replace(/^@/, "")}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="tap-target inline-flex items-center gap-2 rounded-lg border border-western-border-strong px-4 text-[15px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
+                  >
+                    <Instagram className="h-4 w-4" aria-hidden="true" /> Instagram
+                  </a>
+                )}
               </div>
-              <Switch checked={kit} onCheckedChange={setKit} />
-            </div>
+            )}
 
-            <div className="mt-2 border-2 border-red-300/70 bg-red-50/60 p-4">
-              <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-red-800 mb-3 inline-flex items-center gap-1.5">
-                <ShieldCheck className="h-3.5 w-3.5" /> Acesso ao sistema · ação sensível
-              </p>
-              <div className="flex items-center justify-between gap-3">
-                <div className="min-w-0">
-                  <Label className="text-sm text-western-green-deep">Promover a admin</Label>
-                  <p className="text-xs text-red-800/80 mt-1">
-                    Dá acesso <strong>TOTAL</strong> ao painel administrativo (/admin) — leads, orçamentos, pedidos, parceiros, configurações.
+            <div className="my-6 h-px bg-western-border-soft" />
+
+            {/* ── O PRÓXIMO PASSO ── */}
+            {decidirNoCredenciamento ? (
+              <button type="button" onClick={onIrParaCredenciamento} className="btn-primary w-full">
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                Analisar no credenciamento
+              </button>
+            ) : !aprovado ? (
+              <div className="space-y-3">
+                {p.status !== "cancelled" && (
+                  <button type="button" onClick={() => pedirStatus("approved")} className="btn-primary w-full">
+                    <Check className="h-4 w-4" aria-hidden="true" />
+                    Aprovar parceiro
+                  </button>
+                )}
+                {p.status !== "rejected" && p.status !== "cancelled" && (
+                  <button type="button" onClick={() => pedirStatus("rejected")} className="btn-outline-forest w-full">
+                    <X className="h-4 w-4" aria-hidden="true" />
+                    Recusar
+                  </button>
+                )}
+                {p.status !== "pending" && (
+                  <button
+                    type="button"
+                    onClick={() => pedirStatus("pending")}
+                    className="tap-target w-full rounded-lg text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
+                  >
+                    Reverter para análise
+                  </button>
+                )}
+                <p className="text-meta">
+                  Nível, desconto e permissões só ficam disponíveis depois de aprovar.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div>
+                  <Label className="text-eyebrow mb-2 block">Nível</Label>
+                  <Select value={nivel} onValueChange={(v) => setNivel(v as Tier)}>
+                    <SelectTrigger className="h-control rounded-sm border-western-border-strong text-[15px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TIERS.map((t) => <SelectItem key={t} value={t}>{TIER_LABEL[t]}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-meta mt-2">
+                    O nível define os padrões de desconto, boleto e parcelas (ajustáveis em Configurações).
                   </p>
                 </div>
-                <Switch
-                  checked={admin}
-                  onCheckedChange={(v) => {
-                    if (v && !admin) setConfirmAdmin(true);
-                    else setAdmin(v);
-                  }}
-                />
+
+                <div>
+                  <Label className="text-eyebrow mb-2 block" htmlFor="desconto">
+                    Desconto personalizado (%)
+                  </Label>
+                  <Input
+                    id="desconto"
+                    type="number"
+                    min={0}
+                    max={100}
+                    step="0.5"
+                    value={desconto}
+                    onChange={(e) => setDesconto(e.target.value)}
+                    placeholder="Vazio = usa o padrão do nível"
+                    className="h-control rounded-sm border-western-border-strong text-[15px]"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between gap-4 border-t border-western-border-soft pt-5">
+                  <div className="min-w-0">
+                    <Label className="text-[15px] font-semibold text-western-green-deep">Liberar boleto</Label>
+                    <p className="text-meta">Pode fechar o pedido com boleto bancário.</p>
+                  </div>
+                  <Switch checked={boleto} onCheckedChange={setBoleto} aria-label="Liberar boleto" />
+                </div>
+
+                <div>
+                  <Label className="text-eyebrow mb-2 block" htmlFor="parcelas">Parcelas máximas</Label>
+                  <Input
+                    id="parcelas"
+                    type="number"
+                    min={1}
+                    max={12}
+                    value={parcelas}
+                    onChange={(e) => setParcelas(e.target.value)}
+                    className="h-control rounded-sm border-western-border-strong text-[15px]"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between gap-4 border-t border-western-border-soft pt-5">
+                  <div className="min-w-0">
+                    <Label className="text-[15px] font-semibold text-western-green-deep">Kit de amostras grátis</Label>
+                    <p className="text-meta">Aprovação imediata, sem custo.</p>
+                  </div>
+                  <Switch checked={kit} onCheckedChange={setKit} aria-label="Kit de amostras grátis" />
+                </div>
+
+                <div className="rounded-lg border border-status-error/30 bg-status-error/[0.04] p-4">
+                  <p className="inline-flex items-center gap-2 text-[14px] font-semibold uppercase tracking-[0.06em] text-status-error">
+                    <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                    Acesso ao sistema
+                  </p>
+                  <div className="mt-3 flex items-center justify-between gap-4">
+                    <div className="min-w-0">
+                      <Label className="text-[15px] font-semibold text-western-green-deep">Promover a admin</Label>
+                      <p className="text-[14px] leading-[1.5] text-western-stone-dark/85">
+                        Dá acesso <strong>total</strong> ao painel — leads, orçamentos, pedidos, parceiros e configurações.
+                      </p>
+                    </div>
+                    <Switch
+                      checked={admin}
+                      onCheckedChange={(v) => {
+                        if (v && !admin) setConfirmarAdmin(true);
+                        else setAdmin(v);
+                      }}
+                      aria-label="Promover a admin"
+                    />
+                  </div>
+                </div>
+
+                {/* A ÚNICA ação primária da tela. Verde. */}
+                <button type="button" onClick={salvar} disabled={salvando} className="btn-primary w-full">
+                  {salvando ? (
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  ) : (
+                    <><Save className="h-4 w-4" aria-hidden="true" /> Salvar configurações</>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => pedirStatus("rejected")}
+                  className="tap-target w-full rounded-lg text-[15px] font-semibold text-status-error transition-colors hover:bg-status-error/10"
+                >
+                  Revogar acesso do parceiro
+                </button>
               </div>
-            </div>
-
-            <ConfirmDialog
-              open={confirmAdmin}
-              onOpenChange={setConfirmAdmin}
-              title="Promover a administrador?"
-              description="Isto dá acesso TOTAL ao painel administrativo para esta pessoa. Confirmar?"
-              confirmLabel="Sim, promover"
-              danger
-              onConfirm={() => { setAdmin(true); setConfirmAdmin(false); }}
-            />
-
-            <Button onClick={save} disabled={saving} className="w-full h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none">
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4 mr-2" /> Salvar configurações</>}
-            </Button>
+            )}
           </div>
+        </aside>
+      </div>
+
+      <ConfirmDialog
+        open={confirmarAdmin}
+        onOpenChange={setConfirmarAdmin}
+        title="Promover a administrador?"
+        description="Isto dá acesso TOTAL ao painel administrativo para esta pessoa. A mudança só vale depois de salvar."
+        confirmLabel="Sim, promover"
+        danger
+        onConfirm={() => { setAdmin(true); setConfirmarAdmin(false); }}
+      />
+
+      <ConfirmDialog
+        open={!!statusPendente}
+        onOpenChange={(o) => { if (!o) setStatusPendente(null); }}
+        title={
+          statusPendente === "rejected"
+            ? "Revogar o acesso deste parceiro?"
+            : statusPendente === "cancelled"
+              ? "Cancelar este parceiro?"
+              : "Reverter para em análise?"
+        }
+        description={`${p.empresa || p.nome || "Este parceiro"} perde imediatamente o acesso ao Programa Western Pro e ao preço de atacado. Confirmar?`}
+        confirmLabel={statusPendente === "rejected" ? "Revogar acesso" : "Confirmar"}
+        danger
+        onConfirm={async () => {
+          const alvo = statusPendente;
+          setStatusPendente(null);
+          if (alvo) await aplicarStatus(alvo);
+        }}
+      />
+
+      <ConfirmDialog
+        open={confirmarExcluir}
+        onOpenChange={setConfirmarExcluir}
+        title="Excluir o cadastro deste parceiro?"
+        description={`Isto apaga permanentemente o perfil de ${p.empresa || p.nome || "este parceiro"}, o nível, o desconto e o papel de admin. A ação NÃO pode ser desfeita. Digite EXCLUIR para confirmar.`}
+        confirmLabel="Excluir cadastro"
+        danger
+        requireText="EXCLUIR"
+        onConfirm={excluir}
+      />
+    </div>
+  );
+}
+
+/* ── Blocos do detalhe ── */
+
+function Bloco({ titulo, children }: { titulo: string; children: React.ReactNode }) {
+  return (
+    <section className="rounded-xl border border-western-border-soft bg-white p-6">
+      <h2 className="text-eyebrow mb-4">{titulo}</h2>
+      <dl className="space-y-3">{children}</dl>
+    </section>
+  );
+}
+
+function Campo({
+  rotulo, valor, numerico, children,
+}: {
+  rotulo: string;
+  valor?: string | null;
+  numerico?: boolean;
+  children?: React.ReactNode;
+}) {
+  if (!children && !valor) return null;
+  return (
+    <div className="flex flex-col gap-1 sm:flex-row sm:gap-4">
+      <dt className="w-40 flex-shrink-0 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">
+        {rotulo}
+      </dt>
+      <dd
+        className={cn(
+          "min-w-0 flex-1 break-words text-[15px] text-western-green-deep",
+          numerico && "tabular-nums",
         )}
-      </SheetContent>
-    </Sheet>
+      >
+        {children ?? valor}
+      </dd>
+    </div>
   );
 }

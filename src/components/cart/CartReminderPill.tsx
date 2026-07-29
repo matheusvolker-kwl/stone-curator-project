@@ -1,27 +1,30 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { ShoppingBag, X } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 
 /**
- * Pílula fina fixa no rodapé (mobile), lembrando que há um orçamento aberto.
- * - Só aparece quando há itens no carrinho e o drawer está fechado.
- * - Some ao rolar pra baixo, volta ao rolar pra cima (mesma UX da StickyBuyBar).
- * - Botão X descarta a sessão; reaparece quando o total de itens sobe.
- * - Empilha acima da StickyBuyBarLab usando --sticky-buy-bar-h.
+ * Pílula fina fixa no rodapé (mobile): lembrete de que há um orçamento aberto.
+ *
+ * É um LEMBRETE PERSISTENTE — NÃO uma confirmação de "adicionado". A confirmação
+ * de cada add é o toast único do cartStore (+ pulso do badge no header). Por isso
+ * a pílula não "pisca" a cada peça: ela aparece enquanto há orçamento, some ao
+ * rolar pra baixo, é dispensável no X e fica escondida na própria /carrinho.
+ * - Empilha acima da barra fixa via --sticky-buy-bar-h.
  * - Escondida em ≥ md (desktop tem "Orçamento (N)" no header).
  */
 export default function CartReminderPill({ cartOpen }: { cartOpen: boolean }) {
   const items = useCartStore((s) => s.items);
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
+  const { pathname } = useLocation();
+  const onCartPage = pathname === "/carrinho";
 
-  const [visible, setVisible] = useState(true);
-  const [dismissedAt, setDismissedAt] = useState(0);
+  /* Nasce escondida: na primeira dobra ela cobria o CTA do hero e duplicava o
+     badge do carrinho, que está visível no header. Só aparece depois que a
+     pessoa já rolou a página (e, como antes, some ao descer / volta ao subir). */
+  const [visible, setVisible] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
   const lastY = useRef(0);
-
-  // Reaparece quando o cliente adiciona mais peças (total sobe acima do dismiss).
-  useEffect(() => {
-    if (totalItems > dismissedAt) setDismissedAt(0);
-  }, [totalItems, dismissedAt]);
 
   useEffect(() => {
     lastY.current = window.scrollY;
@@ -29,7 +32,8 @@ export default function CartReminderPill({ cartOpen }: { cartOpen: boolean }) {
       const y = window.scrollY;
       const goingDown = y > lastY.current + 4;
       const goingUp = y < lastY.current - 4;
-      if (goingDown && y > 80) setVisible(false);
+      if (y <= 320) setVisible(false);
+      else if (goingDown) setVisible(false);
       else if (goingUp) setVisible(true);
       lastY.current = y;
     };
@@ -37,7 +41,7 @@ export default function CartReminderPill({ cartOpen }: { cartOpen: boolean }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const shouldRender = totalItems > 0 && !cartOpen && dismissedAt < totalItems;
+  const shouldRender = totalItems > 0 && !cartOpen && !dismissed && !onCartPage;
   if (!shouldRender) return null;
 
   return (
@@ -51,24 +55,26 @@ export default function CartReminderPill({ cartOpen }: { cartOpen: boolean }) {
       aria-hidden={!visible}
     >
       <div className="pointer-events-auto w-fit max-w-[calc(100vw-5.5rem)]">
-        <div className="flex items-center gap-2 pl-3 pr-1 py-1.5 bg-western-green-deep text-western-cream shadow-[0_10px_30px_-12px_rgba(15,40,24,0.6)] border border-western-gold/25 rounded-full">
-          <ShoppingBag className="h-3.5 w-3.5 text-western-gold-soft shrink-0" />
+        <div className="flex items-center gap-1 pl-4 pr-1 rounded-full bg-western-cta text-western-cream border border-western-green-deep/20 shadow-[0_12px_32px_-14px_rgba(15,40,24,0.55)]">
+          <ShoppingBag className="h-5 w-5 text-western-gold-soft shrink-0" />
           <button
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent("western:open-cart"))}
-            className="font-mono text-[11px] uppercase tracking-[0.18em] py-1 pr-2 whitespace-nowrap"
+            className="min-h-tap pl-2 pr-2 inline-flex items-center font-sans text-[15px] font-semibold whitespace-nowrap"
           >
-            {totalItems} no orçamento
-            <span className="mx-2 text-western-gold-soft/60">·</span>
+            {totalItems} no carrinho
+            <span className="mx-2 text-western-cream/50" aria-hidden="true">
+              ·
+            </span>
             <span className="text-western-gold-soft">Ver</span>
           </button>
           <button
             type="button"
-            onClick={() => setDismissedAt(totalItems)}
+            onClick={() => setDismissed(true)}
             aria-label="Dispensar lembrete"
-            className="p-1.5 text-western-cream/60 hover:text-western-cream transition-colors"
+            className="min-h-tap min-w-tap inline-flex items-center justify-center rounded-full text-western-cream/80 hover:text-western-cream hover:bg-western-green-deep/40 transition-colors"
           >
-            <X className="h-3.5 w-3.5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
       </div>

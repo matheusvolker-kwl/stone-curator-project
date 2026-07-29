@@ -65,11 +65,18 @@ export default function Reveal({
     const node = ref.current;
     if (!node) return;
 
+    // Rede de segurança contra "vazios de scroll": se o observer não disparar
+    // (crawler, captura full-page/preview, scroll muito rápido), revela mesmo
+    // assim — nada de conteúdo permanentemente invisível. O scroll normal
+    // dispara o IO bem antes disso, preservando a animação.
+    const fallback = window.setTimeout(() => setVisible(true), 1600);
+
     const obs = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
             setVisible(true);
+            window.clearTimeout(fallback);
             if (!repeat) obs.unobserve(entry.target);
           } else if (repeat) {
             setVisible(false);
@@ -80,7 +87,10 @@ export default function Reveal({
     );
 
     obs.observe(node);
-    return () => obs.disconnect();
+    return () => {
+      obs.disconnect();
+      window.clearTimeout(fallback);
+    };
   }, [threshold, repeat]);
 
   const style: CSSProperties = {

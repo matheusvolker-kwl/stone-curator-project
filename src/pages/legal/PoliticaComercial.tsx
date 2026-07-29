@@ -1,10 +1,53 @@
+import { Link } from "react-router-dom";
 import LegalPage from "@/components/legal/LegalPage";
+import FechamentoLegal from "@/components/legal/FechamentoLegal";
 import { BUSINESS } from "@/config/business";
 
-export default function PoliticaComercial() {
+/* DS V3 — as políticas terminavam em beco sem saída: navegação entre elas no topo
+ * e faixa de fechamento com CTA no fim. Os "!" vencem os seletores descendentes
+ * do LegalPage ([&_a]:underline, [&_h2]:text-western-green-deep), que sairiam
+ * errados na faixa escura. */
+const POLITICAS = [
+  { to: "/politica-comercial", label: "Comercial e entrega" },
+  { to: "/privacidade", label: "Privacidade" },
+  { to: "/trocas-e-avarias", label: "Trocas e avarias" },
+] as const;
+
+function LegalNav({ atual }: { atual: string }) {
   return (
-    <LegalPage eyebrow="Política comercial" titulo="Como compramos e vendemos." atualizadoEm="maio de 2026" seoPath="/politica-comercial" seoTitle="Política comercial — Western" seoDescription="Regras B2B da Western: pedido mínimo, condições de pagamento, credenciamento e catálogo profissional.">
-      <p>
+    <nav aria-label="Políticas da Western" className="mb-10 flex flex-wrap gap-2">
+      {POLITICAS.map((p) => {
+        const ativa = p.to === atual;
+        return (
+          <Link
+            key={p.to}
+            to={p.to}
+            aria-current={ativa ? "page" : undefined}
+            className={`tap-target inline-flex items-center rounded-full border px-5 font-sans text-[15px] font-semibold !no-underline transition-colors ${
+              ativa
+                ? "border-western-cta bg-western-cta text-western-cream"
+                : "border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper"
+            }`}
+          >
+            {p.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+
+export default function PoliticaComercial() {
+  const waConsultor = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
+    "Olá, vim pelo site da Western e gostaria de falar com um consultor."
+  )}`;
+
+  return (
+    <LegalPage eyebrow="Política comercial e de entrega" titulo="Como compramos, vendemos e entregamos." atualizadoEm="maio de 2026" seoPath="/politica-comercial" seoTitle="Política comercial e de entrega — Western" seoDescription="Regras B2B da Western: pedido mínimo, pagamento, credenciamento, retirada no ateliê e envio por transportadora.">
+      <LegalNav atual="/politica-comercial" />
+
+      <p className="text-[17px] leading-[1.6] text-western-green-deep">
         O catálogo Western Pools com preço de atacado opera no canal B2B, atendendo profissionais
         e empresas do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a
         laguistas, jardineiros, garden centers, lojas e construtoras. O acesso à tabela de preços,
@@ -12,10 +55,15 @@ export default function PoliticaComercial() {
         exceção: aberta também a clientes finais, sem cadastro B2B.
       </p>
 
+      {/* Fonte única: BUSINESS.pedidoMinimoLabel (src/config/business.ts).
+       * Nunca reescreva o valor aqui — abolir ou alterar o mínimo se faz lá. */}
       <h2>Pedido mínimo</h2>
       <p>
-        Não há pedido mínimo. Você pode montar a nota a partir de qualquer valor,
-        respeitando a produção sob demanda de cada peça.
+        Pedido mínimo por nota: <strong>{BUSINESS.pedidoMinimoLabel}</strong>, exclusivo B2B. O
+        valor é o mesmo em todo o catálogo, em todas as condições comerciais e em todo o site —
+        você monta a nota como quiser (uma peça ou uma composição inteira), desde que ela alcance
+        esse valor. A Western Box de amostras é a única exceção: aberta a todos, sem cadastro B2B e
+        sem pedido mínimo.
       </p>
 
       <h2>Pagamento</h2>
@@ -48,6 +96,52 @@ export default function PoliticaComercial() {
         Pedidos podem ser cancelados sem ônus em até 24h após a confirmação. Após o início da
         produção, o cancelamento implica retenção proporcional ao estágio executado.
       </p>
+
+      <h2>Entrega: como o pedido sai do ateliê</h2>
+      <p>
+        A Western trabalha com retirada no ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}{" "}
+        ou envio por transportadora contratada pelo parceiro. Não temos frota própria.
+      </p>
+      <ul>
+        <li>
+          <strong>Retirada no ateliê.</strong> Sem custo. Agendamento prévio obrigatório, em
+          horário comercial ({BUSINESS.horarioAtelie}).
+        </li>
+        <li>
+          <strong>Transportadora indicada pelo parceiro.</strong> O frete é contratado e pago
+          diretamente à transportadora. A Western prepara a embalagem e libera a coleta.
+        </li>
+        <li>
+          <strong>Cotação assistida.</strong> Mediante solicitação, indicamos transportadoras de
+          confiança e ajudamos a cotar — sem repasse de margem.
+        </li>
+      </ul>
+
+      <h2>Embalagem e proteção</h2>
+      <p>
+        Cada peça é embalada individualmente em filme stretch, papelão estruturado e cantoneiras
+        de proteção. Cascatas e peças grandes recebem pallet dedicado com cintas.
+      </p>
+
+      <h2>Conferência no recebimento</h2>
+      <p>
+        O parceiro deve conferir as peças no ato da entrega, na presença do motorista, e
+        registrar qualquer avaria visível no canhoto da nota. Avarias não registradas no momento
+        da entrega não podem ser pleiteadas posteriormente.
+      </p>
+
+      <h2>Prazo de coleta</h2>
+      <p>
+        Após a conclusão da produção, o pedido fica disponível para coleta em até 5 dias úteis.
+        Após esse período, eventual armazenagem prolongada poderá ser cobrada.
+      </p>
+
+      <FechamentoLegal
+        titulo="Dúvida sobre condições ou entrega?"
+        apoio="Fale com um consultor pelo WhatsApp — credenciamento, tabela de parceiro, pagamento e retirada no ateliê."
+        waHref={waConsultor}
+        waLabel="Falar com consultor"
+      />
     </LegalPage>
   );
 }

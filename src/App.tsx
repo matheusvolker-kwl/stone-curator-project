@@ -1,11 +1,19 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import RouteTransition from "@/components/RouteTransition";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 
 function LabProductRedirect() {
   const { handle = "" } = useParams();
   return <Navigate to={`/produtos/${handle}`} replace />;
+}
+
+// /inspiracoes(?tipo=lagos) → /obras(?tipo=lagos). Carrega a query string: um
+// <Navigate to="/obras"> com string a descartaria, e o `?tipo=` de UsageScenes
+// é o que seleciona o segmento na lista.
+function RedirectObras() {
+  const { search } = useLocation();
+  return <Navigate to={{ pathname: "/obras", search }} replace />;
 }
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -42,15 +50,22 @@ const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
 const AccountLayout = lazy(() => import("@/components/account/AccountLayout"));
 const AccountIndex = lazy(() => import("./pages/account/AccountIndex"));
 const AccountProfile = lazy(() => import("./pages/account/AccountProfile"));
-const AccountQuotes = lazy(() => import("./pages/account/AccountQuotes"));
+
 const AccountOrders = lazy(() => import("./pages/account/AccountOrders"));
-const AccountSketches = lazy(() => import("./pages/account/AccountSketches"));
+
 const AccountFavorites = lazy(() => import("./pages/account/AccountFavorites"));
-const AccountSamples = lazy(() => import("./pages/account/AccountSamples"));
+
 const AccountPreferences = lazy(() => import("./pages/account/AccountPreferences"));
 const AccountTracking = lazy(() => import("./pages/account/AccountTracking"));
-const AccountCompositions = lazy(() => import("./pages/account/AccountCompositions"));
+const AccountOrcamentos = lazy(() => import("./pages/account/AccountOrcamentos"));
 
+const LabSecoes = lazy(() => import("./pages/lab/LabSecoes.tsx"));
+const LabParaSuaCasa = lazy(() => import("./pages/lab/LabParaSuaCasa.tsx"));
+const Inspiracoes = lazy(() => import("./pages/Inspiracoes.tsx"));
+const ObraPage = lazy(() => import("./pages/ObraPage.tsx"));
+const ComoComprar = lazy(() => import("./pages/ComoComprar.tsx"));
+const ParaSuaCasa = lazy(() => import("./pages/ParaSuaCasa.tsx"));
+const Carrinho = lazy(() => import("./pages/Carrinho.tsx"));
 const Linhas = lazy(() => import("./pages/Linhas.tsx"));
 const LinhaPage = lazy(() => import("./pages/LinhaPage.tsx"));
 const Produtos = lazy(() => import("./pages/Produtos.tsx"));
@@ -59,6 +74,9 @@ const ConjuntoPage = lazy(() => import("./pages/ConjuntoPage.tsx"));
 const ProductPage = lazy(() => import("./pages/ProductPage.tsx"));
 
 const About = lazy(() => import("./pages/About.tsx"));
+const APedra = lazy(() => import("./pages/APedra.tsx"));
+/* Apresentação interna da reconstrução. Fora do menu e do sitemap, noindex. */
+const Relatorio = lazy(() => import("./pages/Relatorio.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
 const WesternBoxPage = lazy(() => import("./pages/WesternBox.tsx"));
 
@@ -71,18 +89,15 @@ const PartnerLogin = lazy(() => import("./pages/PartnerLogin.tsx"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 
 const AgendarVisita = lazy(() => import("./pages/AgendarVisita.tsx"));
-const PorQueWestern = lazy(() => import("./pages/PorQueWestern.tsx"));
 const ContrateAWestern = lazy(() => import("./pages/ContrateAWestern.tsx"));
 const FAQ = lazy(() => import("./pages/FAQ.tsx"));
 const PoliticaComercial = lazy(() => import("./pages/legal/PoliticaComercial.tsx"));
-const PoliticaEntrega = lazy(() => import("./pages/legal/PoliticaEntrega.tsx"));
 const TrocasAvarias = lazy(() => import("./pages/legal/TrocasAvarias.tsx"));
 const PoliticaPrivacidade = lazy(() => import("./pages/legal/PoliticaPrivacidade.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
-const Entrada = lazy(() => import("./pages/Entrada.tsx"));
-const Parceria = lazy(() => import("./pages/Parceria.tsx"));
-const ParceriaDireto = lazy(() => import("./pages/ParceriaDireto.tsx"));
-const Orcamento = lazy(() => import("./pages/Orcamento.tsx"));
+/* Entrada/Parceria/ParceriaDireto aposentadas em 2026-07-17 — viraram
+   redirects (ver as rotas). A home já segmenta B2B×B2C e /contrate-a-western
+   é a página de serviços que a /parceria prometia. */
 const FavoritosCompartilhados = lazy(() => import("./pages/FavoritosCompartilhados.tsx"));
 
 const queryClient = new QueryClient({
@@ -157,11 +172,32 @@ const App = () => (
                       ? <Route path="/inicio" element={<Index />} />
                       : <Route path="/" element={<Index />} />}
                     <Route path="/linhas" element={<Linhas />} />
-                    <Route path="/entrada" element={<Entrada />} />
-                    <Route path="/parceria" element={<Parceria />} />
-                    <Route path="/parceria-direto" element={<ParceriaDireto />} />
-                    <Route path="/orcamento" element={<Orcamento />} />
+                    {/* Aposentadas (2026-07-17, decisão do dono): 873 linhas
+                        órfãs de nav vendendo a versão velha do site. Redirect
+                        preserva qualquer link antigo. */}
+                    <Route path="/entrada" element={<Navigate to="/" replace />} />
+                    <Route path="/parceria" element={<Navigate to="/contrate-a-western" replace />} />
+                    <Route path="/parceria-direto" element={<Navigate to="/contrate-a-western" replace />} />
+                    {/* Orçamento (página pública) removido por decisão do dono — B2C vai pro atendimento */}
+                    <Route path="/orcamento" element={<Navigate to="/contato" replace />} />
+                    {/* v1 usava /linhas/pisantes — preservar SEO/links externos no cutover */}
+                    <Route path="/linhas/pisantes" element={<Navigate to="/linhas/pisadas" replace />} />
                     <Route path="/linhas/:handle" element={<LinhaPage />} />
+                    {/* A lista é /obras (é o que ela é: obra entregue). Os nomes
+                        antigos seguem vivos como redirect — nenhum link morre. */}
+                    <Route path="/obras" element={<Inspiracoes />} />
+                    <Route path="/obras/:slug" element={<ObraPage />} />
+                    <Route path="/inspiracoes" element={<RedirectObras />} />
+                    <Route path="/inspiracao" element={<RedirectObras />} />
+                    {/* LAB — bancada interna de decisão do dono, com noindex.
+                        Não entra em menu nem em sitemap: só existe enquanto há
+                        variante em julgamento, e sai do ar depois da escolha. */}
+                    <Route path="/lab/secoes" element={<LabSecoes />} />
+                    <Route path="/lab/casa" element={<LabParaSuaCasa />} />
+                    {/* Telas do V3 que faltavam no app */}
+                    <Route path="/como-comprar" element={<ComoComprar />} />
+                    <Route path="/para-sua-casa" element={<ParaSuaCasa />} />
+                    <Route path="/carrinho" element={<Carrinho />} />
                     <Route path="/conjuntos" element={<Conjuntos />} />
                     <Route path="/conjuntos/:handle" element={<ConjuntoPage />} />
                     <Route path="/produtos" element={<Produtos />} />
@@ -169,6 +205,8 @@ const App = () => (
                     <Route path="/lab/produtos/:handle" element={<LabProductRedirect />} />
                     <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
                     <Route path="/sobre" element={<About />} />
+                    <Route path="/a-pedra" element={<APedra />} />
+                    <Route path="/relatorio" element={<Relatorio />} />
                     <Route path="/contato" element={<Contact />} />
                     <Route path="/western-box" element={<WesternBoxPage />} />
                     <Route path="/contrate-a-western" element={<ContrateAWestern />} />
@@ -190,13 +228,15 @@ const App = () => (
                     >
                       <Route index element={<AccountIndex />} />
                       <Route path="perfil" element={<AccountProfile />} />
-                      <Route path="orcamentos" element={<AccountQuotes />} />
+                      <Route path="orcamentos" element={<AccountOrcamentos />} />
                       <Route path="pedidos" element={<AccountOrders />} />
                       <Route path="rastreio" element={<AccountTracking />} />
-                      <Route path="composicoes" element={<AccountCompositions />} />
-                      <Route path="sketches" element={<AccountSketches />} />
+                      {/* Fundida em /minha-conta/orcamentos (2026-07-18): eram duas telas para o mesmo evento */}
+                      <Route path="composicoes" element={<Navigate to="/minha-conta/orcamentos" replace />} />
+                      {/* Aposentadas (2026-07-18, dono): sem usuário nem admin */}
+                      <Route path="sketches" element={<Navigate to="/minha-conta" replace />} />
                       <Route path="favoritos" element={<AccountFavorites />} />
-                      <Route path="amostras" element={<AccountSamples />} />
+                      <Route path="amostras" element={<Navigate to="/minha-conta" replace />} />
                       <Route path="preferencias" element={<AccountPreferences />} />
                     </Route>
                     <Route
@@ -206,10 +246,14 @@ const App = () => (
                     {/* Rota antiga de amostras: substituída pela Western Box (página paga). */}
                     <Route path="/pedir-amostras" element={<Navigate to="/western-box" replace />} />
                     <Route path="/visitar" element={<AgendarVisita />} />
-                    <Route path="/por-que-western" element={<PorQueWestern />} />
+                    {/* "Por que Western" foi para /a-pedra (2026-07): é lá que o
+                        argumento mora agora — o FAQ ficou com a logística.
+                        O redirect traz o histórico de SEO junto. */}
+                    <Route path="/por-que-western" element={<Navigate to="/a-pedra" replace />} />
                     <Route path="/faq" element={<FAQ />} />
                     <Route path="/politica-comercial" element={<PoliticaComercial />} />
-                    <Route path="/politica-de-entrega" element={<PoliticaEntrega />} />
+                    {/* Política de entrega foi fundida na comercial (2026-07). */}
+                    <Route path="/politica-de-entrega" element={<Navigate to="/politica-comercial" replace />} />
                     <Route path="/trocas-e-avarias" element={<TrocasAvarias />} />
                     <Route path="/privacidade" element={<PoliticaPrivacidade />} />
                     <Route path="/parceiro/favoritos" element={<Navigate to="/minha-conta/favoritos" replace />} />

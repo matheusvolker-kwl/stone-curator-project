@@ -60,15 +60,15 @@ export default function CartaoCnpjUpload({ userId, onUploaded, disabled }: Props
         type="button"
         disabled={disabled || uploading}
         onClick={() => inputRef.current?.click()}
-        className="w-full h-12 border border-western-stone-warm/30 hover:border-western-gold transition-colors flex items-center justify-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-western-green-deep disabled:opacity-50"
+        className="w-full h-control rounded-sm border border-western-border-strong hover:border-western-green-deep transition-colors flex items-center justify-center gap-2 font-sans text-[15px] font-semibold text-western-green-deep disabled:opacity-50"
       >
-        {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : filename ? <FileCheck2 className="h-4 w-4 text-western-gold" /> : <Upload className="h-4 w-4" />}
-        {uploading ? "Enviando..." : filename ?? "Enviar Cartão CNPJ"}
+        {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : filename ? <FileCheck2 className="h-5 w-5 text-western-bronze" /> : <Upload className="h-5 w-5" />}
+        {uploading ? "Enviando…" : filename ?? "Enviar Cartão CNPJ"}
       </button>
       {error && (
-        <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{error}</p>
+        <p className="mt-1.5 font-sans text-[14px] text-status-error">{error}</p>
       )}
-      <p className="mt-2 text-[11px] text-western-stone-warm">
+      <p className="mt-2 text-[14px] text-western-stone-warm">
         JPG, PNG, WEBP ou PDF até 5 MB. Documento usado apenas para conferência interna.
       </p>
     </div>

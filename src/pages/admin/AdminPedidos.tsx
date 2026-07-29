@@ -1,25 +1,40 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
-  Truck,
-  Factory,
-  CheckCircle2,
-  Clock,
-  XCircle,
-  Package,
   Plus,
   Search,
-  ArrowLeft,
   Save,
   Trash2,
   Send,
-  X,
-  Layers,
+  ChevronLeft,
+  ChevronRight,
   FileDown,
+  Loader2,
 } from "lucide-react";
 import { downloadPedidoPdf } from "@/lib/pdf/pedidoPdf";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
+import {
+  DataTable, type Coluna,
+  EstadoCarregando, EstadoErro,
+  StatusBadge, rotuloStatus,
+  Tabs,
+  PageHeader,
+  CelulaData,
+  dataCurta,
+} from "@/components/backoffice";
+
+/**
+ * Pedidos — produção e logística.
+ *
+ * Consertado nesta passada:
+ *  - a carga inicial fazia `Promise.all([...])` e jogava `res.data ?? []` na
+ *    tela: qualquer erro (403/RLS/rede) virava "nenhum pedido". Agora o erro é
+ *    estado e a tela mostra EstadoErro com "Tentar de novo".
+ *  - o histórico do pedido (production_order_events) engolia o erro do mesmo
+ *    jeito — o dono via "Nenhuma atualização registrada" quando na verdade a
+ *    query tinha falhado. Idem: erro é erro, vazio é vazio.
+ */
 
 type Status =
   | "aguardando"
@@ -68,17 +83,6 @@ interface Partner {
   cidade: string | null;
 }
 
-const STATUS_META: Record<Status, { label: string; tone: string; icon: typeof Clock }> = {
-  aguardando: { label: "Aguardando", tone: "text-western-stone-warm border-western-stone-warm/30 bg-western-stone-warm/10", icon: Clock },
-  em_producao: { label: "Em produção", tone: "text-western-gold border-western-gold/40 bg-western-gold/10", icon: Factory },
-  controle_qualidade: { label: "Controle qualidade", tone: "text-western-gold border-western-gold/40 bg-western-gold/10", icon: CheckCircle2 },
-  pronto: { label: "Pronto", tone: "text-emerald-700 border-emerald-600/40 bg-emerald-50", icon: Package },
-  em_transporte: { label: "Em transporte", tone: "text-blue-700 border-blue-600/40 bg-blue-50", icon: Truck },
-  entregue: { label: "Entregue", tone: "text-emerald-700 border-emerald-600/40 bg-emerald-50", icon: CheckCircle2 },
-  retirado: { label: "Retirado", tone: "text-emerald-700 border-emerald-600/40 bg-emerald-50", icon: CheckCircle2 },
-  cancelado: { label: "Cancelado", tone: "text-red-700 border-red-600/40 bg-red-50", icon: XCircle },
-};
-
 const STATUS_OPTIONS: Status[] = [
   "aguardando",
   "em_producao",
@@ -90,33 +94,50 @@ const STATUS_OPTIONS: Status[] = [
   "cancelado",
 ];
 
-function fmtDate(iso: string | null): string {
-  if (!iso) return "—";
-  return new Date(iso).toLocaleDateString("pt-BR");
-}
+const CONCLUIDOS: Status[] = ["entregue", "retirado", "cancelado"];
 
-function fmtDateTime(iso: string): string {
-  return new Date(iso).toLocaleString("pt-BR", {
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+/** Copy de apoio: o que o dono normalmente faz a seguir em cada status. */
+const PROXIMO_PASSO: Record<Status, string> = {
+  aguardando: "Confirme o escopo e mande para produção.",
+  em_producao: "Quando as peças saírem do molde, passe para controle de qualidade.",
+  controle_qualidade: "Aprovada a conferência, marque como pronto.",
+  pronto: "Combine a retirada ou despache com transportadora.",
+  em_transporte: "Assim que chegar, marque como entregue.",
+  entregue: "Pedido concluído. Nada pendente.",
+  retirado: "Pedido concluído. Nada pendente.",
+  cancelado: "Pedido cancelado. Nada pendente.",
+};
 
-function StatusBadge({ status }: { status: Status }) {
-  const meta = STATUS_META[status];
-  const Icon = meta.icon;
+/* Duas classes de propósito, e não uma com override em cima: numa string comum
+ * (sem tailwind-merge) `h-control … h-tap` deixa AS DUAS no DOM, e quem decide
+ * é a ordem do CSS gerado — não a ordem no atributo. Então nada de sobrescrever. */
+const campoCls =
+  "h-control w-full rounded-sm border border-western-border-strong bg-white px-3 text-[15px] text-western-green-deep placeholder:text-western-stone-warm/70 transition-colors focus:border-western-cta focus:outline-none focus:ring-2 focus:ring-western-cta/20";
+/** Controles de filtro/lote: 48px (toque mínimo), largura definida no uso. */
+const filtroCls =
+  "h-tap rounded-sm border border-western-border-strong bg-white px-3 text-[15px] text-western-green-deep placeholder:text-western-stone-warm/70 transition-colors focus:border-western-cta focus:outline-none focus:ring-2 focus:ring-western-cta/20";
+const areaCls =
+  "w-full rounded-sm border border-western-border-strong bg-white px-3 py-2.5 text-[15px] leading-[1.5] text-western-green-deep placeholder:text-western-stone-warm/70 transition-colors focus:border-western-cta focus:outline-none focus:ring-2 focus:ring-western-cta/20";
+
+const moeda = (v: number | null) =>
+  v == null ? "—" : v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+const nomeParceiro = (p: Partner | undefined, userId: string) =>
+  p?.empresa || p?.nome || userId.slice(0, 8);
+
+function Campo({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 border font-mono text-[10px] uppercase tracking-[0.2em] ${meta.tone}`}>
-      <Icon className="h-3 w-3" /> {meta.label}
-    </span>
+    <label className={`block ${full ? "md:col-span-2" : ""}`}>
+      <span className="text-eyebrow mb-1.5 block">{label}</span>
+      {children}
+    </label>
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-// Detalhe + edição
-// ─────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────
+ * Detalhe — dados à esquerda, card de ação à direita
+ * ───────────────────────────────────────────────────────────── */
+
 function OrderEditor({
   order,
   partners,
@@ -133,22 +154,32 @@ function OrderEditor({
   const [draft, setDraft] = useState<ProductionOrder>(order);
   const [saving, setSaving] = useState(false);
   const [events, setEvents] = useState<OrderEvent[]>([]);
+  const [eventosCarregando, setEventosCarregando] = useState(true);
+  const [eventosErro, setEventosErro] = useState<unknown>(null);
   const [newNote, setNewNote] = useState("");
   const [postingNote, setPostingNote] = useState(false);
+  const [removeOpen, setRemoveOpen] = useState(false);
+  const [gerandoPdf, setGerandoPdf] = useState(false);
 
-  useEffect(() => setDraft(order), [order.id]);
+  useEffect(() => setDraft(order), [order.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const carregarEventos = useCallback(async () => {
+    setEventosCarregando(true);
+    setEventosErro(null);
+    const { data, error } = await supabase
+      .from("production_order_events")
+      .select("id,status,note,created_at")
+      .eq("order_id", order.id)
+      .order("created_at", { ascending: false });
+    // "Nenhuma atualização" e "não consegui carregar" NÃO são a mesma tela.
+    if (error) setEventosErro(error);
+    else setEvents((data as OrderEvent[]) ?? []);
+    setEventosCarregando(false);
+  }, [order.id]);
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      const { data } = await supabase
-        .from("production_order_events")
-        .select("id,status,note,created_at")
-        .eq("order_id", order.id)
-        .order("created_at", { ascending: false });
-      if (!mounted) return;
-      setEvents((data as OrderEvent[]) ?? []);
-    })();
+    void carregarEventos();
+
     const channel = supabase
       .channel(`admin-order-events-${order.id}`)
       .on(
@@ -157,11 +188,9 @@ function OrderEditor({
         (payload) => setEvents((prev) => [payload.new as OrderEvent, ...prev]),
       )
       .subscribe();
-    return () => {
-      mounted = false;
-      supabase.removeChannel(channel);
-    };
-  }, [order.id]);
+
+    return () => { supabase.removeChannel(channel); };
+  }, [order.id, carregarEventos]);
 
   const partner = partners.find((p) => p.user_id === draft.user_id);
 
@@ -188,10 +217,10 @@ function OrderEditor({
       .single();
     setSaving(false);
     if (error) {
-      toast.error("Erro ao salvar: " + error.message);
+      toast.error("Não consegui salvar.", { description: error.message });
       return;
     }
-    toast.success("Pedido atualizado · cliente já vê em tempo real");
+    toast.success("Pedido atualizado. O parceiro já vê a mudança.");
     onChanged(data as ProductionOrder);
   };
 
@@ -204,282 +233,320 @@ function OrderEditor({
       .insert({ order_id: order.id, status: draft.status, note });
     setPostingNote(false);
     if (error) {
-      toast.error("Erro ao publicar nota: " + error.message);
+      toast.error("Não consegui publicar a nota.", { description: error.message });
       return;
     }
     setNewNote("");
-    toast.success("Nota publicada para o cliente");
+    toast.success("Nota publicada para o parceiro.");
   };
 
-  const [removeOpen, setRemoveOpen] = useState(false);
   const remove = async () => {
     const { error } = await supabase.from("production_orders").delete().eq("id", order.id);
     if (error) {
-      toast.error("Erro: " + error.message);
+      toast.error("Não consegui excluir.", { description: error.message });
       return;
     }
-    toast.success("Pedido excluído");
+    toast.success("Pedido excluído.");
     onDeleted(order.id);
+  };
+
+  const baixarPdf = async () => {
+    setGerandoPdf(true);
+    try {
+      const filename = await downloadPedidoPdf({
+        order: { ...draft, observacoes_admin: draft.observacoes_admin },
+        events,
+        partner: partner ? { nome: partner.nome, empresa: partner.empresa, cidade: partner.cidade } : undefined,
+        scenario: "admin",
+      });
+      toast.success(`PDF gerado: ${filename}`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "erro desconhecido";
+      toast.error("Falha ao gerar o PDF.", { description: msg });
+    } finally {
+      setGerandoPdf(false);
+    }
   };
 
   const set = <K extends keyof ProductionOrder>(k: K, v: ProductionOrder[K]) =>
     setDraft((d) => ({ ...d, [k]: v }));
 
   return (
-    <div className="space-y-6">
+    <div>
+      {/* O "voltar" daqui é estado local (não é rota), por isso é um <button> de
+          verdade e não o slot `voltar` do PageHeader, que renderiza um <Link>. */}
       <button
         type="button"
         onClick={onBack}
-        className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep"
+        className="-ml-1 mb-3 inline-flex items-center gap-1 text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
       >
-        <ArrowLeft className="h-3 w-3" /> Voltar
+        <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+        Pedidos
       </button>
 
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <p className="text-eyebrow mb-1">
-            Nº {order.numero} · {partner?.empresa || partner?.nome || order.user_id.slice(0, 8)}
-          </p>
-          <h2 className="font-display text-2xl text-western-green-deep">{draft.titulo}</h2>
-          <p className="text-xs text-western-stone-warm mt-1">
-            Criado em {fmtDateTime(order.created_at)} · atualizado {fmtDateTime(order.updated_at)}
-          </p>
-        </div>
-        <StatusBadge status={draft.status} />
-      </div>
+      <PageHeader
+        eyebrow={`Nº ${order.numero} · ${nomeParceiro(partner, order.user_id)}`}
+        titulo={draft.titulo || "Pedido sem título"}
+        subtitulo={`Criado ${dataCurta(order.created_at)} · atualizado ${dataCurta(order.updated_at)}`}
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field label="Título">
-          <input
-            value={draft.titulo}
-            onChange={(e) => set("titulo", e.target.value)}
-            className="ui-input"
-          />
-        </Field>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        {/* ── Coluna esquerda: os dados ── */}
+        <div className="space-y-6">
+          <section className="rounded-xl border border-western-border-soft bg-white p-5">
+            <p className="text-eyebrow mb-4">Dados do pedido</p>
 
-        <Field label="Status">
-          <select
-            value={draft.status}
-            onChange={(e) => set("status", e.target.value as Status)}
-            className="ui-input"
-          >
-            {STATUS_OPTIONS.map((s) => (
-              <option key={s} value={s}>{STATUS_META[s].label}</option>
-            ))}
-          </select>
-        </Field>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Campo label="Título">
+                <input value={draft.titulo} onChange={(e) => set("titulo", e.target.value)} className={campoCls} />
+              </Campo>
 
-        <Field label="Modo de entrega">
-          <select
-            value={draft.modo_entrega}
-            onChange={(e) => set("modo_entrega", e.target.value as Modo)}
-            className="ui-input"
-          >
-            <option value="frete">Frete</option>
-            <option value="retirada">Retirada na fábrica</option>
-          </select>
-        </Field>
+              <Campo label="Status">
+                <select
+                  value={draft.status}
+                  onChange={(e) => set("status", e.target.value as Status)}
+                  className={campoCls}
+                >
+                  {STATUS_OPTIONS.map((s) => (
+                    <option key={s} value={s}>{rotuloStatus(s)}</option>
+                  ))}
+                </select>
+              </Campo>
 
-        <Field label="Prazo (dias úteis)">
-          <input
-            type="number"
-            min={1}
-            value={draft.prazo_dias_uteis}
-            onChange={(e) => set("prazo_dias_uteis", Number(e.target.value))}
-            className="ui-input"
-          />
-        </Field>
+              <Campo label="Modo de entrega">
+                <select
+                  value={draft.modo_entrega}
+                  onChange={(e) => set("modo_entrega", e.target.value as Modo)}
+                  className={campoCls}
+                >
+                  <option value="frete">Frete</option>
+                  <option value="retirada">Retirada no ateliê</option>
+                </select>
+              </Campo>
 
-        <Field label="Prazo interno de produção">
-          <input
-            type="date"
-            value={draft.produzir_ate ?? ""}
-            onChange={(e) => set("produzir_ate", e.target.value || null)}
-            className="ui-input"
-          />
-        </Field>
+              <Campo label="Prazo (dias úteis)">
+                <input
+                  type="number"
+                  min={1}
+                  value={draft.prazo_dias_uteis}
+                  onChange={(e) => set("prazo_dias_uteis", Number(e.target.value))}
+                  className={`${campoCls} tabular-nums`}
+                />
+              </Campo>
 
-        <Field label={draft.modo_entrega === "retirada" ? "Disponível em" : "Previsão de entrega"}>
-          <input
-            type="date"
-            value={draft.previsao_entrega ?? ""}
-            onChange={(e) => set("previsao_entrega", e.target.value || null)}
-            className="ui-input"
-          />
-        </Field>
+              <Campo label="Prazo interno de produção">
+                <input
+                  type="date"
+                  value={draft.produzir_ate ?? ""}
+                  onChange={(e) => set("produzir_ate", e.target.value || null)}
+                  className={`${campoCls} tabular-nums`}
+                />
+              </Campo>
 
-        {draft.modo_entrega === "frete" && (
-          <>
-            <Field label="Transportadora">
+              <Campo label={draft.modo_entrega === "retirada" ? "Disponível em" : "Previsão de entrega"}>
+                <input
+                  type="date"
+                  value={draft.previsao_entrega ?? ""}
+                  onChange={(e) => set("previsao_entrega", e.target.value || null)}
+                  className={`${campoCls} tabular-nums`}
+                />
+              </Campo>
+
+              {draft.modo_entrega === "frete" && (
+                <>
+                  <Campo label="Transportadora">
+                    <input
+                      value={draft.transportadora ?? ""}
+                      onChange={(e) => set("transportadora", e.target.value || null)}
+                      className={campoCls}
+                      placeholder="Ex.: Correios, Jamef…"
+                    />
+                  </Campo>
+                  <Campo label="Código de rastreio">
+                    <input
+                      value={draft.tracking_code ?? ""}
+                      onChange={(e) => set("tracking_code", e.target.value || null)}
+                      className={`${campoCls} tabular-nums`}
+                      placeholder="Ex.: BR123456789"
+                    />
+                  </Campo>
+                  <Campo label="Endereço de entrega" full>
+                    <textarea
+                      value={draft.endereco_entrega ?? ""}
+                      onChange={(e) => set("endereco_entrega", e.target.value || null)}
+                      className={`${areaCls} min-h-[72px]`}
+                    />
+                  </Campo>
+                </>
+              )}
+
+              <Campo label="Valor total (R$)">
+                <input
+                  type="number"
+                  step="0.01"
+                  value={draft.valor_total ?? ""}
+                  onChange={(e) => set("valor_total", e.target.value === "" ? null : Number(e.target.value))}
+                  className={`${campoCls} tabular-nums`}
+                />
+              </Campo>
+            </div>
+          </section>
+
+          <section className="rounded-xl border border-western-border-soft bg-white p-5">
+            <p className="text-eyebrow mb-4">Recados</p>
+            <div className="grid grid-cols-1 gap-4">
+              <Campo label="Recado para o parceiro (aparece na conta dele)">
+                <textarea
+                  value={draft.observacoes_cliente ?? ""}
+                  onChange={(e) => set("observacoes_cliente", e.target.value || null)}
+                  className={`${areaCls} min-h-[84px]`}
+                />
+              </Campo>
+              <Campo label="Nota interna (só o ateliê vê)">
+                <textarea
+                  value={draft.observacoes_admin ?? ""}
+                  onChange={(e) => set("observacoes_admin", e.target.value || null)}
+                  className={`${areaCls} min-h-[84px]`}
+                />
+              </Campo>
+            </div>
+          </section>
+
+          {/* Histórico */}
+          <section className="rounded-xl border border-western-border-soft bg-white p-5">
+            <p className="text-eyebrow mb-1">Histórico</p>
+            <p className="text-meta mb-4">Sincronizado em tempo real com a conta do parceiro.</p>
+
+            <div className="mb-5 flex flex-col gap-2 sm:flex-row">
               <input
-                value={draft.transportadora ?? ""}
-                onChange={(e) => set("transportadora", e.target.value || null)}
-                className="ui-input"
-                placeholder="Ex.: Correios, Jamef…"
+                value={newNote}
+                onChange={(e) => setNewNote(e.target.value)}
+                placeholder="Publicar uma nota visível ao parceiro (sem mudar o status)…"
+                className={`${campoCls} flex-1`}
+                onKeyDown={(e) => { if (e.key === "Enter") void postNote(); }}
               />
-            </Field>
-            <Field label="Código de rastreio">
-              <input
-                value={draft.tracking_code ?? ""}
-                onChange={(e) => set("tracking_code", e.target.value || null)}
-                className="ui-input"
-                placeholder="Ex.: BR123456789"
-              />
-            </Field>
-            <Field label="Endereço de entrega" full>
-              <textarea
-                value={draft.endereco_entrega ?? ""}
-                onChange={(e) => set("endereco_entrega", e.target.value || null)}
-                className="ui-input min-h-[60px]"
-              />
-            </Field>
-          </>
-        )}
+              <button
+                type="button"
+                onClick={postNote}
+                disabled={postingNote || !newNote.trim()}
+                className="tap-target inline-flex h-control flex-shrink-0 items-center justify-center gap-2 rounded-lg border border-western-border-strong px-5 text-[15px] font-semibold text-western-green-deep transition-colors hover:border-western-green-deep hover:bg-western-paper disabled:opacity-45"
+              >
+                <Send className="h-4 w-4" aria-hidden="true" />
+                Publicar
+              </button>
+            </div>
 
-        <Field label="Valor total (R$)">
-          <input
-            type="number"
-            step="0.01"
-            value={draft.valor_total ?? ""}
-            onChange={(e) => set("valor_total", e.target.value === "" ? null : Number(e.target.value))}
-            className="ui-input"
-          />
-        </Field>
-
-        <Field label="Recado para o parceiro (aparece na conta dele)" full>
-          <textarea
-            value={draft.observacoes_cliente ?? ""}
-            onChange={(e) => set("observacoes_cliente", e.target.value || null)}
-            className="ui-input min-h-[70px]"
-          />
-        </Field>
-
-        <Field label="Notas internas (admin)" full>
-          <textarea
-            value={draft.observacoes_admin ?? ""}
-            onChange={(e) => set("observacoes_admin", e.target.value || null)}
-            className="ui-input min-h-[70px]"
-          />
-        </Field>
-      </div>
-
-      <div className="flex items-center justify-between gap-3 flex-wrap pt-2 border-t border-western-stone-warm/15">
-        <button
-          onClick={() => setRemoveOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-red-700 border border-red-300 hover:bg-red-50"
-        >
-          <Trash2 className="h-3 w-3" /> Excluir pedido
-        </button>
-        <ConfirmDialog
-          open={removeOpen}
-          onOpenChange={setRemoveOpen}
-          title={`Excluir pedido Nº ${order.numero}?`}
-          description="Esta ação é irreversível. Todo o histórico do pedido é apagado."
-          confirmLabel="Excluir definitivamente"
-          danger
-          onConfirm={() => { setRemoveOpen(false); remove(); }}
-        />
-        <div className="flex items-center gap-2">
-          <button
-            onClick={async () => {
-              try {
-                const filename = await downloadPedidoPdf({
-                  order: { ...draft, observacoes_admin: draft.observacoes_admin },
-                  events,
-                  partner: partner
-                    ? { nome: partner.nome, empresa: partner.empresa, cidade: partner.cidade }
-                    : undefined,
-                  scenario: "admin",
-                });
-                toast.success(`PDF gerado: ${filename}`);
-              } catch (err) {
-                const msg = err instanceof Error ? err.message : "erro desconhecido";
-                toast.error("Falha ao gerar PDF: " + msg);
-              }
-            }}
-            className="inline-flex items-center gap-2 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep border border-western-green-deep/40 hover:bg-western-cream"
-          >
-            <FileDown className="h-3 w-3" /> Baixar PDF (admin)
-          </button>
-          <button
-            onClick={save}
-            disabled={saving}
-            className="inline-flex items-center gap-2 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.22em] bg-western-green-deep text-western-cream hover:bg-western-green-deep/90 disabled:opacity-50"
-          >
-            <Save className="h-3 w-3" /> {saving ? "Salvando…" : "Salvar e sincronizar"}
-          </button>
-        </div>
-      </div>
-
-      {/* Histórico + nota manual */}
-      <div className="border border-western-stone-warm/15 bg-white p-5">
-        <p className="text-eyebrow mb-3">Histórico (sincronizado em tempo real com o cliente)</p>
-
-        <div className="flex gap-2 mb-4">
-          <input
-            value={newNote}
-            onChange={(e) => setNewNote(e.target.value)}
-            placeholder="Publicar uma nota visível ao parceiro (sem mudar status)…"
-            className="ui-input flex-1"
-            onKeyDown={(e) => e.key === "Enter" && postNote()}
-          />
-          <button
-            onClick={postNote}
-            disabled={postingNote || !newNote.trim()}
-            className="inline-flex items-center gap-1.5 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] bg-western-gold text-western-green-deep hover:bg-western-gold/90 disabled:opacity-40"
-          >
-            <Send className="h-3 w-3" /> Publicar
-          </button>
+            {eventosErro ? (
+              <EstadoErro erro={eventosErro} onRetry={carregarEventos} titulo="Não consegui carregar o histórico" compacto />
+            ) : eventosCarregando ? (
+              <EstadoCarregando linhas={3} />
+            ) : events.length === 0 ? (
+              <p className="text-body">Nenhuma atualização registrada até agora.</p>
+            ) : (
+              <ul className="space-y-4">
+                {events.map((ev) => (
+                  <li key={ev.id} className="flex gap-3">
+                    <span className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-western-gold" aria-hidden="true" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {ev.status && <StatusBadge status={ev.status} />}
+                        <CelulaData valor={ev.created_at} className="text-meta" />
+                      </div>
+                      {ev.note && (
+                        <p className="mt-1.5 whitespace-pre-line text-[15px] leading-[1.5] text-western-green-deep">
+                          {ev.note}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         </div>
 
-        {events.length === 0 ? (
-          <p className="text-sm text-western-stone-warm">Nenhuma atualização registrada.</p>
-        ) : (
-          <ul className="space-y-3">
-            {events.map((ev) => (
-              <li key={ev.id} className="flex gap-3 text-sm">
-                <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-western-gold mt-2" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {ev.status && <StatusBadge status={ev.status} />}
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
-                      {fmtDateTime(ev.created_at)}
-                    </span>
-                  </div>
-                  {ev.note && (
-                    <p className="text-western-green-deep mt-1.5 leading-relaxed whitespace-pre-line">
-                      {ev.note}
-                    </p>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+        {/* ── Coluna direita: card de ação ── */}
+        <aside className="lg:sticky lg:top-6 lg:self-start">
+          <div className="rounded-xl border border-western-border-soft bg-white p-5">
+            <p className="text-eyebrow mb-3">Situação</p>
+            <StatusBadge status={draft.status} />
+            <p className="text-body mt-3 text-[15px]">{PROXIMO_PASSO[draft.status]}</p>
+
+            <dl className="mt-5 space-y-2.5 border-t border-western-border-soft pt-5">
+              <ItemResumo k="Parceiro" v={nomeParceiro(partner, draft.user_id)} />
+              {partner?.cidade && <ItemResumo k="Cidade" v={partner.cidade} />}
+              <ItemResumo k="Entrega" v={draft.modo_entrega === "retirada" ? "Retirada" : "Frete"} />
+              <ItemResumo
+                k={draft.modo_entrega === "retirada" ? "Disponível" : "Previsão"}
+                v={draft.previsao_entrega ? dataCurta(draft.previsao_entrega) : "—"}
+              />
+              <ItemResumo k="Valor" v={moeda(draft.valor_total)} />
+            </dl>
+
+            <button type="button" onClick={save} disabled={saving} className="btn-primary mt-5 w-full">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Save className="h-4 w-4" aria-hidden="true" />}
+              {saving ? "Salvando…" : "Salvar e sincronizar"}
+            </button>
+
+            <button
+              type="button"
+              onClick={baixarPdf}
+              disabled={gerandoPdf}
+              className="tap-target mt-2 inline-flex h-control w-full items-center justify-center gap-2 rounded-lg border border-western-border-strong px-5 text-[15px] font-semibold text-western-green-deep transition-colors hover:border-western-green-deep hover:bg-western-paper disabled:opacity-45"
+            >
+              <FileDown className="h-4 w-4" aria-hidden="true" />
+              {gerandoPdf ? "Gerando…" : "Baixar PDF"}
+            </button>
+
+            <div className="mt-5 border-t border-western-border-soft pt-4">
+              <button
+                type="button"
+                onClick={() => setRemoveOpen(true)}
+                className="tap-target inline-flex items-center gap-2 text-[15px] font-semibold text-status-error transition-colors hover:underline"
+              >
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
+                Excluir pedido
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onBack}
+            className="tap-target mt-3 w-full rounded-lg px-5 text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
+          >
+            Voltar para a lista
+          </button>
+        </aside>
       </div>
 
-      <p className="text-xs text-western-stone-warm">
-        ✉️ Notificações por e-mail ao cliente serão adicionadas em breve. Por enquanto, toda alteração
-        já aparece em tempo real na conta do parceiro.
-      </p>
+      <ConfirmDialog
+        open={removeOpen}
+        onOpenChange={setRemoveOpen}
+        title={`Excluir o pedido Nº ${order.numero}?`}
+        description="Esta ação é irreversível. Todo o histórico do pedido é apagado."
+        confirmLabel="Excluir definitivamente"
+        danger
+        requireText="EXCLUIR"
+        onConfirm={() => { setRemoveOpen(false); void remove(); }}
+      />
     </div>
   );
 }
 
-function Field({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {
+function ItemResumo({ k, v }: { k: string; v: string }) {
   return (
-    <label className={`block ${full ? "md:col-span-2" : ""}`}>
-      <span className="block font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm mb-1.5">
-        {label}
-      </span>
-      {children}
-    </label>
+    <div className="flex items-baseline justify-between gap-3">
+      <dt className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">{k}</dt>
+      <dd className="min-w-0 break-words text-right text-[15px] tabular-nums text-western-green-deep">{v}</dd>
+    </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-// Modal de criação
-// ─────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────
+ * Criação
+ * ───────────────────────────────────────────────────────────── */
+
 function CreateOrderModal({
   partners,
   onClose,
@@ -499,9 +566,23 @@ function CreateOrderModal({
   });
   const [saving, setSaving] = useState(false);
 
+  // A11y do modal manual: esc fecha, trava o scroll do fundo, restaura ao sair.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [onClose]);
+
   const create = async () => {
     if (!form.user_id || !form.numero.trim() || !form.titulo.trim()) {
-      toast.error("Preencha parceiro, número e título");
+      toast.error("Preencha parceiro, número e título.");
       return;
     }
     setSaving(true);
@@ -519,98 +600,105 @@ function CreateOrderModal({
       .single();
     setSaving(false);
     if (error) {
-      toast.error("Erro ao criar: " + error.message);
+      toast.error("Não consegui criar o pedido.", { description: error.message });
       return;
     }
-    toast.success("Pedido criado · sincronizado com a conta do parceiro");
+    toast.success("Pedido criado e sincronizado com a conta do parceiro.");
     onCreated(data as ProductionOrder);
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-western-green-deep/60 flex items-center justify-center p-4">
-      <div className="bg-white max-w-lg w-full p-6 border border-western-stone-warm/30 max-h-[90vh] overflow-y-auto">
-        <p className="text-eyebrow mb-1">Novo pedido</p>
-        <h3 className="font-display text-xl text-western-green-deep mb-4">Criar pedido de produção</h3>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-western-green-deep/60 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Criar pedido de produção"
+      onClick={onClose}
+    >
+      <div
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-western-border-soft bg-white p-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <p className="text-eyebrow mb-2">Novo pedido</p>
+        <h2 className="display-md mb-5 text-western-green-deep">Criar pedido de produção</h2>
 
-        <div className="space-y-3">
-          <Field label="Parceiro">
+        <div className="space-y-4">
+          <Campo label="Parceiro">
             <select
               value={form.user_id}
               onChange={(e) => setForm({ ...form, user_id: e.target.value })}
-              className="ui-input"
+              className={campoCls}
             >
               {partners.map((p) => (
                 <option key={p.user_id} value={p.user_id}>
-                  {p.empresa || p.nome || p.user_id.slice(0, 8)}{p.cidade ? ` · ${p.cidade}` : ""}
+                  {nomeParceiro(p, p.user_id)}{p.cidade ? ` · ${p.cidade}` : ""}
                 </option>
               ))}
             </select>
-          </Field>
+          </Campo>
 
-          <Field label="Número do pedido">
+          <Campo label="Número do pedido">
             <input
               value={form.numero}
               onChange={(e) => setForm({ ...form, numero: e.target.value })}
-              className="ui-input"
+              className={`${campoCls} tabular-nums`}
               placeholder="Ex.: 2026-001"
             />
-          </Field>
+          </Campo>
 
-          <Field label="Título / descrição curta">
+          <Campo label="Título (descrição curta)">
             <input
               value={form.titulo}
               onChange={(e) => setForm({ ...form, titulo: e.target.value })}
-              className="ui-input"
-              placeholder="Ex.: Composição Atelier Jardim"
+              className={campoCls}
+              placeholder="Ex.: Composição Ateliê Jardim"
             />
-          </Field>
+          </Campo>
 
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Modo">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Campo label="Modo de entrega">
               <select
                 value={form.modo_entrega}
                 onChange={(e) => setForm({ ...form, modo_entrega: e.target.value as Modo })}
-                className="ui-input"
+                className={campoCls}
               >
                 <option value="frete">Frete</option>
                 <option value="retirada">Retirada</option>
               </select>
-            </Field>
-            <Field label="Prazo (dias úteis)">
+            </Campo>
+            <Campo label="Prazo (dias úteis)">
               <input
                 type="number"
                 min={1}
                 value={form.prazo_dias_uteis}
                 onChange={(e) => setForm({ ...form, prazo_dias_uteis: Number(e.target.value) })}
-                className="ui-input"
+                className={`${campoCls} tabular-nums`}
               />
-            </Field>
+            </Campo>
           </div>
 
-          <Field label="Valor total (R$) — opcional">
+          <Campo label="Valor total (R$) — opcional">
             <input
               type="number"
               step="0.01"
               value={form.valor_total}
               onChange={(e) => setForm({ ...form, valor_total: e.target.value })}
-              className="ui-input"
+              className={`${campoCls} tabular-nums`}
             />
-          </Field>
+          </Campo>
         </div>
 
-        <div className="flex justify-end gap-2 mt-6 pt-4 border-t border-western-stone-warm/15">
+        <div className="mt-6 flex flex-col-reverse gap-3 border-t border-western-border-soft pt-5 sm:flex-row sm:justify-end">
           <button
+            type="button"
             onClick={onClose}
-            className="px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep"
+            className="tap-target rounded-lg px-5 text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
           >
             Cancelar
           </button>
-          <button
-            onClick={create}
-            disabled={saving}
-            className="inline-flex items-center gap-2 px-5 py-2 font-mono text-[10px] uppercase tracking-[0.22em] bg-western-green-deep text-western-cream hover:bg-western-green-deep/90 disabled:opacity-50"
-          >
-            <Plus className="h-3 w-3" /> {saving ? "Criando…" : "Criar pedido"}
+          <button type="button" onClick={create} disabled={saving} className="btn-primary">
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Plus className="h-4 w-4" aria-hidden="true" />}
+            {saving ? "Criando…" : "Criar pedido"}
           </button>
         </div>
       </div>
@@ -618,40 +706,62 @@ function CreateOrderModal({
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-// Página principal
-// ─────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────
+ * Lista
+ * ───────────────────────────────────────────────────────────── */
+
 export default function AdminPedidos() {
   const [orders, setOrders] = useState<ProductionOrder[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<unknown>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [filter, setFilter] = useState<"todos" | "ativos" | "concluidos">("ativos");
+  const [aba, setAba] = useState<"ativos" | "concluidos" | "todos">("ativos");
   const [search, setSearch] = useState("");
   const [creating, setCreating] = useState(false);
-  const [checked, setChecked] = useState<Set<string>>(new Set());
+  const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
   const [bulkStatus, setBulkStatus] = useState<Status | "">("");
   const [bulkModo, setBulkModo] = useState<Modo | "">("");
   const [bulkNote, setBulkNote] = useState("");
   const [bulkApplying, setBulkApplying] = useState(false);
   const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      const [ordersRes, partnersRes] = await Promise.all([
-        supabase.from("production_orders").select("*").order("created_at", { ascending: false }),
-        supabase
-          .from("partner_profiles")
-          .select("user_id,nome,empresa,cidade")
-          .eq("status", "approved")
-          .order("empresa"),
-      ]);
-      if (!mounted) return;
-      setOrders((ordersRes.data as ProductionOrder[]) ?? []);
+  const load = useCallback(async () => {
+    setCarregando(true);
+    setErro(null);
+    const [ordersRes, partnersRes] = await Promise.all([
+      supabase.from("production_orders").select("*").order("created_at", { ascending: false }),
+      supabase
+        .from("partner_profiles")
+        .select("user_id,nome,empresa,cidade")
+        .eq("status", "approved")
+        .order("empresa"),
+    ]);
+
+    // O erro dos PEDIDOS derruba a tela (é a lista). O erro dos PARCEIROS só
+    // degrada o nome exibido — não vale esconder os pedidos por causa disso —
+    // mas ele aparece como aviso, nunca em silêncio.
+    if (ordersRes.error) {
+      setErro(ordersRes.error);
+      setCarregando(false);
+      return;
+    }
+    setOrders((ordersRes.data as ProductionOrder[]) ?? []);
+
+    if (partnersRes.error) {
+      toast.error("Não consegui carregar os parceiros.", {
+        description: `${partnersRes.error.message} — os pedidos aparecem, mas sem o nome do parceiro.`,
+      });
+      setPartners([]);
+    } else {
       setPartners((partnersRes.data as Partner[]) ?? []);
-      setLoading(false);
-    })();
+    }
+
+    setCarregando(false);
+  }, []);
+
+  useEffect(() => {
+    void load();
 
     const channel = supabase
       .channel("admin-orders")
@@ -677,11 +787,8 @@ export default function AdminPedidos() {
       )
       .subscribe();
 
-    return () => {
-      mounted = false;
-      supabase.removeChannel(channel);
-    };
-  }, []);
+    return () => { supabase.removeChannel(channel); };
+  }, [load]);
 
   const partnerById = useMemo(() => {
     const map = new Map<string, Partner>();
@@ -689,92 +796,141 @@ export default function AdminPedidos() {
     return map;
   }, [partners]);
 
+  const contagens = useMemo(() => ({
+    ativos: orders.filter((o) => !CONCLUIDOS.includes(o.status)).length,
+    concluidos: orders.filter((o) => CONCLUIDOS.includes(o.status)).length,
+    todos: orders.length,
+  }), [orders]);
+
   const visible = useMemo(() => {
-    const concluidos: Status[] = ["entregue", "retirado", "cancelado"];
     let list = orders;
-    if (filter === "ativos") list = list.filter((o) => !concluidos.includes(o.status));
-    if (filter === "concluidos") list = list.filter((o) => concluidos.includes(o.status));
+    if (aba === "ativos") list = list.filter((o) => !CONCLUIDOS.includes(o.status));
+    if (aba === "concluidos") list = list.filter((o) => CONCLUIDOS.includes(o.status));
+
     const q = search.trim().toLowerCase();
-    if (q) {
-      list = list.filter((o) => {
-        const p = partnerById.get(o.user_id);
-        return (
-          o.numero.toLowerCase().includes(q) ||
-          o.titulo.toLowerCase().includes(q) ||
-          (p?.empresa ?? "").toLowerCase().includes(q) ||
-          (p?.nome ?? "").toLowerCase().includes(q)
-        );
-      });
-    }
-    return list;
-  }, [orders, filter, search, partnerById]);
-
-  const visibleIds = useMemo(() => visible.map((o) => o.id), [visible]);
-  const checkedVisible = useMemo(
-    () => visibleIds.filter((id) => checked.has(id)),
-    [visibleIds, checked],
-  );
-  const allVisibleChecked = visibleIds.length > 0 && checkedVisible.length === visibleIds.length;
-
-  const toggleOne = (id: string) =>
-    setChecked((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
+    if (!q) return list;
+    return list.filter((o) => {
+      const p = partnerById.get(o.user_id);
+      return (
+        o.numero.toLowerCase().includes(q) ||
+        o.titulo.toLowerCase().includes(q) ||
+        (p?.empresa ?? "").toLowerCase().includes(q) ||
+        (p?.nome ?? "").toLowerCase().includes(q)
+      );
     });
-  const toggleAllVisible = () =>
-    setChecked((prev) => {
-      const next = new Set(prev);
-      if (allVisibleChecked) visibleIds.forEach((id) => next.delete(id));
-      else visibleIds.forEach((id) => next.add(id));
-      return next;
-    });
-  const clearChecked = () => setChecked(new Set());
+  }, [orders, aba, search, partnerById]);
+
+  // Sair da aba/busca não pode deixar seleção invisível pendurada.
+  useEffect(() => { setSelecionados(new Set()); }, [aba, search]);
 
   const applyBulk = async () => {
-    const ids = Array.from(checked);
+    const ids = Array.from(selecionados);
     if (ids.length === 0) return;
     const note = bulkNote.trim();
     if (!bulkStatus && !bulkModo && !note) {
-      toast.error("Escolha ao menos uma alteração");
+      toast.error("Escolha ao menos uma alteração.");
       return;
     }
     setBulkApplying(true);
     try {
-      // 1. Atualização de campos (status / modo)
       if (bulkStatus || bulkModo) {
         const patch: { status?: Status; modo_entrega?: Modo } = {};
         if (bulkStatus) patch.status = bulkStatus;
         if (bulkModo) patch.modo_entrega = bulkModo;
-        const { error } = await supabase
-          .from("production_orders")
-          .update(patch)
-          .in("id", ids);
+        const { error } = await supabase.from("production_orders").update(patch).in("id", ids);
         if (error) throw error;
       }
-      // 2. Observação anexada como evento (visível ao parceiro)
       if (note) {
-        const events = ids.map((order_id) => ({
-          order_id,
-          status: bulkStatus || null,
-          note,
-        }));
-        const { error } = await supabase.from("production_order_events").insert(events);
+        const eventos = ids.map((order_id) => ({ order_id, status: bulkStatus || null, note }));
+        const { error } = await supabase.from("production_order_events").insert(eventos);
         if (error) throw error;
       }
-      toast.success(`${ids.length} pedido(s) atualizado(s) e sincronizado(s)`);
+      toast.success(`${ids.length} pedido(s) atualizado(s) e sincronizado(s).`);
       setBulkStatus("");
       setBulkModo("");
       setBulkNote("");
-      clearChecked();
+      setSelecionados(new Set());
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Erro desconhecido";
-      toast.error("Falha em lote: " + msg);
+      toast.error("Falha ao aplicar em lote.", { description: msg });
     } finally {
       setBulkApplying(false);
     }
   };
+
+  const colunas: ReadonlyArray<Coluna<ProductionOrder>> = useMemo(() => [
+    {
+      key: "numero",
+      header: "Nº",
+      width: "110px",
+      numerica: true,
+      sortable: true,
+      render: (o) => <span className="font-semibold text-western-green-deep">{o.numero}</span>,
+    },
+    {
+      key: "titulo",
+      header: "Pedido",
+      principalNoMobile: true,
+      sortable: true,
+      render: (o) => {
+        const p = partnerById.get(o.user_id);
+        return (
+          <div className="min-w-0">
+            <p className="truncate font-semibold text-western-green-deep">{o.titulo}</p>
+            <p className="truncate text-[14px] text-western-stone-warm">
+              {nomeParceiro(p, o.user_id)}{p?.cidade ? ` · ${p.cidade}` : ""}
+            </p>
+          </div>
+        );
+      },
+    },
+    {
+      key: "status",
+      header: "Status",
+      sortable: true,
+      render: (o) => <StatusBadge status={o.status} />,
+    },
+    {
+      key: "modo_entrega",
+      header: "Entrega",
+      ocultarNoMobile: true,
+      sortable: true,
+      render: (o) => (
+        <span className="text-[15px] text-western-stone-warm">
+          {o.modo_entrega === "retirada" ? "Retirada" : "Frete"}
+        </span>
+      ),
+    },
+    {
+      key: "valor_total",
+      header: "Valor",
+      align: "right",
+      sortable: true,
+      sortValue: (o) => o.valor_total,
+      ocultarNoMobile: true,
+      render: (o) => <span className="text-western-green-deep">{moeda(o.valor_total)}</span>,
+    },
+    {
+      key: "previsao_entrega",
+      header: "Previsão",
+      align: "right",
+      sortable: true,
+      sortValue: (o) => o.previsao_entrega,
+      render: (o) => (
+        <span className="text-western-green-deep">
+          {o.previsao_entrega ? dataCurta(o.previsao_entrega) : "—"}
+        </span>
+      ),
+    },
+    {
+      key: "acao",
+      header: "",
+      align: "right",
+      width: "56px",
+      ocultarNoMobile: true,
+      render: () => <ChevronRight className="ml-auto h-4 w-4 text-western-stone-warm/45" aria-hidden="true" />,
+    },
+  ], [partnerById]);
 
   const selected = orders.find((o) => o.id === selectedId) ?? null;
 
@@ -788,7 +944,7 @@ export default function AdminPedidos() {
         onDeleted={(id) => {
           setOrders((prev) => prev.filter((o) => o.id !== id));
           setSelectedId(null);
-          setChecked((prev) => {
+          setSelecionados((prev) => {
             const next = new Set(prev);
             next.delete(id);
             return next;
@@ -800,225 +956,141 @@ export default function AdminPedidos() {
 
   return (
     <div>
-      <div className="flex items-start justify-between gap-4 flex-wrap mb-6">
-        <div>
-          <p className="text-eyebrow mb-2">Pedidos · produção e logística</p>
-          <h1 className="font-display text-3xl text-western-green-deep">Status dos pedidos</h1>
-          <p className="text-sm text-western-stone-warm mt-1 max-w-2xl">
-            Atualize status, prazos, rastreio e observações. Tudo é sincronizado em tempo real com a
-            conta do parceiro.
-          </p>
-        </div>
-        <button
-          onClick={() => setCreating(true)}
-          disabled={partners.length === 0}
-          className="inline-flex items-center gap-2 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.22em] bg-western-green-deep text-western-cream hover:bg-western-green-deep/90 disabled:opacity-40"
-        >
-          <Plus className="h-4 w-4" /> Novo pedido
-        </button>
-      </div>
+      <PageHeader
+        eyebrow="Produção e logística"
+        titulo="Pedidos"
+        subtitulo="Status, prazos, rastreio e recados. Tudo sincroniza em tempo real com a conta do parceiro."
+        acao={
+          <button
+            type="button"
+            onClick={() => setCreating(true)}
+            disabled={partners.length === 0}
+            className="btn-primary"
+            title={partners.length === 0 ? "Aprove um parceiro antes de criar pedidos." : undefined}
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            Novo pedido
+          </button>
+        }
+      />
 
-      <div className="flex items-center gap-3 mb-4 flex-wrap">
-        <div className="flex items-center gap-2 border-b border-western-stone-warm/15">
-          {(["ativos", "concluidos", "todos"] as const).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] border-b-2 -mb-px transition-colors ${
-                filter === f
-                  ? "border-western-gold text-western-green-deep"
-                  : "border-transparent text-western-stone-warm hover:text-western-green-deep"
-              }`}
-            >
-              {f === "ativos" ? "Ativos" : f === "concluidos" ? "Concluídos" : "Todos"}
-            </button>
-          ))}
-        </div>
-        <div className="relative ml-auto">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-western-stone-warm" />
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <Tabs
+          abas={[
+            { key: "ativos", label: "Ativos", count: carregando || erro ? undefined : contagens.ativos },
+            { key: "concluidos", label: "Concluídos", count: carregando || erro ? undefined : contagens.concluidos },
+            { key: "todos", label: "Todos", count: carregando || erro ? undefined : contagens.todos },
+          ]}
+          ativa={aba}
+          onChange={(k) => setAba(k as "ativos" | "todos" | "concluidos")}
+        />
+
+        <div className="relative ml-auto min-w-[240px] flex-1 md:max-w-sm">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-western-stone-warm" aria-hidden="true" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar nº, título ou parceiro…"
-            className="ui-input pl-9 w-72 max-w-full"
+            aria-label="Buscar pedido"
+            className={`${filtroCls} w-full pl-10`}
           />
         </div>
       </div>
 
-      {loading ? (
-        <p className="text-sm text-western-stone-warm">Carregando…</p>
-      ) : visible.length === 0 ? (
-        <div className="border border-dashed border-western-stone-warm/30 bg-white p-10 text-center">
-          <p className="text-western-stone-warm mb-3">
-            {orders.length === 0
-              ? "Nenhum pedido de produção ainda — crie o primeiro."
-              : "Nenhum pedido encontrado com esses filtros."}
-          </p>
-          {partners.length === 0 ? (
-            <p className="text-xs text-western-stone-warm">
-              Aprove parceiros primeiro para poder criar pedidos.
-            </p>
-          ) : (
-            <button
-              onClick={() => setCreating(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] bg-western-green-deep text-western-cream hover:bg-western-green-deep/90"
-            >
-              <Plus className="h-3 w-3" /> Criar primeiro pedido
-            </button>
-          )}
-        </div>
-      ) : (
-        <div className="border border-western-stone-warm/15 bg-white">
-          {/* Cabeçalho com seleção em lote */}
-          <div className="flex items-center gap-3 px-4 py-2.5 border-b border-western-stone-warm/15 bg-western-cream/30">
-            <input
-              type="checkbox"
-              checked={allVisibleChecked}
-              ref={(el) => {
-                if (el) el.indeterminate = checkedVisible.length > 0 && !allVisibleChecked;
-              }}
-              onChange={toggleAllVisible}
-              className="h-4 w-4 accent-western-gold cursor-pointer"
-              aria-label="Selecionar todos"
-            />
-            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
-              {checked.size > 0
-                ? `${checked.size} selecionado(s)`
-                : `${visible.length} pedido(s)`}
-            </span>
-          </div>
+      <DataTable
+        linhas={visible}
+        colunas={colunas}
+        getId={(o) => o.id}
+        isLoading={carregando}
+        error={erro}
+        onRetry={load}
+        onRowClick={(o) => setSelectedId(o.id)}
+        vazio={{
+          titulo:
+            orders.length === 0
+              ? "Nenhum pedido de produção ainda"
+              : "Nenhum pedido com esses filtros",
+          mensagem:
+            orders.length === 0
+              ? partners.length === 0
+                ? "Aprove um parceiro antes de criar o primeiro pedido."
+                : "Crie o primeiro pedido para acompanhar a produção por aqui."
+              : "Troque de aba ou limpe a busca.",
+          acao:
+            orders.length === 0 && partners.length > 0 ? (
+              <button type="button" onClick={() => setCreating(true)} className="btn-primary">
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                Criar primeiro pedido
+              </button>
+            ) : undefined,
+        }}
+        selecao={{
+          selecionados,
+          onChange: setSelecionados,
+          barra: (ids) => (
+            <>
+              <select
+                value={bulkStatus}
+                onChange={(e) => setBulkStatus(e.target.value as Status | "")}
+                className={`${filtroCls} w-[190px]`}
+                aria-label="Novo status"
+              >
+                <option value="">Manter status</option>
+                {STATUS_OPTIONS.map((s) => (
+                  <option key={s} value={s}>{rotuloStatus(s)}</option>
+                ))}
+              </select>
 
-          <div className="divide-y divide-western-stone-warm/10">
-            {visible.map((o) => {
-              const p = partnerById.get(o.user_id);
-              const isChecked = checked.has(o.id);
-              return (
-                <div
-                  key={o.id}
-                  className={`flex items-center gap-3 px-4 py-3 transition-colors ${
-                    isChecked ? "bg-western-gold/5" : "hover:bg-western-cream/40"
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={() => toggleOne(o.id)}
-                    onClick={(e) => e.stopPropagation()}
-                    className="h-4 w-4 accent-western-gold cursor-pointer flex-shrink-0"
-                    aria-label={`Selecionar pedido ${o.numero}`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setSelectedId(o.id)}
-                    className="flex-1 min-w-0 text-left flex items-center gap-4"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
-                          Nº {o.numero}
-                        </span>
-                        <StatusBadge status={o.status} />
-                        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-western-stone-warm">
-                          {o.modo_entrega === "retirada" ? "Retirada" : "Frete"}
-                        </span>
-                      </div>
-                      <p className="font-display text-base text-western-green-deep truncate mt-1">
-                        {o.titulo}
-                      </p>
-                      <p className="text-xs text-western-stone-warm mt-0.5 truncate">
-                        {p?.empresa || p?.nome || o.user_id.slice(0, 8)}
-                        {p?.cidade ? ` · ${p.cidade}` : ""}
-                      </p>
-                    </div>
-                    <div className="text-right hidden sm:block">
-                      <p className="text-xs text-western-stone-warm">
-                        {o.modo_entrega === "retirada" ? "Disponível" : "Previsão"}
-                      </p>
-                      <p className="font-mono text-xs text-western-green-deep">
-                        {fmtDate(o.previsao_entrega)}
-                      </p>
-                    </div>
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+              <select
+                value={bulkModo}
+                onChange={(e) => setBulkModo(e.target.value as Modo | "")}
+                className={`${filtroCls} w-[150px]`}
+                aria-label="Modo de entrega"
+              >
+                <option value="">Manter entrega</option>
+                <option value="frete">Frete</option>
+                <option value="retirada">Retirada</option>
+              </select>
 
-      {/* Barra flutuante de ações em lote */}
-      {checked.size > 0 && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[min(960px,calc(100vw-2rem))] bg-western-green-deep text-western-cream border border-western-gold/30 shadow-2xl">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-western-gold/20">
-            <Layers className="h-4 w-4 text-western-gold-soft" />
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold-soft">
-              Ações em lote · {checked.size} pedido(s)
-            </p>
-            <button
-              onClick={clearChecked}
-              className="ml-auto inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-western-cream/70 hover:text-western-cream"
-            >
-              <X className="h-3 w-3" /> Limpar
-            </button>
-          </div>
-          <div className="p-4 grid grid-cols-1 md:grid-cols-[170px_140px_1fr_auto] gap-2 items-start">
-            <select
-              value={bulkStatus}
-              onChange={(e) => setBulkStatus(e.target.value as Status | "")}
-              className="ui-input text-western-green-deep"
-              aria-label="Novo status"
-            >
-              <option value="">— Manter status —</option>
-              {STATUS_OPTIONS.map((s) => (
-                <option key={s} value={s}>{STATUS_META[s].label}</option>
-              ))}
-            </select>
-            <select
-              value={bulkModo}
-              onChange={(e) => setBulkModo(e.target.value as Modo | "")}
-              className="ui-input text-western-green-deep"
-              aria-label="Modo de entrega"
-            >
-              <option value="">— Manter modo —</option>
-              <option value="frete">Frete</option>
-              <option value="retirada">Retirada</option>
-            </select>
-            <textarea
-              value={bulkNote}
-              onChange={(e) => setBulkNote(e.target.value)}
-              placeholder="Observação anexada como evento (opcional, visível ao parceiro)…"
-              className="ui-input text-western-green-deep min-h-[42px] max-h-32"
-              rows={1}
-            />
-            <button
-              onClick={() => {
-                if (!bulkStatus && !bulkModo && !bulkNote.trim()) {
-                  toast.error("Escolha ao menos uma alteração");
-                  return;
-                }
-                setBulkConfirmOpen(true);
-              }}
-              disabled={bulkApplying}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.22em] bg-western-gold text-western-green-deep hover:bg-western-gold/90 disabled:opacity-50 whitespace-nowrap h-[42px]"
-            >
-              <Save className="h-3 w-3" /> {bulkApplying ? "Aplicando…" : "Aplicar"}
-            </button>
-          </div>
-        </div>
-      )}
+              <input
+                value={bulkNote}
+                onChange={(e) => setBulkNote(e.target.value)}
+                placeholder="Nota para o parceiro (opcional)"
+                aria-label="Nota anexada ao lote"
+                className={`${filtroCls} w-[240px]`}
+              />
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (!bulkStatus && !bulkModo && !bulkNote.trim()) {
+                    toast.error("Escolha ao menos uma alteração.");
+                    return;
+                  }
+                  setBulkConfirmOpen(true);
+                }}
+                disabled={bulkApplying || ids.length === 0}
+                className="btn-primary"
+              >
+                <Save className="h-4 w-4" aria-hidden="true" />
+                {bulkApplying ? "Aplicando…" : "Aplicar"}
+              </button>
+            </>
+          ),
+        }}
+      />
 
       <ConfirmDialog
         open={bulkConfirmOpen}
         onOpenChange={setBulkConfirmOpen}
         title="Aplicar alterações em lote?"
-        description={`Você vai mudar ${checked.size} pedido(s)${
-          bulkStatus ? ` para ${STATUS_META[bulkStatus as Status].label}` : ""
-        }${bulkModo ? ` · modo ${bulkModo}` : ""}. O parceiro vê a mudança na hora. Confirmar?`}
+        description={`Você vai mudar ${selecionados.size} pedido(s)${
+          bulkStatus ? ` para "${rotuloStatus(bulkStatus)}"` : ""
+        }${bulkModo ? ` · entrega por ${bulkModo === "frete" ? "frete" : "retirada"}` : ""}. O parceiro vê a mudança na hora.`}
         confirmLabel="Aplicar"
         danger
-        onConfirm={() => { setBulkConfirmOpen(false); applyBulk(); }}
+        onConfirm={() => { setBulkConfirmOpen(false); void applyBulk(); }}
       />
-
 
       {creating && (
         <CreateOrderModal

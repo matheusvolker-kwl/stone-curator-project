@@ -24,15 +24,13 @@ export const tipoImage: Record<TipoVisual, string> = {
   "jardim-seco": jardimSecoDiamantina,
 };
 
+// Teasers curtos (2 linhas limpas nos cards de cena; sem truncar palavra).
 export const tipoMicrocopy: Record<TipoVisual, string> = {
-  piscina: "Cascata e pedras compondo a borda da piscina.",
-  lago: "Espelho d'água com pedras e cascata, criado do zero.",
-  "lago-hibrido":
-    "Já tem pedra natural? Complemente com peças Western que conversam com o que já existe.",
-  "jardim-fonte":
-    "Fonte central e pedras — o jardim com o som da água, sem piscina.",
-  "jardim-seco":
-    "Composição de pedras sem água: jardim mineral, contemplativo.",
+  piscina: "Cascata e pedras na borda da piscina.",
+  lago: "Espelho d'água com pedras, criado do zero.",
+  "lago-hibrido": "Complementa a pedra natural que você já tem.",
+  "jardim-fonte": "Fonte central e pedras, com o som da água.",
+  "jardim-seco": "Jardim mineral e contemplativo, sem água.",
 };
 
 export const nivelImage: Record<Nivel, string> = {

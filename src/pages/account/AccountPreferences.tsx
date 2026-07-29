@@ -1,129 +1,457 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Loader2, AlertTriangle } from "lucide-react";
-import { passwordSchema } from "@/lib/forms/br";
+import { AlertTriangle, Check, Loader2 } from "lucide-react";
+import { passwordSchema, passwordStrength } from "@/lib/forms/br";
+import { EstadoCarregando, EstadoErro, PageHeader } from "@/components/backoffice";
+
+/**
+ * CONFIGURAÇÕES DA CONTA — o que é sensível mora aqui, separado do dia a dia.
+ *
+ * REGRA: toda ação sensível pede confirmação explícita.
+ *   · senha  → exige a nova senha DIGITADA DUAS VEZES (um typo aqui tranca o
+ *              parceiro para fora da conta) e mostra a força enquanto ele digita.
+ *   · cancelar conta → motivo + digitar "CANCELAR" + diálogo final. Três portas,
+ *              porque é irreversível pela interface.
+ *
+ * OS 4 ESTADOS na leitura das preferências: carregando · vazio · ERRO · sucesso.
+ * O load antigo era `.then(({ data }) => …)`: engolia o erro e mostrava o switch
+ * de newsletter em "ligado" por padrão, mesmo sem saber a verdade.
+ */
 
 export default function AccountPreferences() {
-  const { user, signOut, refresh } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [newsletter, setNewsletter] = useState(true);
-  const [pwLoading, setPwLoading] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [cancelOpen, setCancelOpen] = useState(false);
-  const [reason, setReason] = useState("");
-  const [confirmText, setConfirmText] = useState("");
-  const [cancelling, setCancelling] = useState(false);
 
-  useEffect(() => {
+  const [newsletter, setNewsletter] = useState(false);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<unknown>(null);
+  const [salvandoNewsletter, setSalvandoNewsletter] = useState(false);
+
+  const [novaSenha, setNovaSenha] = useState("");
+  const [repetirSenha, setRepetirSenha] = useState("");
+  const [pwLoading, setPwLoading] = useState(false);
+
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [motivo, setMotivo] = useState("");
+  const [confirmText, setConfirmText] = useState("");
+  const [cancelando, setCancelando] = useState(false);
+
+  const carregar = useCallback(async () => {
     if (!user) return;
-    supabase.from("partner_profiles").select("newsletter_opt_in").eq("user_id", user.id).maybeSingle()
-      .then(({ data }) => { if (data) setNewsletter(data.newsletter_opt_in ?? true); });
+    setCarregando(true);
+    setErro(null);
+
+    const { data, error } = await supabase
+      .from("partner_profiles")
+      .select("newsletter_opt_in")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      setErro(error);
+      setCarregando(false);
+      return;
+    }
+
+    setNewsletter(data?.newsletter_opt_in ?? true);
+    setCarregando(false);
   }, [user]);
 
-  const toggleNewsletter = async (v: boolean) => {
+  useEffect(() => {
+    void carregar();
+  }, [carregar]);
+
+  const alternarNewsletter = async (v: boolean) => {
     if (!user) return;
-    setNewsletter(v);
-    const { error } = await supabase.from("partner_profiles").update({ newsletter_opt_in: v }).eq("user_id", user.id);
-    if (error) { toast.error(error.message); setNewsletter(!v); }
-    else toast.success(v ? "Inscrito na newsletter." : "Você não receberá mais e-mails.");
+    const anterior = newsletter;
+    setNewsletter(v); // otimista
+    setSalvandoNewsletter(true);
+
+    const { data, error } = await supabase
+      .from("partner_profiles")
+      .update({ newsletter_opt_in: v })
+      .eq("user_id", user.id)
+      .select("user_id");
+
+    setSalvandoNewsletter(false);
+
+    if (error) {
+      setNewsletter(anterior);
+      toast.error("Não consegui salvar", { description: error.message });
+      return;
+    }
+
+    // UPDATE sem linhas afetadas volta sem erro. Antes, a tela dizia "salvo".
+    if (!data || data.length === 0) {
+      setNewsletter(anterior);
+      toast.error("Nada foi salvo", {
+        description: "Não localizamos o seu cadastro. Fale com a nossa equipe.",
+      });
+      return;
+    }
+
+    toast.success(v ? "Você passa a receber a newsletter." : "Você não receberá mais e-mails.");
   };
 
-  const changePassword = async (e: React.FormEvent) => {
+  const forca = passwordStrength(novaSenha);
+  const senhasBatem = novaSenha.length > 0 && novaSenha === repetirSenha;
+  const podeTrocarSenha = passwordSchema.safeParse(novaSenha).success && senhasBatem;
+
+  const trocarSenha = async (e: React.FormEvent) => {
     e.preventDefault();
-    const r = passwordSchema.safeParse(newPassword);
+
+    const r = passwordSchema.safeParse(novaSenha);
     if (!r.success) return toast.error(r.error.issues[0]?.message ?? "Senha inválida.");
+    if (!senhasBatem) return toast.error("As duas senhas não são iguais.");
+
     setPwLoading(true);
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    const { error } = await supabase.auth.updateUser({ password: novaSenha });
     setPwLoading(false);
-    if (error) toast.error(error.message);
-    else { toast.success("Senha atualizada."); setNewPassword(""); }
+
+    if (error) return toast.error("Não consegui trocar a senha", { description: error.message });
+
+    setNovaSenha("");
+    setRepetirSenha("");
+    toast.success("Senha atualizada.");
   };
 
-  const cancelAccount = async () => {
-    if (!user) return;
-    if (reason.trim().length < 10) return toast.error("Conte rapidamente o motivo (mín. 10 caracteres).");
-    if (confirmText !== "CANCELAR") return toast.error('Digite "CANCELAR" para confirmar.');
-    setCancelling(true);
-    const { error } = await supabase.from("partner_profiles").update({
-      status: "cancelled",
-      cancellation_reason: reason.trim(),
-      cancelled_at: new Date().toISOString(),
-    }).eq("user_id", user.id);
-    if (error) { setCancelling(false); return toast.error(error.message); }
+  const podeCancelar = motivo.trim().length >= 10 && confirmText.trim().toUpperCase() === "CANCELAR";
+
+  const cancelarConta = async () => {
+    if (!user || !podeCancelar) return;
+    setConfirmDialogOpen(false);
+    setCancelando(true);
+
+    const { data, error } = await supabase
+      .from("partner_profiles")
+      .update({
+        status: "cancelled",
+        cancellation_reason: motivo.trim(),
+        cancelled_at: new Date().toISOString(),
+      })
+      .eq("user_id", user.id)
+      .select("user_id");
+
+    if (error) {
+      setCancelando(false);
+      return toast.error("Não consegui cancelar", { description: error.message });
+    }
+
+    // Sem esta checagem, um UPDATE que não pegou nenhuma linha derrubaria a
+    // sessão do parceiro e diria "conta cancelada" — com a conta intacta.
+    if (!data || data.length === 0) {
+      setCancelando(false);
+      return toast.error("Nada foi alterado", {
+        description: "Não localizamos o seu cadastro. Fale com a nossa equipe.",
+      });
+    }
+
     await signOut();
-    await refresh();
     toast.success("Conta cancelada.");
     navigate("/", { replace: true });
   };
 
+  /* ── Os 4 estados ─────────────────────────────────────────────── */
+
+  if (carregando) {
+    return (
+      <div>
+        <PageHeader eyebrow="Minha conta" titulo="Configurações" />
+        <div className="rounded-xl border border-western-border-soft bg-white">
+          <EstadoCarregando linhas={4} />
+        </div>
+      </div>
+    );
+  }
+
+  if (erro) {
+    return (
+      <div>
+        <PageHeader eyebrow="Minha conta" titulo="Configurações" />
+        <EstadoErro erro={erro} onRetry={carregar} titulo="Não consegui carregar as suas preferências" />
+      </div>
+    );
+  }
+
+  /* ── Sucesso ──────────────────────────────────────────────────── */
+
   return (
-    <div className="space-y-12">
-      <header>
-        <p className="text-eyebrow mb-3">Preferências</p>
-        <h2 className="font-display text-3xl text-western-green-deep">Conta e privacidade</h2>
-      </header>
+    <div>
+      <PageHeader
+        eyebrow="Minha conta"
+        titulo="Configurações"
+        subtitulo="Comunicação, acesso e encerramento. As alterações aqui pedem confirmação."
+      />
 
-      <section className="border border-western-stone-warm/15 bg-white p-6">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="font-display text-lg text-western-green-deep">Newsletter</p>
-            <p className="text-sm text-western-stone-warm">Lançamentos, projetos e oportunidades B2B. Sem spam.</p>
-          </div>
-          <Switch checked={newsletter} onCheckedChange={toggleNewsletter} />
-        </div>
-      </section>
+      <div className="max-w-3xl space-y-6">
+        {/* ── Identificação (leitura) ───────────────────────────── */}
+        <section className="rounded-xl border border-western-border-soft bg-white p-6">
+          <h2 className="text-[18px] font-semibold text-western-green-deep">Acesso</h2>
+          <p className="text-meta mt-1">É com este e-mail que você entra na conta.</p>
+          <p className="mt-4 rounded-sm bg-western-paper px-3 py-2.5 text-[15px] text-western-green-deep">
+            {user?.email ?? "—"}
+          </p>
+        </section>
 
-      <section className="border border-western-stone-warm/15 bg-white p-6">
-        <p className="font-display text-lg text-western-green-deep mb-4">Alterar senha</p>
-        <form onSubmit={changePassword} className="flex flex-col sm:flex-row gap-3 max-w-lg">
-          <Input type="password" autoComplete="new-password" placeholder="Nova senha (mín. 8)" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="h-11 bg-transparent border-western-stone-warm/30 rounded-none" />
-          <Button type="submit" disabled={pwLoading} className="h-11 px-6 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-[11px] uppercase tracking-[0.22em] rounded-none">
-            {pwLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Atualizar"}
-          </Button>
-        </form>
-      </section>
-
-      <section className="border border-red-500/30 bg-red-50/40 p-6">
-        <div className="flex items-start gap-3 mb-4">
-          <AlertTriangle className="h-5 w-5 text-red-700 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="font-display text-lg text-red-900">Cancelar minha conta</p>
-            <p className="text-sm text-red-900/80">Sua conta será desativada. Mantemos histórico para fins legais (LGPD), mas você não conseguirá mais acessar o painel.</p>
-          </div>
-        </div>
-        {!cancelOpen ? (
-          <Button onClick={() => setCancelOpen(true)} variant="outline" className="rounded-none border-red-700 text-red-700 hover:bg-red-700 hover:text-white font-mono text-[11px] uppercase tracking-[0.22em] h-10 px-5">
-            Quero cancelar
-          </Button>
-        ) : (
-          <div className="space-y-4">
-            <div>
-              <Label className="text-eyebrow mb-2 block text-red-900">Motivo (obrigatório)</Label>
-              <Textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} className="bg-white border-red-300 rounded-none" placeholder="Conte rapidamente por que está saindo." />
+        {/* ── Newsletter ────────────────────────────────────────── */}
+        <section className="rounded-xl border border-western-border-soft bg-white p-6">
+          <div className="flex items-center justify-between gap-6">
+            <div className="min-w-0">
+              <Label htmlFor="newsletter" className="text-[18px] font-semibold text-western-green-deep">
+                Novidades por e-mail
+              </Label>
+              <p className="text-meta mt-1 leading-[1.45]">
+                Peças novas, projetos e oportunidades para parceiros. Sem spam — e você desliga aqui
+                quando quiser.
+              </p>
             </div>
-            <div>
-              <Label className="text-eyebrow mb-2 block text-red-900">Digite CANCELAR para confirmar</Label>
-              <Input value={confirmText} onChange={(e) => setConfirmText(e.target.value)} className="h-11 bg-white border-red-300 rounded-none max-w-xs" />
-            </div>
-            <div className="flex gap-2">
-              <Button onClick={cancelAccount} disabled={cancelling} className="rounded-none bg-red-700 hover:bg-red-800 text-white font-mono text-[11px] uppercase tracking-[0.22em] h-10 px-5">
-                {cancelling ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirmar cancelamento"}
-              </Button>
-              <Button onClick={() => { setCancelOpen(false); setReason(""); setConfirmText(""); }} variant="outline" className="rounded-none h-10 px-5 font-mono text-[11px] uppercase tracking-[0.22em]">
-                Voltar
-              </Button>
+
+            <div className="flex flex-shrink-0 items-center gap-2">
+              {salvandoNewsletter && (
+                <Loader2 className="h-4 w-4 animate-spin text-western-stone-warm" aria-hidden="true" />
+              )}
+              <Switch
+                id="newsletter"
+                checked={newsletter}
+                onCheckedChange={alternarNewsletter}
+                disabled={salvandoNewsletter}
+              />
             </div>
           </div>
-        )}
-      </section>
+        </section>
+
+        {/* ── Senha ─────────────────────────────────────────────── */}
+        <section className="rounded-xl border border-western-border-soft bg-white p-6">
+          <h2 className="text-[18px] font-semibold text-western-green-deep">Trocar a senha</h2>
+          <p className="text-meta mt-1">
+            Digite a nova senha duas vezes. Só confirmamos a troca quando as duas forem iguais.
+          </p>
+
+          <form onSubmit={trocarSenha} className="mt-5 space-y-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <Label htmlFor="nova-senha" className="mb-2 block text-[14px] font-semibold text-western-stone-dark">
+                  Nova senha
+                </Label>
+                <Input
+                  id="nova-senha"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="Mínimo 8 caracteres e um número"
+                  value={novaSenha}
+                  onChange={(e) => setNovaSenha(e.target.value)}
+                  className={SENHA_CLS}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="repetir-senha" className="mb-2 block text-[14px] font-semibold text-western-stone-dark">
+                  Repetir a nova senha
+                </Label>
+                <Input
+                  id="repetir-senha"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="A mesma senha"
+                  value={repetirSenha}
+                  onChange={(e) => setRepetirSenha(e.target.value)}
+                  aria-invalid={repetirSenha.length > 0 && !senhasBatem}
+                  className={SENHA_CLS}
+                />
+                {repetirSenha.length > 0 && !senhasBatem && (
+                  <p className="mt-1.5 text-[14px] font-semibold text-status-error">
+                    As duas senhas não são iguais.
+                  </p>
+                )}
+                {senhasBatem && (
+                  <p className="mt-1.5 inline-flex items-center gap-1.5 text-[14px] font-semibold text-status-success">
+                    <Check className="h-4 w-4" aria-hidden="true" />
+                    As senhas conferem.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {novaSenha.length > 0 && <MedidorDeForca score={forca.score} label={forca.label} />}
+
+            <button type="submit" disabled={pwLoading || !podeTrocarSenha} className="btn-primary w-full sm:w-auto">
+              {pwLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  Atualizando…
+                </>
+              ) : (
+                "Atualizar senha"
+              )}
+            </button>
+          </form>
+        </section>
+
+        {/* ── Zona sensível: cancelamento ───────────────────────── */}
+        <section className="rounded-xl border border-status-error/35 bg-status-error/[0.06] p-6">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-status-error" aria-hidden="true" />
+            <div className="min-w-0">
+              <h2 className="text-[18px] font-semibold text-status-error">Cancelar a minha conta</h2>
+              <p className="mt-1 text-[15px] leading-[1.5] text-western-stone-dark/90">
+                Sua conta é desativada e o preço de parceiro é suspenso. O histórico de pedidos fica
+                guardado por obrigação legal (LGPD), mas você perde o acesso ao painel. Não dá para
+                desfazer por aqui.
+              </p>
+            </div>
+          </div>
+
+          {!cancelOpen ? (
+            <button
+              type="button"
+              onClick={() => setCancelOpen(true)}
+              className="tap-target mt-5 inline-flex items-center justify-center rounded-lg border border-status-error/50 px-5 text-[15px] font-semibold text-status-error transition-colors hover:bg-status-error/10"
+            >
+              Quero cancelar
+            </button>
+          ) : (
+            <div className="mt-6 space-y-4">
+              <div>
+                <Label htmlFor="motivo" className="mb-2 block text-[14px] font-semibold text-western-stone-dark">
+                  Por que está saindo? (obrigatório)
+                </Label>
+                <Textarea
+                  id="motivo"
+                  value={motivo}
+                  onChange={(e) => setMotivo(e.target.value)}
+                  rows={3}
+                  placeholder="Conte rapidamente o motivo — a gente lê tudo."
+                  className="rounded-sm border-western-border-strong bg-white text-[15px] text-western-green-deep"
+                />
+                {motivo.length > 0 && motivo.trim().length < 10 && (
+                  <p className="mt-1.5 text-[14px] font-semibold text-status-error">
+                    Escreva pelo menos 10 caracteres.
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="confirmar" className="mb-2 block text-[14px] font-semibold text-western-stone-dark">
+                  Digite CANCELAR para confirmar
+                </Label>
+                <Input
+                  id="confirmar"
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  autoComplete="off"
+                  placeholder="CANCELAR"
+                  className="h-control max-w-xs rounded-sm border-western-border-strong bg-white px-3 text-[15px] text-western-green-deep"
+                />
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => setConfirmDialogOpen(true)}
+                  disabled={!podeCancelar || cancelando}
+                  className="tap-target inline-flex items-center justify-center gap-2 rounded-lg bg-status-error px-5 text-[15px] font-semibold text-white transition-colors hover:bg-[#932C25] disabled:cursor-not-allowed disabled:opacity-45"
+                >
+                  {cancelando ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                      Cancelando…
+                    </>
+                  ) : (
+                    "Cancelar minha conta"
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCancelOpen(false);
+                    setMotivo("");
+                    setConfirmText("");
+                  }}
+                  disabled={cancelando}
+                  className="btn-outline-forest"
+                >
+                  Voltar
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* Última porta antes do irreversível. */}
+      <AlertDialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+        <AlertDialogContent className="rounded-xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="display-md text-status-error">
+              Cancelar a conta de {user?.email}?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-[16px] leading-[1.6] text-western-stone-warm">
+              Você sai do painel agora e perde o preço de parceiro. Reativar depois só falando com a
+              nossa equipe. Tem certeza?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {/*
+            AlertDialogAction já vem com buttonVariants() (verde, 52px, raio 10px).
+            Aqui só trocamos a COR por utilities — utility vence utility no
+            twMerge. Uma classe .btn-* de @layer components perderia em silêncio.
+          */}
+          <AlertDialogFooter>
+            <AlertDialogCancel className="mt-0">Não, quero ficar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={cancelarConta}
+              className="bg-status-error text-white hover:bg-[#932C25]"
+            >
+              Sim, cancelar a conta
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
+
+const SENHA_CLS =
+  "h-control rounded-sm border-western-border-strong bg-white px-3 text-[15px] text-western-green-deep placeholder:text-western-stone-warm/50 focus-visible:border-western-green-deep focus-visible:ring-0 focus-visible:ring-offset-0";
+
+/** Força da senha — 4 barras. Verde só quando é forte de verdade. */
+function MedidorDeForca({ score, label }: { score: 0 | 1 | 2 | 3 | 4; label: string }) {
+  const cor =
+    score <= 1 ? "bg-status-error" : score === 2 ? "bg-status-warning" : score === 3 ? "bg-status-warning" : "bg-status-success";
+
+  return (
+    <div>
+      <div className="flex gap-1.5" aria-hidden="true">
+        {[1, 2, 3, 4].map((i) => (
+          <span
+            key={i}
+            className={`h-1.5 flex-1 rounded-sm transition-colors ${
+              i <= score ? cor : "bg-western-border-soft"
+            }`}
+          />
+        ))}
+      </div>
+      <p className="text-meta mt-1.5" role="status">
+        Força da senha: <span className="font-semibold text-western-stone-dark">{label}</span>
+      </p>
     </div>
   );
 }

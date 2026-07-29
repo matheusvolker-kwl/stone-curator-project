@@ -10,13 +10,26 @@ interface Props {
   collectionHandle?: string;
   collectionTitle?: string;
   currentHandle: string;
+  /**
+   * SKU da peça aberta. Serve para NÃO recomendar a própria peça: o bundle de
+   * acabamento (WEST-FSL-G) e a peça-mãe (WEST-FSL) têm HANDLES diferentes, então
+   * filtrar por handle deixava a PDP da Fonte Sabino recomendar a Fonte Sabino.
+   */
+  currentSku?: string | null;
   productTitle: string;
+}
+
+/** WEST-FSL-G → FSL · WEST-PM5-MOLEDO → PM5. É o código que identifica a PEÇA. */
+function codigoBase(sku?: string | null): string {
+  if (!sku) return "";
+  return sku.trim().toUpperCase().replace(/^WEST(ERN)?-/, "").split("-")[0];
 }
 
 export default function RelatedProducts({
   collectionHandle,
   collectionTitle,
   currentHandle,
+  currentSku,
   productTitle,
 }: Props) {
   const { data: coll, isPending: collPending } = useQuery({
@@ -29,16 +42,25 @@ export default function RelatedProducts({
     queryFn: () => fetchCollection("conjuntos", 6),
   });
 
+  // A mesma peça pode aparecer com outro handle (bundle de acabamento × peça-mãe).
+  // Só o código base do SKU identifica a PEÇA — o handle não.
+  const baseAtual = codigoBase(currentSku);
+  const ehOutraPeca = (p: { handle: string; variants: { edges: Array<{ node: { sku?: string | null } }> } }) => {
+    if (p.handle === currentHandle) return false;
+    if (!baseAtual) return true;
+    return codigoBase(p.variants.edges[0]?.node?.sku) !== baseAtual;
+  };
+
   const related =
     coll?.products?.edges
       ?.map((e) => e.node)
-      .filter((p) => p.handle !== currentHandle)
+      .filter(ehOutraPeca)
       .slice(0, 4) ?? [];
 
   const sets =
     conjuntos?.products?.edges
       ?.map((e) => e.node)
-      .filter((p) => p.handle !== currentHandle)
+      .filter(ehOutraPeca)
       .slice(0, 2) ?? [];
 
   const loading = (!!collectionHandle && collPending) || setsPending;
@@ -47,7 +69,7 @@ export default function RelatedProducts({
 
   if (loading && related.length === 0 && sets.length === 0) {
     return (
-      <section className="py-14 md:py-20">
+      <section className="py-10 md:py-12">
         <div className="container-western">
           <header className="mb-10">
             <p className="text-eyebrow mb-4">Compõe bem com</p>
@@ -67,7 +89,7 @@ export default function RelatedProducts({
   }
 
   return (
-    <section className="py-14 md:py-20">
+    <section className="py-10 md:py-12">
       <div className="container-western">
         {related.length > 0 && (
           <>
@@ -109,7 +131,7 @@ export default function RelatedProducts({
                       </div>
                       <div className="px-1 pt-4 pb-2">
                         {p.productType && (
-                          <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-western-stone-warm/70 mb-1">
+                          <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm/70 mb-1">
                             {p.productType}
                           </p>
                         )}
@@ -161,7 +183,7 @@ export default function RelatedProducts({
                           <p className="text-spec text-western-stone-warm mt-1 line-clamp-2">
                             {s.description}
                           </p>
-                          <span className="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep group-hover:text-western-gold transition-colors">
+                          <span className="mt-3 inline-flex items-center gap-1.5 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-green-deep group-hover:text-western-gold transition-colors">
                             Ver conjunto <ArrowRight className="h-3 w-3" />
                           </span>
                         </div>

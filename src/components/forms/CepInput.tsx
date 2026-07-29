@@ -65,7 +65,7 @@ export default function CepInput({
           required={required}
           aria-invalid={!!finalError}
           aria-describedby={describedBy}
-          className={`h-12 w-full bg-transparent border px-3 rounded-none text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none transition-colors ${
+          className={`h-control w-full bg-transparent border px-3.5 rounded-sm text-[15px] text-western-green-deep placeholder:text-western-stone-warm/50 focus:outline-none transition-colors ${
             finalError
               ? "border-red-700/60"
               : "border-western-stone-warm/30 focus:border-western-gold"
@@ -76,7 +76,7 @@ export default function CepInput({
         )}
       </div>
       {finalError && (
-        <p id={describedBy} className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">
+        <p id={describedBy} className="mt-1.5 text-[14px] font-semibold text-status-error">
           {finalError}
         </p>
       )}

@@ -6,6 +6,11 @@ export interface PessoaComFoto {
   nome: string;
   /** slug kebab-case; foto em src/assets/famosos/{slug}.(webp|jpg|png) */
   slug: string;
+  /**
+   * O que a pessoa é — vale mais que o rótulo do tier ("celebridades"/
+   * "profissionais"), que é taxonomia nossa e não diz nada a quem visita.
+   */
+  papel?: string;
 }
 export interface MarcaComLogo {
   nome: string;
@@ -17,14 +22,14 @@ export interface MarcaComLogo {
 
 export const SOCIAL_PROOF = {
   celebridades: [
-    { nome: "Neymar Jr.", slug: "neymar-jr" },
-    { nome: "Caito Maia", slug: "caito-maia" },
-    { nome: "Tato (Falamansa)", slug: "tato-falamansa" },
+    { nome: "Neymar Jr.", slug: "neymar-jr", papel: "Atleta" },
+    { nome: "Caito Maia", slug: "caito-maia", papel: "Chilli Beans" },
+    { nome: "Tato (Falamansa)", slug: "tato-falamansa", papel: "Músico" },
   ] as PessoaComFoto[],
   profissionais: [
-    { nome: "Alex Hanazaki", slug: "alex-hanazaki" },
-    { nome: "Jader Almeida", slug: "jader-almeida" },
-    { nome: "Marcelo Faisal", slug: "marcelo-faisal" },
+    { nome: "Alex Hanazaki", slug: "alex-hanazaki", papel: "Paisagista" },
+    { nome: "Jader Almeida", slug: "jader-almeida", papel: "Arquiteto e designer" },
+    { nome: "Marcelo Faisal", slug: "marcelo-faisal", papel: "Paisagista" },
   ] as PessoaComFoto[],
   marcas: [
     { nome: "Cobasi", slug: "cobasi", logoScale: 0.6 },

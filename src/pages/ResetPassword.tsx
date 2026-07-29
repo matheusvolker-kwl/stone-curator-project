@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import PasswordField from "@/components/forms/PasswordField";
+import FieldLabel from "@/components/forms/FieldLabel";
+import Seo from "@/components/seo/Seo";
 import { passwordSchema } from "@/lib/forms/br";
 
 export default function ResetPassword() {
@@ -49,47 +49,58 @@ export default function ResetPassword() {
 
   return (
     <div className="surface-ivory">
-      <div className="container-western py-20 md:py-28 max-w-md">
+      <Seo
+        title="Redefinir senha · Western"
+        description="Defina uma nova senha para a sua conta de parceiro Western. Abra o link enviado por e-mail para continuar."
+        path="/parceiro/redefinir-senha"
+        noindex
+      />
+      <div className="container-western py-16 md:py-24 max-w-md">
         <p className="text-eyebrow mb-5">Recuperação de senha</p>
         <div className="w-12 h-px bg-western-gold mb-8" />
-        <h1 className="font-display text-4xl md:text-5xl text-western-green-deep leading-[1.05] mb-10">
-          Defina uma nova senha.
-        </h1>
+        <h1 className="display-xl mb-6">Defina uma nova senha.</h1>
         {!ready ? (
-          <p className="text-western-stone-warm">
+          <p className="text-body">
             Abra o link de redefinição enviado por e-mail para continuar.
           </p>
         ) : (
-          <form onSubmit={submit} className="space-y-6" noValidate>
-            <div>
-              <Label htmlFor="newpw" className="text-eyebrow mb-3 block">Nova senha</Label>
-              <PasswordField
-                id="newpw"
-                value={password}
-                onChange={setPassword}
-                required
-                error={errors.password}
-              />
-            </div>
-            <div>
-              <Label htmlFor="newpw2" className="text-eyebrow mb-3 block">Confirmar</Label>
-              <PasswordField
-                id="newpw2"
-                value={confirm}
-                onChange={setConfirm}
-                required
-                showStrength={false}
-                error={errors.confirm}
-              />
-            </div>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
-            >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Salvar nova senha"}
-            </Button>
-          </form>
+          <>
+            <p className="text-body mb-8">
+              Escolha uma senha nova para a sua conta de parceiro. Ela passa a valer no próximo acesso.
+            </p>
+            <form onSubmit={submit} className="space-y-6" noValidate>
+              <div>
+                <FieldLabel htmlFor="newpw">Nova senha</FieldLabel>
+                <PasswordField
+                  id="newpw"
+                  value={password}
+                  onChange={setPassword}
+                  required
+                  error={errors.password}
+                />
+              </div>
+              <div>
+                <FieldLabel htmlFor="newpw2">Confirmar senha</FieldLabel>
+                <PasswordField
+                  id="newpw2"
+                  value={confirm}
+                  onChange={setConfirm}
+                  required
+                  showStrength={false}
+                  error={errors.confirm}
+                />
+              </div>
+              <Button type="submit" disabled={loading} size="lg" className="w-full">
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin" aria-hidden="true" /> Salvando…
+                  </>
+                ) : (
+                  "Salvar nova senha"
+                )}
+              </Button>
+            </form>
+          </>
         )}
       </div>
     </div>

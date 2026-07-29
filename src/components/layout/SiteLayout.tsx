@@ -3,9 +3,7 @@ import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import CartDrawer from "./CartDrawer";
-import TopBar from "./TopBar";
 import WhatsAppFAB from "./WhatsAppFAB";
-import AudienceOverlay from "@/components/funnel/AudienceOverlay";
 import CartReminderPill from "@/components/cart/CartReminderPill";
 import { useCartSync } from "@/hooks/useCartSync";
 
@@ -24,11 +22,10 @@ export default function SiteLayout() {
       {/* Skip-to-content para usuários de teclado/leitor de tela */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-western-green-deep focus:text-western-cream focus:px-4 focus:py-2 focus:font-mono focus:text-xs focus:uppercase focus:tracking-[0.2em] focus:outline focus:outline-2 focus:outline-western-gold"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-western-green-deep focus:text-western-cream focus:px-4 focus:py-2 focus:text-[14px] focus:font-semibold focus:uppercase focus:tracking-[0.06em] focus:outline focus:outline-2 focus:outline-western-gold"
       >
         Pular para o conteúdo
       </a>
-      <TopBar />
       <Header onCartOpen={() => setCartOpen(true)} />
       <main id="main-content" className="flex-1 relative z-10" tabIndex={-1}>
         <Outlet context={{ openCart: () => setCartOpen(true) }} />
@@ -37,7 +34,6 @@ export default function SiteLayout() {
       <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
       <CartReminderPill cartOpen={cartOpen} />
       <WhatsAppFAB />
-      <AudienceOverlay />
     </div>
   );
 }

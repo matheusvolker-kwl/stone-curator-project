@@ -1,29 +1,67 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCollection } from "@/lib/datasource";
+import { fetchCollection, fetchProducts } from "@/lib/datasource";
 import { ChevronLeft } from "lucide-react";
 import ProductGrid from "@/components/product/ProductGrid";
 import Reveal from "@/components/shared/Reveal";
+import Seo from "@/components/seo/Seo";
+import {
+  PEDRAS_HANDLES,
+  PEDRAS_VIRTUAL,
+  PEDRAS_VIRTUAL_HANDLE,
+} from "@/lib/catalogScenes";
 
 export default function LinhaPage() {
   const { handle = "" } = useParams();
+  const isVirtualPedras = handle === PEDRAS_VIRTUAL_HANDLE;
 
   const { data, isLoading } = useQuery({
-    queryKey: ["collection", handle],
-    queryFn: () => fetchCollection(handle, 100),
+    queryKey: isVirtualPedras ? ["linha-virtual", "pedras"] : ["collection", handle],
+    queryFn: async () => {
+      // "Pedras decorativas" não é uma categoria do Woo — funde as 3 (grandes/
+      // médias/pequenas). O ProductGrid oferece o filtro de tamanho.
+      if (isVirtualPedras) {
+        const all = await fetchProducts(250);
+        const edges = all.filter((p) =>
+          (p.node.collections?.edges ?? []).some((e) =>
+            PEDRAS_HANDLES.includes(e.node.handle),
+          ),
+        );
+        return {
+          title: PEDRAS_VIRTUAL.title,
+          description: PEDRAS_VIRTUAL.description,
+          products: { edges },
+        };
+      }
+      return fetchCollection(handle, 100);
+    },
     enabled: !!handle,
   });
 
   if (!isLoading && !data) {
     return (
       <div className="surface-ivory">
-        <div className="container-western py-32 text-center">
-          <h1 className="font-display text-4xl text-western-green-deep">
-            Linha não encontrada
-          </h1>
-          <Link to="/linhas" className="link-underline mt-6 inline-block text-western-gold">
-            Ver todas as linhas
-          </Link>
+        <Seo
+          title="Categoria não encontrada · Western"
+          description="O endereço pode ter mudado. Veja as categorias disponíveis no catálogo Western."
+          path={`/linhas/${handle}`}
+          noindex
+        />
+        <div className="container-western py-24 md:py-32">
+          <div className="mx-auto max-w-md text-center">
+            <h1 className="display-lg text-western-green-deep">
+              Categoria não encontrada.
+            </h1>
+            <p className="text-body mt-4">
+              O endereço pode ter mudado. Veja as categorias disponíveis no catálogo.
+            </p>
+            <Link
+              to="/linhas"
+              className="btn-primary mt-8 w-full sm:w-auto"
+            >
+              Ver todas as categorias
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -33,27 +71,40 @@ export default function LinhaPage() {
 
   return (
     <div className="surface-ivory">
-      <div className="container-western py-10 md:py-16">
+      {data && (
+        <Seo
+          title={`${data.title} — catálogo Western`}
+          description={
+            data.description?.trim() ||
+            `Peças da linha ${data.title} em pedra artesanal Western — réplica de pedra real, até 10× mais leve. Preço de parceiro após cadastro com CNPJ.`
+          }
+          path={`/linhas/${handle}`}
+        />
+      )}
+      <div className="container-western py-8 md:py-14">
+        {/* Volta para o índice de linhas — alvo de toque cheio */}
         <Link
           to="/linhas"
-          className="inline-flex items-center gap-2 text-western-stone-warm hover:text-western-gold transition-colors font-mono text-xs uppercase tracking-[0.2em] mb-8"
+          className="tap-target -ml-2 mb-6 inline-flex items-center gap-2 px-2 font-sans text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep md:mb-8"
         >
-          <ChevronLeft className="h-4 w-4" /> Linhas
+          <ChevronLeft className="h-5 w-5" aria-hidden="true" /> Todas as categorias
         </Link>
 
         <Reveal variant="fade-up">
-          <div className="max-w-3xl mb-10 md:mb-14">
-            <p className="text-eyebrow mb-4">Linha</p>
-            <div className="w-12 h-px bg-western-gold mb-6" />
-            <h1 className="font-display text-4xl md:text-5xl text-western-green-deep leading-[1.05]">
+          <header className="mb-10 max-w-2xl md:mb-14">
+            <p className="text-eyebrow mb-4">Categoria</p>
+            <h1 className="display-lg text-western-green-deep">
               {data?.title ?? "—"}
             </h1>
             {data?.description && (
-              <p className="mt-5 text-western-stone-warm leading-relaxed">
-                {data.description}
+              <p className="text-body mt-5 max-w-[52ch]">{data.description}</p>
+            )}
+            {!isLoading && products.length > 0 && (
+              <p className="text-meta mt-4">
+                {products.length} {products.length === 1 ? "peça" : "peças"} nesta linha
               </p>
             )}
-          </div>
+          </header>
         </Reveal>
 
         <ProductGrid products={products} isLoading={isLoading} />

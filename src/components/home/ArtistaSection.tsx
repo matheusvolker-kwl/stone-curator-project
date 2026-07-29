@@ -2,89 +2,68 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import ricardoDesenhando from "@/assets/ricardo-desenhando.webp";
 
+/**
+ * O fecho da home — a assinatura da casa, DEPOIS do credenciamento.
+ * (O credenciamento é o pedido; esta seção é o aperto de mão.)
+ *
+ * Antes ela estava "solta" por quatro desobediências empilhadas:
+ *  1. fora da grade — a foto vivia em max-w-[1600px], 240px mais larga que o site;
+ *  2. centralizada, num site inteiro alinhado à esquerda;
+ *  3. a citação em display-xl (48px) = o MESMO tamanho do h1 da página;
+ *  4. posicionada antes de um formulário de vendas (clímax emocional no meio).
+ * Quatro exceções não fazem uma seção especial — fazem uma seção órfã.
+ *
+ * Agora ela RIMA com o hero: régua dourada → texto creme → divisor fino → a
+ * autoria. Mesmo desenho, papéis opostos (a promessa lá, a assinatura aqui).
+ * Continuidade feita com forma, não com texto.
+ */
 export default function ArtistaSection() {
   return (
-    <section
-      aria-labelledby="artista-heading"
-      className="relative surface-ivory pt-14 md:pt-20 pb-14 md:pb-20 border-t border-western-stone-warm/10 overflow-hidden"
-    >
-      {/* Eyebrow */}
-      <div className="container-western max-w-4xl text-center mb-8 md:mb-12">
-        <p id="artista-heading" className="text-eyebrow mb-4">O artista</p>
-        <div className="w-12 h-px bg-western-gold mx-auto" />
-      </div>
-
-      {/* Still cinematográfico — foto domina, citação por cima */}
-      <figure className="relative mx-auto max-w-[1600px] px-4 md:px-8">
-        <div className="relative w-full overflow-hidden rounded-[2px] shadow-2xl shadow-western-green-deep/30 aspect-[4/5] sm:aspect-[16/10] md:aspect-[21/10] lg:aspect-[21/9]">
-          <img
-            src={ricardoDesenhando}
-            alt="Ricardo Botelho, diretor criativo da Western, projetando à mão uma nova matriz de pedra no ateliê em Cajamar/SP."
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 w-full h-full object-cover object-center"
-          />
-
-          {/* Véu de legibilidade — mobile: base escura; desktop: lateral esquerda */}
-          <div
-            aria-hidden
-            className="absolute inset-0 pointer-events-none md:hidden"
-            style={{
-              background:
-                "linear-gradient(180deg, hsl(var(--western-green-deep) / 0.15) 0%, hsl(var(--western-green-deep) / 0.35) 45%, hsl(var(--western-green-deep) / 0.88) 100%)",
-            }}
-          />
-          <div
-            aria-hidden
-            className="absolute inset-0 pointer-events-none hidden md:block"
-            style={{
-              background:
-                "linear-gradient(95deg, hsl(var(--western-green-deep) / 0.88) 0%, hsl(var(--western-green-deep) / 0.6) 38%, hsl(var(--western-green-deep) / 0.15) 65%, transparent 85%)",
-            }}
-          />
-
-          {/* Marca d'água discreta — canto superior direito, só desktop */}
-          <div
-            aria-hidden
-            className="hidden md:flex absolute top-6 right-8 items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-western-cream/50"
-          >
-            <span className="w-8 h-px bg-western-gold/60" />
-            No ateliê · Cajamar/SP
-          </div>
-
-          {/* Bloco editorial — citação + atribuição + CTA */}
-          <div className="absolute inset-0 flex items-end md:items-center">
-            <div className="w-full md:max-w-[62%] lg:max-w-[54%] px-6 pb-8 pt-16 md:pl-12 md:pr-8 md:py-12 lg:pl-16">
-              {/* Filete dourado */}
-              <div className="w-10 h-px bg-western-gold mb-5 md:mb-6" />
-
-              <blockquote>
-                <p className="font-display text-western-cream leading-[1.15] text-[1.75rem] sm:text-3xl md:text-4xl lg:text-[2.75rem]">
-                  <span className="text-western-gold/70 mr-0.5">“</span>
-                  Cada peça da Western nasce duas vezes:
-                  <span className="italic font-light text-western-gold-soft"> uma na natureza, outra no traço.</span>
-                  <span className="text-western-gold/70 ml-0.5">”</span>
-                </p>
-              </blockquote>
-
-              <figcaption className="mt-6 md:mt-8">
-                <p className="font-display text-lg md:text-xl text-western-cream">Ricardo Botelho</p>
-                <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-western-cream/60 mt-1">
-                  Diretor criativo · 2ª geração
-                </p>
-              </figcaption>
-
-              <Link
-                to="/sobre"
-                className="group mt-7 md:mt-9 inline-flex items-center gap-2 min-h-[44px] px-5 py-3 rounded-[2px] bg-western-gold text-western-green-deep hover:bg-western-gold-soft font-mono text-[11px] uppercase tracking-[0.22em] transition-colors"
-              >
-                Conhecer o ateliê
-                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-              </Link>
+    <section className="surface-forest pb-20 pt-4 md:pb-28 md:pt-8">
+      <div className="container-western">
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14">
+          {/* Foto — 7 colunas, DENTRO da grade. 5:4 (quase quadrada): uma pessoa
+              desenhando é um assunto vertical; 21:9 num retrato é enquadrar o vazio. */}
+          <figure className="m-0 lg:col-span-7">
+            <div className="aspect-[5/4] overflow-hidden rounded-xl ring-1 ring-western-gold/20 shadow-[0_28px_60px_-32px_rgba(0,0,0,0.6)]">
+              <img
+                src={ricardoDesenhando}
+                alt="Ricardo Botelho desenhando uma nova matriz no ateliê Western em Cajamar/SP"
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover object-center"
+              />
             </div>
+          </figure>
+
+          {/* Texto — 5 colunas, à esquerda. 30px: uma página, um 48px (é o hero).
+              Creme sobre verde profundo lê mais forte que 48px sobre bege. */}
+          <div className="lg:col-span-5">
+            <div className="mb-7 h-px w-12 bg-western-gold" />
+            <blockquote className="font-display text-[22px] leading-[1.28] text-western-cream md:text-[30px]">
+              “Cada peça da Western nasce duas vezes: uma na natureza, outra no projeto.”
+            </blockquote>
+
+            <div className="mt-8 border-t border-western-cream/15 pt-6">
+              <p className="font-sans text-[16px] font-semibold text-western-cream">
+                Ricardo Botelho
+              </p>
+              <p className="mt-1 font-sans text-[14px] text-western-cream/60">
+                Diretor criativo · 2ª geração · Cajamar/SP
+              </p>
+            </div>
+
+            {/* Cortesia é link, não botão. Vestir cortesia de botão sólido é o que
+                dilui o CTA de verdade — e um fechamento não despacha a pessoa. */}
+            <Link
+              to="/sobre"
+              className="tap-target mt-7 inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-gold-soft underline underline-offset-4 decoration-western-gold/50 transition-colors hover:decoration-western-gold-soft"
+            >
+              Conhecer o ateliê <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
+            </Link>
           </div>
         </div>
-      </figure>
+      </div>
     </section>
   );
 }

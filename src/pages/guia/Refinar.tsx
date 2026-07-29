@@ -14,7 +14,7 @@ import ProjetoSidebar from "@/components/guide-v2/ProjetoSidebar";
 import ContextoChips from "@/components/guide-v2/ContextoChips";
 import SectionDivider from "@/components/guide-v2/SectionDivider";
 import Reveal from "@/components/shared/Reveal";
-import ProjetosWesternBand from "@/components/shared/ProjetosWesternBand";
+import Seo from "@/components/seo/Seo";
 import brasao from "@/assets/brasao.png";
 import {
   acabamentoMeta,
@@ -36,6 +36,12 @@ import {
   type ConjuntoLeaf,
   type Nivel,
 } from "@/data/guideMap";
+
+/**
+ * Pilha sticky do wizard: GuideHeader (80px) + ContextoChips (44px) = 124px.
+ * Sem reservar esse espaço, a barra cobria a 1ª peça da lista.
+ */
+const STICKY_STACK = "scroll-mt-[140px]";
 
 function findConjunto(handle: string): { conjunto: ConjuntoLeaf; nivel: Nivel } | null {
   let found: { conjunto: ConjuntoLeaf; nivel: Nivel } | null = null;
@@ -264,28 +270,28 @@ export default function GuiaRefinar() {
 
   return (
     <div className="min-h-screen surface-ivory relative">
+      <Seo
+        title={`Refinar ${conjunto.nome} — guia Western`}
+        description={`Ajuste a composição ${conjunto.nome} peça por peça — quantidades, autorais e acabamento — e feche o pedido ou peça um orçamento.`}
+        path={`/guia-de-composicao/refinar/${conjunto.handle}`}
+      />
       <GuideHeader step={3} breadcrumb={{ label: "Voltar · Três caminhos", to: backToCaminhos }} />
       {area && (
         <ContextoChips tipo={tipoVisual} area={Number(area)} acabamento={acabamento} />
       )}
       <div ref={stickySentinelRef} aria-hidden="true" className="h-0" />
-      <main className="container-western pt-12 md:pt-16 pb-32 lg:pb-20 relative">
+
+      <main className="container-western pt-12 md:pt-16 pb-32 lg:pb-24 relative">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-10 lg:gap-16 items-start">
           <div className="min-w-0">
             {/* Cabeçalho */}
-            <Reveal variant="fade-up" duration={750}>
-              <p className="font-display italic text-xl md:text-2xl text-western-green-deep mb-5">
-                O conjunto se ajusta a você.
-              </p>
-            </Reveal>
             <Reveal variant="fade-up" duration={700} delay={120}>
               <div className="flex items-start justify-between gap-6">
-                <div>
-                  <p className="eyebrow-bar mb-4">Etapa 03 · Composição base</p>
-                  <h1 className="font-display text-3xl md:text-[44px] text-western-green-deep leading-[1.05]">
-                    {conjunto.nome}
-                  </h1>
-                  <div className="w-12 h-px bg-western-gold mt-5 mb-5" />
+                <div className="min-w-0">
+                  <p className="text-eyebrow mb-4">Etapa 03 · Composição base</p>
+                  <h1 className="display-xl text-western-green-deep">{conjunto.nome}</h1>
+                  <div className="w-12 h-px bg-western-gold mt-6 mb-6" />
+
                   <div className="flex flex-wrap gap-2">
                     <Tag>{tipoMeta.label}</Tag>
                     {tamanhoId && tamanhoId !== "consultor" && (
@@ -294,60 +300,61 @@ export default function GuiaRefinar() {
                     <Tag>{nivelLabelMap[nivelParam]}</Tag>
                     <Tag>{acabamentoMeta[acabamento].label}</Tag>
                   </div>
-                  {conjunto.subtitulo && (
-                    <p className="font-display italic text-lg md:text-xl text-western-stone-warm leading-relaxed mt-6 max-w-[620px]">
-                      {conjunto.subtitulo}.
-                    </p>
-                  )}
+
+                  <p className="text-body mt-6 max-w-[62ch]">
+                    O conjunto se ajusta a você.
+                    {conjunto.subtitulo ? ` ${conjunto.subtitulo}.` : ""}
+                  </p>
                 </div>
+
                 <Link
                   to={backToCaminhos}
-                  className="hidden md:inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep flex-shrink-0"
+                  className="hidden md:inline-flex tap-target items-center gap-2 flex-shrink-0 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-stone-warm hover:text-western-green-deep transition-colors"
                 >
-                  <ExternalLink className="h-3 w-3" /> Trocar de composição
+                  <ExternalLink className="h-4 w-4" aria-hidden /> Trocar de composição
                 </Link>
               </div>
             </Reveal>
 
-            <div className="mt-14"><SectionDivider /></div>
+            <div className="mt-12">
+              <SectionDivider />
+            </div>
 
             {/* Aviso sob consulta */}
             {isCustomizado && (
-              <div className="mt-10 border-l-2 border-western-gold pl-5 py-4 bg-western-gold/[0.06]">
-                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold inline-flex items-center gap-2 mb-2">
-                  <Info className="h-3 w-3" /> Projeto autoral · sob consulta
+              <div className="mt-10 rounded-lg border border-western-gold/40 bg-western-gold/[0.08] p-5 md:p-6">
+                <p className="text-eyebrow inline-flex items-center gap-2 mb-2">
+                  <Info className="h-4 w-4" aria-hidden /> Projeto autoral · sob consulta
                 </p>
-                <p className="font-display italic text-[15px] text-western-stone-warm leading-relaxed max-w-[620px]">
-                  Você está ajustando a composição original. Projetos personalizados seguem para nossa equipe
-                  e voltam com uma proposta em até 3 dias úteis.
+                <p className="text-body max-w-[62ch]">
+                  Você está ajustando a composição original. Projetos personalizados seguem para nossa
+                  equipe e voltam com uma proposta em até 3 dias úteis.
                 </p>
-                <div className="flex flex-wrap items-center gap-3 mt-5">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-5">
                   <button
                     type="button"
                     onClick={() => setPecas(baseInicial)}
-                    className="inline-flex items-center gap-2 h-11 px-4 border border-western-green-deep text-western-green-deep font-sans text-[13px] font-medium hover:bg-western-green-deep hover:text-western-cream transition-colors"
+                    className="btn-outline-forest w-full sm:w-auto"
                   >
-                    <RotateCcw className="h-3.5 w-3.5" /> Voltar à composição original
+                    <RotateCcw className="h-4 w-4" aria-hidden /> Voltar à composição original
                   </button>
                   <a
                     href={whatsHref}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 h-11 px-4 font-sans text-[13px] text-western-stone-warm hover:text-western-green-deep transition-colors"
+                    className="tap-target inline-flex items-center justify-center gap-2 px-2 font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-bronze transition-colors"
                   >
-                    <MessageCircle className="h-3.5 w-3.5" /> Falar com consultor →
+                    <MessageCircle className="h-4 w-4" aria-hidden /> Falar com consultor
                   </a>
                 </div>
               </div>
             )}
 
             {/* Peças */}
-            <section className="mt-10">
-              <p className="eyebrow-bar mb-3">Peças desta composição</p>
-              <h2 className="font-display text-2xl md:text-[30px] text-western-green-deep leading-tight">
-                Ajuste o conjunto peça por peça.
-              </h2>
-              <div className="mt-6">
+            <section className={`mt-12 ${STICKY_STACK}`}>
+              <p className="text-eyebrow mb-3">Peças desta composição</p>
+              <h2 className="display-lg text-western-green-deep">Ajuste o conjunto peça por peça.</h2>
+              <div className="mt-8">
                 {isLoading && pecas.length === 0 ? (
                   <SkeletonRows count={4} />
                 ) : (
@@ -358,18 +365,18 @@ export default function GuiaRefinar() {
               </div>
             </section>
 
-            <div className="mt-14"><SectionDivider /></div>
+            <div className="mt-14">
+              <SectionDivider />
+            </div>
 
             {/* Autorais */}
-            <section className="mt-10">
-              <p className="eyebrow-bar mb-3">Itens autorais</p>
-              <h2 className="font-display text-2xl md:text-[30px] text-western-green-deep leading-tight">
-                Peças que somam ao projeto.
-              </h2>
-              <p className="font-display italic text-[16px] text-western-stone-warm max-w-[620px] mt-3 leading-relaxed">
-                Vendidas avulsas, viajam no mesmo pedido com frete otimizado. Clique para ver detalhes.
+            <section className={`mt-12 ${STICKY_STACK}`}>
+              <p className="text-eyebrow mb-3">Itens autorais</p>
+              <h2 className="display-lg text-western-green-deep">Peças que somam ao projeto.</h2>
+              <p className="text-body mt-4 max-w-[62ch]">
+                Vendidas avulsas, viajam no mesmo pedido com frete otimizado. Toque para ver detalhes.
               </p>
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 mt-8">
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 mt-8">
                 {isLoading && autorais.length === 0 ? (
                   <SkeletonCards count={4} />
                 ) : (
@@ -389,21 +396,29 @@ export default function GuiaRefinar() {
               </div>
             </section>
 
-            <div className="mt-14"><SectionDivider /></div>
+            <div className="mt-14">
+              <SectionDivider />
+            </div>
 
             {/* Trocar acabamento */}
-            <section className="mt-10">
-              <p className="eyebrow-bar mb-3">
+            <section className={`mt-12 ${STICKY_STACK}`}>
+              <p className="text-eyebrow mb-4">
                 Acabamento atual · {acabamentoMeta[acabamento].label}
               </p>
               <button
                 type="button"
                 onClick={() => setShowAcab((v) => !v)}
-                className="inline-flex items-center gap-2 h-11 px-4 border border-western-green-deep/30 font-sans text-[13px] font-medium text-western-green-deep hover:border-western-gold hover:text-western-gold transition-colors"
+                aria-expanded={showAcab}
+                className="btn-outline-forest w-full md:w-auto"
               >
-                {showAcab ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                {showAcab ? (
+                  <ChevronUp className="h-4 w-4" aria-hidden />
+                ) : (
+                  <ChevronDown className="h-4 w-4" aria-hidden />
+                )}
                 {showAcab ? "Fechar" : "Trocar acabamento desta composição"}
               </button>
+
               {showAcab && (
                 <div className="mt-6 max-w-2xl">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -417,9 +432,7 @@ export default function GuiaRefinar() {
                       />
                     ))}
                   </div>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/70 mt-4">
-                    Trocar o acabamento recalcula o projeto inteiro.
-                  </p>
+                  <p className="text-meta mt-4">Trocar o acabamento recalcula o projeto inteiro.</p>
                 </div>
               )}
             </section>
@@ -443,11 +456,8 @@ export default function GuiaRefinar() {
               nivel: nivelParam,
             }}
           />
-
         </div>
       </main>
-
-      <ProjetosWesternBand />
 
       <AutoralProductModal
         item={modalItem}
@@ -491,7 +501,7 @@ export default function GuiaRefinar() {
 
 function Tag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 border border-western-stone-warm/25 text-western-green-deep">
+    <span className="inline-flex items-center rounded-full border border-western-border-strong px-3.5 py-1.5 font-sans text-[14px] font-semibold text-western-green-deep">
       {children}
     </span>
   );
@@ -501,12 +511,15 @@ function SkeletonRows({ count }: { count: number }) {
   return (
     <>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="flex items-start gap-5 py-6 border-b border-western-stone-warm/15 first:border-t animate-pulse">
-          <div className="w-24 h-24 bg-western-paper" />
-          <div className="flex-1 space-y-2.5">
-            <div className="h-5 w-2/3 bg-western-paper" />
-            <div className="h-3 w-1/3 bg-western-paper" />
-            <div className="h-4 w-1/4 bg-western-paper" />
+        <div
+          key={i}
+          className="flex items-start gap-5 py-6 border-b border-western-border-soft first:border-t animate-pulse"
+        >
+          <div className="w-24 h-24 rounded-lg bg-western-paper" />
+          <div className="flex-1 space-y-3">
+            <div className="h-5 w-2/3 rounded-sm bg-western-paper" />
+            <div className="h-4 w-1/3 rounded-sm bg-western-paper" />
+            <div className="h-5 w-1/4 rounded-sm bg-western-paper" />
           </div>
         </div>
       ))}
@@ -518,13 +531,14 @@ function SkeletonCards({ count }: { count: number }) {
   return (
     <>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="bg-white animate-pulse">
-          <div className="aspect-[4/3] bg-western-paper" />
-          <div className="p-6 space-y-3">
-            <div className="h-5 w-2/3 bg-western-paper" />
-            <div className="h-3 w-1/3 bg-western-paper" />
-            <div className="h-5 w-1/4 bg-western-paper" />
-            <div className="h-12 w-full bg-western-paper mt-4" />
+        <div
+          key={i}
+          className="rounded-lg border border-western-border-soft bg-white overflow-hidden animate-pulse"
+        >
+          <div className="aspect-square bg-western-paper" />
+          <div className="p-4 space-y-3">
+            <div className="h-5 w-2/3 rounded-sm bg-western-paper" />
+            <div className="h-4 w-1/3 rounded-sm bg-western-paper" />
           </div>
         </div>
       ))}

@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { clearCatalogCache } from "@/lib/woocommerce/queries";
@@ -79,6 +80,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setEmpresa(null);
     setProfileLoading(false);
   };
+
+  // ── Preço não pode ter delay pós-login/aprovação ───────────────────────────
+  // O react-query cacheia o catálogo por 5 min (staleTime). Se o cliente viu os
+  // produtos como visitante (sem preço) e depois logou/foi aprovado, o cache
+  // continuava servindo os dados SEM preço. Aqui, sempre que a identidade OU a
+  // aprovação muda, derrubamos o catálogo interno E invalidamos o react-query —
+  // ele rebusca com o novo JWT e o preço aparece na hora. (Só em transição, via
+  // ref: não refaz fetch a cada render nem no 1º load.)
+  const queryClient = useQueryClient();
+  const prevAuthKey = useRef<string>("");
+  useEffect(() => {
+    const approved = partnerStatus === "approved" || isAdmin;
+    const key = `${session?.user?.id ?? "anon"}:${approved}`;
+    if (prevAuthKey.current && prevAuthKey.current !== key) {
+      clearCatalogCache();
+      void queryClient.invalidateQueries();
+    }
+    prevAuthKey.current = key;
+  }, [session?.user?.id, partnerStatus, isAdmin, queryClient]);
 
   const value: AuthCtx = {
     session,

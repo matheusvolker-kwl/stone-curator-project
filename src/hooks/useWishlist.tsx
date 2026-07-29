@@ -13,8 +13,16 @@ export interface WishlistItem {
 interface Ctx {
   items: WishlistItem[];
   loading: boolean;
+  /**
+   * Mensagem de erro da última leitura, ou null.
+   * Existe para que a tela distinga "não tem nada salvo" de "não consegui
+   * carregar". Antes o erro era engolido e uma falha de RLS aparecia como
+   * "nenhuma peça salva" — o parceiro achava que tinha perdido a seleção.
+   */
+  error: string | null;
   has: (handle: string) => boolean;
-  toggle: (p: { handle: string; title?: string | null; image?: string | null }) => Promise<"added" | "removed" | "auth-required">;
+  /** "erro" = a operação NÃO aconteceu no banco. Nunca minta dizendo que aconteceu. */
+  toggle: (p: { handle: string; title?: string | null; image?: string | null }) => Promise<"added" | "removed" | "auth-required" | "erro">;
   remove: (handle: string) => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -24,19 +32,30 @@ const WishlistCtx = createContext<Ctx | null>(null);
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [items, setItems] = useState<WishlistItem[]>([]);
-  const [loading, setLoading] = useState(false);
+  // Começa carregando: se inicializasse em false, a tela pintava o estado
+  // vazio por um instante antes dos dados chegarem.
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     if (!user) {
       setItems([]);
+      setError(null);
+      setLoading(false);
       return;
     }
     setLoading(true);
-    const { data } = await supabase
+    const { data, error: err } = await supabase
       .from("wishlists")
       .select("id, product_handle, product_title, product_image, created_at")
       .order("created_at", { ascending: false });
-    setItems((data as WishlistItem[]) ?? []);
+    if (err) {
+      // NUNCA cair para lista vazia: vazio é uma afirmação, e aqui não sabemos.
+      setError(err.message);
+    } else {
+      setError(null);
+      setItems((data as WishlistItem[]) ?? []);
+    }
     setLoading(false);
   }, [user]);
 
@@ -53,7 +72,12 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     if (!user) return "auth-required";
     const existing = items.find((i) => i.product_handle === handle);
     if (existing) {
-      await supabase.from("wishlists").delete().eq("id", existing.id);
+      const { error: delErr } = await supabase
+        .from("wishlists")
+        .delete()
+        .eq("id", existing.id);
+      // Se o banco recusou, a peça CONTINUA salva — não some da tela.
+      if (delErr) return "erro";
       setItems((prev) => prev.filter((i) => i.id !== existing.id));
       return "removed";
     }
@@ -67,7 +91,9 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       })
       .select()
       .maybeSingle();
-    if (error || !data) return "removed";
+    // Antes isto retornava "removed" quando o INSERT falhava: a tela cantava
+    // "Removido dos favoritos" para uma peça que nunca foi salva.
+    if (error || !data) return "erro";
     setItems((prev) => [data as WishlistItem, ...prev]);
     return "added";
   };
@@ -75,12 +101,20 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const remove = async (handle: string) => {
     const existing = items.find((i) => i.product_handle === handle);
     if (!existing) return;
-    await supabase.from("wishlists").delete().eq("id", existing.id);
+    const { error: delErr } = await supabase
+      .from("wishlists")
+      .delete()
+      .eq("id", existing.id);
+    if (delErr) {
+      // Não sumir da tela o que não sumiu do banco.
+      setError(delErr.message);
+      return;
+    }
     setItems((prev) => prev.filter((i) => i.id !== existing.id));
   };
 
   return (
-    <WishlistCtx.Provider value={{ items, loading, has, toggle, remove, refresh }}>
+    <WishlistCtx.Provider value={{ items, loading, error, has, toggle, remove, refresh }}>
       {children}
     </WishlistCtx.Provider>
   );

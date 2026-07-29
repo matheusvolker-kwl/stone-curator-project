@@ -22,6 +22,13 @@ interface HandoffLine {
   quantity: number;
   kind: "simple" | "variation" | "bundle";
   conjunto?: string;
+  /** Config dos itens embrulhados (kits sobre base variável) — ver docs §6. */
+  bundle_config?: Array<{
+    bundled_item_id: number;
+    quantity: number;
+    variation_id: number | null;
+    attributes: Array<{ slug: string; value: string }>;
+  }>;
 }
 
 function toLine(item: CartItem): HandoffLine | null {
@@ -34,6 +41,7 @@ function toLine(item: CartItem): HandoffLine | null {
     kind: item.wooKind,
   };
   if (item.conjuntoRef) line.conjunto = item.conjuntoRef;
+  if (item.wooBundleConfig?.length) line.bundle_config = item.wooBundleConfig;
   return line;
 }
 

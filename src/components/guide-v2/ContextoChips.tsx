@@ -9,6 +9,19 @@ interface Props {
   acabamento: Acabamento;
 }
 
+/**
+ * Barra de contexto do guia — DS V3.
+ *
+ * BUG CORRIGIDO (375px): os chips viviam num `overflow-x-auto` que encolhia
+ * livremente ao lado de um link "Editar contexto" largo (mono + tracking
+ * 0.22em). O último chip era cortado no meio da palavra — "Moledo" virava "M".
+ * Agora: cada chip é `whitespace-nowrap` (nunca quebra/corta palavra), o link
+ * de edição encolhe para "Editar" no mobile e a fila rola por inteiro quando
+ * um rótulo longo ("Jardim com Fonte") não couber.
+ *
+ * ALTURA: 52px. A pilha sticky do wizard (GuideHeader 80px + esta barra) tem
+ * que caber no `scroll-mt-[140px]` que Refinar.tsx usa — 80 + 52 = 132px.
+ */
 export default function ContextoChips({ tipo, area, acabamento }: Props) {
   const editHref = `/guia-de-composicao?${buildContextQuery({ tipoVisual: tipo, area, acabamento })}`;
   const items = [
@@ -18,30 +31,29 @@ export default function ContextoChips({ tipo, area, acabamento }: Props) {
   ];
 
   return (
-    <div className="sticky top-20 z-20 bg-western-paper/95 backdrop-blur-sm border-b border-western-stone-warm/15 relative">
-      <div className="container-western h-11 flex items-center justify-between gap-6">
-        <ol className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
-          {items.map((label, i) => (
-            <li key={label} className="flex items-center gap-1 flex-shrink-0">
-              {i > 0 && (
-                <span aria-hidden className="text-western-gold/60 font-mono text-[10px]">
-                  ◇
-                </span>
-              )}
-              <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-green-deep px-2.5 py-1">
+    <div className="sticky top-20 z-20 bg-western-paper/95 backdrop-blur-sm border-b border-western-border-soft">
+      <div className="container-western h-control flex items-center gap-3">
+        <ol className="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto scrollbar-hide">
+          {items.map((label) => (
+            <li key={label} className="flex-shrink-0">
+              <span className="inline-flex items-center whitespace-nowrap rounded-full border border-western-border-soft bg-white px-3 py-1 font-sans text-[14px] font-semibold text-western-green-deep">
                 {label}
               </span>
             </li>
           ))}
         </ol>
+
         <Link
           to={editHref}
-          className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep transition-colors flex-shrink-0"
+          aria-label="Editar contexto do projeto"
+          className="tap-target flex-shrink-0 inline-flex items-center gap-2 rounded-lg px-2 font-sans text-[14px] font-semibold text-western-bronze hover:text-western-green-deep hover:bg-western-ivory transition-colors"
         >
-          <Pencil className="h-3 w-3" /> Editar contexto
+          <Pencil className="h-4 w-4 flex-shrink-0" aria-hidden />
+          <span className="whitespace-nowrap">
+            Editar<span className="hidden sm:inline"> contexto</span>
+          </span>
         </Link>
       </div>
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-western-gold/30 to-transparent" />
     </div>
   );
 }

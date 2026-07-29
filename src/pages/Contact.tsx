@@ -19,10 +19,8 @@ import { BUSINESS } from "@/config/business";
 import Seo from "@/components/seo/Seo";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import PhoneInput from "@/components/forms/PhoneInput";
 import EmailInput from "@/components/forms/EmailInput";
-import FieldLabel from "@/components/forms/FieldLabel";
 import {
   emailSchema,
   phoneBRSchema,
@@ -40,17 +38,8 @@ const waUrlAfter = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURICo
   "Olá Western! Acabei de enviar uma mensagem pelo formulário do site."
 )}`;
 
+// Canais secundários — o WhatsApp tem cartão próprio (destaque) acima da lista.
 const canais = [
-  {
-    eyebrow: "WhatsApp comercial",
-    titulo: BUSINESS.whatsappLabel,
-    descricao: "Resposta em até 1h útil. Canal preferido para projetos.",
-    icon: MessageCircle,
-    href: waUrl,
-    cta: "Abrir conversa",
-    destaque: true,
-    internal: false,
-  },
   {
     eyebrow: "E-mail",
     titulo: BUSINESS.emailComercial,
@@ -58,7 +47,6 @@ const canais = [
     icon: Mail,
     href: `mailto:${BUSINESS.emailComercial}`,
     cta: "Enviar e-mail",
-    destaque: false,
     internal: false,
   },
   {
@@ -68,7 +56,6 @@ const canais = [
     icon: Instagram,
     href: "https://instagram.com/westernpools",
     cta: "Seguir no Instagram",
-    destaque: false,
     internal: false,
   },
   {
@@ -78,7 +65,6 @@ const canais = [
     icon: Box,
     href: BUSINESS.sketchupWarehouse,
     cta: "Abrir biblioteca",
-    destaque: false,
     internal: false,
   },
   {
@@ -88,10 +74,21 @@ const canais = [
     icon: MapPin,
     href: "/visitar",
     cta: "Agendar visita",
-    destaque: false,
     internal: true,
   },
 ];
+
+/* Pele V3 dos campos. EmailInput e PhoneInput são compartilhados (não são deste
+ * arquivo), então normalizamos aqui: 52px de altura, cantos 10px, tipo 16px,
+ * borda visível e mensagens em sans 14px — nunca mono, nunca abaixo de 14px. */
+const CONTROL =
+  "h-control rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 text-[15px] md:text-[15px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-green-deep";
+const CONTROL_ERR = "border-[1.5px] border-status-error";
+
+const EMAIL_FX =
+  "[&_input]:!h-control [&_input]:!rounded-lg [&_input]:!border-[1.5px] [&_input]:!bg-western-paper [&_input]:!px-4 [&_input]:!text-[15px] [&_p]:!font-sans [&_p]:!text-[14px] [&_p]:!normal-case [&_p]:!tracking-normal [&_p]:!text-status-error [&_button]:!font-sans [&_button]:!text-[14px] [&_button]:!normal-case [&_button]:!tracking-normal";
+const PHONE_FX =
+  "[&_input]:!px-4 [&_input]:!text-[15px] [&_span]:!font-sans [&_span]:!text-[15px] [&_p]:!font-sans [&_p]:!text-[14px] [&_p]:!normal-case [&_p]:!tracking-normal [&_p]:!text-status-error";
 
 // email OU telefone obrigatório — RLS exige ao menos um.
 const contactSchema = z
@@ -198,133 +195,117 @@ export default function Contact() {
       />
 
       {/* Hero */}
-      <section className="container-western pt-20 md:pt-28 pb-12 md:pb-16 max-w-6xl">
-        <div className="grid md:grid-cols-12 gap-10 md:gap-16 items-end">
-          <div className="md:col-span-8">
-            <p className="text-eyebrow mb-5">Contato</p>
-            <div className="w-12 h-px bg-western-gold mb-8" />
-            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-western-green-deep leading-[1.02] tracking-tight">
-              Fale com a Western.
-            </h1>
-          </div>
-          <div className="md:col-span-4">
-            <p className="text-western-stone-warm leading-relaxed text-base md:text-[17px] border-l border-western-gold/40 pl-5">
-              Atendimento direto com quem desenha e fabrica.
-              Sem call center, sem formulário labiríntico —
-              uma equipe pequena, focada em projetos de arquitetura e paisagismo.
-            </p>
-          </div>
+      <section className="container-western pt-12 md:pt-20 pb-10 md:pb-14">
+        <div className="max-w-6xl">
+          <p className="text-eyebrow mb-4">Contato</p>
+          <h1 className="display-xl text-western-green-deep max-w-[18ch]">
+            Fale com a Western.
+          </h1>
+          <p className="text-body mt-5 max-w-[56ch]">
+            Atendimento direto com quem desenha e fabrica. Sem call center, sem formulário
+            labiríntico — uma equipe pequena, focada em projetos de arquitetura e paisagismo.
+          </p>
         </div>
       </section>
 
-      {/* Canais + Formulário */}
-      <section className="container-western pb-20 md:pb-28 max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.05fr] gap-10 lg:gap-14 items-start">
-          {/* Canais rápidos */}
-          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-px bg-western-stone-warm/15 border border-western-stone-warm/15 self-stretch">
-            {canais.map((c) => {
-              const Icon = c.icon;
-              const cardClass = `group relative block h-full p-6 md:p-7 lg:px-8 lg:py-6 transition-colors duration-500 ${
-                c.destaque
-                  ? "bg-western-green-deep text-western-cream hover:bg-western-green-mid"
-                  : "hover:bg-western-cream/60"
-              }`;
-              const inner = (
-                <>
-                  <div className="flex items-start justify-between gap-4 mb-6 lg:mb-4">
+      {/* Canais + formulário */}
+      <section className="container-western pb-16 md:pb-24">
+        <div className="max-w-6xl">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.05fr] gap-8 lg:gap-14 items-start">
+          {/* Coluna de canais */}
+          <div className="space-y-4">
+            {/* WhatsApp — canal preferido do ateliê */}
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="surface-forest block rounded-xl p-6 md:p-8 transition-colors hover:bg-western-green-mid"
+            >
+              <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft">
+                WhatsApp comercial
+              </p>
+              <p className="display-md mt-3 text-western-cream">{BUSINESS.whatsappLabel}</p>
+              <p className="mt-3 text-[16px] leading-[1.6] text-western-cream-muted">
+                Resposta em até 1h útil. É o canal preferido do ateliê para projetos.
+              </p>
+              <span className="btn-gold mt-6 w-full">
+                <MessageCircle className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                Abrir conversa
+              </span>
+            </a>
+
+            {/* Demais canais */}
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
+              {canais.map((c) => {
+                const Icon = c.icon;
+                const cardClass =
+                  "tap-target block h-full rounded-lg border border-western-border-soft bg-white p-5 md:p-6 transition-colors hover:border-western-border-strong hover:bg-western-paper";
+                const inner = (
+                  <div className="flex items-start gap-4">
                     <Icon
-                      className={`h-5 w-5 ${
-                        c.destaque ? "text-western-gold-soft" : "text-western-gold"
-                      }`}
-                      strokeWidth={1.4}
+                      className="mt-1 h-6 w-6 flex-shrink-0 text-western-bronze"
+                      strokeWidth={1.75}
+                      aria-hidden="true"
                     />
-                    <ArrowUpRight
-                      className={`h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1 ${
-                        c.destaque ? "text-western-cream-muted" : "text-western-stone-warm/60"
-                      }`}
-                      strokeWidth={1.4}
-                    />
+                    <div className="min-w-0">
+                      <p className="text-eyebrow">{c.eyebrow}</p>
+                      <p className="mt-1.5 break-words text-[18px] font-semibold leading-snug text-western-green-deep">
+                        {c.titulo}
+                      </p>
+                      <p className="mt-2 text-[15px] leading-relaxed text-western-stone-warm">
+                        {c.descricao}
+                      </p>
+                      <span className="mt-3 inline-flex items-center gap-1.5 text-[15px] font-semibold text-western-cta">
+                        {c.cta}
+                        <ArrowUpRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                      </span>
+                    </div>
                   </div>
-
-                  <p
-                    className={`font-mono text-[10px] uppercase tracking-[0.28em] mb-2 ${
-                      c.destaque ? "text-western-gold-soft" : "text-western-gold"
-                    }`}
-                  >
-                    {c.eyebrow}
-                  </p>
-                  <p
-                    className={`font-display text-lg md:text-xl leading-tight mb-2 ${
-                      c.destaque ? "text-western-cream" : "text-western-green-deep"
-                    }`}
-                  >
-                    {c.titulo}
-                  </p>
-                  <p
-                    className={`text-[13px] leading-relaxed ${
-                      c.destaque ? "text-western-cream-muted" : "text-western-stone-warm"
-                    }`}
-                  >
-                    {c.descricao}
-                  </p>
-
-                  <span
-                    className={`mt-5 lg:mt-4 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.24em] ${
-                      c.destaque ? "text-western-cream" : "text-western-green-deep"
-                    }`}
-                  >
-                    <span className="link-underline">{c.cta}</span>
-                  </span>
-                </>
-              );
-              return (
-                <li key={c.eyebrow} className="bg-western-paper">
-                  {c.internal ? (
-                    <Link to={c.href} className={cardClass}>
-                      {inner}
-                    </Link>
-                  ) : (
-                    <a
-                      href={c.href}
-                      target={c.href.startsWith("http") ? "_blank" : undefined}
-                      rel="noopener noreferrer"
-                      className={cardClass}
-                    >
-                      {inner}
-                    </a>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
+                );
+                return (
+                  <li key={c.eyebrow}>
+                    {c.internal ? (
+                      <Link to={c.href} className={cardClass}>
+                        {inner}
+                      </Link>
+                    ) : (
+                      <a
+                        href={c.href}
+                        target={c.href.startsWith("http") ? "_blank" : undefined}
+                        rel="noopener noreferrer"
+                        className={cardClass}
+                      >
+                        {inner}
+                      </a>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
 
           {/* Formulário */}
           <div className="lg:sticky lg:top-24">
             {success ? (
-              <div className="bg-western-cream border border-western-gold/40 rounded-[2px] p-8 md:p-10 shadow-[0_20px_60px_-24px_rgba(30,40,25,0.35),0_2px_8px_-4px_rgba(30,40,25,0.15)]">
-                <div className="w-12 h-12 rounded-full bg-western-gold/15 flex items-center justify-center">
-                  <CheckCircle2 className="w-6 h-6 text-western-gold" aria-hidden="true" />
+              <div className="rounded-xl border border-western-border-soft bg-white p-6 md:p-9 shadow-[0_24px_60px_-32px_rgba(30,40,25,0.28)]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-status-success/10">
+                  <CheckCircle2 className="h-6 w-6 text-status-success" strokeWidth={1.75} aria-hidden="true" />
                 </div>
-                <h2 className="mt-6 font-display text-2xl md:text-3xl text-western-green-deep leading-tight">
-                  Recebemos sua mensagem.
-                </h2>
-                <p className="mt-4 text-base leading-relaxed text-western-stone-warm">
+                <h2 className="display-md mt-6 text-western-green-deep">Recebemos sua mensagem.</h2>
+                <p className="text-body mt-4">
                   Nosso time responde em até 1 dia útil. Se preferir agilizar, chame no WhatsApp.
                 </p>
-                <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <a
                     href={waUrlAfter}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 h-12 px-6 border border-western-green-deep text-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] hover:bg-western-green-deep hover:text-western-cream transition-colors"
+                    className="btn-primary w-full sm:w-auto"
                   >
-                    <MessageCircle className="w-4 h-4" aria-hidden="true" />
+                    <MessageCircle className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
                     Falar agora no WhatsApp
                   </a>
-                  <Link
-                    to="/linhas"
-                    className="inline-flex items-center justify-center h-12 px-6 font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep transition-colors"
-                  >
+                  <Link to="/linhas" className="btn-outline-forest w-full sm:w-auto">
                     Ver o catálogo
                   </Link>
                 </div>
@@ -334,19 +315,15 @@ export default function Contact() {
                 ref={formRef}
                 onSubmit={handleSubmit}
                 noValidate
-                className="bg-western-cream border border-western-stone-warm/35 rounded-[2px] p-7 md:p-9 shadow-[0_20px_60px_-24px_rgba(30,40,25,0.35),0_2px_8px_-4px_rgba(30,40,25,0.15)]"
+                className="rounded-xl border border-western-border-soft bg-white p-6 md:p-9 shadow-[0_24px_60px_-32px_rgba(30,40,25,0.28)]"
               >
-                <p className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-western-gold">
-                  Enviar mensagem
-                </p>
-                <h2 className="mt-3 font-display text-2xl md:text-[28px] leading-tight text-western-green-deep">
-                  Escreva pra gente
-                </h2>
-                <p className="mt-2 text-sm text-western-stone-warm">
-                  Retorno em até 1 dia útil (WhatsApp: até 1h útil).
+                <p className="text-eyebrow">Enviar mensagem</p>
+                <h2 className="display-md mt-3 text-western-green-deep">Escreva pra gente</h2>
+                <p className="mt-2 text-[15px] leading-relaxed text-western-stone-warm">
+                  Retorno em até 1 dia útil. Pelo WhatsApp, em até 1h útil.
                 </p>
 
-                <div className="mt-7 space-y-5">
+                <div className="mt-8 space-y-6">
                   <div>
                     <FieldLabel htmlFor="nome" required>Nome</FieldLabel>
                     <Input
@@ -356,42 +333,52 @@ export default function Contact() {
                       onChange={(e) => setField("nome", e.target.value)}
                       maxLength={120}
                       autoComplete="name"
+                      placeholder="Como podemos te chamar"
                       aria-invalid={!!errors.nome}
-                      className="h-12 rounded-none bg-transparent"
+                      className={`${CONTROL} ${errors.nome ? CONTROL_ERR : ""}`}
                     />
-                    {errors.nome && (
-                      <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">
-                        {errors.nome}
-                      </p>
-                    )}
+                    {errors.nome && <FieldError id="nome-error">{errors.nome}</FieldError>}
                   </div>
 
-                  <div>
-                    <FieldLabel htmlFor="email" hint="Informe pelo menos um: e-mail ou WhatsApp/telefone.">E-mail</FieldLabel>
-                    <EmailInput
-                      id="email"
-                      name="email"
-                      value={f.email}
-                      onChange={(v) => setField("email", v)}
-                      error={errors.email}
-                    />
+                  <div className={EMAIL_FX}>
+                    <FieldLabel htmlFor="email" hint="Informe pelo menos um: e-mail ou WhatsApp/telefone.">
+                      E-mail
+                    </FieldLabel>
+                    <div
+                      className={
+                        errors.email
+                          ? ""
+                          : "[&_input]:!border-western-border-strong [&_input:focus]:!border-western-green-deep"
+                      }
+                    >
+                      <EmailInput
+                        id="email"
+                        name="email"
+                        value={f.email}
+                        onChange={(v) => setField("email", v)}
+                        error={errors.email}
+                      />
+                    </div>
                   </div>
 
-                  <div>
-                    <FieldLabel htmlFor="telefone" hint="Ou informe o e-mail acima — basta um dos dois.">WhatsApp / Telefone</FieldLabel>
+                  <div className={PHONE_FX}>
+                    <FieldLabel htmlFor="telefone" hint="Ou informe o e-mail acima — basta um dos dois.">
+                      WhatsApp / Telefone
+                    </FieldLabel>
                     <PhoneInput
                       id="telefone"
                       name="telefone"
                       value={f.telefone}
                       onChange={(v) => setField("telefone", v)}
                       error={errors.telefone}
+                      className={`!h-control overflow-hidden rounded-lg !bg-western-paper ${
+                        errors.telefone ? "" : "!border-[1.5px] !border-western-border-strong"
+                      }`}
                     />
                   </div>
 
                   <div>
-                    <FieldLabel htmlFor="cidade" optional>
-                      Cidade
-                    </FieldLabel>
+                    <FieldLabel htmlFor="cidade" optional>Cidade</FieldLabel>
                     <Input
                       id="cidade"
                       name="cidade"
@@ -399,14 +386,13 @@ export default function Contact() {
                       onChange={(e) => setField("cidade", e.target.value)}
                       maxLength={80}
                       autoComplete="address-level2"
-                      className="h-12 rounded-none bg-transparent"
+                      placeholder="Onde fica o projeto"
+                      className={CONTROL}
                     />
                   </div>
 
                   <div>
-                    <FieldLabel htmlFor="assunto" optional>
-                      Assunto
-                    </FieldLabel>
+                    <FieldLabel htmlFor="assunto" optional>Assunto</FieldLabel>
                     <Input
                       id="assunto"
                       name="assunto"
@@ -414,7 +400,7 @@ export default function Contact() {
                       onChange={(e) => setField("assunto", e.target.value)}
                       maxLength={120}
                       placeholder="Ex.: proposta técnica, visita, imprensa…"
-                      className="h-12 rounded-none bg-transparent"
+                      className={CONTROL}
                     />
                   </div>
 
@@ -426,21 +412,21 @@ export default function Contact() {
                       value={f.mensagem}
                       onChange={(e) => setField("mensagem", e.target.value)}
                       maxLength={1000}
-                      rows={4}
+                      rows={5}
                       aria-invalid={!!errors.mensagem}
-                      placeholder="Conte brevemente como podemos ajudar."
-                      className="rounded-none bg-transparent border-western-stone-warm/30 focus-visible:ring-0 focus-visible:border-western-gold text-western-green-deep placeholder:text-western-stone-warm/50"
+                      placeholder="Conte brevemente sobre o projeto: tipo (piscina, lago, jardim), tamanho aproximado e cidade."
+                      className={`min-h-[140px] rounded-lg border-[1.5px] bg-western-paper px-4 py-3 text-[16px] leading-[1.6] text-western-green-deep placeholder:text-western-stone-warm/60 focus-visible:ring-0 ${
+                        errors.mensagem
+                          ? "border-status-error"
+                          : "border-western-border-strong focus-visible:border-western-green-deep"
+                      }`}
                     />
-                    {errors.mensagem && (
-                      <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">
-                        {errors.mensagem}
-                      </p>
-                    )}
+                    {errors.mensagem && <FieldError id="mensagem-error">{errors.mensagem}</FieldError>}
                   </div>
                 </div>
 
                 {/* Honeypot — invisível ao usuário, atrai bots. */}
-                <div aria-hidden="true" className="absolute -left-[9999px] top-auto w-px h-px overflow-hidden">
+                <div aria-hidden="true" className="absolute -left-[9999px] top-auto h-px w-px overflow-hidden">
                   <label>
                     Não preencha este campo
                     <input
@@ -456,61 +442,66 @@ export default function Contact() {
 
                 <InvisibleTurnstile ref={captchaRef} />
 
-
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="mt-7 h-14 w-full rounded-none bg-western-gold hover:bg-western-gold/90 text-western-green-deep font-mono text-[12px] uppercase tracking-[0.24em]"
-                >
+                <button type="submit" disabled={loading} className="btn-primary mt-8 w-full">
                   {loading ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Enviando…
+                      <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+                      Enviando…
                     </>
                   ) : (
                     "Enviar mensagem"
                   )}
-                </Button>
+                </button>
 
-                <p className="mt-4 flex items-start gap-2 font-mono text-[10px] leading-relaxed uppercase tracking-[0.16em] text-western-stone-warm/70">
-                  <ShieldCheck className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" aria-hidden="true" />
+                <p className="mt-5 flex items-start gap-2.5 text-[14px] leading-relaxed text-western-stone-warm">
+                  <ShieldCheck
+                    className="mt-0.5 h-5 w-5 flex-shrink-0 text-western-bronze"
+                    strokeWidth={1.75}
+                    aria-hidden="true"
+                  />
                   <span>
-                    Ao enviar, você concorda em receber contato da Western e com a nossa{" "}
-                    <Link to="/privacidade" className="underline decoration-western-gold/50 underline-offset-2 hover:decoration-western-gold hover:text-western-green-deep">política de privacidade</Link>. Seus dados ficam seguros e nunca são usados para spam.
+                    Empresa brasileira · CNPJ {BUSINESS.cnpj} · Ateliê desde {BUSINESS.fundadaEm}. Ao enviar,
+                    você concorda em receber contato da Western e com a nossa{" "}
+                    <Link
+                      to="/privacidade"
+                      className="font-semibold text-western-green-deep underline decoration-western-gold underline-offset-2"
+                    >
+                      política de privacidade
+                    </Link>
+                    . Seus dados ficam seguros e nunca são usados para spam.
                   </span>
                 </p>
               </form>
             )}
           </div>
+          </div>
         </div>
       </section>
 
       {/* Ateliê */}
-      <section className="bg-western-green-deep text-western-cream">
-        <div className="container-western py-20 md:py-28 max-w-6xl">
-          <div className="grid md:grid-cols-12 gap-10 md:gap-16">
+      <section className="surface-forest">
+        <div className="container-western py-16 md:py-24">
+          <div className="max-w-6xl">
+            <div className="grid gap-12 md:grid-cols-12 md:gap-16">
             <div className="md:col-span-5">
-              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft mb-4">
+              <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft">
                 Conheça o ateliê
               </p>
-              <div className="w-12 h-px bg-western-gold mb-7" />
-              <h2 className="font-display text-3xl md:text-5xl leading-[1.05] mb-6">
-                Onde cada peça nasce.
-              </h2>
-              <p className="text-western-cream-muted leading-relaxed text-[15px] md:text-base mb-10 max-w-md">
+              <div className="mb-7 mt-5 h-px w-12 bg-western-gold" />
+              <h2 className="display-lg text-western-cream">Onde cada peça nasce.</h2>
+              <p className="mt-5 max-w-md text-[16px] leading-[1.6] text-western-cream-muted">
                 Estamos em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}, na Grande São Paulo.
-                Receba arquitetos, paisagistas e clientes finais para conhecer os acabamentos
+                Recebemos arquitetos, paisagistas e clientes finais para conhecer os acabamentos
                 ao vivo e ver as peças em produção.
               </p>
-              <Link
-                to="/visitar"
-                className="inline-flex items-center gap-2 h-12 px-7 bg-western-gold text-western-green-deep hover:bg-western-gold-soft font-mono text-[11px] uppercase tracking-[0.24em] transition-colors"
-              >
-                Agendar visita <ArrowUpRight className="h-4 w-4" />
+              <Link to="/visitar" className="btn-gold mt-8 w-full sm:w-auto">
+                Agendar visita
+                <ArrowUpRight className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
               </Link>
             </div>
 
             <div className="md:col-span-7 md:border-l md:border-western-gold/20 md:pl-16">
-              <dl className="grid sm:grid-cols-2 gap-x-10 gap-y-10">
+              <dl className="grid gap-x-10 gap-y-9 sm:grid-cols-2">
                 <InfoBlock icon={MapPin} label="Endereço">
                   {BUSINESS.enderecoAtelieRua}<br />
                   {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · {BUSINESS.enderecoAtelieCep}
@@ -520,25 +511,79 @@ export default function Contact() {
                   Visitas mediante agendamento.
                 </InfoBlock>
                 <InfoBlock icon={Phone} label="Telefone do ateliê">
-                  <a href={`tel:+${BUSINESS.whatsappFabrica}`} className="hover:text-western-gold-soft transition-colors">
+                  <a
+                    href={`tel:+${BUSINESS.whatsappFabrica}`}
+                    className="underline decoration-western-gold/60 underline-offset-4 transition-colors hover:text-western-gold-soft"
+                  >
                     {BUSINESS.whatsappLabel}
                   </a>
                 </InfoBlock>
-                <InfoBlock icon={Mail} label="Suporte / pós-venda">
-                  <a href={`mailto:${BUSINESS.emailSuporte}`} className="hover:text-western-gold-soft transition-colors break-all">
+                <InfoBlock icon={Mail} label="Suporte e pós-venda">
+                  <a
+                    href={`mailto:${BUSINESS.emailSuporte}`}
+                    className="break-all underline decoration-western-gold/60 underline-offset-4 transition-colors hover:text-western-gold-soft"
+                  >
                     {BUSINESS.emailSuporte}
                   </a>
                 </InfoBlock>
               </dl>
 
-              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-cream-muted/70 mt-14 pt-8 border-t border-western-gold/15">
-                Fundada em {BUSINESS.fundadaEm} · {BUSINESS.anosOperacao}+ anos de coautoria com arquitetos
+              <p className="mt-12 border-t border-western-gold/20 pt-8 text-[14px] leading-relaxed text-western-cream-muted">
+                Fundada em {BUSINESS.fundadaEm} · {BUSINESS.anosOperacao}+ anos de coautoria com arquitetos ·
+                Compra segura · Garantia de {BUSINESS.garantiaLabel}
               </p>
+            </div>
             </div>
           </div>
         </div>
       </section>
     </div>
+  );
+}
+
+/* Label de campo — sans 16px (o mínimo de UI no V3), sentence case.
+ * Local a esta tela: o FieldLabel compartilhado ainda usa a escala antiga. */
+function FieldLabel({
+  htmlFor,
+  children,
+  required,
+  optional,
+  hint,
+}: {
+  htmlFor: string;
+  children: React.ReactNode;
+  required?: boolean;
+  optional?: boolean;
+  hint?: string;
+}) {
+  return (
+    <div className="mb-2">
+      <label
+        htmlFor={htmlFor}
+        className="block text-[15px] font-semibold leading-snug text-western-green-deep"
+      >
+        {children}
+        {required && (
+          <span aria-hidden="true" className="ml-1 text-western-bronze">
+            *
+          </span>
+        )}
+        {optional && (
+          <span className="ml-2 font-normal text-western-stone-warm">(opcional)</span>
+        )}
+      </label>
+      {hint && (
+        <p className="mt-1 text-[14px] leading-snug text-western-stone-warm">{hint}</p>
+      )}
+    </div>
+  );
+}
+
+function FieldError({ id, children }: { id: string; children: React.ReactNode }) {
+  return (
+    <p id={id} className="mt-2 text-[14px] font-semibold text-status-error">
+      {children}
+    </p>
   );
 }
 
@@ -553,13 +598,11 @@ function InfoBlock({
 }) {
   return (
     <div>
-      <div className="flex items-center gap-3 mb-3">
-        <Icon className="h-4 w-4 text-western-gold" strokeWidth={1.4} />
-        <dt className="font-mono text-[10px] uppercase tracking-[0.24em] text-western-gold-soft">
-          {label}
-        </dt>
+      <div className="mb-2.5 flex items-center gap-3">
+        <Icon className="h-5 w-5 text-western-gold-soft" strokeWidth={1.75} aria-hidden="true" />
+        <dt className="text-[15px] font-semibold text-western-gold-soft">{label}</dt>
       </div>
-      <dd className="text-western-cream leading-relaxed text-[15px]">{children}</dd>
+      <dd className="text-[16px] leading-[1.6] text-western-cream">{children}</dd>
     </div>
   );
 }

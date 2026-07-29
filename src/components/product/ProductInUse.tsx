@@ -53,6 +53,18 @@ function findImage(sku: string, kind: "CLOSE" | "AMBIENTE"): string | null {
   return null;
 }
 
+/**
+ * Resolve as fotos aplicadas de um SKU (galeria canônica da PDP:
+ * estúdio → ambiente → detalhe). Aceita SKU com sufixo de variante.
+ */
+export function getAplicadas(sku?: string | null): {
+  ambiente: string | null;
+  close: string | null;
+} {
+  const s = baseSku(sku);
+  return { ambiente: findImage(s, "AMBIENTE"), close: findImage(s, "CLOSE") };
+}
+
 export default function ProductInUse({ productTitle, sku }: Props) {
   const { close, ambiente } = useMemo(() => {
     const s = baseSku(sku);
@@ -93,7 +105,7 @@ export default function ProductInUse({ productTitle, sku }: Props) {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <figcaption className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm">
+              <figcaption className="mt-3 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-stone-warm">
                 {it.legenda}
               </figcaption>
             </figure>

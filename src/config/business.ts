@@ -2,7 +2,16 @@
 // Qualquer mudança aqui se reflete em todo o site.
 
 export const BUSINESS = {
-  // Pedido mínimo B2B (em BRL)
+  // ── PEDIDO MÍNIMO — FONTE ÚNICA DA VERDADE ──────────────────────────────
+  // Regra: pedido mínimo por nota no catálogo B2B (preço de parceiro).
+  // Única exceção: a Western Box de amostras, que é aberta a todos — sem
+  // cadastro B2B e sem mínimo (ver src/pages/WesternBox.tsx).
+  //
+  // NUNCA escreva "R$ 700" na mão em página, texto ou componente: leia daqui.
+  // Mudar o valor = trocar estes dois campos. ABOLIR o mínimo = trocar aqui
+  // (pedidoMinimoBRL: 0) e o site inteiro acompanha. Se você se pegar
+  // editando a frase do mínimo em dois arquivos, o bug é este comentário
+  // não ter sido lido.
   pedidoMinimoBRL: 700,
   pedidoMinimoLabel: "R$ 700",
 
@@ -27,12 +36,16 @@ export const BUSINESS = {
 
   // Empresa
   fundadaEm: 1993,
-  anosOperacao: 2026 - 1993,
+  // Calculado, NUNCA cravado: com "2026 - 1993" o site inteiro passava a mentir
+  // em 1º de janeiro ("33 anos" quando já seriam 34). Quem escrever a idade do
+  // ateliê em texto novo usa BUSINESS.anosOperacao — não digite o número.
+  anosOperacao: new Date().getFullYear() - 1993,
 
-  // Contato
-  whatsappFabrica: "5511958967088",
-  whatsappLabel: "+55 11 95896-7088",
-  emailComercial: "comercial@westernpools.com.br",
+  // Contato — oficial (decisão do dono, 2026-07-15). Tem WhatsApp (confirmado).
+  // whatsappFabrica alimenta TODOS os botões de WhatsApp do site.
+  whatsappFabrica: "551144482918",
+  whatsappLabel: "(11) 4448-2918",
+  emailComercial: "atendimento@westernstore.com.br",
   emailSuporte: "suporte@westernpools.com.br",
   emailNewsletter: "contato@westernpools.com.br",
   razaoSocial: "Western Pools - Cascatas e Pedras Artesanais LTDA",

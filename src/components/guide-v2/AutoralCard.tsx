@@ -1,5 +1,5 @@
 import { Minus, Plus } from "lucide-react";
-import { formatPreco } from "@/data/guideMap";
+import GatedPrice from "@/components/shared/GatedPrice";
 import type { AutoralItem } from "./autoraisCatalog";
 import { cn } from "@/lib/utils";
 
@@ -19,14 +19,13 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
   return (
     <article
       className={cn(
-        "group relative bg-white flex flex-col transition-all duration-300 overflow-hidden cursor-zoom-in",
+        "group relative flex flex-col overflow-hidden rounded-lg bg-white cursor-pointer transition-shadow duration-300",
         selected
-          ? "shadow-[0_18px_28px_-22px_hsl(var(--western-stone-dark)/0.45)] outline outline-1 outline-western-gold"
-          : "shadow-[0_10px_20px_-18px_hsl(var(--western-stone-dark)/0.35)] hover:-translate-y-0.5 hover:shadow-[0_18px_28px_-22px_hsl(var(--western-stone-dark)/0.4)]"
+          ? "border-2 border-western-gold shadow-[0_18px_32px_-26px_hsl(var(--western-stone-dark)/0.4)]"
+          : "border border-western-border-soft shadow-[0_12px_24px_-22px_hsl(var(--western-stone-dark)/0.32)] hover:shadow-[0_20px_34px_-26px_hsl(var(--western-stone-dark)/0.4)]"
       )}
       onClick={onOpen}
     >
-      {/* Imagem — fundo paper, peça inteira */}
       <div className="relative aspect-square w-full bg-western-paper overflow-hidden">
         {item.imageUrl ? (
           <img
@@ -34,13 +33,14 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
             alt={item.nome}
             loading="lazy"
             decoding="async"
-            className="w-full h-full object-contain p-3 transition-transform duration-500 group-hover:scale-[1.04]"
+            className="w-full h-full object-contain p-3"
           />
         ) : (
           <div className="w-full h-full bg-western-paper" />
         )}
 
-        {/* Botão flutuante: adiciona a primeira unidade ou mais uma */}
+        {/* Adiciona a 1ª unidade ou mais uma. SEMPRE visível: no mobile (sem
+            hover) o botão escondido atrás de group-hover era inalcançável. */}
         <button
           type="button"
           onClick={(e) => {
@@ -48,58 +48,61 @@ export default function AutoralCard({ item, selected, qty = 0, onToggle, onSetQt
             if (selected && onSetQty) onSetQty(currentQty + 1);
             else onToggle();
           }}
-          aria-label={selected ? "Adicionar mais uma unidade" : "Adicionar ao projeto"}
+          aria-label={selected ? `Adicionar mais uma unidade de ${item.nome}` : `Adicionar ${item.nome} ao projeto`}
           className={cn(
-            "absolute top-2 right-2 inline-flex items-center justify-center h-9 rounded-full font-sans text-[12px] font-medium tabular-nums transition-all duration-300",
+            "absolute top-2 right-2 inline-flex h-12 items-center justify-center gap-1.5 rounded-lg font-sans text-[15px] font-semibold tabular-nums transition-colors",
             selected
-              ? "bg-western-green-deep text-western-cream anim-settle px-3 gap-1.5 min-w-[36px]"
-              : "w-9 bg-white/95 text-western-green-deep border border-western-stone-warm/20 hover:bg-western-gold hover:border-western-gold opacity-0 group-hover:opacity-100"
+              ? "anim-settle min-w-tap px-3 bg-western-cta text-western-cream"
+              : "w-12 bg-white text-western-green-deep border border-western-border-strong hover:bg-western-cta hover:text-western-cream hover:border-western-cta"
           )}
         >
           {selected ? (
-            <><Plus className="h-3 w-3" strokeWidth={2.5} /> {currentQty}×</>
+            <>
+              <Plus className="h-4 w-4" strokeWidth={2.5} aria-hidden /> {currentQty}×
+            </>
           ) : (
-            <Plus className="h-4 w-4" />
+            <Plus className="h-5 w-5" aria-hidden />
           )}
         </button>
       </div>
 
-      {/* Info compacta */}
-      <div className="px-3.5 py-3 border-t border-western-stone-warm/10">
-        <h4 className="font-display text-[15px] text-western-green-deep leading-tight line-clamp-1">
+      <div className="flex flex-col flex-1 px-4 py-3.5 border-t border-western-border-soft">
+        <h4 className="font-sans text-[16px] font-semibold text-western-green-deep leading-snug line-clamp-2">
           {item.nome}
         </h4>
-        <div className="flex items-baseline justify-between mt-1.5 gap-2">
-          <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-western-stone-warm/80 truncate">
-            {item.codigo}
-          </p>
-          <p className="font-sans text-[15px] font-semibold tabular-nums text-western-green-deep flex-shrink-0">
-            {formatPreco(item.preco)}
-          </p>
+
+        <div className="mt-2 flex items-baseline justify-between gap-2">
+          <p className="text-meta truncate">{item.codigo}</p>
+          <GatedPrice
+            amount={item.preco}
+            variant="hidden"
+            className="font-sans text-[16px] font-semibold tabular-nums text-western-green-deep flex-shrink-0"
+          />
         </div>
+
         {selected && onSetQty && (
           <div
-            className="mt-3 inline-flex w-full items-center justify-between border border-western-stone-warm/25 bg-western-ivory"
+            className="mt-3 inline-flex w-full items-center justify-between rounded-lg border border-western-border-strong bg-western-ivory overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
               onClick={() => onSetQty(currentQty - 1)}
-              aria-label={currentQty <= 1 ? "Remover do projeto" : "Diminuir quantidade"}
-              className="h-9 w-10 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+              aria-label={currentQty <= 1 ? `Remover ${item.nome} do projeto` : `Diminuir quantidade de ${item.nome}`}
+              className="h-12 w-12 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
             >
-              <Minus className="h-3 w-3" />
+              <Minus className="h-4 w-4" aria-hidden />
             </button>
-            <span className="font-sans text-[12px] tabular-nums text-western-green-deep">
+            <span className="font-sans text-[15px] font-semibold tabular-nums text-western-green-deep">
               {currentQty} no projeto
             </span>
             <button
               type="button"
               onClick={() => onSetQty(currentQty + 1)}
-              aria-label="Aumentar quantidade"
-              className="h-9 w-10 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+              aria-label={`Aumentar quantidade de ${item.nome}`}
+              className="h-12 w-12 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
             >
-              <Plus className="h-3 w-3" />
+              <Plus className="h-4 w-4" aria-hidden />
             </button>
           </div>
         )}

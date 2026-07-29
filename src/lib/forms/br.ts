@@ -32,6 +32,48 @@ export const cnpjSchema = z
   .refine((v) => v.length === 14, { message: "CNPJ deve ter 14 dígitos" })
   .refine(isValidCNPJ, { message: "CNPJ inválido" });
 
+/** Dados públicos do CNPJ (BrasilAPI). Preenche a razão social e o endereço,
+ *  para o cadastro de parceiro não precisar digitar. */
+export interface CnpjResult {
+  razao_social: string;
+  nome_fantasia: string;
+  cep: string;
+  logradouro: string;
+  numero: string;
+  complemento: string;
+  bairro: string;
+  municipio: string;
+  uf: string;
+  situacao: string; // descrição da situação cadastral (ex.: "ATIVA")
+}
+
+/** Consulta o CNPJ na BrasilAPI (pública e gratuita, sem chave). */
+export async function fetchCnpj(cnpj: string): Promise<CnpjResult | null> {
+  const d = onlyDigits(cnpj);
+  if (d.length !== 14) return null;
+  try {
+    const r = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${d}`);
+    if (!r.ok) return null;
+    const j = (await r.json()) as Record<string, unknown>;
+    if (!j || typeof j.razao_social !== "string") return null;
+    const s = (k: string) => (typeof j[k] === "string" ? (j[k] as string) : "");
+    return {
+      razao_social: j.razao_social as string,
+      nome_fantasia: s("nome_fantasia"),
+      cep: j.cep ? onlyDigits(String(j.cep)) : "",
+      logradouro: s("logradouro"),
+      numero: j.numero != null ? String(j.numero) : "",
+      complemento: s("complemento"),
+      bairro: s("bairro"),
+      municipio: s("municipio"),
+      uf: s("uf"),
+      situacao: s("descricao_situacao_cadastral"),
+    };
+  } catch {
+    return null;
+  }
+}
+
 /* ---------------- CPF ---------------- */
 export function isValidCPF(raw: string): boolean {
   const cpf = onlyDigits(raw);

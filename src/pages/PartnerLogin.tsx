@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, ShieldCheck, MessageCircle, ArrowRight } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import EmailInput from "@/components/forms/EmailInput";
 import PasswordField from "@/components/forms/PasswordField";
+import FieldLabel from "@/components/forms/FieldLabel";
+import Seo from "@/components/seo/Seo";
 import { emailSchema } from "@/lib/forms/br";
 
 const waClienteFinalUrl = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
@@ -22,7 +22,9 @@ export default function PartnerLogin() {
   const [showReset, setShowReset] = useState(false);
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const next = params.get("next") || "/minha-conta";
+  // Aprovado cai direto no catálogo (comprar), não na conta — a conta fica a um
+  // clique no header. Se veio de uma página específica (?next=), volta pra ela.
+  const next = params.get("next") || "/linhas";
 
   // If already logged in, send to next/account
   useEffect(() => {
@@ -92,39 +94,44 @@ export default function PartnerLogin() {
 
   return (
     <div className="surface-ivory">
+      <Seo
+        title="Entrar na conta de parceiro · Western"
+        description="Acesso de parceiros aprovados: tabela comercial, modelos 3D no SketchUp e composições. Ainda sem conta? O cadastro com CNPJ é gratuito."
+        path="/parceiro/login"
+      />
       <div className="container-western py-16 md:py-24 max-w-5xl">
         <div className="grid md:grid-cols-[1fr_1.1fr] gap-10 md:gap-16 items-start">
           {/* COLUNA ESQUERDA — contexto B2B + saída pra cliente final */}
-          <aside className="space-y-8 md:sticky md:top-28 order-2 md:order-1">
+          <aside className="space-y-6 md:space-y-8 md:sticky md:top-28 order-2 md:order-1">
             <div className="hidden md:block">
               <p className="text-eyebrow mb-4">Acesso restrito</p>
               <div className="w-12 h-px bg-western-gold mb-6" />
-              <h2 className="font-display text-3xl md:text-4xl text-western-green-deep leading-[1.1] mb-5">
-                Plataforma exclusiva para parceiros aprovados.
-              </h2>
-              <p className="text-western-stone-warm leading-relaxed text-[15px] md:text-base">
+              <h2 className="display-lg mb-5">Plataforma exclusiva para parceiros aprovados.</h2>
+              <p className="text-body">
                 A Western atende profissionais e empresas do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a laguistas, jardineiros, garden centers, lojas e construtoras. O acesso à tabela comercial, modelos 3D e composições é liberado automaticamente para profissionais do ramo, na hora do cadastro.
               </p>
             </div>
 
-            {/* Card 1 — Solicitar cadastro */}
+            {/* Card 1 — Solicitar cadastro (dourado sobre verde: acento permitido) */}
             <Link
               to="/parceiro/cadastro"
-              className="group relative block bg-western-green-deep text-western-cream p-7 md:p-8 transition-colors duration-500 hover:bg-western-green-mid"
+              className="group block rounded-xl surface-forest p-6 md:p-8 transition-colors duration-200 hover:bg-western-green-mid"
             >
               <div className="flex items-start gap-4 mb-5">
-                <ShieldCheck className="h-6 w-6 text-western-gold-soft mt-0.5 flex-shrink-0" strokeWidth={1.4} />
+                <ShieldCheck className="h-6 w-6 flex-shrink-0 text-western-gold-soft mt-0.5" strokeWidth={1.75} aria-hidden="true" />
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold-soft mb-2">
+                  <p className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft mb-2">
                     Sou empresa / profissional
                   </p>
-                  <p className="font-display text-xl md:text-[22px] leading-tight">
-                    Solicitar credenciamento B2B.
-                  </p>
+                  <p className="display-md text-western-cream">Solicitar credenciamento B2B.</p>
                 </div>
               </div>
-              <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-western-cream link-underline">
-                Fazer cadastro <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+              <p className="font-sans text-[15px] leading-relaxed text-western-cream/80 mb-6 max-w-sm">
+                Cadastro gratuito com CNPJ. Aprovação automática para profissionais do ramo — preço de parceiro, modelos 3D e composições liberados na hora.
+              </p>
+              <span className="btn-gold w-full sm:w-auto">
+                Fazer cadastro
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </span>
             </Link>
 
@@ -133,25 +140,23 @@ export default function PartnerLogin() {
               href={waClienteFinalUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative block border border-western-stone-warm/25 bg-western-paper/60 p-7 md:p-8 transition-colors duration-500 hover:border-western-gold/60 hover:bg-western-paper"
+              className="group block rounded-xl border border-western-border-soft bg-western-paper p-6 md:p-8 transition-colors duration-200 hover:border-western-border-strong hover:bg-western-cream/40"
             >
               <div className="flex items-start gap-4 mb-5">
-                <MessageCircle className="h-6 w-6 text-western-gold mt-0.5 flex-shrink-0" strokeWidth={1.4} />
+                <MessageCircle className="h-6 w-6 flex-shrink-0 text-western-bronze mt-0.5" strokeWidth={1.75} aria-hidden="true" />
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold mb-2">
+                  <p className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze mb-2">
                     Sou cliente final
                   </p>
-                  <p className="font-display text-xl md:text-[22px] leading-tight text-western-green-deep">
-                    Quero fazer um projeto
-                  </p>
+                  <p className="display-md text-western-green-deep">Quero fazer um projeto</p>
                 </div>
               </div>
-              <p className="text-[13px] text-western-stone-warm leading-relaxed mb-5 max-w-sm">
-                Atendimento direto com nosso time pelo WhatsApp — indicamos um arquiteto
-                parceiro ou cuidamos do seu projeto residencial.
+              <p className="font-sans text-[15px] leading-relaxed text-western-stone-warm mb-6 max-w-sm">
+                Atendimento direto com nosso time pelo WhatsApp — indicamos um arquiteto parceiro ou cuidamos do seu projeto residencial.
               </p>
-              <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-western-green-deep link-underline">
-                Falar no WhatsApp <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+              <span className="btn-outline-forest w-full sm:w-auto">
+                Falar no WhatsApp
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </span>
             </a>
           </aside>
@@ -160,13 +165,16 @@ export default function PartnerLogin() {
           <div className="md:max-w-md md:mx-auto w-full order-1 md:order-2">
             <p className="text-eyebrow mb-5">Acesso de parceiro</p>
             <div className="w-12 h-px bg-western-gold mb-8" />
-            <h1 className="font-display text-4xl md:text-5xl text-western-green-deep leading-[1.05] mb-10">
-              {showReset ? "Recuperar senha." : "Entrar."}
-            </h1>
+            <h1 className="display-xl mb-4">{showReset ? "Recuperar senha." : "Entrar."}</h1>
+            <p className="text-body mb-8">
+              {showReset
+                ? "Informe o e-mail do cadastro e enviamos um link para você criar uma nova senha."
+                : "Entre com o e-mail e a senha do seu cadastro de parceiro para ver preço, modelos 3D e composições."}
+            </p>
 
             <form className="space-y-6" onSubmit={showReset ? handleReset : handleLogin} noValidate>
               <div>
-                <Label htmlFor="email" className="text-eyebrow mb-3 block">E-mail</Label>
+                <FieldLabel htmlFor="email">E-mail</FieldLabel>
                 <EmailInput
                   id="email"
                   value={email}
@@ -177,7 +185,7 @@ export default function PartnerLogin() {
               </div>
               {!showReset && (
                 <div>
-                  <Label htmlFor="password" className="text-eyebrow mb-3 block">Senha</Label>
+                  <FieldLabel htmlFor="password">Senha</FieldLabel>
                   <PasswordField
                     id="password"
                     value={password}
@@ -189,26 +197,33 @@ export default function PartnerLogin() {
                 </div>
               )}
 
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
-              >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : showReset ? "Enviar link" : "Entrar"}
+              <Button type="submit" disabled={loading} size="lg" className="w-full">
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin" aria-hidden="true" /> {showReset ? "Enviando…" : "Entrando…"}
+                  </>
+                ) : showReset ? (
+                  "Enviar link"
+                ) : (
+                  "Entrar"
+                )}
               </Button>
 
               <button
                 type="button"
                 onClick={() => setShowReset((v) => !v)}
-                className="block mx-auto text-spec text-western-stone-warm hover:text-western-gold link-underline"
+                className="tap-target mx-auto flex items-center justify-center px-2 font-sans text-[15px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-bronze transition-colors hover:text-western-cta"
               >
-                {showReset ? "← Voltar ao login" : "Esqueci minha senha"}
+                {showReset ? "Voltar ao login" : "Esqueci minha senha"}
               </button>
             </form>
 
-            <p className="text-spec text-western-stone-warm mt-8 text-center md:hidden">
+            <p className="font-sans text-[15px] text-western-stone-warm mt-8 text-center md:hidden">
               Ainda não é parceiro?{" "}
-              <Link to="/parceiro/cadastro" className="link-underline text-western-gold">
+              <Link
+                to="/parceiro/cadastro"
+                className="font-semibold text-western-green-deep underline underline-offset-4 decoration-western-bronze"
+              >
                 Solicite cadastro
               </Link>
             </p>

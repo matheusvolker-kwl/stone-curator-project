@@ -31,11 +31,11 @@ export function ConfirmDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="rounded-none border border-western-stone-warm/30">
+      <AlertDialogContent className="rounded-xl border border-western-border-soft">
         <AlertDialogHeader>
-          <AlertDialogTitle className="font-display text-western-green-deep">{title}</AlertDialogTitle>
+          <AlertDialogTitle className="font-display text-[18px] text-western-green-deep">{title}</AlertDialogTitle>
           {description && (
-            <AlertDialogDescription className="text-sm text-western-stone-warm whitespace-pre-line">
+            <AlertDialogDescription className="text-[15px] text-western-stone-warm whitespace-pre-line">
               {description}
             </AlertDialogDescription>
           )}
@@ -46,13 +46,13 @@ export function ConfirmDialog({
               value={typed}
               onChange={(e) => setTyped(e.target.value)}
               placeholder={requireTextPlaceholder ?? `Digite ${requireText}`}
-              className="h-10 rounded-none font-mono"
+              className="h-12 rounded-lg text-[15px]"
               autoFocus
             />
           </div>
         )}
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-none font-mono text-[11px] uppercase tracking-[0.18em]">
+          <AlertDialogCancel className="tap-target rounded-lg text-[15px] font-semibold">
             {cancelLabel}
           </AlertDialogCancel>
           <AlertDialogAction
@@ -61,10 +61,10 @@ export function ConfirmDialog({
               if (!canConfirm) { e.preventDefault(); return; }
               onConfirm();
             }}
-            className={`rounded-none font-mono text-[11px] uppercase tracking-[0.18em] ${
+            className={`tap-target rounded-lg text-[15px] font-semibold ${
               danger
-                ? "bg-red-700 text-white hover:bg-red-800"
-                : "bg-western-green-deep text-western-cream hover:bg-western-green-mid"
+                ? "bg-status-error text-white hover:bg-[#992e26]"
+                : "bg-western-cta text-white hover:bg-western-cta/90"
             }`}
           >
             {confirmLabel}

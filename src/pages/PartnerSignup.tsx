@@ -1,22 +1,24 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, ChevronLeft, ChevronRight, MessageCircle, ArrowRight, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { Loader2, ChevronLeft, ChevronRight, MessageCircle, CheckCircle2, AlertTriangle, XCircle, Check, ArrowRight } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import PhoneInput from "@/components/forms/PhoneInput";
 import CnpjInput from "@/components/forms/CnpjInput";
-import CepInput from "@/components/forms/CepInput";
 import EmailInput from "@/components/forms/EmailInput";
 import PasswordField from "@/components/forms/PasswordField";
 import SegmentoSelect, { SEGMENTOS } from "@/components/forms/SegmentoSelect";
 import FieldLabel from "@/components/forms/FieldLabel";
 import CartaoCnpjUpload from "@/components/forms/CartaoCnpjUpload";
+import SocialProof from "@/components/shared/SocialProof";
+import Seo from "@/components/seo/Seo";
 import {
-  cnpjSchema, phoneBRSchema, cepSchema, emailSchema, passwordSchema, UF_LIST,
-  normalizeText, focusFirstInvalid,
+  cnpjSchema, phoneBRSchema, emailSchema, passwordSchema,
+  normalizeText, focusFirstInvalid, fetchCnpj, isValidCNPJ,
 } from "@/lib/forms/br";
 import { z } from "zod";
 
@@ -52,6 +54,44 @@ const INITIAL: Form = {
   telefone: "", email: "", senha: "", senha2: "", aceite: false,
 };
 
+/* ——— DS V3 (apresentação) ———
+ * Controles de 52px, cantos 10px, texto de UI 16px (nunca menos), borda visível
+ * de 1.5px — o público 40+ precisa VER o campo. Erro em sans 14px semibold,
+ * nunca mono/caixa-alta de 10px. CTA primário é VERDE e full-width no mobile. */
+const CONTROL =
+  "h-control w-full rounded-lg border-[1.5px] bg-western-paper px-4 font-sans text-[15px] md:text-[15px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 transition-colors focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0";
+const CONTROL_OK = "border-western-border-strong focus:border-western-green-deep";
+const CONTROL_ERR = "border-status-error focus:border-status-error";
+
+const control = (hasError?: boolean) => `${CONTROL} ${hasError ? CONTROL_ERR : CONTROL_OK}`;
+
+function FieldError({ id, children }: { id?: string; children: React.ReactNode }) {
+  return (
+    <p id={id} role="alert" className="mt-2 font-sans text-[14px] font-semibold leading-snug text-status-error">
+      {children}
+    </p>
+  );
+}
+
+/* Sinais de legitimidade perto da decisão (§12) — todos vindos de BUSINESS. */
+const CONFIANCA = [
+  "Cadastro gratuito, com aprovação automática para profissionais do ramo",
+  `Compra segura · garantia de ${BUSINESS.garantiaLabel}`,
+  `Ateliê brasileiro desde ${BUSINESS.fundadaEm} · CNPJ ${BUSINESS.cnpj}`,
+];
+
+/* Proposta enxuta na coluna esquerda da dobra (desktop) — mata objeção sem
+   parede de texto. Uma prova por linha. */
+const PROPOSTA = [
+  "Aprovação automática para profissionais do ramo",
+  "Tabela comercial e modelos 3D liberados na hora",
+  "Grátis · leva menos de 2 minutos",
+];
+
+// Etapa 1 = o mínimo para criar a conta e liberar o preço. O credenciamento
+// (função `credenciar`) só usa CNPJ + nome + e-mail; o endereço não entra na
+// decisão e o Woo já o coleta no checkout — por isso saiu do caminho crítico
+// (virou opcional na etapa 2, e a BrasilAPI ainda pré-preenche pelo CNPJ).
 const empresaSchema = z.object({
   empresa: z.string().trim().min(2, "Informe a razão social").max(160),
   cnpj: cnpjSchema,
@@ -59,13 +99,6 @@ const empresaSchema = z.object({
   segmentoOutro: z.string().optional(),
   site: z.string().max(200).optional(),
   instagram: z.string().max(60).optional(),
-  cep: cepSchema,
-  endereco: z.string().trim().min(2, "Informe o endereço").max(200),
-  numero: z.string().trim().min(1, "Número").max(20),
-  complemento: z.string().max(80).optional(),
-  bairro: z.string().trim().min(2, "Bairro").max(80),
-  cidade: z.string().trim().min(2, "Cidade").max(80),
-  estado: z.enum(UF_LIST as unknown as [string, ...string[]], { message: "UF" }),
 }).refine((v) => v.segmento !== "Outro" || (v.segmentoOutro && v.segmentoOutro.trim().length >= 2), {
   message: "Especifique o segmento",
   path: ["segmentoOutro"],
@@ -94,11 +127,47 @@ export default function PartnerSignup() {
   const [newUserId, setNewUserId] = useState<string | null>(null);
   const [cardPath, setCardPath] = useState<string | null>(null);
   const [cardLoading, setCardLoading] = useState(false);
+  const { refresh } = useAuth();
+
+  // Quando o credenciamento APROVA, recarrega o perfil (isApproved vira true).
+  // Aí o AuthProvider invalida o catálogo cacheado e o preço de parceiro aparece
+  // NA HORA — sem o cliente precisar recarregar a página (era o "delay").
+  useEffect(() => {
+    if (credResult?.decisao === "aprovado") void refresh();
+  }, [credResult, refresh]);
   const navigate = useNavigate();
   const formRef = useRef<HTMLFormElement>(null);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) =>
     setF((p) => ({ ...p, [k]: v }));
+
+  // Busca automática de CNPJ (BrasilAPI): preenche razão social + endereço, para
+  // o parceiro não digitar. Só preenche campos ainda vazios (não sobrescreve).
+  const [cnpjLoading, setCnpjLoading] = useState(false);
+  const [cnpjFound, setCnpjFound] = useState(false);
+  const lastCnpj = useRef("");
+
+  const lookupCnpj = async (digits: string) => {
+    if (digits.length !== 14 || !isValidCNPJ(digits) || lastCnpj.current === digits) return;
+    lastCnpj.current = digits;
+    setCnpjFound(false);
+    setCnpjLoading(true);
+    const res = await fetchCnpj(digits);
+    setCnpjLoading(false);
+    if (!res) return;
+    setF((p) => ({
+      ...p,
+      empresa: p.empresa.trim() || res.razao_social,
+      cep: p.cep || res.cep,
+      endereco: p.endereco || res.logradouro,
+      numero: p.numero || res.numero,
+      complemento: p.complemento || res.complemento,
+      bairro: p.bairro || res.bairro,
+      cidade: p.cidade || res.municipio,
+      estado: p.estado || res.uf,
+    }));
+    setCnpjFound(true);
+  };
 
   const goNext = () => {
     const normalized = { ...f, empresa: normalizeText(f.empresa) };
@@ -181,7 +250,9 @@ export default function PartnerSignup() {
         type: "partner_signup",
         nome: f.nome, email: f.email, telefone: f.telefone, empresa: f.empresa,
         cnpj: f.cnpj, segmento: segmentoFinal, cidade: f.cidade, uf: f.estado,
-        endereco: `${f.endereco}, ${f.numero}${f.complemento ? " - " + f.complemento : ""} - ${f.bairro}`,
+        endereco: f.endereco
+          ? `${f.endereco}, ${f.numero}${f.complemento ? " - " + f.complemento : ""} - ${f.bairro}`
+          : null,
         cep: f.cep,
         payload: { site: f.site, instagram: f.instagram, cargo: cargoFinal },
         origem: "site/parceiro/cadastro",
@@ -221,11 +292,11 @@ export default function PartnerSignup() {
     const d = credResult.decisao;
     return (
       <div className="surface-ivory">
-        <div className="container-western py-24 max-w-2xl text-center">
-          {d === "aprovado" && <CheckCircle2 className="h-12 w-12 text-western-gold mx-auto mb-6" strokeWidth={1.4} />}
-          {(d === "analise") && <AlertTriangle className="h-12 w-12 text-amber-600 mx-auto mb-6" strokeWidth={1.4} />}
-          {d === "reprovado" && <XCircle className="h-12 w-12 text-red-700/80 mx-auto mb-6" strokeWidth={1.4} />}
-          {d === "solicitar_cartao" && <AlertTriangle className="h-12 w-12 text-amber-600 mx-auto mb-6" strokeWidth={1.4} />}
+        <div className="container-western py-12 md:py-16 max-w-2xl text-center">
+          {d === "aprovado" && <CheckCircle2 className="h-12 w-12 text-status-success mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
+          {d === "analise" && <AlertTriangle className="h-12 w-12 text-status-warning mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
+          {d === "reprovado" && <XCircle className="h-12 w-12 text-status-error mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
+          {d === "solicitar_cartao" && <AlertTriangle className="h-12 w-12 text-status-warning mx-auto mb-6" strokeWidth={1.75} aria-hidden="true" />}
 
           <p className="text-eyebrow mb-4">
             {d === "aprovado" && "Cadastro aprovado"}
@@ -237,58 +308,69 @@ export default function PartnerSignup() {
 
           {d === "aprovado" && (
             <>
-              <h1 className="font-display text-4xl md:text-5xl text-western-green-deep leading-tight mb-6">
-                Bem-vindo à Western Pro.
-              </h1>
-              <p className="text-western-stone-warm leading-relaxed mb-10">
-                Sua condição B2B já está liberada. Confirme seu e-mail e faça login para ver tabela, modelos 3D e composições.
+              <h1 className="display-lg mb-6">Bem-vindo à Western Pro.</h1>
+              <p className="text-body mb-10 mx-auto max-w-[46ch]">
+                Sua condição B2B já está liberada — o preço de parceiro, os modelos 3D
+                e as composições já aparecem pra você. Comece a montar seu carrinho.
               </p>
-              <Link to="/parceiro/login" className="inline-block h-12 px-6 leading-[3rem] bg-western-gold text-western-green-deep font-mono text-xs uppercase tracking-[0.25em]">Acessar minha conta</Link>
+              <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-center">
+                <Button asChild variant="outline" className="w-full sm:w-auto">
+                  <Link to="/minha-conta">Ir para minha conta</Link>
+                </Button>
+                <Button asChild className="w-full sm:w-auto">
+                  <Link to="/linhas">
+                    Ver produtos <ArrowRight className="h-5 w-5" aria-hidden="true" />
+                  </Link>
+                </Button>
+              </div>
+              <p className="text-meta mt-6">
+                Enviamos um e-mail de confirmação — use-o nos próximos acessos.
+              </p>
             </>
           )}
 
           {d === "analise" && (
             <>
-              <h1 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight mb-6">
-                Recebemos sua solicitação.
-              </h1>
-              <p className="text-western-stone-warm leading-relaxed mb-4">
+              <h1 className="display-lg mb-6">Recebemos sua solicitação.</h1>
+              <p className="text-body mb-4 mx-auto max-w-[46ch]">
                 Estamos concluindo a validação do seu cadastro e liberamos seu acesso por e-mail em breve.
               </p>
               {credResult.protocolo && (
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-western-stone-warm mb-10">
-                  Protocolo: <span className="text-western-green-deep">{credResult.protocolo}</span>
+                <p className="text-meta mb-10">
+                  Protocolo:{" "}
+                  <span className="font-semibold tabular-nums text-western-green-deep">{credResult.protocolo}</span>
                 </p>
               )}
-              <Link to="/" className="link-underline text-western-gold font-mono text-xs uppercase tracking-[0.22em]">Voltar ao catálogo</Link>
+              <Button asChild variant="outline" className="w-full sm:w-auto">
+                <Link to="/">Voltar ao catálogo</Link>
+              </Button>
             </>
           )}
 
           {d === "reprovado" && (
             <>
-              <h1 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight mb-6">
-                Não foi possível aprovar agora.
-              </h1>
-              <p className="text-western-stone-warm leading-relaxed mb-4">
+              <h1 className="display-lg mb-6">Não foi possível aprovar agora.</h1>
+              <p className="text-body mb-4 mx-auto max-w-[46ch]">
                 {credResult.motivo ?? "Sua empresa não atende aos critérios B2B no momento."}
               </p>
-              <p className="text-western-stone-warm leading-relaxed mb-10">
+              <p className="text-body mb-10 mx-auto max-w-[46ch]">
                 Se acredita que houve engano, fale com o comercial pelo WhatsApp.
               </p>
-              <a
-                href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent("Olá, gostaria de revisar meu credenciamento B2B.")}`}
-                target="_blank" rel="noopener noreferrer"
-                className="inline-block h-12 px-6 leading-[3rem] bg-western-green-deep text-western-cream font-mono text-xs uppercase tracking-[0.25em]"
-              >Falar com o comercial</a>
+              <Button asChild className="w-full sm:w-auto">
+                <a
+                  href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent("Olá, gostaria de revisar meu credenciamento B2B.")}`}
+                  target="_blank" rel="noopener noreferrer"
+                >
+                  <MessageCircle aria-hidden="true" /> Falar com o comercial
+                </a>
+              </Button>
             </>
           )}
 
           {d === "solicitar_cartao" && (
             <>
-              <h1 className="font-display text-3xl md:text-4xl text-western-green-deep leading-tight mb-6">
-                Envie seu Cartão CNPJ.
-              </h1>
-              <p className="text-western-stone-warm leading-relaxed mb-8">
+              <h1 className="display-lg mb-6">Envie seu Cartão CNPJ.</h1>
+              <p className="text-body mb-8 mx-auto max-w-[48ch]">
                 As bases públicas não responderam agora. Envie o Cartão CNPJ ou siga para análise manual e concluímos a validação em seguida.
               </p>
               <div className="max-w-md mx-auto text-left space-y-4">
@@ -299,21 +381,27 @@ export default function PartnerSignup() {
                     onUploaded={(p) => setCardPath(p)}
                   />
                 )}
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button
-                    onClick={() => reenviarComCartao(cardPath, false)}
-                    disabled={!cardPath || cardLoading}
-                    className="flex-1 h-12 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.22em] rounded-none disabled:opacity-50"
-                  >
-                    {cardLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar para análise"}
-                  </Button>
+                <div className="flex flex-col-reverse sm:flex-row gap-3">
                   <Button
                     variant="outline"
                     onClick={() => reenviarComCartao(null, true)}
                     disabled={cardLoading}
-                    className="h-12 border-western-stone-warm/30 text-western-green-deep hover:border-western-gold rounded-none font-mono text-xs uppercase tracking-[0.22em]"
+                    className="w-full sm:w-auto"
                   >
                     Seguir sem enviar agora
+                  </Button>
+                  <Button
+                    onClick={() => reenviarComCartao(cardPath, false)}
+                    disabled={!cardPath || cardLoading}
+                    className="w-full sm:flex-1"
+                  >
+                    {cardLoading ? (
+                      <>
+                        <Loader2 className="animate-spin" aria-hidden="true" /> Enviando…
+                      </>
+                    ) : (
+                      "Enviar para análise"
+                    )}
                   </Button>
                 </div>
               </div>
@@ -328,74 +416,85 @@ export default function PartnerSignup() {
 
   return (
     <div className="surface-ivory">
-      <div className="container-western py-20 md:py-28 max-w-2xl">
-        <p className="text-eyebrow mb-5">Cadastro B2B</p>
-        <div className="w-12 h-px bg-western-gold mb-8" />
-        <h1 className="font-display text-4xl md:text-6xl text-western-green-deep leading-[1.05] mb-6">
-          Solicite acesso de parceiro comercial.
-        </h1>
-        <p className="text-western-stone-warm text-lg leading-relaxed mb-8">
-          A Western atende profissionais e empresas do paisagismo e da construção com CNPJ ativo — de arquitetos e paisagistas a laguistas, jardineiros, garden centers, lojas e construtoras. O acesso à tabela comercial, modelos 3D e composições é liberado automaticamente para profissionais do ramo, na hora do cadastro.
-        </p>
-
-        {/* Saída para cliente final — WhatsApp */}
-        <a
-          href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
-            "Olá Western! Sou cliente final e gostaria de comprar / fazer um projeto com pedras Western."
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex items-center gap-4 border border-western-stone-warm/25 bg-western-paper/60 p-5 md:p-6 mb-10 transition-colors duration-500 hover:border-western-gold/60 hover:bg-western-paper"
-        >
-          <MessageCircle className="h-5 w-5 text-western-gold flex-shrink-0" strokeWidth={1.4} />
-          <div className="flex-1 min-w-0">
-            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-western-gold mb-1">
-              Sou cliente final
+      <Seo
+        title="Cadastro de parceiro comercial — Western"
+        description="Cadastro gratuito para profissionais com CNPJ — arquitetos, paisagistas, laguistas, lojas e construtoras. Tabela comercial e modelos 3D liberados na hora."
+        path="/parceiro/cadastro"
+      />
+      {/* Balcão: cadastro é formulário — o primeiro campo tem que estar na dobra. */}
+      <div className="container-western py-10 md:py-14">
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 xl:gap-24 items-start">
+          {/* Proposta enxuta — coluna esquerda, fixa no desktop */}
+          <div className="lg:sticky lg:top-28">
+            <p className="text-eyebrow mb-3">Cadastro B2B · Aprovação imediata</p>
+            <div className="w-12 h-px bg-western-gold mb-5" />
+            <h1 className="display-md mb-3">Solicite acesso de parceiro comercial.</h1>
+            <p className="text-body-balcao max-w-[42ch]">
+              Para profissionais e empresas com CNPJ ativo — arquitetos,
+              paisagistas, laguistas, lojas e construtoras.
             </p>
-            <p className="text-[14px] md:text-[15px] text-western-green-deep leading-snug">
-              Quero fazer um projeto residencial — atendimento direto pelo WhatsApp.
-            </p>
+            <ul className="mt-6 space-y-2.5 hidden lg:block">
+              {PROPOSTA.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-body-balcao">
+                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-western-bronze" strokeWidth={2} aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-          <span className="hidden sm:inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-western-green-deep link-underline flex-shrink-0">
-            Falar no WhatsApp <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-          </span>
-          <ArrowRight className="sm:hidden h-4 w-4 text-western-green-deep flex-shrink-0 transition-transform group-hover:translate-x-1" />
-        </a>
 
-        {/* Stepper */}
-        <div className="flex items-center gap-3 mb-10">
-          {[1, 2].map((n) => (
-            <div key={n} className="flex items-center gap-3 flex-1">
-              <span
-                className={`w-8 h-8 flex items-center justify-center font-mono text-xs border ${
-                  step >= n
-                    ? "bg-western-gold text-western-green-deep border-western-gold"
-                    : "border-western-stone-warm/30 text-western-stone-warm"
-                }`}
-              >
-                {n}
-              </span>
-              <span className={`font-mono text-[11px] uppercase tracking-[0.2em] ${step >= n ? "text-western-green-deep" : "text-western-stone-warm/70"}`}>
-                {n === 1 ? "Empresa" : "Responsável & acesso"}
-              </span>
-              {n === 1 && <div className="flex-1 h-px bg-western-stone-warm/20" />}
+          {/* Formulário — coluna direita, primeiro campo na dobra */}
+          <div>
+            <p className="text-meta mb-8 lg:hidden">Grátis · leva menos de 2 minutos · precisa de CNPJ</p>
+
+            {/* Progresso — uma decisão por vez */}
+            <div className="mb-8">
+              <p className="text-eyebrow mb-3">
+                Etapa {step} de 2 · {step === 1 ? "Empresa" : "Responsável e acesso"}
+              </p>
+              <div className="flex gap-2" aria-hidden="true">
+                <span className="h-1.5 flex-1 rounded-sm bg-western-cta" />
+                <span className={`h-1.5 flex-1 rounded-sm ${step >= 2 ? "bg-western-cta" : "bg-western-border-soft"}`} />
+              </div>
             </div>
-          ))}
-        </div>
 
-        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
           {step === 1 && (
             <>
               <div>
-                <FieldLabel htmlFor="empresa">Razão social</FieldLabel>
-                <Input id="empresa" value={f.empresa} onChange={(e) => set("empresa", e.target.value)} required
-                  className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-                {errors.empresa && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.empresa}</p>}
+                <FieldLabel htmlFor="cnpj" hint="Digite o CNPJ — a gente busca a razão social pra você.">CNPJ</FieldLabel>
+                <CnpjInput
+                  id="cnpj"
+                  value={f.cnpj}
+                  onChange={(v) => { set("cnpj", v); setCnpjFound(false); if (v.length === 14) void lookupCnpj(v); }}
+                  onBlur={() => void lookupCnpj(f.cnpj)}
+                  required
+                  error={errors.cnpj}
+                />
+                {cnpjLoading && (
+                  <p className="mt-2 inline-flex items-center gap-2 text-meta">
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Buscando dados do CNPJ…
+                  </p>
+                )}
+                {cnpjFound && !cnpjLoading && (
+                  <p className="mt-2 inline-flex items-center gap-2 text-meta text-western-bronze">
+                    <Check className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                    Razão social e endereço preenchidos pelo CNPJ.
+                  </p>
+                )}
               </div>
 
               <div>
-                <FieldLabel htmlFor="cnpj">CNPJ</FieldLabel>
-                <CnpjInput id="cnpj" value={f.cnpj} onChange={(v) => set("cnpj", v)} required error={errors.cnpj} />
+                <FieldLabel htmlFor="empresa">Razão social</FieldLabel>
+                <Input
+                  id="empresa" value={f.empresa} onChange={(e) => set("empresa", e.target.value)} required
+                  autoComplete="organization"
+                  placeholder="Preenchemos pelo CNPJ — confira ou ajuste"
+                  aria-invalid={!!errors.empresa}
+                  aria-describedby={errors.empresa ? "empresa-error" : undefined}
+                  className={control(!!errors.empresa)}
+                />
+                {errors.empresa && <FieldError id="empresa-error">{errors.empresa}</FieldError>}
               </div>
 
               <div>
@@ -403,118 +502,52 @@ export default function PartnerSignup() {
                 <SegmentoSelect id="segmento" value={f.segmento} onChange={(v) => set("segmento", v)} required error={errors.segmento} />
                 {f.segmento === "Outro" && (
                   <Input
+                    id="segmentoOutro"
                     placeholder="Especifique seu segmento"
                     value={f.segmentoOutro}
                     onChange={(e) => set("segmentoOutro", e.target.value)}
-                    className="mt-3 h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold"
+                    aria-invalid={!!errors.segmentoOutro}
+                    aria-describedby={errors.segmentoOutro ? "segmentoOutro-error" : undefined}
+                    className={`mt-3 ${control(!!errors.segmentoOutro)}`}
                   />
                 )}
-                {errors.segmentoOutro && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.segmentoOutro}</p>}
+                {errors.segmentoOutro && <FieldError id="segmentoOutro-error">{errors.segmentoOutro}</FieldError>}
               </div>
 
               <div className="grid sm:grid-cols-2 gap-5">
                 <div>
                   <FieldLabel htmlFor="site" optional>Site</FieldLabel>
-                  <Input id="site" placeholder="https://" value={f.site} onChange={(e) => set("site", e.target.value)}
-                    className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                  <Input
+                    id="site" placeholder="https://" value={f.site} onChange={(e) => set("site", e.target.value)}
+                    inputMode="url" autoComplete="url"
+                    className={control()}
+                  />
                 </div>
                 <div>
                   <FieldLabel htmlFor="instagram" optional>Instagram</FieldLabel>
-                  <div className="flex items-stretch h-12 border border-western-stone-warm/30 focus-within:border-western-gold transition-colors">
-                    <span className="px-3 flex items-center font-mono text-sm text-western-stone-warm border-r border-western-stone-warm/20">@</span>
+                  <div className="flex items-stretch h-control overflow-hidden rounded-lg border-[1.5px] border-western-border-strong bg-western-paper transition-colors focus-within:border-western-green-deep">
+                    <span className="px-4 flex items-center font-sans text-[15px] font-medium text-western-stone-warm border-r border-western-border-soft select-none">
+                      @
+                    </span>
                     <input
                       id="instagram"
                       value={f.instagram.replace(/^@/, "")}
                       onChange={(e) => set("instagram", e.target.value.replace(/^@/, ""))}
                       placeholder="seuestudio"
-                      className="flex-1 bg-transparent px-3 outline-none text-western-green-deep placeholder:text-western-stone-warm/50"
+                      autoComplete="off"
+                      className="flex-1 min-w-0 bg-transparent px-4 outline-none font-sans text-[15px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-western-stone-warm/15">
-                <p className="text-eyebrow mb-4">Endereço comercial</p>
+              <p className="text-meta">
+                O endereço não é pedido aqui — a gente puxa pelo CNPJ e você
+                confirma na hora da entrega.
+              </p>
 
-                <div className="grid sm:grid-cols-3 gap-5">
-                  <div className="sm:col-span-1">
-                    <FieldLabel htmlFor="cep">CEP</FieldLabel>
-                    <CepInput
-                      id="cep"
-                      value={f.cep}
-                      onChange={(v) => set("cep", v)}
-                      onResolved={(d) => {
-                        setF((p) => ({
-                          ...p,
-                          endereco: d.logradouro || p.endereco,
-                          bairro: d.bairro || p.bairro,
-                          cidade: d.localidade || p.cidade,
-                          estado: d.uf || p.estado,
-                        }));
-                      }}
-                      focusNextId="numero"
-                      required
-                      error={errors.cep}
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <FieldLabel htmlFor="endereco">Logradouro</FieldLabel>
-                    <Input id="endereco" value={f.endereco} onChange={(e) => set("endereco", e.target.value)} required
-                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-                    {errors.endereco && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.endereco}</p>}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-5">
-                  <div>
-                    <FieldLabel htmlFor="numero">Número</FieldLabel>
-                    <Input id="numero" value={f.numero} onChange={(e) => set("numero", e.target.value)} required
-                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-                    {errors.numero && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.numero}</p>}
-                  </div>
-                  <div className="sm:col-span-2">
-                    <FieldLabel htmlFor="complemento" optional>Complemento</FieldLabel>
-                    <Input id="complemento" value={f.complemento} onChange={(e) => set("complemento", e.target.value)}
-                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-                  </div>
-                </div>
-
-                <div className="grid sm:grid-cols-3 gap-5 mt-5">
-                  <div>
-                    <FieldLabel htmlFor="bairro">Bairro</FieldLabel>
-                    <Input id="bairro" value={f.bairro} onChange={(e) => set("bairro", e.target.value)} required
-                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-                    {errors.bairro && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.bairro}</p>}
-                  </div>
-                  <div>
-                    <FieldLabel htmlFor="cidade">Cidade</FieldLabel>
-                    <Input id="cidade" value={f.cidade} onChange={(e) => set("cidade", e.target.value)} required
-                      className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-                    {errors.cidade && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.cidade}</p>}
-                  </div>
-                  <div>
-                    <FieldLabel htmlFor="estado">UF</FieldLabel>
-                    <select
-                      id="estado"
-                      value={f.estado}
-                      onChange={(e) => set("estado", e.target.value)}
-                      required
-                      className="h-12 w-full bg-transparent border border-western-stone-warm/30 px-3 rounded-none text-western-green-deep focus:outline-none focus:border-western-gold"
-                    >
-                      <option value="" disabled>—</option>
-                      {UF_LIST.map((uf) => <option key={uf} value={uf}>{uf}</option>)}
-                    </select>
-                    {errors.estado && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.estado}</p>}
-                  </div>
-                </div>
-              </div>
-
-              <Button
-                type="button"
-                onClick={goNext}
-                className="w-full h-12 bg-western-green-deep text-western-cream hover:bg-western-green-mid font-mono text-xs uppercase tracking-[0.25em] rounded-none mt-4"
-              >
-                Avançar <ChevronRight className="h-4 w-4 ml-1" />
+              <Button type="button" onClick={goNext} size="lg" className="w-full mt-4">
+                Avançar <ChevronRight aria-hidden="true" />
               </Button>
             </>
           )}
@@ -523,9 +556,14 @@ export default function PartnerSignup() {
             <>
               <div>
                 <FieldLabel htmlFor="nome">Nome do responsável</FieldLabel>
-                <Input id="nome" value={f.nome} onChange={(e) => set("nome", e.target.value)} required
-                  className="h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
-                {errors.nome && <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.nome}</p>}
+                <Input
+                  id="nome" value={f.nome} onChange={(e) => set("nome", e.target.value)} required
+                  autoComplete="name"
+                  aria-invalid={!!errors.nome}
+                  aria-describedby={errors.nome ? "nome-error" : undefined}
+                  className={control(!!errors.nome)}
+                />
+                {errors.nome && <FieldError id="nome-error">{errors.nome}</FieldError>}
               </div>
 
               <div>
@@ -535,17 +573,25 @@ export default function PartnerSignup() {
                   value={f.cargo}
                   onChange={(e) => set("cargo", e.target.value)}
                   required
-                  className="h-12 w-full bg-transparent border border-western-stone-warm/30 px-3 rounded-none text-western-green-deep focus:outline-none focus:border-western-gold"
+                  aria-invalid={!!errors.cargo}
+                  aria-describedby={errors.cargo || errors.cargoOutro ? "cargo-error" : undefined}
+                  className={control(!!errors.cargo)}
                 >
                   <option value="" disabled>Selecione…</option>
                   {CARGOS.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
                 {f.cargo === "Outro" && (
-                  <Input placeholder="Especifique o cargo" value={f.cargoOutro} onChange={(e) => set("cargoOutro", e.target.value)}
-                    className="mt-3 h-12 bg-transparent border-western-stone-warm/30 rounded-none focus-visible:border-western-gold" />
+                  <Input
+                    id="cargoOutro"
+                    placeholder="Especifique o cargo"
+                    value={f.cargoOutro}
+                    onChange={(e) => set("cargoOutro", e.target.value)}
+                    aria-invalid={!!errors.cargoOutro}
+                    className={`mt-3 ${control(!!errors.cargoOutro)}`}
+                  />
                 )}
                 {(errors.cargo || errors.cargoOutro) && (
-                  <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.cargo || errors.cargoOutro}</p>
+                  <FieldError id="cargo-error">{errors.cargo || errors.cargoOutro}</FieldError>
                 )}
               </div>
 
@@ -569,49 +615,110 @@ export default function PartnerSignup() {
                 <PasswordField id="senha2" value={f.senha2} onChange={(v) => set("senha2", v)} required error={errors.senha2} showStrength={false} />
               </div>
 
-              <label className="flex items-start gap-3 pt-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={f.aceite}
-                  onChange={(e) => set("aceite", e.target.checked)}
-                  className="mt-1 h-4 w-4 accent-western-gold flex-shrink-0"
-                />
-                <span className="text-spec text-western-stone-warm leading-relaxed">
-                  Li e concordo com a{" "}
-                  <Link to="/politica-comercial" className="link-underline text-western-gold">política comercial</Link>{" "}
-                  e a{" "}
-                  <Link to="/privacidade" className="link-underline text-western-gold">política de privacidade</Link>.
-                </span>
-              </label>
-              {errors.aceite && <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-red-700/80">{errors.aceite}</p>}
+              <div>
+                <label htmlFor="aceite" className="flex items-start gap-3 py-2 cursor-pointer">
+                  <input
+                    id="aceite"
+                    type="checkbox"
+                    checked={f.aceite}
+                    onChange={(e) => set("aceite", e.target.checked)}
+                    aria-invalid={!!errors.aceite}
+                    aria-describedby={errors.aceite ? "aceite-error" : undefined}
+                    className="mt-0.5 h-6 w-6 flex-shrink-0 rounded-sm accent-western-cta"
+                  />
+                  <span className="font-sans text-[15px] leading-relaxed text-western-stone-warm">
+                    Li e concordo com a{" "}
+                    <Link
+                      to="/politica-comercial"
+                      className="font-semibold text-western-green-deep underline underline-offset-4 decoration-western-bronze"
+                    >
+                      política comercial
+                    </Link>{" "}
+                    e a{" "}
+                    <Link
+                      to="/privacidade"
+                      className="font-semibold text-western-green-deep underline underline-offset-4 decoration-western-bronze"
+                    >
+                      política de privacidade
+                    </Link>.
+                  </span>
+                </label>
+                {errors.aceite && <FieldError id="aceite-error">{errors.aceite}</FieldError>}
+              </div>
 
-              <div className="flex gap-3 pt-2">
+              {/* CTA primário verde, full-width no mobile; "Voltar" fica abaixo no celular. */}
+              <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
                 <Button
                   type="button"
                   onClick={() => setStep(1)}
                   variant="outline"
-                  className="h-12 px-5 border-western-stone-warm/30 text-western-green-deep hover:border-western-gold rounded-none font-mono text-xs uppercase tracking-[0.22em]"
+                  size="lg"
+                  className="w-full sm:w-auto"
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Voltar
+                  <ChevronLeft aria-hidden="true" /> Voltar
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 h-12 bg-western-gold text-western-green-deep hover:bg-western-gold/90 font-mono text-xs uppercase tracking-[0.25em] rounded-none disabled:opacity-60"
-                >
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar solicitação"}
+                <Button type="submit" disabled={loading} size="lg" className="w-full sm:flex-1">
+                  {loading ? (
+                    <>
+                      <Loader2 className="animate-spin" aria-hidden="true" /> Enviando…
+                    </>
+                  ) : (
+                    "Enviar solicitação"
+                  )}
                 </Button>
               </div>
+
+              {/* Sinais de confiança perto da decisão */}
+              <ul className="space-y-2 pt-2">
+                {CONFIANCA.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-meta leading-snug">
+                    <Check className="h-5 w-5 flex-shrink-0 text-western-bronze" strokeWidth={1.75} aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
             </>
           )}
 
-          <p className="text-spec text-western-stone-warm text-center pt-4">
+          <p className="font-sans text-[15px] text-western-stone-warm text-center pt-4">
             Já é parceiro?{" "}
-            <Link to="/parceiro/login" className="link-underline text-western-gold">
+            <Link
+              to="/parceiro/login"
+              className="font-semibold text-western-green-deep underline underline-offset-4 decoration-western-bronze"
+            >
               Entrar
             </Link>
           </p>
         </form>
+
+            {/* Saída discreta para cliente final — não compete com o formulário */}
+            <p className="text-center pt-6">
+              <a
+                href={`https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
+                  "Olá Western! Sou cliente final e gostaria de comprar / fazer um projeto com pedras Western."
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 font-sans text-[14px] text-western-stone-warm underline underline-offset-4 decoration-western-border-strong transition-colors hover:text-western-green-deep"
+              >
+                Sem CNPJ? Veja as opções para a sua casa
+                <ChevronRight className="h-4 w-4" aria-hidden="true" />
+              </a>
+            </p>
+          </div>
+        </div>
+
+        {/* Prova social perto da conversão (auditoria): quem já especifica
+            Western. Reforça a decisão de se cadastrar. */}
+        <div className="mt-16 border-t border-western-border-soft pt-12 md:mt-20 md:pt-16">
+          <SocialProof
+            compact
+            variant="light"
+            groups={["profissionais", "marcas"]}
+            eyebrow="Boa companhia"
+            titulo="Arquitetos, paisagistas e marcas que já especificam Western."
+          />
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Check, ChevronDown, Minus, Plus, Trash2, X } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { ChevronDown, Minus, Plus, Trash2, X } from "lucide-react";
 import { formatPreco } from "@/data/guideMap";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
@@ -25,6 +25,16 @@ function splitDescricao(d?: string): { resumo: string; resto: string } {
   return { resumo: m[1], resto: clean.slice(m[0].length).trim() };
 }
 
+/**
+ * Detalhe da peça autoral — DS V3.
+ * Sem mono e sem itálico display: eyebrow bronze 14px, corpo 17px, meta 14px.
+ * CTA primário VERDE (btn-primary) — o dourado sai de cena aqui, porque o
+ * fundo é claro e o verde tem o contraste. Controles com 52px de altura.
+ *
+ * O `DialogContent` do shadcn já injeta um botão de fechar minúsculo (16px) no
+ * canto — abaixo do mínimo de toque. Ele é o ÚLTIMO filho do content, então
+ * `[&>button:last-child]:hidden` o esconde e nós desenhamos um X de 48px.
+ */
 export default function AutoralProductModal({ item, selected, qty, onClose, onToggle, onSetQty }: Props) {
   const { isApproved, session } = useAuth();
   const [showMais, setShowMais] = useState(false);
@@ -46,141 +56,128 @@ export default function AutoralProductModal({ item, selected, qty, onClose, onTo
         }
       }}
     >
-      <DialogContent className="max-w-[580px] p-0 bg-western-cream border-0 overflow-hidden gap-0">
+      <DialogContent className="w-[calc(100%-24px)] max-w-[580px] gap-0 overflow-hidden rounded-xl border-0 bg-western-ivory p-0 [&>button:last-child]:hidden">
         {item && (
           <>
-            {/* Botão fechar — flutuante acima de tudo */}
+            {/* Fechar — 48px, o mínimo de toque do sistema */}
             <button
               type="button"
               onClick={onClose}
               aria-label="Fechar"
-              className="absolute top-3 right-3 z-20 inline-flex items-center justify-center w-8 h-8 rounded-full bg-western-cream/95 backdrop-blur-sm text-western-stone-warm hover:text-western-green-deep hover:bg-white shadow-sm transition-colors"
+              className="tap-target absolute right-3 top-3 z-20 inline-flex items-center justify-center rounded-lg border border-western-border-soft bg-western-ivory/95 text-western-green-deep backdrop-blur-sm transition-colors hover:bg-white"
             >
-              <X className="h-4 w-4" />
+              <X className="h-5 w-5" aria-hidden />
             </button>
 
             <div className="grid grid-cols-1 md:grid-cols-[5fr_6fr]">
               {/* Imagem */}
-              <div className="relative aspect-square md:aspect-auto bg-western-paper overflow-hidden border-r border-western-stone-warm/10">
+              <div className="relative aspect-square overflow-hidden border-b border-western-border-soft bg-western-paper md:aspect-auto md:border-b-0 md:border-r">
                 {item.imageUrl ? (
                   <img
                     src={item.imageUrl}
                     alt={item.nome}
-                    className="w-full h-full object-contain p-6"
+                    className="h-full w-full object-contain p-6"
                   />
                 ) : (
-                  <div className="w-full h-full bg-western-paper" />
+                  <div className="h-full w-full bg-western-paper" />
                 )}
               </div>
 
               {/* Conteúdo */}
-              <div className="relative p-6 md:p-7 flex flex-col">
-                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold mb-2 pr-8">
-                  {item.codigo} · Item autoral
-                </p>
-                <h3 className="font-display text-[24px] text-western-green-deep leading-tight pr-8">
+              <div className="relative flex flex-col p-6 md:p-7">
+                <p className="text-eyebrow pr-14">{item.codigo} · Peça autoral</p>
+
+                {/* Archivo 650 — só aqui, porque é o único título ≥22px do modal.
+                    Utilities explícitas: as classes-base do DialogTitle (text-lg)
+                    vivem em @layer utilities e venceriam um `.display-md`. */}
+                <DialogTitle className="mt-2 pr-14 text-left font-display text-[20px] font-[650] leading-tight tracking-[-0.01em] text-western-green-deep md:text-[22px]">
                   {item.nome}
-                </h3>
-                <div className="w-8 h-px bg-western-gold mt-3 mb-4" />
+                </DialogTitle>
 
                 {/* Preço */}
-                {isApproved ? (
-                  <p className="font-display text-[28px] text-western-green-deep leading-none">
-                    {formatPreco(item.preco)}
-                  </p>
-                ) : (
-                  <div>
-                    <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-western-stone-warm">
-                      Preço para parceiros
-                    </p>
-                    <Link
-                      to={session ? "/minha-conta" : "/parceiro/login"}
-                      className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-gold hover:text-western-green-deep transition-colors mt-1 inline-block"
-                    >
-                      Acessar para ver preço →
-                    </Link>
-                  </div>
-                )}
+                <div className="mt-4">
+                  {isApproved ? (
+                    <p className="text-price">{formatPreco(item.preco)}</p>
+                  ) : (
+                    <>
+                      <p className="text-eyebrow">Preço de parceiro</p>
+                      <Link
+                        to={session ? "/minha-conta" : "/parceiro/login"}
+                        className="tap-target -ml-1 mt-0.5 inline-flex items-center gap-1.5 rounded-lg px-1 font-sans text-[15px] font-semibold text-western-green-deep underline underline-offset-4 transition-colors hover:text-western-cta"
+                      >
+                        Acessar para ver o preço
+                      </Link>
+                    </>
+                  )}
+                </div>
 
-                {resumo && (
-                  <p className="font-display italic text-[13.5px] text-western-stone-warm leading-relaxed mt-4">
-                    {resumo}
-                  </p>
-                )}
+                {resumo && <p className="text-body mt-4">{resumo}</p>}
 
-                {specs && (
-                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm/90 mt-4">
-                    {specs}
-                  </p>
-                )}
+                {specs && <p className="text-meta mt-3">{specs}</p>}
 
                 {/* CTA / Stepper */}
-                <div className="mt-5">
+                <div className="mt-6">
                   {selected ? (
                     <div className="flex items-stretch gap-2">
-                      {/* Stepper */}
-                      <div className="flex-1 inline-flex items-center justify-between border border-western-green-deep bg-white">
+                      <div className="inline-flex flex-1 items-center justify-between overflow-hidden rounded-lg border border-western-border-strong bg-white">
                         <button
                           type="button"
                           onClick={() => onSetQty(Math.max(1, qty - 1))}
                           disabled={qty <= 1}
-                          aria-label="Diminuir"
-                          className="w-11 h-11 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors disabled:opacity-30"
+                          aria-label="Diminuir quantidade"
+                          className="inline-flex h-control w-[52px] items-center justify-center text-western-green-deep transition-colors hover:bg-western-paper disabled:opacity-30"
                         >
-                          <Minus className="h-3.5 w-3.5" />
+                          <Minus className="h-4 w-4" aria-hidden />
                         </button>
-                        <div className="flex flex-col items-center">
-                          <span className="font-display text-[20px] text-western-green-deep leading-none">{qty}</span>
-                          <span className="font-mono text-[8px] uppercase tracking-[0.22em] text-western-stone-warm/70 mt-0.5">no projeto</span>
-                        </div>
+                        <span className="font-sans text-[15px] font-semibold tabular-nums text-western-green-deep">
+                          {qty} no projeto
+                        </span>
                         <button
                           type="button"
                           onClick={() => onSetQty(qty + 1)}
-                          aria-label="Aumentar"
-                          className="w-11 h-11 inline-flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+                          aria-label="Aumentar quantidade"
+                          className="inline-flex h-control w-[52px] items-center justify-center text-western-green-deep transition-colors hover:bg-western-paper"
                         >
-                          <Plus className="h-3.5 w-3.5" />
+                          <Plus className="h-4 w-4" aria-hidden />
                         </button>
                       </div>
-                      {/* Remover */}
+
                       <button
                         type="button"
                         onClick={() => { onToggle(); onClose(); }}
-                        aria-label="Remover do projeto"
-                        className="w-11 h-11 inline-flex items-center justify-center border border-western-stone-warm/30 text-western-stone-warm hover:border-western-green-deep hover:text-western-green-deep transition-colors"
+                        aria-label="Remover peça do projeto"
+                        className="inline-flex h-control w-[52px] flex-shrink-0 items-center justify-center rounded-lg border border-western-border-strong text-western-stone-warm transition-colors hover:border-western-green-deep hover:text-western-green-deep"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-5 w-5" aria-hidden />
                       </button>
                     </div>
                   ) : (
                     <button
                       type="button"
                       onClick={() => onSetQty(1)}
-                      className="w-full inline-flex items-center justify-center gap-2 h-12 bg-western-gold text-western-green-deep font-mono text-[11px] uppercase tracking-[0.22em] hover:bg-western-gold-soft transition-colors"
+                      className="btn-primary w-full"
                     >
-                      <Plus className="h-3.5 w-3.5" /> Adicionar ao projeto
+                      <Plus className="h-5 w-5" aria-hidden /> Adicionar ao projeto
                     </button>
                   )}
                 </div>
 
                 {/* Mais detalhes */}
                 {resto && (
-                  <div className="mt-4 pt-4 border-t border-western-stone-warm/15">
+                  <div className="mt-5 border-t border-western-border-soft pt-3">
                     <button
                       type="button"
                       onClick={() => setShowMais((v) => !v)}
-                      className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-western-stone-warm hover:text-western-green-deep transition-colors"
+                      aria-expanded={showMais}
+                      className="tap-target -ml-2 inline-flex items-center gap-2 rounded-lg px-2 font-sans text-[15px] font-semibold text-western-green-deep transition-colors hover:text-western-cta"
                     >
                       <ChevronDown
-                        className={cn("h-3 w-3 transition-transform", showMais && "rotate-180")}
+                        className={cn("h-4 w-4 transition-transform", showMais && "rotate-180")}
+                        aria-hidden
                       />
                       {showMais ? "Menos detalhes" : "Mais detalhes"}
                     </button>
-                    {showMais && (
-                      <p className="font-display italic text-[13px] text-western-stone-warm leading-relaxed mt-3 animate-fade-in">
-                        {resto}
-                      </p>
-                    )}
+                    {showMais && <p className="text-body animate-fade-in mt-2">{resto}</p>}
                   </div>
                 )}
               </div>
