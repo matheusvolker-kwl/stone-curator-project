@@ -85,11 +85,11 @@ export default function KitUpsell({ product, variant }: Props) {
         <button
           type="button"
           onClick={handleAddKit}
-          className="h-11 px-4 rounded-[10px] border border-western-gold text-western-green-deep hover:bg-western-gold/15 font-semibold text-[14px] uppercase tracking-[0.06em] transition-colors inline-flex items-center gap-2 flex-shrink-0"
+          className="h-11 px-4 rounded-lg border border-western-gold text-western-green-deep hover:bg-western-gold/15 font-semibold text-[14px] uppercase tracking-[0.06em] transition-colors inline-flex items-center gap-2 flex-shrink-0"
         >
           {added ? (
             <>
-              <Check className="h-3.5 w-3.5 text-western-gold" /> No pedido
+              <Check className="h-3.5 w-3.5 text-western-gold" /> No carrinho
             </>
           ) : (
             "Adicionar kit"

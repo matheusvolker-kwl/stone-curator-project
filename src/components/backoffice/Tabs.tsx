@@ -39,7 +39,7 @@ export function Tabs<K extends string>({ abas, ativa, onChange, className }: Pro
       role="tablist"
       aria-orientation="horizontal"
       className={cn(
-        "inline-flex items-center gap-1 rounded-[10px] border border-western-border-soft bg-western-paper p-1",
+        "inline-flex items-center gap-1 rounded-lg border border-western-border-soft bg-western-paper p-1",
         "max-w-full overflow-x-auto scrollbar-hide",
         className,
       )}
@@ -54,8 +54,8 @@ export function Tabs<K extends string>({ abas, ativa, onChange, className }: Pro
             aria-selected={selecionada}
             onClick={() => onChange(aba.key)}
             className={cn(
-              "tap-target inline-flex flex-shrink-0 items-center gap-2 rounded-[6px] px-4",
-              "text-[16px] font-semibold transition-colors",
+              "tap-target inline-flex flex-shrink-0 items-center gap-2 rounded-sm px-4",
+              "text-[15px] font-semibold transition-colors",
               selecionada
                 ? "bg-white text-western-green-deep shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
                 : "text-western-stone-warm hover:text-western-green-deep",
@@ -65,7 +65,7 @@ export function Tabs<K extends string>({ abas, ativa, onChange, className }: Pro
             {aba.count !== undefined && (
               <span
                 className={cn(
-                  "inline-flex min-w-[22px] items-center justify-center rounded-[6px] px-1.5 py-0.5",
+                  "inline-flex min-w-[22px] items-center justify-center rounded-sm px-1.5 py-0.5",
                   "text-[14px] font-semibold tabular-nums leading-none",
                   selecionada
                     ? "bg-western-cta text-western-cream"

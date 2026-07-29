@@ -26,8 +26,8 @@ interface Row { codigo: string; tier: Faixa; descricao: string | null }
 
 /* Dessaturado, na paleta semântica do DS: sucesso #2E7D4F · aviso #9C6812 · bronze. */
 const FAIXA_CLS: Record<Faixa, string> = {
-  verde: "border-[#2E7D4F]/30 bg-[#2E7D4F]/[0.07] text-[#2E7D4F]",
-  amarela: "border-[#9C6812]/30 bg-[#9C6812]/[0.07] text-[#9C6812]",
+  verde: "border-status-success/30 bg-status-success/[0.07] text-status-success",
+  amarela: "border-status-warning/30 bg-status-warning/[0.07] text-status-warning",
   laranja: "border-western-bronze/35 bg-western-bronze/[0.07] text-western-bronze",
 };
 
@@ -42,7 +42,7 @@ const FAIXAS: Faixa[] = ["verde", "amarela", "laranja"];
 const formatCnae = (c: string) => c.replace(/^(\d{4})(\d)(\d{2})$/, "$1-$2/$3");
 
 const campoCls =
-  "h-[52px] w-full rounded-[6px] border border-western-border-strong bg-white px-3 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/70 transition-colors focus:border-western-cta focus:outline-none focus:ring-2 focus:ring-western-cta/20";
+  "h-control w-full rounded-sm border border-western-border-strong bg-white px-3 text-[15px] text-western-green-deep placeholder:text-western-stone-warm/70 transition-colors focus:border-western-cta focus:outline-none focus:ring-2 focus:ring-western-cta/20";
 
 export default function AdminCnaeWhitelist() {
   const [rows, setRows] = useState<Row[]>([]);
@@ -146,7 +146,7 @@ export default function AdminCnaeWhitelist() {
         >
           <SelectTrigger
             aria-label={`Faixa do CNAE ${formatCnae(r.codigo)}`}
-            className={`h-[48px] w-[180px] rounded-[6px] border text-[16px] font-semibold ${FAIXA_CLS[r.tier]}`}
+            className={`h-tap w-[180px] rounded-sm border text-[15px] font-semibold ${FAIXA_CLS[r.tier]}`}
           >
             <SelectValue />
           </SelectTrigger>
@@ -163,7 +163,7 @@ export default function AdminCnaeWhitelist() {
       header: "Descrição",
       sortable: true,
       render: (r) => (
-        <span className="text-[16px] text-western-stone-warm">{r.descricao ?? "—"}</span>
+        <span className="text-[15px] text-western-stone-warm">{r.descricao ?? "—"}</span>
       ),
     },
     {
@@ -176,7 +176,7 @@ export default function AdminCnaeWhitelist() {
           type="button"
           onClick={(e) => { e.stopPropagation(); setRemoverPendente(r); }}
           aria-label={`Remover CNAE ${formatCnae(r.codigo)}`}
-          className="tap-target ml-auto inline-flex items-center justify-center rounded-[10px] text-western-stone-warm transition-colors hover:text-[#B3372E]"
+          className="tap-target ml-auto inline-flex items-center justify-center rounded-lg text-western-stone-warm transition-colors hover:text-status-error"
         >
           <Trash2 className="h-4 w-4" aria-hidden="true" />
         </button>
@@ -186,9 +186,9 @@ export default function AdminCnaeWhitelist() {
 
   return (
     <div>
-      <div className="mb-6 flex max-w-3xl items-start gap-2.5 rounded-[10px] border border-[#2E7D4F]/30 bg-[#2E7D4F]/[0.06] p-4">
-        <Info className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#2E7D4F]" aria-hidden="true" />
-        <p className="text-[16px] leading-[1.5] text-western-green-deep">
+      <div className="mb-6 flex max-w-3xl items-start gap-2.5 rounded-lg border border-status-success/30 bg-status-success/[0.06] p-4">
+        <Info className="mt-0.5 h-4 w-4 flex-shrink-0 text-status-success" aria-hidden="true" />
+        <p className="text-[15px] leading-[1.5] text-western-green-deep">
           <strong className="font-semibold">Verde</strong> aprova sozinho qualquer empresa com esse CNAE —
           principal <em>ou</em> secundário. Nunca reprova ninguém, só libera.{" "}
           <strong className="font-semibold">Amarela</strong> e <strong className="font-semibold">Laranja</strong>{" "}
@@ -197,7 +197,7 @@ export default function AdminCnaeWhitelist() {
       </div>
 
       {/* Adicionar — a única ação primária desta aba. */}
-      <section className="mb-8 rounded-[16px] border border-western-border-soft bg-western-paper p-5">
+      <section className="mb-8 rounded-xl border border-western-border-soft bg-western-paper p-5">
         <p className="text-eyebrow mb-4">Adicionar CNAE</p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-[150px_200px_1fr_auto]">
           <input
@@ -210,7 +210,7 @@ export default function AdminCnaeWhitelist() {
           />
 
           <Select value={novo.tier} onValueChange={(v) => setNovo({ ...novo, tier: v as Faixa })}>
-            <SelectTrigger aria-label="Faixa do novo CNAE" className="h-[52px] rounded-[6px] border-western-border-strong text-[16px]">
+            <SelectTrigger aria-label="Faixa do novo CNAE" className="h-control rounded-sm border-western-border-strong text-[15px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -241,7 +241,7 @@ export default function AdminCnaeWhitelist() {
           { key: "laranja", label: "Laranja", count: carregando || erro ? undefined : contagens.laranja },
         ]}
         ativa={filtro}
-        onChange={setFiltro}
+        onChange={(k) => setFiltro(k as "todos" | Faixa)}
         className="mb-4"
       />
 

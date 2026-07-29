@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-import { createPortal } from "react-dom";
-import { ChevronLeft, ChevronRight, X, Maximize2 } from "lucide-react";
+import { useMemo, useState, useCallback } from "react";
+import { ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 import { cdnImg, cdnSrcSet } from "@/lib/catalog/client";
+import Lightbox, { type LightboxFoto } from "@/components/shared/Lightbox";
 
 interface ImageNode {
   url: string;
@@ -22,119 +22,55 @@ export default function ProductGallery({
   productTitle,
 }: Props) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [zoomed, setZoomed] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const dialogRef = useRef<HTMLDivElement>(null);
-  const openedOnceRef = useRef(false);
-
 
   const total = images.length;
-  const goPrev = useCallback(
-    () => {
-      const nextIdx = (activeIndex - 1 + total) % total;
-      const nx = images[nextIdx];
+  // Pré-carrega a imagem alvo antes de trocar — a troca não pisca.
+  const goTo = useCallback(
+    (idx: number) => {
+      const nx = images[idx];
       if (nx) { const img = new Image(); img.src = cdnImg(nx.url, 1200); }
-      onChange(nextIdx);
+      onChange(idx);
     },
-    [activeIndex, total, onChange, images]
+    [onChange, images]
+  );
+  const goPrev = useCallback(
+    () => goTo((activeIndex - 1 + total) % total),
+    [goTo, activeIndex, total]
   );
   const goNext = useCallback(
-    () => {
-      const nextIdx = (activeIndex + 1) % total;
-      const nx = images[nextIdx];
-      if (nx) { const img = new Image(); img.src = cdnImg(nx.url, 1200); }
-      onChange(nextIdx);
-    },
-    [activeIndex, total, onChange, images]
+    () => goTo((activeIndex + 1) % total),
+    [goTo, activeIndex, total]
   );
 
-  // Keyboard nav + focus-trap when lightbox open
-  useEffect(() => {
-    if (!lightboxOpen) return;
-    const getFocusables = (): HTMLElement[] => {
-      const root = dialogRef.current;
-      if (!root) return [];
-      const nodes = root.querySelectorAll<HTMLElement>(
-        'button,[href],[tabindex]:not([tabindex="-1"])',
-      );
-      return Array.from(nodes).filter(
-        (el) => !el.hasAttribute("disabled") && el.offsetParent !== null,
-      );
-    };
-    // Move focus into the dialog on open
-    const focusables = getFocusables();
-    (focusables[0] ?? dialogRef.current)?.focus();
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setLightboxOpen(false);
-        return;
-      }
-      if (e.key === "ArrowLeft") {
-        goPrev();
-        return;
-      }
-      if (e.key === "ArrowRight") {
-        goNext();
-        return;
-      }
-      if (e.key === "Tab") {
-        const items = getFocusables();
-        if (items.length === 0) {
-          e.preventDefault();
-          dialogRef.current?.focus();
-          return;
-        }
-        const first = items[0];
-        const last = items[items.length - 1];
-        const active = document.activeElement as HTMLElement | null;
-        if (e.shiftKey) {
-          if (active === first || !dialogRef.current?.contains(active)) {
-            e.preventDefault();
-            last.focus();
-          }
-        } else {
-          if (active === last) {
-            e.preventDefault();
-            first.focus();
-          }
-        }
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [lightboxOpen, goPrev, goNext]);
-
-  // Return focus to trigger when closing
-  useEffect(() => {
-    if (lightboxOpen) {
-      openedOnceRef.current = true;
-    } else if (openedOnceRef.current) {
-      triggerRef.current?.focus();
-    }
-  }, [lightboxOpen]);
-
-  // Lock body scroll when lightbox open
-  useEffect(() => {
-
-    if (lightboxOpen) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = prev;
-      };
-    }
-  }, [lightboxOpen]);
+  // Fotos do lightbox compartilhado — mesmo alt da galeria, CDN responsivo.
+  const lightboxFotos = useMemo<LightboxFoto[]>(
+    () =>
+      images.map((img, idx) => ({
+        src: cdnImg(img.url, 1200),
+        srcSet: cdnSrcSet(img.url, [800, 1200, 2000]),
+        sizes: "100vw",
+        alt:
+          img.altText ??
+          (images.length > 1
+            ? `${productTitle} — imagem ${idx + 1} de ${images.length}`
+            : productTitle),
+      })),
+    [images, productTitle]
+  );
 
   if (!images.length) return null;
-  const current = images[activeIndex];
+  /* Guarda de índice: se activeIndex apontar além do array (peça nova com menos
+   * fotos que a anterior), `current` viria undefined e `current.url` derrubava a
+   * PDP inteira em TypeError — sem ErrorBoundary, era tela branca. A causa raiz
+   * é resetada na ProductPage; isto aqui é a rede de segurança. */
+  const current = images[activeIndex] ?? images[0];
+  if (!current) return null;
 
   return (
     <>
       <div className="relative group">
         <div className="frame-product aspect-square overflow-hidden relative">
           <button
-            ref={triggerRef}
             type="button"
             onClick={() => setLightboxOpen(true)}
             className="absolute inset-0 w-full h-full cursor-zoom-in"
@@ -221,75 +157,16 @@ export default function ProductGallery({
         </div>
       )}
 
-      {/* Lightbox */}
-      {lightboxOpen && typeof document !== "undefined" && createPortal(
-        <div
-          ref={dialogRef}
-          tabIndex={-1}
-          className="fixed inset-0 z-[999] bg-western-green-deep flex items-center justify-center"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Visualização ampliada"
-        >
-
-          <button
-            type="button"
-            onClick={() => setLightboxOpen(false)}
-            aria-label="Fechar (Esc)"
-            className="absolute top-4 right-4 h-11 w-11 flex items-center justify-center text-western-cream/80 hover:text-western-cream border border-western-cream/20 hover:border-western-cream/60 transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
-
-          {total > 1 && (
-            <>
-              <button
-                type="button"
-                onClick={goPrev}
-                aria-label="Imagem anterior (←)"
-                className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 h-12 w-12 flex items-center justify-center text-western-cream/80 hover:text-western-cream border border-western-cream/20 hover:border-western-cream/60 transition-colors"
-              >
-                <ChevronLeft className="h-6 w-6" />
-              </button>
-              <button
-                type="button"
-                onClick={goNext}
-                aria-label="Próxima imagem (→)"
-                className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 h-12 w-12 flex items-center justify-center text-western-cream/80 hover:text-western-cream border border-western-cream/20 hover:border-western-cream/60 transition-colors"
-              >
-                <ChevronRight className="h-6 w-6" />
-              </button>
-            </>
-          )}
-
-          <button
-            type="button"
-            onClick={() => setZoomed((z) => !z)}
-            className={`relative block mx-auto max-w-[92vw] max-h-[88vh] overflow-auto ${
-              zoomed ? "cursor-zoom-out" : "cursor-zoom-in"
-            }`}
-            aria-label={zoomed ? "Reduzir zoom" : "Ampliar"}
-          >
-            <img
-              key={activeIndex}
-              src={cdnImg(current.url, 1200)}
-              srcSet={cdnSrcSet(current.url, [800, 1200, 2000])}
-              sizes="100vw"
-              decoding="async"
-              loading="eager"
-              alt={current.altText ?? (total > 1 ? `${productTitle} — imagem ${activeIndex + 1} de ${total}` : productTitle)}
-              className={`block mx-auto transition-transform duration-300 ${
-                zoomed ? "scale-[1.6]" : "scale-100"
-              } max-w-[92vw] max-h-[88vh] object-contain`}
-            />
-          </button>
-
-          <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/70">
-            {activeIndex + 1} / {total} · ← → para navegar · esc para fechar
-          </span>
-        </div>,
-        document.body
-      )}
+      {/* Lightbox compartilhado (portal Radix, z-overlay) — mesma foto da
+          galeria; navegar dentro dele sincroniza thumbs e imagem principal. */}
+      <Lightbox
+        fotos={lightboxFotos}
+        index={lightboxOpen ? activeIndex : null}
+        onIndexChange={goTo}
+        onClose={() => setLightboxOpen(false)}
+        label={productTitle}
+        zoomable
+      />
     </>
   );
 }

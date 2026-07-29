@@ -1,10 +1,12 @@
-// Lightbox — ampliação das fotos de obra (/obras e /obras/:slug).
-// Radix Dialog dá ESC + foco preso + scroll-lock de graça; aqui só a moldura.
-// Controlado por índice: `index === null` = fechado. O alt de cada foto vem do
-// chamador e é preservado — a legenda embaixo repete o mesmo texto.
+// Lightbox — ampliação de fotos em tela cheia (obras, inspirações e PDPs).
+// Radix Dialog dá ESC + foco preso + scroll-lock + retorno de foco de graça;
+// aqui só a moldura. Controlado por índice: `index === null` = fechado.
+// O alt de cada foto vem do chamador e é preservado — a legenda embaixo
+// repete o mesmo texto.
 // Mobile: fechar é um alvo de 52px; a pinça nativa não funciona dentro do
 // Dialog (Radix trava o scroll), então navegação = setas + swipe do carrossel.
-import { useCallback, useEffect } from "react";
+// `zoomable` (PDPs): toque na foto alterna zoom 1.6× — resetado ao navegar.
+import { useCallback, useEffect, useState } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Dialog,
@@ -15,7 +17,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-export type LightboxFoto = { src: string; alt: string };
+export type LightboxFoto = {
+  src: string;
+  alt: string;
+  /** srcSet/sizes opcionais — PDPs servem a foto via CDN responsivo */
+  srcSet?: string;
+  sizes?: string;
+};
 
 type Props = {
   fotos: LightboxFoto[];
@@ -25,11 +33,19 @@ type Props = {
   onClose: () => void;
   /** rótulo do conjunto — vira o título acessível do diálogo */
   label: string;
+  /** toque na foto alterna zoom (padrão: false — obras não usam) */
+  zoomable?: boolean;
 };
 
-export default function Lightbox({ fotos, index, onIndexChange, onClose, label }: Props) {
+export default function Lightbox({ fotos, index, onIndexChange, onClose, label, zoomable = false }: Props) {
   const aberto = index !== null && index >= 0 && index < fotos.length;
   const total = fotos.length;
+  const [zoomed, setZoomed] = useState(false);
+
+  // Trocar de foto (ou fechar) volta ao enquadramento normal.
+  useEffect(() => {
+    setZoomed(false);
+  }, [index]);
 
   const ir = useCallback(
     (delta: number) => {
@@ -75,7 +91,7 @@ export default function Lightbox({ fotos, index, onIndexChange, onClose, label }
             </span>
             <DialogClose
               aria-label="Fechar"
-              className="inline-flex h-[52px] w-[52px] items-center justify-center rounded-full border border-western-cream/30 text-western-cream transition-colors hover:bg-western-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold"
+              className="inline-flex h-control w-[52px] items-center justify-center rounded-full border border-western-cream/30 text-western-cream transition-colors hover:bg-western-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold"
             >
               <X className="h-6 w-6" aria-hidden />
             </DialogClose>
@@ -83,12 +99,38 @@ export default function Lightbox({ fotos, index, onIndexChange, onClose, label }
 
           {/* Foto */}
           <div className="relative flex min-h-0 flex-1 items-center justify-center px-4 pb-2 md:px-20">
-            <img
-              src={foto.src}
-              alt={foto.alt}
-              decoding="async"
-              className="max-h-full max-w-full object-contain rounded-[10px]"
-            />
+            {zoomable ? (
+              // Botão ocupa a área toda (tamanho definido → max-h-full da foto
+              // resolve); quando ampliado, o excedente rola dentro do botão.
+              <button
+                type="button"
+                onClick={() => setZoomed((z) => !z)}
+                aria-label={zoomed ? "Reduzir zoom" : "Ampliar"}
+                className={`absolute inset-0 flex items-center justify-center overflow-auto px-4 pb-2 md:px-20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-western-gold ${
+                  zoomed ? "cursor-zoom-out" : "cursor-zoom-in"
+                }`}
+              >
+                <img
+                  src={foto.src}
+                  srcSet={foto.srcSet}
+                  sizes={foto.sizes}
+                  alt={foto.alt}
+                  decoding="async"
+                  className={`max-h-full max-w-full object-contain rounded-lg transition-transform duration-300 ${
+                    zoomed ? "scale-[1.6]" : "scale-100"
+                  }`}
+                />
+              </button>
+            ) : (
+              <img
+                src={foto.src}
+                srcSet={foto.srcSet}
+                sizes={foto.sizes}
+                alt={foto.alt}
+                decoding="async"
+                className="max-h-full max-w-full object-contain rounded-lg"
+              />
+            )}
 
             {total > 1 && (
               <>
@@ -96,7 +138,7 @@ export default function Lightbox({ fotos, index, onIndexChange, onClose, label }
                   type="button"
                   onClick={() => ir(-1)}
                   aria-label="Foto anterior"
-                  className="absolute left-2 md:left-5 inline-flex h-[52px] w-[52px] items-center justify-center rounded-full border border-western-cream/30 bg-western-green-deep/70 text-western-cream transition-colors hover:bg-western-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold"
+                  className="absolute left-2 md:left-5 inline-flex h-control w-[52px] items-center justify-center rounded-full border border-western-cream/30 bg-western-green-deep/70 text-western-cream transition-colors hover:bg-western-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold"
                 >
                   <ChevronLeft className="h-6 w-6" aria-hidden />
                 </button>
@@ -104,7 +146,7 @@ export default function Lightbox({ fotos, index, onIndexChange, onClose, label }
                   type="button"
                   onClick={() => ir(1)}
                   aria-label="Próxima foto"
-                  className="absolute right-2 md:right-5 inline-flex h-[52px] w-[52px] items-center justify-center rounded-full border border-western-cream/30 bg-western-green-deep/70 text-western-cream transition-colors hover:bg-western-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold"
+                  className="absolute right-2 md:right-5 inline-flex h-control w-[52px] items-center justify-center rounded-full border border-western-cream/30 bg-western-green-deep/70 text-western-cream transition-colors hover:bg-western-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-western-gold"
                 >
                   <ChevronRight className="h-6 w-6" aria-hidden />
                 </button>
@@ -113,9 +155,16 @@ export default function Lightbox({ fotos, index, onIndexChange, onClose, label }
           </div>
 
           {/* Legenda — o mesmo alt, visível */}
-          <p className="px-4 pb-5 pt-2 text-center font-sans text-[14px] leading-[1.5] text-western-cream-muted md:px-20">
-            {foto.alt}
-          </p>
+          <div className="px-4 pb-5 pt-2 text-center md:px-20">
+            <p className="font-sans text-[14px] leading-[1.5] text-western-cream-muted">
+              {foto.alt}
+            </p>
+            {zoomable && (
+              <p className="mt-1 font-sans text-[12px] text-western-cream-muted/70">
+                {zoomed ? "Toque na imagem para reduzir" : "Toque na imagem para ampliar"}
+              </p>
+            )}
+          </div>
         </DialogPrimitiveContent>
       </DialogPortal>
     </Dialog>

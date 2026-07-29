@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Helmet } from "react-helmet-async";
 import { Heart, ArrowRight } from "lucide-react";
 import { fetchProductsByHandles } from "@/lib/datasource";
 import ProductCard from "@/components/product/ProductCard";
+import Seo from "@/components/seo/Seo";
 
 export default function FavoritosCompartilhados() {
   const [params] = useSearchParams();
@@ -32,10 +32,14 @@ export default function FavoritosCompartilhados() {
 
   return (
     <div className="surface-ivory min-h-[60vh]">
-      <Helmet>
-        <title>Seleção compartilhada — Western</title>
-        <meta name="robots" content="noindex, nofollow" />
-      </Helmet>
+      {/* noindex: conteúdo parametrizado por link. O Seo ainda emite title/og —
+          é o que o WhatsApp mostra quando a seleção é compartilhada. */}
+      <Seo
+        title="Seleção compartilhada — Western"
+        description="Uma seleção de peças do catálogo Western enviada por alguém. Veja cada peça e monte o seu próprio orçamento."
+        path="/favoritos-compartilhados"
+        noindex
+      />
       <div className="container-western py-10 md:py-16">
         <header className="mb-10 max-w-2xl md:mb-14">
           <p className="text-eyebrow mb-4">Seleção compartilhada</p>
@@ -48,7 +52,7 @@ export default function FavoritosCompartilhados() {
 
         {handles.length === 0 ? (
           /* Vazio nunca é beco sem saída: cartão do sistema + CTA verde */
-          <div className="rounded-2xl border border-western-border-soft bg-white p-8 text-center md:p-12">
+          <div className="rounded-xl border border-western-border-soft bg-white p-8 text-center md:p-12">
             <Heart
               className="mx-auto mb-4 h-8 w-8 text-western-stone-warm/50"
               aria-hidden="true"
@@ -67,12 +71,12 @@ export default function FavoritosCompartilhados() {
             {Array.from({ length: Math.min(handles.length, 8) }).map((_, i) => (
               <div
                 key={i}
-                className="aspect-square animate-pulse rounded-[10px] bg-western-stone-warm/10"
+                className="aspect-square animate-pulse rounded-lg bg-western-stone-warm/10"
               />
             ))}
           </div>
         ) : products.length === 0 ? (
-          <div className="rounded-2xl border border-western-border-soft bg-white p-8 text-center md:p-12">
+          <div className="rounded-xl border border-western-border-soft bg-white p-8 text-center md:p-12">
             <p className="text-body mb-6">
               Nenhuma peça encontrada para esta seleção.
             </p>

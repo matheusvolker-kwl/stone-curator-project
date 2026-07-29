@@ -4,7 +4,7 @@ import {
   LayoutDashboard,
   User,
   ShoppingBag,
-  Truck,
+  Heart,
   FileStack,
   LogOut,
   ShieldCheck,
@@ -31,14 +31,15 @@ import { BUSINESS } from "@/config/business";
  * "Tentar de novo", nunca um silencioso "cadastro não localizado".
  */
 
-// Itens visíveis no menu do cliente. A lógica de tier/desconto/orçamentos/
-// sketches/favoritos/amostras/preferências continua existindo (rotas ativas e
-// tabelas intocadas) — apenas escondemos do menu enquanto o foco é o pedido.
+// Menu do cliente (arquitetura aprovada pelo dono, 2026-07-18): um substantivo
+// por tela. Rastreio virou sub-destino de Meus pedidos (link no cabeçalho da
+// página); Preferências mora dentro de Meu perfil; Sketches/Amostras foram
+// aposentadas; Favoritos volta ao menu — é o "guardar pra depois" oficial.
 const items = [
   { to: "/minha-conta", label: "Visão geral", icon: LayoutDashboard, end: true },
+  { to: "/minha-conta/orcamentos", label: "Meus orçamentos", icon: FileStack },
   { to: "/minha-conta/pedidos", label: "Meus pedidos", icon: ShoppingBag },
-  { to: "/minha-conta/rastreio", label: "Rastreio", icon: Truck },
-  { to: "/minha-conta/composicoes", label: "Composições", icon: FileStack },
+  { to: "/minha-conta/favoritos", label: "Favoritos", icon: Heart },
   { to: "/minha-conta/perfil", label: "Meu perfil", icon: User },
 ];
 
@@ -129,10 +130,11 @@ export default function AccountLayout() {
         {/* ── Cabeçalho: quem é, em que nível está, e a saída ── */}
         <header className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
           <div className="min-w-0">
+            {/* Balcão: display-md — a conta é ferramenta, não palco. */}
             <p className="text-eyebrow mb-2">Minha conta</p>
-            <h1 className="display-lg text-western-green-deep break-words">{nome}</h1>
+            <h1 className="display-md text-western-green-deep break-words">{nome}</h1>
 
-            <div className="mt-4 flex flex-wrap items-center gap-2">
+            <div className="mt-3 flex flex-wrap items-center gap-2">
               {situacao === "erro" ? null : situacao === "carregando" ? (
                 <ChipEsqueleto />
               ) : situacao === "admin" ? (
@@ -165,7 +167,7 @@ export default function AccountLayout() {
               await signOut();
               navigate("/", { replace: true });
             }}
-            className="tap-target inline-flex flex-shrink-0 items-center gap-2 self-start rounded-[10px] px-4 text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-[#B3372E]"
+            className="tap-target inline-flex flex-shrink-0 items-center gap-2 self-start rounded-lg px-4 text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-status-error"
           >
             <LogOut className="h-4 w-4" aria-hidden="true" /> Sair
           </button>
@@ -174,7 +176,7 @@ export default function AccountLayout() {
         {/* ── HERÓI: o card de credenciamento ──
             Na visão geral ele aparece inteiro. Nas telas internas ele encolhe
             para uma faixa — mas um erro ou uma pendência NUNCA somem. */}
-        <div className="mt-8">
+        <div className="mt-6">
           {situacao === "erro" ? (
             <EstadoErro
               erro={erro}
@@ -192,7 +194,7 @@ export default function AccountLayout() {
         </div>
 
         {/* ── Navegação + conteúdo ── */}
-        <div className="mt-10 flex flex-col gap-8 md:flex-row lg:gap-12">
+        <div className="mt-8 flex flex-col gap-6 md:flex-row lg:gap-10">
           <aside className="flex-shrink-0 md:w-60">
             <nav
               ref={navRef}
@@ -205,7 +207,7 @@ export default function AccountLayout() {
                   to={it.to}
                   end={it.end}
                   className={({ isActive }) =>
-                    `tap-target flex-shrink-0 inline-flex items-center gap-3 whitespace-nowrap rounded-[10px] border px-4 text-[16px] transition-colors md:w-full ${
+                    `tap-target flex-shrink-0 inline-flex items-center gap-3 whitespace-nowrap rounded-lg border px-4 text-[15px] transition-colors md:w-full ${
                       isActive
                         ? "border-western-border-soft bg-white font-semibold text-western-green-deep"
                         : "border-transparent text-western-stone-warm hover:bg-western-paper hover:text-western-green-deep"
@@ -245,7 +247,7 @@ function Hero({ situacao, perfil, pricing }: HeroProps) {
       <Card tom="positivo">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0">
-            <p className="inline-flex items-center gap-2 text-[14px] font-semibold text-[#2E7D4F]">
+            <p className="inline-flex items-center gap-2 text-[14px] font-semibold text-status-success">
               <ShieldCheck className="h-4 w-4" aria-hidden="true" /> Credenciamento aprovado
             </p>
             <h2 className="display-md mt-2 text-western-green-deep">Preço de atacado liberado</h2>
@@ -256,7 +258,7 @@ function Hero({ situacao, perfil, pricing }: HeroProps) {
 
           <div className="flex flex-shrink-0 flex-col gap-6 sm:flex-row sm:items-end sm:gap-10">
             {pricing.loading ? (
-              <div className="h-12 w-40 animate-pulse rounded-[10px] bg-western-border-soft" />
+              <div className="h-12 w-40 animate-pulse rounded-lg bg-western-border-soft" />
             ) : (
               <>
                 <Dado rotulo="Seu nível">{TIER_LABEL[pricing.tier]}</Dado>
@@ -289,7 +291,7 @@ function Hero({ situacao, perfil, pricing }: HeroProps) {
     const motivo = perfil?.pending_reason;
     return (
       <Card tom="aviso">
-        <p className="inline-flex items-center gap-2 text-[14px] font-semibold text-[#9C6812]">
+        <p className="inline-flex items-center gap-2 text-[14px] font-semibold text-status-warning">
           <Clock className="h-4 w-4" aria-hidden="true" />
           {motivo ? "Cadastro em reanálise" : "Credenciamento em análise"}
         </p>
@@ -330,7 +332,7 @@ function Hero({ situacao, perfil, pricing }: HeroProps) {
   if (situacao === "bloqueado") {
     return (
       <Card tom="negativo">
-        <p className="text-[14px] font-semibold text-[#B3372E]">
+        <p className="text-[14px] font-semibold text-status-error">
           {perfil?.status === "cancelled" ? "Credenciamento cancelado" : "Credenciamento não aprovado"}
         </p>
         <h2 className="display-md mt-2 text-western-green-deep">
@@ -377,7 +379,7 @@ function Hero({ situacao, perfil, pricing }: HeroProps) {
      tem tela própria); é um cadastro que nunca foi enviado. */
   return (
     <Card tom="aviso">
-      <p className="text-[14px] font-semibold text-[#9C6812]">Cadastro não localizado</p>
+      <p className="text-[14px] font-semibold text-status-warning">Cadastro não localizado</p>
       <h2 className="display-md mt-2 text-western-green-deep">
         Falta enviar seu credenciamento B2B
       </h2>
@@ -401,15 +403,15 @@ function FaixaStatus({ situacao }: { situacao: Situacao }) {
     bloqueado: "Credenciamento suspenso — os preços de parceiro estão ocultos.",
     "sem-cadastro": "Sem cadastro de parceiro — os preços de atacado não estão liberados.",
   };
-  const tom = situacao === "bloqueado" ? "#B3372E" : "#9C6812";
+  const tom = situacao === "bloqueado" ? "hsl(var(--status-error))" : "hsl(var(--status-warning))";
 
   return (
     <Link
       to="/minha-conta"
-      className="flex items-center justify-between gap-4 rounded-[10px] border px-4 py-3 transition-colors hover:bg-western-paper"
+      className="flex items-center justify-between gap-4 rounded-lg border px-4 py-3 transition-colors hover:bg-western-paper"
       style={{ borderColor: `${tom}55`, backgroundColor: `${tom}0F` }}
     >
-      <span className="text-[16px] font-semibold" style={{ color: tom }}>
+      <span className="text-[15px] font-semibold" style={{ color: tom }}>
         {texto[situacao]}
       </span>
       <ArrowRight className="h-4 w-4 flex-shrink-0" style={{ color: tom }} aria-hidden="true" />
@@ -422,14 +424,14 @@ function FaixaStatus({ situacao }: { situacao: Situacao }) {
  * ───────────────────────────────────────────────────────────── */
 
 const TOM_CARD: Record<string, string> = {
-  positivo: "border-[#2E7D4F]/30 bg-[#2E7D4F]/[0.05]",
-  aviso: "border-[#9C6812]/30 bg-[#9C6812]/[0.05]",
-  negativo: "border-[#B3372E]/30 bg-[#B3372E]/[0.05]",
+  positivo: "border-status-success/30 bg-status-success/[0.05]",
+  aviso: "border-status-warning/30 bg-status-warning/[0.05]",
+  negativo: "border-status-error/30 bg-status-error/[0.05]",
   neutro: "border-western-border-soft bg-white",
 };
 
 function Card({ tom, children }: { tom: keyof typeof TOM_CARD; children: React.ReactNode }) {
-  return <section className={`rounded-[16px] border p-6 md:p-8 ${TOM_CARD[tom]}`}>{children}</section>;
+  return <section className={`rounded-xl border p-6 md:p-8 ${TOM_CARD[tom]}`}>{children}</section>;
 }
 
 function Dado({
@@ -445,7 +447,7 @@ function Dado({
     <div className="min-w-0">
       <p className="text-eyebrow mb-1">{rotulo}</p>
       <p
-        className={`text-[20px] font-semibold leading-tight text-western-green-deep ${
+        className={`text-[18px] font-semibold leading-tight text-western-green-deep ${
           numerico ? "tabular-nums" : ""
         }`}
       >
@@ -458,7 +460,7 @@ function Dado({
 function Chip({ children, destaque }: { children: React.ReactNode; destaque?: boolean }) {
   return (
     <span
-      className={`inline-flex items-center whitespace-nowrap rounded-[6px] border px-2.5 py-1 text-[14px] font-semibold leading-none ${
+      className={`inline-flex items-center whitespace-nowrap rounded-sm border px-2.5 py-1 text-[14px] font-semibold leading-none ${
         destaque
           ? "border-western-gold/50 bg-western-gold/10 text-western-green-deep"
           : "border-western-border-strong bg-western-paper text-western-stone-warm"
@@ -470,21 +472,21 @@ function Chip({ children, destaque }: { children: React.ReactNode; destaque?: bo
 }
 
 function ChipEsqueleto() {
-  return <span className="inline-block h-7 w-32 animate-pulse rounded-[6px] bg-western-border-soft" />;
+  return <span className="inline-block h-7 w-32 animate-pulse rounded-sm bg-western-border-soft" />;
 }
 
 function HeroEsqueleto() {
   return (
     <div
-      className="rounded-[16px] border border-western-border-soft bg-white p-6 md:p-8"
+      className="rounded-xl border border-western-border-soft bg-white p-6 md:p-8"
       aria-busy="true"
       aria-live="polite"
     >
       <span className="sr-only">Carregando seu credenciamento…</span>
-      <div className="h-4 w-40 animate-pulse rounded-[6px] bg-western-border-soft" />
-      <div className="mt-4 h-8 w-72 max-w-full animate-pulse rounded-[6px] bg-western-border-soft/80" />
-      <div className="mt-4 h-4 w-full max-w-md animate-pulse rounded-[6px] bg-western-border-soft/60" />
-      <div className="mt-8 h-[52px] w-52 animate-pulse rounded-[10px] bg-western-border-soft/70" />
+      <div className="h-4 w-40 animate-pulse rounded-sm bg-western-border-soft" />
+      <div className="mt-4 h-8 w-72 max-w-full animate-pulse rounded-sm bg-western-border-soft/80" />
+      <div className="mt-4 h-4 w-full max-w-md animate-pulse rounded-sm bg-western-border-soft/60" />
+      <div className="mt-8 h-control w-52 animate-pulse rounded-lg bg-western-border-soft/70" />
     </div>
   );
 }

@@ -34,7 +34,7 @@ export default function GuideHeader({ breadcrumb, step }: Props) {
           <Link
             to={breadcrumb.to}
             aria-label={breadcrumb.label}
-            className="md:hidden tap-target -ml-3 inline-flex items-center justify-center rounded-[10px] text-western-green-deep hover:bg-western-paper transition-colors"
+            className="md:hidden tap-target -ml-3 inline-flex items-center justify-center rounded-lg text-western-green-deep hover:bg-western-paper transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>
@@ -45,7 +45,7 @@ export default function GuideHeader({ breadcrumb, step }: Props) {
         </Link>
 
         <span aria-hidden className="hidden md:block w-px h-8 bg-western-border-strong" />
-        <span className="hidden md:inline lg:hidden font-sans text-[17px] font-semibold text-western-green-deep truncate">
+        <span className="hidden md:inline lg:hidden font-sans text-[16px] font-semibold text-western-green-deep truncate">
           Monte seu projeto
         </span>
 
@@ -109,7 +109,7 @@ export default function GuideHeader({ breadcrumb, step }: Props) {
           <Link
             to="/"
             aria-label="Sair do guia"
-            className="tap-target -mr-3 md:mr-0 inline-flex items-center justify-center gap-2 rounded-[10px] px-2 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-stone-warm hover:text-western-green-deep hover:bg-western-paper transition-colors"
+            className="tap-target -mr-3 md:mr-0 inline-flex items-center justify-center gap-2 rounded-lg px-2 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-stone-warm hover:text-western-green-deep hover:bg-western-paper transition-colors"
           >
             <span className="hidden md:inline">Sair do guia</span>
             <X className="h-5 w-5 md:h-4 md:w-4" />

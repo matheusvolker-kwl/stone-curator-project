@@ -28,7 +28,7 @@ export default function AcabamentoCard({ value, index, selected, onSelect }: Pro
       onClick={() => onSelect(value)}
       aria-pressed={selected}
       className={cn(
-        "group flex h-full w-full flex-col gap-3 rounded-[10px] border-2 bg-white p-4 text-left transition-colors duration-200 min-h-[120px]",
+        "group flex h-full w-full flex-col gap-3 rounded-lg border-2 bg-white p-4 text-left transition-colors duration-200 min-h-[120px]",
         selected
           ? "border-western-cta bg-western-ivory shadow-[0_18px_32px_-26px_hsl(var(--western-stone-dark)/0.4)]"
           : "border-western-border-soft hover:border-western-border-strong hover:bg-western-paper"
@@ -59,12 +59,12 @@ export default function AcabamentoCard({ value, index, selected, onSelect }: Pro
 
       <div className="mt-auto min-w-0">
         <span className="text-eyebrow block tabular-nums">{String(index).padStart(2, "0")}</span>
-        <span className="mt-1 block font-sans text-[20px] font-semibold leading-tight text-western-green-deep">
+        <span className="mt-1 block font-sans text-[18px] font-semibold leading-tight text-western-green-deep">
           {meta.label}
         </span>
 
         {meta.tag && (
-          <span className="mt-2 inline-flex items-center rounded-[6px] bg-western-gold px-2 py-1 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-green-deep">
+          <span className="mt-2 inline-flex items-center rounded-sm bg-western-gold px-2 py-1 font-sans text-[14px] font-semibold tracking-[0.06em] text-western-green-deep">
             {meta.tag}
           </span>
         )}

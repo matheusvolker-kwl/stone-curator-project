@@ -12,6 +12,7 @@ import {
   ChevronRight,
   ArrowRight,
   MessageCircle,
+  Home,
 } from "lucide-react";
 import { useWishlist } from "@/hooks/useWishlist";
 import logoVerde from "@/assets/logo-horizontal-verde.png";
@@ -44,10 +45,19 @@ import {
  * ---------------------------------------------------------------------------
  * REGRA DE PRIORIDADE DO NAV — do mais importante ao menos (esq. → dir.)
  * ---------------------------------------------------------------------------
- *   1. VENDER  — leva à peça e ao carrinho ....... Catálogo · Conjuntos · Guia
- *   2. CONFIAR — prova que a Western entrega ..... Inspirações
+ *   1. VENDER  — leva à peça e ao carrinho ....... Catálogo · Conjuntos prontos
+ *   2. CONFIAR — prova que a Western entrega ..... Obras · A pedra
  *   3. CAPTAR  — vira lead quando não há CNPJ .... Para sua casa
  *   4. AGIR    — a ação primária, isolada à dir .. Seja parceiro (verde)
+ *
+ *   2026-07-17 (6 movimentos aprovados pelo dono): "A pedra" SUBIU ao topo —
+ *   é a página que responde a pergunta nº 1 do visitante frio ("isso é pedra
+ *   de verdade?") e estava enterrada no drawer. "Guia de composição" DESCEU:
+ *   é ferramenta de meio de jornada (o próprio drawer o classifica em
+ *   "Decidir") e já tem 3 entradas a um clique (mega-menu "Montar no guia",
+ *   drawer, rodapé) — a regra da PORTA ÚNICA se aplica. O ☰ Menu migrou para
+ *   o INÍCIO da fileira (o drawer nasce da esquerda; o gatilho colado no CTA
+ *   diluía a única ação da barra). O CTA ficou sozinho na zona direita.
  *
  *   Regra de corte: se uma entrada não serve a 1–4, ela NÃO fica no topo —
  *   vive no drawer. É o que mantém o nav em 5 links + 1 ação.
@@ -83,12 +93,14 @@ import {
 const NAV_INTENTS = [
   // 1. VENDER
   { to: "/linhas", label: "Catálogo" },
-  { to: "/conjuntos", label: "Conjuntos" },
-  { to: "/guia-de-composicao", label: "Guia de composição" },
+  // "prontos" é o qualificador que o próprio rodapé já usava — "Conjuntos"
+  // seco não diz se é linha, kit ou categoria.
+  { to: "/conjuntos", label: "Conjuntos prontos" },
   // 2. CONFIAR
   { to: "/obras", label: "Obras" },
+  { to: "/a-pedra", label: "A pedra" },
   // 3. CAPTAR — hub B2C: sem CNPJ, a Western executa (vira lead turnkey).
-  //    (Não confundir com /contrate-a-western, que é a página com formulário.)
+  //    (Não confundir com /contrate-a-western, que é a página de SERVIÇOS B2B.)
   { to: "/para-sua-casa", label: "Para sua casa" },
 ];
 
@@ -229,7 +241,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
       <ul
         id={`${idPrefix}search-suggestions`}
         role="listbox"
-        className="bg-white border border-western-border-soft rounded-[10px] shadow-lg max-h-[60vh] overflow-y-auto overflow-hidden"
+        className="bg-white border border-western-border-soft rounded-lg shadow-lg max-h-[60vh] overflow-y-auto overflow-hidden"
       >
         {suggestions.atalhos.length > 0 && (
           <li className="text-eyebrow px-4 pt-4 pb-2">Ir para</li>
@@ -253,11 +265,11 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 active ? "bg-western-paper" : "hover:bg-western-paper"
               }`}
             >
-              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[6px] bg-western-cta/10">
+              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-sm bg-western-cta/10">
                 <ArrowRight className="h-5 w-5 text-western-cta" aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[16px] font-semibold text-western-green-deep">
+                <p className="truncate text-[15px] font-semibold text-western-green-deep">
                   {a.label}
                 </p>
                 <p className="truncate text-[14px] text-western-stone-warm">{a.desc}</p>
@@ -287,7 +299,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 active ? "bg-western-paper" : "hover:bg-western-paper"
               }`}
             >
-              <div className="h-11 w-11 flex-shrink-0 bg-western-paper rounded-[6px] overflow-hidden">
+              <div className="h-11 w-11 flex-shrink-0 bg-western-paper rounded-sm overflow-hidden">
                 {c.image?.url && (
                   <img
                     src={cdnImg(c.image.url, 80)}
@@ -297,7 +309,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                   />
                 )}
               </div>
-              <span className="text-[16px] font-medium text-western-green-deep truncate">
+              <span className="text-[15px] font-medium text-western-green-deep truncate">
                 {c.title}
               </span>
             </li>
@@ -328,7 +340,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 active ? "bg-western-paper" : "hover:bg-western-paper"
               }`}
             >
-              <div className="h-11 w-11 flex-shrink-0 bg-western-paper rounded-[6px] overflow-hidden">
+              <div className="h-11 w-11 flex-shrink-0 bg-western-paper rounded-sm overflow-hidden">
                 {img?.url && (
                   <img
                     src={cdnImg(img.url, 80)}
@@ -339,7 +351,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[16px] font-medium text-western-green-deep truncate">
+                <p className="text-[15px] font-medium text-western-green-deep truncate">
                   {node.title}
                 </p>
                 {price && isApproved && (
@@ -358,18 +370,18 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   /* Ação do header: ícone + rótulo (público 40+ não decifra ícone mudo).
      56x48 mínimo — alvo de toque do DS. */
   const actionCls =
-    "relative inline-flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 rounded-[6px] text-[14px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors";
+    "relative inline-flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-tap px-2 rounded-sm text-[14px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors";
 
   const navLinkCls = ({ isActive }: { isActive: boolean }) =>
-    `inline-flex items-center min-h-[48px] px-3 xl:px-3.5 text-[16px] font-medium whitespace-nowrap border-b-2 transition-colors ${
+    `inline-flex items-center min-h-tap px-3 xl:px-3.5 text-[15px] font-medium whitespace-nowrap border-b-2 transition-colors ${
       isActive
         ? "border-western-gold text-western-green-deep font-semibold"
         : "border-transparent text-western-green-deep hover:border-western-gold"
     }`;
 
-  /* Linha do drawer — 56px de alvo, hairline, chevron. */
+  /* Linha do drawer — Balcão: 48px de alvo (≥ tap-min), rótulo 16px. */
   const rowCls =
-    "flex items-center justify-between gap-3 w-full min-h-[56px] py-2 text-left border-b border-western-border-soft text-[17px] font-medium text-western-green-deep hover:text-western-cta transition-colors";
+    "flex items-center justify-between gap-3 w-full min-h-[48px] py-1.5 text-left border-b border-western-border-soft text-[15px] font-medium text-western-green-deep hover:text-western-cta transition-colors";
 
   const drawerLink = (to: string, label: string, sub?: string) => (
     <Link key={`${to}-${label}`} to={to} className={rowCls} onClick={() => setMenuOpen(false)}>
@@ -415,16 +427,18 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         <Link
           to="/"
           aria-label="Western — Início"
-          className="flex-shrink-0 inline-flex items-center min-h-[48px]"
+          className="flex-shrink-0 inline-flex items-center min-h-tap"
         >
           <img src={logoVerde} alt="Western" className="h-7 sm:h-8 lg:h-10 w-auto" />
         </Link>
 
-        {/* Busca persistente (desktop). Mesmo motor de sugestões do painel mobile. */}
-        <div className="hidden lg:block relative flex-1 max-w-[420px]">
+        {/* Busca persistente — desktop E tablet (2026-07-17): em 768px havia
+            342px de miolo morto medido, com a busca ("a alavanca de conversão
+            mais barata da loja") escondida atrás de um toque. md:block resolve. */}
+        <div className="hidden md:block relative flex-1 max-w-[420px]">
           <form
             onSubmit={handleSearch}
-            className="flex items-center gap-3 px-4 h-[52px] rounded-[10px] border-[1.5px] border-western-border-strong bg-white focus-within:border-western-cta transition-colors"
+            className="flex items-center gap-3 px-4 h-control rounded-lg border-[1.5px] border-western-border-strong bg-white focus-within:border-western-cta transition-colors"
           >
             <Search className="h-5 w-5 text-western-stone-warm flex-shrink-0" strokeWidth={1.75} />
             <input
@@ -436,7 +450,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               type="search"
               placeholder="Buscar linha, peça, código…"
               aria-label="Buscar no catálogo"
-              className="flex-1 min-w-0 bg-transparent outline-none text-[16px] text-western-green-deep placeholder:text-western-stone-warm/70"
+              className="flex-1 min-w-0 bg-transparent outline-none text-[15px] text-western-green-deep placeholder:text-western-stone-warm/70"
               role="combobox"
               aria-expanded={suggestOpen}
               aria-controls="d-search-suggestions"
@@ -448,7 +462,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 type="button"
                 onClick={() => setQuery("")}
                 aria-label="Limpar busca"
-                className="inline-flex items-center justify-center h-9 w-9 -mr-2 rounded-[6px] text-western-stone-warm hover:text-western-green-deep transition-colors"
+                className="inline-flex items-center justify-center h-9 w-9 -mr-2 rounded-sm text-western-stone-warm hover:text-western-green-deep transition-colors"
               >
                 <X className="h-5 w-5" strokeWidth={1.75} />
               </button>
@@ -460,12 +474,13 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         </div>
 
         <div className="ml-auto flex items-center gap-1 lg:gap-2">
-          {/* Busca no mobile = painel superior (não há largura para um campo fixo). */}
+          {/* Busca no mobile = painel superior (não há largura para um campo
+              fixo). Do tablet pra cima o campo inline assume (md:block acima). */}
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
             aria-label="Buscar no catálogo"
-            className={`lg:hidden ${actionCls}`}
+            className={`md:hidden ${actionCls}`}
           >
             <Search className="h-6 w-6" strokeWidth={1.75} />
             Buscar
@@ -475,28 +490,38 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               (a empresa passa a ser o cabeçalho de dentro do menu, onde ela
               informa sem roubar o rótulo). Deslogado: "Entrar". */}
           {session ? (
-            <DropdownMenu>
+            /* modal={false}: sem a trava de scroll do Radix (que, em header
+               sticky, causava o salto ao abrir). onCloseAutoFocus preventDefault:
+               impede o Radix de re-focar o gatilho sticky ao fechar — era esse
+               re-foco que rolava a página pro topo ("corre pra cima", dono
+               2026-07-18). Foco volta pro body; a11y de teclado preservada no
+               essencial (o menu ainda navega por seta ao abrir). */
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
-                <button aria-label="Minha conta" className={`hidden lg:inline-flex ${actionCls}`}>
+                <button aria-label="Minha conta" className={`hidden md:inline-flex ${actionCls}`}>
                   <User className="h-6 w-6" strokeWidth={1.75} />
                   Minha conta
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64">
+              <DropdownMenuContent
+                align="end"
+                className="w-64"
+                onCloseAutoFocus={(e) => e.preventDefault()}
+              >
                 <div className="px-2 py-2">
-                  <p className="text-[16px] font-semibold text-western-green-deep truncate">
+                  <p className="text-[15px] font-semibold text-western-cream truncate">
                     {contaLabel}
                   </p>
-                  <p className="text-[14px] text-western-stone-warm">
+                  <p className="text-[14px] text-western-cream/70">
                     {isApproved ? "Parceiro credenciado" : "Credenciamento em análise"}
                   </p>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-[16px] py-2.5" onClick={() => navigate("/minha-conta")}>
+                <DropdownMenuItem className="text-[15px] py-2.5" onClick={() => navigate("/minha-conta")}>
                   <User className="h-4 w-4 mr-2" /> Minha conta
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="text-[16px] py-2.5"
+                  className="text-[15px] py-2.5"
                   onClick={() => navigate("/minha-conta/favoritos")}
                 >
                   <Heart className="h-4 w-4 mr-2" /> Favoritos
@@ -507,13 +532,13 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                   )}
                 </DropdownMenuItem>
                 {isAdmin && (
-                  <DropdownMenuItem className="text-[16px] py-2.5" onClick={() => navigate("/admin")}>
+                  <DropdownMenuItem className="text-[15px] py-2.5" onClick={() => navigate("/admin")}>
                     <ShieldCheck className="h-4 w-4 mr-2" /> Painel admin
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  className="text-[16px] py-2.5"
+                  className="text-[15px] py-2.5"
                   onClick={async () => {
                     await signOut();
                     navigate("/", { replace: true });
@@ -524,9 +549,14 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link to="/parceiro/login" aria-label="Entrar" className={`hidden lg:inline-flex ${actionCls}`}>
+            <Link
+              to="/parceiro/login"
+              aria-label="Entrar para ver preços"
+              /* Em loja de preço gated, login É o preço — o rótulo diz o benefício. */
+              className={`hidden md:inline-flex ${actionCls}`}
+            >
               <User className="h-6 w-6" strokeWidth={1.75} />
-              Entrar
+              Entrar · ver preços
             </Link>
           )}
 
@@ -542,21 +572,25 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
             }
             className={`${actionCls} -mr-2 ${pulse ? "anim-settle" : ""}`}
           >
-            <ShoppingBag className="h-6 w-6" strokeWidth={1.75} />
+            {/* O badge ancora no ÍCONE, não na button. Antes era absolute
+                right-0 da button — mas a button é larga (tem o rótulo "Meu
+                carrinho"), então o número flutuava no canto direito, longe do
+                ícone: era o "desalinhado". Wrapper relative no ícone resolve. */}
+            <span className="relative inline-flex">
+              <ShoppingBag className="h-6 w-6" strokeWidth={1.75} />
+              {totalItems > 0 && (
+                <span
+                  className={`absolute -top-2 -right-2.5 min-w-[20px] h-[20px] px-1 inline-flex items-center justify-center rounded-full bg-western-cta text-western-cream text-[12px] font-bold leading-none tabular-nums transition-shadow ${
+                    pulse ? "ring-2 ring-western-gold/60 ring-offset-1 ring-offset-western-ivory" : ""
+                  }`}
+                >
+                  {totalItems}
+                </span>
+              )}
+            </span>
             {/* Em 360px o rótulo cheio estouraria a fileira — abaixo de sm, "Carrinho". */}
             <span className="sm:hidden">Carrinho</span>
             <span className="hidden sm:inline">Meu carrinho</span>
-            {totalItems > 0 && (
-              <span
-                className={`absolute top-0 right-0 min-w-[22px] h-[22px] px-1 inline-flex items-center justify-center rounded-full bg-western-cta text-western-cream text-[13px] font-bold tabular-nums transition-shadow ${
-                  pulse ? "ring-2 ring-western-gold/60 ring-offset-1 ring-offset-western-ivory" : ""
-                }`}
-              >
-                {/* O dígito senta acima da baseline (sobra de descender); um leve
-                    nudge pra baixo o centra opticamente no círculo. */}
-                <span className="block leading-none translate-y-[0.5px]">{totalItems}</span>
-              </span>
-            )}
           </button>
         </div>
       </div>
@@ -570,6 +604,34 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
         className="hidden lg:block border-t border-western-border-soft"
       >
         <div className="container-western flex items-center gap-1 xl:gap-2 py-1">
+          {/* ☰ Menu no INÍCIO (2026-07-17): o drawer nasce da esquerda — o
+              gatilho agora fica do lado de onde a coisa abre (no mobile sempre
+              foi assim). E é onde ML/Leroy/Amazon põem o "todos os
+              departamentos": memória muscular do público 40+. Sair da zona
+              direita devolve ao CTA o isolamento que a regra 4 exige. */}
+          <button
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Abrir menu completo"
+            className="-ml-3 inline-flex items-center gap-2 min-h-tap px-3 text-[15px] font-medium text-western-green-deep border-b-2 border-transparent hover:border-western-gold transition-colors"
+          >
+            <Menu className="h-5 w-5" strokeWidth={1.75} />
+            Menu
+          </button>
+          <span aria-hidden="true" className="mx-1 h-6 w-px bg-western-border-soft" />
+
+          {/* INÍCIO — porta de volta explícita (dono, 2026-07-18: "ao clicar no
+              logo a página às vezes não responde, ou demora muito"). A logo
+              continua levando pra home, mas ela é uma CONVENÇÃO, não uma
+              afordância: não parece clicável e não tem estado ativo. Um destino
+              nomeado resolve os dois — e o ícone dá o reconhecimento imediato
+              que o dono pediu ("ícones quando pudermos pra facilitar"). `end`
+              porque sem ele a rota "/" casa com tudo e o item nunca desliga. */}
+          <NavLink to="/" end className={navLinkCls}>
+            <Home className="mr-1.5 h-4 w-4" strokeWidth={1.75} aria-hidden />
+            Início
+          </NavLink>
+
           {/* "Catálogo" é o gatilho do mega-menu por cena (só desktop). */}
           <CatalogMegaMenu navLinkCls={navLinkCls} />
           {NAV_INTENTS.slice(1).map((item) => (
@@ -578,30 +640,20 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
             </NavLink>
           ))}
 
-          {/* Bloco direito: o "resto" (drawer) e, isolada, a ação primária. */}
-          <div className="ml-auto flex items-center gap-2 xl:gap-3">
-            <button
-              type="button"
-              onClick={() => setMenuOpen(true)}
-              aria-label="Abrir menu completo"
-              className="inline-flex items-center gap-2 min-h-[48px] px-3 text-[16px] font-medium text-western-green-deep border-b-2 border-transparent hover:border-western-gold transition-colors"
+          {/* Zona direita: SÓ a ação primária (logado, fica vazia — o CTA de
+              cadastro não faz sentido pra quem já tem conta). */}
+          {!session && (
+            <Link
+              to={PARTNER_INTENT.to}
+              /* h-10 (não min-h-tap): o botão tinha só 4px de folga na barra e
+                 encostava no border-b do header (dono: "apertado entre as
+                 margens"). 40px dá 8px de respiro — a barra mantém a altura pelo
+                 Menu (min-h-tap), então nada de sticky se desloca. */
+              className="ml-auto inline-flex h-10 items-center justify-center px-5 rounded-lg bg-western-cta text-western-cream text-[15px] font-semibold whitespace-nowrap hover:bg-western-green-deep transition-colors"
             >
-              <Menu className="h-5 w-5" strokeWidth={1.75} />
-              Menu
-            </button>
-
-            {!session && (
-              <>
-                <span aria-hidden="true" className="h-6 w-px bg-western-border-soft" />
-                <Link
-                  to={PARTNER_INTENT.to}
-                  className="inline-flex items-center justify-center min-h-[48px] px-5 rounded-[10px] bg-western-cta text-western-cream text-[16px] font-semibold whitespace-nowrap hover:bg-western-green-deep transition-colors"
-                >
-                  {PARTNER_INTENT.label}
-                </Link>
-              </>
-            )}
-          </div>
+              {PARTNER_INTENT.label}
+            </Link>
+          )}
         </div>
       </nav>
 
@@ -622,7 +674,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               <button
                 onClick={() => setMenuOpen(false)}
                 aria-label="Fechar menu"
-                className="-mr-2 inline-flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] rounded-[6px] text-[14px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors"
+                className="-mr-2 inline-flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-tap rounded-sm text-[14px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors"
               >
                 <X className="h-6 w-6" strokeWidth={1.75} />
                 Fechar
@@ -639,11 +691,11 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                     <Link
                       to="/minha-conta"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-3 w-full min-h-[64px] px-4 rounded-[10px] bg-western-paper border border-western-border-soft hover:border-western-cta transition-colors"
+                      className="flex items-center gap-3 w-full min-h-[56px] px-4 rounded-lg bg-western-paper border border-western-border-soft hover:border-western-cta transition-colors"
                     >
                       <User className="h-6 w-6 shrink-0 text-western-cta" strokeWidth={1.75} />
                       <span className="min-w-0 flex-1">
-                        <span className="block text-[17px] font-semibold text-western-green-deep">
+                        <span className="block text-[15px] font-semibold text-western-green-deep">
                           Minha conta
                         </span>
                         <span className="block text-[14px] font-normal text-western-stone-warm truncate">
@@ -680,7 +732,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                     <Link
                       to="/parceiro/cadastro"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center justify-center w-full min-h-[52px] px-5 rounded-[10px] bg-western-cta text-western-cream text-[17px] font-semibold hover:bg-western-green-deep transition-colors"
+                      className="flex items-center justify-center w-full min-h-control px-5 rounded-lg bg-western-cta text-western-cream text-[15px] font-semibold hover:bg-western-green-deep transition-colors"
                     >
                       Seja parceiro
                     </Link>
@@ -694,11 +746,21 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 )}
               </div>
 
+              {/* INÍCIO — primeira linha de navegação do drawer. No celular a
+                  logo fica no topo da barra e é alvo pequeno; quem está no meio
+                  de uma página funda precisa de uma volta NOMEADA. Sem ícone de
+                  propósito: nenhuma outra linha do drawer tem, e um ícone
+                  sozinho leria como erro, não como destaque. */}
+              {drawerLink("/", "Início", "A página inicial")}
+
               {/* 1. VENDER */}
-              <p className="text-eyebrow mt-7 mb-1">Comprar</p>
-              {drawerLink("/linhas", "Catálogo", "As 11 linhas do ateliê")}
+              <p className="text-eyebrow mt-5 mb-1">Comprar</p>
+              {/* "8 linhas" é a CONTAGEM OFICIAL (decisão do dono, 2026-07-17):
+                  é o que o hero diz e o que a página /linhas mostra em cards.
+                  O site dizia 8, 9 e 11 em três lugares — acabou. */}
+              {drawerLink("/linhas", "Catálogo", "As 8 linhas do ateliê")}
               {drawerLink("/produtos", "Todas as peças", "A coleção inteira, com filtros")}
-              {drawerLink("/conjuntos", "Conjuntos", "Kits prontos por tipo de projeto")}
+              {drawerLink("/conjuntos", "Conjuntos prontos", "Combinações por tipo de projeto")}
               {drawerLink("/western-box", "Western Box", "Amostras · o valor volta como crédito no 1º pedido")}
               {drawerLink(
                 "/carrinho",
@@ -710,23 +772,28 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               {drawerLink("/como-comprar", "Como comprar", "Preço de parceiro em 4 passos")}
 
               {/* 2. CONFIAR */}
-              <p className="text-eyebrow mt-7 mb-1">Decidir</p>
+              <p className="text-eyebrow mt-5 mb-1">Decidir</p>
               {drawerLink("/guia-de-composicao", "Guia de composição", "Monte seu projeto em 3 passos")}
               {drawerLink("/obras", "Obras", "Obras e projetos reais")}
 
-              {/* 3. CAPTAR — a rampa B2C. Agrupada e rotulada pela PERGUNTA do
-                  visitante ("não tenho CNPJ"), para o B2B pular e o B2C achar. */}
-              <p className="text-eyebrow mt-7 mb-1">Sem CNPJ?</p>
-              {drawerLink("/para-sua-casa", "Para sua casa", "A Western executa pra você")}
-              {drawerLink("/contrate-a-western", "Contrate a Western", "Consultoria, projeto 3D e instalação")}
+              {/* SERVIÇOS — B2B contratando capacidade (projeto 3D, consultoria,
+                  execução). Estava arquivado sob "Sem CNPJ?" — mas o laguista
+                  COM CNPJ procurando projeto 3D pulava o grupo inteiro. Decisão
+                  das duas portas (dono, 2026-07-17): /contrate-a-western é a
+                  porta de serviços B2B; /para-sua-casa é a B2C. */}
+              <p className="text-eyebrow mt-5 mb-1">Serviços</p>
+              {drawerLink("/contrate-a-western", "Contrate a Western", "Projeto 3D, consultoria e execução — com o seu projeto")}
 
-              <p className="text-eyebrow mt-7 mb-1">Ateliê</p>
+              {/* 3. CAPTAR — a rampa B2C. Rotulada pela PERGUNTA do visitante
+                  ("não tenho CNPJ"), para o B2B pular e o B2C achar. */}
+              <p className="text-eyebrow mt-5 mb-1">Sem CNPJ?</p>
+              {drawerLink("/para-sua-casa", "Para sua casa", "A Western executa pra você")}
+
+              <p className="text-eyebrow mt-5 mb-1">Ateliê</p>
               {/* "A pedra" vem ANTES de "Sobre": quem chega frio pergunta o que
-                  é a peça antes de perguntar quem a fabrica. O nav principal
-                  (6 slots cheios, regra de prioridade no topo deste arquivo)
-                  não foi tocado — a decisão de promover "A pedra" ao topo é do
-                  dono. As 5 entradas (home, PDP, drawer, rodapé, redirect de
-                  /por-que-western) já resolvem a orfandade sem isso. */}
+                  é a peça antes de perguntar quem a fabrica. Desde 2026-07-17
+                  ela também está no nav principal (decisão do dono) — aqui é o
+                  superset, e a entrada fica pra quem navega pelo drawer. */}
               {drawerLink("/a-pedra", "A pedra", "Como é feita · por que pesa 10× menos")}
               {drawerLink("/sobre", "Sobre o ateliê", `Cajamar/SP · desde ${BUSINESS.fundadaEm}`)}
               <a
@@ -747,10 +814,13 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               {drawerLink("/contato", "Contato")}
               {drawerLink("/faq", "Perguntas frequentes")}
 
-              <p className="text-eyebrow mt-7 mb-1">Políticas</p>
-              {drawerLink("/politica-comercial", "Política comercial e de entrega")}
-              {drawerLink("/trocas-e-avarias", "Trocas e avarias")}
-              {drawerLink("/privacidade", "Privacidade")}
+              {/* AS POLÍTICAS SAÍRAM DAQUI (dono, 2026-07-18: "no menu lateral,
+                  tirar todas as Políticas. Vamos manter isso só no rodapé").
+                  Política comercial, trocas/avarias e privacidade seguem vivas
+                  em /politica-comercial, /trocas-e-avarias e /privacidade, todas
+                  linkadas no Footer — nenhum link morreu, nenhuma rota sumiu.
+                  Elas ocupavam o fim do drawer, que é território de navegação,
+                  não de contrato: quem abre o menu quer ir a algum lugar. */}
             </nav>
           </div>
         </SheetContent>
@@ -765,7 +835,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
           <SheetTitle className="text-eyebrow mb-3">Buscar no catálogo</SheetTitle>
           <form
             onSubmit={handleSearch}
-            className="flex items-center gap-3 px-4 h-[52px] rounded-[10px] border-[1.5px] border-western-border-strong bg-white focus-within:border-western-cta transition-colors"
+            className="flex items-center gap-3 px-4 h-control rounded-lg border-[1.5px] border-western-border-strong bg-white focus-within:border-western-cta transition-colors"
           >
             <Search className="h-5 w-5 text-western-stone-warm flex-shrink-0" strokeWidth={1.75} />
             <input
@@ -777,7 +847,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
               onKeyDown={handleSearchKeyDown}
               type="search"
               placeholder="Buscar linha, peça, código…"
-              className="flex-1 min-w-0 bg-transparent outline-none text-[16px] text-western-green-deep placeholder:text-western-stone-warm/70"
+              className="flex-1 min-w-0 bg-transparent outline-none text-[15px] text-western-green-deep placeholder:text-western-stone-warm/70"
               role="combobox"
               aria-expanded={suggestOpen}
               aria-controls="m-search-suggestions"

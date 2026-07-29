@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { fetchProductsByHandles } from "@/lib/datasource";
@@ -16,6 +16,7 @@ import {
   type Nivel,
 } from "@/data/guideMap";
 import GatedPrice from "@/components/shared/GatedPrice";
+import Seo from "@/components/seo/Seo";
 import { ArrowRight, SlidersHorizontal, X } from "lucide-react";
 import { conjuntoRenders } from "@/data/conjuntoRenders";
 import { nivelImage } from "@/components/guide-v2/imagery";
@@ -77,7 +78,7 @@ const NIVEL_ADJETIVO: Record<Nivel, string> = {
 };
 
 export default function Conjuntos() {
-  const { data: products, isLoading } = useQuery({
+  const { data: products } = useQuery({
     queryKey: ["conjuntos", "all-handles"],
     queryFn: () => fetchProductsByHandles(ALL_HANDLES),
     staleTime: 1000 * 60 * 5,
@@ -126,6 +127,12 @@ export default function Conjuntos() {
     return map;
   }, [filtered]);
 
+  // Primeira categoria com resultado — a faixa do guia entra LOGO APÓS ela, para
+  // o cliente ver conjuntos na 1ª dobra antes do "não sabe por onde começar?".
+  const primeiroTipoComResultado = TIPOS_ORDER.find(
+    (t) => (grouped.get(t)?.length ?? 0) > 0,
+  );
+
   const toggleTipo = (t: Tipo) => {
     setTiposSel((prev) => {
       const next = new Set(prev);
@@ -162,45 +169,35 @@ export default function Conjuntos() {
 
   return (
     <div className="surface-ivory min-h-screen">
-      {/* HERO */}
+      <Seo
+        title="Conjuntos curados — Western"
+        description="Composições prontas organizadas pelo local de aplicação — piscinas, lagos, lagos híbridos e jardins. Pedras, volumes e acabamentos já equilibrados."
+        path="/conjuntos"
+      />
+      {/* HERO — compacto, coluna única. O card do guia SAIU daqui (o dono:
+          "demora muito na 1ª dobra até ver que tem produtos"): ele desce para
+          uma faixa logo após a primeira categoria de conjuntos. Assim os
+          conjuntos aparecem já na dobra, e o "não sabe por onde começar?" vira
+          ajuda para quem rolou e ficou indeciso. */}
       <header className="border-b border-western-border-soft">
-        <div className="container-western py-14 md:py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-10 lg:gap-16 items-end">
-            <div className="max-w-3xl">
-              <p className="text-eyebrow mb-4">Curadoria · Conjuntos</p>
-              <div className="w-12 h-px bg-western-gold mb-7" />
-              <h1 className="display-xl text-western-green-deep">
-                Conjuntos curados, prontos para projetar.
-              </h1>
-              <p className="mt-6 text-body max-w-[60ch]">
-                {ALL_LEAVES.length} composições organizadas pelo local de aplicação —
-                piscinas, lagos, lagos híbridos e jardins. Cada conjunto reúne
-                pedras, volumes e acabamentos já equilibrados pela curadoria
-                Western.
-              </p>
-            </div>
-
-            {/* Atalho guiado — o caminho de maior conversão para quem chega sem rumo */}
-            <aside className="surface-forest rounded-2xl p-7 md:p-8">
-              <p className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft mb-3">
-                Não sabe por onde começar?
-              </p>
-              <p className="display-md text-western-cream">
-                Responda 3 perguntas e veja os conjuntos certos para o seu
-                projeto.
-              </p>
-              <Link
-                to="/guia-de-composicao"
-                className="btn-gold mt-7 w-full sm:w-auto"
-              >
-                Abrir o guia <ArrowRight className="h-5 w-5" />
-              </Link>
-            </aside>
+        {/* Balcão: listagem é ferramenta — display-md + uma linha meta. */}
+        <div className="container-western pt-6 pb-5 md:pt-8 md:pb-6">
+          <div className="max-w-3xl">
+            <p className="text-eyebrow mb-2">Curadoria · Conjuntos</p>
+            <h1 className="display-md text-western-green-deep">
+              Conjuntos curados, prontos para projetar.
+            </h1>
+            <p className="mt-2 text-meta max-w-[56ch]">
+              {ALL_LEAVES.length} composições organizadas pelo local de aplicação —
+              pedras, volumes e acabamentos já equilibrados pela curadoria.
+            </p>
           </div>
         </div>
       </header>
 
-      <div className="container-western py-12 md:py-16">
+      {/* pt-6 (não `section`): o hero acima já espaçou + tem filete; o `section`
+          top somava ~104px de vão morto e empurrava os cards pra fora da dobra. */}
+      <div className="container-western pt-6 pb-16 md:pt-10 md:pb-24">
         <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-12">
           {/* SIDEBAR — desktop */}
           <aside className="hidden lg:block">
@@ -219,7 +216,7 @@ export default function Conjuntos() {
 
           {/* MOBILE — botão de abrir filtros */}
           <div className="lg:hidden mb-6 flex items-center justify-between gap-4">
-            <p className="font-sans text-[16px] text-western-stone-warm">
+            <p className="font-sans text-[15px] text-western-stone-warm">
               {filtered.length}{" "}
               {filtered.length === 1 ? "conjunto" : "conjuntos"}
             </p>
@@ -233,19 +230,14 @@ export default function Conjuntos() {
             </button>
           </div>
 
-          {/* MAIN */}
+          {/* MAIN — a grade renderiza IMEDIATAMENTE: imagem vem de render local
+              (conjuntoRenders ?? nivelImage no card), preço tem fallback estático
+              e o GatedPrice já gateia o valor sozinho. Não há por que esconder
+              tudo atrás de um skeleton de página inteira esperando o Woo — era ele
+              a "parede cinza" que lia como bizarro. */}
           <main>
-            {isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="aspect-[4/5] rounded-lg bg-western-stone-warm/10 animate-pulse"
-                  />
-                ))}
-              </div>
-            ) : filtered.length === 0 ? (
-              <div className="rounded-2xl border border-western-border-soft bg-white p-10 md:p-12 text-center">
+            {filtered.length === 0 ? (
+              <div className="rounded-xl border border-western-border-soft bg-white p-10 md:p-12 text-center">
                 <p className="display-md text-western-green-deep mb-3">
                   Nenhum conjunto nessa combinação.
                 </p>
@@ -273,16 +265,17 @@ export default function Conjuntos() {
                     : items.slice(0, PREVIEW_POR_TIPO);
                   const ocultos = items.length - visiveis.length;
                   return (
-                    <section key={tipo}>
-                      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 mb-8 pb-5 border-b border-western-border-soft">
+                    <Fragment key={tipo}>
+                    <section>
+                      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 mb-6 pb-4 border-b border-western-border-soft">
                         <div>
-                          <p className="text-eyebrow mb-2">
+                          <p className="text-eyebrow mb-1.5">
                             Local de aplicação
                           </p>
-                          <h2 className="display-lg text-western-green-deep">
+                          <h2 className="display-md text-western-green-deep">
                             {tipoLabels[tipo]}
                           </h2>
-                          <p className="mt-3 text-body max-w-xl">
+                          <p className="mt-1.5 text-meta max-w-xl">
                             {TIPO_DESCRICAO[tipo]}
                           </p>
                         </div>
@@ -323,6 +316,27 @@ export default function Conjuntos() {
                         </button>
                       )}
                     </section>
+                    {/* Faixa do guia — desce pra cá (logo após a 1ª categoria):
+                        conjuntos aparecem primeiro, ajuda depois. */}
+                    {tipo === primeiroTipoComResultado && (
+                      <aside className="surface-forest rounded-xl p-6 md:p-8">
+                        <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                          <div className="max-w-xl">
+                            <p className="text-eyebrow-dark mb-2">Não sabe por onde começar?</p>
+                            <p className="display-md text-western-cream">
+                              Responda 3 perguntas e veja os conjuntos certos para o seu projeto.
+                            </p>
+                          </div>
+                          <Link
+                            to="/guia-de-composicao"
+                            className="btn-gold w-full shrink-0 sm:w-auto"
+                          >
+                            Abrir o guia <ArrowRight className="h-5 w-5" />
+                          </Link>
+                        </div>
+                      </aside>
+                    )}
+                    </Fragment>
                   );
                 })}
               </div>
@@ -406,7 +420,7 @@ function FilterPanel({
   return (
     <div className="lg:sticky lg:top-24 space-y-8">
       <div className="hidden lg:flex items-center justify-between gap-3 pb-4 border-b border-western-border-soft">
-        <p className="font-sans text-[16px] text-western-stone-warm">
+        <p className="font-sans text-[15px] text-western-stone-warm">
           {totalResults}{" "}
           {totalResults === 1 ? "resultado" : "resultados"}
         </p>
@@ -455,7 +469,7 @@ function FilterPanel({
                     onChange={() => onToggleTipo(t)}
                     className="sr-only"
                   />
-                  <span className="font-sans text-[16px] text-western-green-deep">
+                  <span className="font-sans text-[15px] text-western-green-deep">
                     {tipoLabels[t]}
                   </span>
                 </label>
@@ -477,7 +491,7 @@ function FilterPanel({
                 type="button"
                 aria-pressed={active}
                 onClick={() => onToggleTamanho(t)}
-                className={`tap-target inline-flex items-center justify-center rounded-full border px-5 font-sans text-[16px] font-semibold transition-colors ${
+                className={`tap-target inline-flex items-center justify-center rounded-full border px-5 font-sans text-[15px] font-semibold transition-colors ${
                   active
                     ? "bg-western-green-deep text-western-cream border-western-green-deep"
                     : "bg-white border-western-border-strong text-western-green-deep hover:border-western-green-deep"
@@ -506,7 +520,7 @@ function FilterPanel({
           />
           <div className="flex items-center justify-between gap-3 font-sans text-[14px] tabular-nums text-western-stone-warm">
             <span>{formatPreco(PRECO_MIN_GLOBAL)}</span>
-            <span className="text-[16px] font-semibold text-western-green-deep">
+            <span className="text-[15px] font-semibold text-western-green-deep">
               {formatPreco(precoMax)}
             </span>
           </div>
@@ -571,7 +585,7 @@ function ConjuntoCard({ leaf, shopify, preco, img }: CardProps) {
         <p className="text-eyebrow">
           Composição {NIVEL_ADJETIVO[leaf.nivel]}
         </p>
-        <h3 className="font-sans text-[20px] font-semibold tracking-normal leading-snug text-western-green-deep">
+        <h3 className="font-sans text-[18px] font-semibold tracking-normal leading-snug text-western-green-deep">
           {leaf.nome}
         </h3>
         <p className="text-meta line-clamp-2">
@@ -582,7 +596,7 @@ function ConjuntoCard({ leaf, shopify, preco, img }: CardProps) {
           <GatedPrice
             amount={String(preco)}
             currency="BRL"
-            className="font-sans text-[20px] font-semibold tabular-nums text-western-green-deep"
+            className="font-sans text-[18px] font-semibold tabular-nums text-western-green-deep"
             linked={false}
           />
           <span className="inline-flex items-center gap-1.5 font-sans text-[14px] font-semibold text-western-bronze group-hover:text-western-green-deep transition-colors">

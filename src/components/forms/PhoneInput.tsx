@@ -30,13 +30,13 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(function PhoneInput(
   return (
     <div>
       <div
-        className={`flex items-stretch h-[52px] overflow-hidden rounded-[10px] border-[1.5px] bg-western-paper transition-colors ${
+        className={`flex items-stretch h-control overflow-hidden rounded-lg border-[1.5px] bg-western-paper transition-colors ${
           error
-            ? "border-[#B3372E]"
+            ? "border-status-error"
             : "border-western-border-strong focus-within:border-western-green-deep"
         } ${className ?? ""}`}
       >
-        <span className="px-4 flex items-center font-sans text-[16px] font-medium text-western-stone-warm border-r border-western-border-soft select-none">
+        <span className="px-4 flex items-center font-sans text-[15px] font-medium text-western-stone-warm border-r border-western-border-soft select-none">
           +55
         </span>
         <IMaskInput
@@ -62,13 +62,13 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(function PhoneInput(
           readOnly={readOnly}
           aria-invalid={!!error}
           aria-describedby={describedBy}
-          className={`flex-1 min-w-0 bg-transparent px-4 outline-none font-sans text-[16px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 ${readOnly ? "opacity-70 cursor-not-allowed" : ""}`}
+          className={`flex-1 min-w-0 bg-transparent px-4 outline-none font-sans text-[15px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 ${readOnly ? "opacity-70 cursor-not-allowed" : ""}`}
         />
       </div>
       {error && (
         <p
           id={describedBy}
-          className="mt-2 font-sans text-[14px] font-semibold normal-case tracking-normal leading-snug text-[#B3372E]"
+          className="mt-2 font-sans text-[14px] font-semibold normal-case tracking-normal leading-snug text-status-error"
         >
           {error}
         </p>

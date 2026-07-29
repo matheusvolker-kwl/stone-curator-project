@@ -33,7 +33,7 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
   return (
     <div className="flex flex-col md:flex-row md:items-start gap-5 py-6 border-b border-western-border-soft first:border-t">
       <div className="flex gap-4 md:gap-5 flex-1 min-w-0">
-        <div className="w-24 h-24 flex-shrink-0 rounded-[10px] bg-western-paper border border-western-border-soft overflow-hidden">
+        <div className="w-24 h-24 flex-shrink-0 rounded-lg bg-western-paper border border-western-border-soft overflow-hidden">
           {peca.imageUrl ? (
             <img
               src={peca.imageUrl}
@@ -48,7 +48,7 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
         </div>
 
         <div className="flex-1 min-w-0">
-          <h4 className="font-sans text-[18px] md:text-[20px] font-semibold text-western-green-deep leading-snug break-words">
+          <h4 className="font-sans text-[17px] md:text-[18px] font-semibold text-western-green-deep leading-snug break-words">
             {peca.nome}
           </h4>
           {papel && (
@@ -67,13 +67,13 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
           <GatedPrice
             amount={peca.preco}
             variant="hidden"
-            className="font-sans text-[17px] font-semibold tabular-nums text-western-green-deep mt-2"
+            className="font-sans text-[16px] font-semibold tabular-nums text-western-green-deep mt-2"
           />
         </div>
       </div>
 
       <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-4 md:gap-3 flex-shrink-0">
-        <div className="inline-flex items-center rounded-[10px] border border-western-border-strong bg-white overflow-hidden">
+        <div className="inline-flex items-center rounded-lg border border-western-border-strong bg-white overflow-hidden">
           <button
             type="button"
             onClick={() => handleQty(peca.qty - 1)}
@@ -84,7 +84,7 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
           </button>
           <span
             key={pulse ?? peca.qty}
-            className="w-12 text-center font-sans text-[16px] font-semibold tabular-nums text-western-green-deep animate-fade-in"
+            className="w-12 text-center font-sans text-[15px] font-semibold tabular-nums text-western-green-deep animate-fade-in"
           >
             {peca.qty}
           </span>
@@ -99,7 +99,7 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
         </div>
 
         {confirm ? (
-          <div className="inline-flex items-center gap-3 font-sans text-[16px]">
+          <div className="inline-flex items-center gap-3 font-sans text-[15px]">
             <span className="text-western-stone-warm">Remover?</span>
             <button
               type="button"
@@ -120,7 +120,7 @@ export default function PecaRow({ peca, onQty, onRemove }: Props) {
           <button
             type="button"
             onClick={() => setConfirm(true)}
-            className="tap-target inline-flex items-center font-sans text-[16px] text-western-stone-warm hover:text-destructive transition-colors"
+            className="tap-target inline-flex items-center font-sans text-[15px] text-western-stone-warm hover:text-destructive transition-colors"
           >
             Remover
           </button>

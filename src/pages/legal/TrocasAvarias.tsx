@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, MessageCircle, Mail, Phone, MapPin, Clock, type LucideIcon } from "lucide-react";
 import LegalPage from "@/components/legal/LegalPage";
+import FechamentoLegal from "@/components/legal/FechamentoLegal";
 import { BUSINESS } from "@/config/business";
 
 /* DS V3 — as políticas terminavam em beco sem saída: navegação entre elas no topo
@@ -23,7 +24,7 @@ function LegalNav({ atual }: { atual: string }) {
             key={p.to}
             to={p.to}
             aria-current={ativa ? "page" : undefined}
-            className={`tap-target inline-flex items-center rounded-full border px-5 font-sans text-[16px] font-semibold !no-underline transition-colors ${
+            className={`tap-target inline-flex items-center rounded-full border px-5 font-sans text-[15px] font-semibold !no-underline transition-colors ${
               ativa
                 ? "border-western-cta bg-western-cta text-western-cream"
                 : "border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper"
@@ -37,44 +38,6 @@ function LegalNav({ atual }: { atual: string }) {
   );
 }
 
-function FechamentoLegal({
-  titulo,
-  apoio,
-  waHref,
-  waLabel,
-}: {
-  titulo: string;
-  apoio: string;
-  waHref: string;
-  waLabel: string;
-}) {
-  return (
-    <section className="surface-forest mt-16 rounded-[16px] px-6 py-12 text-center md:px-12 md:py-14">
-      <h2 className="display-md mx-auto max-w-xl !mb-3 !mt-0 !text-[1.625rem] !text-western-cream md:!text-[1.875rem]">
-        {titulo}
-      </h2>
-      <p className="mx-auto mb-8 max-w-lg text-[17px] leading-[1.6] text-western-cream/80">{apoio}</p>
-      <div className="mx-auto flex max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center">
-        {/* Dourado: único CTA da faixa escura, onde o verde não teria contraste. */}
-        <a
-          href={waHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-gold w-full !no-underline sm:w-auto"
-        >
-          <MessageCircle className="h-5 w-5" strokeWidth={1.75} /> {waLabel}
-        </a>
-        <Link to="/parceiro/cadastro" className="btn-outline-cream w-full !no-underline sm:w-auto">
-          Solicitar acesso B2B <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
-        </Link>
-      </div>
-      <p className="mt-8 text-[14px] leading-[1.5] text-western-cream/70">
-        Ateliê desde {BUSINESS.fundadaEm} · CNPJ {BUSINESS.cnpj} · Compra segura · Garantia de{" "}
-        {BUSINESS.garantiaLabel}
-      </p>
-    </section>
-  );
-}
 
 /* Ficha de contato do pós-venda: rótulo em eyebrow sans 14px bronze (era mono 10px)
  * e valor em 17px — alvo de toque inteiro clicável. */
@@ -96,11 +59,11 @@ function ContatoTile({
       <Icone className="mt-1 h-5 w-5 flex-shrink-0 text-western-green-deep" strokeWidth={1.75} />
       <span className="min-w-0">
         <span className="text-eyebrow mb-1 block">{label}</span>
-        <span className="block break-words text-[17px] leading-[1.5] text-western-green-deep">{valor}</span>
+        <span className="block break-words text-[16px] leading-[1.5] text-western-green-deep">{valor}</span>
       </span>
     </>
   );
-  const base = `tap-target flex items-start gap-3 rounded-[10px] border border-western-border-soft bg-white p-4 ${className}`;
+  const base = `tap-target flex items-start gap-3 rounded-lg border border-western-border-soft bg-white p-4 ${className}`;
 
   return href ? (
     <a
@@ -125,7 +88,7 @@ export default function TrocasAvarias() {
     <LegalPage eyebrow="Trocas e avarias" titulo="O que cobre, e como acionar." atualizadoEm="maio de 2026" seoPath="/trocas-e-avarias" seoTitle="Trocas e avarias — Western" seoDescription="Como abrir um chamado de trocas ou avarias com a Western: cobertura, prazos e passo a passo do pós-venda.">
       <LegalNav atual="/trocas-e-avarias" />
 
-      <p className="text-[19px] leading-[1.6] text-western-green-deep">
+      <p className="text-[17px] leading-[1.6] text-western-green-deep">
         Cada peça Western é fabricada artesanalmente, com variação cromática esperada entre
         peças do mesmo acabamento — essa variação é parte do produto, não um defeito. Para
         avarias de transporte, defeitos de fabricação ou divergências de pedido, seguimos o
@@ -133,7 +96,7 @@ export default function TrocasAvarias() {
       </p>
 
       {/* Bloco de contato — pós-venda */}
-      <div className="mb-12 mt-10 rounded-[16px] border border-western-border-soft bg-western-paper p-6 md:p-8">
+      <div className="mb-12 mt-10 rounded-xl border border-western-border-soft bg-western-paper p-6 md:p-8">
         <p className="text-eyebrow mb-5">Falar com pós-venda</p>
         <div className="grid gap-3 sm:grid-cols-2">
           <ContatoTile icon={MessageCircle} label="WhatsApp pós-venda" valor={BUSINESS.whatsappLabel} href={waUrl} />

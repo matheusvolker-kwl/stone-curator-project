@@ -1,6 +1,14 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { CartItem } from "@/stores/cartStore";
-import { orcamentoPdfBlob, type PdfProjetoContext } from "@/lib/pdf/orcamentoPdf";
+/* ⚠ SÓ O TIPO é importado estaticamente. O gerador de PDF (jspdf + autotable +
+ * as TTFs da marca embutidas em base64, ~650 kB) é carregado sob demanda dentro
+ * de submitQuoteLead — ver o import() lá embaixo.
+ * Por que isso importa: o Footer usa submitSecureLead deste mesmo módulo, e o
+ * Footer existe em TODA página. Com o import estático, o grafo virava
+ * SiteLayout → Footer → leads → pdf, e todo visitante baixava o gerador de
+ * orçamento antes de ver a home. Se voltar a importar orcamentoPdfBlob no topo,
+ * o peso volta para o chunk de entrada. */
+import type { PdfProjetoContext } from "@/lib/pdf/orcamentoPdf";
 import { computeItemsHash } from "@/lib/leads/itemsHash";
 import { reportError } from "@/lib/telemetry";
 
@@ -170,6 +178,7 @@ export async function submitQuoteLead({
   // Always generate the PDF blob — used for download in success screen
   let pdfBlob: Blob | undefined;
   try {
+    const { orcamentoPdfBlob } = await import("@/lib/pdf/orcamentoPdf");
     pdfBlob = await orcamentoPdfBlob({
       items,
       subtotal,

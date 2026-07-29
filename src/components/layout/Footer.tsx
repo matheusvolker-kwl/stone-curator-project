@@ -47,7 +47,7 @@ const COLECOES: { label: string; handle: string }[] = [
  * break-all/anywhere aqui. */
 const colTitle = "text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft mb-4";
 const colLink =
-  "inline-flex items-center min-h-[48px] md:min-h-[36px] max-w-full break-normal text-[16px] text-western-cream hover:text-western-gold-soft hover:underline underline-offset-4 transition-colors";
+  "inline-flex items-center min-h-tap md:min-h-[36px] max-w-full break-normal text-[15px] text-western-cream hover:text-western-gold-soft hover:underline underline-offset-4 transition-colors";
 
 /* Quebra saudável do e-mail: única oportunidade de quebra é DEPOIS do "@"
  * (comercial@ / westernpools.com.br). O domínio nunca é partido no meio. */
@@ -100,7 +100,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-x-8 gap-y-10 md:gap-y-12 pb-14">
           <div className="min-w-0 sm:col-span-2 md:col-span-3">
             <img src={logo} alt="Western" className="h-11 md:h-12 w-auto mb-5" />
-            <p className="text-[17px] leading-[1.6] text-western-cream-muted max-w-[320px]">
+            <p className="text-[16px] leading-[1.6] text-western-cream-muted max-w-[320px]">
               Ateliê de pedra artesanal desde {BUSINESS.fundadaEm}. Peças com cerca de 10% do peso
               da pedra natural — sobem sem guindaste, até em coberturas e terraços.
             </p>
@@ -225,24 +225,24 @@ export default function Footer() {
         </div>
 
         {/* Novidades do catálogo */}
-        <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-start py-12 border-t border-western-gold/15">
+        <div className="grid md:grid-cols-2 gap-6 md:gap-10 items-start py-9 border-t border-western-gold/15">
           <div>
             <h4 className={colTitle}>Novidades do catálogo</h4>
-            <p className="text-[17px] leading-[1.6] text-western-cream-muted max-w-[420px]">
+            <p className="text-[16px] leading-[1.6] text-western-cream-muted max-w-[420px]">
               Receba lançamentos e tabelas técnicas atualizadas. Sem spam — cancele quando quiser.
             </p>
           </div>
 
           <div>
             {done ? (
-              <div className="flex items-center gap-3 rounded-[10px] border border-western-gold/40 bg-western-gold/10 px-4 min-h-[52px] text-[17px] text-western-cream">
+              <div className="flex items-center gap-3 rounded-lg border border-western-gold/40 bg-western-gold/10 px-4 min-h-control text-[16px] text-western-cream">
                 <Check className="h-5 w-5 text-western-gold-soft shrink-0" strokeWidth={1.75} />
                 Inscrição confirmada.
               </div>
             ) : (
               <>
                 <form onSubmit={handleNewsletter} className="flex flex-col sm:flex-row gap-3">
-                  <div className="flex items-center gap-3 flex-1 px-4 min-h-[52px] rounded-[10px] border-[1.5px] border-western-cream/40 focus-within:border-western-gold-soft transition-colors">
+                  <div className="flex items-center gap-3 flex-1 px-4 min-h-control rounded-lg border-[1.5px] border-western-cream/40 focus-within:border-western-gold-soft transition-colors">
                     <Mail className="h-5 w-5 text-western-gold-soft shrink-0" strokeWidth={1.75} />
                     <input
                       type="email"
@@ -252,7 +252,7 @@ export default function Footer() {
                       placeholder="seu@email.com"
                       autoComplete="email"
                       aria-label="Seu e-mail"
-                      className="flex-1 min-w-0 bg-transparent outline-none text-[16px] text-western-cream placeholder:text-western-cream-muted/70"
+                      className="flex-1 min-w-0 bg-transparent outline-none text-[15px] text-western-cream placeholder:text-western-cream-muted/70"
                     />
                     {/* honeypot — escondido de usuários reais */}
                     <input
@@ -286,14 +286,14 @@ export default function Footer() {
         </div>
 
         {/* Sinais de confiança — perto da decisão, na voz da marca */}
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4 py-10 border-t border-western-gold/15">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-3 py-8 border-t border-western-gold/15">
           {[
             { Icon: ShieldCheck, text: `Garantia de ${BUSINESS.garantiaLabel} em todas as peças` },
             { Icon: FileText, text: "Compra 100% segura" },
             { Icon: Truck, text: "Entrega rastreada por transportadora" },
             { Icon: MapPin, text: `Retirada no ateliê em ${BUSINESS.cidadeAtelie}/${BUSINESS.ufAtelie}` },
           ].map(({ Icon, text }) => (
-            <li key={text} className="flex items-start gap-3 text-[16px] text-western-cream leading-[1.5]">
+            <li key={text} className="flex items-start gap-3 text-[15px] text-western-cream leading-[1.5]">
               <Icon className="h-5 w-5 text-western-gold-soft shrink-0 mt-0.5" strokeWidth={1.75} />
               <span>{text}</span>
             </li>

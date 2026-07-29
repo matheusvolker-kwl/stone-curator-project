@@ -12,6 +12,7 @@ import ProductCard from "@/components/product/ProductCard";
 import RangeFilter, { type Range } from "@/components/product/RangeFilter";
 import { BUSINESS } from "@/config/business";
 import { extractSizeWeight } from "@/lib/catalog/sizeWeight";
+import { PRODUCT_CATEGORIES } from "@/lib/catalogScenes";
 import type { ShopifyProduct } from "@/lib/catalog/types";
 import { linhaRank, naturalTitleCompare } from "@/lib/lineOrder";
 import { cn } from "@/lib/utils";
@@ -48,6 +49,9 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
 
   const q = params.get("q") ?? "";
   const sort = (params.get("sort") as SortKey) || "";
+  /* Categoria (dono, 2026-07-18): o filtro mais pedido. O produto já traz as
+     coleções dele, então casa por handle — sem camada de dados extra. */
+  const cat = params.get("cat") ?? "";
 
   const update = (key: string, value: string | null) => {
     const next = new URLSearchParams(params);
@@ -59,6 +63,7 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
   const clearFilters = () => {
     const next = new URLSearchParams(params);
     next.delete("q");
+    next.delete("cat");
     next.delete("tamanho");
     next.delete("peso");
     setParams(next, { replace: true });
@@ -85,6 +90,25 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
     return { maxCm: roundUp(mc, 10, 60), maxKg: roundUp(mk, 10, 40) };
   }, [enriched]);
 
+  /* Categorias presentes NESTE conjunto (com contagem). Só entra chip que tem
+     peça — numa linha/coleção específica sobra 1 chip só, e aí ele nem aparece.
+     A contagem deixa decidir antes de clicar (regra do Balcão). */
+  const categorias = useMemo(() => {
+    const count = new Map<string, number>();
+    for (const p of enriched) {
+      const handles = (p.node.collections?.edges ?? []).map((e) => e.node.handle);
+      for (const c of PRODUCT_CATEGORIES) {
+        if (c.handles.some((h) => handles.includes(h))) {
+          count.set(c.key, (count.get(c.key) ?? 0) + 1);
+        }
+      }
+    }
+    return PRODUCT_CATEGORIES.filter((c) => (count.get(c.key) ?? 0) > 0).map((c) => ({
+      ...c,
+      count: count.get(c.key) ?? 0,
+    }));
+  }, [enriched]);
+
   const tamRange = parseRange(params.get("tamanho"), maxCm);
   const pesRange = parseRange(params.get("peso"), maxKg);
   const tamActive = tamRange.min > 0 || tamRange.max < maxCm;
@@ -97,6 +121,12 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
 
   const filtered = useMemo(() => {
     let list = enriched;
+    if (cat) {
+      const handles = PRODUCT_CATEGORIES.find((c) => c.key === cat)?.handles ?? [];
+      list = list.filter((p) =>
+        (p.node.collections?.edges ?? []).some((e) => handles.includes(e.node.handle)),
+      );
+    }
     if (q) {
       const needle = q.toLowerCase();
       list = list.filter(
@@ -157,10 +187,10 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
         });
     }
     return arr;
-  }, [enriched, q, tamActive, tamRange.min, tamRange.max, pesActive, pesRange.min, pesRange.max, sort]);
+  }, [enriched, cat, q, tamActive, tamRange.min, tamRange.max, pesActive, pesRange.min, pesRange.max, sort]);
 
-  const hasFilters = !!q || tamActive || pesActive;
-  const activeCount = (q ? 1 : 0) + (tamActive ? 1 : 0) + (pesActive ? 1 : 0);
+  const hasFilters = !!q || !!cat || tamActive || pesActive;
+  const activeCount = (q ? 1 : 0) + (cat ? 1 : 0) + (tamActive ? 1 : 0) + (pesActive ? 1 : 0);
   // Mobile: filtros começam recolhidos pra não empurrar os produtos pra baixo
   // da dobra; abertos automaticamente se a URL já chega com filtros ativos.
   const [filtersOpen, setFiltersOpen] = useState(hasFilters);
@@ -183,7 +213,7 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
             </span>
           )}
         </span>
-        <span aria-hidden="true" className="text-[20px] leading-none text-western-stone-warm">
+        <span aria-hidden="true" className="text-[18px] leading-none text-western-stone-warm">
           {filtersOpen ? "−" : "+"}
         </span>
       </button>
@@ -195,6 +225,58 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
           filtersOpen ? "block" : "hidden lg:block"
         )}
       >
+        {/* CATEGORIA — o filtro que o dono pediu, no topo do rail (é o primeiro
+            corte que o profissional faz). Chips em modo Balcão: h-11, 15px, com
+            a contagem pra decidir antes de clicar. Só aparece se o conjunto tem
+            mais de uma categoria (numa linha específica não faz sentido). */}
+        {categorias.length > 1 && (
+          <div>
+            <p className="text-eyebrow mb-3">Categoria</p>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => update("cat", null)}
+                aria-pressed={!cat}
+                className={cn(
+                  "inline-flex h-11 items-center rounded-full border px-4 font-sans text-[15px] font-semibold transition-colors",
+                  !cat
+                    ? "border-western-cta bg-western-cta text-western-cream"
+                    : "border-western-border-strong bg-white text-western-green-deep hover:border-western-green-deep",
+                )}
+              >
+                Todas
+              </button>
+              {categorias.map((c) => {
+                const on = cat === c.key;
+                return (
+                  <button
+                    key={c.key}
+                    type="button"
+                    onClick={() => update("cat", on ? null : c.key)}
+                    aria-pressed={on}
+                    className={cn(
+                      "inline-flex h-11 items-center gap-2 rounded-full border px-4 font-sans text-[15px] font-semibold transition-colors",
+                      on
+                        ? "border-western-cta bg-western-cta text-western-cream"
+                        : "border-western-border-strong bg-white text-western-green-deep hover:border-western-green-deep",
+                    )}
+                  >
+                    {c.label}
+                    <span
+                      className={cn(
+                        "tabular-nums text-[14px] font-normal",
+                        on ? "text-western-cream/70" : "text-western-stone-warm",
+                      )}
+                    >
+                      {c.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         <div>
           <p className="text-eyebrow mb-3">Buscar</p>
           <div className="relative">
@@ -205,7 +287,7 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
               onChange={(e) => update("q", e.target.value || null)}
               placeholder="Nome ou código"
               aria-label="Buscar peça por nome ou código"
-              className="h-[52px] w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper pl-12 pr-4 font-sans text-[16px] text-western-green-deep transition-colors placeholder:text-western-stone-warm focus:border-western-cta focus:outline-none"
+              className="h-control w-full rounded-lg border-[1.5px] border-western-border-strong bg-western-paper pl-12 pr-4 font-sans text-[15px] text-western-green-deep transition-colors placeholder:text-western-stone-warm focus:border-western-cta focus:outline-none"
             />
           </div>
         </div>
@@ -244,7 +326,7 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
             <button
               type="button"
               onClick={clearFilters}
-              className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-cta underline underline-offset-4 decoration-western-gold hover:text-western-green-deep"
+              className="tap-target inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-cta underline underline-offset-4 decoration-western-gold hover:text-western-green-deep"
             >
               <X className="h-4 w-4" /> Limpar filtros
             </button>
@@ -264,20 +346,20 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
             value={sort || undefined}
             onValueChange={(v) => update("sort", v || null)}
           >
-            <SelectTrigger className="h-[52px] w-[200px] rounded-lg border-[1.5px] border-western-border-strong bg-white px-4 font-sans text-[16px] font-semibold text-western-green-deep">
+            <SelectTrigger className="h-control w-[200px] rounded-lg border-[1.5px] border-western-border-strong bg-white px-4 font-sans text-[15px] font-semibold text-western-green-deep">
               <SelectValue placeholder="Ordenar" />
             </SelectTrigger>
             <SelectContent className="rounded-lg">
-              <SelectItem value="az" className="text-[16px]">Nome A–Z</SelectItem>
-              <SelectItem value="za" className="text-[16px]">Nome Z–A</SelectItem>
-              <SelectItem value="price-asc" className="text-[16px]">Menor preço</SelectItem>
-              <SelectItem value="price-desc" className="text-[16px]">Maior preço</SelectItem>
+              <SelectItem value="az" className="text-[15px]">Nome A–Z</SelectItem>
+              <SelectItem value="za" className="text-[15px]">Nome Z–A</SelectItem>
+              <SelectItem value="price-asc" className="text-[15px]">Menor preço</SelectItem>
+              <SelectItem value="price-desc" className="text-[15px]">Maior preço</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 xl:grid-cols-3">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
@@ -303,7 +385,7 @@ export default function ProductGrid({ products, isLoading, emptyLabel }: Props) 
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 xl:grid-cols-3">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
             {filtered.map((p) => (
               <ProductCard key={p.node.id} product={p.node} />
             ))}

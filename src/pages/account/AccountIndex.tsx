@@ -183,7 +183,7 @@ export default function AccountIndex() {
           Onde estão minhas coisas
         </h2>
 
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
           <Tile
             to="/minha-conta/pedidos"
             icone={ShoppingBag}
@@ -197,16 +197,10 @@ export default function AccountIndex() {
             valor={numeroOuTraco(contagens?.aCaminho)}
           />
           <Tile
-            to="/minha-conta/composicoes"
-            icone={Boxes}
-            rotulo="Composições em conversa"
-            valor={numeroOuTraco(contagens?.composicoes)}
-          />
-          <Tile
             to="/minha-conta/orcamentos"
             icone={FileText}
-            rotulo="Orçamentos salvos"
-            valor={numeroOuTraco(contagens?.orcamentos)}
+            rotulo="Meus orçamentos"
+            valor={numeroOuTraco(contagens?.composicoes)}
           />
         </div>
       </section>
@@ -220,7 +214,7 @@ export default function AccountIndex() {
           {totalPedidos > 0 && !erro && (
             <Link
               to="/minha-conta/pedidos"
-              className="inline-flex items-center gap-1 text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+              className="inline-flex items-center gap-1 text-[15px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
             >
               Ver todos
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -286,21 +280,21 @@ export default function AccountIndex() {
         <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
           <Link
             to="/minha-conta/perfil"
-            className="tap-target inline-flex items-center gap-2 text-[16px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
+            className="tap-target inline-flex items-center gap-2 text-[15px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
           >
             <ClipboardList className="h-4 w-4" aria-hidden="true" />
             Dados da empresa
           </Link>
           <Link
             to="/minha-conta/preferencias"
-            className="tap-target inline-flex items-center gap-2 text-[16px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
+            className="tap-target inline-flex items-center gap-2 text-[15px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
           >
             <Settings className="h-4 w-4" aria-hidden="true" />
             Configurações da conta
           </Link>
           <Link
             to="/contato"
-            className="tap-target inline-flex items-center gap-2 text-[16px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
+            className="tap-target inline-flex items-center gap-2 text-[15px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
           >
             <LifeBuoy className="h-4 w-4" aria-hidden="true" />
             Falar com a equipe
@@ -347,7 +341,7 @@ function HeroAprovado() {
   ].filter((v): v is string => v !== null);
 
   return (
-    <section className="surface-forest rounded-[16px] p-6 md:p-8">
+    <section className="surface-forest rounded-xl p-6 md:p-8">
       <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold">
         Credenciamento
       </p>
@@ -360,14 +354,14 @@ function HeroAprovado() {
           </h2>
 
           {loading ? (
-            <div className="mt-5 h-6 w-64 animate-pulse rounded-[6px] bg-western-cream/15" />
+            <div className="mt-5 h-6 w-64 animate-pulse rounded-sm bg-western-cream/15" />
           ) : (
             <div className="mt-5 flex flex-wrap items-center gap-x-8 gap-y-4">
               <div>
                 <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/60">
                   Seu nível
                 </p>
-                <p className="mt-1 text-[20px] font-semibold text-western-cream">
+                <p className="mt-1 text-[18px] font-semibold text-western-cream">
                   {TIER_LABEL[tier as Tier] ?? tier}
                 </p>
               </div>
@@ -376,7 +370,7 @@ function HeroAprovado() {
                 <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/60">
                   Desconto
                 </p>
-                <p className="mt-1 text-[20px] font-semibold tabular-nums text-western-gold">
+                <p className="mt-1 text-[18px] font-semibold tabular-nums text-western-gold">
                   {discountPct}% em toda a linha
                 </p>
               </div>
@@ -388,7 +382,7 @@ function HeroAprovado() {
               {vantagens.map((v) => (
                 <li
                   key={v}
-                  className="rounded-[6px] border border-western-cream/25 px-2.5 py-1 text-[14px] font-semibold text-western-cream/90"
+                  className="rounded-sm border border-western-cream/25 px-2.5 py-1 text-[14px] font-semibold text-western-cream/90"
                 >
                   {v}
                 </li>
@@ -423,22 +417,22 @@ function HeroPendente({ pendingReason }: { pendingReason: string | null }) {
   const precisaAgir = !!pendingReason;
 
   return (
-    <section className="rounded-[16px] border border-[#9C6812]/35 bg-[#9C6812]/[0.06] p-6 md:p-8">
-      <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-[#9C6812]">
+    <section className="rounded-xl border border-status-warning/35 bg-status-warning/[0.06] p-6 md:p-8">
+      <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-status-warning">
         Credenciamento
       </p>
 
       <h2 className="display-md mt-3 flex items-center gap-2.5 text-western-green-deep">
-        <Clock className="h-6 w-6 flex-shrink-0 text-[#9C6812]" aria-hidden="true" />
+        <Clock className="h-6 w-6 flex-shrink-0 text-status-warning" aria-hidden="true" />
         {precisaAgir ? "Precisamos de um ajuste no seu cadastro" : "Cadastro em análise"}
       </h2>
 
       {precisaAgir ? (
-        <div className="mt-5 rounded-[10px] border border-[#9C6812]/30 bg-white px-4 py-3">
-          <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-[#9C6812]">
+        <div className="mt-5 rounded-lg border border-status-warning/30 bg-white px-4 py-3">
+          <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-status-warning">
             O que falta
           </p>
-          <p className="mt-1.5 text-[17px] leading-[1.6] text-western-stone-dark">{pendingReason}</p>
+          <p className="mt-1.5 text-[16px] leading-[1.6] text-western-stone-dark">{pendingReason}</p>
         </div>
       ) : (
         <p className="text-body mt-3 max-w-2xl">
@@ -483,13 +477,13 @@ function HeroPendente({ pendingReason }: { pendingReason: string | null }) {
 
 function HeroRecusado() {
   return (
-    <section className="rounded-[16px] border border-[#B3372E]/35 bg-[#B3372E]/[0.06] p-6 md:p-8">
-      <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-[#B3372E]">
+    <section className="rounded-xl border border-status-error/35 bg-status-error/[0.06] p-6 md:p-8">
+      <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-status-error">
         Credenciamento
       </p>
 
       <h2 className="display-md mt-3 flex items-center gap-2.5 text-western-green-deep">
-        <XCircle className="h-6 w-6 flex-shrink-0 text-[#B3372E]" aria-hidden="true" />
+        <XCircle className="h-6 w-6 flex-shrink-0 text-status-error" aria-hidden="true" />
         Credenciamento não aprovado
       </h2>
 
@@ -513,7 +507,7 @@ function HeroRecusado() {
 
 function HeroCancelado() {
   return (
-    <section className="rounded-[16px] border border-western-border-strong bg-western-paper p-6 md:p-8">
+    <section className="rounded-xl border border-western-border-strong bg-western-paper p-6 md:p-8">
       <p className="text-eyebrow">Credenciamento</p>
 
       <h2 className="display-md mt-3 text-western-green-deep">Conta cancelada</h2>
@@ -534,7 +528,7 @@ function HeroCancelado() {
 
 function HeroAdmin() {
   return (
-    <section className="surface-forest rounded-[16px] p-6 md:p-8">
+    <section className="surface-forest rounded-xl p-6 md:p-8">
       <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold">
         Acesso interno
       </p>
@@ -545,7 +539,7 @@ function HeroAdmin() {
             <ShieldCheck className="h-6 w-6 flex-shrink-0 text-western-gold" aria-hidden="true" />
             Você é administrador
           </h2>
-          <p className="mt-2 text-[17px] leading-[1.6] text-western-cream/75">
+          <p className="mt-2 text-[16px] leading-[1.6] text-western-cream/75">
             Esta é a visão do parceiro. A operação — credenciamentos, pedidos e orçamentos — fica no
             painel administrativo.
           </p>
@@ -569,8 +563,8 @@ function PassoCredenciamento({
   estado: "feito" | "atual" | "futuro";
 }) {
   const bolha = {
-    feito: "border-[#2E7D4F]/40 bg-[#2E7D4F]/10 text-[#2E7D4F]",
-    atual: "border-[#9C6812] bg-[#9C6812] text-white",
+    feito: "border-status-success/40 bg-status-success/10 text-status-success",
+    atual: "border-status-warning bg-status-warning text-white",
     futuro: "border-western-border-strong bg-white text-western-stone-warm",
   }[estado];
 
@@ -588,7 +582,7 @@ function PassoCredenciamento({
       >
         {estado === "feito" ? <PackageCheck className="h-4 w-4" /> : numero}
       </span>
-      <span className={`text-[16px] ${texto}`}>{rotulo}</span>
+      <span className={`text-[15px] ${texto}`}>{rotulo}</span>
     </li>
   );
 }
@@ -619,7 +613,7 @@ function Tile({
   return (
     <Link
       to={to}
-      className="tap-target group flex flex-col justify-between rounded-[16px] border border-western-border-soft bg-white p-4 transition-colors hover:border-western-green-deep/40 md:p-5"
+      className="tap-target group flex flex-col justify-between rounded-xl border border-western-border-soft bg-white p-4 transition-colors hover:border-western-green-deep/40 md:p-5"
     >
       <div className="flex items-start justify-between gap-2">
         <Icone className="h-5 w-5 text-western-bronze" aria-hidden="true" />
@@ -631,7 +625,7 @@ function Tile({
 
       <div className="mt-4">
         <p
-          className={`text-[28px] font-semibold leading-none tabular-nums ${
+          className={`text-[24px] font-semibold leading-none tabular-nums ${
             desconhecido ? "text-western-stone-warm/40" : "text-western-green-deep"
           }`}
         >
@@ -657,14 +651,14 @@ function Atalho({
   return (
     <Link
       to={to}
-      className="group flex items-start gap-3.5 rounded-[16px] border border-western-border-soft bg-white p-5 transition-colors hover:border-western-green-deep/40"
+      className="group flex items-start gap-3.5 rounded-xl border border-western-border-soft bg-white p-5 transition-colors hover:border-western-green-deep/40"
     >
-      <span className="mt-0.5 inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[10px] bg-western-paper">
+      <span className="mt-0.5 inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-western-paper">
         <Icone className="h-5 w-5 text-western-bronze" aria-hidden="true" />
       </span>
 
       <span className="min-w-0">
-        <span className="flex items-center gap-1.5 text-[17px] font-semibold text-western-green-deep">
+        <span className="flex items-center gap-1.5 text-[16px] font-semibold text-western-green-deep">
           {titulo}
           <ArrowRight
             className="h-4 w-4 flex-shrink-0 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100"

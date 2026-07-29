@@ -88,11 +88,34 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        /* Paleta de status oficial (auditoria 2026-07-17): antes vivia como
+         * hex hardcoded em 40 arquivos (#B3372E/#9C6812/#2E7D4F). */
+        status: {
+          error: "hsl(var(--status-error))",
+          warning: "hsl(var(--status-warning))",
+          success: "hsl(var(--status-success))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      /* === Tokens que existiam como CSS var SEM utilitário (auditoria 2026-07-17):
+       * h-[52px] era re-digitado 97×, min-h-[48px] 30×. Agora: h-control, min-h-tap. */
+      height: { control: "var(--control-h)", tap: "var(--tap-min)" },
+      minHeight: { control: "var(--control-h)", tap: "var(--tap-min)" },
+      minWidth: { tap: "var(--tap-min)" },
+      /* Medida de prosa: 16 valores de ch em uso → 3 nomes. */
+      maxWidth: { "prose-sm": "46ch", prose: "58ch", "prose-lg": "64ch" },
+      /* Escala de camadas — antes era escalada arbitrária 40→50→60→100→999. */
+      zIndex: { header: "40", fab: "45", overlay: "50", progress: "60", toast: "100" },
+      /* 4 elevações nomeadas — antes 42 sombras literais em 2 famílias concorrentes. */
+      boxShadow: {
+        card: "0 2px 10px -6px hsl(var(--western-stone-dark) / 0.18)",
+        lift: "0 14px 30px -16px hsl(var(--western-stone-dark) / 0.28)",
+        float: "0 24px 60px -32px hsl(var(--western-stone-dark) / 0.30)",
+        bar: "0 -8px 24px -16px hsl(var(--western-stone-dark) / 0.25)",
       },
       keyframes: {
         "accordion-down": {
@@ -108,15 +131,6 @@ export default {
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "fade-in": { "0%": { opacity: "0" }, "100%": { opacity: "1" } },
-        shimmer: { "0%": { backgroundPosition: "-200% 0" }, "100%": { backgroundPosition: "200% 0" } },
-        "hero-shimmer": {
-          "0%": { transform: "translateX(-100%)" },
-          "100%": { transform: "translateX(400%)" },
-        },
-        "hero-drift": {
-          "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
-          "50%": { transform: "translateY(-14px) rotate(-1.2deg)" },
-        },
         "swatch-fill": {
           "0%": { clipPath: "circle(0% at 50% 50%)", opacity: "0" },
           "100%": { clipPath: "circle(60% at 50% 50%)", opacity: "1" },
@@ -138,25 +152,17 @@ export default {
           "0%": { transform: "translateY(-100%)" },
           "100%": { transform: "translateY(100%)" },
         },
-        "marquee-x": {
-          "0%": { transform: "translateX(0)" },
-          "100%": { transform: "translateX(-50%)" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
         "accordion-up": "accordion-up 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
         "fade-in-up": "fade-in-up 600ms cubic-bezier(0.4, 0, 0.2, 1) both",
         "fade-in": "fade-in 500ms ease-out both",
-        shimmer: "shimmer 2s linear infinite",
-        "hero-shimmer": "hero-shimmer 9s ease-in-out infinite",
-        "hero-drift": "hero-drift 12s ease-in-out infinite",
         "swatch-fill": "swatch-fill 400ms ease-out both",
         "swatch-breathe": "swatch-breathe 2.5s ease-in-out infinite",
         "swatch-splash": "swatch-splash 350ms cubic-bezier(0.34, 1.56, 0.64, 1)",
         "breathe-zoom": "breathe-zoom 14s ease-in-out infinite",
         "scroll-tick": "scroll-tick 2.6s cubic-bezier(0.65, 0, 0.35, 1) infinite",
-        "marquee-x": "marquee-x 22s linear infinite",
       },
 
     },

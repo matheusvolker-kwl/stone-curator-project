@@ -50,15 +50,17 @@ const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
 const AccountLayout = lazy(() => import("@/components/account/AccountLayout"));
 const AccountIndex = lazy(() => import("./pages/account/AccountIndex"));
 const AccountProfile = lazy(() => import("./pages/account/AccountProfile"));
-const AccountQuotes = lazy(() => import("./pages/account/AccountQuotes"));
+
 const AccountOrders = lazy(() => import("./pages/account/AccountOrders"));
-const AccountSketches = lazy(() => import("./pages/account/AccountSketches"));
+
 const AccountFavorites = lazy(() => import("./pages/account/AccountFavorites"));
-const AccountSamples = lazy(() => import("./pages/account/AccountSamples"));
+
 const AccountPreferences = lazy(() => import("./pages/account/AccountPreferences"));
 const AccountTracking = lazy(() => import("./pages/account/AccountTracking"));
-const AccountCompositions = lazy(() => import("./pages/account/AccountCompositions"));
+const AccountOrcamentos = lazy(() => import("./pages/account/AccountOrcamentos"));
 
+const LabSecoes = lazy(() => import("./pages/lab/LabSecoes.tsx"));
+const LabParaSuaCasa = lazy(() => import("./pages/lab/LabParaSuaCasa.tsx"));
 const Inspiracoes = lazy(() => import("./pages/Inspiracoes.tsx"));
 const ObraPage = lazy(() => import("./pages/ObraPage.tsx"));
 const ComoComprar = lazy(() => import("./pages/ComoComprar.tsx"));
@@ -73,6 +75,8 @@ const ProductPage = lazy(() => import("./pages/ProductPage.tsx"));
 
 const About = lazy(() => import("./pages/About.tsx"));
 const APedra = lazy(() => import("./pages/APedra.tsx"));
+/* Apresentação interna da reconstrução. Fora do menu e do sitemap, noindex. */
+const Relatorio = lazy(() => import("./pages/Relatorio.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
 const WesternBoxPage = lazy(() => import("./pages/WesternBox.tsx"));
 
@@ -91,9 +95,9 @@ const PoliticaComercial = lazy(() => import("./pages/legal/PoliticaComercial.tsx
 const TrocasAvarias = lazy(() => import("./pages/legal/TrocasAvarias.tsx"));
 const PoliticaPrivacidade = lazy(() => import("./pages/legal/PoliticaPrivacidade.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
-const Entrada = lazy(() => import("./pages/Entrada.tsx"));
-const Parceria = lazy(() => import("./pages/Parceria.tsx"));
-const ParceriaDireto = lazy(() => import("./pages/ParceriaDireto.tsx"));
+/* Entrada/Parceria/ParceriaDireto aposentadas em 2026-07-17 — viraram
+   redirects (ver as rotas). A home já segmenta B2B×B2C e /contrate-a-western
+   é a página de serviços que a /parceria prometia. */
 const FavoritosCompartilhados = lazy(() => import("./pages/FavoritosCompartilhados.tsx"));
 
 const queryClient = new QueryClient({
@@ -168,9 +172,12 @@ const App = () => (
                       ? <Route path="/inicio" element={<Index />} />
                       : <Route path="/" element={<Index />} />}
                     <Route path="/linhas" element={<Linhas />} />
-                    <Route path="/entrada" element={<Entrada />} />
-                    <Route path="/parceria" element={<Parceria />} />
-                    <Route path="/parceria-direto" element={<ParceriaDireto />} />
+                    {/* Aposentadas (2026-07-17, decisão do dono): 873 linhas
+                        órfãs de nav vendendo a versão velha do site. Redirect
+                        preserva qualquer link antigo. */}
+                    <Route path="/entrada" element={<Navigate to="/" replace />} />
+                    <Route path="/parceria" element={<Navigate to="/contrate-a-western" replace />} />
+                    <Route path="/parceria-direto" element={<Navigate to="/contrate-a-western" replace />} />
                     {/* Orçamento (página pública) removido por decisão do dono — B2C vai pro atendimento */}
                     <Route path="/orcamento" element={<Navigate to="/contato" replace />} />
                     {/* v1 usava /linhas/pisantes — preservar SEO/links externos no cutover */}
@@ -182,6 +189,11 @@ const App = () => (
                     <Route path="/obras/:slug" element={<ObraPage />} />
                     <Route path="/inspiracoes" element={<RedirectObras />} />
                     <Route path="/inspiracao" element={<RedirectObras />} />
+                    {/* LAB — bancada interna de decisão do dono, com noindex.
+                        Não entra em menu nem em sitemap: só existe enquanto há
+                        variante em julgamento, e sai do ar depois da escolha. */}
+                    <Route path="/lab/secoes" element={<LabSecoes />} />
+                    <Route path="/lab/casa" element={<LabParaSuaCasa />} />
                     {/* Telas do V3 que faltavam no app */}
                     <Route path="/como-comprar" element={<ComoComprar />} />
                     <Route path="/para-sua-casa" element={<ParaSuaCasa />} />
@@ -194,6 +206,7 @@ const App = () => (
                     <Route path="/guia-de-compra" element={<Navigate to="/guia-de-composicao" replace />} />
                     <Route path="/sobre" element={<About />} />
                     <Route path="/a-pedra" element={<APedra />} />
+                    <Route path="/relatorio" element={<Relatorio />} />
                     <Route path="/contato" element={<Contact />} />
                     <Route path="/western-box" element={<WesternBoxPage />} />
                     <Route path="/contrate-a-western" element={<ContrateAWestern />} />
@@ -215,13 +228,15 @@ const App = () => (
                     >
                       <Route index element={<AccountIndex />} />
                       <Route path="perfil" element={<AccountProfile />} />
-                      <Route path="orcamentos" element={<AccountQuotes />} />
+                      <Route path="orcamentos" element={<AccountOrcamentos />} />
                       <Route path="pedidos" element={<AccountOrders />} />
                       <Route path="rastreio" element={<AccountTracking />} />
-                      <Route path="composicoes" element={<AccountCompositions />} />
-                      <Route path="sketches" element={<AccountSketches />} />
+                      {/* Fundida em /minha-conta/orcamentos (2026-07-18): eram duas telas para o mesmo evento */}
+                      <Route path="composicoes" element={<Navigate to="/minha-conta/orcamentos" replace />} />
+                      {/* Aposentadas (2026-07-18, dono): sem usuário nem admin */}
+                      <Route path="sketches" element={<Navigate to="/minha-conta" replace />} />
                       <Route path="favoritos" element={<AccountFavorites />} />
-                      <Route path="amostras" element={<AccountSamples />} />
+                      <Route path="amostras" element={<Navigate to="/minha-conta" replace />} />
                       <Route path="preferencias" element={<AccountPreferences />} />
                     </Route>
                     <Route

@@ -25,7 +25,7 @@ const OBJEÇÕES: { q: string; a: string }[] = [
   },
   {
     q: "Vai amarelar com o tempo, vai descascar.",
-    a: "A pintura Western é desenvolvida há 33 anos para resistir a cloro, sol, chuva e variação térmica. Não é tinta de parede aplicada por cima — são 6 camadas distintas de pigmento mineral, com 5 cores sobrepostas em cada camada, simulando a sedimentação geológica natural. Garantia formal de 1 ano contra defeito; histórico real: peças instaladas em 1995 ainda estão em pé.",
+    a: `A pintura Western é desenvolvida há ${BUSINESS.anosOperacao} anos para resistir a cloro, sol, chuva e variação térmica. Não é tinta de parede aplicada por cima — são 6 camadas distintas de pigmento mineral, com 5 cores sobrepostas em cada camada, simulando a sedimentação geológica natural. Garantia formal de 1 ano contra defeito; histórico real: peças instaladas em 1995 ainda estão em pé.`,
   },
   {
     q: "É caro.",
@@ -41,7 +41,7 @@ const OBJEÇÕES: { q: string; a: string }[] = [
   },
   {
     q: "Tem garantia? E se quebrar?",
-    a: "1 ano formal contra defeito de fabricação. Mas o ponto é que Western quase não quebra: você pode pular em cima, pode furar com furadeira para passar fiação, pode sentar — o composto de cimento com fibra de PET é mais resistente a impacto que pedra natural, que é frágil a fissuras laterais. Em 33 anos, parceiros como Cristal Pool e Genesis continuam comprando há mais de duas décadas — falariam abertamente se houvesse histórico de problemas.",
+    a: `1 ano formal contra defeito de fabricação. Mas o ponto é que Western quase não quebra: você pode pular em cima, pode furar com furadeira para passar fiação, pode sentar — o composto de cimento com fibra de PET é mais resistente a impacto que pedra natural, que é frágil a fissuras laterais. Em ${BUSINESS.anosOperacao} anos, parceiros como Cristal Pool e Genesis continuam comprando há mais de duas décadas — falariam abertamente se houvesse histórico de problemas.`,
   },
   {
     q: "Como vai ficar montado? Não quero surpresa.",
@@ -57,7 +57,7 @@ const OBJEÇÕES: { q: string; a: string }[] = [
   },
   {
     q: "Prefiro fornecedor mais conhecido / mais barato.",
-    a: "Em pedra artificial no Brasil, mais conhecido que Western não existe. Somos a empresa que trouxe essa tecnologia para o país em 1993, vinda do Arizona — dos mesmos artistas que assinaram trabalhos da Disney e de Las Vegas. 33 anos de operação com a mesma família. Se a comparação é com produto importado da China ou cimento texturizado por revendedor local, sim, somos mais caros — mas o material é incomparável. Mande uma amostra dos dois lado a lado.",
+    a: `Em pedra artificial no Brasil, mais conhecido que Western não existe. Somos a empresa que trouxe essa tecnologia para o país em ${BUSINESS.fundadaEm}, vinda do Arizona — dos mesmos artistas que assinaram trabalhos da Disney e de Las Vegas. ${BUSINESS.anosOperacao} anos de operação com a mesma família. Se a comparação é com produto importado da China ou cimento texturizado por revendedor local, sim, somos mais caros — mas o material é incomparável. Mande uma amostra dos dois lado a lado.`,
   },
   {
     q: "Não tenho como ir até a fábrica para ver.",
@@ -271,7 +271,7 @@ export default function FAQ() {
                 <p className="text-eyebrow mb-3">{g.eyebrow}</p>
                 <h2 className="display-md text-western-green-deep mb-5">{g.titulo}</h2>
 
-                <ul className="rounded-[16px] border border-western-border-soft bg-white overflow-hidden">
+                <ul className="rounded-xl border border-western-border-soft bg-white overflow-hidden">
                   {g.itens.map((it, ii) => {
                     const id = `${gi}-${ii}`;
                     const aberto = open === id;
@@ -287,7 +287,7 @@ export default function FAQ() {
                           aria-controls={`faq-a-${id}`}
                           className="tap-target group flex w-full items-start justify-between gap-4 px-5 py-5 text-left md:px-7 hover:bg-western-paper transition-colors"
                         >
-                          <span className="font-sans text-[17px] md:text-[18px] font-semibold leading-snug text-western-green-deep group-hover:text-western-cta transition-colors">
+                          <span className="font-sans text-[16px] md:text-[17px] font-semibold leading-snug text-western-green-deep group-hover:text-western-cta transition-colors">
                             {it.q}
                           </span>
                           <ChevronDown
@@ -334,7 +334,7 @@ export default function FAQ() {
             <h2 className="display-md text-western-cream mx-auto max-w-lg">
               Não encontrou o que procurava?
             </h2>
-            <p className="mx-auto mt-4 max-w-xl font-sans text-[17px] leading-[1.6] text-western-cream-muted">
+            <p className="mx-auto mt-4 max-w-xl font-sans text-[16px] leading-[1.6] text-western-cream-muted">
               Receba os 4 acabamentos e sinta a pedra na mão — o valor volta como crédito no primeiro pedido. Ou fale direto com a fábrica.
             </p>
 

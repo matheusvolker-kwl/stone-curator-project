@@ -36,7 +36,7 @@ export function InstallationTrustStrip({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center gap-x-3 gap-y-1 rounded-[10px] border border-western-border-soft bg-western-paper/60 px-4 py-2",
+        "flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-western-border-soft bg-western-paper/60 px-4 py-2",
         className,
       )}
     >
@@ -44,7 +44,7 @@ export function InstallationTrustStrip({
       <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-western-bronze/10 text-western-bronze">
         <Check className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
       </span>
-      <span className="font-sans text-[16px] font-semibold text-western-green-deep">
+      <span className="font-sans text-[15px] font-semibold text-western-green-deep">
         Guia de instalação
       </span>
       <span className="font-sans text-[14px] text-western-stone-warm">
@@ -53,7 +53,7 @@ export function InstallationTrustStrip({
       <a
         href={`#${ANCHOR_ID}`}
         onClick={scrollToInstallation}
-        className="ml-auto inline-flex min-h-[48px] items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep underline-offset-4 transition-colors hover:underline"
+        className="ml-auto inline-flex min-h-tap items-center gap-1.5 font-sans text-[15px] font-semibold text-western-green-deep underline-offset-4 transition-colors hover:underline"
       >
         Ver como
         <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -116,41 +116,40 @@ export function InstallationSection({
   return (
     <section
       id={ANCHOR_ID}
-      className="surface-paper scroll-mt-24 border-t border-western-border-soft py-12 md:py-16"
+      className="surface-paper scroll-mt-24 border-t border-western-border-soft py-10 md:py-12"
       aria-labelledby="instalacao-title"
     >
       <div className="container-western">
         <div className="max-w-5xl">
           {/* Header */}
           <p className="text-section-label mb-3">Instalação</p>
-          <h2 id="instalacao-title" className="display-lg text-western-green-deep">
-            Instalação assistida
+          <h2 id="instalacao-title" className="display-md text-western-green-deep">
+            Como instalar
           </h2>
           <p className="text-body mt-3 max-w-[62ch]">{subtitle}</p>
 
           <div className="mt-10 grid gap-10 md:grid-cols-12 md:gap-12">
             {/* Coluna esquerda — Selo nível + fatos + reassurance */}
             <div className="space-y-8 md:col-span-5">
-              {/* Selo de nível */}
-              <div className="rounded-[10px] border border-western-border-soft bg-western-cream p-5">
-                <p className="text-sublabel mb-3">Nível de instalação</p>
-                <div className="flex items-center justify-between gap-4">
-                  <LevelBars level={level} />
-                  <span className="font-sans text-[14px] font-semibold tabular-nums text-western-stone-warm">
-                    {level} de 4
-                  </span>
-                </div>
-                <p className="mt-3 font-sans text-[17px] font-semibold text-western-green-deep">
+              {/* Tipo de instalação — SEM escala de nível (dono, 2026-07-18):
+                  "nível 4 de 4" sugeria dificuldade a quem não conhece a régua.
+                  O que importa: o tipo de sistema e o suporte que acompanha. */}
+              <div className="rounded-lg border border-western-border-soft bg-western-cream p-5">
+                <p className="text-sublabel mb-2">Tipo de instalação</p>
+                <p className="font-sans text-[16px] font-semibold text-western-green-deep">
                   {levelLabel}
+                </p>
+                <p className="text-body mt-2 text-[15px]">
+                  Manual passo a passo incluso — e o time Western acompanha quando precisar.
                 </p>
               </div>
 
               {/* 3 fatos rápidos */}
-              <ul className="grid grid-cols-3 gap-px overflow-hidden rounded-[10px] border border-western-border-soft bg-western-border-soft">
+              <ul className="grid grid-cols-3 gap-px overflow-hidden rounded-lg border border-western-border-soft bg-western-border-soft">
                 {facts.map((f) => (
                   <li key={f.label} className="bg-western-cream px-3 py-4 text-center">
                     <p className="text-sublabel mb-2">{f.label}</p>
-                    <p className="font-sans text-[16px] leading-snug text-western-green-deep">
+                    <p className="font-sans text-[15px] leading-snug text-western-green-deep">
                       {f.value}
                     </p>
                   </li>
@@ -162,7 +161,7 @@ export function InstallationSection({
 
               {/* Avisos que valem ouro — impermeabilização, cura, elétrica, bomba */}
               {warnings.length > 0 && (
-                <div className="rounded-[16px] border border-western-border-strong bg-western-ivory p-5">
+                <div className="rounded-xl border border-western-border-strong bg-western-ivory p-5">
                   <p className="text-sublabel mb-4">Antes de começar</p>
                   <ul className="space-y-5">
                     {warnings.map((w) => (
@@ -173,10 +172,10 @@ export function InstallationSection({
                           aria-hidden="true"
                         />
                         <div>
-                          <p className="font-sans text-[17px] font-semibold text-western-green-deep">
+                          <p className="font-sans text-[16px] font-semibold text-western-green-deep">
                             {w.title}
                           </p>
-                          <p className="mt-1 font-sans text-[16px] leading-relaxed text-western-stone-warm">
+                          <p className="mt-1 font-sans text-[15px] leading-relaxed text-western-stone-warm">
                             {w.text}
                           </p>
                         </div>
@@ -191,10 +190,13 @@ export function InstallationSection({
             <div className="space-y-8 md:col-span-7">
               <div>
                 <p className="text-section-label mb-4">{stepsLabel}</p>
+                {/* Todos os passos começam FECHADOS: o bloco vira uma lista de
+                    títulos escaneável (o dono pediu "menos massante"), e cada
+                    etapa abre sob demanda. O passo a passo detalhado mesmo vive
+                    no manual, que o botão abaixo entrega. */}
                 <Accordion
                   type="single"
                   collapsible
-                  defaultValue="step-0"
                   className="border-t border-western-border-soft"
                 >
                   {steps.map((s, i) => (
@@ -205,24 +207,23 @@ export function InstallationSection({
                     >
                       <AccordionTrigger className="gap-4 py-4 text-left hover:no-underline">
                         <span className="flex min-w-0 items-baseline gap-3">
-                          <span className="font-sans text-[16px] font-semibold tabular-nums text-western-bronze">
+                          <span className="font-sans text-[15px] font-semibold tabular-nums text-western-bronze">
                             {String(i + 1).padStart(2, "0")}
                           </span>
-                          <span className="font-sans text-[17px] font-semibold text-western-green-deep">
+                          <span className="font-sans text-[16px] font-semibold text-western-green-deep">
                             {s.title}
                           </span>
                         </span>
                       </AccordionTrigger>
-                      <AccordionContent className="pb-5 pl-10 pr-2 font-sans text-[17px] leading-relaxed text-western-stone-warm">
+                      <AccordionContent className="pb-5 pl-10 pr-2 font-sans text-[16px] leading-relaxed text-western-stone-warm">
                         {s.text}
                       </AccordionContent>
                     </AccordionItem>
                   ))}
                 </Accordion>
                 <p className="text-meta mt-4">
-                  Resumo do Capítulo {chapter} · {chapterTitle}. O passo a passo completo,
-                  a ficha técnica com o peso de cada peça e os cuidados de manutenção estão
-                  no manual.
+                  Resumo do Capítulo {chapter}. O passo a passo completo e a manutenção
+                  estão no manual.
                 </p>
               </div>
 

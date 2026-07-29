@@ -3,9 +3,10 @@ import { Link, useSearchParams } from "react-router-dom";
 import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/datasource";
 import { cdnImg, cdnSrcSet } from "@/lib/catalog/client";
 import iconePedra from "@/assets/icone-pedra-verde.png";
-import { useMemo } from "react";
+import { Fragment, useMemo } from "react";
 import { ArrowRight, X } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
+import Seo from "@/components/seo/Seo";
 import { LINHA_COVER_OVERRIDES } from "@/lib/lineCovers";
 import { LINHA_DESCRIPTIONS } from "@/lib/lineDescriptions";
 import { resolveSearch } from "@/lib/search/vocab";
@@ -32,7 +33,7 @@ function LinhaCard({ c }: { c: LinhaCardData }) {
   const cover = LINHA_COVER_OVERRIDES[c.coverKey];
   return (
     <Link to={c.to} className="group block">
-      <div className="frame-product mb-3 aspect-[4/3] overflow-hidden rounded-2xl sm:mb-4">
+      <div className="frame-product mb-3 aspect-[4/3] overflow-hidden rounded-xl sm:mb-4">
         {cover ? (
           <img
             src={cover.url}
@@ -59,7 +60,7 @@ function LinhaCard({ c }: { c: LinhaCardData }) {
         )}
       </div>
 
-      <h3 className="font-sans text-[20px] font-semibold leading-snug text-western-green-deep transition-colors group-hover:text-western-bronze">
+      <h3 className="font-sans text-[18px] font-semibold leading-snug text-western-green-deep transition-colors group-hover:text-western-bronze">
         {c.title}
       </h3>
       {c.count > 0 && (
@@ -166,9 +167,14 @@ export default function Linhas() {
 
   return (
     <div className="surface-ivory">
+      <Seo
+        title="Catálogo Western — pedras artesanais por cena"
+        description="Navegue por cena — água, superfícies, volumes e detalhes — ou veja o catálogo inteiro. A maioria das peças vem em até 4 acabamentos."
+        path="/linhas"
+      />
       <div className="container-western py-12 md:py-20">
         {/* Cabeçalho — hierarquia contida: eyebrow, display, apoio, ação */}
-        <header className="max-w-2xl mb-10 md:mb-16">
+        <header className="max-w-2xl mb-8 md:mb-12">
           {q ? (
             <>
               <p className="text-eyebrow mb-4">Resultados da busca</p>
@@ -187,7 +193,7 @@ export default function Linhas() {
               <button
                 type="button"
                 onClick={() => setParams(new URLSearchParams(), { replace: true })}
-                className="tap-target mt-4 -ml-1 inline-flex items-center gap-2 px-1 font-sans text-[16px] font-semibold text-western-green-deep transition-colors hover:text-western-bronze"
+                className="tap-target mt-4 -ml-1 inline-flex items-center gap-2 px-1 font-sans text-[15px] font-semibold text-western-green-deep transition-colors hover:text-western-bronze"
               >
                 <X className="h-5 w-5" aria-hidden="true" /> Limpar busca
               </button>
@@ -198,22 +204,18 @@ export default function Linhas() {
               <h1 className="display-lg text-western-green-deep">
                 O que você vai construir?
               </h1>
-              <p className="text-body mt-5 max-w-[48ch]">
-                Navegue por cena — água, superfícies, volumes e detalhes. Ou veja
-                o catálogo inteiro de uma vez.
-              </p>
-              <p className="text-meta mt-3 max-w-[52ch]">
-                A maioria das peças vem em até 4 acabamentos: Quartzo, Arenito,
-                Moledo e Granito.
+              {/* Cabeçalho enxuto (dono: "demora até ver que tem produtos"):
+                  intro + acabamentos numa frase só, e só a ação principal aqui —
+                  "Montar no guia" desceu pra uma faixa após a primeira cena. */}
+              <p className="text-body mt-4 max-w-[54ch]">
+                Navegue por cena — água, superfícies, volumes e detalhes. A maioria das
+                peças vem em até 4 acabamentos: Quartzo, Arenito, Moledo e Granito.
               </p>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-6">
                 <Link to="/produtos" className="btn-primary w-full sm:w-auto">
                   Ver o catálogo inteiro
                   <ArrowRight className="h-5 w-5" aria-hidden="true" />
-                </Link>
-                <Link to="/guia-de-composicao" className="btn-outline-forest w-full sm:w-auto">
-                  Montar no guia
                 </Link>
               </div>
             </>
@@ -236,7 +238,7 @@ export default function Linhas() {
                     <ArrowRight className="h-5 w-5 text-western-cta" aria-hidden="true" />
                   </span>
                   <span className="min-w-0">
-                    <span className="block font-sans text-[17px] font-semibold text-western-green-deep">
+                    <span className="block font-sans text-[16px] font-semibold text-western-green-deep">
                       {a.label}
                     </span>
                     <span className="text-meta">{a.desc}</span>
@@ -265,7 +267,7 @@ export default function Linhas() {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="aspect-[4/3] animate-pulse rounded-2xl bg-western-stone-warm/10"
+                className="aspect-[4/3] animate-pulse rounded-xl bg-western-stone-warm/10"
               />
             ))}
           </div>
@@ -284,29 +286,53 @@ export default function Linhas() {
         ) : (
           // Navegação: agrupada por CENA
           <div className="space-y-14 md:space-y-20">
-            {scenes.map(({ scene, cards }) => (
-              <section key={scene.key} aria-labelledby={`cena-${scene.key}`}>
-                <div className="mb-6 md:mb-8 max-w-2xl">
-                  <h2
-                    id={`cena-${scene.key}`}
-                    className="font-display text-[26px] md:text-[30px] font-semibold text-western-green-deep"
-                  >
-                    {scene.titulo}
-                  </h2>
-                  <p className="text-meta mt-2">{scene.descricao}</p>
-                </div>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3">
-                  {cards.map((c) => (
-                    <LinhaCard key={c.handle} c={c} />
-                  ))}
-                </div>
-              </section>
+            {scenes.map(({ scene, cards }, i) => (
+              <Fragment key={scene.key}>
+                <section aria-labelledby={`cena-${scene.key}`}>
+                  <div className="mb-6 md:mb-8 max-w-2xl">
+                    <h2
+                      id={`cena-${scene.key}`}
+                      className="font-display text-[22px] md:text-[30px] font-semibold text-western-green-deep"
+                    >
+                      {scene.titulo}
+                    </h2>
+                    <p className="text-meta mt-2">{scene.descricao}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3">
+                    {cards.map((c) => (
+                      <LinhaCard key={c.handle} c={c} />
+                    ))}
+                  </div>
+                </section>
+
+                {/* Faixa do guia — desce pra depois da 1ª cena (dono: produto
+                    primeiro). "Montar no guia" saiu do cabeçalho pra cá. */}
+                {i === 0 && (
+                  <aside className="surface-forest rounded-xl p-6 md:p-8">
+                    <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                      <div className="max-w-xl">
+                        <p className="text-eyebrow-dark mb-2">Não sabe por onde começar?</p>
+                        <p className="display-md text-western-cream">
+                          Responda 3 perguntas e o guia monta um conjunto pronto para o seu projeto.
+                        </p>
+                      </div>
+                      <Link
+                        to="/guia-de-composicao"
+                        className="btn-gold w-full shrink-0 sm:w-auto"
+                      >
+                        Abrir o guia
+                        <ArrowRight className="h-5 w-5" aria-hidden="true" />
+                      </Link>
+                    </div>
+                  </aside>
+                )}
+              </Fragment>
             ))}
           </div>
         )}
 
         {/* Faixa institucional — verde escuro pontual; aqui o dourado é o acento certo */}
-        <section className="surface-forest mt-14 rounded-2xl px-6 py-8 md:mt-20 md:px-10 md:py-10">
+        <section className="surface-forest mt-14 rounded-xl px-6 py-8 md:mt-20 md:px-10 md:py-10">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="max-w-xl">
               <p className="mb-3 font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft">

@@ -126,7 +126,7 @@ export default function FinishSelector({ values, selected, onSelect }: Props) {
             >
 
               {isBestseller && (
-                <span className="absolute -top-2 -right-2 px-1.5 py-0.5 bg-western-gold text-western-green-deep text-[14px] font-semibold uppercase tracking-[0.06em] leading-none rounded-[6px] shadow-sm">
+                <span className="absolute -top-2 -right-2 px-1.5 py-0.5 bg-western-gold text-western-green-deep text-[14px] font-semibold uppercase tracking-[0.06em] leading-none rounded-sm shadow-sm">
                   + vendido
                 </span>
               )}

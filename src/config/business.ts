@@ -36,7 +36,10 @@ export const BUSINESS = {
 
   // Empresa
   fundadaEm: 1993,
-  anosOperacao: 2026 - 1993,
+  // Calculado, NUNCA cravado: com "2026 - 1993" o site inteiro passava a mentir
+  // em 1º de janeiro ("33 anos" quando já seriam 34). Quem escrever a idade do
+  // ateliê em texto novo usa BUSINESS.anosOperacao — não digite o número.
+  anosOperacao: new Date().getFullYear() - 1993,
 
   // Contato — oficial (decisão do dono, 2026-07-15). Tem WhatsApp (confirmado).
   // whatsappFabrica alimenta TODOS os botões de WhatsApp do site.

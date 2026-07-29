@@ -51,7 +51,8 @@
     --accent: var(--western-gold);
     --accent-foreground: var(--western-green-deep);
 
-    --destructive: 0 50% 45%;
+    /* Aponta pro token de status: une o mundo shadcn à paleta oficial. */
+    --destructive: 4 59% 44%;
     --destructive-foreground: var(--western-cream);
 
     --border: 140 30% 22%;
@@ -62,12 +63,22 @@
     --radius: 0.625rem;
 
     /* DS V3 — tokens novos */
-    --western-bronze: 33 32% 37%;        /* #7E6240 — eyebrows/labels */
+    /* Escurecido 37%→32% (2026-07-17): a 37% o eyebrow bronze sobre surface-cream
+       (o mais escuro dos fundos claros) dava 4,35:1 — 0,15 abaixo do AA. A 32%
+       passa em creme E melhora o contraste em ivory/paper. Continua bronze. */
+    --western-bronze: 33 34% 32%;        /* eyebrows/labels — AA em todos os fundos claros */
     --western-border-soft: 40 41% 86%;   /* #E7DFCE */
     --western-border-strong: 40 25% 73%; /* #C9C0AD */
     --western-cta: 140 38% 17%;          /* #1B3C26 — CTA primário É VERDE no V3 */
     --tap-min: 48px;                     /* alvo mínimo de toque (público 40+) */
-    --control-h: 52px;                   /* altura padrão de botão/input */
+    --control-h: 48px;                   /* altura padrão de botão/input (Modelo B) */
+
+    /* Paleta de status — oficializa a "paleta fantasma" que o site já usava em
+     * hex hardcoded (erro 128×, aviso 41×, sucesso 33× — auditoria 2026-07-17).
+     * Canais HSL para suportar modificador de opacidade (/10, /40…). */
+    --status-error: 4 59% 44%;     /* era #B3372E */
+    --status-warning: 37 79% 34%;  /* era #9C6812 */
+    --status-success: 145 46% 34%; /* era #2E7D4F */
 
     --sidebar-background: var(--western-green-deep);
     --sidebar-foreground: var(--western-cream);
@@ -158,10 +169,6 @@
     background-color: hsl(var(--surface-forest));
     color: hsl(var(--western-cream));
   }
-  .surface-forest-mid {
-    background-color: hsl(var(--surface-forest-mid));
-    color: hsl(var(--western-cream));
-  }
   .surface-cream {
     background-color: hsl(var(--surface-cream));
     color: hsl(var(--western-green-deep));
@@ -193,13 +200,6 @@
   }
   .frame-product:hover {
     box-shadow: 0 36px 48px -28px hsl(var(--western-stone-dark) / 0.28);
-  }
-
-  /* Gallery frame — used on dark surfaces only */
-  .frame-gallery {
-    @apply relative overflow-hidden;
-    background-color: hsl(var(--western-cream));
-    border: 1px solid hsl(var(--western-gold) / 0.4);
   }
 
   /* === TIPOGRAFIA — DS V3 ===
@@ -245,8 +245,10 @@
     color: hsl(var(--western-stone-warm));
   }
 
+  /* MODELO B (18/07, escolha do dono no lab de escala): corpo 16/1.55.
+   * Toda a escala tipográfica desceu um degrau coordenado — ver display-*. */
   .text-body {
-    @apply font-sans text-[17px] leading-[1.6];
+    @apply font-sans text-[16px] leading-[1.55];
     color: hsl(var(--western-stone-warm));
   }
 
@@ -254,15 +256,17 @@
   .text-price {
     @apply font-sans tabular-nums;
     color: hsl(var(--western-green-deep));
-    font-size: clamp(1.75rem, 3vw, 2.125rem);
+    font-size: clamp(1.4rem, 2.4vw, 1.65rem);
     line-height: 1.1;
     font-weight: 700;
   }
 
   /* Escala display do V3 — Archivo 650, contida de propósito */
+  /* Escala display do MODELO B — um degrau abaixo da V3 original, coordenada
+   * com body 16 / ui 15 / title-sm 18 / controle 48. */
   .display-xl {
     @apply font-display;
-    font-size: clamp(1.875rem, 1.2rem + 2.6vw, 3rem);
+    font-size: clamp(1.7rem, 1.1rem + 2.2vw, 2.6rem);
     font-weight: 650;
     line-height: 1.15;
     letter-spacing: -0.01em;
@@ -270,7 +274,7 @@
   }
   .display-lg {
     @apply font-display;
-    font-size: clamp(1.625rem, 1.15rem + 1.8vw, 2.375rem);
+    font-size: clamp(1.45rem, 1.05rem + 1.5vw, 2rem);
     font-weight: 650;
     line-height: 1.15;
     letter-spacing: -0.01em;
@@ -278,7 +282,7 @@
   }
   .display-md {
     @apply font-display;
-    font-size: clamp(1.375rem, 1.15rem + 1vw, 1.75rem);
+    font-size: clamp(1.22rem, 1.05rem + 0.8vw, 1.5rem);
     font-weight: 650;
     line-height: 1.15;
     letter-spacing: -0.01em;
@@ -292,7 +296,7 @@
    */
   .display-stat {
     @apply font-display;
-    font-size: clamp(3.25rem, 2rem + 6vw, 6.5rem);
+    font-size: clamp(2.85rem, 1.8rem + 5.2vw, 5.5rem);
     font-weight: 650;
     line-height: 0.95;
     letter-spacing: -0.03em;
@@ -316,58 +320,86 @@
     min-width: var(--tap-min);
   }
 
-  /* === FORM INPUTS (admin / utilitário) === */
-  .ui-input {
-    @apply w-full px-3 py-2 text-sm bg-white border border-western-stone-warm/30
-           text-western-green-deep placeholder:text-western-stone-warm/60
-           focus:outline-none focus:border-western-gold focus:ring-1 focus:ring-western-gold/30
-           transition-colors;
+  /* === PAPÉIS QUE FALTAVAM (auditoria 2026-07-17) ===
+   * Os dois tamanhos mais usados do site (16px 386×, 20px 49×) nunca tiveram
+   * nome — a causa nº 1 do drift: ninguém desobedece um sistema; as pessoas
+   * improvisam quando a classe de que precisam não existe. */
+  .text-ui {
+    @apply font-sans text-[15px] leading-[1.4];
   }
-
-  /* === PRODUCT EDITORIAL === */
-  .product-lead {
-    @apply font-display text-[1.2rem] md:text-[1.45rem] leading-[1.55] text-western-green-deep;
-    font-style: italic;
-    font-weight: 400;
-    hyphens: auto;
-    -webkit-hyphens: auto;
-    overflow-wrap: break-word;
-  }
-  .product-lead strong {
-    font-style: normal;
-    font-weight: 500;
+  .text-title-sm {
+    @apply font-sans text-[18px] leading-[1.3] font-semibold;
     color: hsl(var(--western-green-deep));
   }
-  .product-lead::first-letter {
-    font-family: inherit;
-    font-style: normal;
-    font-size: 2.8em;
-    line-height: 0.85;
-    float: left;
-    padding: 0.05em 0.12em 0 0;
-    color: hsl(var(--western-gold));
-    font-weight: 400;
-  }
-  @media (min-width: 768px) {
-    .product-lead::first-letter {
-      font-size: 3.4em;
-    }
+
+  /* Eyebrow para superfícies escuras (forest/foto). Substitui as 3 consts
+   * duplicadas (eyebrowDark/EYEBROW_DARK) e as ~36 cópias inline. */
+  .text-eyebrow-dark {
+    @apply font-sans text-[14px] uppercase tracking-[0.06em];
+    color: hsl(var(--western-gold-soft));
+    font-weight: 600;
   }
 
-  .product-list {
-    @apply space-y-2.5 text-[15px] leading-relaxed text-western-stone-warm;
+  /* O padrão de link-CTA mais copiado do site (link com seta), enfim com nome. */
+  .link-cta {
+    @apply inline-flex items-center gap-2 font-sans text-[16px] font-semibold underline underline-offset-4 transition-colors;
+    min-height: var(--tap-min);
+    color: hsl(var(--western-green-deep));
+    text-decoration-color: hsl(var(--western-gold));
   }
-  .product-list li {
-    @apply relative pl-5;
+  .link-cta:hover {
+    text-decoration-color: hsl(var(--western-green-deep));
   }
-  .product-list li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0.65em;
-    width: 6px;
-    height: 1px;
-    background: hsl(var(--western-gold));
+  .link-cta-dark {
+    @apply inline-flex items-center gap-2 font-sans text-[16px] font-semibold underline underline-offset-4 transition-colors;
+    min-height: var(--tap-min);
+    color: hsl(var(--western-cream));
+    text-decoration-color: hsl(var(--western-gold) / 0.5);
+  }
+  .link-cta-dark:hover {
+    text-decoration-color: hsl(var(--western-gold-soft));
+  }
+
+  /* === RITMO VERTICAL — 2 níveis nomeados (decisão do dono, 2026-07-17) ===
+   * .section = padrão do site; .section-tight = PDP interna e seções de apoio.
+   * Qualquer outro ritmo é exceção DECLARADA em comentário, nunca deriva. */
+  /* Ritmos do MODELO B: um degrau abaixo em todas as faixas. */
+  .section {
+    @apply py-12 md:py-[4.5rem];
+  }
+  .section-tight {
+    @apply py-10 md:py-14;
+  }
+
+  /* === MODOS DE DENSIDADE — PALCO × BALCÃO (2026-07-18, decisão do dono) ===
+   * O site tem DOIS modos, e cada superfície declara o seu.
+   *
+   * PALCO (argumento) — existe pra CONVENCER. Heros, páginas de marca
+   * (/a-pedra, /para-sua-casa, /contrate, /sobre), seções de história.
+   * Escala editorial: display-lg/xl, .section, foto em coluna, display-stat.
+   * Nada muda no Palco.
+   *
+   * BALCÃO (ferramenta) — existe pra LER, DECIDIR e OPERAR. Carrinho e
+   * drawer, calculadoras, ficha da PDP, listagens (/produtos, /conjuntos),
+   * Minha conta, admin, formulários, modais. Regras:
+   *   · título de seção display-md NO MÁXIMO (h1 de página utilitária idem);
+   *     sem parágrafo de apoio — quando precisar, UMA linha text-meta.
+   *   · ritmo .section-balcao (py-10/12); dentro de cartões, p-4/p-5.
+   *   · texto corrido .text-body-balcao (15px/1.55); meta 13–14px
+   *     (14px segue o piso absoluto do público 40+ em texto essencial).
+   *   · controles 32–44px (stepper h-8, input/chip h-11); CTA principal h-12.
+   *   · thumbs 56–64px; ícone no lugar de rótulo quando o gesto é óbvio.
+   *   · ficha/stats de resultado em UMA linha ("a · b · c"), nunca em grid.
+   * Gabaritos: CartDrawer.tsx e CalculadoraQuantidade.tsx (18/07).
+   * Página mista (home, PDP): o hero e o argumento são Palco; a ferramenta
+   * embutida é Balcão. Evidência que motivou os modos: drawer com ~1,5 item
+   * visível, calculadora de 2 telas, /a-pedra com 25 telas. */
+  .section-balcao {
+    @apply py-8 md:py-10;
+  }
+  .text-body-balcao {
+    @apply font-sans text-[15px] leading-[1.55];
+    color: hsl(var(--western-stone-warm));
   }
 
   .product-prose a {
@@ -380,12 +412,6 @@
   }
   .product-prose p {
     @apply text-spec leading-[1.8] text-western-stone-warm;
-  }
-
-  .spec-chip {
-    @apply inline-flex items-center px-3 py-1 text-[14px] font-semibold uppercase tracking-[0.06em] border rounded-[6px];
-    border-color: hsl(var(--western-stone-warm) / 0.3);
-    color: hsl(var(--western-green-deep));
   }
 
   .link-underline {
@@ -406,35 +432,6 @@
   .link-underline:hover::after {
     transform: scaleX(1);
     transform-origin: left;
-  }
-
-  .hairline-top {
-    position: relative;
-  }
-  .hairline-top::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 0;
-    height: 1px;
-    background: hsl(var(--western-gold));
-    transform: translateX(-50%);
-    transition: width 500ms cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .hairline-top:hover::before {
-    width: 100%;
-  }
-
-  /* Soft section divider hairline */
-  .divider-hairline {
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      hsl(var(--western-gold) / 0.35) 50%,
-      transparent
-    );
   }
 
   /* Section divider with center diamond — assinatura Western */
@@ -461,20 +458,6 @@
     margin: 0 18px;
     background: hsl(var(--western-gold));
     transform: rotate(45deg);
-    flex-shrink: 0;
-  }
-
-  /* Eyebrow numerado com filete dourado vertical */
-  .eyebrow-bar {
-    @apply text-[14px] font-semibold uppercase tracking-[0.06em] inline-flex items-center;
-    color: hsl(var(--western-gold));
-  }
-  .eyebrow-bar::before {
-    content: "";
-    width: 1px;
-    height: 14px;
-    background: hsl(var(--western-gold));
-    margin-right: 14px;
     flex-shrink: 0;
   }
 
@@ -506,11 +489,6 @@
     @apply active:scale-[0.97] motion-reduce:active:scale-100;
     min-height: var(--control-h);
     border-radius: var(--radius);
-  }
-  /* Mesmo "press" para os CTAs que não usam .btn-base (herói, add-to-cart,
-     barras fixas): basta acrescentar a classe `press`. */
-  .press {
-    @apply transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100;
   }
   .btn-base:disabled {
     opacity: 0.45;
@@ -560,10 +538,6 @@
     border-color: hsl(var(--western-cream));
   }
 
-  /* Alias histórico — o app chama btn-dark em vários lugares. */
-  .btn-dark {
-    @apply btn-primary;
-  }
 }
 
 @layer utilities {
@@ -581,19 +555,6 @@
     transition: opacity 700ms cubic-bezier(0.4, 0, 0.2, 1), transform 700ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Uniformiza logos coloridos sobre placa escura: vira tudo cream/branco */
-  .logo-mono {
-    filter: brightness(0) invert(1);
-    opacity: 0.78;
-    transition: opacity 300ms ease;
-  }
-  .logo-mono:hover { opacity: 1; }
-  /* Logo já branco/claro: não inverte, só normaliza opacidade */
-  .logo-mono-keep {
-    opacity: 0.85;
-    transition: opacity 300ms ease;
-  }
-  .logo-mono-keep:hover { opacity: 1; }
   .reveal.is-visible {
     opacity: 1;
     transform: translateY(0);

@@ -25,7 +25,7 @@ export default function ArtistaSection() {
           {/* Foto — 7 colunas, DENTRO da grade. 5:4 (quase quadrada): uma pessoa
               desenhando é um assunto vertical; 21:9 num retrato é enquadrar o vazio. */}
           <figure className="m-0 lg:col-span-7">
-            <div className="aspect-[5/4] overflow-hidden rounded-[16px] ring-1 ring-western-gold/20 shadow-[0_28px_60px_-32px_rgba(0,0,0,0.6)]">
+            <div className="aspect-[5/4] overflow-hidden rounded-xl ring-1 ring-western-gold/20 shadow-[0_28px_60px_-32px_rgba(0,0,0,0.6)]">
               <img
                 src={ricardoDesenhando}
                 alt="Ricardo Botelho desenhando uma nova matriz no ateliê Western em Cajamar/SP"
@@ -40,12 +40,12 @@ export default function ArtistaSection() {
               Creme sobre verde profundo lê mais forte que 48px sobre bege. */}
           <div className="lg:col-span-5">
             <div className="mb-7 h-px w-12 bg-western-gold" />
-            <blockquote className="font-display text-[26px] leading-[1.28] text-western-cream md:text-[30px]">
+            <blockquote className="font-display text-[22px] leading-[1.28] text-western-cream md:text-[30px]">
               “Cada peça da Western nasce duas vezes: uma na natureza, outra no projeto.”
             </blockquote>
 
             <div className="mt-8 border-t border-western-cream/15 pt-6">
-              <p className="font-sans text-[17px] font-semibold text-western-cream">
+              <p className="font-sans text-[16px] font-semibold text-western-cream">
                 Ricardo Botelho
               </p>
               <p className="mt-1 font-sans text-[14px] text-western-cream/60">

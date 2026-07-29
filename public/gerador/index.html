@@ -1,0 +1,1148 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gerador Western</title>
+<link rel="icon" href="brand/logo-verde.png">
+<style>
+  /* fontes do design system, auto-hospedadas — nada de CDN */
+  @font-face{font-family:'Archivo';src:url('fontes/archivo-600.ttf') format('truetype');font-weight:600;font-display:block}
+  @font-face{font-family:'Archivo';src:url('fontes/archivo-700.ttf') format('truetype');font-weight:700;font-display:block}
+  @font-face{font-family:'SourceSans';src:url('fontes/sourcesans3-400.ttf') format('truetype');font-weight:400;font-display:block}
+  @font-face{font-family:'SourceSans';src:url('fontes/sourcesans3-600.ttf') format('truetype');font-weight:600;font-display:block}
+  @font-face{font-family:'SourceSans';src:url('fontes/sourcesans3-700.ttf') format('truetype');font-weight:700;font-display:block}
+  /* Berlin é a fonte do wordmark; opcional, entra se os TTF estiverem em brand/ */
+  @font-face{font-family:'Berlin';src:url('brand/Berlin-Regular.ttf') format('truetype');font-weight:400;font-display:swap}
+  @font-face{font-family:'Berlin';src:url('brand/Berlin-Bold.ttf') format('truetype');font-weight:700;font-display:swap}
+
+  :root{
+    --verde:#0D341F; --verde-2:#103A24; --verde-cta:#1B3C26;
+    --ouro:#A68764; --ouro-claro:#C7AF81;
+    --papel:#F4F3EF; --carta:#FFFFFF; --elev:#EAE9E3;
+    --tinta:#16221B; --tinta-2:#5A665E; --tinta-3:#8B958D;
+    --fio:#DCDDD6; --fio-forte:#BFC3BA;
+    --ok:#2F6B45; --alerta:#9C4A38;
+    --ui:'SourceSans',system-ui,sans-serif;
+    --disp:'Archivo',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--papel);color:var(--tinta);font:15px/1.5 var(--ui);
+       overflow:hidden}
+  button,input,select,textarea{font:inherit;color:inherit}
+
+  /* ================= barra ================= */
+  .barra{height:56px;background:var(--verde);color:#fff;display:flex;align-items:center;
+         gap:18px;padding:0 16px;flex:0 0 auto}
+  .barra .marca{display:flex;align-items:center;gap:9px;font:600 15px/1 var(--disp);
+                letter-spacing:.01em}
+  .barra .marca img{height:22px;display:block}
+  .seg{display:flex;background:rgba(255,255,255,.13);border-radius:8px;padding:3px;gap:2px}
+  .seg button{background:none;border:0;color:rgba(255,255,255,.75);padding:6px 14px;
+              border-radius:6px;cursor:pointer;font-size:13.5px}
+  .seg button.on{background:#fff;color:var(--verde);font-weight:600}
+  .barra .nome{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);
+    color:#fff;border-radius:7px;padding:6px 11px;font-size:13.5px;width:210px}
+  .barra .nome::placeholder{color:rgba(255,255,255,.5)}
+  .barra .dir{margin-left:auto;display:flex;align-items:center;gap:9px}
+  .salvo{font-size:12px;color:rgba(255,255,255,.6);min-width:96px;text-align:right}
+  .bt{background:#fff;color:var(--verde);border:0;padding:8px 15px;border-radius:7px;
+      cursor:pointer;font-weight:600;font-size:13.5px;white-space:nowrap}
+  .bt.linha{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.34)}
+  .bt:disabled{opacity:.45;cursor:default}
+
+  /* ================= grade ================= */
+  .grade{display:grid;grid-template-columns:212px 1fr 348px;height:calc(100% - 56px)}
+  .col{overflow-y:auto;overflow-x:hidden}
+  .col.fotos{background:var(--elev);border-right:1px solid var(--fio);padding:14px}
+  .col.props{background:var(--carta);border-left:1px solid var(--fio)}
+  .palco{display:flex;flex-direction:column;align-items:center;gap:14px;
+         padding:20px 20px 16px;overflow:hidden}
+  @media (max-width:1180px){
+    .grade{grid-template-columns:170px 1fr 300px}
+  }
+  @media (max-width:900px){
+    body{overflow:auto}
+    .grade{grid-template-columns:1fr;height:auto}
+    .col{overflow:visible}
+    .palco{order:-1}
+  }
+
+  h3.tit{font:600 11.5px/1 var(--disp);letter-spacing:.13em;text-transform:uppercase;
+         color:var(--tinta-3);margin:0 0 10px}
+
+  /* ---- bandeja de fotos ---- */
+  .solta{border:1.5px dashed var(--fio-forte);border-radius:9px;padding:16px 10px;
+         text-align:center;color:var(--tinta-2);font-size:12.5px;cursor:pointer;
+         background:var(--carta);line-height:1.4;transition:border-color .15s,background .15s}
+  .solta:hover,.solta.ativo{border-color:var(--verde);background:#fff}
+  .solta b{display:block;font-size:13.5px;color:var(--tinta);margin-bottom:3px}
+  .bandeja{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
+  .fx{position:relative;aspect-ratio:4/5;border-radius:6px;overflow:hidden;cursor:pointer;
+      border:2px solid transparent;background:#d5d8d2}
+  .fx img{width:100%;height:100%;object-fit:cover;display:block}
+  .fx.usada{border-color:var(--verde)}
+  .fx .marca-uso{position:absolute;left:0;bottom:0;background:var(--verde);color:#fff;
+    font:600 10px/1 var(--ui);padding:3px 5px;border-top-right-radius:5px}
+  .fx .tirar{position:absolute;right:2px;top:2px;background:rgba(0,0,0,.55);color:#fff;
+    border:0;border-radius:4px;width:19px;height:19px;line-height:1;cursor:pointer;
+    font-size:13px;opacity:0;transition:opacity .12s}
+  .fx:hover .tirar{opacity:1}
+  .vazio{color:var(--tinta-3);font-size:12.5px;text-align:center;padding:22px 6px;line-height:1.5}
+
+  /* ---- palco ---- */
+  #tela{max-width:100%;flex:1 1 auto;min-height:0;object-fit:contain;border-radius:3px;
+        box-shadow:0 8px 30px rgba(22,34,27,.17);cursor:grab;background:#dfe1dc}
+  #tela.arrasta{cursor:grabbing}
+  .infoTela{font-size:12px;color:var(--tinta-3);display:flex;gap:14px;align-items:center}
+  .infoTela label{display:flex;align-items:center;gap:5px;cursor:pointer}
+  .filme{display:flex;gap:6px;align-items:center;max-width:100%;overflow-x:auto;
+         padding:2px;flex:0 0 auto}
+  .sl{position:relative;flex:0 0 auto;width:52px;height:65px;border-radius:5px;
+      border:2px solid transparent;background:#dcded8 center/cover;cursor:pointer;overflow:hidden}
+  .sl.on{border-color:var(--verde);box-shadow:0 0 0 2px rgba(13,52,31,.16)}
+  .sl b{position:absolute;left:0;bottom:0;background:rgba(0,0,0,.6);color:#fff;
+        font:600 9.5px/1 var(--ui);padding:2px 4px;border-top-right-radius:4px}
+  .filme .mais{flex:0 0 auto;width:52px;height:65px;border:1.5px dashed var(--fio-forte);
+    border-radius:5px;background:none;cursor:pointer;color:var(--tinta-3);font-size:19px}
+
+  /* ---- painel de propriedades ---- */
+  .abas{display:flex;border-bottom:1px solid var(--fio);position:sticky;top:0;
+        background:var(--carta);z-index:3}
+  .abas button{flex:1;background:none;border:0;padding:13px 6px;cursor:pointer;
+    font-size:13.5px;color:var(--tinta-2);border-bottom:2px solid transparent}
+  .abas button.on{color:var(--verde);border-bottom-color:var(--verde);font-weight:600}
+  .painel{padding:16px}
+  .painel.oculto{display:none}
+  label.cmp{display:block;font-size:12.5px;color:var(--tinta-2);margin:13px 0 4px}
+  label.cmp:first-child{margin-top:0}
+  .painel input[type=text],.painel textarea,.painel select{width:100%;padding:8px 10px;
+    border:1px solid var(--fio);border-radius:7px;background:#fdfdfc}
+  .painel textarea{resize:vertical;min-height:66px;line-height:1.45;font-size:14px}
+  .painel input[type=range]{width:100%;accent-color:var(--verde)}
+  .dica{font-size:12px;color:var(--tinta-3);margin-top:7px;line-height:1.45}
+  .aviso{font-size:12.5px;background:#FBF3E9;border:1px solid #E5D2B6;color:#6B4E2A;
+         border-radius:7px;padding:9px 11px;margin-top:11px;line-height:1.45}
+  .aviso.bom{background:#EDF5EF;border-color:#BFD9C7;color:#26543A}
+  .par{display:flex;gap:9px}.par>*{flex:1}
+  .btlinha{width:100%;background:var(--verde-cta);color:#fff;border:0;padding:10px;
+    border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;margin-top:14px}
+  .btlinha.sec{background:transparent;color:var(--verde-cta);border:1px solid var(--fio-forte)}
+  .saida{white-space:pre-wrap;background:#FAF9F6;border:1px solid var(--fio);
+    border-radius:8px;padding:12px;font-size:14px;line-height:1.55;min-height:70px;margin-top:4px}
+  .conta{font-size:12px;margin-top:7px}
+  .conta.ok{color:var(--ok)} .conta.fora{color:var(--alerta)}
+
+  /* toast */
+  #toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+    background:var(--tinta);color:#fff;padding:11px 18px;border-radius:9px;font-size:14px;
+    opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50;
+    max-width:90vw;text-align:center}
+  #toast.ver{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="barra">
+  <span class="marca"><img src="brand/logo-branco.png" alt="Western">Gerador</span>
+  <div class="seg" id="segFormato">
+    <button data-f="feed" class="on">Feed 4:5</button>
+    <button data-f="story">Story 9:16</button>
+  </div>
+  <input class="nome" id="nomePeca" type="text" placeholder="Nome da peça" value="">
+  <div class="dir">
+    <span class="salvo" id="salvo"></span>
+    <button class="bt linha" id="btCanva">Abrir no Canva</button>
+    <button class="bt" id="btZip">Baixar pacote</button>
+  </div>
+</div>
+
+<div class="grade">
+
+  <!-- ---------- fotos ---------- -->
+  <div class="col fotos">
+    <h3 class="tit">Fotos da obra</h3>
+    <div class="solta" id="solta">
+      <b>Solte as fotos aqui</b>
+      ou clique para escolher · várias de uma vez
+    </div>
+    <input type="file" id="arquivos" accept="image/*" multiple hidden>
+    <button class="btlinha sec" id="btMontar" style="margin-top:11px">Montar carrossel</button>
+    <div class="bandeja" id="bandeja"></div>
+    <div class="vazio" id="vazio">Nenhuma foto ainda.<br>As fotos ficam salvas neste navegador.</div>
+  </div>
+
+  <!-- ---------- palco ---------- -->
+  <div class="palco">
+    <canvas id="tela"></canvas>
+    <div class="filme" id="filme"></div>
+    <div class="infoTela">
+      <span id="metaTela"></span>
+      <label id="rotGuias"><input type="checkbox" id="guias"> áreas seguras</label>
+      <span style="color:var(--fio-forte)">|</span>
+      <span>← → troca slide</span>
+    </div>
+  </div>
+
+  <!-- ---------- propriedades ---------- -->
+  <div class="col props">
+    <div class="abas">
+      <button data-p="slide" class="on">Slide</button>
+      <button data-p="obra">Obra</button>
+      <button data-p="legenda">Legenda</button>
+    </div>
+
+    <div class="painel" id="pSlide">
+      <label class="cmp">Template</label>
+      <select id="template"></select>
+      <div class="dica" id="descTemplate"></div>
+
+      <div id="blocoFoto">
+        <label class="cmp">Enquadramento <span id="zoomVal" style="color:var(--tinta-3)"></span></label>
+        <input type="range" id="zoom" min="100" max="260" value="100">
+        <div class="dica">Arraste a foto no preview para reposicionar.</div>
+      </div>
+
+      <div id="campos"></div>
+
+      <label class="cmp">Marca d'água</label>
+      <select id="marca">
+        <option value="icone-sd">Ícone — superior direito</option>
+        <option value="icone-ie">Ícone — inferior esquerdo</option>
+        <option value="word-baixo">Wordmark — centralizada embaixo</option>
+        <option value="nenhuma">Sem marca</option>
+      </select>
+
+      <div class="par" style="margin-top:14px">
+        <button class="btlinha sec" id="btDup" style="margin:0">Duplicar</button>
+        <button class="btlinha sec" id="btDel" style="margin:0">Remover</button>
+      </div>
+      <div class="aviso" id="avisoFonte"></div>
+    </div>
+
+    <div class="painel oculto" id="pObra">
+      <div class="dica" style="margin:0 0 4px">Preenchido uma vez. Alimenta a legenda e o slide de ficha técnica.</div>
+      <label class="cmp">Nome da obra</label>
+      <input type="text" id="oNome" placeholder="RZ">
+      <label class="cmp">Cidade e estado</label>
+      <input type="text" id="oLocal" placeholder="Atibaia, SP">
+      <label class="cmp">O que é — uma frase</label>
+      <input type="text" id="oOque" placeholder="piscina natural praia com cascata de pedras artesanais">
+      <label class="cmp">Segmento</label>
+      <select id="oSeg">
+        <option>Piscina natural</option><option>Lago ornamental</option>
+        <option>Viveiro</option><option>Cascata</option>
+        <option>Revestimento</option><option>Western Spa</option>
+      </select>
+      <label class="cmp">Detalhe concreto (medida, prazo, nº de peças)</label>
+      <input type="text" id="oDetalhe" placeholder="projeto em 2023, obra entregue em 2024">
+      <label class="cmp">Créditos — @ separados por vírgula</label>
+      <input type="text" id="oCreditos" placeholder="@cristalpool, @tina.atelier">
+    </div>
+
+    <div class="painel oculto" id="pLegenda">
+      <label class="cmp">Tipo de conteúdo</label>
+      <select id="lgTipo">
+        <option value="entrega">Obra entregue</option>
+        <option value="processo">Obra em andamento</option>
+        <option value="antes">Antes e depois</option>
+        <option value="produto">Produto ou acabamento</option>
+        <option value="serie">De Portas Abertas</option>
+        <option value="parceiro">Projeto com parceiro</option>
+      </select>
+      <label class="cmp">Chamada final</label>
+      <select id="lgCta">
+        <option>Clique no link da bio e faça um orçamento personalizado.</option>
+        <option>Acesse o link da bio e fale com o nosso time de arquitetos para solicitar seu projeto 3D.</option>
+        <option>Continue nos acompanhando para conferir o resultado final.</option>
+        <option>Link na bio para conhecer o catálogo completo.</option>
+        <option value="">Sem chamada</option>
+      </select>
+      <div class="par">
+        <button class="btlinha" id="btLegenda" style="margin-top:14px">Gerar</button>
+        <button class="btlinha sec" id="btCopiar" style="margin-top:14px">Copiar</button>
+      </div>
+      <div class="saida" id="saidaLegenda">Preencha a aba Obra e gere.</div>
+      <div class="conta" id="conta"></div>
+      <div class="dica">Padrão medido da casa: 380 a 700 caracteres, no máximo um emoji, quase nenhuma hashtag.</div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* =====================================================================
+   Gerador Western
+   Desenha em canvas no tamanho final. Estado salvo no navegador.
+   ===================================================================== */
+
+const V = {verde:'#0D341F', verde2:'#103A24', ouro:'#A68764', ouroClaro:'#C7AF81'};
+const TONS = [
+  {nome:'Quartzo', cor:'#D8CEBE'}, {nome:'Arenito', cor:'#C6A268'},
+  {nome:'Moledo',  cor:'#B09274'}, {nome:'Granito', cor:'#8C8C87'},
+  {nome:'Carbono', cor:'#3B3C3E'}
+];
+/* Faixas que o Instagram cobre com a própria interface no story. */
+const SEGURO = {topo:0.15, base:0.80};
+
+const TEMPLATES = {
+  feed:{
+    'foto':{nome:'Foto limpa', desc:'Foto do projeto com a marca. O formato mais usado do perfil.', campos:[]},
+    'foto-chip':{nome:'Foto + chip de textura', desc:'Recorte circular com o macro da pedra, anel branco.', campos:[
+      {id:'chipZoom',tipo:'range',rot:'Zoom do chip',min:150,max:600,val:400},
+      {id:'chipX',tipo:'range',rot:'Posição horizontal',min:5,max:95,val:24},
+      {id:'chipY',tipo:'range',rot:'Posição vertical',min:5,max:95,val:78}
+    ]},
+    'capa-tipo':{nome:'Capa tipográfica', desc:'Frase em caixa alta sobre a foto. No máximo três linhas curtas.', campos:[
+      {id:'frase',tipo:'textarea',rot:'Frase (uma linha por quebra)',val:'É pedra,\nmas é feita\npor gente'},
+      {id:'corpoTexto',tipo:'text',rot:'Linha de apoio (opcional)',val:''},
+      {id:'tamFrase',tipo:'range',rot:'Corpo da frase',min:40,max:130,val:76},
+      {id:'posFrase',tipo:'select',rot:'Ancoragem',opcoes:['Inferior esquerda','Centro esquerda','Superior esquerda'],val:'Inferior esquerda'}
+    ]},
+    'verde-cta':{nome:'Verde — paleta e chamada', desc:'Slide de fechamento do carrossel: cinco tons, chamada e wordmark.', campos:[
+      {id:'olho',tipo:'text',rot:'Primeira parte',val:'O seu'},
+      {id:'olhoIt',tipo:'text',rot:'Palavra em serifada itálica',val:'/tom'},
+      {id:'sub',tipo:'text',rot:'Complemento',val:'ainda não existe? A gente desenvolve'},
+      {id:'cta',tipo:'textarea',rot:'Chamada',val:'Acesse o link da bio e fale com o nosso time\nde arquitetos para solicitar seu projeto 3D'}
+    ]},
+    'verde-texto':{nome:'Verde — declaração', desc:'Fundo verde, uma ideia só, fio e círculo.', campos:[
+      {id:'olho',tipo:'text',rot:'Sobretítulo',val:'Piscina natural'},
+      {id:'frase',tipo:'textarea',rot:'Declaração',val:'A água não é tratada\npara parecer limpa.\nEla é limpa.'},
+      {id:'apoio',tipo:'textarea',rot:'Texto de apoio',val:'Filtragem biológica com pedra e planta. Sem cloro, sem cheiro, sem olho ardendo.'},
+      {id:'tamFrase',tipo:'range',rot:'Corpo da declaração',min:34,max:96,val:58}
+    ]},
+    'ficha':{nome:'Ficha técnica', desc:'Os dados da obra em fundo verde. Preenche sozinho pela aba Obra.', campos:[
+      {id:'extra1',tipo:'text',rot:'Linha extra (opcional)',val:''},
+      {id:'extra2',tipo:'text',rot:'Outra linha extra (opcional)',val:''}
+    ]},
+    'portas-abertas':{nome:'De Portas Abertas', desc:'Letterbox preto com fio dourado. Identidade da série.', campos:[
+      {id:'serie',tipo:'text',rot:'Rótulo da série',val:'DE PORTAS ABERTAS'},
+      {id:'ep',tipo:'text',rot:'Legenda inferior',val:''}
+    ]},
+    'antes-depois':{nome:'Antes e depois', desc:'Duas fotos com divisor. Escolha a segunda foto na bandeja com Shift.', campos:[
+      {id:'rotA',tipo:'text',rot:'Rótulo esquerdo',val:'ANTES'},
+      {id:'rotB',tipo:'text',rot:'Rótulo direito',val:'DEPOIS'}
+    ]}
+  },
+  story:{
+    'story-gancho':{nome:'Story 1 — gancho', desc:'Texto no terço inferior, fio subindo até o círculo.', campos:[
+      {id:'titulo',tipo:'textarea',rot:'Título em negrito',val:'Uma área externa não precisa\nde mais espaço. Precisa de propósito.'},
+      {id:'corpo',tipo:'textarea',rot:'Parágrafo',val:'Em Atibaia, os proprietários não queriam\nsó uma piscina praia em casa. Queriam que\no quintal inteiro tivesse identidade.'},
+      {id:'tamTexto',tipo:'range',rot:'Corpo do texto',min:26,max:60,val:38}
+    ]},
+    'story-corpo':{nome:'Story 2 — desenvolvimento', desc:'Texto no topo, fio descendo. Use *asteriscos* para negritar.', campos:[
+      {id:'corpo',tipo:'textarea',rot:'Texto (*negrito* entre asteriscos)',val:'As *pedras artesanais* compõem\na cascata e o jardim, e a piscina praia\nrecebeu revestimento Cristal Pool.\n\nO *paisagismo tropical* fecha o conjunto.'},
+      {id:'tamTexto',tipo:'range',rot:'Corpo do texto',min:26,max:60,val:38}
+    ]},
+    'story-cta':{nome:'Story 3 — chamada', desc:'Texto centralizado, sticker de link e wordmark fechando.', campos:[
+      {id:'corpo',tipo:'textarea',rot:'Texto centralizado',val:'Traga o seu projeto para o nosso time\ne veja o que a pedra pode fazer.'},
+      {id:'link',tipo:'text',rot:'Rótulo do sticker de link',val:'Linklist.ai'},
+      {id:'tamTexto',tipo:'range',rot:'Corpo do texto',min:26,max:60,val:38}
+    ]},
+    'story-foto':{nome:'Story — foto pura', desc:'Só a foto com a marca. Para sequência de canteiro.', campos:[]}
+  }
+};
+
+/* ---------------- estado ---------------- */
+let P = {
+  nome:'', formato:'feed', slides:[], atual:0,
+  obra:{nome:'',local:'',oque:'',seg:'Piscina natural',detalhe:'',creditos:''},
+  legenda:'', lgTipo:'entrega', lgCta:''
+};
+let FOTOS = [];            // {id, url, img, nome}
+let mostrarGuias = false;
+
+function slideNovo(f){
+  const chave = Object.keys(TEMPLATES[f])[0];
+  const s = {template:chave, foto:null, foto2:null, zoom:100, fx:.5, fy:.5,
+             marca: f==='story' ? 'icone-ie' : 'icone-sd', props:{}};
+  padroes(s,f); return s;
+}
+function padroes(s,f){
+  (TEMPLATES[f][s.template].campos||[]).forEach(c=>{
+    if(s.props[c.id]===undefined) s.props[c.id]=c.val;
+  });
+}
+const sAtual = ()=> P.slides[P.atual];
+const fotoDe = id => FOTOS.find(f=>f.id===id) || null;
+
+/* ---------------- persistência ---------------- */
+const BD='western-gerador';
+let bd=null;
+function abrirBD(){
+  return new Promise(res=>{
+    if(bd) return res(bd);
+    const r = indexedDB.open(BD,1);
+    r.onupgradeneeded = ()=>{ const d=r.result;
+      if(!d.objectStoreNames.contains('fotos')) d.createObjectStore('fotos');
+      if(!d.objectStoreNames.contains('estado')) d.createObjectStore('estado'); };
+    r.onsuccess = ()=>{ bd=r.result; res(bd); };
+    r.onerror = ()=>res(null);
+  });
+}
+async function guardar(loja,chave,valor){
+  const d=await abrirBD(); if(!d) return;
+  return new Promise(res=>{ const t=d.transaction(loja,'readwrite');
+    t.objectStore(loja).put(valor,chave); t.oncomplete=res; t.onerror=res; });
+}
+async function ler(loja,chave){
+  const d=await abrirBD(); if(!d) return null;
+  return new Promise(res=>{ const t=d.transaction(loja,'readonly');
+    const q=t.objectStore(loja).get(chave); q.onsuccess=()=>res(q.result); q.onerror=()=>res(null); });
+}
+async function apagar(loja,chave){
+  const d=await abrirBD(); if(!d) return;
+  return new Promise(res=>{ const t=d.transaction(loja,'readwrite');
+    t.objectStore(loja).delete(chave); t.oncomplete=res; t.onerror=res; });
+}
+
+/* Trava de segurança: nada é gravado antes de a restauração terminar.
+   Sem isso, um erro de leitura faz o primeiro clique apagar o trabalho salvo. */
+let pronto=false;
+let tSalvar=null;
+function salvar(){
+  if(!pronto) return;
+  clearTimeout(tSalvar);
+  tSalvar=setTimeout(async()=>{
+    const magro = JSON.parse(JSON.stringify(P));
+    await guardar('estado','P',magro);
+    await guardar('estado','ordemFotos',FOTOS.map(f=>({id:f.id,nome:f.nome})));
+    const el=document.getElementById('salvo');
+    const h=new Date();
+    el.textContent='salvo '+String(h.getHours()).padStart(2,'0')+':'+String(h.getMinutes()).padStart(2,'0');
+  },600);
+}
+async function restaurar(){
+  let est, ordem;
+  try{
+    est = await ler('estado','P');
+    ordem = await ler('estado','ordemFotos');
+  }catch(e){ return 'erro'; }
+  if(ordem && ordem.length){
+    for(const o of ordem){
+      const blob = await ler('fotos',o.id);
+      if(!blob) continue;
+      const url=URL.createObjectURL(blob);
+      const img=new Image(); img.src=url;
+      await new Promise(r=>{img.onload=r;img.onerror=r;});
+      FOTOS.push({id:o.id,nome:o.nome,url,img});
+    }
+  }
+  if(est && est.slides && est.slides.length){
+    P = est; P.atual = Math.min(P.atual||0, P.slides.length-1);
+    return 'restaurado';
+  }
+  return 'vazio';
+}
+
+/* ---------------- logo ---------------- */
+const logo = new Image(); logo.src='brand/logo-branco.png';
+let logoOk=false; logo.onload=()=>{logoOk=true; desenhar();};
+
+/* ---------------- canvas ---------------- */
+const tela=document.getElementById('tela'), ctx=tela.getContext('2d');
+const dims = ()=> P.formato==='story' ? [1080,1920] : [1080,1350];
+let SERIF='Berlin,Georgia,serif';
+
+function fonte(peso,tam,fam,ital){
+  ctx.font=(ital?'italic ':'')+peso+' '+tam+'px '+fam;
+}
+function cobrir(img,x,y,w,h,zoom,fx,fy){
+  if(!img) return;
+  const e=Math.max(w/img.width,h/img.height)*(zoom/100);
+  const dw=img.width*e, dh=img.height*e;
+  ctx.drawImage(img, x+(w-dw)*fx, y+(h-dh)*fy, dw, dh);
+}
+function quebrar(txt,larg){
+  const out=[];
+  txt.split('\n').forEach(par=>{
+    if(!par.trim()){out.push('');return;}
+    let l='';
+    par.split(' ').forEach(p=>{
+      const t=l?l+' '+p:p;
+      if(ctx.measureText(t).width>larg && l){out.push(l);l=p;} else l=t;
+    });
+    if(l)out.push(l);
+  });
+  return out;
+}
+const sombra=f=>{ctx.shadowColor='rgba(0,0,0,'+f+')';ctx.shadowBlur=26;ctx.shadowOffsetY=2;};
+const semSombra=()=>{ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;};
+
+/* fio vertical fino terminando em círculo aberto — assinatura da marca */
+function fioCirculo(x,yCirc,yFim,cor,r){
+  r=r||10;
+  ctx.strokeStyle=cor; ctx.lineWidth=2.4; ctx.globalAlpha=.9;
+  ctx.beginPath(); ctx.arc(x,yCirc,r,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath();
+  if(yFim>yCirc){ctx.moveTo(x,yCirc+r);ctx.lineTo(x,yFim);}
+  else{ctx.moveTo(x,yCirc-r);ctx.lineTo(x,yFim);}
+  ctx.stroke(); ctx.globalAlpha=1;
+}
+const limiteTopo = H => P.formato==='story' ? H*SEGURO.topo : H*0.04;
+const limiteBase = H => P.formato==='story' ? H*SEGURO.base : H-74;
+
+function marcaDagua(modo,W,H){
+  if(modo==='nenhuma'||!logoOk) return;
+  const prop=logo.width/logo.height, margem=54;
+  if(modo==='word-baixo'){
+    const w=W*0.30, h=w/prop;
+    ctx.globalAlpha=.95; ctx.drawImage(logo,(W-w)/2,limiteBase(H)-h,w,h); ctx.globalAlpha=1;
+    return;
+  }
+  const fatia=logo.width*0.245, lado=W*0.062, alt=lado*(logo.height/fatia);
+  const x = modo==='icone-ie' ? margem : W-lado-margem;
+  const y = modo==='icone-ie' ? limiteBase(H)-alt : limiteTopo(H);
+  ctx.globalAlpha=.92;
+  ctx.drawImage(logo,0,0,fatia,logo.height,x,y,lado,alt);
+  ctx.globalAlpha=1;
+}
+function guias(W,H){
+  if(!mostrarGuias||P.formato!=='story') return;
+  ctx.save(); ctx.fillStyle='rgba(255,40,40,.26)';
+  ctx.fillRect(0,0,W,H*SEGURO.topo);
+  ctx.fillRect(0,H*SEGURO.base,W,H*(1-SEGURO.base));
+  ctx.fillStyle='rgba(255,255,255,.92)'; fonte(600,26,'SourceSans');
+  ctx.fillText('coberto pelo Instagram',40,H*SEGURO.topo-22);
+  ctx.fillText('coberto pela barra de resposta',40,H*SEGURO.base+42);
+  ctx.restore();
+}
+function granulado(W,H,f){
+  const n=Math.floor(W*H/900);
+  ctx.save(); ctx.globalAlpha=f||.03;
+  for(let i=0;i<n;i++){
+    ctx.fillStyle=Math.random()>.5?'#fff':'#000';
+    ctx.fillRect(Math.random()*W,Math.random()*H,1.6,1.6);
+  }
+  ctx.restore();
+}
+
+/* ---------------- desenho ---------------- */
+function desenhar(){
+  if(!P.slides.length) return;
+  const [W,H]=dims(); tela.width=W; tela.height=H;
+  const s=sAtual(); if(!s) return;
+  ctx.clearRect(0,0,W,H); ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  const t=s.template;
+  if(t==='verde-cta') dVerdeCta(s,W,H);
+  else if(t==='verde-texto') dVerdeTexto(s,W,H);
+  else if(t==='ficha') dFicha(s,W,H);
+  else if(t==='antes-depois') dAntesDepois(s,W,H);
+  else if(t==='portas-abertas') dPortas(s,W,H);
+  else if(t==='capa-tipo') dCapaTipo(s,W,H);
+  else if(t==='foto-chip') dFotoChip(s,W,H);
+  else if(t==='story-gancho') dStGancho(s,W,H);
+  else if(t==='story-corpo') dStCorpo(s,W,H);
+  else if(t==='story-cta') dStCta(s,W,H);
+  else dFoto(s,W,H);
+  guias(W,H);
+  pintarFilme();
+  document.getElementById('metaTela').textContent =
+    W+' × '+H+' px · slide '+(P.atual+1)+' de '+P.slides.length;
+}
+function fundoFoto(s,W,H){
+  const f=fotoDe(s.foto);
+  if(f&&f.img) cobrir(f.img,0,0,W,H,s.zoom,s.fx,s.fy);
+  else{
+    ctx.fillStyle='#cfd6d0'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#8b988f'; fonte(400,34,'SourceSans'); ctx.textAlign='center';
+    ctx.fillText('escolha uma foto na bandeja',W/2,H/2); ctx.textAlign='left';
+  }
+}
+function dFoto(s,W,H){ fundoFoto(s,W,H); marcaDagua(s.marca,W,H); }
+
+function dFotoChip(s,W,H){
+  fundoFoto(s,W,H);
+  const p=s.props, r=W*0.17, cx=W*(p.chipX/100), cy=H*(p.chipY/100), f=fotoDe(s.foto);
+  ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.clip();
+  if(f&&f.img) cobrir(f.img,cx-r,cy-r,r*2,r*2,p.chipZoom,s.fx,s.fy);
+  ctx.restore();
+  ctx.strokeStyle='rgba(255,255,255,.92)'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+  marcaDagua(s.marca,W,H);
+}
+function dCapaTipo(s,W,H){
+  fundoFoto(s,W,H);
+  const p=s.props, tam=+p.tamFrase;
+  const linhas=(p.frase||'').split('\n').filter(l=>l!=='');
+  const alturaL=tam*1.06, bloco=linhas.length*alturaL+(p.corpoTexto?tam*0.9:0);
+  let topo = p.posFrase==='Superior esquerda' ? H*0.16
+           : p.posFrase==='Centro esquerda' ? (H-bloco)/2
+           : H-bloco-H*0.13;
+  const g=ctx.createLinearGradient(0,topo-tam*2.4,0,topo+bloco+tam*1.4);
+  g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(.42,'rgba(0,0,0,.42)'); g.addColorStop(1,'rgba(0,0,0,.05)');
+  ctx.fillStyle=g; ctx.fillRect(0,topo-tam*2.4,W,bloco+tam*3.8);
+  const x=W*0.088;
+  fioCirculo(x-34,topo-tam*0.72,topo+bloco-tam*0.2,'rgba(255,255,255,.85)',9);
+  ctx.fillStyle='#fff'; sombra(.34); fonte(700,tam,'Archivo');
+  let y=topo;
+  linhas.forEach(l=>{ctx.fillText(l.toUpperCase(),x,y+tam*0.8);y+=alturaL;});
+  if(p.corpoTexto){ fonte(400,tam*0.34,'SourceSans'); ctx.globalAlpha=.9;
+    ctx.fillText(p.corpoTexto,x,y+tam*0.42); ctx.globalAlpha=1; }
+  semSombra(); marcaDagua(s.marca,W,H);
+}
+function fundoVerde(W,H){
+  const g=ctx.createLinearGradient(0,0,W*0.6,H);
+  g.addColorStop(0,V.verde2); g.addColorStop(1,V.verde);
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H); granulado(W,H,.03);
+}
+function dVerdeCta(s,W,H){
+  fundoVerde(W,H);
+  const p=s.props, cx=W/2;
+  fioCirculo(cx,H*0.072,0,'rgba(255,255,255,.65)',9);
+  ctx.fillStyle='#fff';
+  const t1=p.olho||'', t2=p.olhoIt||'';
+  fonte(400,46,'SourceSans'); const w1=ctx.measureText(t1+' ').width;
+  fonte(400,70,SERIF,true);  const w2=ctx.measureText(t2).width;
+  const x0=cx-(w1+w2)/2;
+  fonte(400,46,'SourceSans'); ctx.fillText(t1,x0,H*0.175);
+  fonte(400,70,SERIF,true);   ctx.fillText(t2,x0+w1,H*0.175);
+  ctx.textAlign='center'; fonte(400,30,'SourceSans'); ctx.globalAlpha=.92;
+  ctx.fillText(p.sub||'',cx,H*0.222); ctx.globalAlpha=1;
+  const gw=W*0.68, cel=gw/3, gx=(W-gw)/2, gy=H*0.27;
+  TONS.forEach((tom,i)=>{
+    const a=gx+(i%3)*cel, b=gy+Math.floor(i/3)*cel;
+    ctx.fillStyle=tom.cor; ctx.fillRect(a+3,b+3,cel-6,cel-6);
+    ctx.textAlign='left'; ctx.fillStyle='rgba(255,255,255,.96)'; fonte(400,19,'SourceSans');
+    ctx.save(); sombra(.55); ctx.fillText(tom.nome,a+16,b+cel-22); ctx.restore();
+  });
+  const sx=gx+2*cel, sy=gy+cel;
+  ctx.setLineDash([7,6]); ctx.strokeStyle='rgba(198,162,104,.75)'; ctx.lineWidth=1.6;
+  ctx.strokeRect(sx+3,sy+3,cel-6,cel-6); ctx.setLineDash([]);
+  ctx.textAlign='center'; ctx.fillStyle=V.ouroClaro; fonte(600,17,'SourceSans');
+  ctx.fillText('◆',sx+cel/2,sy+cel/2-16);
+  ctx.fillText('SEU TOM',sx+cel/2,sy+cel/2+12);
+  ctx.fillText('SOB MEDIDA',sx+cel/2,sy+cel/2+34);
+  ctx.fillStyle='#fff'; fonte(400,27,'SourceSans');
+  let y=gy+cel*2+H*0.055;
+  (p.cta||'').split('\n').forEach(l=>{ctx.fillText(l,cx,y);y+=36;});
+  ctx.textAlign='left'; marcaDagua('word-baixo',W,H);
+}
+function dVerdeTexto(s,W,H){
+  fundoVerde(W,H);
+  const p=s.props, tam=+p.tamFrase, x=W*0.11;
+  const lf=(p.frase||'').split('\n');
+  fonte(400,29,'SourceSans');
+  const la=quebrar(p.apoio||'',W-x*2);
+  const alt=46+lf.length*tam*1.18+(la.length?18+la.length*42:0);
+  const topo=Math.max(H*0.16,(H*0.86-alt)/2);
+  fioCirculo(x-36,topo-26,topo+alt-tam*0.4,'rgba(255,255,255,.6)',9);
+  ctx.fillStyle=V.ouroClaro; fonte(600,22,'SourceSans');
+  ctx.letterSpacing='0.14em'; ctx.fillText((p.olho||'').toUpperCase(),x,topo); ctx.letterSpacing='0px';
+  ctx.fillStyle='#fff'; fonte(600,tam,'Archivo');
+  let y=topo+46+tam*0.72;
+  lf.forEach(l=>{ctx.fillText(l,x,y);y+=tam*1.18;});
+  fonte(400,29,'SourceSans'); ctx.globalAlpha=.86; y+=18;
+  la.forEach(l=>{ctx.fillText(l,x,y);y+=42;});
+  ctx.globalAlpha=1; marcaDagua('word-baixo',W,H);
+}
+/* ficha técnica — puxa da aba Obra */
+function dFicha(s,W,H){
+  fundoVerde(W,H);
+  const o=P.obra, x=W*0.12;
+  fioCirculo(x-36,H*0.135,H*0.09,'rgba(255,255,255,.6)',9);
+  ctx.fillStyle=V.ouroClaro; fonte(600,22,'SourceSans');
+  ctx.letterSpacing='0.16em'; ctx.fillText('FICHA TÉCNICA',x,H*0.20); ctx.letterSpacing='0px';
+  ctx.fillStyle='#fff'; fonte(600,60,'Archivo');
+  ctx.fillText(o.nome||'Obra',x,H*0.28);
+  const itens=[
+    ['Local', o.local], ['Segmento', o.seg], ['O que é', o.oque],
+    ['Detalhe', o.detalhe], [null, s.props.extra1], [null, s.props.extra2]
+  ].filter(i=>i[1]);
+  let y=H*0.375;
+  itens.forEach(([rot,val])=>{
+    ctx.strokeStyle='rgba(255,255,255,.16)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(x,y-26); ctx.lineTo(W-x,y-26); ctx.stroke();
+    if(rot){ ctx.fillStyle=V.ouroClaro; fonte(600,19,'SourceSans');
+      ctx.letterSpacing='0.1em'; ctx.fillText(rot.toUpperCase(),x,y); ctx.letterSpacing='0px'; }
+    ctx.fillStyle='#fff'; fonte(400,30,'SourceSans');
+    const linhas=quebrar(val,W-x*2);
+    let yy=y+(rot?38:6);
+    linhas.forEach(l=>{ctx.fillText(l,x,yy);yy+=40;});
+    y = yy + 34;
+  });
+  if(o.creditos){
+    ctx.fillStyle='rgba(255,255,255,.7)'; fonte(400,24,'SourceSans');
+    ctx.fillText(o.creditos, x, limiteBase(H)-130);
+  }
+  marcaDagua('word-baixo',W,H);
+}
+function dPortas(s,W,H){
+  fundoFoto(s,W,H);
+  const p=s.props, barra=H*0.135;
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,W,barra); ctx.fillRect(0,H-barra,W,barra);
+  ctx.fillStyle=V.ouro; ctx.fillRect(0,barra-3,W,3); ctx.fillRect(0,H-barra,W,3);
+  ctx.textAlign='center'; ctx.fillStyle='#fff'; fonte(700,30,'Archivo');
+  ctx.letterSpacing='0.26em'; ctx.fillText((p.serie||'').toUpperCase(),W/2,barra*0.64);
+  ctx.letterSpacing='0px';
+  fonte(400,26,'SourceSans'); ctx.globalAlpha=.9;
+  ctx.fillText(p.ep||'',W/2,H-barra*0.42); ctx.globalAlpha=1; ctx.textAlign='left';
+  marcaDagua(s.marca==='word-baixo'?'nenhuma':s.marca,W,H);
+}
+function dAntesDepois(s,W,H){
+  const p=s.props, m=W/2, a=fotoDe(s.foto), b=fotoDe(s.foto2);
+  ctx.save(); ctx.beginPath(); ctx.rect(0,0,m,H); ctx.clip();
+  if(a&&a.img) cobrir(a.img,0,0,m,H,s.zoom,s.fx,s.fy);
+  else{ctx.fillStyle='#c9cfc9';ctx.fillRect(0,0,m,H);}
+  ctx.restore();
+  ctx.save(); ctx.beginPath(); ctx.rect(m,0,m,H); ctx.clip();
+  if(b&&b.img) cobrir(b.img,m,0,m,H,s.zoom,s.fx,s.fy);
+  else{ctx.fillStyle='#dfe4de';ctx.fillRect(m,0,m,H);
+       ctx.fillStyle='#8b988f';fonte(400,28,'SourceSans');ctx.textAlign='center';
+       ctx.fillText('shift + clique na bandeja',m*1.5,H/2);ctx.textAlign='left';}
+  ctx.restore();
+  ctx.fillStyle='#fff'; ctx.fillRect(m-2,0,4,H);
+  [[p.rotA,m*0.5],[p.rotB,m*1.5]].forEach(([r,x])=>{
+    ctx.textAlign='center'; ctx.fillStyle='#fff'; sombra(.5); fonte(700,32,'Archivo');
+    ctx.letterSpacing='0.2em'; ctx.fillText((r||'').toUpperCase(),x,H-H*0.075);
+    ctx.letterSpacing='0px'; semSombra(); ctx.textAlign='left';
+  });
+  marcaDagua(s.marca,W,H);
+}
+function textoRico(linha,x,y,tam){
+  let cur=x;
+  linha.split(/(\*[^*]+\*)/).forEach(parte=>{
+    if(!parte) return;
+    const neg=parte.startsWith('*')&&parte.endsWith('*');
+    const txt=neg?parte.slice(1,-1):parte;
+    fonte(neg?700:400,tam,'SourceSans');
+    ctx.fillText(txt,cur,y); cur+=ctx.measureText(txt).width;
+  });
+}
+function dStGancho(s,W,H){
+  fundoFoto(s,W,H);
+  const p=s.props, tam=+p.tamTexto, x=W*0.135;
+  const tit=(p.titulo||'').split('\n'), cor=(p.corpo||'').split('\n');
+  const alt=tit.length*tam*1.22+18+cor.length*tam*1.22;
+  const topo=Math.max(H*0.42,limiteBase(H)-alt-28);
+  const g=ctx.createLinearGradient(0,topo-160,0,H);
+  g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(.5,'rgba(0,0,0,.38)'); g.addColorStop(1,'rgba(0,0,0,.5)');
+  ctx.fillStyle=g; ctx.fillRect(0,topo-160,W,H-topo+160);
+  fioCirculo(x-46,topo-tam*0.55,topo+alt,'rgba(255,255,255,.85)',10);
+  ctx.fillStyle='#fff'; sombra(.3);
+  let y=topo+tam*0.9;
+  tit.forEach(l=>{fonte(700,tam,'SourceSans');ctx.fillText(l,x,y);y+=tam*1.22;});
+  y+=18;
+  cor.forEach(l=>{textoRico(l,x,y,tam);y+=tam*1.22;});
+  semSombra(); marcaDagua(s.marca,W,H);
+}
+function dStCorpo(s,W,H){
+  fundoFoto(s,W,H);
+  const p=s.props, tam=+p.tamTexto, x=W*0.135;
+  const linhas=(p.corpo||'').split('\n'), topo=limiteTopo(H)+34;
+  const alt=linhas.length*tam*1.22;
+  const g=ctx.createLinearGradient(0,0,0,topo+alt+180);
+  g.addColorStop(0,'rgba(0,0,0,.5)'); g.addColorStop(.6,'rgba(0,0,0,.34)'); g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,topo+alt+180);
+  fioCirculo(x-46,topo+alt+26,topo-tam*0.4,'rgba(255,255,255,.85)',10);
+  ctx.fillStyle='#fff'; sombra(.3);
+  let y=topo+tam*0.9;
+  linhas.forEach(l=>{textoRico(l,x,y,tam);y+=tam*1.22;});
+  semSombra(); marcaDagua(s.marca,W,H);
+}
+function dStCta(s,W,H){
+  fundoFoto(s,W,H);
+  const p=s.props, tam=+p.tamTexto, linhas=(p.corpo||'').split('\n'), topo=limiteTopo(H)+34;
+  let g=ctx.createLinearGradient(0,0,0,H*0.5);
+  g.addColorStop(0,'rgba(0,0,0,.5)'); g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H*0.5);
+  g=ctx.createLinearGradient(0,H*0.62,0,H);
+  g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,.42)');
+  ctx.fillStyle=g; ctx.fillRect(0,H*0.62,W,H*0.38);
+  ctx.textAlign='center'; ctx.fillStyle='#fff'; sombra(.32);
+  let y=topo+tam*0.9;
+  linhas.forEach(l=>{fonte(600,tam,'SourceSans');ctx.fillText(l,W/2,y);y+=tam*1.22;});
+  semSombra();
+  if(p.link){
+    fonte(400,44,'SourceSans');
+    const w=ctx.measureText(p.link).width+150, h=94, sx=(W-w)/2, sy=H*0.535;
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.roundRect(sx,sy,w,h,26); ctx.fill();
+    ctx.fillStyle='#1a1a1a'; ctx.textAlign='left'; ctx.fillText(p.link,sx+112,sy+62);
+    ctx.strokeStyle='#0F6FE8'; ctx.lineWidth=6; ctx.lineCap='round';
+    ctx.beginPath(); ctx.arc(sx+56,sy+h/2,21,Math.PI*0.75,Math.PI*1.9); ctx.stroke();
+    ctx.beginPath(); ctx.arc(sx+80,sy+h/2,21,Math.PI*1.75,Math.PI*0.9); ctx.stroke();
+  }
+  ctx.textAlign='left'; marcaDagua('word-baixo',W,H);
+}
+
+/* ---------------- fotos ---------------- */
+let proxId=1;
+async function adicionarFotos(lista){
+  for(const arq of lista){
+    if(!arq.type.startsWith('image/')) continue;
+    const id='f'+Date.now()+'_'+(proxId++);
+    await guardar('fotos',id,arq);
+    const url=URL.createObjectURL(arq);
+    const img=new Image(); img.src=url;
+    await new Promise(r=>{img.onload=r;img.onerror=r;});
+    FOTOS.push({id,url,img,nome:arq.name});
+  }
+  pintarBandeja(); salvar();
+  aviso(lista.length+(lista.length>1?' fotos carregadas':' foto carregada'));
+}
+function pintarBandeja(){
+  const b=document.getElementById('bandeja'); b.innerHTML='';
+  document.getElementById('vazio').style.display = FOTOS.length?'none':'block';
+  FOTOS.forEach(f=>{
+    const usos = P.slides.map((s,i)=> (s.foto===f.id||s.foto2===f.id) ? i+1 : null).filter(Boolean);
+    const d=document.createElement('div');
+    d.className='fx'+(usos.length?' usada':'');
+    d.innerHTML='<img src="'+f.url+'" alt="">'+
+      (usos.length?'<span class="marca-uso">'+usos.join(', ')+'</span>':'')+
+      '<button class="tirar" title="Remover">×</button>';
+    d.onclick=e=>{
+      if(e.target.classList.contains('tirar')){
+        e.stopPropagation();
+        FOTOS=FOTOS.filter(x=>x.id!==f.id); apagar('fotos',f.id);
+        P.slides.forEach(s=>{ if(s.foto===f.id)s.foto=null; if(s.foto2===f.id)s.foto2=null; });
+        pintarBandeja(); desenhar(); salvar(); return;
+      }
+      const s=sAtual(); if(!s) return;
+      if(e.shiftKey) s.foto2=f.id; else s.foto=f.id;
+      pintarBandeja(); desenhar(); salvar();
+    };
+    b.appendChild(d);
+  });
+}
+/* monta o carrossel padrão da casa: fotos + fechamento verde */
+function montarCarrossel(){
+  if(!FOTOS.length){ aviso('Carregue fotos primeiro.'); return; }
+  P.formato='feed'; pintarSegmento();
+  const usar=FOTOS.slice(0,5);
+  P.slides = usar.map((f,i)=>{
+    const s=slideNovo('feed');
+    s.template = i===1 ? 'foto-chip' : 'foto';
+    s.props={}; padroes(s,'feed'); s.foto=f.id;
+    return s;
+  });
+  const fim=slideNovo('feed'); fim.template='verde-cta'; fim.props={}; padroes(fim,'feed');
+  P.slides.push(fim);
+  P.atual=0;
+  montarSelect(); montarCampos(); pintarBandeja(); desenhar(); salvar();
+  aviso('Carrossel de '+P.slides.length+' slides montado.');
+}
+
+/* ---------------- interface ---------------- */
+function aviso(txt){
+  const t=document.getElementById('toast'); t.textContent=txt; t.classList.add('ver');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('ver'),2600);
+}
+function pintarSegmento(){
+  document.querySelectorAll('#segFormato button').forEach(b=>
+    b.classList.toggle('on', b.dataset.f===P.formato));
+  document.getElementById('rotGuias').style.display = P.formato==='story'?'flex':'none';
+}
+function montarSelect(){
+  const el=document.getElementById('template'); el.innerHTML='';
+  Object.entries(TEMPLATES[P.formato]).forEach(([k,v])=>{
+    const o=document.createElement('option'); o.value=k; o.textContent=v.nome; el.appendChild(o);
+  });
+  const s=sAtual(); if(s) el.value=s.template;
+}
+function montarCampos(){
+  const s=sAtual(); if(!s) return;
+  const def=TEMPLATES[P.formato][s.template];
+  document.getElementById('descTemplate').textContent=def.desc;
+  const semFoto = s.template==='verde-cta'||s.template==='verde-texto'||s.template==='ficha';
+  document.getElementById('blocoFoto').style.display = semFoto?'none':'block';
+  document.getElementById('marca').value=s.marca;
+  document.getElementById('zoom').value=s.zoom;
+  document.getElementById('zoomVal').textContent=s.zoom+'%';
+  const c=document.getElementById('campos'); c.innerHTML='';
+  (def.campos||[]).forEach(cp=>{
+    const l=document.createElement('label'); l.className='cmp'; l.textContent=cp.rot; c.appendChild(l);
+    let el;
+    if(cp.tipo==='textarea'){ el=document.createElement('textarea'); el.rows=4; }
+    else if(cp.tipo==='select'){ el=document.createElement('select');
+      cp.opcoes.forEach(o=>{const op=document.createElement('option');op.textContent=o;el.appendChild(op);}); }
+    else if(cp.tipo==='range'){ el=document.createElement('input'); el.type='range'; el.min=cp.min; el.max=cp.max; }
+    else { el=document.createElement('input'); el.type='text'; }
+    el.value = s.props[cp.id]!==undefined ? s.props[cp.id] : cp.val;
+    el.addEventListener('input',()=>{ s.props[cp.id]=el.value; desenhar(); salvar(); });
+    c.appendChild(el);
+  });
+}
+function pintarFilme(){
+  const f=document.getElementById('filme'); f.innerHTML='';
+  P.slides.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='sl'+(i===P.atual?' on':'');
+    const ft=fotoDe(s.foto);
+    if(ft) d.style.backgroundImage='url('+ft.url+')';
+    else if(s.template.startsWith('verde')||s.template==='ficha') d.style.background=V.verde;
+    d.innerHTML='<b>'+(i+1)+'</b>';
+    d.onclick=()=>{ P.atual=i; montarSelect(); montarCampos(); desenhar(); salvar(); };
+    f.appendChild(d);
+  });
+  const b=document.createElement('button'); b.className='mais'; b.textContent='+';
+  b.title='Novo slide';
+  b.onclick=()=>{ P.slides.push(slideNovo(P.formato)); P.atual=P.slides.length-1;
+                  montarSelect(); montarCampos(); desenhar(); salvar(); };
+  f.appendChild(b);
+}
+
+/* eventos */
+document.querySelectorAll('#segFormato button').forEach(b=>b.onclick=()=>{
+  if(P.formato===b.dataset.f) return;
+  P.formato=b.dataset.f; P.slides=[slideNovo(P.formato)]; P.atual=0;
+  pintarSegmento(); montarSelect(); montarCampos(); pintarBandeja(); desenhar(); salvar();
+});
+document.getElementById('nomePeca').addEventListener('input',e=>{P.nome=e.target.value;salvar();});
+document.getElementById('template').addEventListener('change',e=>{
+  const s=sAtual(); s.template=e.target.value; s.props={}; padroes(s,P.formato);
+  montarCampos(); desenhar(); salvar();
+});
+document.getElementById('marca').addEventListener('change',e=>{
+  sAtual().marca=e.target.value; desenhar(); salvar();
+});
+document.getElementById('zoom').addEventListener('input',e=>{
+  sAtual().zoom=+e.target.value;
+  document.getElementById('zoomVal').textContent=e.target.value+'%'; desenhar(); salvar();
+});
+document.getElementById('guias').addEventListener('change',e=>{
+  mostrarGuias=e.target.checked; desenhar();
+});
+document.getElementById('btDup').onclick=()=>{
+  const s=sAtual(); P.slides.splice(P.atual+1,0,JSON.parse(JSON.stringify(s)));
+  P.atual++; montarCampos(); desenhar(); salvar();
+};
+document.getElementById('btDel').onclick=()=>{
+  if(P.slides.length===1){aviso('É o único slide.');return;}
+  P.slides.splice(P.atual,1); P.atual=Math.max(0,P.atual-1);
+  montarSelect(); montarCampos(); pintarBandeja(); desenhar(); salvar();
+};
+document.getElementById('btMontar').onclick=montarCarrossel;
+
+/* entrada de arquivos */
+const solta=document.getElementById('solta'), arquivos=document.getElementById('arquivos');
+solta.onclick=()=>arquivos.click();
+arquivos.onchange=e=>{ adicionarFotos([...e.target.files]); e.target.value=''; };
+['dragenter','dragover'].forEach(ev=>solta.addEventListener(ev,e=>{
+  e.preventDefault(); solta.classList.add('ativo'); }));
+['dragleave','drop'].forEach(ev=>solta.addEventListener(ev,e=>{
+  e.preventDefault(); solta.classList.remove('ativo'); }));
+solta.addEventListener('drop',e=>adicionarFotos([...e.dataTransfer.files]));
+document.addEventListener('dragover',e=>e.preventDefault());
+document.addEventListener('drop',e=>{
+  if(solta.contains(e.target)) return;
+  e.preventDefault(); if(e.dataTransfer.files.length) adicionarFotos([...e.dataTransfer.files]);
+});
+
+/* arrastar para reenquadrar */
+let arrastando=false, ax=0, ay=0;
+tela.addEventListener('pointerdown',e=>{
+  arrastando=true; ax=e.clientX; ay=e.clientY;
+  tela.classList.add('arrasta'); tela.setPointerCapture(e.pointerId);
+});
+tela.addEventListener('pointermove',e=>{
+  if(!arrastando) return;
+  const s=sAtual(), r=tela.getBoundingClientRect();
+  s.fx=Math.min(1,Math.max(0,s.fx+(e.clientX-ax)/r.width));
+  s.fy=Math.min(1,Math.max(0,s.fy+(e.clientY-ay)/r.height));
+  ax=e.clientX; ay=e.clientY; desenhar();
+});
+['pointerup','pointercancel'].forEach(ev=>tela.addEventListener(ev,()=>{
+  if(arrastando) salvar();
+  arrastando=false; tela.classList.remove('arrasta');
+}));
+
+/* teclado */
+document.addEventListener('keydown',e=>{
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+  if(e.key==='ArrowRight'&&P.atual<P.slides.length-1){
+    P.atual++; montarSelect(); montarCampos(); desenhar(); }
+  if(e.key==='ArrowLeft'&&P.atual>0){
+    P.atual--; montarSelect(); montarCampos(); desenhar(); }
+});
+
+/* abas */
+document.querySelectorAll('.abas button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.abas button').forEach(x=>x.classList.toggle('on',x===b));
+  ['slide','obra','legenda'].forEach(p=>
+    document.getElementById('p'+p[0].toUpperCase()+p.slice(1))
+      .classList.toggle('oculto', p!==b.dataset.p));
+});
+
+/* obra */
+const campoObra={oNome:'nome',oLocal:'local',oOque:'oque',oSeg:'seg',oDetalhe:'detalhe',oCreditos:'creditos'};
+Object.entries(campoObra).forEach(([id,chave])=>{
+  document.getElementById(id).addEventListener('input',e=>{
+    P.obra[chave]=e.target.value;
+    if(sAtual() && sAtual().template==='ficha') desenhar();
+    salvar();
+  });
+});
+
+/* ---------------- legenda ---------------- */
+const GANCHOS={
+  entrega:['Ficou pronto.','Esse é daqueles que a foto não dá conta.','Entregue.',
+           'Aquele resultado que enche os olhos de beleza, natureza e vida.'],
+  processo:['Obra em andamento.','Por dentro do processo.','Ainda em obra — e já dá pra sentir.'],
+  antes:['Aquele antes e depois que enche os olhos.','O mesmo terreno. Outro lugar.'],
+  produto:['Cada peça sai da nossa fábrica com a mão de quem fez.','É pedra, mas é feita por gente.'],
+  serie:['Mais um De Portas Abertas.'],
+  parceiro:['Projeto assinado a quatro mãos.','Quando arquitetura e pedra falam a mesma língua.']
+};
+const sortear=a=>a[Math.floor(Math.random()*a.length)];
+document.getElementById('btLegenda').onclick=()=>{
+  const o=P.obra, tipo=document.getElementById('lgTipo').value;
+  const cta=document.getElementById('lgCta').value.trim();
+  const partes=[sortear(GANCHOS[tipo])];
+  let corpo='';
+  if(o.oque) corpo=(tipo==='processo'?'Estamos executando ':'')+o.oque.charAt(0).toUpperCase()+o.oque.slice(1);
+  if(o.local) corpo+=(corpo?', ':'')+(/^(em|no|na)\s/i.test(o.local)?o.local:'em '+o.local);
+  if(corpo) partes.push(corpo.replace(/\.$/,'')+'.');
+  if(o.detalhe) partes.push(o.detalhe.charAt(0).toUpperCase()+o.detalhe.slice(1).replace(/\.$/,'')+'.');
+  if(tipo==='entrega'||tipo==='antes')
+    partes.push('Cada pedra foi assentada à mão pelo nosso time — é o que faz o conjunto parecer que sempre esteve ali.');
+  if(tipo==='processo') partes.push('Continue nos acompanhando para conferir o resultado final.');
+  if(tipo==='produto') partes.push('São cinco tons de acabamento, e se o seu não existe a gente desenvolve.');
+  if(o.creditos){
+    const l=o.creditos.split(',').map(c=>c.trim()).filter(Boolean).map(c=>c[0]==='@'?c:'@'+c).join('  ');
+    partes.push('Projeto e parceria: '+l);
+  }
+  if(cta) partes.push(cta);
+  const txt=partes.join('\n\n');
+  P.legenda=txt; P.lgTipo=tipo; P.lgCta=cta;
+  document.getElementById('saidaLegenda').textContent=txt;
+  const n=txt.length, c=document.getElementById('conta');
+  c.textContent=n+' caracteres — '+(n<380?'curta para o padrão (mediana da casa é 499)':
+    n>700?'acima do padrão, corte uma frase':'dentro do padrão da casa');
+  c.className='conta '+(n<380||n>700?'fora':'ok');
+  salvar();
+};
+document.getElementById('btCopiar').onclick=()=>{
+  if(!P.legenda){aviso('Gere a legenda primeiro.');return;}
+  navigator.clipboard.writeText(P.legenda).then(()=>aviso('Legenda copiada.'));
+};
+
+/* ---------------- exportação ---------------- */
+let TAB;
+function crc32(u8){
+  if(!TAB){ TAB=new Uint32Array(256);
+    for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;TAB[n]=c;} }
+  let c=0xFFFFFFFF;
+  for(let i=0;i<u8.length;i++) c=TAB[(c^u8[i])&0xFF]^(c>>>8);
+  return (c^0xFFFFFFFF)>>>0;
+}
+function montarZip(arqs){
+  const locais=[],central=[]; let desloc=0;
+  arqs.forEach(a=>{
+    const nome=new TextEncoder().encode(a.nome), crc=crc32(a.dados), tam=a.dados.length;
+    const lh=new Uint8Array(30+nome.length), lv=new DataView(lh.buffer);
+    lv.setUint32(0,0x04034b50,true); lv.setUint16(4,20,true);
+    lv.setUint32(14,crc,true); lv.setUint32(18,tam,true); lv.setUint32(22,tam,true);
+    lv.setUint16(26,nome.length,true); lh.set(nome,30);
+    const cd=new Uint8Array(46+nome.length), cv=new DataView(cd.buffer);
+    cv.setUint32(0,0x02014b50,true); cv.setUint16(4,20,true); cv.setUint16(6,20,true);
+    cv.setUint32(16,crc,true); cv.setUint32(20,tam,true); cv.setUint32(24,tam,true);
+    cv.setUint16(28,nome.length,true); cv.setUint32(42,desloc,true); cd.set(nome,46);
+    locais.push(lh,a.dados); central.push(cd); desloc+=lh.length+tam;
+  });
+  const tc=central.reduce((s,c)=>s+c.length,0);
+  const fim=new Uint8Array(22), fv=new DataView(fim.buffer);
+  fv.setUint32(0,0x06054b50,true);
+  fv.setUint16(8,arqs.length,true); fv.setUint16(10,arqs.length,true);
+  fv.setUint32(12,tc,true); fv.setUint32(16,desloc,true);
+  return new Blob([...locais,...central,fim],{type:'application/zip'});
+}
+function baseNome(){
+  const n=(P.nome||P.obra.nome||'peca').toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-')
+    .replace(/^-|-$/g,'');
+  return 'western-'+(n||'peca')+'-'+P.formato;
+}
+async function gerarPacote(){
+  const guiasAntes=mostrarGuias; mostrarGuias=false;
+  const guardado=P.atual, arqs=[];
+  for(let i=0;i<P.slides.length;i++){
+    P.atual=i; desenhar();
+    const b=await new Promise(r=>tela.toBlob(r,'image/png'));
+    arqs.push({nome:baseNome()+'-'+String(i+1).padStart(2,'0')+'.png',
+               dados:new Uint8Array(await b.arrayBuffer())});
+  }
+  if(P.legenda) arqs.push({nome:'legenda.txt', dados:new TextEncoder().encode(P.legenda)});
+  mostrarGuias=guiasAntes; P.atual=guardado;
+  montarSelect(); montarCampos(); desenhar();
+  return arqs;
+}
+document.getElementById('btZip').onclick=async e=>{
+  const bt=e.target, rot=bt.textContent;
+  bt.disabled=true; bt.textContent='Gerando…';
+  try{
+    const arqs=await gerarPacote();
+    const url=URL.createObjectURL(montarZip(arqs));
+    const a=document.createElement('a');
+    a.href=url; a.download=baseNome()+'.zip';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+    aviso('Pacote com '+arqs.length+' arquivos baixado.');
+  }catch(err){ aviso('Falhou ao gerar: '+err.message); }
+  bt.disabled=false; bt.textContent=rot;
+};
+/* Baixa o pacote, copia a legenda e abre a pasta Western no Canva.
+   O upload em si é arrastar o ZIP descompactado para dentro do Canva. */
+document.getElementById('btCanva').onclick=async e=>{
+  const bt=e.target, rot=bt.textContent;
+  bt.disabled=true; bt.textContent='Preparando…';
+  try{
+    const arqs=await gerarPacote();
+    const url=URL.createObjectURL(montarZip(arqs));
+    const a=document.createElement('a');
+    a.href=url; a.download=baseNome()+'.zip';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+    if(P.legenda) await navigator.clipboard.writeText(P.legenda).catch(()=>{});
+    window.open('https://www.canva.com/folder/all','_blank','noopener');
+    aviso('Pacote baixado e legenda copiada. Arraste os PNG na pasta do Canva.');
+  }catch(err){ aviso('Falhou: '+err.message); }
+  bt.disabled=false; bt.textContent=rot;
+};
+
+/* ---------------- arranque ---------------- */
+async function iniciar(){
+  // O canvas só usa uma fonte se ela já estiver carregada — força antes do 1º desenho.
+  try{
+    await Promise.all([
+      document.fonts.load('600 40px Archivo'), document.fonts.load('700 40px Archivo'),
+      document.fonts.load('400 40px SourceSans'), document.fonts.load('600 40px SourceSans'),
+      document.fonts.load('700 40px SourceSans'), document.fonts.load('400 40px Berlin'),
+      document.fonts.load('700 40px Berlin')
+    ]);
+    await document.fonts.ready;
+  }catch(e){}
+  const berlin = document.fonts && document.fonts.check('700 40px Berlin');
+  const av=document.getElementById('avisoFonte');
+  av.textContent = berlin
+    ? 'Berlin carregada — wordmark na fonte oficial.'
+    : 'Berlin não instalada: coloque Berlin-Regular.ttf e Berlin-Bold.ttf em brand/ para a serifada oficial. Archivo e Source Sans (do design system) já estão ativas.';
+  av.className='aviso'+(berlin?' bom':'');
+
+  const estado = await restaurar();
+  if(estado!=='restaurado') P.slides=[slideNovo(P.formato)];
+  document.getElementById('nomePeca').value=P.nome||'';
+  Object.entries(campoObra).forEach(([id,chave])=>{
+    document.getElementById(id).value=P.obra[chave]||'';
+  });
+  if(P.legenda){
+    document.getElementById('saidaLegenda').textContent=P.legenda;
+    document.getElementById('lgTipo').value=P.lgTipo||'entrega';
+  }
+  proxId = FOTOS.length+1;
+  pintarSegmento(); montarSelect(); montarCampos(); pintarBandeja(); desenhar();
+
+  if(estado==='erro'){
+    // Continua utilizável, mas não grava — assim nada por cima do que já existe.
+    document.getElementById('salvo').textContent='sem salvar';
+    aviso('Não consegui ler o trabalho salvo. Nada será gravado por cima — recarregue a página antes de continuar.');
+    return;
+  }
+  pronto=true;
+  if(estado==='restaurado') aviso('Trabalho anterior restaurado.');
+}
+iniciar();
+</script>
+</body>
+</html>

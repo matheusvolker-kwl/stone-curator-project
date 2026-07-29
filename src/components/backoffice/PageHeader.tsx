@@ -46,7 +46,7 @@ export function PageHeader({
       {voltar && (
         <Link
           to={voltar.to}
-          className="inline-flex items-center gap-1 -ml-1 mb-3 text-[16px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
+          className="inline-flex items-center gap-1 -ml-1 mb-3 text-[15px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
         >
           <ChevronLeft className="h-4 w-4" aria-hidden="true" />
           {voltar.label}

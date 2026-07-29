@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 import SocialProof from "@/components/shared/SocialProof";
 import Reveal from "@/components/shared/Reveal";
+import Seo from "@/components/seo/Seo";
 import { ArrowRight, Layers, Mountain, Recycle, Hammer } from "lucide-react";
 import irmaosGruta from "@/assets/irmaos-botelho-gruta.webp";
 import heroObra from "@/assets/linguagens/piscina.webp";
@@ -11,7 +12,7 @@ const NUMEROS = [
   { n: "33", l: "anos de operação ininterrupta" },
   { n: "50", l: "modelos fabricados em ateliê" },
   { n: "50", l: "selecionados no catálogo atual" },
-  { n: "+300", l: "projetos entregues pelo Brasil" },
+  { n: "+700", l: "obras entregues pelo Brasil" },
 ];
 
 const PILARES = [
@@ -41,7 +42,7 @@ const PILARES = [
     eyebrow: "ESG",
     titulo: "Biofilia industrializada",
     texto:
-      "Zero extração ambiental, plástico recuperado como armadura, logística leve. Um caminhão comum entrega o que pedra natural exigiria guindaste, alvará municipal e fechamento de via. Em qualquer matriz ESG séria, Western pontua melhor.",
+      "Zero extração ambiental, plástico recuperado como armadura, logística leve. Um caminhão comum entrega o que, em pedra natural, exigiria guindaste, alvará municipal e fechamento de via. Em qualquer matriz ESG séria, a Western pontua melhor.",
   },
 ];
 
@@ -55,17 +56,25 @@ const VOCABULARIO = [
 export default function About() {
   return (
     <>
+      <Seo
+        title="Sobre a Western — ateliê de pedra artesanal desde 1993"
+        description="Fundada em 1993, a Western replica pedra natural em composto mineral no ateliê de Cajamar/SP. Hoje a segunda geração da família Botelho conduz a operação."
+        path="/sobre"
+        ogType="article"
+      />
       {/* HERO — abertura editorial em superfície clara: texto + foto */}
       <section className="surface-paper py-12 md:py-20">
         <div className="container-western">
           <div className="grid gap-9 lg:grid-cols-[1.05fr_1fr] lg:gap-14 lg:items-center">
             <Reveal variant="fade-up" duration={800}>
-              <p className="text-eyebrow mb-3">A Western · 1993 — 2026</p>
+              <p className="text-eyebrow mb-3">
+                A Western · {BUSINESS.fundadaEm} — {new Date().getFullYear()}
+              </p>
               <h1 className="display-xl text-western-green-deep mb-5">
-                33 anos moldando<br />
+                {BUSINESS.anosOperacao} anos moldando<br />
                 <span className="text-western-bronze">pedra sem extrair pedra.</span>
               </h1>
-              <p className="text-body md:text-[19px] max-w-[46ch]">
+              <p className="text-body md:text-[17px] max-w-[46ch]">
                 Fundada em São Paulo em 1993, a Western é a única fábrica brasileira que opera
                 ininterruptamente — há três décadas — a tecnologia de pedra artesanal em composto
                 mineral trazida do Arizona. Da Disney às piscinas do Neymar; de Cobasi ao Unique
@@ -79,7 +88,7 @@ export default function About() {
                 alt="Projeto Western — piscina com cascata de pedra artesanal"
                 loading="eager"
                 decoding="async"
-                className="w-full aspect-[16/10] lg:aspect-[4/5] object-cover rounded-2xl shadow-[0_30px_60px_-40px_hsl(var(--western-stone-dark)/0.45)]"
+                className="w-full aspect-[16/10] lg:aspect-[4/5] object-cover rounded-xl shadow-[0_30px_60px_-40px_hsl(var(--western-stone-dark)/0.45)]"
               />
             </Reveal>
           </div>
@@ -87,14 +96,14 @@ export default function About() {
       </section>
 
       {/* NÚMEROS — escala da operação */}
-      <section className="surface-ivory py-14 md:py-20 border-y border-western-border-soft">
+      <section className="surface-ivory section-tight border-y border-western-border-soft">
         <div className="container-western">
           <div className="mx-auto max-w-5xl">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-western-border-soft border border-western-border-soft rounded-2xl overflow-hidden">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-western-border-soft border border-western-border-soft rounded-xl overflow-hidden">
               {NUMEROS.map((s, i) => (
               <Reveal key={s.l} variant="fade-up" delay={i * 80} duration={650} distance={20}>
                 <div className="bg-white h-full p-6 md:p-8 text-center">
-                  <p className="font-display text-[34px] md:text-[46px] leading-none tracking-[-0.02em] text-western-green-deep tabular-nums">
+                  <p className="font-display text-[30px] md:text-[46px] leading-none tracking-[-0.02em] text-western-green-deep tabular-nums">
                     {s.n}
                   </p>
                   <p className="text-meta mt-2 leading-snug">{s.l}</p>
@@ -107,7 +116,7 @@ export default function About() {
       </section>
 
       {/* IRMÃOS BOTELHO — 2ª geração: título + foto + narrativa */}
-      <section className="surface-paper py-14 md:py-20">
+      <section className="surface-paper section-tight">
         <div className="container-western">
           <Reveal variant="fade-up" duration={800}>
             <div className="max-w-3xl mb-8 md:mb-10">
@@ -122,7 +131,7 @@ export default function About() {
           </Reveal>
 
           <Reveal variant="fade-up" delay={120} duration={900}>
-            <figure className="relative overflow-hidden rounded-2xl">
+            <figure className="relative overflow-hidden rounded-xl">
               <img
                 src={irmaosGruta}
                 alt="Ricardo e Luiz Carlos Botelho entre formações de pedra Western, com cascata ao fundo"
@@ -140,7 +149,7 @@ export default function About() {
                 <p className="text-eyebrow text-western-gold-soft mb-1">
                   {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie} · ateliê desde 1993
                 </p>
-                <p className="font-sans font-semibold text-[17px] md:text-[19px] text-western-cream leading-tight">
+                <p className="font-sans font-semibold text-[16px] md:text-[17px] text-western-cream leading-tight">
                   Ricardo &amp; Luiz Carlos Botelho
                 </p>
               </figcaption>
@@ -174,8 +183,11 @@ export default function About() {
             </Reveal>
             <Reveal variant="fade-up" delay={200} duration={750}>
               <p className="text-body">
-                Em 2026, são <strong className="text-western-green-deep font-semibold">33 anos
-                de ateliê ininterrupto</strong> em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie},
+                Em {new Date().getFullYear()}, são{" "}
+                <strong className="text-western-green-deep font-semibold">
+                  {BUSINESS.anosOperacao} anos de ateliê ininterrupto
+                </strong>{" "}
+                em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie},
                 com 50 modelos catalogados e um lugar firmado no paisagismo brasileiro de alto
                 padrão — uma operação familiar que atravessou três décadas sem trocar de mão,
                 de método ou de assinatura.
@@ -187,7 +199,7 @@ export default function About() {
               <div className="pt-5 border-t border-western-border-soft flex items-center flex-wrap gap-3">
                 <span className="text-eyebrow">2ª geração</span>
                 <span className="text-western-border-strong" aria-hidden>·</span>
-                <span className="text-[16px] font-semibold text-western-green-deep">
+                <span className="text-[15px] font-semibold text-western-green-deep">
                   Ricardo &amp; Luiz Carlos Botelho
                 </span>
               </div>
@@ -197,14 +209,14 @@ export default function About() {
       </section>
 
       {/* CITAÇÃO — Ricardo Botelho */}
-      <section className="surface-ivory py-14 md:py-20 border-t border-western-border-soft">
+      <section className="surface-ivory section-tight border-t border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={800}>
             <div className="max-w-[760px] mx-auto text-center">
               <div className="w-[34px] h-[2px] bg-western-gold mx-auto mb-6" aria-hidden />
               <blockquote className="display-md text-western-green-deep leading-[1.32]">
-                "Não vendemos pedra. Oferecemos elemento autoral para o projeto — pintado à mão,
-                peça por peça, no nosso ateliê."
+                “Não vendemos pedra. Oferecemos elemento autoral para o projeto — pintado à mão,
+                peça por peça, no nosso ateliê.”
               </blockquote>
               <p className="text-eyebrow mt-6">Ricardo Botelho · Diretor de criação</p>
             </div>
@@ -213,7 +225,7 @@ export default function About() {
       </section>
 
       {/* MÉTODO — 4 pilares */}
-      <section className="surface-paper py-14 md:py-20 border-t border-western-border-soft">
+      <section className="surface-paper section-tight border-t border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={750}>
             <div className="max-w-2xl mb-9 md:mb-12">
@@ -227,7 +239,7 @@ export default function About() {
           <div className="grid md:grid-cols-2 gap-4 md:gap-5">
             {PILARES.map(({ Icon, eyebrow, titulo, texto }, i) => (
               <Reveal key={titulo} variant="fade-up" delay={i * 100} duration={700} distance={24}>
-                <article className="h-full bg-white border border-western-border-soft rounded-2xl p-6 md:p-8">
+                <article className="h-full bg-white border border-western-border-soft rounded-xl p-6 md:p-8">
                   <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-western-paper mb-5">
                     <Icon className="h-6 w-6 text-western-bronze" strokeWidth={1.75} />
                   </span>
@@ -257,7 +269,7 @@ export default function About() {
 
       {/* OBRAS — a vitrine vive em /obras (por segmento). Aqui é só a
           ponte: nada de repetir a galeria numa segunda superfície. */}
-      <section className="surface-forest py-14 md:py-20 border-y border-western-gold/15">
+      <section className="surface-forest section-tight border-y border-western-gold/15">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="text-center max-w-2xl mx-auto">
@@ -268,7 +280,7 @@ export default function About() {
               <h2 className="display-lg text-western-cream">
                 De piscinas de celebridades a endereços icônicos.
               </h2>
-              <p className="font-sans text-[17px] leading-[1.6] text-western-cream/85 mt-4 mb-8">
+              <p className="font-sans text-[16px] leading-[1.6] text-western-cream/85 mt-4 mb-8">
                 A ideia por trás de cada obra, as fotos do que já foi entregue e as peças que
                 compõem cada cena.
               </p>
@@ -281,7 +293,7 @@ export default function About() {
       </section>
 
       {/* PROVA SOCIAL — rostos + marcas */}
-      <section className="surface-ivory py-14 md:py-20">
+      <section className="surface-ivory section-tight">
         <div className="container-western">
           <div className="mx-auto max-w-5xl">
           <Reveal variant="fade-up" duration={800}>
@@ -291,14 +303,14 @@ export default function About() {
                 Profissionais e marcas que assinam com a Western.
               </h2>
             </div>
-            <SocialProof interactive groups={["celebridades", "profissionais", "marcas"]} />
+            <SocialProof interactive layout="row" groups={["celebridades", "profissionais", "marcas"]} />
           </Reveal>
           </div>
         </div>
       </section>
 
       {/* VOCABULÁRIO DO ATELIÊ */}
-      <section className="surface-paper py-14 md:py-20 border-t border-western-border-soft">
+      <section className="surface-paper section-tight border-t border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={750}>
             <div className="max-w-2xl mb-8 md:mb-10">
@@ -307,7 +319,7 @@ export default function About() {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-western-border-soft border border-western-border-soft rounded-2xl overflow-hidden">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-western-border-soft border border-western-border-soft rounded-xl overflow-hidden">
             {VOCABULARIO.map((p, i) => (
               <Reveal key={p.de} variant="fade-up" delay={i * 90} duration={650} distance={18}>
                 <div className="bg-white h-full p-5 md:p-6">
@@ -339,7 +351,7 @@ export default function About() {
           linter ou teste de a11y pegava; só o olho pegava. Uso de imagem de
           terceiro em página comercial sugere endosso. Removido em 2026-07 aqui
           e em /a-pedra. NÃO reintroduza fundo aqui sem ABRIR o arquivo. */}
-      <section className="relative overflow-hidden surface-forest py-16 md:py-24">
+      <section className="relative overflow-hidden surface-forest section">
         <div
           className="absolute inset-0 pointer-events-none"
           aria-hidden
@@ -354,7 +366,7 @@ export default function About() {
             <h2 className="display-lg text-western-cream mb-5">
               Conheça o ateliê em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}.
             </h2>
-            <p className="text-[17px] md:text-[19px] leading-[1.6] text-western-cream-muted max-w-xl mx-auto mb-8">
+            <p className="text-[16px] md:text-[17px] leading-[1.6] text-western-cream-muted max-w-xl mx-auto mb-8">
               Visita guiada com Ricardo ou Luiz Carlos, repertório completo de acabamentos na mão e
               apresentação técnica para o seu próximo projeto.
             </p>

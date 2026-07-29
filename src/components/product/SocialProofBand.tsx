@@ -11,15 +11,18 @@ export default function SocialProofBand() {
 
   return (
     <section className="bg-white border-y border-western-stone-warm/12 py-8 md:py-10">
+      {/* GRID de colunas fixas em vez de flex-wrap: 6 marcas ÷ (2 no mobile, 3 no
+          desktop) dão sempre LINHAS CHEIAS — nunca o 4+2 que deixava Cristal Pool
+          e Genesis órfãos numa 2ª linha. Nenhuma marca cortada. */}
       <div className="container-western max-w-4xl text-center">
-        <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold mb-5">
+        <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold mb-6">
           Especificado e revendido por
         </p>
-        <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 md:gap-x-12">
+        <ul className="grid grid-cols-2 sm:grid-cols-3 items-center justify-items-center gap-x-6 gap-y-5">
           {marcas.map((m) => (
             <li
               key={m.slug}
-              className="font-display text-[17px] md:text-[19px] leading-none text-western-green-deep/70 hover:text-western-green-deep transition-colors"
+              className="font-display text-[15px] md:text-[17px] leading-tight text-center text-western-green-deep/70 hover:text-western-green-deep transition-colors"
             >
               {m.nome}
             </li>

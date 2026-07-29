@@ -47,7 +47,7 @@ function Galeria({ fotos, label }: { fotos: string[]; label: string }) {
   // Mobile: carrossel horizontal com peek (menos scroll vertical). Desktop: grade.
   return (
     <>
-      <div className="mt-8 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6 px-6 pb-2 sm:mx-0 sm:px-0 sm:overflow-visible sm:grid sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-6 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6 px-6 pb-2 sm:mx-0 sm:px-0 sm:overflow-visible sm:grid sm:grid-cols-2 lg:grid-cols-3">
         {itens.map((foto, i) => (
           <button
             key={foto.src}
@@ -102,7 +102,7 @@ function ObraLook({ obra, index }: { obra: Obra; index: number }) {
     >
       <Link
         to={`/obras/${obra.slug}`}
-        className="group relative frame-product rounded-[16px] overflow-hidden aspect-[4/3] block"
+        className="group relative frame-product rounded-xl overflow-hidden aspect-[4/3] block"
         aria-label={`Ver obra ${obra.titulo}`}
       >
         {cover ? (
@@ -115,7 +115,7 @@ function ObraLook({ obra, index }: { obra: Obra; index: number }) {
           />
         ) : (
           <div className="w-full h-full bg-western-green-deep flex items-center justify-center text-center px-8">
-            <span className="font-display text-western-gold-soft text-[20px] leading-snug">
+            <span className="font-display text-western-gold-soft text-[18px] leading-snug">
               {obra.titulo}
             </span>
           </div>
@@ -131,7 +131,7 @@ function ObraLook({ obra, index }: { obra: Obra; index: number }) {
         </Link>
 
         {isHibrido && (
-          <span className="mt-3 inline-flex items-center gap-1.5 rounded-[6px] border border-western-gold/50 bg-western-gold/15 px-3 py-1 text-[14px] font-semibold text-western-bronze">
+          <span className="mt-3 inline-flex items-center gap-1.5 rounded-sm border border-western-gold/50 bg-western-gold/15 px-3 py-1 text-[14px] font-semibold text-western-bronze">
             <span aria-hidden>◆</span> Lago híbrido · natural + Western
           </span>
         )}
@@ -180,29 +180,33 @@ function ObraLook({ obra, index }: { obra: Obra; index: number }) {
         <div className="mt-7">
           {comprable ? (
             <>
-              <button
-                type="button"
-                onClick={onAdd}
-                disabled={isLoading}
-                className="btn-primary w-full sm:w-auto"
-              >
-                {added ? (
-                  <>
-                    <Check className="h-5 w-5" /> Adicionada ao orçamento
-                  </>
-                ) : (
-                  <>
-                    <Plus className="h-5 w-5" /> Adicionar ao orçamento
-                  </>
-                )}
-              </button>
-              <div className="mt-4 flex items-center justify-between gap-4">
-                <GatedPrice amount={totalPreco} variant="block" className="text-price" />
+              {/* Preço em cima; abaixo as DUAS ações LADO A LADO. "Ver a obra"
+                  virou botão outline (não mais link de texto discreto), pareado
+                  com "Adicionar ao orçamento" — dono pediu mais visível/acessível
+                  e ao lado (2026-07-18). */}
+              <GatedPrice amount={totalPreco} variant="block" className="text-price" />
+              <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                <button
+                  type="button"
+                  onClick={onAdd}
+                  disabled={isLoading}
+                  className="btn-primary w-full sm:w-auto"
+                >
+                  {added ? (
+                    <>
+                      <Check className="h-5 w-5" /> Adicionada ao orçamento
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-5 w-5" /> Adicionar ao orçamento
+                    </>
+                  )}
+                </button>
                 <Link
                   to={`/obras/${obra.slug}`}
-                  className="tap-target inline-flex items-center gap-1.5 font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-bronze shrink-0"
+                  className="btn-outline-forest w-full sm:w-auto"
                 >
-                  Ver a obra <ArrowRight className="h-4 w-4" />
+                  Ver a obra <ArrowRight className="h-5 w-5" />
                 </Link>
               </div>
             </>
@@ -260,12 +264,13 @@ export default function Inspiracoes() {
         path="/obras"
       />
 
-      {/* Abertura */}
-      <div className="container-western pt-12 md:pt-20 pb-6">
+      {/* Abertura — lead-in compacto (não é .section: encosta no seletor sticky
+          logo abaixo, por isso pb-6 e top enxuto — puxa a 1ª foto pra dobra). */}
+      <div className="container-western pt-10 md:pt-12 pb-6">
         <Reveal variant="fade-up">
           <div className="max-w-3xl">
-            <p className="text-eyebrow mb-4">Obras · Por segmento</p>
-            <div className="w-12 h-px bg-western-gold mb-8" />
+            <p className="text-eyebrow mb-3">Obras · Por segmento</p>
+            <div className="w-12 h-px bg-western-gold mb-6" />
             <h1 className="display-xl text-western-green-deep">Obras entregues, por segmento.</h1>
             <p className="text-body mt-5 max-w-[60ch]">
               Escolha um caminho — a ideia por trás, fotos de obras reais e as peças que compõem
@@ -305,8 +310,9 @@ export default function Inspiracoes() {
         </div>
       </div>
 
-      {/* Conteúdo do segmento */}
-      <div ref={contentRef} className="container-western py-10 md:py-14 scroll-mt-[128px]">
+      {/* Conteúdo do segmento — top enxuto (exceção declarada ao ritmo nomeado):
+          fica logo sob o seletor sticky e sobe a galeria pra dobra no desktop. */}
+      <div ref={contentRef} className="container-western pt-6 md:pt-8 pb-12 md:pb-16 scroll-mt-[128px]">
         <Reveal variant="fade-up">
           <div className="max-w-3xl">
             <p className="text-eyebrow mb-3">{cur.eyebrow}</p>
@@ -335,11 +341,12 @@ export default function Inspiracoes() {
           </>
         ) : (
           <Reveal variant="fade-up">
-            <div className="mt-12 rounded-[16px] border border-western-border-soft bg-white p-7 md:p-9 text-center">
+            <div className="mt-12 rounded-xl border border-western-border-soft bg-white p-7 md:p-9 text-center">
               <p className="text-body max-w-[54ch] mx-auto">
                 Quer {cur.label.toLowerCase()} assim no seu projeto? Monte a composição com preço de
                 parceiro, ou fale direto com o ateliê.
               </p>
+              {/* UMA ação primária (verde) — o secundário é outline, não sólido. */}
               <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
                 <Link to="/guia-de-composicao" className="btn-primary w-full sm:w-auto">
                   Montar no guia
@@ -348,7 +355,7 @@ export default function Inspiracoes() {
                   href={waMsg(`a linha de ${cur.label.toLowerCase()}`)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-gold w-full sm:w-auto"
+                  className="btn-outline-forest w-full sm:w-auto"
                 >
                   <MessageCircle className="h-5 w-5" /> Falar com o ateliê
                 </a>
@@ -369,9 +376,9 @@ export default function Inspiracoes() {
         </p>
 
         <Reveal variant="fade-up">
-          <section className="mt-10 md:mt-16 surface-forest rounded-[16px] text-center px-6 py-12 md:py-16">
+          <section className="mt-10 md:mt-16 surface-forest rounded-xl text-center px-6 py-12 md:py-16">
             <h2 className="display-md text-western-cream max-w-xl mx-auto">Prefere montar do zero?</h2>
-            <p className="text-[17px] leading-[1.6] text-western-cream-muted max-w-[44ch] mx-auto mt-4 mb-8">
+            <p className="text-[16px] leading-[1.6] text-western-cream-muted max-w-[44ch] mx-auto mt-4 mb-8">
               Responda 3 perguntas no guia e o ateliê monta uma composição no seu acabamento, com
               preço de parceiro após o cadastro (CNPJ).
             </p>

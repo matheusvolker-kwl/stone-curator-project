@@ -111,11 +111,11 @@ export default function AccountTracking() {
         return (
           <div className="flex flex-wrap items-center gap-2">
             {r.transportadora && (
-              <span className="text-[16px] font-semibold text-western-green-deep">
+              <span className="text-[15px] font-semibold text-western-green-deep">
                 {r.transportadora}
               </span>
             )}
-            <span className="rounded-[6px] bg-western-paper px-2 py-1 text-[16px] font-semibold tabular-nums text-western-green-deep">
+            <span className="rounded-sm bg-western-paper px-2 py-1 text-[15px] font-semibold tabular-nums text-western-green-deep">
               {r.tracking_code}
             </span>
             <button
@@ -124,7 +124,7 @@ export default function AccountTracking() {
                 e.stopPropagation();
                 void copiar(r.tracking_code as string);
               }}
-              className="tap-target inline-flex items-center gap-1.5 rounded-[10px] px-2 text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
+              className="tap-target inline-flex items-center gap-1.5 rounded-lg px-2 text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
               aria-label={`Copiar código de rastreio do pedido ${r.numero}`}
             >
               <Copy className="h-4 w-4" aria-hidden="true" />
@@ -136,7 +136,7 @@ export default function AccountTracking() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="tap-target inline-flex items-center gap-1.5 rounded-[10px] px-2 text-[16px] font-semibold text-western-bronze transition-colors hover:text-western-green-deep"
+                className="tap-target inline-flex items-center gap-1.5 rounded-lg px-2 text-[15px] font-semibold text-western-bronze transition-colors hover:text-western-green-deep"
               >
                 Acompanhar
                 <ExternalLink className="h-4 w-4" aria-hidden="true" />
@@ -174,7 +174,7 @@ export default function AccountTracking() {
           { key: "todos", label: "Todos", count: carregando ? undefined : rows.length },
         ]}
         ativa={aba}
-        onChange={setAba}
+        onChange={(k) => setAba(k as Aba)}
       />
 
       <DataTable

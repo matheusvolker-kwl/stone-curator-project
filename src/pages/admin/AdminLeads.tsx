@@ -309,7 +309,7 @@ export default function AdminLeads() {
               <a
                 href={`mailto:${l.email}`}
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 text-[16px] text-western-green-deep hover:text-western-cta hover:underline break-all"
+                className="inline-flex items-center gap-1.5 text-[15px] text-western-green-deep hover:text-western-cta hover:underline break-all"
               >
                 <Mail className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
                 {l.email}
@@ -321,7 +321,7 @@ export default function AdminLeads() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 text-[16px] tabular-nums text-western-green-deep hover:text-western-cta hover:underline"
+                className="inline-flex items-center gap-1.5 text-[15px] tabular-nums text-western-green-deep hover:text-western-cta hover:underline"
               >
                 <MessageCircle className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
                 {l.telefone}
@@ -404,7 +404,7 @@ export default function AdminLeads() {
             onChange={(e) => setQInput(e.target.value)}
             placeholder="Buscar nome, e-mail, mensagem…"
             aria-label="Buscar leads"
-            className="h-[52px] rounded-[6px] border-western-border-strong bg-white pl-11 text-[16px] placeholder:text-western-stone-warm/70"
+            className="h-control rounded-sm border-western-border-strong bg-white pl-11 text-[15px] placeholder:text-western-stone-warm/70"
           />
         </div>
       </div>
@@ -441,7 +441,7 @@ export default function AdminLeads() {
                 type="button"
                 onClick={() => setConfirmarExclusao(true)}
                 disabled={excluindo}
-                className="tap-target inline-flex items-center justify-center gap-2 rounded-[10px] border border-[#B3372E]/50 px-4 text-[16px] font-semibold text-[#B3372E] transition-colors hover:bg-[#B3372E]/10 disabled:opacity-45"
+                className="tap-target inline-flex items-center justify-center gap-2 rounded-lg border border-status-error/50 px-4 text-[15px] font-semibold text-status-error transition-colors hover:bg-status-error/10 disabled:opacity-45"
               >
                 {excluindo ? (
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -555,9 +555,9 @@ export default function AdminLeads() {
               </dl>
 
               {detalhe.mensagem && (
-                <div className="mt-6 rounded-[16px] border border-western-border-soft bg-western-paper p-4">
+                <div className="mt-6 rounded-xl border border-western-border-soft bg-western-paper p-4">
                   <p className="text-eyebrow mb-2">Mensagem</p>
-                  <p className="text-[17px] leading-[1.6] whitespace-pre-wrap text-western-green-deep">
+                  <p className="text-[16px] leading-[1.6] whitespace-pre-wrap text-western-green-deep">
                     {detalhe.mensagem}
                   </p>
                 </div>
@@ -591,7 +591,7 @@ function Campo({ rotulo, valor, numerica }: { rotulo: string; valor?: string | n
     <div className="flex flex-col gap-0.5 sm:flex-row sm:gap-4">
       <dt className="text-sublabel sm:w-36 sm:flex-shrink-0 sm:pt-0.5">{rotulo}</dt>
       <dd
-        className={`flex-1 break-words text-[16px] text-western-green-deep ${numerica ? "tabular-nums" : ""}`}
+        className={`flex-1 break-words text-[15px] text-western-green-deep ${numerica ? "tabular-nums" : ""}`}
       >
         {valor}
       </dd>

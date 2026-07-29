@@ -177,8 +177,8 @@ export function DataTable<T>({
     <div className={cn("relative", className)}>
       {/* Barra contextual de ações em massa */}
       {selecao?.barra && idsSelecionados.length > 0 && (
-        <div className="sticky top-0 z-20 mb-3 flex flex-wrap items-center gap-3 rounded-[10px] border border-western-cta/25 bg-western-cta/[0.06] px-4 py-3">
-          <span className="text-[16px] font-semibold tabular-nums text-western-green-deep">
+        <div className="sticky top-0 z-20 mb-3 flex flex-wrap items-center gap-3 rounded-lg border border-western-cta/25 bg-western-cta/[0.06] px-4 py-3">
+          <span className="text-[15px] font-semibold tabular-nums text-western-green-deep">
             {idsSelecionados.length} selecionado{idsSelecionados.length > 1 ? "s" : ""}
           </span>
           <div className="ml-auto flex flex-wrap items-center gap-2">
@@ -186,7 +186,7 @@ export function DataTable<T>({
             <button
               type="button"
               onClick={() => selecao.onChange(new Set())}
-              className="tap-target inline-flex items-center gap-1 rounded-[10px] px-3 text-[16px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
+              className="tap-target inline-flex items-center gap-1 rounded-lg px-3 text-[15px] font-semibold text-western-stone-warm hover:text-western-green-deep transition-colors"
             >
               <X className="h-4 w-4" aria-hidden="true" />
               Limpar
@@ -196,8 +196,8 @@ export function DataTable<T>({
       )}
 
       {/* ───────── DESKTOP: tabela densa ───────── */}
-      <div className="hidden md:block overflow-x-auto rounded-[16px] border border-western-border-soft bg-white">
-        <table className="w-full border-collapse text-[16px]">
+      <div className="hidden md:block overflow-x-auto rounded-xl border border-western-border-soft bg-white">
+        <table className="w-full border-collapse text-[15px]">
           <thead>
             <tr className="border-b border-western-border-strong bg-western-paper">
               {selecao && (
@@ -274,7 +274,7 @@ export function DataTable<T>({
                   tabIndex={clicavel ? 0 : undefined}
                   role={clicavel ? "button" : undefined}
                   className={cn(
-                    "h-[52px] transition-colors",
+                    "h-control transition-colors",
                     marcada && "bg-western-cta/[0.04]",
                     clicavel &&
                       "cursor-pointer hover:bg-western-paper focus:outline-none focus-visible:ring-2 focus-visible:ring-western-gold focus-visible:ring-inset",
@@ -313,7 +313,7 @@ export function DataTable<T>({
       {/* ───────── MOBILE: lista de cards ───────── */}
       <div className="md:hidden space-y-3">
         {selecao && (
-          <label className="flex items-center gap-3 px-1 py-2 text-[16px] font-semibold text-western-stone-warm">
+          <label className="flex items-center gap-3 px-1 py-2 text-[15px] font-semibold text-western-stone-warm">
             <Checkbox
               checked={todosSelecionados ? true : algunsSelecionados ? "indeterminate" : false}
               onCheckedChange={alternarTodos}
@@ -343,7 +343,7 @@ export function DataTable<T>({
               tabIndex={clicavel ? 0 : undefined}
               role={clicavel ? "button" : undefined}
               className={cn(
-                "rounded-[16px] border bg-white p-4 transition-colors",
+                "rounded-xl border bg-white p-4 transition-colors",
                 marcada ? "border-western-cta/40 bg-western-cta/[0.04]" : "border-western-border-soft",
                 clicavel && "cursor-pointer active:bg-western-paper focus:outline-none focus-visible:ring-2 focus-visible:ring-western-gold",
               )}
@@ -357,7 +357,7 @@ export function DataTable<T>({
 
                 <div className="min-w-0 flex-1">
                   {colPrincipal && (
-                    <div className="text-[17px] font-semibold text-western-green-deep break-words">
+                    <div className="text-[16px] font-semibold text-western-green-deep break-words">
                       {colPrincipal.render(row)}
                     </div>
                   )}
@@ -370,7 +370,7 @@ export function DataTable<T>({
                         </dt>
                         <dd
                           className={cn(
-                            "text-[16px] text-western-green-deep text-right min-w-0 break-words",
+                            "text-[15px] text-western-green-deep text-right min-w-0 break-words",
                             (col.numerica || col.align === "right") && "tabular-nums",
                           )}
                         >

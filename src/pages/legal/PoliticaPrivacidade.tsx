@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, MessageCircle } from "lucide-react";
 import LegalPage from "@/components/legal/LegalPage";
+import FechamentoLegal from "@/components/legal/FechamentoLegal";
 import { BUSINESS } from "@/config/business";
 
 /* DS V3 — as políticas terminavam em beco sem saída: navegação entre elas no topo
@@ -23,7 +23,7 @@ function LegalNav({ atual }: { atual: string }) {
             key={p.to}
             to={p.to}
             aria-current={ativa ? "page" : undefined}
-            className={`tap-target inline-flex items-center rounded-full border px-5 font-sans text-[16px] font-semibold !no-underline transition-colors ${
+            className={`tap-target inline-flex items-center rounded-full border px-5 font-sans text-[15px] font-semibold !no-underline transition-colors ${
               ativa
                 ? "border-western-cta bg-western-cta text-western-cream"
                 : "border-western-border-strong text-western-green-deep hover:border-western-green-deep hover:bg-western-paper"
@@ -37,44 +37,6 @@ function LegalNav({ atual }: { atual: string }) {
   );
 }
 
-function FechamentoLegal({
-  titulo,
-  apoio,
-  waHref,
-  waLabel,
-}: {
-  titulo: string;
-  apoio: string;
-  waHref: string;
-  waLabel: string;
-}) {
-  return (
-    <section className="surface-forest mt-16 rounded-[16px] px-6 py-12 text-center md:px-12 md:py-14">
-      <h2 className="display-md mx-auto max-w-xl !mb-3 !mt-0 !text-[1.625rem] !text-western-cream md:!text-[1.875rem]">
-        {titulo}
-      </h2>
-      <p className="mx-auto mb-8 max-w-lg text-[17px] leading-[1.6] text-western-cream/80">{apoio}</p>
-      <div className="mx-auto flex max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center">
-        {/* Dourado: único CTA da faixa escura, onde o verde não teria contraste. */}
-        <a
-          href={waHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-gold w-full !no-underline sm:w-auto"
-        >
-          <MessageCircle className="h-5 w-5" strokeWidth={1.75} /> {waLabel}
-        </a>
-        <Link to="/parceiro/cadastro" className="btn-outline-cream w-full !no-underline sm:w-auto">
-          Solicitar acesso B2B <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
-        </Link>
-      </div>
-      <p className="mt-8 text-[14px] leading-[1.5] text-western-cream/70">
-        Ateliê desde {BUSINESS.fundadaEm} · CNPJ {BUSINESS.cnpj} · Compra segura · Garantia de{" "}
-        {BUSINESS.garantiaLabel}
-      </p>
-    </section>
-  );
-}
 
 export default function PoliticaPrivacidade() {
   const waConsultor = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
@@ -85,7 +47,7 @@ export default function PoliticaPrivacidade() {
     <LegalPage eyebrow="Privacidade" titulo="Como tratamos os seus dados." atualizadoEm="maio de 2026" seoPath="/privacidade" seoTitle="Política de privacidade — Western" seoDescription="LGPD na prática: dados coletados pela Western, finalidades, prazos de retenção e como exercer seus direitos.">
       <LegalNav atual="/privacidade" />
 
-      <p className="text-[19px] leading-[1.6] text-western-green-deep">
+      <p className="text-[17px] leading-[1.6] text-western-green-deep">
         A Western Pools respeita a Lei Geral de Proteção de Dados (LGPD — Lei 13.709/2018) e
         coleta apenas os dados necessários para credenciar parceiros B2B, processar pedidos e
         manter contato comercial.

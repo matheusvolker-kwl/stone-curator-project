@@ -109,15 +109,15 @@ const PROXIMO_PASSO: Record<Status, string> = {
 };
 
 /* Duas classes de propósito, e não uma com override em cima: numa string comum
- * (sem tailwind-merge) `h-[52px] … h-[48px]` deixa AS DUAS no DOM, e quem decide
+ * (sem tailwind-merge) `h-control … h-tap` deixa AS DUAS no DOM, e quem decide
  * é a ordem do CSS gerado — não a ordem no atributo. Então nada de sobrescrever. */
 const campoCls =
-  "h-[52px] w-full rounded-[6px] border border-western-border-strong bg-white px-3 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/70 transition-colors focus:border-western-cta focus:outline-none focus:ring-2 focus:ring-western-cta/20";
+  "h-control w-full rounded-sm border border-western-border-strong bg-white px-3 text-[15px] text-western-green-deep placeholder:text-western-stone-warm/70 transition-colors focus:border-western-cta focus:outline-none focus:ring-2 focus:ring-western-cta/20";
 /** Controles de filtro/lote: 48px (toque mínimo), largura definida no uso. */
 const filtroCls =
-  "h-[48px] rounded-[6px] border border-western-border-strong bg-white px-3 text-[16px] text-western-green-deep placeholder:text-western-stone-warm/70 transition-colors focus:border-western-cta focus:outline-none focus:ring-2 focus:ring-western-cta/20";
+  "h-tap rounded-sm border border-western-border-strong bg-white px-3 text-[15px] text-western-green-deep placeholder:text-western-stone-warm/70 transition-colors focus:border-western-cta focus:outline-none focus:ring-2 focus:ring-western-cta/20";
 const areaCls =
-  "w-full rounded-[6px] border border-western-border-strong bg-white px-3 py-2.5 text-[16px] leading-[1.5] text-western-green-deep placeholder:text-western-stone-warm/70 transition-colors focus:border-western-cta focus:outline-none focus:ring-2 focus:ring-western-cta/20";
+  "w-full rounded-sm border border-western-border-strong bg-white px-3 py-2.5 text-[15px] leading-[1.5] text-western-green-deep placeholder:text-western-stone-warm/70 transition-colors focus:border-western-cta focus:outline-none focus:ring-2 focus:ring-western-cta/20";
 
 const moeda = (v: number | null) =>
   v == null ? "—" : v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -278,7 +278,7 @@ function OrderEditor({
       <button
         type="button"
         onClick={onBack}
-        className="-ml-1 mb-3 inline-flex items-center gap-1 text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
+        className="-ml-1 mb-3 inline-flex items-center gap-1 text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
       >
         <ChevronLeft className="h-4 w-4" aria-hidden="true" />
         Pedidos
@@ -293,7 +293,7 @@ function OrderEditor({
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         {/* ── Coluna esquerda: os dados ── */}
         <div className="space-y-6">
-          <section className="rounded-[16px] border border-western-border-soft bg-white p-5">
+          <section className="rounded-xl border border-western-border-soft bg-white p-5">
             <p className="text-eyebrow mb-4">Dados do pedido</p>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -392,7 +392,7 @@ function OrderEditor({
             </div>
           </section>
 
-          <section className="rounded-[16px] border border-western-border-soft bg-white p-5">
+          <section className="rounded-xl border border-western-border-soft bg-white p-5">
             <p className="text-eyebrow mb-4">Recados</p>
             <div className="grid grid-cols-1 gap-4">
               <Campo label="Recado para o parceiro (aparece na conta dele)">
@@ -413,7 +413,7 @@ function OrderEditor({
           </section>
 
           {/* Histórico */}
-          <section className="rounded-[16px] border border-western-border-soft bg-white p-5">
+          <section className="rounded-xl border border-western-border-soft bg-white p-5">
             <p className="text-eyebrow mb-1">Histórico</p>
             <p className="text-meta mb-4">Sincronizado em tempo real com a conta do parceiro.</p>
 
@@ -429,7 +429,7 @@ function OrderEditor({
                 type="button"
                 onClick={postNote}
                 disabled={postingNote || !newNote.trim()}
-                className="tap-target inline-flex h-[52px] flex-shrink-0 items-center justify-center gap-2 rounded-[10px] border border-western-border-strong px-5 text-[16px] font-semibold text-western-green-deep transition-colors hover:border-western-green-deep hover:bg-western-paper disabled:opacity-45"
+                className="tap-target inline-flex h-control flex-shrink-0 items-center justify-center gap-2 rounded-lg border border-western-border-strong px-5 text-[15px] font-semibold text-western-green-deep transition-colors hover:border-western-green-deep hover:bg-western-paper disabled:opacity-45"
               >
                 <Send className="h-4 w-4" aria-hidden="true" />
                 Publicar
@@ -453,7 +453,7 @@ function OrderEditor({
                         <CelulaData valor={ev.created_at} className="text-meta" />
                       </div>
                       {ev.note && (
-                        <p className="mt-1.5 whitespace-pre-line text-[16px] leading-[1.5] text-western-green-deep">
+                        <p className="mt-1.5 whitespace-pre-line text-[15px] leading-[1.5] text-western-green-deep">
                           {ev.note}
                         </p>
                       )}
@@ -467,10 +467,10 @@ function OrderEditor({
 
         {/* ── Coluna direita: card de ação ── */}
         <aside className="lg:sticky lg:top-6 lg:self-start">
-          <div className="rounded-[16px] border border-western-border-soft bg-white p-5">
+          <div className="rounded-xl border border-western-border-soft bg-white p-5">
             <p className="text-eyebrow mb-3">Situação</p>
             <StatusBadge status={draft.status} />
-            <p className="text-body mt-3 text-[16px]">{PROXIMO_PASSO[draft.status]}</p>
+            <p className="text-body mt-3 text-[15px]">{PROXIMO_PASSO[draft.status]}</p>
 
             <dl className="mt-5 space-y-2.5 border-t border-western-border-soft pt-5">
               <ItemResumo k="Parceiro" v={nomeParceiro(partner, draft.user_id)} />
@@ -492,7 +492,7 @@ function OrderEditor({
               type="button"
               onClick={baixarPdf}
               disabled={gerandoPdf}
-              className="tap-target mt-2 inline-flex h-[52px] w-full items-center justify-center gap-2 rounded-[10px] border border-western-border-strong px-5 text-[16px] font-semibold text-western-green-deep transition-colors hover:border-western-green-deep hover:bg-western-paper disabled:opacity-45"
+              className="tap-target mt-2 inline-flex h-control w-full items-center justify-center gap-2 rounded-lg border border-western-border-strong px-5 text-[15px] font-semibold text-western-green-deep transition-colors hover:border-western-green-deep hover:bg-western-paper disabled:opacity-45"
             >
               <FileDown className="h-4 w-4" aria-hidden="true" />
               {gerandoPdf ? "Gerando…" : "Baixar PDF"}
@@ -502,7 +502,7 @@ function OrderEditor({
               <button
                 type="button"
                 onClick={() => setRemoveOpen(true)}
-                className="tap-target inline-flex items-center gap-2 text-[16px] font-semibold text-[#B3372E] transition-colors hover:underline"
+                className="tap-target inline-flex items-center gap-2 text-[15px] font-semibold text-status-error transition-colors hover:underline"
               >
                 <Trash2 className="h-4 w-4" aria-hidden="true" />
                 Excluir pedido
@@ -513,7 +513,7 @@ function OrderEditor({
           <button
             type="button"
             onClick={onBack}
-            className="tap-target mt-3 w-full rounded-[10px] px-5 text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
+            className="tap-target mt-3 w-full rounded-lg px-5 text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
           >
             Voltar para a lista
           </button>
@@ -538,7 +538,7 @@ function ItemResumo({ k, v }: { k: string; v: string }) {
   return (
     <div className="flex items-baseline justify-between gap-3">
       <dt className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">{k}</dt>
-      <dd className="min-w-0 break-words text-right text-[16px] tabular-nums text-western-green-deep">{v}</dd>
+      <dd className="min-w-0 break-words text-right text-[15px] tabular-nums text-western-green-deep">{v}</dd>
     </div>
   );
 }
@@ -616,7 +616,7 @@ function CreateOrderModal({
       onClick={onClose}
     >
       <div
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[16px] border border-western-border-soft bg-white p-6"
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-western-border-soft bg-white p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <p className="text-eyebrow mb-2">Novo pedido</p>
@@ -692,7 +692,7 @@ function CreateOrderModal({
           <button
             type="button"
             onClick={onClose}
-            className="tap-target rounded-[10px] px-5 text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
+            className="tap-target rounded-lg px-5 text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
           >
             Cancelar
           </button>
@@ -896,7 +896,7 @@ export default function AdminPedidos() {
       ocultarNoMobile: true,
       sortable: true,
       render: (o) => (
-        <span className="text-[16px] text-western-stone-warm">
+        <span className="text-[15px] text-western-stone-warm">
           {o.modo_entrega === "retirada" ? "Retirada" : "Frete"}
         </span>
       ),
@@ -982,7 +982,7 @@ export default function AdminPedidos() {
             { key: "todos", label: "Todos", count: carregando || erro ? undefined : contagens.todos },
           ]}
           ativa={aba}
-          onChange={setAba}
+          onChange={(k) => setAba(k as "ativos" | "todos" | "concluidos")}
         />
 
         <div className="relative ml-auto min-w-[240px] flex-1 md:max-w-sm">

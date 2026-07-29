@@ -61,7 +61,7 @@ function NivelBadge({ tier }: { tier: Tier }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center whitespace-nowrap rounded-[6px] border px-2.5 py-1",
+        "inline-flex items-center whitespace-nowrap rounded-sm border px-2.5 py-1",
         "text-[14px] font-semibold leading-none",
         NIVEL_CLS[tier] ?? NIVEL_CLS.light,
       )}
@@ -467,12 +467,12 @@ function ListaParceiros({
             onChange={(e) => setBusca(e.target.value)}
             placeholder="Nome, empresa, CNPJ, cidade…"
             aria-label="Buscar parceiro"
-            className="h-[52px] rounded-[6px] border-western-border-strong pl-10 text-[16px]"
+            className="h-control rounded-sm border-western-border-strong pl-10 text-[15px]"
           />
         </div>
 
         <Select value={filtroSegmento} onValueChange={setFiltroSegmento}>
-          <SelectTrigger className="h-[52px] w-[200px] rounded-[6px] border-western-border-strong text-[16px]" aria-label="Segmento">
+          <SelectTrigger className="h-control w-[200px] rounded-sm border-western-border-strong text-[15px]" aria-label="Segmento">
             <SelectValue placeholder="Segmento" />
           </SelectTrigger>
           <SelectContent>
@@ -482,7 +482,7 @@ function ListaParceiros({
         </Select>
 
         <Select value={filtroUf} onValueChange={setFiltroUf}>
-          <SelectTrigger className="h-[52px] w-[130px] rounded-[6px] border-western-border-strong text-[16px]" aria-label="UF">
+          <SelectTrigger className="h-control w-[130px] rounded-sm border-western-border-strong text-[15px]" aria-label="UF">
             <SelectValue placeholder="UF" />
           </SelectTrigger>
           <SelectContent>
@@ -533,7 +533,7 @@ function ListaParceiros({
                 onClick={() => exportarSelecionados(ids)}
                 disabled={ocupado}
                 variant="outline"
-                className="tap-target rounded-[10px] border-western-border-strong text-[16px] font-semibold"
+                className="tap-target rounded-lg border-western-border-strong text-[15px] font-semibold"
               >
                 <Download className="mr-2 h-4 w-4" aria-hidden="true" /> Exportar
               </Button>
@@ -542,7 +542,7 @@ function ListaParceiros({
                 disabled={ocupado || aprovadosSelecionados.length === 0}
                 variant="outline"
                 title={aprovadosSelecionados.length === 0 ? "Selecione ao menos um parceiro aprovado" : undefined}
-                className="tap-target rounded-[10px] border-western-border-strong text-[16px] font-semibold"
+                className="tap-target rounded-lg border-western-border-strong text-[15px] font-semibold"
               >
                 <ChevronsUpDown className="mr-2 h-4 w-4" aria-hidden="true" />
                 Mudar nível
@@ -554,7 +554,7 @@ function ListaParceiros({
                 onClick={() => setConfirmarRevogar(true)}
                 disabled={ocupado || aprovadosSelecionados.length === 0}
                 title={aprovadosSelecionados.length === 0 ? "Selecione ao menos um parceiro aprovado" : undefined}
-                className="tap-target rounded-[10px] bg-[#B3372E] text-[16px] font-semibold text-white hover:bg-[#8f2c25]"
+                className="tap-target rounded-lg bg-status-error text-[15px] font-semibold text-white hover:bg-[#8f2c25]"
               >
                 <ShieldX className="mr-2 h-4 w-4" aria-hidden="true" />
                 Revogar acesso
@@ -566,7 +566,7 @@ function ListaParceiros({
                 onClick={() => setConfirmarExcluir(true)}
                 disabled={ocupado}
                 variant="ghost"
-                className="tap-target rounded-[10px] text-[16px] font-semibold text-[#B3372E] hover:bg-[#B3372E]/10"
+                className="tap-target rounded-lg text-[15px] font-semibold text-status-error hover:bg-status-error/10"
               >
                 <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" /> Excluir
               </Button>
@@ -593,7 +593,7 @@ function ListaParceiros({
             <div>
               <Label className="text-eyebrow mb-2 block">Novo nível</Label>
               <Select value={nivelEmLote} onValueChange={(v) => setNivelEmLote(v as Tier)}>
-                <SelectTrigger className="h-[52px] rounded-[6px] border-western-border-strong text-[16px]">
+                <SelectTrigger className="h-control rounded-sm border-western-border-strong text-[15px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -661,7 +661,7 @@ function ChipStatus({
       onClick={onClick}
       aria-pressed={ativo}
       className={cn(
-        "tap-target inline-flex items-center gap-2 rounded-[6px] border px-4 text-[16px] font-semibold transition-colors",
+        "tap-target inline-flex items-center gap-2 rounded-sm border px-4 text-[15px] font-semibold transition-colors",
         ativo
           ? "border-western-cta bg-western-cta/[0.08] text-western-green-deep"
           : "border-western-border-strong text-western-stone-warm hover:border-western-green-deep hover:text-western-green-deep",
@@ -856,8 +856,8 @@ function ParceiroDetalhe({
     return (
       <div>
         <PageHeader voltar={voltar} titulo="Parceiro não encontrado" />
-        <div className="rounded-[16px] border border-dashed border-western-border-strong bg-western-paper px-6 py-14 text-center">
-          <p className="font-display text-[20px] font-semibold text-western-green-deep">
+        <div className="rounded-xl border border-dashed border-western-border-strong bg-western-paper px-6 py-14 text-center">
+          <p className="font-display text-[18px] font-semibold text-western-green-deep">
             Este cadastro não existe mais
           </p>
           <p className="text-body mx-auto mt-2 max-w-md">
@@ -924,7 +924,7 @@ function ParceiroDetalhe({
 
           {p.cancellation_reason && (
             <Bloco titulo="Motivo do cancelamento">
-              <p className="whitespace-pre-wrap text-[17px] leading-[1.6] text-western-green-deep">
+              <p className="whitespace-pre-wrap text-[16px] leading-[1.6] text-western-green-deep">
                 {p.cancellation_reason}
               </p>
               {p.cancelled_at && (
@@ -938,30 +938,30 @@ function ParceiroDetalhe({
           {/* Linha do tempo */}
           <Bloco titulo="Linha do tempo">
             <Campo rotulo="Cadastro" valor={null}>
-              <CelulaData valor={p.created_at} className="text-[16px] text-western-green-deep" />
+              <CelulaData valor={p.created_at} className="text-[15px] text-western-green-deep" />
             </Campo>
             {p.approved_at && (
               <Campo rotulo="Aprovado" valor={null}>
-                <CelulaData valor={p.approved_at} className="text-[16px] text-western-green-deep" />
+                <CelulaData valor={p.approved_at} className="text-[15px] text-western-green-deep" />
               </Campo>
             )}
             {p.cancelled_at && (
               <Campo rotulo="Cancelado" valor={null}>
-                <CelulaData valor={p.cancelled_at} className="text-[16px] text-western-green-deep" />
+                <CelulaData valor={p.cancelled_at} className="text-[15px] text-western-green-deep" />
               </Campo>
             )}
           </Bloco>
 
           {/* Zona sensível — separada, no fim, nunca perto do botão primário. */}
-          <div className="rounded-[16px] border border-[#B3372E]/30 bg-[#B3372E]/[0.04] p-5">
-            <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-[#B3372E]">Ação irreversível</p>
+          <div className="rounded-xl border border-status-error/30 bg-status-error/[0.04] p-5">
+            <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-status-error">Ação irreversível</p>
             <p className="text-body mt-2">
               Excluir apaga o perfil, as configurações de nível e o papel de admin deste parceiro. Não dá para desfazer.
             </p>
             <button
               type="button"
               onClick={() => setConfirmarExcluir(true)}
-              className="tap-target mt-4 inline-flex items-center gap-2 rounded-[10px] border border-[#B3372E]/50 px-5 text-[16px] font-semibold text-[#B3372E] transition-colors hover:bg-[#B3372E]/10"
+              className="tap-target mt-4 inline-flex items-center gap-2 rounded-lg border border-status-error/50 px-5 text-[15px] font-semibold text-status-error transition-colors hover:bg-status-error/10"
             >
               <Trash2 className="h-4 w-4" aria-hidden="true" />
               Excluir cadastro
@@ -971,7 +971,7 @@ function ParceiroDetalhe({
 
         {/* ── DIREITA: o card de ação (fixo) ── */}
         <aside className="lg:sticky lg:top-6 lg:self-start">
-          <div className="rounded-[16px] border border-western-border-strong bg-white p-6">
+          <div className="rounded-xl border border-western-border-strong bg-white p-6">
             <div className="flex items-center justify-between gap-3">
               <StatusBadge status={p.status} />
               {aprovado && <NivelBadge tier={p.tier} />}
@@ -981,11 +981,11 @@ function ParceiroDetalhe({
 
             {/* Desconto real em vigor */}
             {aprovado && (
-              <div className="mt-5 rounded-[10px] border border-western-border-soft bg-western-paper p-4">
+              <div className="mt-5 rounded-lg border border-western-border-soft bg-western-paper p-4">
                 <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">
                   Desconto em vigor
                 </p>
-                <p className="mt-1 text-[24px] font-semibold tabular-nums text-western-green-deep">
+                <p className="mt-1 text-[20px] font-semibold tabular-nums text-western-green-deep">
                   {usado == null ? "—" : `${usado}%`}
                 </p>
                 <p className="text-meta mt-1">
@@ -1006,7 +1006,7 @@ function ParceiroDetalhe({
                     href={whatsapp}
                     target="_blank"
                     rel="noreferrer"
-                    className="tap-target inline-flex items-center gap-2 rounded-[10px] border border-western-border-strong px-4 text-[16px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
+                    className="tap-target inline-flex items-center gap-2 rounded-lg border border-western-border-strong px-4 text-[15px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
                   >
                     <MessageCircle className="h-4 w-4" aria-hidden="true" /> WhatsApp
                   </a>
@@ -1016,7 +1016,7 @@ function ParceiroDetalhe({
                     href={site}
                     target="_blank"
                     rel="noreferrer"
-                    className="tap-target inline-flex items-center gap-2 rounded-[10px] border border-western-border-strong px-4 text-[16px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
+                    className="tap-target inline-flex items-center gap-2 rounded-lg border border-western-border-strong px-4 text-[15px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
                   >
                     <Globe className="h-4 w-4" aria-hidden="true" /> Site
                   </a>
@@ -1026,7 +1026,7 @@ function ParceiroDetalhe({
                     href={`https://instagram.com/${p.instagram.replace(/^@/, "")}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="tap-target inline-flex items-center gap-2 rounded-[10px] border border-western-border-strong px-4 text-[16px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
+                    className="tap-target inline-flex items-center gap-2 rounded-lg border border-western-border-strong px-4 text-[15px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
                   >
                     <Instagram className="h-4 w-4" aria-hidden="true" /> Instagram
                   </a>
@@ -1060,7 +1060,7 @@ function ParceiroDetalhe({
                   <button
                     type="button"
                     onClick={() => pedirStatus("pending")}
-                    className="tap-target w-full rounded-[10px] text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
+                    className="tap-target w-full rounded-lg text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep"
                   >
                     Reverter para análise
                   </button>
@@ -1074,7 +1074,7 @@ function ParceiroDetalhe({
                 <div>
                   <Label className="text-eyebrow mb-2 block">Nível</Label>
                   <Select value={nivel} onValueChange={(v) => setNivel(v as Tier)}>
-                    <SelectTrigger className="h-[52px] rounded-[6px] border-western-border-strong text-[16px]">
+                    <SelectTrigger className="h-control rounded-sm border-western-border-strong text-[15px]">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1099,13 +1099,13 @@ function ParceiroDetalhe({
                     value={desconto}
                     onChange={(e) => setDesconto(e.target.value)}
                     placeholder="Vazio = usa o padrão do nível"
-                    className="h-[52px] rounded-[6px] border-western-border-strong text-[16px]"
+                    className="h-control rounded-sm border-western-border-strong text-[15px]"
                   />
                 </div>
 
                 <div className="flex items-center justify-between gap-4 border-t border-western-border-soft pt-5">
                   <div className="min-w-0">
-                    <Label className="text-[16px] font-semibold text-western-green-deep">Liberar boleto</Label>
+                    <Label className="text-[15px] font-semibold text-western-green-deep">Liberar boleto</Label>
                     <p className="text-meta">Pode fechar o pedido com boleto bancário.</p>
                   </div>
                   <Switch checked={boleto} onCheckedChange={setBoleto} aria-label="Liberar boleto" />
@@ -1120,26 +1120,26 @@ function ParceiroDetalhe({
                     max={12}
                     value={parcelas}
                     onChange={(e) => setParcelas(e.target.value)}
-                    className="h-[52px] rounded-[6px] border-western-border-strong text-[16px]"
+                    className="h-control rounded-sm border-western-border-strong text-[15px]"
                   />
                 </div>
 
                 <div className="flex items-center justify-between gap-4 border-t border-western-border-soft pt-5">
                   <div className="min-w-0">
-                    <Label className="text-[16px] font-semibold text-western-green-deep">Kit de amostras grátis</Label>
+                    <Label className="text-[15px] font-semibold text-western-green-deep">Kit de amostras grátis</Label>
                     <p className="text-meta">Aprovação imediata, sem custo.</p>
                   </div>
                   <Switch checked={kit} onCheckedChange={setKit} aria-label="Kit de amostras grátis" />
                 </div>
 
-                <div className="rounded-[10px] border border-[#B3372E]/30 bg-[#B3372E]/[0.04] p-4">
-                  <p className="inline-flex items-center gap-2 text-[14px] font-semibold uppercase tracking-[0.06em] text-[#B3372E]">
+                <div className="rounded-lg border border-status-error/30 bg-status-error/[0.04] p-4">
+                  <p className="inline-flex items-center gap-2 text-[14px] font-semibold uppercase tracking-[0.06em] text-status-error">
                     <ShieldCheck className="h-4 w-4" aria-hidden="true" />
                     Acesso ao sistema
                   </p>
                   <div className="mt-3 flex items-center justify-between gap-4">
                     <div className="min-w-0">
-                      <Label className="text-[16px] font-semibold text-western-green-deep">Promover a admin</Label>
+                      <Label className="text-[15px] font-semibold text-western-green-deep">Promover a admin</Label>
                       <p className="text-[14px] leading-[1.5] text-western-stone-dark/85">
                         Dá acesso <strong>total</strong> ao painel — leads, orçamentos, pedidos, parceiros e configurações.
                       </p>
@@ -1167,7 +1167,7 @@ function ParceiroDetalhe({
                 <button
                   type="button"
                   onClick={() => pedirStatus("rejected")}
-                  className="tap-target w-full rounded-[10px] text-[16px] font-semibold text-[#B3372E] transition-colors hover:bg-[#B3372E]/10"
+                  className="tap-target w-full rounded-lg text-[15px] font-semibold text-status-error transition-colors hover:bg-status-error/10"
                 >
                   Revogar acesso do parceiro
                 </button>
@@ -1225,7 +1225,7 @@ function ParceiroDetalhe({
 
 function Bloco({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-[16px] border border-western-border-soft bg-white p-6">
+    <section className="rounded-xl border border-western-border-soft bg-white p-6">
       <h2 className="text-eyebrow mb-4">{titulo}</h2>
       <dl className="space-y-3">{children}</dl>
     </section>
@@ -1248,7 +1248,7 @@ function Campo({
       </dt>
       <dd
         className={cn(
-          "min-w-0 flex-1 break-words text-[16px] text-western-green-deep",
+          "min-w-0 flex-1 break-words text-[15px] text-western-green-deep",
           numerico && "tabular-nums",
         )}
       >

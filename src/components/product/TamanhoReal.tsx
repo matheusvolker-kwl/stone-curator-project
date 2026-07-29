@@ -72,9 +72,9 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
   const x10 = peso ? Math.round(peso * 10) : null;
 
   return (
-    <section className="surface-paper py-14 md:py-20 scroll-mt-24" id="tamanho">
-      <div className="max-w-5xl mx-auto px-6 md:px-8">
-        <header className="mb-9 md:mb-12 max-w-2xl">
+    <section className="surface-paper py-10 md:py-14 scroll-mt-24" id="tamanho">
+      <div className="container-western">
+        <header className="mb-6 md:mb-8 max-w-2xl">
           <p className="text-section-label mb-3">A leveza · Tamanho real</p>
           <h2 className="display-lg text-western-green-deep">
             {img ? "Do lado de uma pessoa de 1,70 m" : "Tamanho e peso reais"}
@@ -92,7 +92,7 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
           }
         >
           {img && (
-            <figure className="relative m-0 overflow-hidden rounded-[16px] border border-western-border-soft bg-western-cream-muted">
+            <figure className="relative m-0 overflow-hidden rounded-xl border border-western-border-soft bg-western-cream-muted">
               <img
                 src={img}
                 alt={`Pessoa de 1,70 m ao lado de ${productTitle} — referência de tamanho real`}
@@ -113,56 +113,41 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
           )}
 
           <div className="min-w-0">
-            {cells.length > 0 && (
-              <>
-                <p className="text-sublabel mb-4">Dimensões da peça · cm</p>
-                <div className="flex flex-wrap items-end gap-x-8 gap-y-5 mb-4">
-                  {cells.map((d) => (
-                    <div key={d.label} className="flex flex-col leading-none">
-                      <span className="font-sans text-[34px] font-bold tracking-tight tabular-nums text-western-green-deep">
-                        {d.v}
-                      </span>
-                      <span className="mt-2 font-sans text-[14px] text-western-stone-warm">
-                        {d.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-meta mb-7">Variação artesanal de até 5% por peça</p>
-              </>
-            )}
+            {/* V1 (escolha do dono, 18/07): régua ÚNICA — medida e peso na
+                mesma linha display; comparação e variação numa linha meta.
+                Os dois sub-cabeçalhos uppercase saíram; nenhum número sumiu. */}
+            <p className="font-sans text-[26px] md:text-[30px] font-bold tabular-nums leading-none text-western-green-deep">
+              {cells.map((d) => d.v).join(" × ")}
+              {cells.length > 0 && (
+                <span className="ml-1.5 text-[14px] font-normal text-western-stone-warm">cm</span>
+              )}
+              {cells.length > 0 && peso && (
+                <span className="mx-3 font-normal text-western-border-strong">|</span>
+              )}
+              {peso && (
+                <>
+                  {peso}
+                  <span className="ml-1.5 text-[14px] font-normal text-western-stone-warm">kg</span>
+                </>
+              )}
+            </p>
+            <p className="text-meta mt-2.5 max-w-[54ch]">
+              {peso && (
+                <>
+                  Pedra natural do mesmo tamanho:{" "}
+                  <b className="text-western-stone-warm">≈{x10?.toLocaleString("pt-BR")} kg</b> ·{" "}
+                  <span className="font-semibold text-western-green-deep">10× mais leve</span> ·{" "}
+                </>
+              )}
+              variação artesanal de até 5% por peça
+            </p>
 
             {peso && (
-              <div className="border-t border-western-border-soft pt-6">
-                <p className="text-sublabel mb-4">Peso da peça · kg</p>
-                <div className="flex flex-wrap items-center gap-x-7 gap-y-4">
-                  <div>
-                    <p className="font-sans text-[14px] text-western-stone-warm mb-1">Western</p>
-                    <p className="font-sans text-[28px] font-bold leading-none tabular-nums text-western-green-deep">
-                      {peso}
-                      <span className="text-[16px] font-normal text-western-stone-warm ml-1">
-                        kg
-                      </span>
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-sans text-[14px] text-western-stone-warm mb-1 max-w-[24ch]">
-                      Pedra natural do mesmo tamanho
-                    </p>
-                    <p className="font-sans text-[28px] font-semibold leading-none tabular-nums text-western-stone-warm">
-                      ≈{x10?.toLocaleString("pt-BR")}
-                      <span className="text-[16px] font-normal ml-1">kg</span>
-                    </p>
-                  </div>
-                  <span className="inline-flex items-center rounded-full border border-western-border-strong bg-white px-4 py-2 font-sans text-[14px] font-semibold text-western-green-deep">
-                    10× mais leve
-                  </span>
-                </div>
-
-                <p className="mt-6 flex items-center gap-2 font-sans text-[17px] font-semibold text-western-green-deep">
+              <>
+                <p className="mt-4 flex items-center gap-2 font-sans text-[15px] font-semibold text-western-green-deep">
                   <svg
-                    width="20"
-                    height="20"
+                    width="18"
+                    height="18"
                     viewBox="0 0 16 16"
                     fill="none"
                     stroke="currentColor"
@@ -176,25 +161,20 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
                   </svg>
                   Sobe sem guindaste — instala em terraços, coberturas e pavimentos altos.
                 </p>
-
-                {/* ENTRADA DE /a-pedra pela PDP: é exatamente aqui que o
-                    comprador pergunta "por que ela pesa isso?". A CAUSA (molde
-                    tirado da pedra real, composto oco com fibra de PET) é da
-                    página do argumento, não da ficha da peça. */}
-                <p className="mt-4">
+                <p className="mt-3">
                   <Link
                     to="/a-pedra"
-                    className="tap-target inline-flex items-center gap-1.5 font-sans text-[16px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
+                    className="tap-target inline-flex items-center gap-1.5 font-sans text-[15px] font-semibold text-western-green-deep hover:text-western-cta transition-colors"
                   >
                     Por que ela pesa 10% →
                   </Link>
                 </p>
-              </div>
+              </>
             )}
 
             {/* Separa os dois modelos de dado: a PEÇA (aqui) e a CAIXA (Entrega).
              * Sem repetir número — só aponta o caminho. */}
-            <p className="mt-7 pt-6 border-t border-western-border-soft text-meta">
+            <p className="mt-5 pt-4 border-t border-western-border-soft text-meta">
               Medidas e peso da peça, sem embalagem. Quantas caixas e quanto pesa para o frete:{" "}
               <a
                 href="#entrega"

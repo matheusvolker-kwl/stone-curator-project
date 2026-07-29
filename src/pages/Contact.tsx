@@ -82,13 +82,13 @@ const canais = [
  * arquivo), então normalizamos aqui: 52px de altura, cantos 10px, tipo 16px,
  * borda visível e mensagens em sans 14px — nunca mono, nunca abaixo de 14px. */
 const CONTROL =
-  "h-[52px] rounded-[10px] border-[1.5px] border-western-border-strong bg-western-paper px-4 text-[16px] md:text-[16px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-green-deep";
-const CONTROL_ERR = "border-[1.5px] border-[#B3372E]";
+  "h-control rounded-lg border-[1.5px] border-western-border-strong bg-western-paper px-4 text-[15px] md:text-[15px] text-western-green-deep placeholder:text-western-stone-warm/60 focus:border-western-green-deep";
+const CONTROL_ERR = "border-[1.5px] border-status-error";
 
 const EMAIL_FX =
-  "[&_input]:!h-[52px] [&_input]:!rounded-[10px] [&_input]:!border-[1.5px] [&_input]:!bg-western-paper [&_input]:!px-4 [&_input]:!text-[16px] [&_p]:!font-sans [&_p]:!text-[14px] [&_p]:!normal-case [&_p]:!tracking-normal [&_p]:!text-[#B3372E] [&_button]:!font-sans [&_button]:!text-[14px] [&_button]:!normal-case [&_button]:!tracking-normal";
+  "[&_input]:!h-control [&_input]:!rounded-lg [&_input]:!border-[1.5px] [&_input]:!bg-western-paper [&_input]:!px-4 [&_input]:!text-[15px] [&_p]:!font-sans [&_p]:!text-[14px] [&_p]:!normal-case [&_p]:!tracking-normal [&_p]:!text-status-error [&_button]:!font-sans [&_button]:!text-[14px] [&_button]:!normal-case [&_button]:!tracking-normal";
 const PHONE_FX =
-  "[&_input]:!px-4 [&_input]:!text-[16px] [&_span]:!font-sans [&_span]:!text-[16px] [&_p]:!font-sans [&_p]:!text-[14px] [&_p]:!normal-case [&_p]:!tracking-normal [&_p]:!text-[#B3372E]";
+  "[&_input]:!px-4 [&_input]:!text-[15px] [&_span]:!font-sans [&_span]:!text-[15px] [&_p]:!font-sans [&_p]:!text-[14px] [&_p]:!normal-case [&_p]:!tracking-normal [&_p]:!text-status-error";
 
 // email OU telefone obrigatório — RLS exige ao menos um.
 const contactSchema = z
@@ -219,13 +219,13 @@ export default function Contact() {
               href={waUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="surface-forest block rounded-2xl p-6 md:p-8 transition-colors hover:bg-western-green-mid"
+              className="surface-forest block rounded-xl p-6 md:p-8 transition-colors hover:bg-western-green-mid"
             >
               <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-gold-soft">
                 WhatsApp comercial
               </p>
               <p className="display-md mt-3 text-western-cream">{BUSINESS.whatsappLabel}</p>
-              <p className="mt-3 text-[17px] leading-[1.6] text-western-cream-muted">
+              <p className="mt-3 text-[16px] leading-[1.6] text-western-cream-muted">
                 Resposta em até 1h útil. É o canal preferido do ateliê para projetos.
               </p>
               <span className="btn-gold mt-6 w-full">
@@ -239,7 +239,7 @@ export default function Contact() {
               {canais.map((c) => {
                 const Icon = c.icon;
                 const cardClass =
-                  "tap-target block h-full rounded-[10px] border border-western-border-soft bg-white p-5 md:p-6 transition-colors hover:border-western-border-strong hover:bg-western-paper";
+                  "tap-target block h-full rounded-lg border border-western-border-soft bg-white p-5 md:p-6 transition-colors hover:border-western-border-strong hover:bg-western-paper";
                 const inner = (
                   <div className="flex items-start gap-4">
                     <Icon
@@ -249,13 +249,13 @@ export default function Contact() {
                     />
                     <div className="min-w-0">
                       <p className="text-eyebrow">{c.eyebrow}</p>
-                      <p className="mt-1.5 break-words text-[20px] font-semibold leading-snug text-western-green-deep">
+                      <p className="mt-1.5 break-words text-[18px] font-semibold leading-snug text-western-green-deep">
                         {c.titulo}
                       </p>
-                      <p className="mt-2 text-[16px] leading-relaxed text-western-stone-warm">
+                      <p className="mt-2 text-[15px] leading-relaxed text-western-stone-warm">
                         {c.descricao}
                       </p>
-                      <span className="mt-3 inline-flex items-center gap-1.5 text-[16px] font-semibold text-western-cta">
+                      <span className="mt-3 inline-flex items-center gap-1.5 text-[15px] font-semibold text-western-cta">
                         {c.cta}
                         <ArrowUpRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
                       </span>
@@ -287,9 +287,9 @@ export default function Contact() {
           {/* Formulário */}
           <div className="lg:sticky lg:top-24">
             {success ? (
-              <div className="rounded-2xl border border-western-border-soft bg-white p-6 md:p-9 shadow-[0_24px_60px_-32px_rgba(30,40,25,0.28)]">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2E7D4F]/10">
-                  <CheckCircle2 className="h-6 w-6 text-[#2E7D4F]" strokeWidth={1.75} aria-hidden="true" />
+              <div className="rounded-xl border border-western-border-soft bg-white p-6 md:p-9 shadow-[0_24px_60px_-32px_rgba(30,40,25,0.28)]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-status-success/10">
+                  <CheckCircle2 className="h-6 w-6 text-status-success" strokeWidth={1.75} aria-hidden="true" />
                 </div>
                 <h2 className="display-md mt-6 text-western-green-deep">Recebemos sua mensagem.</h2>
                 <p className="text-body mt-4">
@@ -315,11 +315,11 @@ export default function Contact() {
                 ref={formRef}
                 onSubmit={handleSubmit}
                 noValidate
-                className="rounded-2xl border border-western-border-soft bg-white p-6 md:p-9 shadow-[0_24px_60px_-32px_rgba(30,40,25,0.28)]"
+                className="rounded-xl border border-western-border-soft bg-white p-6 md:p-9 shadow-[0_24px_60px_-32px_rgba(30,40,25,0.28)]"
               >
                 <p className="text-eyebrow">Enviar mensagem</p>
                 <h2 className="display-md mt-3 text-western-green-deep">Escreva pra gente</h2>
-                <p className="mt-2 text-[16px] leading-relaxed text-western-stone-warm">
+                <p className="mt-2 text-[15px] leading-relaxed text-western-stone-warm">
                   Retorno em até 1 dia útil. Pelo WhatsApp, em até 1h útil.
                 </p>
 
@@ -371,7 +371,7 @@ export default function Contact() {
                       value={f.telefone}
                       onChange={(v) => setField("telefone", v)}
                       error={errors.telefone}
-                      className={`!h-[52px] overflow-hidden rounded-[10px] !bg-western-paper ${
+                      className={`!h-control overflow-hidden rounded-lg !bg-western-paper ${
                         errors.telefone ? "" : "!border-[1.5px] !border-western-border-strong"
                       }`}
                     />
@@ -415,9 +415,9 @@ export default function Contact() {
                       rows={5}
                       aria-invalid={!!errors.mensagem}
                       placeholder="Conte brevemente sobre o projeto: tipo (piscina, lago, jardim), tamanho aproximado e cidade."
-                      className={`min-h-[140px] rounded-[10px] border-[1.5px] bg-western-paper px-4 py-3 text-[17px] leading-[1.6] text-western-green-deep placeholder:text-western-stone-warm/60 focus-visible:ring-0 ${
+                      className={`min-h-[140px] rounded-lg border-[1.5px] bg-western-paper px-4 py-3 text-[16px] leading-[1.6] text-western-green-deep placeholder:text-western-stone-warm/60 focus-visible:ring-0 ${
                         errors.mensagem
-                          ? "border-[#B3372E]"
+                          ? "border-status-error"
                           : "border-western-border-strong focus-visible:border-western-green-deep"
                       }`}
                     />
@@ -489,9 +489,9 @@ export default function Contact() {
               </p>
               <div className="mb-7 mt-5 h-px w-12 bg-western-gold" />
               <h2 className="display-lg text-western-cream">Onde cada peça nasce.</h2>
-              <p className="mt-5 max-w-md text-[17px] leading-[1.6] text-western-cream-muted">
+              <p className="mt-5 max-w-md text-[16px] leading-[1.6] text-western-cream-muted">
                 Estamos em {BUSINESS.cidadeAtelie}/{BUSINESS.ufAtelie}, na Grande São Paulo.
-                Receba arquitetos, paisagistas e clientes finais para conhecer os acabamentos
+                Recebemos arquitetos, paisagistas e clientes finais para conhecer os acabamentos
                 ao vivo e ver as peças em produção.
               </p>
               <Link to="/visitar" className="btn-gold mt-8 w-full sm:w-auto">
@@ -560,7 +560,7 @@ function FieldLabel({
     <div className="mb-2">
       <label
         htmlFor={htmlFor}
-        className="block text-[16px] font-semibold leading-snug text-western-green-deep"
+        className="block text-[15px] font-semibold leading-snug text-western-green-deep"
       >
         {children}
         {required && (
@@ -581,7 +581,7 @@ function FieldLabel({
 
 function FieldError({ id, children }: { id: string; children: React.ReactNode }) {
   return (
-    <p id={id} className="mt-2 text-[14px] font-semibold text-[#B3372E]">
+    <p id={id} className="mt-2 text-[14px] font-semibold text-status-error">
       {children}
     </p>
   );
@@ -600,9 +600,9 @@ function InfoBlock({
     <div>
       <div className="mb-2.5 flex items-center gap-3">
         <Icon className="h-5 w-5 text-western-gold-soft" strokeWidth={1.75} aria-hidden="true" />
-        <dt className="text-[16px] font-semibold text-western-gold-soft">{label}</dt>
+        <dt className="text-[15px] font-semibold text-western-gold-soft">{label}</dt>
       </div>
-      <dd className="text-[17px] leading-[1.6] text-western-cream">{children}</dd>
+      <dd className="text-[16px] leading-[1.6] text-western-cream">{children}</dd>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { BUSINESS } from "@/config/business";
 import EmailInput from "@/components/forms/EmailInput";
 import PasswordField from "@/components/forms/PasswordField";
 import FieldLabel from "@/components/forms/FieldLabel";
+import Seo from "@/components/seo/Seo";
 import { emailSchema } from "@/lib/forms/br";
 
 const waClienteFinalUrl = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
@@ -93,6 +94,11 @@ export default function PartnerLogin() {
 
   return (
     <div className="surface-ivory">
+      <Seo
+        title="Entrar na conta de parceiro · Western"
+        description="Acesso de parceiros aprovados: tabela comercial, modelos 3D no SketchUp e composições. Ainda sem conta? O cadastro com CNPJ é gratuito."
+        path="/parceiro/login"
+      />
       <div className="container-western py-16 md:py-24 max-w-5xl">
         <div className="grid md:grid-cols-[1fr_1.1fr] gap-10 md:gap-16 items-start">
           {/* COLUNA ESQUERDA — contexto B2B + saída pra cliente final */}
@@ -109,7 +115,7 @@ export default function PartnerLogin() {
             {/* Card 1 — Solicitar cadastro (dourado sobre verde: acento permitido) */}
             <Link
               to="/parceiro/cadastro"
-              className="group block rounded-[16px] surface-forest p-6 md:p-8 transition-colors duration-200 hover:bg-western-green-mid"
+              className="group block rounded-xl surface-forest p-6 md:p-8 transition-colors duration-200 hover:bg-western-green-mid"
             >
               <div className="flex items-start gap-4 mb-5">
                 <ShieldCheck className="h-6 w-6 flex-shrink-0 text-western-gold-soft mt-0.5" strokeWidth={1.75} aria-hidden="true" />
@@ -120,7 +126,7 @@ export default function PartnerLogin() {
                   <p className="display-md text-western-cream">Solicitar credenciamento B2B.</p>
                 </div>
               </div>
-              <p className="font-sans text-[16px] leading-relaxed text-western-cream/80 mb-6 max-w-sm">
+              <p className="font-sans text-[15px] leading-relaxed text-western-cream/80 mb-6 max-w-sm">
                 Cadastro gratuito com CNPJ. Aprovação automática para profissionais do ramo — preço de parceiro, modelos 3D e composições liberados na hora.
               </p>
               <span className="btn-gold w-full sm:w-auto">
@@ -134,7 +140,7 @@ export default function PartnerLogin() {
               href={waClienteFinalUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="group block rounded-[16px] border border-western-border-soft bg-western-paper p-6 md:p-8 transition-colors duration-200 hover:border-western-border-strong hover:bg-western-cream/40"
+              className="group block rounded-xl border border-western-border-soft bg-western-paper p-6 md:p-8 transition-colors duration-200 hover:border-western-border-strong hover:bg-western-cream/40"
             >
               <div className="flex items-start gap-4 mb-5">
                 <MessageCircle className="h-6 w-6 flex-shrink-0 text-western-bronze mt-0.5" strokeWidth={1.75} aria-hidden="true" />
@@ -145,7 +151,7 @@ export default function PartnerLogin() {
                   <p className="display-md text-western-green-deep">Quero fazer um projeto</p>
                 </div>
               </div>
-              <p className="font-sans text-[16px] leading-relaxed text-western-stone-warm mb-6 max-w-sm">
+              <p className="font-sans text-[15px] leading-relaxed text-western-stone-warm mb-6 max-w-sm">
                 Atendimento direto com nosso time pelo WhatsApp — indicamos um arquiteto parceiro ou cuidamos do seu projeto residencial.
               </p>
               <span className="btn-outline-forest w-full sm:w-auto">
@@ -206,13 +212,13 @@ export default function PartnerLogin() {
               <button
                 type="button"
                 onClick={() => setShowReset((v) => !v)}
-                className="tap-target mx-auto flex items-center justify-center px-2 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-bronze transition-colors hover:text-western-cta"
+                className="tap-target mx-auto flex items-center justify-center px-2 font-sans text-[15px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-bronze transition-colors hover:text-western-cta"
               >
                 {showReset ? "Voltar ao login" : "Esqueci minha senha"}
               </button>
             </form>
 
-            <p className="font-sans text-[16px] text-western-stone-warm mt-8 text-center md:hidden">
+            <p className="font-sans text-[15px] text-western-stone-warm mt-8 text-center md:hidden">
               Ainda não é parceiro?{" "}
               <Link
                 to="/parceiro/cadastro"

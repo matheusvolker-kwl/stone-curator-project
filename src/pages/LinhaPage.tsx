@@ -4,6 +4,7 @@ import { fetchCollection, fetchProducts } from "@/lib/datasource";
 import { ChevronLeft } from "lucide-react";
 import ProductGrid from "@/components/product/ProductGrid";
 import Reveal from "@/components/shared/Reveal";
+import Seo from "@/components/seo/Seo";
 import {
   PEDRAS_HANDLES,
   PEDRAS_VIRTUAL,
@@ -40,6 +41,12 @@ export default function LinhaPage() {
   if (!isLoading && !data) {
     return (
       <div className="surface-ivory">
+        <Seo
+          title="Categoria não encontrada · Western"
+          description="O endereço pode ter mudado. Veja as categorias disponíveis no catálogo Western."
+          path={`/linhas/${handle}`}
+          noindex
+        />
         <div className="container-western py-24 md:py-32">
           <div className="mx-auto max-w-md text-center">
             <h1 className="display-lg text-western-green-deep">
@@ -64,11 +71,21 @@ export default function LinhaPage() {
 
   return (
     <div className="surface-ivory">
+      {data && (
+        <Seo
+          title={`${data.title} — catálogo Western`}
+          description={
+            data.description?.trim() ||
+            `Peças da linha ${data.title} em pedra artesanal Western — réplica de pedra real, até 10× mais leve. Preço de parceiro após cadastro com CNPJ.`
+          }
+          path={`/linhas/${handle}`}
+        />
+      )}
       <div className="container-western py-8 md:py-14">
         {/* Volta para o índice de linhas — alvo de toque cheio */}
         <Link
           to="/linhas"
-          className="tap-target -ml-2 mb-6 inline-flex items-center gap-2 px-2 font-sans text-[16px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep md:mb-8"
+          className="tap-target -ml-2 mb-6 inline-flex items-center gap-2 px-2 font-sans text-[15px] font-semibold text-western-stone-warm transition-colors hover:text-western-green-deep md:mb-8"
         >
           <ChevronLeft className="h-5 w-5" aria-hidden="true" /> Todas as categorias
         </Link>

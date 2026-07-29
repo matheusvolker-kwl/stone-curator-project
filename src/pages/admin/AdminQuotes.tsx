@@ -15,7 +15,7 @@ import {
   type QuoteThread,
   type QuotePayload,
 } from "@/components/admin/quoteTypes";
-import { formatBRL } from "@/lib/catalog/client";
+import { cdnImg, formatBRL } from "@/lib/catalog/client";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { toast } from "sonner";
 
@@ -29,19 +29,27 @@ interface Orcamento {
   payload: QuotePayload;
 }
 
-/** Status aceitos vindos da URL (os tiles-fila do dashboard fazem deep link). */
+/** Status aceitos vindos da URL (os tiles-fila do dashboard fazem deep link).
+ * BUG corrigido (2026-07-18): a lista antiga usava "em_andamento"/"respondido",
+ * que NÃO existem no enum — o deep link abria a fila filtrada por um status
+ * impossível e a tela entregava lista vazia. Aliases antigos seguem mapeados. */
 const STATUS_DA_URL: readonly QuoteStatus[] = [
   "novo",
-  "em_andamento",
-  "respondido",
+  "em_atendimento",
+  "proposta_enviada",
   "fechado",
 ] as const;
 
+const ALIAS_STATUS_LEGADO: Record<string, QuoteStatus> = {
+  em_andamento: "em_atendimento",
+  respondido: "proposta_enviada",
+};
+
 function statusInicialDaUrl(params: URLSearchParams): "all" | QuoteStatus {
   const s = params.get("status");
-  return s && (STATUS_DA_URL as readonly string[]).includes(s)
-    ? (s as QuoteStatus)
-    : "all";
+  if (!s) return "all";
+  if ((STATUS_DA_URL as readonly string[]).includes(s)) return s as QuoteStatus;
+  return ALIAS_STATUS_LEGADO[s] ?? "all";
 }
 
 export default function AdminQuotes() {
@@ -260,7 +268,7 @@ export default function AdminQuotes() {
         numerica: true,
         sortable: true,
         sortValue: (r) => numeroDe(r),
-        render: (r) => <span className="text-[16px] font-semibold tabular-nums">{numeroDe(r)}</span>,
+        render: (r) => <span className="text-[15px] font-semibold tabular-nums">{numeroDe(r)}</span>,
       },
       {
         key: "cliente",
@@ -285,12 +293,32 @@ export default function AdminQuotes() {
       {
         key: "itens",
         header: "Peças",
-        align: "right",
-        width: "90px",
+        width: "150px",
         sortable: true,
         ocultarNoMobile: true,
         sortValue: (r) => r.payload.items?.length ?? 0,
-        render: (r) => <span>{r.payload.items?.length ?? 0}</span>,
+        /* Miniaturas (pedido do dono, 18/07): o atendente reconhece o orçamento
+         * pela FOTO das peças, não pela contagem. Até 3 thumbs + contador. */
+        render: (r) => {
+          const itens = r.payload.items ?? [];
+          const fotos = itens.filter((i) => Boolean(i.image)).slice(0, 3);
+          return (
+            <span className="inline-flex items-center gap-1.5">
+              {fotos.map((i, idx) => (
+                <img
+                  key={idx}
+                  src={cdnImg(i.image ?? "", 96)}
+                  alt=""
+                  loading="lazy"
+                  className="h-8 w-8 rounded-md border border-western-border-soft bg-western-paper object-contain"
+                />
+              ))}
+              <span className="tabular-nums text-[15px] font-semibold">
+                {itens.length}
+              </span>
+            </span>
+          );
+        },
       },
       {
         key: "valor",
@@ -354,7 +382,7 @@ export default function AdminQuotes() {
             onChange={(e) => setQ(e.target.value)}
             placeholder="Buscar nome, empresa, e-mail, nº…"
             aria-label="Buscar orçamentos"
-            className="h-[52px] rounded-[6px] border-western-border-strong bg-white pl-11 text-[16px] placeholder:text-western-stone-warm/70"
+            className="h-control rounded-sm border-western-border-strong bg-white pl-11 text-[15px] placeholder:text-western-stone-warm/70"
           />
         </div>
       </div>
@@ -397,7 +425,7 @@ export default function AdminQuotes() {
                 type="button"
                 onClick={() => setConfirmarExclusao(true)}
                 disabled={arquivando || excluindo}
-                className="tap-target inline-flex items-center justify-center gap-2 rounded-[10px] border border-[#B3372E]/50 px-4 text-[16px] font-semibold text-[#B3372E] transition-colors hover:bg-[#B3372E]/10 disabled:opacity-45"
+                className="tap-target inline-flex items-center justify-center gap-2 rounded-lg border border-status-error/50 px-4 text-[15px] font-semibold text-status-error transition-colors hover:bg-status-error/10 disabled:opacity-45"
               >
                 {excluindo ? (
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />

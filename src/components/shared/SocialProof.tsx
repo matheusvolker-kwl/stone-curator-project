@@ -73,7 +73,8 @@ export default function SocialProof({
   className = "",
   interactive = false,
   layout = "tiers",
-  align = "center",
+  align = "left", // padrão do site (decisão do dono): prova social sempre
+  // ancorada à esquerda no trilho editorial, nunca centralizada/empilhada.
 }: Props) {
   const isRow = layout === "row";
   const isLeft = align === "left";
@@ -99,6 +100,12 @@ export default function SocialProof({
   ) as Array<"celebridades" | "profissionais">;
   const showMarcas = groups.includes("marcas");
 
+  /* UM grupo de rostos = split editorial (cabeçalho à esquerda, rostos à direita),
+   * não o cluster pequeno flutuando à esquerda que o "left compact" deixava. O
+   * row de 2 grupos preenche a largura sozinho; com 1 grupo, o cabeçalho vira a
+   * outra "coluna" e o bloco fica igualmente fluido/balanceado. */
+  const singleSplit = avatarGroups.length === 1;
+
   const tierMax = compact ? "max-w-md md:max-w-lg" : "max-w-md md:max-w-2xl";
   const tileGap = compact ? "gap-3 md:gap-4" : "gap-4 md:gap-6";
 
@@ -109,7 +116,7 @@ export default function SocialProof({
           <>
             {/* Raio 10px (md do V3) — sem cantos vivos. */}
             <div
-              className={`relative w-full aspect-[4/5] overflow-hidden rounded-[10px] ${tileBg} ring-1 ${tileRing} shadow-[0_14px_30px_-20px_rgba(15,41,24,0.45)] transition-all duration-300 ${
+              className={`relative w-full aspect-[4/5] overflow-hidden rounded-lg ${tileBg} ring-1 ${tileRing} shadow-[0_14px_30px_-20px_rgba(15,41,24,0.45)] transition-all duration-300 ${
                 prova ? "group-hover:ring-western-gold/60 group-hover:shadow-[0_18px_36px_-18px_rgba(15,41,24,0.55)]" : ""
               }`}
             >
@@ -138,7 +145,7 @@ export default function SocialProof({
                 A seta é a afordância de "tem obra atrás" — visível também no
                 toque (no celular não existe hover para revelar). */}
             <p
-              className={`mt-3 text-center font-sans text-[16px] font-semibold leading-snug ${captionColor} ${
+              className={`mt-3 text-center font-sans text-[15px] font-semibold leading-snug ${captionColor} ${
                 prova ? "transition-colors group-hover:text-western-gold-soft" : ""
               }`}
             >
@@ -183,7 +190,10 @@ export default function SocialProof({
       className={
         full
           ? "grid grid-cols-3 gap-4 sm:grid-cols-6 md:gap-6"
-          : `grid grid-cols-3 ${tileGap} ${tierMax} mx-auto`
+          : /* align="left" ancora a grade ao trilho (sem mx-auto), pra os tiles
+               alinharem com o header à esquerda — senão a fileira flutua
+               centralizada e o header fica órfão à esquerda. */
+            `grid grid-cols-3 ${tileGap} ${tierMax} ${isLeft ? "" : "mx-auto"}`
       }
     >
       {pessoas.map(renderPessoa)}
@@ -191,10 +201,11 @@ export default function SocialProof({
   );
 
   /* Marcas = WORDMARK tipográfico (decisão de marca: nunca logotipo).
-   * Sans semibold, ≥16px, opacidade cheia — legibilidade não depende de hover. */
+   * Dentro de pill (V1, 18/07) o wordmark desce pra 13.5–14.5px — a moldura
+   * compensa o tamanho; piso de leitura preservado. */
   const wordmarkFs = compact
-    ? { mobile: 16, desktop: 18 }
-    : { mobile: 17, desktop: 20 };
+    ? { mobile: 13.5, desktop: 14 }
+    : { mobile: 13.5, desktop: 14.5 };
   const renderMarca = (m: MarcaComLogo) => {
     const prova = interactive ? resolverProva(m.slug) : null;
     const wordmark = (
@@ -205,7 +216,7 @@ export default function SocialProof({
           letterSpacing: "0.02em",
           ["--wm-fs-md" as string]: `${wordmarkFs.desktop}px`,
         }}
-        className={`whitespace-nowrap text-center font-sans font-semibold ${wordmarkColor} md:text-[length:var(--wm-fs-md)] ${
+        className={`text-center font-sans font-semibold leading-tight ${wordmarkColor} md:text-[length:var(--wm-fs-md)] ${
           prova ? "transition-colors group-hover/marca:text-western-gold-soft" : ""
         }`}
       >
@@ -238,7 +249,9 @@ export default function SocialProof({
 
   return (
     <div className={className}>
-      {(eyebrow || titulo) && (
+      {/* header ACIMA — só quando NÃO é o split de 1 grupo (lá o header mora na
+          coluna esquerda, ao lado dos rostos). */}
+      {!singleSplit && (eyebrow || titulo) && (
         <div className={`${isLeft ? "" : "text-center"} mb-9 md:mb-12`}>
           {eyebrow && <p className={`${eyebrowCls} mb-4`}>{eyebrow}</p>}
           <div className={`w-12 h-px ${goldLine} ${isLeft ? "" : "mx-auto"} mb-5`} />
@@ -250,7 +263,19 @@ export default function SocialProof({
         </div>
       )}
 
-      {isRow && avatarGroups.length === 2 ? (
+      {singleSplit ? (
+        /* 1 grupo: split editorial — cabeçalho à esquerda, rostos à direita. */
+        <div className="grid gap-8 md:grid-cols-12 md:items-center md:gap-10 lg:gap-14">
+          <div className="md:col-span-5">
+            {eyebrow && <p className={`${eyebrowCls} mb-4`}>{eyebrow}</p>}
+            <div className={`w-12 h-px ${goldLine} mb-5`} />
+            {titulo && <h2 className={`display-lg ${nameColor}`}>{titulo}</h2>}
+          </div>
+          <ul className="grid grid-cols-3 gap-4 md:col-span-7 md:gap-6">
+            {(SOCIAL_PROOF[avatarGroups[0]] as readonly PessoaComFoto[]).map(renderPessoa)}
+          </ul>
+        </div>
+      ) : isRow && avatarGroups.length === 2 ? (
         /* Dois grupos: separados por ESPAÇO (filete dourado + respiro), não por
          * dois títulos concorrentes. O olho agrupa por proximidade muito antes
          * de agrupar por legenda — e os 6 preenchem a largura (3 rostos numa
@@ -299,15 +324,19 @@ export default function SocialProof({
           <p className={`${isLeft ? "" : "text-center"} ${eyebrowCls} mb-6 md:mb-7`}>
             {SOCIAL_PROOF_LABELS.marcas}
           </p>
-          <ul
-            className={
-              isRow
-                ? "flex flex-wrap items-center gap-x-8 gap-y-4 md:gap-x-12"
-                : "grid grid-cols-2 gap-x-6 gap-y-5 md:flex md:flex-wrap md:items-center md:justify-center md:gap-x-10 lg:gap-x-14 md:gap-y-6 max-w-full"
-            }
-          >
+          {/* V1 (escolha do dono, 18/07): PILLS em wrap denso — as 8 marcas
+              viram um bloco só, metade da altura da antiga grade de 2/4
+              colunas. O pill dá moldura ao wordmark sem inventar logotipo. */}
+          <ul className={`flex flex-wrap gap-2 ${isLeft ? "" : "justify-center"}`}>
             {(SOCIAL_PROOF.marcas as readonly MarcaComLogo[]).map((m) => (
-              <li key={m.slug} className={isRow ? "flex items-center" : "flex items-center justify-center"}>
+              <li
+                key={m.slug}
+                className={`inline-flex items-center rounded-full border px-3.5 py-1.5 ${
+                  isDark
+                    ? "border-western-cream/25 bg-western-green-mid/30"
+                    : "border-western-border-soft bg-white"
+                }`}
+              >
                 {renderMarca(m)}
               </li>
             ))}

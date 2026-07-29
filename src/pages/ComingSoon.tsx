@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import DustCanvas from "@/components/DustCanvas";
+import Seo from "@/components/seo/Seo";
 import logoAsset from "@/assets/coming-soon-logo.png";
 
 /**
@@ -82,6 +83,11 @@ export default function ComingSoon() {
           "radial-gradient(ellipse at center, #1C140D 0%, #120D08 45%, #0E0B08 100%)",
       }}
     >
+      <Seo
+        title="Western Store — lançamento em breve"
+        description="A loja B2B de pedras artesanais Western está em preparação. Ateliê em Cajamar/SP desde 1993."
+        path="/"
+      />
       {/* Film grain */}
       <svg
         aria-hidden="true"

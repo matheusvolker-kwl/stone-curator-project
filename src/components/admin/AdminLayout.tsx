@@ -206,7 +206,7 @@ function BadgeContagem({
       <Tooltip>
         <TooltipTrigger asChild>
           <span
-            className="inline-flex h-6 w-6 flex-shrink-0 cursor-help items-center justify-center rounded-full bg-[#B3372E]/10 text-[#B3372E]"
+            className="inline-flex h-6 w-6 flex-shrink-0 cursor-help items-center justify-center rounded-full bg-status-error/10 text-status-error"
             aria-label={`Não consegui contar ${dica}. Isto é uma falha — não quer dizer zero.`}
           >
             <AlertTriangle className="h-4 w-4" aria-hidden="true" />
@@ -286,7 +286,7 @@ function Navegacao({
                       onClick={onNavegar}
                       aria-current={ativo ? "page" : undefined}
                       className={cn(
-                        "tap-target relative flex items-center gap-3 rounded-[10px] py-2 pl-4 pr-3 text-[16px] transition-colors",
+                        "tap-target relative flex items-center gap-3 rounded-lg py-2 pl-4 pr-3 text-[15px] transition-colors",
                         ativo
                           ? "bg-western-cream font-semibold text-western-green-deep"
                           : "text-western-stone-dark hover:bg-western-cream/60 hover:text-western-green-deep",
@@ -328,8 +328,8 @@ function Navegacao({
             type="button"
             onClick={onTentarDeNovo}
             className={cn(
-              "flex w-full items-start gap-2 rounded-[10px] px-3 py-2 text-left",
-              "text-[14px] font-semibold text-[#B3372E] hover:bg-[#B3372E]/[0.08] transition-colors",
+              "flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left",
+              "text-[14px] font-semibold text-status-error hover:bg-status-error/[0.08] transition-colors",
             )}
           >
             <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" aria-hidden="true" />
@@ -339,7 +339,7 @@ function Navegacao({
         <Link
           to="/"
           onClick={onNavegar}
-          className="tap-target flex items-center gap-3 rounded-[10px] px-3 text-[16px] text-western-stone-dark transition-colors hover:bg-western-cream/60 hover:text-western-green-deep"
+          className="tap-target flex items-center gap-3 rounded-lg px-3 text-[15px] text-western-stone-dark transition-colors hover:bg-western-cream/60 hover:text-western-green-deep"
         >
           <ExternalLink className="h-[18px] w-[18px] flex-shrink-0" aria-hidden="true" />
           Ver a loja
@@ -476,7 +476,7 @@ export default function AdminLayout() {
             type="button"
             onClick={() => setDrawerAberto(true)}
             aria-label="Abrir menu"
-            className="tap-target -ml-2 inline-flex items-center justify-center rounded-[10px] text-western-green-deep transition-colors hover:bg-western-paper lg:hidden"
+            className="tap-target -ml-2 inline-flex items-center justify-center rounded-lg text-western-green-deep transition-colors hover:bg-western-paper lg:hidden"
           >
             <Menu className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -491,7 +491,7 @@ export default function AdminLayout() {
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
             <Link
               to="/"
-              className="tap-target hidden items-center gap-2 rounded-[10px] px-3 text-[16px] text-western-stone-dark transition-colors hover:bg-western-paper hover:text-western-green-deep sm:inline-flex"
+              className="tap-target hidden items-center gap-2 rounded-lg px-3 text-[15px] text-western-stone-dark transition-colors hover:bg-western-paper hover:text-western-green-deep sm:inline-flex"
             >
               <ExternalLink className="h-[18px] w-[18px]" aria-hidden="true" />
               Ver a loja
@@ -508,7 +508,7 @@ export default function AdminLayout() {
                 {iniciais}
               </span>
               <div className="hidden min-w-0 leading-tight sm:block">
-                <p className="max-w-[180px] truncate text-[16px] font-semibold text-western-green-deep">{nome}</p>
+                <p className="max-w-[180px] truncate text-[15px] font-semibold text-western-green-deep">{nome}</p>
                 <p className="max-w-[180px] truncate text-[14px] text-western-stone-warm">
                   {user?.email ?? "Administrador"}
                 </p>
@@ -518,7 +518,7 @@ export default function AdminLayout() {
             <button
               type="button"
               onClick={sair}
-              className="tap-target inline-flex items-center justify-center gap-2 rounded-[10px] border border-western-border-strong px-3 text-[16px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
+              className="tap-target inline-flex items-center justify-center gap-2 rounded-lg border border-western-border-strong px-3 text-[15px] font-semibold text-western-green-deep transition-colors hover:bg-western-paper"
             >
               <LogOut className="h-[18px] w-[18px]" aria-hidden="true" />
               <span className="hidden sm:inline">Sair</span>

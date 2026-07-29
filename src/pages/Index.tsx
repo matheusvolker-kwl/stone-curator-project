@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchProducts } from "@/lib/datasource";
 import Seo from "@/components/seo/Seo";
 import ProductCard from "@/components/product/ProductCard";
+import ObraCard from "@/components/shared/ObraCard";
 import ArtistaSection from "@/components/home/ArtistaSection";
 import SobreAWestern from "@/components/home/SobreAWestern";
 import Reveal from "@/components/shared/Reveal";
@@ -12,6 +13,8 @@ import { SOCIAL_PROOF } from "@/data/socialProof";
 import { ArrowRight, Check, X } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import { texturaPara } from "@/lib/acabamentoTexturas";
+import { useAuth } from "@/hooks/useAuth";
+import { useCartStore } from "@/stores/cartStore";
 import heroHome from "@/assets/hero-home.webp";
 import heroHomeMobile from "@/assets/hero-home-mobile.webp";
 import iconePedraBranco from "@/assets/icone-pedra-branco.png";
@@ -84,6 +87,75 @@ export default function Index() {
     queryFn: () => fetchProducts(8),
   });
 
+  /* PERSONALIZAÇÃO FASE 1 (2026-07-18): logado, a home vira balcão — os CTAs
+   * do hero trocam de missão (recompra > cadastro) e a faixa de credenciamento
+   * some (pedir acesso a quem já tem acesso era ruído). Quem volta navega pelo
+   * header; a home só precisa não ATRAPALHAR quem já é de casa. */
+  const { session, isApproved, empresa } = useAuth();
+  const isPartnerHome = !!session && isApproved;
+  const cartCount = useCartStore((s) => s.items.reduce((n, i) => n + i.quantity, 0));
+
+  /* Vitrine extraída para renderização condicional: parceiro aprovado vê os
+   * Mais vendidos LOGO APÓS o hero (fase 2 da personalização); visitante segue
+   * com a narrativa completa (tecnologia → vitrine). */
+  const vitrineMaisVendidos = (
+    <>
+      {/* Mais vendidos (catálogo dinâmico). Ordem pedida pelo dono: best-sellers
+          primeiro, depois as linhas, e só então "o que você vai construir".
+          (A antiga "barra de confiança" saiu daqui: repetia 10% do peso / garantia
+          / reposição / 50 modelos, que a seção "O que é a Western Store" já diz.) */}
+      <section className="surface-paper section border-t border-western-border-soft" id="produtos">
+        <div className="container-western">
+          <Reveal variant="fade-up" duration={700}>
+            <div className="flex items-end justify-between mb-5 md:mb-6 flex-wrap gap-4">
+              <div>
+                <p className="text-eyebrow mb-2">Os mais pedidos</p>
+                <h2 className="display-md text-western-green-deep">Mais vendidos.</h2>
+              </div>
+              <Link
+                to="/produtos"
+                className="tap-target inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
+              >
+                Ver catálogo completo <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+              </Link>
+            </div>
+          </Reveal>
+          {loadingFeatured && featured.length === 0 ? (
+            <div className={featuredTrack}>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className={`${featuredItem} space-y-3`}>
+                  <div className="aspect-square rounded-xl bg-western-stone-warm/10 animate-pulse" />
+                  <div className="h-5 w-3/4 rounded-sm bg-western-stone-warm/10 animate-pulse" />
+                  <div className="h-4 w-1/3 rounded-sm bg-western-stone-warm/10 animate-pulse" />
+                </div>
+              ))}
+            </div>
+          ) : featured.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-western-border-strong p-10 text-center text-body">
+              Catálogo indisponível no momento. Tente recarregar em instantes.
+            </div>
+          ) : (
+            <div className={featuredTrack}>
+              {featured.slice(0, 8).map((p, i) => (
+                <Reveal
+                  key={p.node.id}
+                  className={featuredItem}
+                  variant="fade-up"
+                  delay={(i % 4) * 90}
+                  duration={650}
+                  distance={20}
+                >
+                  <ProductCard product={p.node} />
+                </Reveal>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+    </>
+  );
+
   return (
     <>
       <Seo
@@ -113,7 +185,7 @@ export default function Index() {
           <source media="(min-width: 768px)" srcSet={heroHome} width={1600} height={900} />
           <img
             src={heroHomeMobile}
-            alt="Piscina natural Western em Tapiraí — pedras e água cristalina na mata."
+            alt="Piscina natural no ateliê Western — cascatas sobre pedras artesanais e água cristalina."
             loading="eager"
             {...({ fetchpriority: "high" } as Record<string, string>)}
             decoding="async"
@@ -137,13 +209,17 @@ export default function Index() {
               "linear-gradient(180deg, hsl(var(--western-green-deep) / 0.95) 0%, hsl(var(--western-green-deep) / 0.92) 45%, hsl(var(--western-green-deep) / 0.55) 70%, hsl(var(--western-green-deep) / 0.08) 100%)",
           }}
         />
-        {/* Scrim desktop: horizontal — texto vive na metade esquerda */}
+        {/* Scrim desktop em DUAS camadas: forte na esquerda (onde vive o H1, a
+            subline e a régua) e um véu leve subindo da base (pra régua não perder
+            contraste sobre a pedra clara). O CENTRO-DIREITA fica livre — é onde a
+            piscina turquesa e as pedras aparecem. Antes um único gradiente de 0.66
+            no meio matava a foto: o hero inteiro lia como verde chapado. */}
         <div
           className="absolute inset-0 pointer-events-none hidden md:block"
           aria-hidden
           style={{
             background:
-              "linear-gradient(92deg, hsl(var(--western-green-deep) / 0.92) 0%, hsl(var(--western-green-deep) / 0.66) 48%, transparent 84%)",
+              "linear-gradient(180deg, transparent 42%, hsl(var(--western-green-deep) / 0.5) 100%), linear-gradient(100deg, hsl(var(--western-green-deep) / 0.85) 0%, hsl(var(--western-green-deep) / 0.48) 36%, transparent 64%)",
           }}
         />
         {/* Símbolo da marca como marca d'água (estático — o DS não usa parallax) */}
@@ -158,12 +234,17 @@ export default function Index() {
             no TOPO (items-start) e a foto respira na base; no desktop, centro. */}
         <div className="relative container-western w-full pt-14 pb-20 md:py-24">
           <div className="w-full max-w-2xl text-western-cream animate-fade-in-up">
+            {isPartnerHome && (
+              <p className="text-eyebrow text-western-gold-soft mb-3">
+                Bem-vindo de volta{empresa ? ` · ${empresa}` : ""}
+              </p>
+            )}
             <div className="w-12 h-px bg-western-gold mb-6" />
             <h1 className="display-xl text-western-cream">
               Natureza que ninguém acredita ser{" "}
               <span className="text-western-gold-soft">obra.</span>
             </h1>
-            <p className="text-[17px] md:text-[19px] leading-[1.6] text-western-cream/85 max-w-md mt-5 mb-6">
+            <p className="text-[16px] md:text-[17px] leading-[1.6] text-western-cream/85 max-w-md mt-5 mb-6">
               Cascatas, pedras e revestimentos artesanais — até 10× mais leves — para projetos e profissionais.
             </p>
 
@@ -172,12 +253,38 @@ export default function Index() {
                 verde — é a regra do V3 (verde é primário sobre fundo claro; sobre
                 foto/verde, o acento dourado assume). */}
             <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
-              <Link to="/parceiro/cadastro" className="btn-gold w-full sm:w-auto">
-                Criar cadastro · ver preços <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
-              </Link>
-              <Link to="/produtos" className="btn-outline-cream w-full sm:w-auto">
-                Ver catálogo
-              </Link>
+              {session ? (
+                cartCount > 0 ? (
+                  <>
+                    <Link to="/carrinho" className="btn-gold w-full sm:w-auto">
+                      Continuar meu carrinho ({cartCount}){" "}
+                      <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+                    </Link>
+                    <Link to="/produtos" className="btn-outline-cream w-full sm:w-auto">
+                      Ver catálogo
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/produtos" className="btn-gold w-full sm:w-auto">
+                      {isApproved ? "Ver catálogo · preços liberados" : "Ver catálogo"}{" "}
+                      <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+                    </Link>
+                    <Link to="/conjuntos" className="btn-outline-cream w-full sm:w-auto">
+                      Conjuntos prontos
+                    </Link>
+                  </>
+                )
+              ) : (
+                <>
+                  <Link to="/parceiro/cadastro" className="btn-gold w-full sm:w-auto">
+                    Criar cadastro · ver preços <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+                  </Link>
+                  <Link to="/produtos" className="btn-outline-cream w-full sm:w-auto">
+                    Ver catálogo
+                  </Link>
+                </>
+              )}
             </div>
             {/* Régua de provas. Era `flex flex-wrap` SEM breakpoint nenhum — o
                 layout no celular não era projetado, era emergente: a 375/390px
@@ -202,153 +309,82 @@ export default function Index() {
                 50% é a distância do preço B2B para o preço B2C, e o tier corre em
                 cima dessa base. Mesma palavra para as duas quebraria a promessa
                 no primeiro login. */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 md:gap-x-8 gap-y-7 md:gap-y-0 mt-10 pt-7 border-t border-western-cream/20">
-              {[
-                { b: "50%", s: "abaixo do varejo, em média", destaque: true },
-                { b: "8", s: "linhas de produtos", destaque: false },
-                { b: "+300 mil", s: "downloads no SketchUp", destaque: false },
-                { b: "33 anos", s: "de ateliê", destaque: false },
-              ].map((x) => (
-                <div key={x.s}>
-                  <p
-                    className={`display-md tabular-nums ${
-                      x.destaque ? "text-western-gold-soft" : "text-western-cream"
-                    }`}
-                  >
-                    {x.b}
-                  </p>
-                  <p className="text-[14px] leading-[1.3] text-western-cream/70 mt-1.5 min-h-[2.6em]">
-                    {x.s}
-                  </p>
-                </div>
-              ))}
-            </div>
+            {/* V1 (escolha do dono, 18/07): a régua 2×2 virou UMA linha corrida
+                com separadores — desk e mobile. O hero fecha ~110px mais cedo
+                no celular e os números param de disputar com os CTAs. */}
+            <p className="mt-6 pt-4 border-t border-western-cream/20 font-sans text-[13px] md:text-[14px] leading-[1.8] text-western-cream/80 max-w-xl">
+              <b className="font-semibold text-western-gold-soft">50%</b> abaixo do varejo, em média
+              {" · "}
+              <b className="font-semibold text-western-cream">8</b> linhas de produtos
+              {" · "}
+              <b className="font-semibold text-western-cream">+300 mil</b> downloads no SketchUp
+              {" · "}
+              <b className="font-semibold text-western-cream">{BUSINESS.anosOperacao} anos</b> de ateliê
+            </p>
           </div>
         </div>
       </section>
+
+      {isPartnerHome && vitrineMaisVendidos}
 
       {/* 1b — Segmentação B2B×B2C inline (substitui o antigo modal de entrada).
           Uma porta só para "por onde começar": profissional (vê preço) ou casa. */}
       {/* 1 — O que é a Western Store (orientação p/ quem cai de paraquedas) */}
       <SobreAWestern />
 
+      {!isPartnerHome && vitrineMaisVendidos}
+
       {/* 2b — CREDENCIAL. Uma tira de ~120px que responde "quem são vocês para
           pedir o meu CNPJ?" — logo abaixo do primeiro pedido de cadastro. Antes
           estes números viviam na 11ª seção: a página cobrava o crédito muito
           antes de mostrar o extrato. Cento e vinte pixels resolvem o que uma
           reordenação inteira tentava resolver. */}
+      {/* V1 (escolha do dono, 18/07): duas linhas FIXAS — números numa linha
+          corrida; marcas numa fita horizontal rolável sem quebra (as 8, não 5).
+          No desktop as duas dividem a mesma linha: números à esquerda, fita à
+          direita ocupando o resto. Nada mais quebra em wrap solto. */}
       <section className="surface-paper border-y border-western-border-soft">
-        <div className="container-western py-6 md:py-7">
-          <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-5">
-            <div className="flex gap-8 md:gap-10">
-              {[
-                { n: "4,9", l: "no Google", stars: true },
-                { n: "+14 mil", l: "no Instagram", stars: false },
-                { n: "+700", l: "obras entregues", stars: false },
-              ].map((s) => (
-                <div key={s.l}>
-                  {/* estrelas NA LINHA do número: embaixo elas criavam uma 3ª
-                      linha só no "4,9" e desalinhavam os três da faixa. */}
-                  <div className="flex items-baseline gap-1.5">
-                    <p className="font-display text-[22px] md:text-[26px] leading-none text-western-green-deep tabular-nums">
-                      {s.n}
-                    </p>
-                    {s.stars && (
-                      <span className="text-[9px] tracking-[0.15em] text-western-gold" aria-hidden="true">
-                        ★★★★★
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-1.5 text-[13px] leading-snug text-western-stone-warm">{s.l}</p>
-                </div>
-              ))}
-            </div>
-            {/* Os wordmarks precisam de rótulo: soltos, oito nomes próprios não
-                dizem se são clientes, parceiros ou fornecedores. */}
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-western-stone-warm/55">
+        <div className="container-western py-4 md:py-5">
+          <div className="flex flex-col gap-2.5 md:flex-row md:items-center md:justify-between md:gap-10">
+            <p className="shrink-0 font-sans text-[13.5px] md:text-[14px] text-western-stone-warm whitespace-nowrap">
+              <b className="font-display text-[16px] md:text-[17px] text-western-green-deep tabular-nums">4,9</b>{" "}
+              <span className="text-[9px] tracking-[0.15em] text-western-gold" aria-hidden="true">★★★★★</span> no Google
+              {" · "}
+              <b className="font-display text-[16px] md:text-[17px] text-western-green-deep tabular-nums">+14 mil</b> no Instagram
+              {" · "}
+              <b className="font-display text-[16px] md:text-[17px] text-western-green-deep tabular-nums">+700</b> obras entregues
+            </p>
+            <div className="flex min-w-0 items-center gap-x-5 overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <span className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.1em] text-western-stone-warm/55">
                 Escolhida por
               </span>
-              <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 md:gap-x-8">
-              {SOCIAL_PROOF.marcas.slice(0, 5).map((m) => (
-                <li
-                  key={m.slug}
-                  className="font-sans text-[14px] md:text-[15px] font-semibold text-western-stone-warm/85"
-                >
-                  {m.nome}
-                </li>
-              ))}
+              <ul className="flex items-center gap-x-5 md:gap-x-6">
+                {SOCIAL_PROOF.marcas.map((m) => (
+                  <li
+                    key={m.slug}
+                    className="shrink-0 font-sans text-[13.5px] md:text-[14px] font-semibold text-western-stone-warm/85"
+                  >
+                    {m.nome}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Mais vendidos (catálogo dinâmico). Ordem pedida pelo dono: best-sellers
-          primeiro, depois as linhas, e só então "o que você vai construir".
-          (A antiga "barra de confiança" saiu daqui: repetia 10% do peso / garantia
-          / reposição / 50 modelos, que a seção "O que é a Western Store" já diz.) */}
-      <section className="surface-paper py-16 md:py-24 border-t border-western-border-soft" id="produtos">
-        <div className="container-western">
-          <Reveal variant="fade-up" duration={700}>
-            <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
-              <div>
-                <p className="text-eyebrow mb-3">Os mais pedidos</p>
-                <h2 className="display-lg text-western-green-deep">Mais vendidos.</h2>
-              </div>
-              <Link
-                to="/produtos"
-                className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
-              >
-                Ver catálogo completo <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
-              </Link>
-            </div>
-          </Reveal>
-          {loadingFeatured && featured.length === 0 ? (
-            <div className={featuredTrack}>
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className={`${featuredItem} space-y-3`}>
-                  <div className="aspect-square rounded-[16px] bg-western-stone-warm/10 animate-pulse" />
-                  <div className="h-5 w-3/4 rounded-[6px] bg-western-stone-warm/10 animate-pulse" />
-                  <div className="h-4 w-1/3 rounded-[6px] bg-western-stone-warm/10 animate-pulse" />
-                </div>
-              ))}
-            </div>
-          ) : featured.length === 0 ? (
-            <div className="rounded-[16px] border border-dashed border-western-border-strong p-10 text-center text-body">
-              Catálogo indisponível no momento. Tente recarregar em instantes.
-            </div>
-          ) : (
-            <div className={featuredTrack}>
-              {featured.slice(0, 8).map((p, i) => (
-                <Reveal
-                  key={p.node.id}
-                  className={featuredItem}
-                  variant="fade-up"
-                  delay={(i % 4) * 90}
-                  duration={650}
-                  distance={20}
-                >
-                  <ProductCard product={p.node} />
-                </Reveal>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
       {/* 3b — Principais linhas (navegação por categoria) */}
-      <section className="surface-ivory py-16 md:py-24 border-t border-western-border-soft">
+      <section className="surface-ivory section border-t border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
               <div>
                 <p className="text-eyebrow mb-3">Navegue por linha</p>
-                <h2 className="display-lg text-western-green-deep">Principais linhas.</h2>
+                <h2 className="display-md text-western-green-deep">Principais linhas.</h2>
               </div>
               <Link
                 to="/linhas"
-                className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
+                className="tap-target inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
               >
                 Ver todas as linhas <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
               </Link>
@@ -358,7 +394,7 @@ export default function Index() {
             {LINHAS_HOME.map((l, i) => (
               <Reveal key={l.handle} variant="fade-up" delay={(i % 4) * 80} duration={620} distance={18}>
                 <Link to={`/linhas/${l.handle}`} className="group block">
-                  <div className="relative overflow-hidden rounded-[16px] aspect-[4/3] bg-western-cream-muted">
+                  <div className="relative overflow-hidden rounded-xl aspect-[4/3] bg-western-cream-muted">
                     <img
                       src={l.cover}
                       alt={l.label}
@@ -366,7 +402,7 @@ export default function Index() {
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
-                  <h3 className="mt-3 font-sans text-[18px] font-semibold text-western-green-deep transition-colors group-hover:text-western-bronze">
+                  <h3 className="mt-3 font-sans text-[17px] font-semibold text-western-green-deep transition-colors group-hover:text-western-bronze">
                     {l.label}
                   </h3>
                 </Link>
@@ -377,7 +413,7 @@ export default function Index() {
       </section>
 
       {/* 3c — O que você vai construir? (intenção por aplicação → guia) */}
-      <section className="surface-paper py-16 md:py-24 border-t border-western-border-soft">
+      <section className="surface-paper section border-t border-western-border-soft">
         <div className="container-western">
           {/* O link do guia vive AQUI, no cabeçalho — os 5 tiles já levam todos
               para /guia-de-composicao. A antiga seção "Não sabe por onde começar"
@@ -386,11 +422,11 @@ export default function Index() {
             <div className="flex items-end justify-between mb-8 md:mb-12 flex-wrap gap-4">
               <div>
                 <p className="text-eyebrow mb-3">Compre por projeto</p>
-                <h2 className="display-lg text-western-green-deep">O que você vai construir?</h2>
+                <h2 className="display-md text-western-green-deep">O que você vai construir?</h2>
               </div>
               <Link
                 to="/guia-de-composicao"
-                className="tap-target inline-flex items-center gap-2 font-sans text-[16px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
+                className="tap-target inline-flex items-center gap-2 font-sans text-[15px] font-semibold text-western-green-deep underline underline-offset-4 decoration-western-gold hover:decoration-western-green-deep transition-colors"
               >
                 Responda 3 perguntas <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
               </Link>
@@ -400,7 +436,7 @@ export default function Index() {
             {TILES.map((t, i) => (
               <Reveal key={t.nome} variant="fade-up" delay={(i % 4) * 80} duration={600} distance={18}>
                 <Link to="/guia-de-composicao" className="group block">
-                  <div className="relative overflow-hidden rounded-[16px] aspect-[4/5] bg-western-cream-muted">
+                  <div className="relative overflow-hidden rounded-xl aspect-[4/5] bg-western-cream-muted">
                     <img
                       src={t.img}
                       alt={t.nome}
@@ -409,7 +445,7 @@ export default function Index() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-western-green-deep/90 via-western-green-deep/25 to-transparent" />
                     <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
-                      <p className="font-sans text-[20px] font-semibold text-western-cream leading-snug">{t.nome}</p>
+                      <p className="font-sans text-[18px] font-semibold text-western-cream leading-snug">{t.nome}</p>
                       <p className="text-[14px] text-western-cream/80 mt-1 leading-snug">{t.desc}</p>
                     </div>
                   </div>
@@ -421,11 +457,11 @@ export default function Index() {
       </section>
 
       {/* 5 — Western Box (porta de entrada, preço aberto) */}
-      <section className="surface-ivory py-16 md:py-24 border-y border-western-border-soft">
+      <section className="surface-ivory section border-y border-western-border-soft">
         <div className="container-western">
           <div className="grid md:grid-cols-2 gap-8 md:gap-14 items-center">
             <Reveal variant="fade-right" duration={700}>
-              <div className="grid grid-cols-2 gap-px rounded-[16px] overflow-hidden bg-western-border-soft">
+              <div className="grid grid-cols-2 gap-px rounded-xl overflow-hidden bg-western-border-soft">
                 {ACABAMENTOS.map((a) => (
                   <div
                     key={a.nome}
@@ -444,7 +480,7 @@ export default function Index() {
                       aria-hidden
                       className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/55 via-black/15 to-transparent"
                     />
-                    <span className="relative font-sans text-[16px] font-semibold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]">
+                    <span className="relative font-sans text-[15px] font-semibold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]">
                       {a.nome}
                     </span>
                   </div>
@@ -477,38 +513,21 @@ export default function Index() {
       </section>
 
       {/* 6 — Veja em uso (projetos reais) */}
-      <section className="surface-paper py-16 md:py-24">
+      <section className="surface-paper section">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <p className="text-eyebrow mb-3">Veja em uso</p>
-            <h2 className="display-lg text-western-green-deep mb-8 md:mb-12">
+            <h2 className="display-md text-western-green-deep mb-6 md:mb-8">
               Projetos reais, pedra Western.
             </h2>
           </Reveal>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-7 md:gap-x-6 md:gap-y-10">
-            {PROJETOS.map((p, i) => (
-              <Reveal key={p.nome} variant="fade-up" delay={(i % 3) * 80} duration={620} distance={18}>
-                {/* A legenda vivia POR CIMA da foto: nas fotos claras (água turquesa,
-                    areia) o texto creme sumia (~1,1:1). Agora ela vive FORA da imagem,
-                    sobre o fundo claro da seção — contraste não depende da foto. */}
-                <figure className="group">
-                  <div className="relative overflow-hidden rounded-[16px] aspect-[4/3] bg-western-cream-muted">
-                    <img
-                      src={p.img}
-                      alt={p.nome}
-                      loading="lazy"
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <figcaption className="mt-3">
-                    <p className="font-sans text-[17px] font-semibold text-western-green-deep leading-snug">
-                      {p.nome}
-                    </p>
-                    <p className="text-[14px] leading-snug text-western-stone-warm mt-1">{p.tipo}</p>
-                  </figcaption>
-                </figure>
-              </Reveal>
-            ))}
+            {/* Card unificado (ObraCard, variant teaser): a legenda vive FORA da
+                  foto de propósito — sobre foto clara (água/areia) o texto creme
+                  sumia (~1,1:1); no fundo da seção o contraste não depende dela. */}
+              {PROJETOS.map((p, i) => (
+                <ObraCard key={p.nome} variant="teaser" index={i} image={p.img} alt={p.nome} title={p.nome} desc={p.tipo} />
+              ))}
           </div>
           {/* Os retratos NÃO vivem aqui: são headshots de imprensa, não fotos de
               obra — no meio de uma grade de obras viravam ruído. E os cards já
@@ -529,7 +548,7 @@ export default function Index() {
           seções com o mesmo h2, o mesmo respiro e o mesmo bege, e por isso nada
           parecia importante. O argumento da empresa não pode respirar igual a
           um passo-a-passo. */}
-      <section className="surface-forest py-20 md:py-28 border-y border-western-gold/15">
+      <section className="surface-forest section border-y border-western-gold/15">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <p className={`${eyebrowDark} mb-3`}>Por que Western</p>
@@ -539,7 +558,7 @@ export default function Index() {
           </Reveal>
           <div className="grid md:grid-cols-2 gap-4 md:gap-6">
             <Reveal variant="fade-up" duration={650}>
-              <div className="rounded-[16px] border border-western-cream/15 bg-western-green-mid/20 p-7 md:p-9 h-full">
+              <div className="rounded-xl border border-western-cream/15 bg-western-green-mid/20 p-7 md:p-9 h-full">
                 <p className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/50 mb-6">
                   Pedra natural
                 </p>
@@ -550,7 +569,7 @@ export default function Index() {
                     "Variedade limitada ao que a natureza deu",
                     "Obra pesada, mais tempo e custo",
                   ].map((t) => (
-                    <li key={t} className="flex gap-3 items-start text-[17px] leading-[1.5] text-western-cream/55">
+                    <li key={t} className="flex gap-3 items-start text-[16px] leading-[1.5] text-western-cream/55">
                       <X className="h-5 w-5 text-western-cream/35 mt-0.5 shrink-0" strokeWidth={1.75} />
                       {t}
                     </li>
@@ -559,7 +578,7 @@ export default function Index() {
               </div>
             </Reveal>
             <Reveal variant="fade-up" delay={100} duration={650}>
-              <div className="rounded-[16px] border border-western-gold/50 bg-western-green-mid/50 ring-1 ring-western-gold/20 p-7 md:p-9 h-full">
+              <div className="rounded-xl border border-western-gold/50 bg-western-green-mid/50 ring-1 ring-western-gold/20 p-7 md:p-9 h-full">
                 <p className={`${eyebrowDark} mb-6`}>Pedra Western</p>
                 <ul className="space-y-4">
                   {/* A CAUSA (≈10% do peso) e a PROVA (reprodução fiel) subiram
@@ -576,7 +595,7 @@ export default function Index() {
                     "50 modelos, formatos para cada cena",
                     "Fixa com argamassa AC3 — sem sistema proprietário",
                   ].map((t) => (
-                    <li key={t} className="flex gap-3 items-start text-[17px] leading-[1.5] text-western-cream">
+                    <li key={t} className="flex gap-3 items-start text-[16px] leading-[1.5] text-western-cream">
                       <Check className="h-5 w-5 text-western-gold-soft mt-0.5 shrink-0" strokeWidth={1.75} />
                       {t}
                     </li>
@@ -585,18 +604,18 @@ export default function Index() {
               </div>
             </Reveal>
           </div>
-          <p className="mt-9 max-w-xl text-[16px] text-western-cream/70">
+          <p className="mt-9 max-w-xl text-[15px] text-western-cream/70">
             Mesma leitura de pedra natural, sem a obra pesada. Ateliê próprio desde 1993.
           </p>
         </div>
       </section>
 
       {/* 8 — Como comprar (4 passos) */}
-      <section className="surface-paper py-16 md:py-24" id="como-comprar">
+      <section className="surface-paper section" id="como-comprar">
         <div className="container-western">
           <Reveal variant="fade-up" duration={700}>
             <p className="text-eyebrow mb-3">Loja para profissionais</p>
-            <h2 className="display-lg text-western-green-deep mb-8 md:mb-12">
+            <h2 className="display-md text-western-green-deep mb-6 md:mb-8">
               Como comprar na Western.
             </h2>
           </Reveal>
@@ -609,12 +628,12 @@ export default function Index() {
             ].map((s, i) => (
               <Reveal key={s.n} variant="fade-up" delay={i * 80} duration={600} distance={16}>
                 <div className="flex gap-4 items-start">
-                  <span className="font-sans text-[20px] font-semibold text-western-bronze bg-white border border-western-border-soft rounded-[10px] w-12 h-12 flex items-center justify-center shrink-0">
+                  <span className="font-sans text-[18px] font-semibold text-western-bronze bg-white border border-western-border-soft rounded-lg w-12 h-12 flex items-center justify-center shrink-0">
                     {s.n}
                   </span>
                   <div>
-                    <p className="font-sans text-[17px] font-semibold text-western-green-deep mb-1">{s.t}</p>
-                    <p className="text-[16px] leading-[1.5] text-western-stone-warm">{s.d}</p>
+                    <p className="font-sans text-[16px] font-semibold text-western-green-deep mb-1">{s.t}</p>
+                    <p className="text-[15px] leading-[1.5] text-western-stone-warm">{s.d}</p>
                   </div>
                 </div>
               </Reveal>
@@ -624,7 +643,7 @@ export default function Index() {
             <Link to="/parceiro/cadastro" className="btn-primary w-full sm:w-auto">
               Criar cadastro grátis <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
             </Link>
-            <span className="text-[16px] text-western-stone-warm">Leva menos de 2 minutos · precisa de CNPJ</span>
+            <span className="text-[15px] text-western-stone-warm">Leva menos de 2 minutos · precisa de CNPJ</span>
           </div>
         </div>
       </section>
@@ -635,7 +654,7 @@ export default function Index() {
           (Os clientes migraram para "Veja em uso" — eles não ilustram obras,
           eles SÃO obras. Os números e as marcas viraram a faixa de credencial
           da 2ª tela, colada no 1º pedido de CNPJ.) */}
-      <section className="surface-paper py-14 md:py-20 border-t border-western-border-soft">
+      <section className="surface-paper section-tight border-t border-western-border-soft">
         <div className="container-western">
           <Reveal variant="fade-up" duration={750}>
             <SocialProof
@@ -650,8 +669,10 @@ export default function Index() {
         </div>
       </section>
 
-      {/* 11 — Credenciamento B2B (o PEDIDO) */}
-      <section className="surface-forest py-16 md:py-24">
+      {/* 11 — Credenciamento B2B (o PEDIDO) — some para quem já tem sessão:
+          pedir acesso a quem já entrou era ruído de fim de página. */}
+      {!session && (
+      <section className="surface-forest section">
         <div className="container-western">
           <div className="grid md:grid-cols-2 gap-10 md:gap-14 items-center">
             <Reveal variant="fade-right" duration={750}>
@@ -660,7 +681,7 @@ export default function Index() {
                 <h2 className="display-lg text-western-cream mb-6">
                   Tabela de preços, condições e modelos 3D liberados após o cadastro.
                 </h2>
-                <p className="text-[17px] leading-[1.6] text-western-cream/80 max-w-md mb-9">
+                <p className="text-[16px] leading-[1.6] text-western-cream/80 max-w-md mb-9">
                   Atendemos profissionais e empresas com CNPJ ativo — de arquitetos e paisagistas a laguistas,
                   jardineiros, garden centers, lojas e construtoras.
                 </p>
@@ -671,7 +692,7 @@ export default function Index() {
               </div>
             </Reveal>
             <Reveal variant="fade-left" delay={120} duration={750}>
-              <div className="grid grid-cols-2 gap-px rounded-[16px] overflow-hidden bg-western-gold/20">
+              <div className="grid grid-cols-2 gap-px rounded-xl overflow-hidden bg-western-gold/20">
                 {[
                   { eyebrow: "Pedido mínimo", t: BUSINESS.pedidoMinimoLabel },
                   { eyebrow: "Garantia", t: BUSINESS.garantiaLabel },
@@ -688,6 +709,7 @@ export default function Index() {
           </div>
         </div>
       </section>
+      )}
 
       {/* 12 — Ricardo: a ASSINATURA da casa, por último. O credenciamento é o
           pedido; esta é o aperto de mão. Quem rolou até aqui e não clicou no

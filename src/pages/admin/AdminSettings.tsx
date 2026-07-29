@@ -40,7 +40,7 @@ const VAZIO: Omit<TierDefault, "tier"> = {
 };
 
 const numCls =
-  "h-[48px] w-[100px] rounded-[6px] border border-western-border-strong bg-white px-3 text-right text-[16px] tabular-nums text-western-green-deep transition-colors focus:border-western-cta focus:outline-none focus:ring-2 focus:ring-western-cta/20";
+  "h-tap w-[100px] rounded-sm border border-western-border-strong bg-white px-3 text-right text-[15px] tabular-nums text-western-green-deep transition-colors focus:border-western-cta focus:outline-none focus:ring-2 focus:ring-western-cta/20";
 
 export default function AdminSettings() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -218,7 +218,7 @@ export default function AdminSettings() {
               {salvando
                 ? "Salvando…"
                 : sujos.length > 0
-                  ? `Salvar ${sujos.length} alteração${sujos.length > 1 ? "ões" : ""}`
+                  ? `Salvar ${sujos.length} ${sujos.length > 1 ? "alterações" : "alteração"}`
                   : "Salvar alterações"}
             </button>
           ) : undefined

@@ -50,11 +50,11 @@ export default function EmailInput({
         spellCheck={false}
         aria-invalid={!!error}
         aria-describedby={describedBy}
-        className={`h-[52px] w-full rounded-[10px] border-[1.5px] bg-western-paper px-4 font-sans text-[16px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 focus:outline-none transition-colors ${
+        className={`h-control w-full rounded-lg border-[1.5px] bg-western-paper px-4 font-sans text-[15px] leading-normal text-western-green-deep placeholder:text-western-stone-warm/60 focus:outline-none transition-colors ${
           readOnly ? "opacity-70 cursor-not-allowed " : ""
         }${
           error
-            ? "border-[#B3372E]"
+            ? "border-status-error"
             : "border-western-border-strong focus:border-western-green-deep"
         }`}
       />
@@ -65,7 +65,7 @@ export default function EmailInput({
             onChange(suggestion);
             setSuggestion(null);
           }}
-          className="mt-2 inline-flex min-h-[48px] items-center font-sans text-[14px] font-semibold normal-case tracking-normal text-western-green-deep hover:text-western-cta transition-colors"
+          className="mt-2 inline-flex min-h-tap items-center font-sans text-[14px] font-semibold normal-case tracking-normal text-western-green-deep hover:text-western-cta transition-colors"
         >
           Você quis dizer&nbsp;
           <span className="underline underline-offset-4 decoration-western-bronze">{suggestion}</span>?
@@ -74,7 +74,7 @@ export default function EmailInput({
       {error && (
         <p
           id={describedBy}
-          className="mt-2 font-sans text-[14px] font-semibold normal-case tracking-normal leading-snug text-[#B3372E]"
+          className="mt-2 font-sans text-[14px] font-semibold normal-case tracking-normal leading-snug text-status-error"
         >
           {error}
         </p>

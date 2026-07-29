@@ -12,7 +12,6 @@ import {
   ArrowRight,
   Box,
   Lock,
-  MessageCircle,
   MapPin,
   ShieldCheck,
   FileText,
@@ -20,6 +19,7 @@ import {
 } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import FinishSelector from "@/components/product/FinishSelector";
+import ComposicaoCena from "@/components/product/ComposicaoCena";
 import { useAuth } from "@/hooks/useAuth";
 import ProductGallery from "@/components/product/ProductGallery";
 import Seo, { SITE_URL } from "@/components/seo/Seo";
@@ -28,7 +28,6 @@ import BackToTop from "@/components/shared/BackToTop";
 import ProductTabs from "@/components/product/ProductTabs";
 import { trackRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import TamanhoReal from "@/components/product/TamanhoReal";
-import UsageScenes from "@/components/product/UsageScenes";
 import CalculadoraQuantidade from "@/components/product/CalculadoraQuantidade";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import SocialProofBand from "@/components/product/SocialProofBand";
@@ -36,26 +35,18 @@ import { getAplicadas } from "@/components/product/ProductInUse";
 import WishlistButton from "@/components/product/WishlistButton";
 import Reveal from "@/components/shared/Reveal";
 import { InstallationSection } from "@/components/product/InstallationModule";
-import StickyBuyBarLab from "@/components/product/lab/StickyBuyBarLab";
+import StickyBuyBar from "@/components/product/StickyBuyBar";
 import KitUpsell from "@/components/product/KitUpsell";
 import {
   getInstallationConfig,
   resolveInstallationType,
 } from "@/data/installation";
 
-/* DS V3 — classes de controle reaproveitadas na escada de decisão.
- * Botões/inputs 52px, cantos suaves (10px), sans 16px. CTA primário é VERDE;
- * o dourado fica como acento (selo, filete, seleção), nunca como 2º primário. */
-const CTA_PRIMARY =
-  "inline-flex items-center justify-center gap-2 w-full min-h-[52px] px-6 rounded-[10px] " +
-  "bg-western-cta text-western-cream hover:bg-western-green-deep " +
-  "font-sans text-[16px] font-semibold transition-colors";
-
-const CTA_OUTLINE =
-  "inline-flex items-center justify-center gap-2 min-h-[52px] px-6 rounded-[10px] " +
-  "border border-western-border-strong text-western-green-deep " +
-  "hover:border-western-green-deep hover:bg-western-paper " +
-  "font-sans text-[16px] font-semibold transition-colors";
+/* Eram cópias à mão do .btn-primary/.btn-outline-forest (auditoria 2026-07-17:
+ * a PDP tinha 24 de 27 CTAs fora do sistema). Agora são as classes do DS — o
+ * que também dá a elas o "press" do btn-base, que faltava aqui. */
+const CTA_PRIMARY = "btn-primary w-full";
+const CTA_OUTLINE = "btn-outline-forest";
 
 function pluralizeCollection(title?: string): string {
   if (!title) return "";
@@ -121,28 +112,62 @@ export default function ProductPage() {
   }, [product, activeOptions, visibleOptions, allOptionsSelected]);
 
   /**
-   * Galeria canônica (C-refinado): estúdio (capa Woo) → ambiente (aplicada) →
-   * detalhe (aplicada _close) → demais fotos do Woo. A foto de escala vive
-   * SÓ no bloco Tamanho real.
+   * Galeria canônica: AMBIENTE (aplicada) abre → estúdio (capa Woo) →
+   * detalhe (aplicada _close) → demais fotos do Woo. O herói é a peça em
+   * projeto real (DS: prova antes da forma); o estúdio vem em seguida para
+   * leitura de silhueta. A foto de escala vive SÓ no bloco Tamanho real.
    */
   const galleryImages = useMemo(() => {
     if (!product) return [];
     const wooImages = product.images.edges.map((e) => e.node);
     const aplicadas = getAplicadas(product.variants.edges[0]?.node?.sku);
-    const extras: { url: string; altText: string | null }[] = [];
-    if (aplicadas.ambiente)
-      extras.push({ url: aplicadas.ambiente, altText: `${product.title} aplicado em projeto real` });
-    if (aplicadas.close)
-      extras.push({ url: aplicadas.close, altText: `${product.title} — detalhe do acabamento` });
-    if (extras.length === 0) return wooImages;
-    return [...wooImages.slice(0, 1), ...extras, ...wooImages.slice(1)];
+    const ambiente = aplicadas.ambiente
+      ? [{ url: aplicadas.ambiente, altText: `${product.title} aplicado em projeto real` }]
+      : [];
+    const close = aplicadas.close
+      ? [{ url: aplicadas.close, altText: `${product.title} — detalhe do acabamento` }]
+      : [];
+    if (ambiente.length === 0 && close.length === 0) return wooImages;
+    return [...ambiente, ...wooImages.slice(0, 1), ...close, ...wooImages.slice(1)];
   }, [product]);
 
+  /* Pular para a foto da variante SÓ quando a troca veio do usuário — no load,
+   * com o acabamento pré-selecionado, o salto atropelaria o ambiente que abre
+   * a galeria. */
+  const userTouchedOptions = useRef(false);
   useEffect(() => {
     if (!product || !variant?.image?.url) return;
+    if (!userTouchedOptions.current) return;
     const idx = galleryImages.findIndex((img) => img.url === variant.image!.url);
     if (idx >= 0) setActiveImage(idx);
   }, [variant?.image?.url, product, galleryImages]);
+
+  /* DS: Moledo é o best-seller e vem PRÉ-SELECIONADO — o CTA nasce destravado.
+   * Só age quando ainda não há escolha (nunca sobrescreve o usuário). */
+  useEffect(() => {
+    if (!product) return;
+    const acab = visibleOptions.find((o) => /acabament/i.test(o.name));
+    if (!acab) return;
+    setActiveOptions((prev) => {
+      if (prev[acab.name]) return prev;
+      const moledo = acab.values.find((v) => /moledo/i.test(v));
+      return moledo ? { ...prev, [acab.name]: moledo } : prev;
+    });
+  }, [product?.handle, visibleOptions]);
+
+  /* TROCA DE PEÇA = ESTADO NOVO.
+   * A PDP é reaproveitada quando se navega de uma peça para outra (Relacionados,
+   * "quem combina", busca). Sem este reset, o estado da peça anterior seguia
+   * junto: a 6ª foto continuava selecionada numa peça de 3 fotos (a galeria
+   * quebrava em TypeError) e o acabamento escolhido antes vazava para uma peça
+   * que não o oferece — travando o CTA, porque a pré-seleção do Moledo não
+   * sobrescreve escolha existente. */
+  useEffect(() => {
+    setActiveImage(0);
+    setActiveOptions({});
+    setQty(1);
+    userTouchedOptions.current = false;
+  }, [handle]);
 
   useEffect(() => {
     if (!product) return;
@@ -163,10 +188,10 @@ export default function ProductPage() {
       <div className="surface-ivory">
         <div className="container-western py-24 md:py-32">
           <div className="grid md:grid-cols-2 gap-12">
-            <div className="aspect-square rounded-[16px] bg-western-stone-warm/10 animate-pulse" />
+            <div className="aspect-square rounded-xl bg-western-stone-warm/10 animate-pulse" />
             <div className="space-y-4">
-              <div className="h-12 w-2/3 rounded-[10px] bg-western-stone-warm/10 animate-pulse" />
-              <div className="h-5 w-1/3 rounded-[6px] bg-western-stone-warm/10 animate-pulse" />
+              <div className="h-12 w-2/3 rounded-lg bg-western-stone-warm/10 animate-pulse" />
+              <div className="h-5 w-1/3 rounded-sm bg-western-stone-warm/10 animate-pulse" />
             </div>
           </div>
         </div>
@@ -181,7 +206,7 @@ export default function ProductPage() {
           <h1 className="display-lg text-western-green-deep">Peça não encontrada</h1>
           <Link
             to="/linhas"
-            className="mt-8 inline-flex items-center justify-center min-h-[52px] px-6 rounded-[10px] bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[16px] font-semibold transition-colors"
+            className="mt-8 inline-flex items-center justify-center min-h-control px-6 rounded-lg bg-western-cta text-western-cream hover:bg-western-green-deep font-sans text-[15px] font-semibold transition-colors"
           >
             Voltar para linhas
           </Link>
@@ -354,16 +379,17 @@ export default function ProductPage() {
                     <div
                       className={
                         acabPending
-                          ? "rounded-[10px] ring-2 ring-western-gold/40 ring-offset-4 ring-offset-western-ivory transition-all"
+                          ? "rounded-lg ring-2 ring-western-gold/40 ring-offset-4 ring-offset-western-ivory transition-all"
                           : ""
                       }
                     >
                       <FinishSelector
                         values={acabOption.values}
                         selected={activeOptions[acabOption.name] ?? null}
-                        onSelect={(val) =>
-                          setActiveOptions((prev) => ({ ...prev, [acabOption.name]: val }))
-                        }
+                        onSelect={(val) => {
+                          userTouchedOptions.current = true;
+                          setActiveOptions((prev) => ({ ...prev, [acabOption.name]: val }));
+                        }}
                       />
                     </div>
                   </div>
@@ -381,14 +407,15 @@ export default function ProductPage() {
                             return (
                               <button
                                 key={val}
-                                onClick={() =>
+                                onClick={() => {
+                                  userTouchedOptions.current = true;
                                   setActiveOptions((prev) => ({
                                     ...prev,
                                     [option.name]: val,
-                                  }))
-                                }
+                                  }));
+                                }}
                                 aria-pressed={selected}
-                                className={`tap-target inline-flex items-center justify-center px-5 rounded-full border font-sans text-[16px] transition-colors ${
+                                className={`tap-target inline-flex items-center justify-center px-5 rounded-full border font-sans text-[15px] transition-colors ${
                                   selected
                                     ? "border-western-gold bg-western-gold/10 text-western-green-deep font-semibold"
                                     : "border-western-border-strong text-western-green-deep font-medium hover:border-western-green-deep"
@@ -408,25 +435,25 @@ export default function ProductPage() {
                 <div className="pt-7 border-t border-western-border-soft">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`flex items-center h-[52px] rounded-[10px] border border-western-border-strong bg-white transition-opacity ${
+                      className={`flex items-center h-control rounded-lg border border-western-border-strong bg-white transition-opacity ${
                         acabPending ? "opacity-50" : ""
                       }`}
                     >
                       <button
                         onClick={() => setQty(Math.max(1, qty - 1))}
                         disabled={acabPending}
-                        className="h-[52px] w-12 flex items-center justify-center rounded-l-[10px] hover:bg-western-paper transition-colors text-western-green-deep text-xl disabled:cursor-not-allowed"
+                        className="h-control w-12 flex items-center justify-center rounded-l-[10px] hover:bg-western-paper transition-colors text-western-green-deep text-xl disabled:cursor-not-allowed"
                         aria-label="Diminuir quantidade"
                       >
                         −
                       </button>
-                      <span className="px-3 font-sans font-semibold text-[16px] min-w-[2ch] text-center tabular-nums">
+                      <span className="px-3 font-sans font-semibold text-[15px] min-w-[2ch] text-center tabular-nums">
                         {qty}
                       </span>
                       <button
                         onClick={() => setQty(qty + 1)}
                         disabled={acabPending}
-                        className="h-[52px] w-12 flex items-center justify-center rounded-r-[10px] hover:bg-western-paper transition-colors text-western-green-deep text-xl disabled:cursor-not-allowed"
+                        className="h-control w-12 flex items-center justify-center rounded-r-[10px] hover:bg-western-paper transition-colors text-western-green-deep text-xl disabled:cursor-not-allowed"
                         aria-label="Aumentar quantidade"
                       >
                         +
@@ -436,7 +463,7 @@ export default function ProductPage() {
                       handle={product.handle}
                       title={product.title}
                       image={product.images.edges[0]?.node?.url ?? null}
-                      className="!h-[52px] !w-[52px] !p-0 justify-center flex-shrink-0 rounded-[10px]"
+                      className="!h-control !w-[52px] !p-0 justify-center flex-shrink-0 rounded-lg"
                     />
                   </div>
 
@@ -444,7 +471,7 @@ export default function ProductPage() {
                     ref={addBtnRef as React.RefObject<HTMLButtonElement>}
                     onClick={handleAdd}
                     disabled={!variant?.availableForSale || isLoadingCart || !!pendingOption}
-                    className={`group mt-4 w-full h-[52px] px-6 rounded-[10px] font-sans text-[16px] font-semibold normal-case tracking-normal transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 ${
+                    className={`group mt-4 w-full h-control px-6 rounded-lg font-sans text-[15px] font-semibold normal-case tracking-normal transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:active:scale-100 ${
                       acabPending
                         ? "bg-western-stone-warm/20 text-western-green-deep/70 hover:bg-western-stone-warm/25 disabled:opacity-100"
                         : "bg-western-cta text-western-cream hover:bg-western-green-deep disabled:opacity-45"
@@ -493,7 +520,7 @@ export default function ProductPage() {
                     <span>Garantia {BUSINESS.garantiaLabel}</span>
                     <span className="opacity-40">·</span>
                     <span>
-                      Instala fácil — nível {installationConfig.level} ·{" "}
+                      Instalação guiada, passo a passo ·{" "}
                       <a
                         href="#instalacao"
                         onClick={(e) => {
@@ -537,7 +564,7 @@ export default function ProductPage() {
             ) : (
               /* Gate de preço — política comercial B2B (visitante nunca vê preço) */
               <section className="mt-8" aria-label="Acesso de parceiro">
-                <div className="rounded-[16px] border border-western-border-soft bg-western-paper p-6 md:p-7">
+                <div className="rounded-xl border border-western-border-soft bg-western-paper p-6 md:p-7">
                   <span className="inline-flex items-center gap-2 mb-5 rounded-full border border-western-border-soft bg-white px-3.5 py-1.5">
                     <Lock className="h-4 w-4 text-western-bronze" aria-hidden />
                     <span className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">
@@ -565,21 +592,11 @@ export default function ProductPage() {
                   </div>
                 </div>
 
-                {/* Pedido mínimo colado ao gate (kit pdp.jsx:120) — seta a
-                 * expectativa comercial antes do cadastro. */}
-                <p className="mt-3 text-meta text-center">
-                  Pedido mínimo {BUSINESS.pedidoMinimoLabel} ·{" "}
-                  <a
-                    href={`https://wa.me/${BUSINESS.whatsappFabrica}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold text-western-green-deep underline decoration-western-gold underline-offset-4 hover:decoration-2"
-                  >
-                    fale no WhatsApp
-                  </a>
-                </p>
-
-                <div className="flex items-center gap-4 my-7">
+                {/* A linha "Pedido mínimo · fale no WhatsApp" saiu daqui (dono:
+                    "não agrega"): o pedido mínimo já vive na aba Entrega, e o
+                    WhatsApp tem o botão flutuante do site. O gate fica limpo:
+                    card de parceiro → "ou" → porta da casa. */}
+                <div className="flex items-center gap-4 mb-7 mt-6">
                   <div className="flex-1 h-px bg-western-border-soft" />
                   <span className="font-sans text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">
                     ou
@@ -587,29 +604,19 @@ export default function ProductPage() {
                   <div className="flex-1 h-px bg-western-border-soft" />
                 </div>
 
-                <div className="space-y-4">
-                  <p className="text-body text-western-green-deep">
-                    É para a sua casa? A gente monta seu orçamento.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    {/* /orcamento redirecionava pra /contato — um fale-conosco
-                        genérico. Quem clica aqui acabou de bater no cadeado do
-                        preço: é dono de casa, e a porta dele é /para-sua-casa,
-                        que responde preço, prazo e "não tenho CNPJ". */}
-                    <Link to="/para-sua-casa" className={`${CTA_OUTLINE} w-full sm:w-auto`}>
-                      Peça um orçamento
-                    </Link>
-                    <a
-                      href={`https://wa.me/${BUSINESS.whatsappFabrica}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 min-h-[52px] px-6 rounded-[10px] font-sans text-[16px] font-semibold text-western-green-deep hover:bg-western-paper transition-colors"
-                    >
-                      <MessageCircle className="h-5 w-5" aria-hidden />
-                      Falar no WhatsApp
-                    </a>
-                  </div>
-                </div>
+                {/* Casa = off-ramp discreto, UM caminho só. Antes esta coluna
+                    empilhava 2 botões + 2 links de WhatsApp competindo com o card
+                    de parceiro (a ação primária). O dono da casa tem uma porta:
+                    /para-sua-casa, que responde preço, prazo e "não tenho CNPJ". */}
+                <p className="text-body text-western-green-deep">
+                  É para a sua casa?{" "}
+                  <Link
+                    to="/para-sua-casa"
+                    className="font-semibold text-western-green-deep underline decoration-western-gold underline-offset-4 hover:decoration-2"
+                  >
+                    A gente monta seu orçamento
+                  </Link>
+                </p>
               </section>
             )}
 
@@ -623,62 +630,111 @@ export default function ProductPage() {
         </div>
       </div>
 
-      {/* A leveza — Tamanho real, logo após a decisão */}
-      <Reveal variant="fade-up">
-        <TamanhoReal
-          productTitle={product.title}
-          sku={sku || product.variants.edges[0]?.node?.sku}
-          dims={dims}
-          pesoKg={pesoKg}
+      {/* Chips-âncora (DS: página longa ganha âncoras; a barra fixa cobre a
+          compra — estas cobrem a LEITURA). */}
+      <nav
+        aria-label="Seções da página"
+        className="border-y border-western-border-soft surface-paper"
+      >
+        <div className="container-western">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide py-3">
+            {[
+              ["medidas", "Medidas e peso"],
+              ["ficha", "Ficha da peça"],
+              ["instalacao", "Instalação"],
+              ["cena", "Onde usar & composição"],
+              ["relacionados", "Relacionados"],
+            ].map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() =>
+                  document
+                    .getElementById(id)
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+                className="tap-target shrink-0 inline-flex items-center px-4 rounded-full border border-western-border-strong font-sans text-[15px] font-medium text-western-green-deep hover:border-western-green-deep transition-colors"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </nav>
+
+      {/* ORDEM DA JORNADA (dono, 2026-07-18): calcular → confiar → aprofundar
+       * → expandir por último (o que tem botão pra fora da PDP fecha a página). */}
+
+      {/* A conta — PRIMEIRA coisa após a compra nos produtos que a usam
+       * (revestimento/pisada): o cliente calcula a quantidade antes de tudo. */}
+      <div id="quantidade" className="scroll-mt-24">
+        <Reveal variant="fade-up">
+          <CalculadoraQuantidade
+            key={product.handle}
+            handle={product.handle}
+            isApproved={isApproved}
+            onUseQuantity={(n) => {
+              setQty(n);
+              addBtnRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }}
+          />
+        </Reveal>
+      </div>
+
+      {/* A leveza — Tamanho real */}
+      <div id="medidas" className="scroll-mt-24">
+        <Reveal variant="fade-up">
+          <TamanhoReal
+            productTitle={product.title}
+            sku={sku || product.variants.edges[0]?.node?.sku}
+            dims={dims}
+            pesoKg={pesoKg}
+          />
+        </Reveal>
+      </div>
+
+      {/* Ficha da peça (híbrido: trilho no desktop, acordeão no mobile) —
+       * Descrição · Especificações · Entrega, logo abaixo da leveza. */}
+      <div id="ficha" className="scroll-mt-24">
+        <ProductTabs
+          parsed={parsed}
+          fichaRows={fichaRows}
+          modelo3dValue={product.modelo3d?.value}
+          hideModelo3d
         />
-      </Reveal>
+      </div>
+      <div id="instalacao" className="scroll-mt-24">
+        <InstallationSection config={installationConfig} />
+      </div>
 
-      {/* A versatilidade — "onde usar". Vem colado à leveza: o Tamanho real
-       * acabou de mostrar que a peça é leve, então "vai em qualquer cena, até
-       * na cobertura" cai naturalmente. Liga com o Inspire-se. */}
-      <Reveal variant="fade-up">
-        <UsageScenes collectionHandle={collection?.handle} productTitle={product.title} />
-      </Reveal>
-
-      {/* A conta — quantas peças. Nasce da dúvida que o "Tamanho real" acabou de
-       * abrir: "beleza, e quantas eu peço?". Só renderiza em revestimento e
-       * pisada (peças com regra física de quantidade). */}
-      <Reveal variant="fade-up">
-        <CalculadoraQuantidade
-          key={product.handle}
-          handle={product.handle}
-          isApproved={isApproved}
-          onUseQuantity={(n) => {
-            setQty(n);
-            addBtnRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-          }}
-        />
-      </Reveal>
-
-      {/* Below-the-fold — enxuto. Sem pesoKg/dims: medida e peso da peça não
-       * entram aqui, moram só no bloco "Tamanho real" acima. */}
-      <ProductTabs
-        parsed={parsed}
-        fichaRows={fichaRows}
-        modelo3dValue={product.modelo3d?.value}
-        hideModelo3d
-      />
-      <InstallationSection config={installationConfig} />
+      {/* Onde usar & composição — FUNDIDAS, por último de propósito: os dois
+       * assuntos têm botões que tiram o cliente da PDP (obras, guia, conjuntos). */}
+      <div id="cena" className="scroll-mt-24">
+        <Reveal variant="fade-up">
+          <ComposicaoCena
+            productHandle={product.handle}
+            productTitle={product.title}
+            collectionHandle={collection?.handle}
+          />
+        </Reveal>
+      </div>
       {/* "Veja em uso" absorvido pela galeria canônica (estúdio → ambiente → detalhe) */}
       <Reveal variant="fade-up">
         <SocialProofBand />
       </Reveal>
-      <Reveal variant="fade-up">
-        <RelatedProducts
-          collectionHandle={collection?.handle}
-          collectionTitle={collection?.title}
-          currentHandle={product.handle}
-          currentSku={sku || product.variants.edges[0]?.node?.sku}
-          productTitle={product.title}
-        />
-      </Reveal>
+      <div id="relacionados" className="scroll-mt-24">
+        <Reveal variant="fade-up">
+          <RelatedProducts
+            collectionHandle={collection?.handle}
+            collectionTitle={collection?.title}
+            currentHandle={product.handle}
+            currentSku={sku || product.variants.edges[0]?.node?.sku}
+            productTitle={product.title}
+          />
+        </Reveal>
+      </div>
 
-      <StickyBuyBarLab
+      <StickyBuyBar
         triggerRef={addBtnRef}
         productImage={images[0]?.url ?? null}
         productTitle={product.title}

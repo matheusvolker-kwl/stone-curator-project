@@ -41,6 +41,7 @@ export function usePartnerPricing(): PartnerPricing {
       return;
     }
     (async () => {
+      try {
       const [{ data: profile }, { data: defs }] = await Promise.all([
         supabase
           .from("partner_profiles")
@@ -65,6 +66,12 @@ export function usePartnerPricing(): PartnerPricing {
           },
           loading: false,
         });
+      }
+      } catch {
+        /* Oscilação de rede ou 5xx do Supabase deixava `loading` em true para
+         * sempre — o parceiro aprovado ficava preso no skeleton de preço, sem
+         * erro na tela. Cai nos defaults do tier e libera a UI. */
+        if (!cancelled) setState((s) => ({ ...s, loading: false }));
       }
     })();
     return () => { cancelled = true; };
