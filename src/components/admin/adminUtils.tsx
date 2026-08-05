@@ -124,6 +124,9 @@ export const LEAD_TYPE_BADGE_CLS: Record<string, string> = {
   contato: "border-zinc-400/50 text-zinc-600 bg-zinc-50",
   orcamento: "border-amber-500/60 text-amber-800 bg-amber-50",
   b2c_orcamento: "border-rose-500/50 text-rose-700 bg-rose-50",
-  pedido_novo: "border-emerald-600/60 text-emerald-800 bg-emerald-50 font-semibold",
+  // Checkout iniciado NÃO é venda: dispara no clique de "Finalizar compra",
+  // antes do pagamento no Woo. Âmbar de atenção, não verde de concluído.
+  pedido_novo: "border-amber-500/60 text-amber-800 bg-amber-50",
+
   pdf_pedido: "border-western-gold/60 text-western-green-deep bg-western-gold/10",
 };
