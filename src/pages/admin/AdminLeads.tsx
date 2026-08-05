@@ -36,7 +36,7 @@ const TOM_POR_TIPO: Record<string, TomStatus> = {
   amostras: "andamento",
   visita: "andamento",
   contato: "neutro",
-  pedido_novo: "positivo",
+  pedido_novo: "aviso",
   b2c_orcamento: "info",
   pdf_pedido: "aviso",
 };

@@ -112,7 +112,7 @@ export const LEAD_TYPE_LABEL: Record<string, string> = {
   contato: "Contato",
   orcamento: "Orçamento",
   b2c_orcamento: "Orçamento (cliente final)",
-  pedido_novo: "Pedido novo",
+  pedido_novo: "Checkout iniciado",
   pdf_pedido: "PDF re-baixado",
 };
 

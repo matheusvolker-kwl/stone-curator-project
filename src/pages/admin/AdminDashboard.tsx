@@ -191,9 +191,9 @@ export default function AdminDashboard() {
     },
     {
       chave: "checkout7d",
-      rotulo: "Pedidos do site (7 dias)",
+      rotulo: "Checkouts iniciados (7 dias)",
       valor: n.checkout7d,
-      unidade: (v) => (v === 1 ? "lead de checkout" : "leads de checkout"),
+      unidade: (v) => (v === 1 ? "carrinho enviado, ainda não é venda" : "carrinhos enviados, ainda não são vendas"),
       to: "/admin/leads?type=pedido_novo",
       icone: ShoppingBag,
     },
