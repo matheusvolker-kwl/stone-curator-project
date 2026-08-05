@@ -4,6 +4,8 @@ import { Loader2, Minus, Plus, Unlock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cdnImg, formatBRL } from "@/lib/catalog/client";
 import { useAuth } from "@/hooks/useAuth";
+import QtyInput from "@/components/ui/QtyInput";
+
 
 interface Props {
   /** Ref no PRÓPRIO botão inline "Adicionar ao pedido". A barra só aparece
