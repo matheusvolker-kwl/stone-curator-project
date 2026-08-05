@@ -17,6 +17,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePartnerPricing } from "@/hooks/usePartnerPricing";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import EmptyCartHints from "@/components/cart/EmptyCartHints";
+import QtyInput from "@/components/ui/QtyInput";
+
 
 /**
  * Drawer do carrinho — PRÉVIA, não checkout: o cliente confere o que somou e
