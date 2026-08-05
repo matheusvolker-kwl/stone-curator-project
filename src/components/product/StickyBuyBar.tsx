@@ -215,9 +215,13 @@ export default function StickyBuyBar({
                 >
                   <Minus className="h-4 w-4" />
                 </button>
-                <span className="px-1.5 font-sans text-[15px] font-semibold min-w-[2ch] text-center tabular-nums text-western-green-deep">
-                  {qty}
-                </span>
+                <QtyInput
+                  value={qty}
+                  onCommit={onQtyChange}
+                  ariaLabel="Quantidade"
+                  className="px-1.5 font-sans text-[15px] font-semibold w-[3.5ch] text-center tabular-nums text-western-green-deep"
+                />
+
                 <button
                   onClick={() => onQtyChange(qty + 1)}
                   className="h-12 w-11 flex items-center justify-center text-western-green-deep"
