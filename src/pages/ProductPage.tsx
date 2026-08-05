@@ -37,6 +37,8 @@ import Reveal from "@/components/shared/Reveal";
 import { InstallationSection } from "@/components/product/InstallationModule";
 import StickyBuyBar from "@/components/product/StickyBuyBar";
 import KitUpsell from "@/components/product/KitUpsell";
+import QtyInput from "@/components/ui/QtyInput";
+
 import {
   getInstallationConfig,
   resolveInstallationType,
