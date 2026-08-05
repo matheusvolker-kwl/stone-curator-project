@@ -17,6 +17,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePartnerPricing } from "@/hooks/usePartnerPricing";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import EmptyCartHints from "@/components/cart/EmptyCartHints";
+import QtyInput from "@/components/ui/QtyInput";
+
 
 /**
  * Drawer do carrinho — PRÉVIA, não checkout: o cliente confere o que somou e
@@ -147,9 +149,13 @@ export default function CartDrawer({
                         >
                           <Minus className="h-3.5 w-3.5" />
                         </button>
-                        <span className="px-1.5 font-sans text-[14px] font-semibold min-w-[2.5ch] text-center tabular-nums text-western-green-deep">
-                          {item.quantity}
-                        </span>
+                        <QtyInput
+                          value={item.quantity}
+                          onCommit={(n) => updateQuantity(item.variantId, n)}
+                          ariaLabel={`Quantidade de ${item.productTitle}`}
+                          className="px-1.5 font-sans text-[14px] font-semibold w-[3.5ch] text-center tabular-nums text-western-green-deep"
+                        />
+
                         <button
                           onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
                           className="h-8 w-8 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"

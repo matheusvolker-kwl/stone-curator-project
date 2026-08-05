@@ -37,6 +37,8 @@ import Reveal from "@/components/shared/Reveal";
 import { InstallationSection } from "@/components/product/InstallationModule";
 import StickyBuyBar from "@/components/product/StickyBuyBar";
 import KitUpsell from "@/components/product/KitUpsell";
+import QtyInput from "@/components/ui/QtyInput";
+
 import {
   getInstallationConfig,
   resolveInstallationType,
@@ -447,9 +449,14 @@ export default function ProductPage() {
                       >
                         −
                       </button>
-                      <span className="px-3 font-sans font-semibold text-[15px] min-w-[2ch] text-center tabular-nums">
-                        {qty}
-                      </span>
+                      <QtyInput
+                        value={qty}
+                        onCommit={setQty}
+                        disabled={acabPending}
+                        ariaLabel="Quantidade"
+                        className="px-3 font-sans font-semibold text-[15px] w-[4ch] text-center tabular-nums text-western-green-deep disabled:cursor-not-allowed"
+                      />
+
                       <button
                         onClick={() => setQty(qty + 1)}
                         disabled={acabPending}

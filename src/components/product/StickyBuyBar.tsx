@@ -4,6 +4,8 @@ import { Loader2, Minus, Plus, Unlock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cdnImg, formatBRL } from "@/lib/catalog/client";
 import { useAuth } from "@/hooks/useAuth";
+import QtyInput from "@/components/ui/QtyInput";
+
 
 interface Props {
   /** Ref no PRÓPRIO botão inline "Adicionar ao pedido". A barra só aparece
@@ -133,9 +135,13 @@ export default function StickyBuyBar({
                 >
                   <Minus className="h-4 w-4" />
                 </button>
-                <span className="px-3 font-sans text-[15px] font-semibold min-w-[2ch] text-center tabular-nums text-western-green-deep">
-                  {qty}
-                </span>
+                <QtyInput
+                  value={qty}
+                  onCommit={onQtyChange}
+                  ariaLabel="Quantidade"
+                  className="px-3 font-sans text-[15px] font-semibold w-[4ch] text-center tabular-nums text-western-green-deep"
+                />
+
                 <button
                   onClick={() => onQtyChange(qty + 1)}
                   className="h-control w-12 flex items-center justify-center hover:bg-western-paper transition-colors text-western-green-deep"
@@ -209,9 +215,13 @@ export default function StickyBuyBar({
                 >
                   <Minus className="h-4 w-4" />
                 </button>
-                <span className="px-1.5 font-sans text-[15px] font-semibold min-w-[2ch] text-center tabular-nums text-western-green-deep">
-                  {qty}
-                </span>
+                <QtyInput
+                  value={qty}
+                  onCommit={onQtyChange}
+                  ariaLabel="Quantidade"
+                  className="px-1.5 font-sans text-[15px] font-semibold w-[3.5ch] text-center tabular-nums text-western-green-deep"
+                />
+
                 <button
                   onClick={() => onQtyChange(qty + 1)}
                   className="h-12 w-11 flex items-center justify-center text-western-green-deep"
