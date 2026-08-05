@@ -13,6 +13,8 @@
 
 import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import QtyInput from "@/components/ui/QtyInput";
+
 import {
   ArrowLeft,
   ArrowRight,
