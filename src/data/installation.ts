@@ -348,7 +348,7 @@ const FONTE: InstallationConfig = {
     { label: "Regra", value: "Nunca ligar a seco" },
   ],
   reassure:
-    "Recirculação em circuito fechado, com a bomba já encaixada. A elétrica é por profissional. Antes de energizar, consulte a Western para os dados elétricos da bomba do seu modelo (tensão, vazão, potência).",
+    "Recirculação em circuito fechado, com a bomba já encaixada. A elétrica é por profissional. As bombas não são bivolt: cada fonte sai de fábrica em 110 V ou 220 V — informe a voltagem na compra. Cabo de força de ~90 cm.",
   stepsLabel: "Passo a passo resumido",
   steps: [
     {
@@ -364,7 +364,7 @@ const FONTE: InstallationConfig = {
     {
       title: "Prepare a tomada",
       text:
-        "O fio tem cerca de 90 cm. Tomada abrigada, aterrada, com DR e acima do nível da água. Faça o laço de gotejamento no cabo.",
+        "O fio tem cerca de 90 cm. A tomada precisa estar na voltagem do modelo (110 V ou 220 V, definida na compra), abrigada, aterrada, com DR e acima do nível da água. Faça o laço de gotejamento no cabo.",
     },
     {
       title: "Encha com água ANTES de ligar",
