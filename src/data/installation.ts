@@ -236,13 +236,14 @@ const ESPECIAL: InstallationConfig = {
     {
       title: "Pedra LED — 2 kg",
       text:
-        "Acompanha o spot de LED embutido, com fiação pronta para plug e o furo para passagem. O LED é próprio para imersão (pode ficar submerso); o driver/fonte fica fora d'água, com alimentação em baixa tensão (12/24 V). Ligação por eletricista, com DR e aterramento: passe a fiação pelo furo e faça o laço de gotejamento. Posicione o facho e deixe a peça apoiada.",
+        "A peça vem preparada para receber o spot: já tem o furo de passagem da fiação. O LED NÃO está incluso — antes de comprar, entre em contato com a Western para confirmar o tipo de LED ideal para a sua instalação (submersa ou seca). Ligação por eletricista habilitado, com DR e aterramento: passe a fiação pelo furo e faça o laço de gotejamento. Posicione o facho e deixe a peça apoiada.",
     },
     {
       title: "Pedra Sonora — 30 kg",
       text:
-        "Acompanha a caixa de som marítima (resistente ao tempo), com Bluetooth e fiação pronta para plug, e o furo para passagem. Alimentação na tomada, bivolt — pode ligar em 127 V ou 220 V. Pareie por Bluetooth com o dispositivo de áudio. Tomada abrigada e aterrada; deixe a peça apoiada, sem assentar com massa.",
+        "Acompanha a caixa de som marítima (resistente ao tempo) embutida, SEM Bluetooth: a conexão é por cabo a um receiver — que não é incluso e o cliente compra à parte — ou por um adaptador instalado no receiver. Não é bivolt: cada peça sai de fábrica em 110 V ou 220 V, e o cliente informa a voltagem na compra. Tomada abrigada, aterrada e com DR; deixe a peça apoiada, sem assentar com massa.",
     },
+
     {
       title: "Pedra Champanheira — 110 kg",
       text:
