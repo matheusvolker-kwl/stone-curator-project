@@ -256,7 +256,13 @@ const ESPECIAL: InstallationConfig = {
     },
   ],
   warnings: [
+    {
+      title: "LED e receiver não acompanham — e a voltagem é definida na compra",
+      text:
+        "O spot da Pedra LED e o receiver da Pedra Sonora são adquiridos à parte. Antes de comprar o LED, confirme com a Western qual é o ideal para a sua instalação (submersa ou seca). A Pedra Sonora não é bivolt: informe 110 V ou 220 V na compra.",
+    },
     AVISO_ELETRICA,
+
     {
       title: "Não assente peças elétricas com massa",
       text:
