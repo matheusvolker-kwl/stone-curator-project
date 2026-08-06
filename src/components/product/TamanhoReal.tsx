@@ -132,6 +132,16 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
               )}
             </p>
             <p className="text-meta mt-2.5 max-w-[54ch]">
+              {/* Diz O QUE cada número é, na mesma ordem da régua acima
+                  (pedido do dono, item 5 da lista de 05/08). */}
+              {cells.length > 0 && (
+                <>
+                  <span className="font-semibold text-western-green-deep">
+                    {cells.map((d) => d.label.toLowerCase()).join(" × ")}
+                  </span>
+                  {" · "}
+                </>
+              )}
               {peso && (
                 <>
                   Pedra natural do mesmo tamanho:{" "}

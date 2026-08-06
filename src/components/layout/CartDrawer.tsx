@@ -1,5 +1,6 @@
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { useCartStore } from "@/stores/cartStore";
+import QtyInput from "@/components/shared/QtyInput";
 import { formatBRL, cdnImg } from "@/lib/catalog/client";
 import {
   Minus,
@@ -17,8 +18,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePartnerPricing } from "@/hooks/usePartnerPricing";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import EmptyCartHints from "@/components/cart/EmptyCartHints";
-import QtyInput from "@/components/ui/QtyInput";
-
 
 /**
  * Drawer do carrinho — PRÉVIA, não checkout: o cliente confere o que somou e
@@ -153,9 +152,8 @@ export default function CartDrawer({
                           value={item.quantity}
                           onCommit={(n) => updateQuantity(item.variantId, n)}
                           ariaLabel={`Quantidade de ${item.productTitle}`}
-                          className="px-1.5 font-sans text-[14px] font-semibold w-[3.5ch] text-center tabular-nums text-western-green-deep"
+                          className="h-8 w-11 border-0 bg-transparent px-1 text-center font-sans text-[14px] font-semibold tabular-nums text-western-green-deep focus:outline-none"
                         />
-
                         <button
                           onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
                           className="h-8 w-8 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"

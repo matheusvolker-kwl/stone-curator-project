@@ -298,17 +298,18 @@ export default function Index() {
                 jeito. Reservar a altura mantém as 4 células iguais e os números
                 na mesma base — a quebra vira projeto, não acidente.
 
-                O primeiro item é o único dourado, no mesmo token do "obra." do h1
-                (regra do DS: sobre foto/verde o acento é dourado). Vem primeiro
-                porque fica logo abaixo do "Criar cadastro · ver preços" — é a
-                objeção mais imediata de quem está fora de São Paulo: a Western
-                entrega em todo o Brasil. */}
+                O acento dourado (único, mesmo token do "obra." do h1 — regra do
+                DS: sobre foto/verde o acento é dourado) marca o B2B: a régua
+                abre dizendo PARA QUEM a loja é, logo abaixo do "Criar cadastro
+                · ver preços". O "50% abaixo do varejo" saiu daqui a pedido do
+                dono (05/08) — recorte de público no lugar de promessa de preço;
+                os percentuais seguem no vocabulário interno (tier 5–20%
+                pós-login em AccountLayout.tsx). */}
             {/* V1 (escolha do dono, 18/07): a régua 2×2 virou UMA linha corrida
                 com separadores — desk e mobile. O hero fecha ~110px mais cedo
                 no celular e os números param de disputar com os CTAs. */}
             <p className="mt-6 pt-4 border-t border-western-cream/20 font-sans text-[13px] md:text-[14px] leading-[1.8] text-western-cream/80 max-w-xl">
-              <b className="font-semibold text-western-gold-soft">Entrega</b> em todo o Brasil
-
+              Loja exclusiva para <b className="font-semibold text-western-gold-soft">B2B</b> com CNPJ
               {" · "}
               <b className="font-semibold text-western-cream">8</b> linhas de produtos
               {" · "}

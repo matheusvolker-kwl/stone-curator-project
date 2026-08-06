@@ -236,14 +236,13 @@ const ESPECIAL: InstallationConfig = {
     {
       title: "Pedra LED — 2 kg",
       text:
-        "A peça vem preparada para receber o spot: já tem o furo de passagem da fiação. O LED NÃO está incluso — antes de comprar, entre em contato com a Western para confirmar o tipo de LED ideal para a sua instalação (submersa ou seca). Ligação por eletricista habilitado, com DR e aterramento: passe a fiação pelo furo e faça o laço de gotejamento. Posicione o facho e deixe a peça apoiada.",
+        "O spot de LED NÃO acompanha a peça — ela chega com o nicho e o furo de passagem prontos, e o LED é comprado à parte. O que comprar: LED de embutir IP68, próprio para uso externo e subaquático, branco quente (3000 K), na tensão da sua rede (127 V ou 220 V). Linhas de mercado que atendem: Stella LED Inground IP68, Interlight Piso LED IP68, Brilia Spot de Solo IP68, Ourolux Spot Solo IP68, Gaya Embutido de Solo IP68, SaveEnergy Spot de Solo IP68. Ligação por eletricista, com DR e aterramento: passe a fiação pelo furo, faça o laço de gotejamento, posicione o facho e deixe a peça apoiada.",
     },
     {
       title: "Pedra Sonora — 30 kg",
       text:
-        "Acompanha a caixa de som marítima (resistente ao tempo) embutida, SEM Bluetooth: a conexão é por cabo a um receiver — que não é incluso e o cliente compra à parte — ou por um adaptador instalado no receiver. Não é bivolt: cada peça sai de fábrica em 110 V ou 220 V, e o cliente informa a voltagem na compra. Tomada abrigada, aterrada e com DR; deixe a peça apoiada, sem assentar com massa.",
+        "Acompanha o alto-falante marítimo (resistente ao tempo) já embutido — não é Bluetooth: a peça sai com cabo PP de 90 cm para ligar num receiver/amplificador, que não acompanha e é comprado à parte. Escolha a tensão do seu local no pedido: 127 V ou 220 V. Fale com a Western para indicarmos o receiver e a melhor instalação para a sua necessidade. Tomada abrigada e aterrada; deixe a peça apoiada, sem assentar com massa.",
     },
-
     {
       title: "Pedra Champanheira — 110 kg",
       text:
@@ -257,12 +256,11 @@ const ESPECIAL: InstallationConfig = {
   ],
   warnings: [
     {
-      title: "LED e receiver não acompanham — e a voltagem é definida na compra",
+      title: "LED e receiver não acompanham — e a voltagem é escolhida no pedido",
       text:
-        "O spot da Pedra LED e o receiver da Pedra Sonora são adquiridos à parte. Antes de comprar o LED, confirme com a Western qual é o ideal para a sua instalação (submersa ou seca). A Pedra Sonora não é bivolt: informe 110 V ou 220 V na compra.",
+        "O spot da Pedra LED e o receiver da Pedra Sonora são comprados à parte. Para o LED, siga a especificação IP68 do passo acima — ou confirme com a Western o ideal para a sua instalação (submersa ou seca). A Pedra Sonora não é bivolt: informe 127 V ou 220 V na compra.",
     },
     AVISO_ELETRICA,
-
     {
       title: "Não assente peças elétricas com massa",
       text:
@@ -344,11 +342,11 @@ const FONTE: InstallationConfig = {
     "As fontes chegam com a bomba já embutida e peças de fácil encaixe. O essencial é base firme, elétrica segura e uma regra inegociável: nunca ligar a bomba a seco.",
   facts: [
     { label: "Bomba", value: "Inclusa, já embutida" },
-    { label: "Fixação", value: "Encaixe, sem assentamento" },
+    { label: "Tensão", value: "127 V ou 220 V — escolha no pedido" },
     { label: "Regra", value: "Nunca ligar a seco" },
   ],
   reassure:
-    "Recirculação em circuito fechado, com a bomba já encaixada. A elétrica é por profissional. As bombas não são bivolt: cada fonte sai de fábrica em 110 V ou 220 V — informe a voltagem na compra. Cabo de força de ~90 cm.",
+    "Recirculação em circuito fechado, com a bomba já encaixada. As fontes acompanham a fonte de alimentação, com cabo de 90 cm — escolha 127 V ou 220 V no pedido. A elétrica é por profissional. Antes de energizar, consulte a Western para os dados elétricos da bomba do seu modelo (tensão, vazão, potência).",
   stepsLabel: "Passo a passo resumido",
   steps: [
     {
@@ -364,7 +362,7 @@ const FONTE: InstallationConfig = {
     {
       title: "Prepare a tomada",
       text:
-        "O fio tem cerca de 90 cm. A tomada precisa estar na voltagem do modelo (110 V ou 220 V, definida na compra), abrigada, aterrada, com DR e acima do nível da água. Faça o laço de gotejamento no cabo.",
+        "O fio tem cerca de 90 cm. Tomada abrigada, aterrada, com DR e acima do nível da água. Faça o laço de gotejamento no cabo.",
     },
     {
       title: "Encha com água ANTES de ligar",
@@ -406,7 +404,7 @@ const CASCATA: InstallationConfig = {
     { label: "Cura", value: "7 dias antes de operar" },
   ],
   reassure:
-    "A bomba NÃO acompanha o kit. Consulte a Western para dimensionar a bomba correta (vazão e altura) do seu modelo — bomba subdimensionada não enche a lâmina d'água.",
+    "A bomba NÃO acompanha o kit. Conte à Western onde a cascata vai ser aplicada para indicarmos a bomba correta (vazão e altura) — ou adquira a bomba com a nossa equipe. Bomba subdimensionada não enche a lâmina d'água.",
   stepsLabel: "Passo a passo resumido",
   steps: [
     {

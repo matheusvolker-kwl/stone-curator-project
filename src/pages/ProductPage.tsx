@@ -34,11 +34,10 @@ import SocialProofBand from "@/components/product/SocialProofBand";
 import { getAplicadas } from "@/components/product/ProductInUse";
 import WishlistButton from "@/components/product/WishlistButton";
 import Reveal from "@/components/shared/Reveal";
+import QtyInput from "@/components/shared/QtyInput";
 import { InstallationSection } from "@/components/product/InstallationModule";
 import StickyBuyBar from "@/components/product/StickyBuyBar";
 import KitUpsell from "@/components/product/KitUpsell";
-import QtyInput from "@/components/ui/QtyInput";
-
 import {
   getInstallationConfig,
   resolveInstallationType,
@@ -454,9 +453,8 @@ export default function ProductPage() {
                         onCommit={setQty}
                         disabled={acabPending}
                         ariaLabel="Quantidade"
-                        className="px-3 font-sans font-semibold text-[15px] w-[4ch] text-center tabular-nums text-western-green-deep disabled:cursor-not-allowed"
+                        className="h-control w-14 border-0 bg-transparent px-1 text-center font-sans font-semibold text-[15px] tabular-nums focus:outline-none disabled:cursor-not-allowed"
                       />
-
                       <button
                         onClick={() => setQty(qty + 1)}
                         disabled={acabPending}
