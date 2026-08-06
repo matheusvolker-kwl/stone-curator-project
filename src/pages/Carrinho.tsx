@@ -34,6 +34,7 @@ import { toast } from "sonner";
 
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
+import QtyInput from "@/components/shared/QtyInput";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import CartCrossSell from "@/components/cart/CartCrossSell";
 import { useCartStore, type CartItem } from "@/stores/cartStore";
@@ -256,7 +257,12 @@ export default function Carrinho() {
           className="h-4 w-4 text-western-bronze flex-shrink-0 mt-0.5"
           aria-hidden="true"
         />
-        Empresa brasileira · Compra segura · CNPJ {BUSINESS.cnpj}
+        {/* O CNPJ é UM token: sem o nowrap ele quebrava no meio e o "24"
+            final caía sozinho na linha de baixo (item 8 da lista de 05/08). */}
+        <span>
+          Empresa brasileira · Compra segura ·{" "}
+          <span className="whitespace-nowrap">CNPJ {BUSINESS.cnpj}</span>
+        </span>
       </p>
       <p className="flex items-start gap-2.5 font-sans text-[14px] leading-snug text-western-stone-warm">
         <ShieldCheck
@@ -376,9 +382,12 @@ export default function Carrinho() {
                           >
                             <Minus className="h-3.5 w-3.5" aria-hidden="true" />
                           </button>
-                          <span className="px-1.5 font-sans text-[14px] font-semibold min-w-[2.5ch] text-center tabular-nums text-western-green-deep">
-                            {item.quantity}
-                          </span>
+                          <QtyInput
+                            value={item.quantity}
+                            onCommit={(n) => updateQuantity(item.variantId, n)}
+                            ariaLabel={`Quantidade de ${item.productTitle}`}
+                            className="h-9 w-12 border-0 bg-transparent px-1 text-center font-sans text-[14px] font-semibold tabular-nums text-western-green-deep focus:outline-none"
+                          />
                           <button
                             type="button"
                             onClick={() => updateQuantity(item.variantId, item.quantity + 1)}

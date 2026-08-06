@@ -1,5 +1,6 @@
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { useCartStore } from "@/stores/cartStore";
+import QtyInput from "@/components/shared/QtyInput";
 import { formatBRL, cdnImg } from "@/lib/catalog/client";
 import {
   Minus,
@@ -147,9 +148,12 @@ export default function CartDrawer({
                         >
                           <Minus className="h-3.5 w-3.5" />
                         </button>
-                        <span className="px-1.5 font-sans text-[14px] font-semibold min-w-[2.5ch] text-center tabular-nums text-western-green-deep">
-                          {item.quantity}
-                        </span>
+                        <QtyInput
+                          value={item.quantity}
+                          onCommit={(n) => updateQuantity(item.variantId, n)}
+                          ariaLabel={`Quantidade de ${item.productTitle}`}
+                          className="h-8 w-11 border-0 bg-transparent px-1 text-center font-sans text-[14px] font-semibold tabular-nums text-western-green-deep focus:outline-none"
+                        />
                         <button
                           onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
                           className="h-8 w-8 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
