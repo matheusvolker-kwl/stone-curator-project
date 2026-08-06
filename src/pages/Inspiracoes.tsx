@@ -9,7 +9,7 @@
 // mobile / grade no desktop; troca de segmento rola para o topo do conteúdo.
 import { useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { ArrowRight, Plus, MessageCircle, Check } from "lucide-react";
+import { ArrowRight, Plus, MessageCircle, Check, Loader2 } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
 import Lightbox from "@/components/shared/Lightbox";
@@ -79,19 +79,26 @@ function Galeria({ fotos, label }: { fotos: string[]; label: string }) {
 
 function ObraLook({ obra, index }: { obra: Obra; index: number }) {
   const composicao = useMemo(() => obraComposicao(obra), [obra]);
-  const { isLoading, totalPreco, addToOrcamento } = useComposicaoCart(composicao, "moledo");
+  const { totalPreco, addToOrcamento } = useComposicaoCart(composicao, "moledo");
   const [added, setAdded] = useState(false);
+  const [adding, setAdding] = useState(false);
   const cover = OBRA_COVER[obra.slug];
   const comprable = obra.tipo === "comprable" && composicao.length > 0;
   const isHibrido = obra.slug === "lago-neymar";
 
-  const onAdd = () => {
-    const ok = addToOrcamento({
-      label: `Obra ${obra.titulo} adicionada ao orçamento`,
-      description: `${composicao.length} ${composicao.length === 1 ? "peça" : "peças"} Western · acabamento Moledo`,
-      conjuntoRef: obra.slug,
-    });
-    if (ok) setAdded(true);
+  const onAdd = async () => {
+    if (adding) return;
+    setAdding(true);
+    try {
+      const ok = await addToOrcamento({
+        label: `Obra ${obra.titulo} adicionada ao orçamento`,
+        description: `${composicao.length} ${composicao.length === 1 ? "peça" : "peças"} Western · acabamento Moledo`,
+        conjuntoRef: obra.slug,
+      });
+      if (ok) setAdded(true);
+    } finally {
+      setAdding(false);
+    }
   };
 
   return (
@@ -189,12 +196,16 @@ function ObraLook({ obra, index }: { obra: Obra; index: number }) {
                 <button
                   type="button"
                   onClick={onAdd}
-                  disabled={isLoading}
+                  disabled={adding}
                   className="btn-primary w-full sm:w-auto"
                 >
                   {added ? (
                     <>
                       <Check className="h-5 w-5" /> Adicionada ao orçamento
+                    </>
+                  ) : adding ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" /> Adicionando…
                     </>
                   ) : (
                     <>
