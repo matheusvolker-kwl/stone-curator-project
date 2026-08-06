@@ -306,7 +306,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 pt-8 border-t border-western-gold/15">
           <p className="text-[14px] text-western-cream-muted leading-[1.6]">
             {BUSINESS.razaoSocial && <>{BUSINESS.razaoSocial} · </>}
-            {BUSINESS.cnpj && <>CNPJ {BUSINESS.cnpj}</>}
+            {BUSINESS.cnpj && <span className="whitespace-nowrap">CNPJ {BUSINESS.cnpj}</span>}
           </p>
           <p className="text-[14px] text-western-cream-muted">
             © {new Date().getFullYear()} Western Pedras Decorativas

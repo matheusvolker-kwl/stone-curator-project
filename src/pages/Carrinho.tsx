@@ -257,7 +257,12 @@ export default function Carrinho() {
           className="h-4 w-4 text-western-bronze flex-shrink-0 mt-0.5"
           aria-hidden="true"
         />
-        Empresa brasileira · Compra segura · CNPJ {BUSINESS.cnpj}
+        {/* O CNPJ é UM token: sem o nowrap ele quebrava no meio e o "24"
+            final caía sozinho na linha de baixo (item 8 da lista de 05/08). */}
+        <span>
+          Empresa brasileira · Compra segura ·{" "}
+          <span className="whitespace-nowrap">CNPJ {BUSINESS.cnpj}</span>
+        </span>
       </p>
       <p className="flex items-start gap-2.5 font-sans text-[14px] leading-snug text-western-stone-warm">
         <ShieldCheck
