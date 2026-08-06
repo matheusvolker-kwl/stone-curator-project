@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { mensagemDeErro } from "@/components/backoffice";
+import { EVENTO_SECAO_VISTA, ultimaVisita } from "@/components/admin/adminSeen";
 import { cn } from "@/lib/utils";
 import logoVerde from "@/assets/logo-horizontal-verde.png";
 
@@ -65,7 +66,7 @@ const CONTAGEM_INICIAL: Record<ChaveContagem, Contagem> = {
 
 /** O que o número quer dizer — aparece no tooltip. */
 const DICA: Record<ChaveContagem, string> = {
-  leads: "novos nos últimos 7 dias",
+  leads: "novos desde a sua última visita à Caixa de entrada",
   orcamentos: "orçamentos em aberto",
   credenciamentos: "cadastros aguardando análise",
   parceiros: "parceiros aguardando aprovação",
@@ -365,6 +366,9 @@ export default function AdminLayout() {
 
   const carregarContagens = useCallback(async () => {
     const seteDiasAtras = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    // "Novos" = criados depois da última visita à Caixa de entrada (item 5a).
+    // Sem visita registrada (primeiro uso neste dispositivo), cai nos 7 dias.
+    const desdeLeads = ultimaVisita(user?.id, "leads") ?? seteDiasAtras;
     try {
       const [orc, cred, part, lds] = await Promise.all([
         supabase
@@ -383,7 +387,7 @@ export default function AdminLayout() {
           .from("leads")
           .select("id", { count: "exact", head: true })
           .neq("type", "orcamento")
-          .gte("created_at", seteDiasAtras),
+          .gte("created_at", desdeLeads),
       ]);
 
       return {
@@ -397,7 +401,7 @@ export default function AdminLayout() {
       const erro: Contagem = { estado: "erro", mensagem: mensagemDeErro(e) };
       return { orcamentos: erro, credenciamentos: erro, parceiros: erro, leads: erro };
     }
-  }, []);
+  }, [user?.id]);
 
   const recarregar = useCallback(async () => {
     const resultado = await carregarContagens();
@@ -415,6 +419,16 @@ export default function AdminLayout() {
     };
     // Recontar a cada troca de seção (aprovou um credenciamento → o badge cai).
   }, [location.pathname, carregarContagens]);
+
+  // A página marcou a seção como vista → reconta na hora (o badge cai a zero
+  // enquanto o dono ainda está na tela, sem esperar a próxima navegação).
+  useEffect(() => {
+    const aoVer = () => {
+      void recarregar();
+    };
+    window.addEventListener(EVENTO_SECAO_VISTA, aoVer);
+    return () => window.removeEventListener(EVENTO_SECAO_VISTA, aoVer);
+  }, [recarregar]);
 
   // Navegou pelo drawer → fecha.
   useEffect(() => {

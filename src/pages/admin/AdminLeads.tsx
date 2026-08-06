@@ -13,6 +13,8 @@ import {
   PageHeader, CelulaData, dataAbsoluta,
 } from "@/components/backoffice";
 import { toCSV, downloadCSV, type Lead, LEAD_TYPE_LABEL } from "@/components/admin/adminUtils";
+import { marcarVisto } from "@/components/admin/adminSeen";
+import { useAuth } from "@/hooks/useAuth";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { toast } from "sonner";
 
@@ -60,6 +62,14 @@ function linkWhatsApp(telefone: string) {
 
 export default function AdminLeads() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { user } = useAuth();
+
+  // Entrar na Caixa de entrada = viu. O badge da sidebar reconta na hora
+  // (via evento) e passa a medir só o que chegar DEPOIS desta visita.
+  useEffect(() => {
+    if (!user?.id) return;
+    marcarVisto(user.id, "leads");
+  }, [user?.id]);
 
   const [leads, setLeads] = useState<Lead[]>([]);
   const [total, setTotal] = useState(0);
