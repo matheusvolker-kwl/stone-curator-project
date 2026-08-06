@@ -3,7 +3,7 @@
 // diretriz anti-texto) → ficha → peças com papel + adicionar ao orçamento.
 import { useMemo, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { ArrowRight, ChevronLeft, Plus, Check, MessageCircle } from "lucide-react";
+import { ArrowRight, ChevronLeft, Plus, Check, MessageCircle, Loader2 } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import Reveal from "@/components/shared/Reveal";
 import Lightbox from "@/components/shared/Lightbox";
@@ -24,10 +24,11 @@ export default function ObraPage() {
   const { slug } = useParams();
   const obra = slug ? OBRAS_BY_SLUG[slug] : undefined;
   const composicao = useMemo(() => (obra ? obraComposicao(obra) : []), [obra]);
-  const { isLoading, totalPreco, addToOrcamento } = useComposicaoCart(composicao, "moledo");
+  const { totalPreco, addToOrcamento } = useComposicaoCart(composicao, "moledo");
   const galeria = (slug && OBRA_GALERIA[slug]) || (slug && OBRA_COVER[slug] ? [OBRA_COVER[slug]] : []);
   const [ativa, setAtiva] = useState(0);
   const [added, setAdded] = useState(false);
+  const [adding, setAdding] = useState(false);
   const [zoom, setZoom] = useState<number | null>(null);
   // O alt de cada foto é o título da obra — a única descrição que o dado
   // garante. Não inventar legenda por foto: a galeria não sabe o que cada
@@ -46,13 +47,19 @@ export default function ObraPage() {
     `Olá! Vi a obra "${obra.titulo}" no site da Western e queria algo parecido.`,
   )}`;
 
-  const onAdd = () => {
-    const ok = addToOrcamento({
-      label: `Obra ${obra.titulo} adicionada ao orçamento`,
-      description: `${composicao.length} ${composicao.length === 1 ? "peça" : "peças"} Western · acabamento Moledo`,
-      conjuntoRef: obra.slug,
-    });
-    if (ok) setAdded(true);
+  const onAdd = async () => {
+    if (adding) return;
+    setAdding(true);
+    try {
+      const ok = await addToOrcamento({
+        label: `Obra ${obra.titulo} adicionada ao orçamento`,
+        description: `${composicao.length} ${composicao.length === 1 ? "peça" : "peças"} Western · acabamento Moledo`,
+        conjuntoRef: obra.slug,
+      });
+      if (ok) setAdded(true);
+    } finally {
+      setAdding(false);
+    }
   };
 
   return (
@@ -234,12 +241,16 @@ export default function ObraPage() {
                   <button
                     type="button"
                     onClick={onAdd}
-                    disabled={isLoading}
+                    disabled={adding}
                     className="btn-primary w-full sm:w-auto"
                   >
                     {added ? (
                       <>
                         <Check className="h-5 w-5" /> Adicionada ao orçamento
+                      </>
+                    ) : adding ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" /> Adicionando…
                       </>
                     ) : (
                       <>
