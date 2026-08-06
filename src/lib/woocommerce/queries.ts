@@ -57,6 +57,7 @@ export function clearCatalogCache() {
   listingCatalogMemory = null;
   listingCatalogPromise = null;
   listingCatalogExpires = 0;
+  variationsCache.clear();
 }
 
 let catalogPromise: Promise<WooProduct[]> | null = null;
@@ -109,16 +110,28 @@ async function getAllCategories(): Promise<WooCategory[]> {
   return categoriesPromise;
 }
 
+// Uma promise por produto: várias composições usam as mesmas peças e cada
+// card disparava seu próprio GET /variations — em /obras isso virava dezenas
+// de requests simultâneos ao proxy para os MESMOS produtos.
+const variationsCache = new Map<number, Promise<WooVariation[]>>();
+
 async function getVariationsFor(p: WooProduct): Promise<WooVariation[]> {
   if (p.type !== "variable" || !p.variations || p.variations.length === 0) return [];
-  try {
+  const cached = variationsCache.get(p.id);
+  if (cached) return cached;
+  const promise = (async () => {
     const res = await wooFetch<WooVariation[] | { error: string; fallback: true }>({
       path: `products/${p.id}/variations`,
       params: { per_page: 100 },
     });
     if (!Array.isArray(res)) return [];
     return res;
+  })();
+  variationsCache.set(p.id, promise);
+  try {
+    return await promise;
   } catch {
+    variationsCache.delete(p.id); // falha não fica cacheada — o próximo clique tenta de novo
     return [];
   }
 }
@@ -176,6 +189,20 @@ function hasCachedListing(): boolean {
   if (listingCatalogMemory) return true;
   const cached = readPersist<ShopifyProductNode[]>(PERSIST_KEY, PERSIST_TTL_MS);
   return !!cached;
+}
+
+/**
+ * Aquece o catálogo de listagem (1 request, com cache/SWR compartilhado).
+ * Com ele quente, fetchProduct pega sempre o caminho rápido — sem isso, cada
+ * peça de composição fria dispara sua própria busca por slug. Falha aqui é
+ * silenciosa de propósito: cada fetchProduct reporta o próprio erro.
+ */
+export async function warmListingCatalog(): Promise<void> {
+  try {
+    await getListingCatalog();
+  } catch {
+    /* fetchProduct decide o que fazer sem catálogo */
+  }
 }
 
 
