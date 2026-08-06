@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { Fragment, useMemo } from "react";
 import { Link } from "react-router-dom";
 
 interface Props {
@@ -113,35 +113,58 @@ export default function TamanhoReal({ productTitle, sku, dims, pesoKg }: Props) 
           )}
 
           <div className="min-w-0">
-            {/* V1 (escolha do dono, 18/07): régua ÚNICA — medida e peso na
-                mesma linha display; comparação e variação numa linha meta.
-                Os dois sub-cabeçalhos uppercase saíram; nenhum número sumiu. */}
-            <p className="font-sans text-[26px] md:text-[30px] font-bold tabular-nums leading-none text-western-green-deep">
-              {cells.map((d) => d.v).join(" × ")}
+            {/* V2 (06/08): cada número com o PRÓPRIO rótulo em cima. A v1
+                punha a legenda na linha meta, longe dos números — o dono
+                reprovou (obrigava a mapear a ordem de cabeça). A régua única
+                de 18/07 segue viva: células na mesma linha, × entre medidas,
+                divisor antes do peso. */}
+            <div className="flex flex-wrap items-end gap-x-2.5 gap-y-3">
+              {cells.map((d, i) => (
+                <Fragment key={d.label}>
+                  {i > 0 && (
+                    <span
+                      aria-hidden
+                      className="pb-0.5 font-sans text-[16px] text-western-border-strong"
+                    >
+                      ×
+                    </span>
+                  )}
+                  <span>
+                    <span className="mb-1 block font-sans text-[11px] font-semibold uppercase tracking-[0.1em] text-western-stone-warm">
+                      {d.label}
+                    </span>
+                    <span className="font-sans text-[26px] md:text-[30px] font-bold tabular-nums leading-none text-western-green-deep">
+                      {d.v}
+                    </span>
+                  </span>
+                </Fragment>
+              ))}
               {cells.length > 0 && (
-                <span className="ml-1.5 text-[14px] font-normal text-western-stone-warm">cm</span>
-              )}
-              {cells.length > 0 && peso && (
-                <span className="mx-3 font-normal text-western-border-strong">|</span>
+                <span className="pb-0.5 font-sans text-[14px] text-western-stone-warm">cm</span>
               )}
               {peso && (
                 <>
-                  {peso}
-                  <span className="ml-1.5 text-[14px] font-normal text-western-stone-warm">kg</span>
-                </>
-              )}
-            </p>
-            <p className="text-meta mt-2.5 max-w-[54ch]">
-              {/* Diz O QUE cada número é, na mesma ordem da régua acima
-                  (pedido do dono, item 5 da lista de 05/08). */}
-              {cells.length > 0 && (
-                <>
-                  <span className="font-semibold text-western-green-deep">
-                    {cells.map((d) => d.label.toLowerCase()).join(" × ")}
+                  {cells.length > 0 && (
+                    <span
+                      aria-hidden
+                      className="mx-1.5 pb-0.5 font-normal text-western-border-strong"
+                    >
+                      |
+                    </span>
+                  )}
+                  <span>
+                    <span className="mb-1 block font-sans text-[11px] font-semibold uppercase tracking-[0.1em] text-western-stone-warm">
+                      Peso
+                    </span>
+                    <span className="font-sans text-[26px] md:text-[30px] font-bold tabular-nums leading-none text-western-green-deep">
+                      {peso}
+                      <span className="ml-1 text-[14px] font-normal text-western-stone-warm">kg</span>
+                    </span>
                   </span>
-                  {" · "}
                 </>
               )}
+            </div>
+            <p className="text-meta mt-2.5 max-w-[54ch]">
               {peso && (
                 <>
                   Pedra natural do mesmo tamanho:{" "}
