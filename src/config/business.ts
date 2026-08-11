@@ -46,7 +46,7 @@ export const BUSINESS = {
   whatsappFabrica: "551144482918",
   whatsappLabel: "(11) 4448-2918",
   emailComercial: "atendimento@westernstore.com.br",
-  emailSuporte: "suporte@westernpools.com.br",
+  emailSuporte: "atendimento@westernstore.com.br",
   emailNewsletter: "contato@westernpools.com.br",
   razaoSocial: "Western Pools - Cascatas e Pedras Artesanais LTDA",
   // CNPJ confirmado (mesmo usado no checkout Woo)
