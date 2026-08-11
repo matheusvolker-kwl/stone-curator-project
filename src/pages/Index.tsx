@@ -81,10 +81,30 @@ const featuredTrack =
   "md:grid-cols-3 lg:grid-cols-4";
 const featuredItem = "snap-start shrink-0 w-[76vw] max-w-[300px] sm:w-auto sm:max-w-none";
 
+/* Ordem da vitrine "Mais vendidos" — pedido do dono, 11/08/2026. */
+const FEATURED_SKU_CODES = ["CSB", "CSC", "PM2", "PM3", "PG2", "PG3", "PP1", "PP2"];
+
 export default function Index() {
+  /* Mais vendidos fixados pelo dono (11/08/2026), nesta ordem. Grupos de
+   * acabamento casam pelo SKU das variantes (WEST-CSB-M etc.) — o sufixo de
+   * caixa (-CX*) não é acabamento e fica de fora do casamento. Se o catálogo
+   * mudar e menos de 4 SKUs casarem, cai no comportamento antigo (8 primeiros)
+   * em vez de deixar a vitrine vazia. */
   const { data: featured = [], isLoading: loadingFeatured } = useQuery({
-    queryKey: ["featured-products"],
-    queryFn: () => fetchProducts(8),
+    queryKey: ["featured-products", FEATURED_SKU_CODES.join(",")],
+    queryFn: async () => {
+      const all = await fetchProducts(100);
+      const skusOf = (p: (typeof all)[number]) =>
+        [p.node.sku, ...(p.node.variants?.edges ?? []).map((e) => e.node.sku)]
+          .filter((s): s is string => !!s)
+          .map((s) => s.toUpperCase());
+      const picked = FEATURED_SKU_CODES.map((code) =>
+        all.find((p) =>
+          skusOf(p).some((s) => s === `WEST-${code}` || s.startsWith(`WEST-${code}-`) && !s.includes("-CX")),
+        ),
+      ).filter((p): p is (typeof all)[number] => !!p);
+      return picked.length >= 4 ? picked : all.slice(0, 8);
+    },
   });
 
   /* PERSONALIZAÇÃO FASE 1 (2026-07-18): logado, a home vira balcão — os CTAs
@@ -308,14 +328,17 @@ export default function Index() {
             {/* V1 (escolha do dono, 18/07): a régua 2×2 virou UMA linha corrida
                 com separadores — desk e mobile. O hero fecha ~110px mais cedo
                 no celular e os números param de disputar com os CTAs. */}
+            {/* V2 (pedido do dono, 11/08): cada argumento é um span nowrap — a
+                linha só pode quebrar nos separadores, nunca no meio de um
+                argumento ("33 anos" órfão era exatamente isso). */}
             <p className="mt-6 pt-4 border-t border-western-cream/20 font-sans text-[13px] md:text-[14px] leading-[1.8] text-western-cream/80 max-w-xl">
-              Loja exclusiva para <b className="font-semibold text-western-gold-soft">B2B</b> com CNPJ
+              <span className="whitespace-nowrap">Loja exclusiva para <b className="font-semibold text-western-gold-soft">B2B</b> com CNPJ</span>
               {" · "}
-              <b className="font-semibold text-western-cream">8</b> linhas de produtos
+              <span className="whitespace-nowrap"><b className="font-semibold text-western-cream">8</b> linhas de produtos</span>
               {" · "}
-              <b className="font-semibold text-western-cream">+300 mil</b> downloads no SketchUp
+              <span className="whitespace-nowrap"><b className="font-semibold text-western-cream">+300 mil</b> downloads no SketchUp</span>
               {" · "}
-              <b className="font-semibold text-western-cream">{BUSINESS.anosOperacao} anos</b> de ateliê
+              <span className="whitespace-nowrap"><b className="font-semibold text-western-cream">{BUSINESS.anosOperacao} anos</b> de ateliê</span>
             </p>
           </div>
         </div>
