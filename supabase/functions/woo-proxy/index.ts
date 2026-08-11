@@ -1,6 +1,27 @@
 // Read-only proxy to WooCommerce via the Lovable connector gateway.
 // Keeps consumer key/secret server-side. Allowlists catalog endpoints only.
 //
+// ─── PROPOSTA: CACHE COMPARTILHADO + PAYLOAD ENXUTO ─────────────────────────
+// Base: a versão do git (gateway Lovable + gate de preço). Duas adições:
+//
+// 1. CACHE L2 COMPARTILHADO (Postgres). O Map em memória é por instância da
+//    edge function e morre a cada cold start — medido em produção: HIT ≈ MISS,
+//    todo visitante paga os 5-7s do WooCommerce. A tabela public.woo_proxy_cache
+//    (ver woo-proxy-cache.sql, precisa existir ANTES do deploy) é compartilhada
+//    entre todas as instâncias: o primeiro visitante da janela paga o Woo, os
+//    demais recebem em dezenas de ms. O cache guarda SEMPRE o corpo cru (com
+//    preço); o gate continua aplicado na saída, por request.
+//
+// 2. PAYLOAD ENXUTO. O Woo devolve ~90 campos por produto; o app declara e usa
+//    só os do tipo WooProduct (src/lib/woocommerce/types.ts) — o corte segue
+//    exatamente esse contrato. `description` (HTML longo) só é lida na página
+//    de detalhe, que busca por `slug`; na listagem ela é descartada.
+//    Botão de emergência: WOO_TRIM=off nos secrets restaura o passthrough
+//    (vale para respostas novas; as cacheadas expiram em até 15 min).
+//
+// Sem secret novo: usa LOVABLE_API_KEY/WOOCOMMERCE_API_KEY que já existem.
+// Rollback: recolar o código anterior no painel.
+//
 // ─── GATE DE PREÇO (servidor) ────────────────────────────────────────────────
 // A tabela de atacado é B2B. O Woo devolve preço para qualquer um que alcance
 // esta função, então o gate NÃO pode viver na interface — ele vive aqui.
@@ -13,7 +34,7 @@
 // (auth.getClaims sobre o Bearer + leitura de partner_profiles com service role).
 // Em QUALQUER dúvida — sem token, token inválido, banco fora — falhamos para o
 // lado seguro: esconder preço.
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/woocommerce";
@@ -28,6 +49,9 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 // WOO_PRICE_GATE=off nos secrets do Supabase e o preço volta na hora, sem deploy.
 // Default = ligado (seguro).
 const PRICE_GATE_ON = (Deno.env.get("WOO_PRICE_GATE") ?? "on").toLowerCase() !== "off";
+
+// Botão de emergência do corte de payload. WOO_TRIM=off → passthrough integral.
+const TRIM_ON = (Deno.env.get("WOO_TRIM") ?? "on").toLowerCase() !== "off";
 
 // Catalog-only allowlist. No orders, no customers, no mutations.
 const ALLOWED_PATHS: RegExp[] = [
@@ -120,6 +144,71 @@ function scrubPrices(value: unknown): unknown {
   return out;
 }
 
+/* ─── Payload enxuto ────────────────────────────────────────────────────────
+ * Allowlist = o tipo que o app declara consumir (src/lib/woocommerce/types.ts).
+ * Campo fora do tipo é invisível para o app por construção — cortar aqui não
+ * muda nada do que a interface enxerga, só o que trafega e o que o cache guarda.
+ */
+const PRODUCT_KEYS = new Set([
+  "id", "name", "slug", "permalink", "type", "status", "catalog_visibility",
+  "description", "short_description", "sku",
+  "price", "regular_price", "sale_price", "price_html",
+  "stock_status", "images", "categories", "tags", "attributes",
+  "default_attributes", "variations", "meta_data", "bundle_price", "bundled_items",
+]);
+const VARIATION_KEYS = new Set([
+  "id", "sku", "price", "regular_price", "sale_price", "price_html",
+  "stock_status", "attributes", "image",
+]);
+const CATEGORY_KEYS = new Set(["id", "name", "slug", "description", "image", "count"]);
+const IMAGE_KEYS = new Set(["id", "src", "name", "alt"]);
+// Só na LISTAGEM (path=products sem `slug`): a grade nunca renderiza o HTML longo.
+const LIST_DROPS = new Set(["description"]);
+
+function trimTo(node: unknown, keys: Set<string>, drop?: Set<string>): unknown {
+  if (!node || typeof node !== "object" || Array.isArray(node)) return node;
+  const src = node as Record<string, unknown>;
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(src)) {
+    if (!keys.has(k)) continue;
+    if (drop && drop.has(k)) continue;
+    if (k === "images" && Array.isArray(v)) {
+      out[k] = v.map((img) => trimTo(img, IMAGE_KEYS));
+    } else if (k === "image") {
+      out[k] = trimTo(v, IMAGE_KEYS);
+    } else {
+      out[k] = v;
+    }
+  }
+  return out;
+}
+
+/** Corta o corpo de uma resposta OK do upstream. Qualquer dúvida → intacto. */
+function trimBody(path: string, dropDesc: boolean, rawBody: string): string {
+  if (!TRIM_ON) return rawBody;
+  try {
+    const data = JSON.parse(rawBody);
+    let out: unknown;
+    if (path === "products") {
+      const drops = dropDesc ? LIST_DROPS : undefined;
+      out = Array.isArray(data)
+        ? data.map((p) => trimTo(p, PRODUCT_KEYS, drops))
+        : trimTo(data, PRODUCT_KEYS, drops);
+    } else if (/^products\/\d+$/.test(path)) {
+      out = trimTo(data, PRODUCT_KEYS);
+    } else if (/^products\/\d+\/variations$/.test(path)) {
+      out = Array.isArray(data) ? data.map((v) => trimTo(v, VARIATION_KEYS)) : data;
+    } else if (path === "products/categories") {
+      out = Array.isArray(data) ? data.map((c) => trimTo(c, CATEGORY_KEYS)) : data;
+    } else {
+      return rawBody;
+    }
+    return JSON.stringify(out);
+  } catch {
+    return rawBody; // não-JSON: passa intacto (o gate já falha fechado adiante)
+  }
+}
+
 /* ─── Identidade do chamador ────────────────────────────────────────────────*/
 
 type Caller = { approved: boolean; userId: string | null };
@@ -210,28 +299,100 @@ const revalidating = new Set<string>();
 type Payload = { status: number; body: string; contentType: string; cacheState: string };
 const inflight = new Map<string, Promise<Payload>>();
 
+/* ─── Cache L2: compartilhado entre instâncias (Postgres) ───────────────────
+ * Uma leitura de ~30-60ms no lugar dos 5-7s do Woo. Tabela criada por
+ * woo-proxy-cache.sql (RLS ligado, zero policies → só a service role alcança).
+ * Qualquer erro aqui degrada em silêncio para o comportamento atual.
+ */
+const L2_TABLE = "woo_proxy_cache";
+let _admin: SupabaseClient | null = null;
+function adminDb() {
+  if (!SUPABASE_URL || !SERVICE_ROLE_KEY) return null;
+  if (!_admin) {
+    _admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+  }
+  return _admin;
+}
+
+async function l2Get(cacheKey: string): Promise<Entry | null> {
+  const db = adminDb();
+  if (!db) return null;
+  try {
+    const { data, error } = await db
+      .from(L2_TABLE)
+      .select("status,body,content_type,fetched_at")
+      .eq("cache_key", cacheKey)
+      .maybeSingle();
+    if (error || !data) return null;
+    const fetchedAt = Date.parse(data.fetched_at as string);
+    if (!Number.isFinite(fetchedAt)) return null;
+    return {
+      expires: fetchedAt + CACHE_TTL_MS,
+      staleUntil: fetchedAt + STALE_TTL_MS,
+      status: data.status as number,
+      body: data.body as string,
+      contentType: (data.content_type as string) ?? "application/json",
+    };
+  } catch (e) {
+    console.error("[woo-proxy] l2Get falhou", e);
+    return null;
+  }
+}
+
+function l2Put(cacheKey: string, status: number, body: string, contentType: string): void {
+  const db = adminDb();
+  if (!db) return;
+  const write = db
+    .from(L2_TABLE)
+    .upsert({
+      cache_key: cacheKey,
+      status,
+      body,
+      content_type: contentType,
+      fetched_at: new Date().toISOString(),
+    })
+    .then(({ error }) => {
+      if (error) console.error("[woo-proxy] l2Put falhou", error.message);
+    });
+  // Fire-and-forget; waitUntil (quando existir) impede a plataforma de matar
+  // a instância antes de o INSERT terminar.
+  try {
+    (globalThis as { EdgeRuntime?: { waitUntil?: (p: Promise<unknown>) => void } })
+      .EdgeRuntime?.waitUntil?.(Promise.resolve(write));
+  } catch { /* promise já disparada */ }
+}
+
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-async function revalidate(cacheKey: string, target: string): Promise<void> {
+async function revalidate(
+  cacheKey: string,
+  target: string,
+  path: string,
+  dropDesc: boolean,
+): Promise<void> {
   try {
     const upstream = await fetch(target, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "X-Connection-Api-Key": WOOCOMMERCE_API_KEY,
+        "X-Connection-Api-Key": WOOCOMMERCE_API_KEY ?? "",
       },
     });
     if (!upstream.ok) return;
-    const body = await upstream.text();
+    const body = trimBody(path, dropDesc, await upstream.text());
+    const contentType = upstream.headers.get("Content-Type") ?? "application/json";
     cache.set(cacheKey, {
       expires: Date.now() + CACHE_TTL_MS,
       staleUntil: Date.now() + STALE_TTL_MS,
       status: upstream.status,
       body,
-      contentType: upstream.headers.get("Content-Type") ?? "application/json",
+      contentType,
     });
+    l2Put(cacheKey, upstream.status, body, contentType);
   } catch {
     // keep existing stale entry; next request will SWR again.
   }
@@ -318,6 +479,9 @@ Deno.serve(async (req) => {
   const target = `${GATEWAY_URL}/${path}${qs ? `?${qs}` : ""}`;
   const cacheKey = target;
 
+  // A grade de listagem não usa `description`; a página de detalhe busca por slug.
+  const dropDesc = path === "products" && !forwarded.has("slug");
+
   /** Aplica o gate na saída. Corpo não-JSON com gate ativo → falha fechada. */
   const respond = (p: Payload): Response => {
     let body = p.body;
@@ -345,7 +509,7 @@ Deno.serve(async (req) => {
   };
 
   const now = Date.now();
-  const cached = cache.get(cacheKey);
+  let cached = cache.get(cacheKey);
   if (cached && cached.expires > now) {
     return respond({
       status: cached.status,
@@ -355,12 +519,32 @@ Deno.serve(async (req) => {
     });
   }
 
+  // L1 frio → L2 compartilhado. Outra instância pode ter pago o Woo há pouco:
+  // uma leitura de ~30-60ms substitui os 5-7s do upstream.
+  const shared = await l2Get(cacheKey);
+  if (shared) {
+    if (shared.expires > now) {
+      cache.set(cacheKey, shared); // hidrata o L1 (o memo do gate vem junto)
+      return respond({
+        status: shared.status,
+        body: shared.body,
+        contentType: shared.contentType,
+        cacheState: "HIT-DB",
+      });
+    }
+    // L2 velho porém mais novo que o L1 → vira o candidato a stale.
+    if (!cached || shared.staleUntil > cached.staleUntil) {
+      cache.set(cacheKey, shared);
+      cached = shared;
+    }
+  }
+
   // Stale-while-revalidate: serve stale immediately, kick off background refresh once.
   if (cached && cached.staleUntil > now) {
     if (!revalidating.has(cacheKey) && !inflight.has(cacheKey)) {
       revalidating.add(cacheKey);
       queueMicrotask(() => {
-        void revalidate(cacheKey, target).finally(() => revalidating.delete(cacheKey));
+        void revalidate(cacheKey, target, path, dropDesc).finally(() => revalidating.delete(cacheKey));
       });
     }
     return respond({
@@ -386,7 +570,7 @@ Deno.serve(async (req) => {
           method: "GET",
           headers: {
             Authorization: `Bearer ${LOVABLE_API_KEY}`,
-            "X-Connection-Api-Key": WOOCOMMERCE_API_KEY,
+            "X-Connection-Api-Key": WOOCOMMERCE_API_KEY ?? "",
           },
         });
         lastContentType = upstream.headers.get("Content-Type") ?? "application/json";
@@ -394,6 +578,7 @@ Deno.serve(async (req) => {
         lastStatus = upstream.status;
 
         if (upstream.ok) {
+          lastBody = trimBody(path, dropDesc, lastBody);
           cache.set(cacheKey, {
             expires: Date.now() + CACHE_TTL_MS,
             staleUntil: Date.now() + STALE_TTL_MS,
@@ -401,6 +586,7 @@ Deno.serve(async (req) => {
             body: lastBody,
             contentType: lastContentType,
           });
+          l2Put(cacheKey, upstream.status, lastBody, lastContentType);
           return {
             status: upstream.status,
             body: lastBody,
