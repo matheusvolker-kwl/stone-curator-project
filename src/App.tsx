@@ -100,6 +100,11 @@ const NotFound = lazy(() => import("./pages/NotFound.tsx"));
    é a página de serviços que a /parceria prometia. */
 const FavoritosCompartilhados = lazy(() => import("./pages/FavoritosCompartilhados.tsx"));
 
+/* Una Spa — duas portas, fora dos menus (tráfego por campanha/QR e time comercial).
+   /una = cliente final; /unaparceiros = B2B. Standalone, sem SiteLayout. */
+const Una = lazy(() => import("./pages/Una.tsx"));
+const UnaParceiros = lazy(() => import("./pages/UnaParceiros.tsx"));
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -146,6 +151,9 @@ const App = () => (
                   <Route path="/guia-de-composicao/composicoes" element={<GuiaComposicoes />} />
                   <Route path="/guia-de-composicao/refinar/:handle" element={<GuiaRefinar />} />
                   <Route path="/guia-de-composicao/finalizar" element={<Navigate to="/guia-de-composicao" replace />} />
+                  {/* Una Spa — standalone, sem SiteLayout e sem entrada nos menus */}
+                  <Route path="/una" element={<Una />} />
+                  <Route path="/unaparceiros" element={<UnaParceiros />} />
                   {/* Admin fora do SiteLayout — sem header/footer/FAB/carrinho da loja */}
                   <Route
                     path="/admin"
