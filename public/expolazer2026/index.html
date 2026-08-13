@@ -16,6 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;650;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
   <script type="module" crossorigin src="./assets/main-COAc-lz3.js"></script>
+  <script src="./lead-bridge.js" defer></script>
   <link rel="modulepreload" crossorigin href="./assets/lib-HT8_sMAV.js">
   <link rel="stylesheet" crossorigin href="./assets/lib-CB8DW46u.css">
   <script type="text/javascript">
@@ -494,6 +495,12 @@
             <label for="fNome">Nome<span aria-hidden="true"> *</span></label>
             <input id="fNome" name="nome" type="text" autocomplete="name" required placeholder="Seu nome" />
           </div>
+          <div class="form__field">
+            <label for="fZap">Seu WhatsApp<span aria-hidden="true"> *</span></label>
+            <input id="fZap" name="whatsapp" type="tel" autocomplete="tel" required placeholder="(11) 9 9999-9999" />
+          </div>
+          <!-- honeypot: humanos não veem; bot que preencher é descartado no servidor -->
+          <input name="site" type="text" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;height:0;width:0;opacity:0" />
           <div class="form__row">
             <div class="form__field">
               <label for="fEmpresa">Empresa</label>
