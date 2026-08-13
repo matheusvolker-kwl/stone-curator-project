@@ -241,7 +241,7 @@ const ESPECIAL: InstallationConfig = {
     {
       title: "Pedra Sonora — 30 kg",
       text:
-        "Acompanha o alto-falante marítimo (resistente ao tempo) já embutido — não é Bluetooth: a peça sai com cabo PP de 90 cm para ligar num receiver/amplificador, que não acompanha e é comprado à parte. Escolha a tensão do seu local no pedido: 127 V ou 220 V. Fale com a Western para indicarmos o receiver e a melhor instalação para a sua necessidade. Tomada abrigada e aterrada; deixe a peça apoiada, sem assentar com massa.",
+        "Acompanha o alto-falante marítimo (resistente ao tempo) já embutido — não é Bluetooth: a peça sai com cabo PP de 90 cm para ligar num receiver/amplificador, que não acompanha e é comprado à parte. A peça não tem voltagem: é caixa passiva, quem liga na tomada é o receiver, em ambiente abrigado. Fale com a Western para indicarmos o receiver e a melhor instalação para a sua necessidade. Deixe a peça apoiada, sem assentar com massa.",
     },
     {
       title: "Pedra Champanheira — 110 kg",
@@ -256,15 +256,15 @@ const ESPECIAL: InstallationConfig = {
   ],
   warnings: [
     {
-      title: "LED e receiver não acompanham — e a voltagem é escolhida no pedido",
+      title: "LED e receiver não acompanham",
       text:
-        "O spot da Pedra LED e o receiver da Pedra Sonora são comprados à parte. Para o LED, siga a especificação IP68 do passo acima — ou confirme com a Western o ideal para a sua instalação (submersa ou seca). A Pedra Sonora não é bivolt: informe 127 V ou 220 V na compra.",
+        "O spot da Pedra LED e o receiver da Pedra Sonora são comprados à parte. Para o LED, siga a especificação IP68 do passo acima, na tensão da sua rede (127 V ou 220 V) — ou confirme com a Western o ideal para a sua instalação (submersa ou seca). A Pedra Sonora não tem voltagem: é caixa passiva, ligada ao receiver por cabo.",
     },
     AVISO_ELETRICA,
     {
       title: "Não assente peças elétricas com massa",
       text:
-        "Qualquer item elétrico (LED, Sonora) exige eletricista habilitado, tomada aterrada e DR. Deixe as peças apoiadas ou encaixadas para facilitar a manutenção.",
+        "O LED exige eletricista habilitado, tomada aterrada e DR. Deixe as peças com componente embutido (LED, Sonora) apoiadas ou encaixadas para facilitar a manutenção.",
     },
   ],
   chapter: 3,

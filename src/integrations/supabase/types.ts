@@ -846,6 +846,30 @@ export type Database = {
         }
         Relationships: []
       }
+      woo_proxy_cache: {
+        Row: {
+          body: string
+          cache_key: string
+          content_type: string
+          fetched_at: string
+          status: number
+        }
+        Insert: {
+          body: string
+          cache_key: string
+          content_type?: string
+          fetched_at?: string
+          status: number
+        }
+        Update: {
+          body?: string
+          cache_key?: string
+          content_type?: string
+          fetched_at?: string
+          status?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       lead_conversion_funnel: {
