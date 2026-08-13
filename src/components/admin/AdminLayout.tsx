@@ -345,6 +345,25 @@ function Navegacao({
           <ExternalLink className="h-[18px] w-[18px] flex-shrink-0" aria-hidden="true" />
           Ver a loja
         </Link>
+        {/* Páginas Una — fora dos menus públicos; acesso do time por aqui. */}
+        <a
+          href="/una"
+          target="_blank"
+          rel="noreferrer"
+          className="tap-target flex items-center gap-3 rounded-lg px-3 text-[15px] text-western-stone-dark transition-colors hover:bg-western-cream/60 hover:text-western-green-deep"
+        >
+          <ExternalLink className="h-[18px] w-[18px] flex-shrink-0" aria-hidden="true" />
+          Una Spa — cliente
+        </a>
+        <a
+          href="/unaparceiros"
+          target="_blank"
+          rel="noreferrer"
+          className="tap-target flex items-center gap-3 rounded-lg px-3 text-[15px] text-western-stone-dark transition-colors hover:bg-western-cream/60 hover:text-western-green-deep"
+        >
+          <ExternalLink className="h-[18px] w-[18px] flex-shrink-0" aria-hidden="true" />
+          Una Spa — parceiros
+        </a>
       </div>
     </div>
   );
