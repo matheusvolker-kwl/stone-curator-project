@@ -95,7 +95,7 @@ export default function Index() {
     queryFn: async () => {
       const all = await fetchProducts(100);
       const skusOf = (p: (typeof all)[number]) =>
-        [p.node.sku, ...(p.node.variants?.edges ?? []).map((e) => e.node.sku)]
+        [...(p.node.variants?.edges ?? []).map((e) => e.node.sku)]
           .filter((s): s is string => !!s)
           .map((s) => s.toUpperCase());
       const picked = FEATURED_SKU_CODES.map((code) =>
