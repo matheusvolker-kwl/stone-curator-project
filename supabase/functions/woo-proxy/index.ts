@@ -479,8 +479,12 @@ Deno.serve(async (req) => {
   const target = `${GATEWAY_URL}/${path}${qs ? `?${qs}` : ""}`;
   const cacheKey = target;
 
-  // A grade de listagem não usa `description`; a página de detalhe busca por slug.
-  const dropDesc = path === "products" && !forwarded.has("slug");
+  // 12/08, INCIDENTE NA FEIRA: a descrição NÃO pode sair da listagem — as
+  // páginas de produto dos grupos de acabamento leem descrição/medidas do
+  // catálogo listado (adapter usa canonical.description), e derrubá-la apagou
+  // descrição, medidas e a seção de tamanho-real desses produtos. O corte de
+  // payload continua valendo para os ~65 campos fora do tipo WooProduct.
+  const dropDesc = false;
 
   /** Aplica o gate na saída. Corpo não-JSON com gate ativo → falha fechada. */
   const respond = (p: Payload): Response => {
