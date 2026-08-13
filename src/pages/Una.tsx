@@ -28,9 +28,9 @@ const MACROS = [
 ];
 
 const FORMA = [
-  { titulo: "Concha monolítica", sub: "Borda orgânica e assento esculpidos na própria peça." },
+  { titulo: "Concha monolítica", sub: "Revestida em Cristal Pool da borda ao fundo — uma única superfície, sem juntas." },
   { titulo: "Escada em lajes", sub: "Três lajes de pedra em cascata acompanham o conjunto." },
-  { titulo: "Até 6 pessoas", sub: "Assento contínuo modelado na concha." },
+  { titulo: "Até 6 pessoas", sub: "Banco contínuo modelado na concha, sem começo nem fim." },
   { titulo: "6 pontos de hidro", sub: "Dispositivos de 50 mm distribuídos no assento." },
   { titulo: "Água aquecida", sub: "Temperatura de spa o ano inteiro, dentro ou fora de casa." },
   { titulo: "Luz subaquática", sub: "2 LEDs RGB em inox 316, cor ao seu gosto." },
@@ -50,7 +50,7 @@ const TONS = [
 const AMBIENTES = [
   { img: "/una/amb-varanda-carbono.jpg", alt: "Una Spa em acabamento Carbono numa varanda", legenda: "Carbono, na varanda" },
   { img: "/una/amb-cobertura.jpg", alt: "Una Spa em tom claro numa cobertura com vista da cidade", legenda: "Tom claro, na cobertura" },
-  { img: "/una/amb-pergolado.jpg", alt: "Una Spa sob pergolado no fim de tarde", legenda: "Fim de tarde, sob o pergolado" },
+  { img: "/una/amb-pergolado.jpg", alt: "Una Spa em tom claro num deck ao fim de tarde, com a escada em lajes de pedra", legenda: "Fim de tarde, no deck" },
 ];
 
 const PASSOS = [
@@ -120,7 +120,7 @@ export default function Una() {
               Esculpido e pintado à mão, peça por peça.
             </h2>
             <p className="text-lg leading-[1.65] [text-wrap:pretty]">
-              O Una nasce no mesmo ateliê em Cajamar onde a Western esculpe pedra artesanal desde 1993. Por fora, rocha esculpida e pintada à mão em seis fases. Por dentro, o revestimento monolítico Nassau, da Cristal Pool — liso e contínuo ao toque da água. Nenhuma peça sai igual à outra.
+              O Una nasce no mesmo ateliê em Cajamar onde a Western esculpe pedra artesanal desde 1993. Por fora, rocha esculpida e pintada à mão em seis fases. Por dentro, uma concha monolítica revestida em Cristal Pool, acabamento Nassau: o revestimento começa na borda e desce contínuo — parede, banco e fundo numa única superfície, sem juntas, lisa ao toque da água. Nenhuma peça sai igual à outra.
             </p>
           </div>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
@@ -146,13 +146,14 @@ export default function Una() {
               Aquecida o ano inteiro. Sem cheiro de cloro.
             </h2>
             <p className="text-lg leading-relaxed text-[#E6DCC6]/80 [text-wrap:pretty]">
-              O assento contínuo fica todo submerso, o aquecimento mantém temperatura de spa em qualquer estação e o gerador de ozônio trata a água sem depender de cloro.
+              O banco contínuo — uma única curva que acompanha toda a concha, sem começo nem fim — fica todo submerso. O aquecimento mantém temperatura de spa em qualquer estação e o gerador de ozônio trata a água sem depender de cloro.
             </p>
           </div>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <img src="/una/macro-meia-agua.jpg" alt="Linha d'água do Una: praia granulada seca acima, interior liso submerso abaixo" loading="lazy" className="min-h-[340px] w-full rounded-2xl object-cover sm:col-span-2" />
-            <img src="/una/macro-assento.jpg" alt="Assento contínuo submerso sob água cristalina" loading="lazy" className="min-h-[300px] w-full rounded-2xl object-cover" />
+            <img src="/una/macro-meia-agua.jpg" alt="Linha d'água do Una: o mesmo revestimento granulado segue da borda para dentro da água" loading="lazy" className="min-h-[340px] w-full rounded-2xl object-cover sm:col-span-2" />
+            <img src="/una/macro-assento.jpg" alt="Banco contínuo submerso acompanhando toda a curva da concha" loading="lazy" className="min-h-[300px] w-full rounded-2xl object-cover" />
             <img src="/una/macro-vapor.jpg" alt="Vapor da água aquecida ao amanhecer" loading="lazy" className="min-h-[300px] w-full rounded-2xl object-cover" />
+            <img src="/una/interna-topo.jpg" alt="Una visto de cima: banco contínuo e poço central sob a água cristalina" loading="lazy" className="min-h-[340px] w-full rounded-2xl object-cover sm:col-span-2" />
           </div>
           <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-[#E6DCC6]/15 bg-[#E6DCC6]/15 sm:grid-cols-3">
             {[
@@ -240,26 +241,6 @@ export default function Una() {
                 Agendar visita ao ateliê
               </a>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Sob medida */}
-      <section className="relative overflow-hidden bg-[#14262B]">
-        <img src="/una/macro-casca.jpg" alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover opacity-[.38]" />
-        <span className="absolute inset-0 bg-[rgba(20,38,43,.55)]" />
-        <div className="relative mx-auto flex max-w-[1100px] flex-col gap-5 px-6 py-28 md:px-8">
-          <span className="text-sm font-semibold uppercase tracking-[.18em] text-[#B99F84]">Sob medida · mesmo ateliê</span>
-          <h2 className="max-w-[620px] font-display text-[clamp(28px,4vw,42px)] font-[650] leading-[1.12] tracking-[-.015em] text-[#F5EFE2] [text-wrap:pretty]">
-            O seu projeto pede outro Una? A gente esculpe.
-          </h2>
-          <p className="max-w-[560px] text-lg leading-relaxed text-[#E6DCC6]/85 [text-wrap:pretty]">
-            Jardim, cobertura, clínica ou hotel: o ateliê modela dimensões, tons e integração para o seu projeto — do render 3D à peça instalada, com equipe própria.
-          </p>
-          <div>
-            <a href="#contato" className="mt-2 inline-block rounded-[10px] bg-[#B99F84] px-8 py-4 text-[17px] font-bold text-[#14262B] transition-colors hover:bg-[#C9B098]">
-              Desenhar um Una sob medida
-            </a>
           </div>
         </div>
       </section>
