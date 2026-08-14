@@ -35,7 +35,7 @@ const FICHA = [
 const TONS = ["Quartzo", "Arenito", "Moledo · mais pedido", "Granito", "Carbono"];
 
 const DETALHES = [
-  { img: "/una/macro-degraus.jpg", alt: "Escada em lajes de pedra em cascata", legenda: "A escada em cascata" },
+  { img: "/una/macro-degraus-v2.jpg", alt: "Escada em lajes de pedra em cascata", legenda: "A escada em cascata" },
   { img: "/una/macro-jato.jpg", alt: "Hidrojato em funcionamento sob a água", legenda: "Hidro de 50 mm" },
   { img: "/una/macro-led.jpg", alt: "LED subaquático aceso", legenda: "LED em inox 316" },
   { img: "/una/macro-borda.jpg", alt: "Transição da casca esculpida para a praia da borda", legenda: "A borda pintada à mão" },
