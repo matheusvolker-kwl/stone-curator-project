@@ -8,7 +8,7 @@ import Seo from "@/components/seo/Seo";
  * A porta B2C correspondente é /una.
  */
 
-const WHATS = "https://wa.me/5511958967088";
+const WHATS = "https://wa.me/5511993403487";
 const ZAP_ESPECIFICAR = `${WHATS}?text=${encodeURIComponent("Sou parceiro e quero especificar o UNA Spa em um projeto.")}`;
 const ZAP_VISITA = `${WHATS}?text=${encodeURIComponent("Sou parceiro e quero agendar uma visita para ver o UNA Spa no ateliê.")}`;
 
@@ -250,7 +250,7 @@ export default function UnaParceiros() {
             <a href="/parceiro/cadastro" className="rounded-[10px] border-[1.5px] border-[#B9B09C] px-7 py-3.5 text-center text-base font-semibold transition-colors hover:bg-[#F7F3EE]">
               Ainda não é parceiro? Credencie-se
             </a>
-            <p className="text-sm leading-normal text-[#8C9A8E]">WhatsApp (11) 95896-7088 · cadastro com CNPJ, aprovação automática.</p>
+            <p className="text-sm leading-normal text-[#8C9A8E]">WhatsApp (11) 99340-3487 · cadastro com CNPJ, aprovação automática.</p>
           </div>
         </div>
       </section>
@@ -263,7 +263,7 @@ export default function UnaParceiros() {
             <a href="/una" className="text-sm font-semibold text-[#F2EDDF]/70 transition-colors hover:text-white">
               Página do cliente final → /una
             </a>
-            <span className="text-sm text-[#F2EDDF]/55">Ateliê próprio desde 1993 · Cajamar/SP · (11) 4448-2918 · @westernpools</span>
+            <span className="text-sm text-[#F2EDDF]/55">Ateliê próprio desde 1993 · Cajamar/SP · (11) 99340-3487 · @westernpools</span>
           </div>
         </div>
       </footer>
