@@ -12,7 +12,7 @@ import UnaLeadForm from "@/components/una/UnaLeadForm";
  * A porta B2B correspondente é /unaparceiros.
  */
 
-const WHATS = "https://wa.me/5511958967088";
+const WHATS = "https://wa.me/5511993403487";
 const ZAP_VISITA = `${WHATS}?text=${encodeURIComponent("Olá! Quero agendar uma visita para ver o UNA Spa de perto.")}`;
 
 const ANCORAS = [
@@ -497,9 +497,6 @@ export default function Una() {
             <div className="relative flex flex-col gap-5">
               <p className="font-display text-[26px] font-[650] tracking-[-.01em] text-[#F5EFE2]">Quero um UNA.</p>
               <UnaLeadForm />
-              <a href={ZAP_VISITA} target="_blank" rel="noreferrer" className="text-center text-[15px] font-semibold text-[#E6DCC6]/70 underline-offset-4 transition-colors hover:text-white hover:underline">
-                Prefiro ver de perto — agendar visita ao ateliê
-              </a>
             </div>
             <span className="una-noise" aria-hidden />
           </div>

@@ -9,7 +9,7 @@ import TurnstileWidget from "@/components/security/TurnstileWidget";
  * saídas pedidas pelo dono: seguir agora no WhatsApp ou aguardar o retorno.
  */
 
-const WHATS = "https://wa.me/5511958967088";
+const WHATS = "https://wa.me/5511993403487";
 
 const LOCAIS = ["Varanda", "Deck / jardim", "Cobertura", "Área interna", "Ainda não sei"] as const;
 
