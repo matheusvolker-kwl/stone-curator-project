@@ -41,10 +41,11 @@ export const BUSINESS = {
   // ateliê em texto novo usa BUSINESS.anosOperacao — não digite o número.
   anosOperacao: new Date().getFullYear() - 1993,
 
-  // Contato — oficial (decisão do dono, 2026-07-15). Tem WhatsApp (confirmado).
+  // Contato — oficial (decisão do dono, 2026-08-14): (11) 99340-3487 é o
+  // telefone/WhatsApp oficial da Western Store E do Una.
   // whatsappFabrica alimenta TODOS os botões de WhatsApp do site.
-  whatsappFabrica: "551144482918",
-  whatsappLabel: "(11) 4448-2918",
+  whatsappFabrica: "5511993403487",
+  whatsappLabel: "(11) 99340-3487",
   emailComercial: "atendimento@westernstore.com.br",
   emailSuporte: "atendimento@westernstore.com.br",
   emailNewsletter: "contato@westernpools.com.br",
