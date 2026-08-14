@@ -22,7 +22,7 @@ const ANCORAS = [
 
 const MACROS = [
   { img: "/una/macro-borda.jpg", alt: "Transição da casca esculpida para a praia da borda e a água", titulo: "Borda pintada à mão", sub: "Da casca esculpida à praia lisa onde a água encosta." },
-  { img: "/una/macro-degraus.jpg", alt: "Escada do Una Spa: três lajes de pedra em cascata", titulo: "Escada em lajes de pedra", sub: "Três lajes esculpidas, em cascata, acompanham a peça." },
+  { img: "/una/macro-degraus-v2.jpg", alt: "Escada do Una Spa: três lajes de pedra em cascata", titulo: "Escada em lajes de pedra", sub: "Três lajes esculpidas, em cascata, acompanham a peça." },
   { img: "/una/macro-jato.jpg", alt: "Hidrojato de 50 mm visto por baixo d'água", titulo: "Hidro de 50 mm", sub: "Seis pontos distribuídos no assento." },
   { img: "/una/macro-led.jpg", alt: "LED subaquático em inox 316", titulo: "LED em inox 316", sub: "Dois pontos, cor ao seu gosto." },
 ];
@@ -50,7 +50,7 @@ const TONS = [
 const AMBIENTES = [
   { img: "/una/amb-varanda-carbono.jpg", alt: "Una Spa em acabamento Carbono numa varanda", legenda: "Carbono, na varanda" },
   { img: "/una/amb-cobertura.jpg", alt: "Una Spa em tom claro numa cobertura com vista da cidade", legenda: "Tom claro, na cobertura" },
-  { img: "/una/amb-pergolado.jpg", alt: "Una Spa em tom claro num deck ao fim de tarde, com a escada em lajes de pedra", legenda: "Fim de tarde, no deck" },
+  { img: "/una/amb-pergolado-v2.jpg", alt: "Una Spa em tom claro num deck ao fim de tarde, com a escada em lajes de pedra", legenda: "Fim de tarde, no deck" },
 ];
 
 const PASSOS = [
@@ -150,8 +150,8 @@ export default function Una() {
             </p>
           </div>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <img src="/una/macro-meia-agua.jpg" alt="Linha d'água do Una: o mesmo revestimento granulado segue da borda para dentro da água" loading="lazy" className="min-h-[340px] w-full rounded-2xl object-cover sm:col-span-2" />
-            <img src="/una/macro-assento.jpg" alt="Banco contínuo submerso acompanhando toda a curva da concha" loading="lazy" className="min-h-[300px] w-full rounded-2xl object-cover" />
+            <img src="/una/macro-meia-agua-v2.jpg" alt="Linha d'água do Una: o mesmo revestimento granulado segue da borda para dentro da água" loading="lazy" className="min-h-[340px] w-full rounded-2xl object-cover sm:col-span-2" />
+            <img src="/una/macro-assento-v2.jpg" alt="Banco contínuo submerso acompanhando toda a curva da concha" loading="lazy" className="min-h-[300px] w-full rounded-2xl object-cover" />
             <img src="/una/macro-vapor.jpg" alt="Vapor da água aquecida ao amanhecer" loading="lazy" className="min-h-[300px] w-full rounded-2xl object-cover" />
             <img src="/una/interna-topo.jpg" alt="Una visto de cima: banco contínuo e poço central sob a água cristalina" loading="lazy" className="min-h-[340px] w-full rounded-2xl object-cover sm:col-span-2" />
           </div>
