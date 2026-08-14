@@ -201,7 +201,7 @@ export default function UnaParceiros() {
           </div>
           <div className="max-w-[860px] rounded-r-[10px] border-l-[3px] border-[#A68764] bg-white px-7 py-5">
             <p className="text-base leading-relaxed text-[#31463A] [text-wrap:pretty]">
-              <strong className="text-[#0F2918]">Garantia de 1 ano e um responsável só.</strong> Quem fabrica é quem instala — custo, prazo e responsabilidade num time único, com NF-e e atendimento humano pelo WhatsApp.
+              <strong className="text-[#0F2918]">Garantia de 5 anos e um responsável só.</strong> Quem fabrica é quem instala — custo, prazo e responsabilidade num time único, com NF-e e atendimento humano pelo WhatsApp.
             </p>
           </div>
         </div>
