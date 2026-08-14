@@ -21,7 +21,7 @@ const STATS = [
 
 const FICHA = [
   { titulo: "Concha monolítica", sub: "Borda orgânica e assento esculpidos na própria peça — nada é acessório." },
-  { titulo: "Escada em lajes de pedra", sub: "Três lajes esculpidas em cascata acompanham o conjunto." },
+  { titulo: "Produto artesanal", sub: "Criado artesanalmente pela Western para ser leve e resistente." },
   { titulo: "Dimensões", sub: "C 3,00 × L 2,00 × A 0,95 m — varandas, decks, coberturas e jardins compactos." },
   { titulo: "Até 6 pessoas", sub: "Banco contínuo modelado na concha, sem começo nem fim." },
   { titulo: "6 pontos de hidro · 50 mm", sub: "Distribuídos no assento." },
@@ -35,7 +35,7 @@ const FICHA = [
 const TONS = ["Quartzo", "Arenito", "Moledo · mais pedido", "Granito", "Carbono"];
 
 const DETALHES = [
-  { img: "/una/macro-degraus-v2.jpg", alt: "Escada em lajes de pedra em cascata", legenda: "A escada em cascata" },
+  { img: "/una/macro-degraus-v2.jpg", alt: "Escada de pedra esculpida em cascata", legenda: "A escada de pedra" },
   { img: "/una/macro-jato.jpg", alt: "Hidrojato em funcionamento sob a água", legenda: "Hidro de 50 mm" },
   { img: "/una/macro-led.jpg", alt: "LED subaquático aceso", legenda: "LED em inox 316" },
   { img: "/una/macro-borda.jpg", alt: "Transição da casca esculpida para a praia da borda", legenda: "A borda pintada à mão" },
@@ -91,7 +91,7 @@ export default function UnaParceiros() {
             <span className="text-sm font-semibold uppercase tracking-[.14em] text-[#7E6240]">Spa de pedra artesanal · linha pronta</span>
             <img src="/una/logos/cristal-petroleo.png" alt="Una Spa, interior Cristal Pool" className="w-[300px] max-w-full" />
             <p className="text-[19px] leading-relaxed text-[#31463A] [text-wrap:pretty]">
-              Concha, borda e banco esculpidos numa única forma contínua, pintada à mão no ateliê de Cajamar — com a escada em lajes de pedra que acompanha a peça. Por dentro, concha monolítica revestida em Cristal Pool (Nassau): o revestimento começa na borda e desce contínuo, sem juntas. A peça que segura o projeto — e a margem.
+              Concha, borda e banco esculpidos numa única forma contínua, pintada à mão no ateliê de Cajamar. Por dentro, concha monolítica revestida em Cristal Pool (Nassau): o revestimento começa na borda e desce contínuo, sem juntas. A peça que segura o projeto — e a margem.
             </p>
             <div className="flex flex-col gap-3 rounded-xl border-[1.5px] border-[#E7DFCE] bg-white px-6 py-5">
               <div className="flex items-baseline justify-between gap-3">
