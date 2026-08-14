@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { MessageCircle, Box, Hammer, Truck, ShieldCheck, Droplets, Sparkles, ThermometerSun } from "lucide-react";
 import Seo from "@/components/seo/Seo";
+import UnaLeadForm from "@/components/una/UnaLeadForm";
 
 /**
  * /una — landing do Una Spa para o cliente final (B2C).
@@ -11,7 +13,6 @@ import Seo from "@/components/seo/Seo";
  */
 
 const WHATS = "https://wa.me/5511958967088";
-const ZAP_QUERO = `${WHATS}?text=${encodeURIComponent("Olá! Quero um UNA Spa no meu projeto.")}`;
 const ZAP_VISITA = `${WHATS}?text=${encodeURIComponent("Olá! Quero agendar uma visita para ver o UNA Spa de perto.")}`;
 
 const ANCORAS = [
@@ -48,17 +49,11 @@ const TONS = [
   { key: "carbono", nome: "Carbono", sub: "O mais grave — quase noite." },
 ];
 
-const AMBIENTES = [
-  { img: "/una/amb-varanda-carbono.jpg", alt: "Una Spa em acabamento Carbono numa varanda", legenda: "Carbono, na varanda" },
-  { img: "/una/amb-cobertura.jpg", alt: "Una Spa em tom claro numa cobertura com vista da cidade", legenda: "Tom claro, na cobertura" },
-  { img: "/una/amb-pergolado-v2.jpg", alt: "Una Spa em tom claro num deck ao fim de tarde, com a escada de pedra esculpida", legenda: "Fim de tarde, no deck" },
-];
-
 const PASSOS = [
-  { titulo: "Conversa no WhatsApp", sub: "Você conta onde o Una vai viver; o time responde no mesmo dia útil." },
-  { titulo: "Projeto e render 3D", sub: "Você vê e aprova a peça no seu espaço antes da produção." },
-  { titulo: "Produção no ateliê", sub: "Esculpido e pintado à mão em Cajamar, no tom escolhido." },
-  { titulo: "Entrega e instalação", sub: "Equipe própria Western instala — sem escavação, direto no deck, laje ou jardim." },
+  { Icon: MessageCircle, titulo: "Conversa no WhatsApp", sub: "Você conta onde o Una vai viver; o time responde no mesmo dia útil." },
+  { Icon: Box, titulo: "Projeto e render 3D", sub: "Você vê e aprova a peça no seu espaço antes da produção." },
+  { Icon: Hammer, titulo: "Produção no ateliê", sub: "Esculpido e pintado à mão em Cajamar, no tom escolhido." },
+  { Icon: Truck, titulo: "Entrega e instalação", sub: "Equipe própria Western instala — sem escavação, direto no deck, laje ou jardim." },
 ];
 
 /* Entrada suave em scroll: fade + deslize de 18px, uma vez só (ASMR, nada "estoura"). */
@@ -97,6 +92,9 @@ function Voz({ children, clara = false }: { children: ReactNode; clara?: boolean
 const UNA_CSS = `
   .una-root ::selection { background: #B99F84; color: #14262B; }
   .una-voz { font-family: "Sentient", Georgia, serif; font-style: italic; font-weight: 400; }
+  .una-serif { font-family: "Sentient", Georgia, serif; font-weight: 500; letter-spacing: -0.01em; }
+  .una-noise { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
   .una-reveal { opacity: 0; transform: translateY(18px); transition: opacity .85s ease, transform .85s cubic-bezier(.22,.61,.36,1); }
   .una-reveal--in { opacity: 1; transform: none; }
   .una-kenburns { animation: unaKenburns 18s ease-in-out infinite alternate; transform-origin: 52% 42%; }
@@ -122,6 +120,15 @@ export default function Una() {
     return () => {
       document.documentElement.style.scrollBehavior = anterior;
     };
+  }, []);
+
+  // CTA fixo no mobile: aparece depois que o hero sai de cena.
+  const [ctaFixo, setCtaFixo] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setCtaFixo(window.scrollY > 560);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
@@ -181,7 +188,37 @@ export default function Una() {
             </Reveal>
           </div>
         </div>
+        <span className="una-noise" aria-hidden />
       </div>
+
+      {/* Em movimento — o vídeo da Expolazer */}
+      <section className="relative overflow-hidden bg-[#14262B]">
+        <div className="relative mx-auto flex max-w-[1100px] flex-col items-center gap-8 px-6 pb-28 pt-24 md:px-8">
+          <Reveal className="flex max-w-[560px] flex-col items-center gap-3 text-center">
+            <span className="text-sm font-semibold uppercase tracking-[.18em] text-[#B99F84]">Em movimento</span>
+            <h2 className="font-display text-[clamp(26px,3.6vw,38px)] font-[650] leading-[1.12] tracking-[-.015em] text-[#F5EFE2]">
+              De perto, como quem visita o estande.
+            </h2>
+            <Voz clara>/ água, pedra e luz — ao vivo.</Voz>
+          </Reveal>
+          <Reveal delay={140} className="w-full">
+            <div className="mx-auto w-full max-w-[420px] overflow-hidden rounded-[26px] shadow-[0_40px_90px_-40px_rgba(0,0,0,.7)] ring-1 ring-[#E6DCC6]/10">
+              <video
+                src="/una/video/una-em-acao.mp4"
+                poster="/una/video/poster-una-video.jpg"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                className="block aspect-[9/16] w-full object-cover"
+                aria-label="Vídeo do Una Spa em funcionamento, filmado de perto na Expolazer 2026"
+              />
+            </div>
+          </Reveal>
+        </div>
+        <span className="una-noise" aria-hidden />
+      </section>
 
       {/* A peça */}
       <section id="peca" className="bg-[#E6DCC6]">
@@ -213,7 +250,7 @@ export default function Una() {
       </section>
 
       {/* A água */}
-      <section id="agua" className="bg-[#14262B]">
+      <section id="agua" className="relative overflow-hidden bg-[#14262B]">
         <div className="mx-auto flex max-w-[1100px] flex-col gap-12 px-6 py-24 md:px-8">
           <Reveal className="flex max-w-[640px] flex-col gap-3.5">
             <span className="text-sm font-semibold uppercase tracking-[.18em] text-[#B99F84]">A água</span>
@@ -247,23 +284,29 @@ export default function Una() {
               </div>
             </Reveal>
           </div>
-          <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-[#E6DCC6]/15 bg-[#E6DCC6]/15 sm:grid-cols-3">
-            {[
-              { titulo: "Aquecida o ano inteiro", sub: "Dentro ou fora de casa, verão e inverno." },
-              { titulo: "Ozônio, sem cloro", sub: "Tratamento de fábrica, água leve na pele." },
-              { titulo: "Hidro + luz", sub: "Seis jatos no assento, dois LEDs na água." },
-            ].map((f) => (
-              <div key={f.titulo} className="bg-[#14262B] px-6 py-6">
-                <p className="font-display text-lg font-[650] text-[#E6DCC6]">{f.titulo}</p>
-                <p className="text-[15px] leading-normal text-[#E6DCC6]/70">{f.sub}</p>
-              </div>
-            ))}
-          </div>
+          <Reveal>
+            <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-[#E6DCC6]/15 bg-[#E6DCC6]/15 sm:grid-cols-3">
+              {[
+                { Icon: ThermometerSun, titulo: "Aquecida o ano inteiro", sub: "Dentro ou fora de casa, verão e inverno." },
+                { Icon: Droplets, titulo: "Ozônio, sem cloro", sub: "Tratamento de fábrica, água leve na pele." },
+                { Icon: Sparkles, titulo: "Hidro + luz", sub: "Seis jatos no assento, dois LEDs na água." },
+              ].map((f) => (
+                <div key={f.titulo} className="flex items-start gap-3.5 bg-[#14262B] px-6 py-6">
+                  <f.Icon className="mt-1 h-5 w-5 shrink-0 text-[#B99F84]" strokeWidth={1.75} />
+                  <div>
+                    <p className="font-display text-lg font-[650] text-[#E6DCC6]">{f.titulo}</p>
+                    <p className="text-[15px] leading-normal text-[#E6DCC6]/70">{f.sub}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Reveal>
         </div>
+        <span className="una-noise" aria-hidden />
       </section>
 
       {/* O que vem na forma */}
-      <section className="bg-[#1B3640]">
+      <section className="relative overflow-hidden bg-[#1B3640]">
         <div className="mx-auto flex max-w-[1100px] flex-col gap-12 px-6 py-24 md:px-8">
           <Reveal className="flex max-w-[640px] flex-col gap-3.5">
             <span className="text-sm font-semibold uppercase tracking-[.18em] text-[#B99F84]">O que vem na forma</span>
@@ -331,19 +374,45 @@ export default function Una() {
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {AMBIENTES.map((a, i) => (
-              <Reveal key={a.legenda} delay={i * 90}>
-                <figure className="una-card relative m-0 min-h-[340px] overflow-hidden rounded-2xl">
-                  <img src={a.img} alt={a.alt} loading="lazy" className="una-zoom absolute inset-0 h-full w-full object-cover" />
-                  <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-b from-transparent to-[rgba(20,38,43,.72)] px-5 pb-4 pt-14">
-                    <p className="text-[15px] font-semibold text-[#E6DCC6]">{a.legenda}</p>
-                  </figcaption>
-                </figure>
-              </Reveal>
-            ))}
+        </div>
+      </section>
+
+      {/* Revestimento interno Cristal Pool Nassau */}
+      <section className="relative overflow-hidden bg-[#14262B]">
+        <div className="relative mx-auto flex max-w-[1100px] flex-col gap-12 px-6 py-24 md:px-8">
+          <Reveal className="flex max-w-[660px] flex-col gap-4">
+            <span className="text-sm font-semibold uppercase tracking-[.18em] text-[#B99F84]">Por dentro</span>
+            <h2 className="font-display text-[clamp(28px,4vw,42px)] font-[650] leading-[1.1] tracking-[-.015em] text-[#F5EFE2]">
+              Revestimento interno Cristal Pool, acabamento Nassau.
+            </h2>
+            <p className="text-lg leading-relaxed text-[#E6DCC6]/80 [text-wrap:pretty]">
+              A concha monolítica do Una é revestida em Cristal Pool — o mesmo revestimento das piscinas de alto padrão. O acabamento Nassau começa na borda e desce contínuo: parede, banco e fundo numa única superfície, sem juntas, lisa ao toque da água.
+            </p>
+            <Voz clara>/ por fora, Western. por dentro, Nassau.</Voz>
+            <img src="/expolazer2026/img/logo-cristalpool-branco.png" alt="Cristal Pool" loading="lazy" className="mt-1 h-9 w-auto self-start opacity-90" />
+          </Reveal>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <Reveal>
+              <figure className="una-card relative m-0 min-h-[380px] overflow-hidden rounded-2xl">
+                <img src="/una/macro-borda.jpg" alt="Transição da casca esculpida Western para a praia da borda e a água" loading="lazy" className="una-zoom absolute inset-0 h-full w-full object-cover" />
+                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-b from-transparent to-[rgba(20,38,43,.82)] px-6 pb-5 pt-16">
+                  <p className="text-base font-semibold text-[#E6DCC6]">Onde os dois mundos se encontram</p>
+                  <p className="text-[15px] text-[#E6DCC6]/75">A casca esculpida vira praia — e a praia vira água.</p>
+                </figcaption>
+              </figure>
+            </Reveal>
+            <Reveal delay={110}>
+              <figure className="una-card relative m-0 min-h-[380px] overflow-hidden rounded-2xl">
+                <img src="/una/macro-casca.jpg" alt="Textura da casca de rocha esculpida e pintada à mão em luz rasante" loading="lazy" className="una-zoom absolute inset-0 h-full w-full object-cover" />
+                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-b from-transparent to-[rgba(20,38,43,.82)] px-6 pb-5 pt-16">
+                  <p className="text-base font-semibold text-[#E6DCC6]">A casca, de perto</p>
+                  <p className="text-[15px] text-[#E6DCC6]/75">Esculpida e pintada à mão em seis fases, no ateliê.</p>
+                </figcaption>
+              </figure>
+            </Reveal>
           </div>
         </div>
+        <span className="una-noise" aria-hidden />
       </section>
 
       {/* Visto de perto */}
@@ -352,8 +421,8 @@ export default function Una() {
           <img src="/una/refoto-estande.jpg" alt="Una Spa em exposição no estande Western" loading="lazy" className="min-h-[400px] w-full rounded-2xl object-cover" />
           <div className="flex flex-col gap-4">
             <span className="text-sm font-semibold uppercase tracking-[.18em] text-[#7E6240]">Visto de perto</span>
-            <h2 className="font-display text-[clamp(28px,4vw,40px)] font-[650] leading-[1.12] tracking-[-.015em] text-[#1B3640] [text-wrap:pretty]">
-              A peça em que a Expolazer entrou.
+            <h2 className="una-serif text-[clamp(30px,4.2vw,44px)] leading-[1.12] text-[#1B3640] [text-wrap:pretty]">
+              O grande sucesso da Expolazer 2026.
             </h2>
             <p className="text-lg leading-relaxed [text-wrap:pretty]">
               O Una estreou no estande Western na Expolazer 2026 — e segue em exposição no ateliê, em Cajamar. Se quiser sentir a pedra antes de decidir, é só agendar.
@@ -373,25 +442,33 @@ export default function Una() {
           <div className="flex max-w-[680px] flex-col gap-3.5">
             <span className="text-sm font-semibold uppercase tracking-[.18em] text-[#7E6240]">Como funciona</span>
             <h2 className="font-display text-[clamp(28px,4vw,42px)] font-[650] leading-[1.1] tracking-[-.015em] text-[#1B3640]">
-              Do primeiro oi à água aquecida.
+              Um novo conceito de spa. Diferente de tudo.
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {PASSOS.map((p, i) => (
               <Reveal key={p.titulo} delay={i * 80}>
-                <div className="flex h-full flex-col gap-2 rounded-[14px] bg-white px-7 py-6">
-                  <span className="font-display text-[15px] font-[650] tracking-[.08em] text-[#7E6240]">0{i + 1}</span>
+                <div className="flex h-full flex-col gap-2.5 rounded-[14px] bg-white px-7 py-6 shadow-[0_18px_40px_-28px_rgba(20,38,43,.4)]">
+                  <div className="flex items-center justify-between">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#E6DCC6]/70">
+                      <p.Icon className="h-5 w-5 text-[#7E6240]" strokeWidth={1.75} />
+                    </span>
+                    <span className="font-display text-[15px] font-[650] tracking-[.08em] text-[#B99F84]">0{i + 1}</span>
+                  </div>
                   <p className="text-[17px] font-semibold text-[#1B3640]">{p.titulo}</p>
                   <p className="text-base leading-normal">{p.sub}</p>
                 </div>
               </Reveal>
             ))}
           </div>
-          <div className="max-w-[860px] rounded-r-[10px] border-l-[3px] border-[#B99F84] bg-white px-7 py-5">
-            <p className="text-base leading-relaxed [text-wrap:pretty]">
-              <strong className="text-[#1B3640]">Um responsável só, do início ao fim.</strong> Quem fabrica é quem instala: garantia de 1 ano, NF-e e atendimento humano pelo WhatsApp.
-            </p>
-          </div>
+          <Reveal>
+            <div className="flex max-w-[860px] items-start gap-4 rounded-r-[10px] border-l-[3px] border-[#B99F84] bg-white px-7 py-5 shadow-[0_18px_40px_-28px_rgba(20,38,43,.4)]">
+              <ShieldCheck className="mt-0.5 h-6 w-6 shrink-0 text-[#7E6240]" strokeWidth={1.75} />
+              <p className="text-base leading-relaxed [text-wrap:pretty]">
+                <strong className="text-[#1B3640]">Garantia de 5 anos e um responsável só.</strong> Quem fabrica é quem instala: NF-e e atendimento humano pelo WhatsApp, do primeiro contato à água aquecida.
+              </p>
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -400,7 +477,7 @@ export default function Una() {
         <div className="mx-auto grid max-w-[1100px] grid-cols-1 items-center gap-14 px-6 py-24 md:grid-cols-2 md:px-8">
           <div className="flex flex-col gap-5">
             <img src="/una/logos/cristal-petroleo.png" alt="Una Spa, interior Cristal Pool" className="w-[260px]" />
-            <h2 className="font-display text-[clamp(28px,4vw,40px)] font-[650] leading-[1.12] tracking-[-.015em] text-[#1B3640] [text-wrap:pretty]">
+            <h2 className="una-serif text-[clamp(30px,4.2vw,44px)] leading-[1.12] text-[#1B3640] [text-wrap:pretty]">
               Série 2026: vinte peças, numeradas.
             </h2>
             <p className="text-lg leading-relaxed [text-wrap:pretty]">
@@ -416,26 +493,32 @@ export default function Una() {
               ))}
             </ul>
           </div>
-          <div className="flex flex-col gap-4 rounded-[18px] bg-[#1B3640] px-10 py-11">
-            <p className="font-display text-[26px] font-[650] tracking-[-.01em] text-[#F5EFE2]">Quero um UNA.</p>
-            <p className="text-base leading-relaxed text-[#E6DCC6]/80">
-              A conversa segue no WhatsApp oficial da Western — a mensagem já vai montada.
-            </p>
-            <a href={ZAP_QUERO} target="_blank" rel="noreferrer" className="rounded-[10px] bg-[#B99F84] px-7 py-4 text-center text-[17px] font-bold text-[#14262B] transition-colors hover:bg-[#C9B098]">
-              Quero um UNA
-            </a>
-            <a href={ZAP_VISITA} target="_blank" rel="noreferrer" className="rounded-[10px] border-[1.5px] border-[#E6DCC6]/45 px-7 py-3.5 text-center text-base font-semibold text-[#E6DCC6] transition-colors hover:bg-[#E6DCC6]/10">
-              Prefiro ver de perto — agendar visita
-            </a>
-            <p className="text-sm leading-normal text-[#E6DCC6]/60">
-              WhatsApp (11) 95896-7088 · resposta no mesmo dia útil. Usamos seus dados só para este atendimento.
-            </p>
+          <div className="relative overflow-hidden rounded-[18px] bg-[#1B3640] px-8 py-10 shadow-[0_40px_90px_-45px_rgba(20,38,43,.9)] md:px-10">
+            <div className="relative flex flex-col gap-5">
+              <p className="font-display text-[26px] font-[650] tracking-[-.01em] text-[#F5EFE2]">Quero um UNA.</p>
+              <UnaLeadForm />
+              <a href={ZAP_VISITA} target="_blank" rel="noreferrer" className="text-center text-[15px] font-semibold text-[#E6DCC6]/70 underline-offset-4 transition-colors hover:text-white hover:underline">
+                Prefiro ver de perto — agendar visita ao ateliê
+              </a>
+            </div>
+            <span className="una-noise" aria-hidden />
           </div>
         </div>
       </section>
 
+      {/* CTA fixo — só mobile, depois do hero */}
+      <div
+        className={`fixed inset-x-0 bottom-0 z-40 border-t border-[#E6DCC6]/15 bg-[#14262B]/92 px-4 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-2.5 backdrop-blur-md transition-transform duration-500 md:hidden ${
+          ctaFixo ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
+        <a href="#contato" className="block rounded-[10px] bg-[#B99F84] px-6 py-3.5 text-center text-base font-bold text-[#14262B] shadow-[0_10px_24px_-12px_rgba(0,0,0,.6)]">
+          Quero um UNA
+        </a>
+      </div>
+
       {/* Footer */}
-      <footer className="bg-[#14262B]">
+      <footer className="bg-[#14262B] pb-16 md:pb-0">
         <div className="mx-auto flex max-w-[1100px] flex-wrap items-center justify-between gap-7 px-6 py-14 md:px-8">
           <div className="flex items-center gap-5">
             <img src="/una/logos/simbolo-areia.png" alt="" aria-hidden className="h-11 w-auto" />
