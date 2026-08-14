@@ -95,8 +95,8 @@ export default function UnaParceiros() {
             </p>
             <div className="flex flex-col gap-3 rounded-xl border-[1.5px] border-[#E7DFCE] bg-white px-6 py-5">
               <div className="flex items-baseline justify-between gap-3">
-                <span className="text-base font-semibold">Tabela cliente final</span>
-                <span className="text-base text-[#31463A]">a partir de R$ 98.000</span>
+                <span className="text-base font-semibold">Série 2026</span>
+                <span className="text-base text-[#31463A]">20 peças numeradas</span>
               </div>
               <span className="h-px bg-[#E7DFCE]" />
               <div className="flex items-baseline justify-between gap-3">
