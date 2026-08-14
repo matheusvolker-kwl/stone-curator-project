@@ -129,7 +129,7 @@ export default function Una() {
       <style>{UNA_CSS}</style>
       <Seo
         title="Una Spa — spa de pedra artesanal, by Western"
-        description="Concha, borda e assento esculpidos numa única forma contínua. Água aquecida o ano inteiro, hidro, LED e tratamento sem cloro. A partir de R$ 98.000 — varandas, decks e jardins."
+        description="Concha, borda e assento esculpidos numa única forma contínua. Água aquecida o ano inteiro, hidro, LED e tratamento sem cloro. Série 2026 limitada a 20 peças numeradas."
         path="/una"
         image="https://westernstore.com.br/una/capa-una.jpg"
       />
@@ -177,7 +177,7 @@ export default function Una() {
               </div>
             </Reveal>
             <Reveal delay={430}>
-              <p className="text-[15px] text-[#E6DCC6]/55">3,00 × 2,00 m · até 6 pessoas · a partir de R$ 98.000</p>
+              <p className="text-[15px] text-[#E6DCC6]/55">3,00 × 2,00 m · até 6 pessoas · série 2026 limitada a 20 peças</p>
             </Reveal>
           </div>
         </div>
@@ -401,14 +401,12 @@ export default function Una() {
           <div className="flex flex-col gap-5">
             <img src="/una/logos/cristal-petroleo.png" alt="Una Spa, interior Cristal Pool" className="w-[260px]" />
             <h2 className="font-display text-[clamp(28px,4vw,40px)] font-[650] leading-[1.12] tracking-[-.015em] text-[#1B3640] [text-wrap:pretty]">
-              A partir de R$ 98.000, direto do ateliê.
+              Série 2026: vinte peças, numeradas.
             </h2>
             <p className="text-lg leading-relaxed [text-wrap:pretty]">
-              Cada Una é produzido por encomenda, no acabamento e na configuração do seu projeto. Conte onde ele vai viver e o time responde no mesmo dia útil — sem fila, sem robô.
+              O lote inicial previa dez Unas neste ano — a estreia na Expolazer pediu mais. Cada peça sai numerada do ateliê, produzida por encomenda no acabamento e na configuração do seu projeto. Conte onde ele vai viver e o time responde no mesmo dia útil — sem fila, sem robô.
             </p>
-            <p className="text-[15px] leading-normal text-[#6B7A7E]">
-              O valor não inclui frete e instalação — cotados por projeto, para o seu endereço.
-            </p>
+            <Voz>/ vinte peças por ano. nenhuma igual.</Voz>
             <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
               {["Orçamento e prazo direto do ateliê", "Projeto aprovado em render 3D antes da produção", "Instalação com equipe própria Western"].map((li) => (
                 <li key={li} className="flex gap-2.5 text-base">
