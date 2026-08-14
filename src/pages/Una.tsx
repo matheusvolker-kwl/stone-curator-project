@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Seo from "@/components/seo/Seo";
 
 /**
@@ -22,14 +23,14 @@ const ANCORAS = [
 
 const MACROS = [
   { img: "/una/macro-borda.jpg", alt: "Transição da casca esculpida para a praia da borda e a água", titulo: "Borda pintada à mão", sub: "Da casca esculpida à praia lisa onde a água encosta." },
-  { img: "/una/macro-degraus-v2.jpg", alt: "Escada do Una Spa: três lajes de pedra em cascata", titulo: "Escada em lajes de pedra", sub: "Três lajes esculpidas, em cascata, acompanham a peça." },
+  { img: "/una/macro-degraus-v2.jpg", alt: "Escada do Una Spa: três degraus de pedra esculpida", titulo: "Escada de pedra", sub: "Três degraus esculpidos à mão acompanham a peça." },
   { img: "/una/macro-jato.jpg", alt: "Hidrojato de 50 mm visto por baixo d'água", titulo: "Hidro de 50 mm", sub: "Seis pontos distribuídos no assento." },
   { img: "/una/macro-led.jpg", alt: "LED subaquático em inox 316", titulo: "LED em inox 316", sub: "Dois pontos, cor ao seu gosto." },
 ];
 
 const FORMA = [
   { titulo: "Concha monolítica", sub: "Revestida em Cristal Pool da borda ao fundo — uma única superfície, sem juntas." },
-  { titulo: "Escada em lajes", sub: "Três lajes de pedra em cascata acompanham o conjunto." },
+  { titulo: "Produto artesanal", sub: "Criado à mão pela Western para ser leve e resistente." },
   { titulo: "Até 6 pessoas", sub: "Banco contínuo modelado na concha, sem começo nem fim." },
   { titulo: "6 pontos de hidro", sub: "Dispositivos de 50 mm distribuídos no assento." },
   { titulo: "Água aquecida", sub: "Temperatura de spa o ano inteiro, dentro ou fora de casa." },
@@ -40,17 +41,17 @@ const FORMA = [
 ];
 
 const TONS = [
-  { nome: "Quartzo", cor: "#DDD5C4", sub: "Quase branco — a luz que a pedra devolve." },
-  { nome: "Arenito", cor: "#C6A882", sub: "Quente e dourado, tom de praia." },
-  { nome: "Moledo", cor: "#9B8468", sub: "O mais pedido do ateliê.", destaque: true },
-  { nome: "Granito", cor: "#8A8B85", sub: "Cinza mineral, sóbrio." },
-  { nome: "Carbono", cor: "#3E4345", sub: "O mais grave — quase noite." },
+  { key: "quartzo", nome: "Quartzo", sub: "Quase branco — a luz que a pedra devolve." },
+  { key: "arenito", nome: "Arenito", sub: "Quente e dourado, tom de praia." },
+  { key: "moledo", nome: "Moledo", sub: "O mais pedido do ateliê.", destaque: true },
+  { key: "granito", nome: "Granito", sub: "Cinza mineral, sóbrio." },
+  { key: "carbono", nome: "Carbono", sub: "O mais grave — quase noite." },
 ];
 
 const AMBIENTES = [
   { img: "/una/amb-varanda-carbono.jpg", alt: "Una Spa em acabamento Carbono numa varanda", legenda: "Carbono, na varanda" },
   { img: "/una/amb-cobertura.jpg", alt: "Una Spa em tom claro numa cobertura com vista da cidade", legenda: "Tom claro, na cobertura" },
-  { img: "/una/amb-pergolado-v2.jpg", alt: "Una Spa em tom claro num deck ao fim de tarde, com a escada em lajes de pedra", legenda: "Fim de tarde, no deck" },
+  { img: "/una/amb-pergolado-v2.jpg", alt: "Una Spa em tom claro num deck ao fim de tarde, com a escada de pedra esculpida", legenda: "Fim de tarde, no deck" },
 ];
 
 const PASSOS = [
@@ -61,6 +62,9 @@ const PASSOS = [
 ];
 
 export default function Una() {
+  const [tomKey, setTomKey] = useState("moledo");
+  const tom = TONS.find((t) => t.key === tomKey) ?? TONS[2];
+
   return (
     <div className="flex min-h-screen flex-col bg-[#E6DCC6] font-sans text-[#3E5058]">
       <Seo
@@ -96,7 +100,7 @@ export default function Una() {
               Água, pedra e luz em uma única forma.
             </h1>
             <p className="max-w-[540px] text-[19px] leading-relaxed text-[#E6DCC6]/85 [text-wrap:pretty]">
-              UNA vem de unidade: concha, borda e assento esculpidos numa única forma contínua, com a escada em lajes de pedra que acompanha a peça. Água aquecida o ano inteiro, dentro ou fora de casa.
+              UNA vem de unidade: concha, borda e assento numa única forma contínua. Água aquecida o ano inteiro, dentro ou fora de casa.
             </p>
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <a href="#contato" className="rounded-[10px] bg-[#B99F84] px-8 py-4 text-[17px] font-bold text-[#14262B] transition-colors hover:bg-[#C9B098]">
@@ -151,9 +155,8 @@ export default function Una() {
           </div>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <img src="/una/macro-meia-agua-v2.jpg" alt="Linha d'água do Una: o mesmo revestimento granulado segue da borda para dentro da água" loading="lazy" className="min-h-[340px] w-full rounded-2xl object-cover sm:col-span-2" />
-            <img src="/una/macro-assento-v2.jpg" alt="Banco contínuo submerso acompanhando toda a curva da concha" loading="lazy" className="min-h-[300px] w-full rounded-2xl object-cover" />
             <img src="/una/macro-vapor.jpg" alt="Vapor da água aquecida ao amanhecer" loading="lazy" className="min-h-[300px] w-full rounded-2xl object-cover" />
-            <img src="/una/interna-topo.jpg" alt="Una visto de cima: banco contínuo e poço central sob a água cristalina" loading="lazy" className="min-h-[340px] w-full rounded-2xl object-cover sm:col-span-2" />
+            <img src="/una/interna-topo.jpg" alt="Una visto de cima: banco contínuo e poço central sob a água cristalina" loading="lazy" className="min-h-[300px] w-full rounded-2xl object-cover" />
           </div>
           <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-[#E6DCC6]/15 bg-[#E6DCC6]/15 sm:grid-cols-3">
             {[
@@ -200,16 +203,42 @@ export default function Una() {
               Do tom mais luminoso ao mais grave, todos pintados à mão no ateliê. Escolha o seu — ele acompanha o projeto.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-5 md:grid-cols-5">
-            {TONS.map((t) => (
-              <div key={t.nome} className={`flex flex-col overflow-hidden rounded-[14px] bg-white ${t.destaque ? "outline outline-2 outline-offset-2 outline-[#B99F84]" : ""}`}>
-                <div className="h-[110px]" style={{ background: t.cor }} />
-                <div className="px-5 py-4">
-                  <p className="font-display text-lg font-[650] text-[#1B3640]">{t.nome}</p>
-                  <p className="text-[15px] leading-normal text-[#6B7A7E]">{t.sub}</p>
-                </div>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1.5fr_1fr]">
+            <figure className="relative m-0 overflow-hidden rounded-2xl bg-[#D8CDB6]">
+              <img
+                key={tom.key}
+                src={`/una/tons/spa-${tom.key}.jpg`}
+                alt={`Una Spa no tom ${tom.nome}`}
+                className="aspect-[4/3] w-full object-cover"
+              />
+              <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-b from-transparent to-[rgba(20,38,43,.72)] px-6 pb-5 pt-16">
+                <p className="font-display text-xl font-[650] text-[#F5EFE2]">{tom.nome}</p>
+                <p className="text-[15px] text-[#E6DCC6]/80">{tom.sub}</p>
+              </figcaption>
+            </figure>
+            <div className="flex flex-col gap-2.5" role="tablist" aria-label="Tons do Una">
+              {TONS.map((t) => (
+                <button
+                  key={t.key}
+                  type="button"
+                  role="tab"
+                  aria-selected={t.key === tomKey}
+                  onClick={() => setTomKey(t.key)}
+                  className={`flex items-center gap-4 rounded-[14px] border-2 bg-white px-4 py-3 text-left transition-all ${
+                    t.key === tomKey ? "border-[#B99F84] shadow-[0_6px_18px_rgba(20,38,43,.12)]" : "border-transparent hover:border-[#D8CDB6]"
+                  }`}
+                >
+                  <img src={`/una/tons/tex-${t.key}.webp`} alt="" aria-hidden className="h-12 w-12 shrink-0 rounded-full object-cover" />
+                  <span className="flex flex-col">
+                    <span className="font-display text-[17px] font-[650] leading-tight text-[#1B3640]">
+                      {t.nome}
+                      {t.destaque ? <span className="ml-2 rounded-full bg-[#E6DCC6] px-2 py-0.5 text-[11px] font-bold uppercase tracking-[.08em] text-[#7E6240]">mais pedido</span> : null}
+                    </span>
+                    <span className="text-[14px] leading-snug text-[#6B7A7E]">{t.sub}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {AMBIENTES.map((a) => (
