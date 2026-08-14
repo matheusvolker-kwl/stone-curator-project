@@ -81,7 +81,7 @@ const PROVAS = [
     img: pisavelDesk,
     alt: "Uma pessoa em pé, de mãos nos bolsos, sobre o lábio de uma cascata Western, com a água caindo por baixo dos pés.",
     pergunta: "Aguenta pisar?",
-    resposta: "Suporta uma pessoa em cima. Não é casca: é estrutura.",
+    resposta: "Suporta uma pessoa em cima. Não é enfeite: é estrutura.",
     meta: "Uma pessoa em pé no lábio da cascata, com a água caindo por baixo.",
   },
   {
@@ -108,7 +108,7 @@ const PROVAS = [
   },
   {
     img: ocoGas2009,
-    alt: "Casca de pedra Western levantada no gramado, revelando registro de gás, mangueiras e caixa elétrica embaixo.",
+    alt: "Pedra Western levantada no gramado, revelando registro de gás, mangueiras e caixa elétrica embaixo.",
     pergunta: "E a manutenção?",
     resposta:
       "O vazio é onde o trabalho passa: fiação, tubulação, bomba, LED. A pedra levanta — sem demolição.",

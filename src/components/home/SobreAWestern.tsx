@@ -37,7 +37,7 @@ const PASSOS = [
     Icon: Recycle,
     titulo: "Mineral + PET reciclado",
     corpo:
-      "Casca de composto mineral de alta resistência, armada com fibra de PET. A peça nasce oca.",
+      "Pedra de composto mineral de alta resistência, armada com fibra de PET. A peça nasce oca.",
   },
   {
     Icon: Paintbrush,

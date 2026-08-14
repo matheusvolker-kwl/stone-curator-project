@@ -33,6 +33,10 @@
     @media (hover: none) and (pointer: coarse) {
       .reveal { opacity: 1 !important; transform: none !important; }
     }
+    /* Logos da faixa Western × Cristal Pool: o grid do .collab__half estica o
+       item na coluna (esmagava o logo no mobile empilhado). Trava no tamanho
+       natural, alinhado ao início — mesmo visual do desktop. */
+    .collab__half .collab__logo { justify-self: start; align-self: start; width: auto; }
   </style>
 </head>
 <body>

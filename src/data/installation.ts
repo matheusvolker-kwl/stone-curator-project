@@ -144,7 +144,7 @@ const PEDRA: InstallationConfig = {
     {
       title: "Corte e furação",
       text:
-        "Corte a úmido com disco diamantado e fure com broca para porcelanato, em baixa rotação e sem impacto, apoiando a casca — assim ela não estala.",
+        "Corte a úmido com disco diamantado e fure com broca para porcelanato, em baixa rotação e sem impacto, apoiando a peça — assim ela não estala.",
     },
     {
       title: "Aproveite os ocos",
