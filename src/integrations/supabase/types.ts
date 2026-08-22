@@ -520,8 +520,12 @@ export type Database = {
           woo_status: string | null
         }
         Insert: {
+          cliente_email?: string | null
+          cliente_nome?: string | null
+          cliente_telefone?: string | null
           conjuntos?: string | null
           created_at?: string
+          date_paid?: string | null
           endereco_entrega?: string | null
           id?: string
           itens?: Json | null
@@ -532,19 +536,14 @@ export type Database = {
           observacoes_admin?: string | null
           observacoes_cliente?: string | null
           origem?: string | null
-          cliente_email?: string | null
-          cliente_nome?: string | null
-          cliente_telefone?: string | null
-          date_paid?: string | null
           payment_method?: string | null
           payment_method_title?: string | null
-          shipping_method_id?: string | null
-          shipping_total?: number | null
-          woo_status?: string | null
           payment_status?: string | null
           prazo_dias_uteis?: number
           previsao_entrega?: string | null
           produzir_ate?: string | null
+          shipping_method_id?: string | null
+          shipping_total?: number | null
           status?: Database["public"]["Enums"]["production_status"]
           titulo: string
           tracking_code?: string | null
@@ -553,10 +552,15 @@ export type Database = {
           user_id?: string | null
           valor_total?: number | null
           woo_order_id?: number | null
+          woo_status?: string | null
         }
         Update: {
+          cliente_email?: string | null
+          cliente_nome?: string | null
+          cliente_telefone?: string | null
           conjuntos?: string | null
           created_at?: string
+          date_paid?: string | null
           endereco_entrega?: string | null
           id?: string
           itens?: Json | null
@@ -567,19 +571,14 @@ export type Database = {
           observacoes_admin?: string | null
           observacoes_cliente?: string | null
           origem?: string | null
-          cliente_email?: string | null
-          cliente_nome?: string | null
-          cliente_telefone?: string | null
-          date_paid?: string | null
           payment_method?: string | null
           payment_method_title?: string | null
-          shipping_method_id?: string | null
-          shipping_total?: number | null
-          woo_status?: string | null
           payment_status?: string | null
           prazo_dias_uteis?: number
           previsao_entrega?: string | null
           produzir_ate?: string | null
+          shipping_method_id?: string | null
+          shipping_total?: number | null
           status?: Database["public"]["Enums"]["production_status"]
           titulo?: string
           tracking_code?: string | null
@@ -588,6 +587,7 @@ export type Database = {
           user_id?: string | null
           valor_total?: number | null
           woo_order_id?: number | null
+          woo_status?: string | null
         }
         Relationships: []
       }
@@ -920,6 +920,7 @@ export type Database = {
         Args: { _ip: string; _ticket: string }
         Returns: Json
       }
+      find_user_id_by_email: { Args: { _email: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
