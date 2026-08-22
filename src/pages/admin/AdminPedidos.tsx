@@ -48,11 +48,20 @@ type Status =
 
 type Modo = "retirada" | "frete";
 
+/** Uma linha do pedido, como o webhook do Woo grava em production_orders.itens. */
+interface ItemPedido {
+  sku: string | null;
+  nome: string | null;
+  qty: number | null;
+  preco: string | number | null;
+}
+
 interface ProductionOrder {
   id: string;
   numero: string;
   titulo: string;
-  user_id: string;
+  /** null quando o comprador não tem conta no site (B2C) — ver needs_linking. */
+  user_id: string | null;
   lead_id: string | null;
   status: Status;
   modo_entrega: Modo;
@@ -67,6 +76,19 @@ interface ProductionOrder {
   observacoes_cliente: string | null;
   created_at: string;
   updated_at: string;
+  // ── vindos do WooCommerce pela edge function woo-order-ingest ──
+  /** jsonb: chega sem forma garantida do banco. Use parseItens() para ler. */
+  itens: unknown;
+  woo_order_id: number | null;
+  woo_status: string | null;
+  payment_method_title: string | null;
+  shipping_total: number | null;
+  cliente_nome: string | null;
+  cliente_email: string | null;
+  cliente_telefone: string | null;
+  origem: string | null;
+  needs_linking: boolean | null;
+  conjuntos: string | null;
 }
 
 interface OrderEvent {
@@ -119,11 +141,35 @@ const filtroCls =
 const areaCls =
   "w-full rounded-sm border border-western-border-strong bg-white px-3 py-2.5 text-[15px] leading-[1.5] text-western-green-deep placeholder:text-western-stone-warm/70 transition-colors focus:border-western-cta focus:outline-none focus:ring-2 focus:ring-western-cta/20";
 
+/** Lê production_orders.itens (jsonb) com segurança: linha malformada é ignorada
+ *  em vez de derrubar a tela. */
+function parseItens(valor: unknown): ItemPedido[] {
+  if (!Array.isArray(valor)) return [];
+  return valor.flatMap((linha) => {
+    if (!linha || typeof linha !== "object") return [];
+    const o = linha as Record<string, unknown>;
+    const texto = (v: unknown) => (typeof v === "string" ? v : v == null ? null : String(v));
+    return [{
+      sku: texto(o.sku),
+      nome: texto(o.nome),
+      qty: typeof o.qty === "number" ? o.qty : o.qty == null ? null : Number(o.qty),
+      preco: (o.preco ?? null) as string | number | null,
+    }];
+  });
+}
+
 const moeda = (v: number | null) =>
   v == null ? "—" : v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-const nomeParceiro = (p: Partner | undefined, userId: string) =>
-  p?.empresa || p?.nome || userId.slice(0, 8);
+/** Nome a exibir na coluna "Parceiro".
+ *  user_id é null em compra B2C (comprador sem conta) — nesse caso o pedido traz
+ *  o nome do comprador vindo do Woo, e só então caímos no rótulo genérico. */
+const nomeParceiro = (
+  p: Partner | undefined,
+  userId: string | null,
+  clienteNome?: string | null,
+) =>
+  p?.empresa || p?.nome || clienteNome || (userId ? userId.slice(0, 8) : "Sem cadastro");
 
 function Campo({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {
   return (
@@ -285,7 +331,7 @@ function OrderEditor({
       </button>
 
       <PageHeader
-        eyebrow={`Nº ${order.numero} · ${nomeParceiro(partner, order.user_id)}`}
+        eyebrow={`Nº ${order.numero} · ${nomeParceiro(partner, order.user_id, order.cliente_nome)}`}
         titulo={draft.titulo || "Pedido sem título"}
         subtitulo={`Criado ${dataCurta(order.created_at)} · atualizado ${dataCurta(order.updated_at)}`}
       />
@@ -412,6 +458,58 @@ function OrderEditor({
             </div>
           </section>
 
+          {/* Itens comprados — gravados pelo webhook do Woo em production_orders.itens.
+              Pedido criado à mão no painel não tem itens; por isso a seção só aparece
+              quando há algo para mostrar. */}
+          {parseItens(draft.itens).length > 0 && (
+            <section className="rounded-xl border border-western-border-soft bg-white p-5">
+              <p className="text-eyebrow mb-1">Itens comprados</p>
+              <p className="text-meta mb-4">
+                {parseItens(draft.itens).length}{" "}
+                {parseItens(draft.itens).length === 1 ? "linha" : "linhas"} · como
+                vieram do checkout
+              </p>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-[15px]">
+                  <thead>
+                    <tr className="border-b border-western-border-soft text-left">
+                      <th className="pb-2 pr-3 text-eyebrow font-semibold">Peça</th>
+                      <th className="pb-2 pr-3 text-eyebrow font-semibold">SKU</th>
+                      <th className="pb-2 pr-3 text-eyebrow font-semibold text-right">Qtd</th>
+                      <th className="pb-2 text-eyebrow font-semibold text-right">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {parseItens(draft.itens).map((item, i) => (
+                      <tr
+                        key={`${item.sku ?? "sem-sku"}-${i}`}
+                        className="border-b border-western-border-soft last:border-0"
+                      >
+                        <td className="py-2.5 pr-3">{item.nome ?? "—"}</td>
+                        <td className="py-2.5 pr-3 text-western-stone-warm">
+                          {item.sku ?? "—"}
+                        </td>
+                        <td className="py-2.5 pr-3 text-right tabular-nums">
+                          {item.qty ?? "—"}
+                        </td>
+                        <td className="py-2.5 text-right tabular-nums">
+                          {item.preco == null ? "—" : moeda(Number(item.preco))}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {draft.conjuntos && (
+                <p className="mt-4 rounded-lg bg-western-paper px-3 py-2 text-[13.5px] text-western-stone-warm">
+                  Conjunto: {draft.conjuntos}
+                </p>
+              )}
+            </section>
+          )}
+
           {/* Histórico */}
           <section className="rounded-xl border border-western-border-soft bg-white p-5">
             <p className="text-eyebrow mb-1">Histórico</p>
@@ -473,15 +571,43 @@ function OrderEditor({
             <p className="text-body mt-3 text-[15px]">{PROXIMO_PASSO[draft.status]}</p>
 
             <dl className="mt-5 space-y-2.5 border-t border-western-border-soft pt-5">
-              <ItemResumo k="Parceiro" v={nomeParceiro(partner, draft.user_id)} />
+              <ItemResumo k="Parceiro" v={nomeParceiro(partner, draft.user_id, draft.cliente_nome)} />
               {partner?.cidade && <ItemResumo k="Cidade" v={partner.cidade} />}
               <ItemResumo k="Entrega" v={draft.modo_entrega === "retirada" ? "Retirada" : "Frete"} />
               <ItemResumo
                 k={draft.modo_entrega === "retirada" ? "Disponível" : "Previsão"}
                 v={draft.previsao_entrega ? dataCurta(draft.previsao_entrega) : "—"}
               />
+              {draft.shipping_total != null && (
+                <ItemResumo k="Frete" v={moeda(draft.shipping_total)} />
+              )}
               <ItemResumo k="Valor" v={moeda(draft.valor_total)} />
+              {draft.payment_method_title && (
+                <ItemResumo k="Pagamento" v={draft.payment_method_title} />
+              )}
+              {draft.woo_order_id != null && (
+                <ItemResumo k="Pedido no Woo" v={`#${draft.woo_order_id}`} />
+              )}
             </dl>
+
+            {/* Comprador — vem do Woo, existe mesmo sem conta no site. */}
+            {(draft.cliente_nome || draft.cliente_email || draft.cliente_telefone) && (
+              <div className="mt-5 border-t border-western-border-soft pt-5">
+                <p className="text-eyebrow mb-2.5">Comprador</p>
+                <dl className="space-y-2.5">
+                  {draft.cliente_nome && <ItemResumo k="Nome" v={draft.cliente_nome} />}
+                  {draft.cliente_email && <ItemResumo k="E-mail" v={draft.cliente_email} />}
+                  {draft.cliente_telefone && (
+                    <ItemResumo k="Telefone" v={draft.cliente_telefone} />
+                  )}
+                </dl>
+                {draft.needs_linking && (
+                  <p className="mt-3 rounded-lg bg-western-paper px-3 py-2 text-[13.5px] text-western-stone-warm">
+                    Sem parceiro vinculado — o comprador não tem conta com este e-mail.
+                  </p>
+                )}
+              </div>
+            )}
 
             <button type="button" onClick={save} disabled={saving} className="btn-primary mt-5 w-full">
               {saving ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Save className="h-4 w-4" aria-hidden="true" />}
