@@ -14,7 +14,9 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "predev": "npx tsx scripts/generate-sitemap.ts",
-    "prebuild": "npx tsx scripts/generate-sitemap.ts"
+    "prebuild": "npx tsx scripts/generate-sitemap.ts",
+    "scrape": "node scripts/scrape/run.mjs",
+    "scrape:test": "node --test scripts/scrape/scrape.test.mjs scripts/scrape/integracao.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
