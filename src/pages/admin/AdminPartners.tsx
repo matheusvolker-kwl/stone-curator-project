@@ -51,9 +51,8 @@ const STATUS_ROTULO: Record<Partner["status"], string> = {
 
 /* Nível é um atributo comercial, não um status — badge próprio, dessaturado. */
 const NIVEL_CLS: Record<Tier, string> = {
-  light: "border-western-border-strong bg-western-paper text-western-stone-warm",
-  gold: "border-western-gold/45 bg-western-gold/10 text-western-bronze",
-  platinum: "border-western-bronze/35 bg-western-bronze/[0.07] text-western-bronze",
+  padrao: "border-western-border-strong bg-western-paper text-western-stone-warm",
+  vitrine: "border-western-gold/45 bg-western-gold/10 text-western-bronze",
   partner: "border-western-cta/35 bg-western-cta/[0.07] text-western-cta",
 };
 
@@ -63,7 +62,7 @@ function NivelBadge({ tier }: { tier: Tier }) {
       className={cn(
         "inline-flex items-center whitespace-nowrap rounded-sm border px-2.5 py-1",
         "text-[14px] font-semibold leading-none",
-        NIVEL_CLS[tier] ?? NIVEL_CLS.light,
+        NIVEL_CLS[tier] ?? NIVEL_CLS.padrao,
       )}
     >
       {TIER_LABEL[tier] ?? tier}
@@ -216,7 +215,7 @@ function ListaParceiros({
 
   const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
   const [ocupado, setOcupado] = useState(false);
-  const [nivelEmLote, setNivelEmLote] = useState<Tier>("light");
+  const [nivelEmLote, setNivelEmLote] = useState<Tier>("padrao");
   const [abrirNivelLote, setAbrirNivelLote] = useState(false);
   const [confirmarNivel, setConfirmarNivel] = useState(false);
   const [confirmarRevogar, setConfirmarRevogar] = useState(false);
@@ -692,7 +691,7 @@ function ParceiroDetalhe({
   const [erro, setErro] = useState<unknown>(null);
 
   /* Formulário (só vale para aprovado) */
-  const [nivel, setNivel] = useState<Tier>("light");
+  const [nivel, setNivel] = useState<Tier>("padrao");
   const [desconto, setDesconto] = useState("");
   const [boleto, setBoleto] = useState(false);
   const [parcelas, setParcelas] = useState("1");

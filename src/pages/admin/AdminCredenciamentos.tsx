@@ -94,7 +94,7 @@ async function aplicarDecisao(
   decisao: "aprovado" | "recusado",
   opts?: { tier?: Tier; note?: string },
 ) {
-  const tier: Tier = opts?.tier ?? ((r.tier as Tier) || "light");
+  const tier: Tier = opts?.tier ?? ((r.tier as Tier) || "padrao");
 
   const patch: Record<string, unknown> = {
     status_manual: decisao,
@@ -468,7 +468,7 @@ export default CredenciamentoTab;
  * ───────────────────────────────────────────────────────────── */
 
 function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: () => void; onSaved: () => void }) {
-  const [tier, setTier] = useState<Tier>("light");
+  const [tier, setTier] = useState<Tier>("padrao");
   const [note, setNote] = useState("");
   const [cardUrl, setCardUrl] = useState<string | null>(null);
   const [cardErro, setCardErro] = useState<unknown>(null);
@@ -476,7 +476,7 @@ function ReviewDrawer({ cred, onClose, onSaved }: { cred: Cred | null; onClose: 
 
   useEffect(() => {
     if (!cred) return;
-    setTier((cred.tier as Tier) ?? "light");
+    setTier((cred.tier as Tier) ?? "padrao");
     setNote("");
     setCardUrl(null);
     setCardErro(null);

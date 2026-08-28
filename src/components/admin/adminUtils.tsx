@@ -38,19 +38,27 @@ export function KV({ k, v }: { k: string; v: string | null | undefined }) {
   );
 }
 
-export const TIERS = ["light", "gold", "platinum", "partner"] as const;
+export const TIERS = ["padrao", "vitrine", "partner"] as const;
 export type Tier = (typeof TIERS)[number];
+/**
+ * Niveis de parceiro (decisao do dono, 24/08/2026).
+ *
+ *   padrao   ->  0%   preco de tabela (base ja com o reajuste de 11,1%)
+ *   vitrine  ->  5%
+ *   partner  -> 10%
+ *
+ * A fonte da verdade dos percentuais e a tabela public.tier_defaults;
+ * o CHECK constraint do banco so aceita estes tres valores.
+ */
 export const TIER_LABEL: Record<Tier, string> = {
-  light: "Western Pro Light",
-  gold: "Western Pro Gold",
-  platinum: "Western Pro Platinum",
-  partner: "Western Pro Partner",
+  padrao: "Parceiro Padrão",
+  vitrine: "Parceiro Vitrine",
+  partner: "Parceiro Partner",
 };
 export const TIER_BADGE_CLS: Record<Tier, string> = {
-  light: "border-western-stone-warm/40 text-western-stone-warm",
-  gold: "border-amber-500/50 text-amber-700 bg-amber-50",
-  platinum: "border-slate-400/60 text-slate-700 bg-slate-50",
-  partner: "border-western-gold/60 text-western-green-deep bg-western-gold/10",
+  padrao: "border-western-stone-warm/40 text-western-stone-warm",
+  vitrine: "border-amber-500/50 text-amber-700 bg-amber-50",
+  partner: "border-emerald-600/50 text-emerald-800 bg-emerald-50",
 };
 
 export interface Partner {

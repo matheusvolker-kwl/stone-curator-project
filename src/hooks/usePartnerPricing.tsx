@@ -18,17 +18,20 @@ interface PartnerPricing {
   loading: boolean;
 }
 
+/**
+ * Espelho local de tier_defaults — so serve de fallback se a consulta falhar.
+ * A verdade e a tabela public.tier_defaults (padrao 0% / vitrine 5% / partner 10%).
+ */
 const DEFAULTS: Record<Tier, TierDefault> = {
-  light:    { tier: "light",    discount_pct: 5,  boleto: false, parcelas_max: 1,  kit_gratis: false },
-  gold:     { tier: "gold",     discount_pct: 10, boleto: true,  parcelas_max: 3,  kit_gratis: false },
-  platinum: { tier: "platinum", discount_pct: 15, boleto: true,  parcelas_max: 6,  kit_gratis: true },
-  partner:  { tier: "partner",  discount_pct: 20, boleto: true,  parcelas_max: 12, kit_gratis: true },
+  padrao:  { tier: "padrao",  discount_pct: 0,  boleto: false, parcelas_max: 1, kit_gratis: false },
+  vitrine: { tier: "vitrine", discount_pct: 5,  boleto: true,  parcelas_max: 4, kit_gratis: true },
+  partner: { tier: "partner", discount_pct: 10, boleto: true,  parcelas_max: 6, kit_gratis: true },
 };
 
 export function usePartnerPricing(): PartnerPricing {
   const { user, isApproved } = useAuth();
   const [state, setState] = useState<PartnerPricing>({
-    tier: "light",
+    tier: "padrao",
     discountPct: 0,
     paymentMethods: { boleto: false, parcelas_max: 1, kit_gratis: false },
     loading: true,
@@ -37,7 +40,7 @@ export function usePartnerPricing(): PartnerPricing {
   useEffect(() => {
     let cancelled = false;
     if (!user || !isApproved) {
-      setState({ tier: "light", discountPct: 0, paymentMethods: { boleto: false, parcelas_max: 1, kit_gratis: false }, loading: false });
+      setState({ tier: "padrao", discountPct: 0, paymentMethods: { boleto: false, parcelas_max: 1, kit_gratis: false }, loading: false });
       return;
     }
     (async () => {
@@ -50,7 +53,7 @@ export function usePartnerPricing(): PartnerPricing {
           .maybeSingle(),
         supabase.from("tier_defaults").select("*"),
       ]);
-      const tier: Tier = (profile?.tier as Tier) ?? "light";
+      const tier: Tier = (profile?.tier as Tier) ?? "padrao";
       const def = defs?.find((d) => d.tier === tier) ?? DEFAULTS[tier];
       const override = profile?.discount_override;
       const discount = typeof override === "number" ? override : def.discount_pct;
@@ -83,16 +86,16 @@ export function usePartnerPricing(): PartnerPricing {
 /** Hook leve, retorna só o tier do parceiro (sem buscar defaults). */
 export function usePartnerTier(): { tier: Tier; loading: boolean } {
   const { user, isApproved } = useAuth();
-  const [tier, setTier] = useState<Tier>("light");
+  const [tier, setTier] = useState<Tier>("padrao");
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    if (!user || !isApproved) { setTier("light"); setLoading(false); return; }
+    if (!user || !isApproved) { setTier("padrao"); setLoading(false); return; }
     supabase
       .from("partner_profiles")
       .select("tier")
       .eq("user_id", user.id)
       .maybeSingle()
-      .then(({ data }) => { setTier((data?.tier as Tier) ?? "light"); setLoading(false); });
+      .then(({ data }) => { setTier((data?.tier as Tier) ?? "padrao"); setLoading(false); });
   }, [user, isApproved]);
   return { tier, loading };
 }

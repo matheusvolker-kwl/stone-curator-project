@@ -368,10 +368,12 @@ function HeroAprovado() {
 
               <div>
                 <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/60">
-                  Desconto
+                  {discountPct > 0 ? "Desconto" : "Sua condição"}
                 </p>
                 <p className="mt-1 text-[18px] font-semibold tabular-nums text-western-gold">
-                  {discountPct}% em toda a linha
+                  {discountPct > 0
+                    ? `${discountPct}% em toda a linha`
+                    : "Preço de atacado em toda a linha"}
                 </p>
               </div>
             </div>

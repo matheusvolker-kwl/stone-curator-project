@@ -153,9 +153,15 @@ export default function AccountLayout() {
                 ) : (
                   <>
                     <Chip>{TIER_LABEL[pricing.tier]}</Chip>
-                    <Chip destaque>
-                      <span className="tabular-nums">{pricing.discountPct}%</span> de desconto
-                    </Chip>
+                    {/* O nivel Padrao nao tem desconto: mostrar "0% de desconto"
+                        e' pior que nao mostrar nada — o beneficio dele e o preco B2B. */}
+                    {pricing.discountPct > 0 ? (
+                      <Chip destaque>
+                        <span className="tabular-nums">{pricing.discountPct}%</span> de desconto
+                      </Chip>
+                    ) : (
+                      <Chip destaque>Preço de atacado</Chip>
+                    )}
                   </>
                 ))}
             </div>
@@ -262,9 +268,13 @@ function Hero({ situacao, perfil, pricing }: HeroProps) {
             ) : (
               <>
                 <Dado rotulo="Seu nível">{TIER_LABEL[pricing.tier]}</Dado>
-                <Dado rotulo="Desconto de parceiro" numerico>
-                  {pricing.discountPct}%
-                </Dado>
+                {pricing.discountPct > 0 ? (
+                  <Dado rotulo="Desconto do seu nível" numerico>
+                    {pricing.discountPct}%
+                  </Dado>
+                ) : (
+                  <Dado rotulo="Sua condição">Preço de atacado</Dado>
+                )}
                 <Dado rotulo="Pagamento">
                   <span className="tabular-nums">
                     {parcelas_max > 1 ? `Em até ${parcelas_max}x` : "À vista"}
