@@ -85,15 +85,22 @@ Deno.serve(async (req) => {
     (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() ||
     null;
 
-  // Captcha is best-effort: if the widget failed client-side (no token),
-  // we still accept the lead — honeypot + server validation are the fallback.
+  // Captcha: os dois casos NAO sao equivalentes, e tratar igual e' o que
+  // tornava a verificacao decorativa.
+  //
+  //  · SEM token  -> o widget nao carregou no cliente (bloqueador, rede ruim).
+  //                  E' um usuario legitimo com problema de ambiente; recusar
+  //                  aqui custa lead de verdade. Segue com honeypot + validacao.
+  //  · COM token INVALIDO -> alguem forjou ou reusou um token. Nenhum usuario
+  //                  legitimo produz isso. Aqui a recusa e' obrigatoria.
   if (token) {
     const captcha = await verifyCaptcha(token, ip);
     if (!captcha.ok) {
-      console.warn("lead-submit captcha rejected, accepting via fallback", { origem: lead?.origem });
+      console.warn("lead-submit captcha invalido, recusado", { origem: lead?.origem, ip });
+      return json(403, { ok: false, error: "captcha_failed" });
     }
   } else {
-    console.warn("lead-submit no captcha token, accepting via honeypot fallback", { origem: lead?.origem });
+    console.warn("lead-submit sem token de captcha, seguindo por honeypot", { origem: lead?.origem });
   }
 
 

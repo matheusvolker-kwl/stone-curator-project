@@ -146,7 +146,13 @@ export default function AdminSettings() {
           max={100}
           step="0.5"
           value={t.discount_pct}
-          onChange={(e) => update(t.tier, { discount_pct: parseFloat(e.target.value) || 0 })}
+          onChange={(e) =>
+            update(t.tier, {
+              // min/max do HTML so afetam as setinhas: digitar 500 passava direto
+              // e zerava o preco de toda a vitrine. Trava de verdade aqui.
+              discount_pct: Math.min(100, Math.max(0, parseFloat(e.target.value) || 0)),
+            })
+          }
           aria-label={`Desconto padrão de ${TIER_LABEL[t.tier]}`}
           className={`${numCls} ml-auto`}
         />
@@ -162,7 +168,11 @@ export default function AdminSettings() {
           min={1}
           max={12}
           value={t.parcelas_max}
-          onChange={(e) => update(t.tier, { parcelas_max: parseInt(e.target.value, 10) || 1 })}
+          onChange={(e) =>
+            update(t.tier, {
+              parcelas_max: Math.min(12, Math.max(1, parseInt(e.target.value, 10) || 1)),
+            })
+          }
           aria-label={`Parcelas máximas de ${TIER_LABEL[t.tier]}`}
           className={`${numCls} ml-auto`}
         />

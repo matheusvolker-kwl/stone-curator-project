@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
     const { data: profile, error: pErr } = await admin
       .from("partner_profiles")
       .select(
-        "user_id,status,nome,empresa,cnpj,telefone,cep,endereco,numero,complemento,bairro,cidade,estado",
+        "user_id,status,tier,discount_override,nome,empresa,cnpj,telefone,cep,endereco,numero,complemento,bairro,cidade,estado",
       )
       .eq("user_id", userId)
       .maybeSingle();
@@ -54,10 +54,31 @@ Deno.serve(async (req) => {
     const [firstName, ...rest] = nomeCompleto.split(/\s+/);
     const lastName = rest.join(" ");
 
+    // ── Nivel comercial do parceiro ────────────────────────────────────
+    // O desconto vai NO TICKET, nao no formulario do hand-off: o ticket e'
+    // criado aqui a partir da sessao autenticada e resgatado servidor-a-
+    // servidor pelo Woo. Se fosse pelo formulario, o cliente trocaria o
+    // cupom de 5% pelo de 10% no inspetor do navegador.
+    const tier = (profile.tier as string | null) ?? "padrao";
+    let discountPct = 0;
+    const { data: tierDef } = await admin
+      .from("tier_defaults")
+      .select("discount_pct")
+      .eq("tier", tier)
+      .maybeSingle();
+    if (tierDef?.discount_pct != null) discountPct = Number(tierDef.discount_pct);
+    // override individual manda mais que o padrao do nivel
+    if (profile.discount_override != null) discountPct = Number(profile.discount_override);
+    // trava de sanidade: nada fora de 0-100 chega ao Woo
+    if (!Number.isFinite(discountPct) || discountPct < 0 || discountPct > 100) discountPct = 0;
+
     const payload = {
       v: 1 as const,
       user_id: userId,
       email,
+      // consumidos pelo snippet de hand-off no Woo para aplicar o cupom
+      tier,
+      discount_pct: discountPct,
       billing: {
         first_name: firstName || (profile.empresa ?? ""),
         last_name: lastName || "",
