@@ -341,6 +341,7 @@ export type Database = {
           payment_methods: Json
           pending_reason: string | null
           segmento: string | null
+          senha_provisoria_em: string | null
           site: string | null
           status: Database["public"]["Enums"]["partner_status"]
           telefone: string | null
@@ -373,6 +374,7 @@ export type Database = {
           payment_methods?: Json
           pending_reason?: string | null
           segmento?: string | null
+          senha_provisoria_em?: string | null
           site?: string | null
           status?: Database["public"]["Enums"]["partner_status"]
           telefone?: string | null
@@ -405,6 +407,7 @@ export type Database = {
           payment_methods?: Json
           pending_reason?: string | null
           segmento?: string | null
+          senha_provisoria_em?: string | null
           site?: string | null
           status?: Database["public"]["Enums"]["partner_status"]
           telefone?: string | null
@@ -776,6 +779,30 @@ export type Database = {
           checkout_url?: string | null
           items?: Json
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      senha_provisoria_log: {
+        Row: {
+          criada_em: string
+          gerada_por: string
+          id: string
+          usada_em: string | null
+          user_id: string
+        }
+        Insert: {
+          criada_em?: string
+          gerada_por: string
+          id?: string
+          usada_em?: string | null
+          user_id: string
+        }
+        Update: {
+          criada_em?: string
+          gerada_por?: string
+          id?: string
+          usada_em?: string | null
           user_id?: string
         }
         Relationships: []
