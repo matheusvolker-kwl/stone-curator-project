@@ -18,6 +18,7 @@ function RedirectObras() {
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
+import TrocaSenhaObrigatoria from "@/components/auth/TrocaSenhaObrigatoria";
 import { WishlistProvider } from "@/hooks/useWishlist";
 import RequireAuth from "@/components/auth/RequireAuth";
 import SiteLayout from "@/components/layout/SiteLayout";
@@ -142,6 +143,9 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <AuthProvider>
+          {/* Acima das rotas de proposito: cobre qualquer pagina quando a senha
+              foi definida pelo admin, sem rota propria e sem guarda por tela. */}
+          <TrocaSenhaObrigatoria />
           <WishlistProvider>
             <Suspense fallback={<RouteFallback />}>
               <RouteTransition>

@@ -32,3 +32,6 @@ verify_jwt = false
 
 [functions.notify-lead]
 verify_jwt = false
+
+[functions.admin-senha-provisoria]
+verify_jwt = true

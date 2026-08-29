@@ -698,6 +698,12 @@ function ParceiroDetalhe({
   const [kit, setKit] = useState(false);
   const [admin, setAdmin] = useState(false);
   const [confirmarAdmin, setConfirmarAdmin] = useState(false);
+
+  /* Senha provisoria: o dono resolve na ligacao, sem depender de e-mail. */
+  const [senhaGerada, setSenhaGerada] = useState<string | null>(null);
+  const [gerandoSenha, setGerandoSenha] = useState(false);
+  const [confirmarSenha, setConfirmarSenha] = useState(false);
+  const [erroSenha, setErroSenha] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
 
   const [statusPendente, setStatusPendente] = useState<Partner["status"] | null>(null);
@@ -929,6 +935,81 @@ function ParceiroDetalhe({
               {p.cancelled_at && (
                 <p className="text-meta mt-2">
                   Cancelado <CelulaData valor={p.cancelled_at} />
+                </p>
+              )}
+            </Bloco>
+          )}
+
+          {/* Acesso do parceiro — resolve a ligacao "nao consigo entrar" sem depender
+              de e-mail, que e problema aberto nesta loja. */}
+          {p.status === "approved" && (
+            <Bloco titulo="Acesso">
+              {senhaGerada ? (
+                <div className="space-y-3">
+                  <p className="text-meta">Leia esta senha para o cliente agora:</p>
+                  {/* data-clarity-mask: o Microsoft Clarity grava a tela (index.html).
+                      O padrao dele mascara CAMPO de formulario, nao texto comum — e a
+                      senha aqui e texto. Sem isto, cada senha ditada ficaria gravada num
+                      servidor da Microsoft junto com o nome do parceiro. */}
+                  <p
+                    data-clarity-mask="true"
+                    className="select-all rounded border border-western-gold/40 bg-western-cream px-4 py-3 text-center font-mono text-[22px] tracking-wide text-western-green-deep"
+                  >
+                    {senhaGerada}
+                  </p>
+                  <p className="text-meta">
+                    Ela <strong>nao aparece de novo</strong>. Ao entrar, o parceiro sera obrigado
+                    a criar uma senha propria — voce deixa de conhecer a senha dele.
+                  </p>
+                  <button type="button" className="btn-ghost" onClick={() => setSenhaGerada(null)}>
+                    Fechar
+                  </button>
+                </div>
+              ) : confirmarSenha ? (
+                <div className="space-y-3">
+                  <p className="text-[15px] leading-[1.6] text-western-green-deep">
+                    A senha atual de <strong>{p.empresa || p.nome}</strong> deixa de funcionar na hora.
+                    Faca isto com o cliente na linha.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      className="btn-primary"
+                      disabled={gerandoSenha}
+                      onClick={async () => {
+                        setGerandoSenha(true);
+                        setErroSenha(null);
+                        try {
+                          setSenhaGerada(await gerarSenhaProvisoria(p.user_id));
+                          setConfirmarSenha(false);
+                        } catch (e) {
+                          setErroSenha(e instanceof Error ? e.message : "Nao consegui gerar a senha.");
+                        } finally {
+                          setGerandoSenha(false);
+                        }
+                      }}
+                    >
+                      {gerandoSenha ? "Gerando…" : "Confirmar e gerar"}
+                    </button>
+                    <button type="button" className="btn-ghost" onClick={() => setConfirmarSenha(false)}>
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <button type="button" className="btn-secondary" onClick={() => setConfirmarSenha(true)}>
+                    Gerar senha provisoria
+                  </button>
+                  <p className="text-meta">
+                    Para quando o cliente ligar sem conseguir entrar. Voce dita a senha por
+                    telefone e ele troca no primeiro acesso.
+                  </p>
+                </div>
+              )}
+              {erroSenha && (
+                <p className="mt-3 rounded border border-western-gold/40 px-3 py-2 text-[15px] text-western-green-deep">
+                  {erroSenha}
                 </p>
               )}
             </Bloco>
@@ -1221,6 +1302,39 @@ function ParceiroDetalhe({
 }
 
 /* ── Blocos do detalhe ── */
+
+/** Gera a senha provisoria e devolve o texto para o dono ler em voz alta. */
+/** Traduz o codigo da funcao para uma frase que diz se a senha mudou ou nao. */
+const ERRO_SENHA: Record<string, string> = {
+  forbidden: "Só administrador pode gerar senha. A senha do parceiro NÃO foi alterada.",
+  parceiro_nao_encontrado: "Não encontrei esse parceiro. A senha NÃO foi alterada.",
+  falha_ao_preparar: "Não consegui preparar a troca. A senha do parceiro NÃO foi alterada — ele continua entrando com a atual.",
+  falha_ao_definir_senha: "Não consegui definir a senha nova. A senha atual do parceiro continua valendo.",
+};
+
+async function gerarSenhaProvisoria(userId: string) {
+  const { data, error } = await supabase.functions.invoke("admin-senha-provisoria", {
+    body: { user_id: userId },
+  });
+
+  if (error) {
+    // O supabase-js descarta o corpo em resposta nao-2xx. Sem ler o corpo, todo
+    // erro viraria a mesma frase em ingles e o dono nao saberia se a senha do
+    // parceiro mudou ou nao — que e a unica coisa que importa nesse momento.
+    let codigo = "";
+    try {
+      const ctx = (error as { context?: Response }).context;
+      if (ctx) codigo = (await ctx.clone().json())?.error ?? "";
+    } catch { /* corpo ilegivel: cai na frase generica */ }
+    throw new Error(
+      ERRO_SENHA[codigo] ??
+        "Não consegui gerar a senha. Confira se o parceiro ainda entra com a senha atual antes de tentar de novo.",
+    );
+  }
+
+  if (!data?.senha) throw new Error("A função respondeu sem a senha. Não repita: verifique com o parceiro se a senha dele mudou.");
+  return data.senha as string;
+}
 
 function Bloco({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (

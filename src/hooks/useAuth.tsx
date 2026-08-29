@@ -16,6 +16,8 @@ interface AuthCtx {
   isAdmin: boolean;
   partnerStatus: PartnerStatus;
   empresa: string | null;
+  /** Senha atual foi definida pelo admin: o parceiro precisa trocar antes de usar a conta. */
+  senhaProvisoria: boolean;
   refresh: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -29,12 +31,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [partnerStatus, setPartnerStatus] = useState<PartnerStatus>(null);
   const [empresa, setEmpresa] = useState<string | null>(null);
+  const [senhaProvisoria, setSenhaProvisoria] = useState(false);
 
   const loadProfile = async (uid: string | null) => {
     if (!uid) {
       setIsAdmin(false);
       setPartnerStatus(null);
       setEmpresa(null);
+      setSenhaProvisoria(false);
       setProfileLoading(false);
       return;
     }
@@ -46,6 +50,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAdmin(!!roles?.some((r) => r.role === "admin"));
     setPartnerStatus((profile?.status as PartnerStatus) ?? null);
     setEmpresa(profile?.empresa ?? null);
+
+    /* Consulta SEPARADA de proposito, e nao mais uma coluna na de cima.
+     * Se esta coluna faltar (cache de schema velho logo apos a migracao, ou
+     * ambiente sem ela), juntar as duas derrubaria a consulta INTEIRA — e com
+     * ela `status`, que decide quem e parceiro aprovado. Os 28 parceiros
+     * perderiam o acesso ao preco de atacado de uma vez.
+     * Aqui a falha custa no maximo nao exibir a tela de troca obrigatoria. */
+    try {
+      const { data: marca } = await supabase
+        .from("partner_profiles")
+        .select("senha_provisoria_em")
+        .eq("user_id", uid)
+        .maybeSingle();
+      setSenhaProvisoria(Boolean(marca?.senha_provisoria_em));
+    } catch {
+      setSenhaProvisoria(false);
+    }
     setProfileLoading(false);
   };
 
@@ -109,6 +130,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAdmin,
     partnerStatus,
     empresa,
+    senhaProvisoria,
     refresh,
     signOut,
   };
