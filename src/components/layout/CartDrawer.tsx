@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePartnerPricing } from "@/hooks/usePartnerPricing";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import EmptyCartHints from "@/components/cart/EmptyCartHints";
+import { totalComDesconto, unitarioComDesconto } from "@/lib/precoParceiro";
 
 /**
  * Drawer do carrinho — PRÉVIA, não checkout: o cliente confere o que somou e
@@ -48,8 +49,8 @@ export default function CartDrawer({
    * Fonte única do cálculo: preço da variante × quantidade × (1 − desconto). */
   const { discountPct } = usePartnerPricing();
   const lineTotal = (amount: string, qty: number) =>
-    parseFloat(amount) * qty * (1 - discountPct / 100);
-  const unitPrice = (amount: string) => parseFloat(amount) * (1 - discountPct / 100);
+    totalComDesconto(parseFloat(amount), qty, discountPct);
+  const unitPrice = (amount: string) => unitarioComDesconto(parseFloat(amount), discountPct);
   const subtotal = items.reduce((s, i) => s + lineTotal(i.price.amount, i.quantity), 0);
 
   // Pedido mínimo B2B — informativo (progresso no orçamento), nunca bloqueia o

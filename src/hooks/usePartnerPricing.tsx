@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import type { Tier } from "@/components/admin/adminUtils";
+import { unitarioComDesconto } from "@/lib/precoParceiro";
 
 interface TierDefault {
   tier: Tier;
@@ -102,6 +103,8 @@ export function usePartnerTier(): { tier: Tier; loading: boolean } {
 
 /** Aplica desconto sobre um valor numérico. Retorna { final, original, discountPct }. */
 export function applyDiscount(amount: number, discountPct: number) {
-  const final = amount * (1 - discountPct / 100);
+  // Mesma aritmetica do WooCommerce (centavos inteiros, arredonda o desconto),
+  // para a vitrine nunca mostrar um centavo diferente do que o checkout cobra.
+  const final = unitarioComDesconto(amount, discountPct);
   return { final, original: amount, discountPct };
 }

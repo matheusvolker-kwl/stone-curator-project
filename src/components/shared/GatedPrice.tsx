@@ -4,6 +4,7 @@ import { Lock, Unlock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePartnerPricing } from "@/hooks/usePartnerPricing";
 import { formatBRL } from "@/lib/catalog/client";
+import { unitarioComDesconto } from "@/lib/precoParceiro";
 
 interface Props {
   amount: string | number;
@@ -99,7 +100,7 @@ export default function GatedPrice({
       );
     }
     const hasDiscount = discountPct > 0;
-    const final = hasDiscount ? base * (1 - discountPct / 100) : base;
+    const final = hasDiscount ? unitarioComDesconto(base, discountPct) : base;
     return (
       <span className={`${className ?? ""} inline-flex flex-wrap items-baseline gap-x-2 gap-y-0.5`}>
         {hasDiscount && (

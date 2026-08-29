@@ -45,6 +45,7 @@ import { formatBRL, cdnImg } from "@/lib/catalog/client";
 import { supabase } from "@/integrations/supabase/client";
 import { registerPedidoNovoLead } from "@/lib/leads/pedidoNovo";
 import { BUSINESS } from "@/config/business";
+import { totalComDesconto, unitarioComDesconto, somaComDesconto } from "@/lib/precoParceiro";
 
 const WHATS_URL = `https://wa.me/${BUSINESS.whatsappFabrica}`;
 
@@ -76,10 +77,13 @@ export default function Carrinho() {
 
   const { totalQty, subtotal, boxOnly } = useMemo(() => {
     const qty = items.reduce((s, i) => s + i.quantity, 0);
-    const gross = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
+    const liquido = somaComDesconto(
+      items.map((i) => ({ precoUnitario: parseFloat(i.price.amount), quantidade: i.quantity })),
+      discountPct,
+    );
     return {
       totalQty: qty,
-      subtotal: gross * (1 - discountPct / 100),
+      subtotal: liquido,
       boxOnly: items.length > 0 && items.every(isWesternBox),
     };
   }, [items, discountPct]);
@@ -94,9 +98,9 @@ export default function Carrinho() {
   const minPct = Math.min(100, Math.round((subtotal / minOrder) * 100));
 
   const lineTotal = (item: CartItem) =>
-    parseFloat(item.price.amount) * item.quantity * (1 - discountPct / 100);
+    totalComDesconto(parseFloat(item.price.amount), item.quantity, discountPct);
   const unitPrice = (item: CartItem) =>
-    parseFloat(item.price.amount) * (1 - discountPct / 100);
+    unitarioComDesconto(parseFloat(item.price.amount), discountPct);
 
   const handleCheckout = async () => {
     if (checkoutLoading) return;
