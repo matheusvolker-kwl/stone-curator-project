@@ -958,10 +958,10 @@ function ParceiroDetalhe({
                     {senhaGerada}
                   </p>
                   <p className="text-meta">
-                    Ela <strong>nao aparece de novo</strong>. Ao entrar, o parceiro sera obrigado
-                    a criar uma senha propria — voce deixa de conhecer a senha dele.
+                    Ela <strong>não aparece de novo</strong>. Ao entrar, o parceiro será obrigado
+                    a criar uma senha própria — você deixa de conhecer a senha dele.
                   </p>
-                  <button type="button" className="btn-ghost" onClick={() => setSenhaGerada(null)}>
+                  <button type="button" className="btn-outline-forest" onClick={() => setSenhaGerada(null)}>
                     Fechar
                   </button>
                 </div>
@@ -969,7 +969,7 @@ function ParceiroDetalhe({
                 <div className="space-y-3">
                   <p className="text-[15px] leading-[1.6] text-western-green-deep">
                     A senha atual de <strong>{p.empresa || p.nome}</strong> deixa de funcionar na hora.
-                    Faca isto com o cliente na linha.
+                    Faça isto com o cliente na linha.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <button
@@ -983,7 +983,7 @@ function ParceiroDetalhe({
                           setSenhaGerada(await gerarSenhaProvisoria(p.user_id));
                           setConfirmarSenha(false);
                         } catch (e) {
-                          setErroSenha(e instanceof Error ? e.message : "Nao consegui gerar a senha.");
+                          setErroSenha(e instanceof Error ? e.message : "Não consegui gerar a senha.");
                         } finally {
                           setGerandoSenha(false);
                         }
@@ -991,18 +991,18 @@ function ParceiroDetalhe({
                     >
                       {gerandoSenha ? "Gerando…" : "Confirmar e gerar"}
                     </button>
-                    <button type="button" className="btn-ghost" onClick={() => setConfirmarSenha(false)}>
+                    <button type="button" className="btn-outline-forest" onClick={() => setConfirmarSenha(false)}>
                       Cancelar
                     </button>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <button type="button" className="btn-secondary" onClick={() => setConfirmarSenha(true)}>
-                    Gerar senha provisoria
+                  <button type="button" className="btn-outline-forest" onClick={() => setConfirmarSenha(true)}>
+                    Gerar senha provisória
                   </button>
                   <p className="text-meta">
-                    Para quando o cliente ligar sem conseguir entrar. Voce dita a senha por
+                    Para quando o cliente ligar sem conseguir entrar. Você dita a senha por
                     telefone e ele troca no primeiro acesso.
                   </p>
                 </div>
