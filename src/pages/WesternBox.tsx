@@ -40,12 +40,12 @@ import pb3Quartzo from "@/assets/western-box/pb3-quartzo.webp";
 import pb3Arenito from "@/assets/western-box/pb3-arenito.webp";
 import pb3Moledo from "@/assets/western-box/pb3-moledo.webp";
 import pb3Granito from "@/assets/western-box/pb3-granito.webp";
+import { usePrecoBox } from "@/hooks/usePrecoBox";
 
 // =============================================================================
 // CONFIG — mesma constante do anterior (Woo product id real)
 // =============================================================================
 const WESTERN_BOX_WOO_PRODUCT_ID: number | null = 1559;
-const PRICE_LABEL = "R$ 149,90";
 
 const WHATSAPP_URL = `https://wa.me/${BUSINESS.whatsappFabrica}`;
 
@@ -117,6 +117,7 @@ const PARA_QUEM = [
 // BUY ACTION — única, compartilhada por TODOS os pontos de compra
 // ---------------------------------------------------------------------------
 function useBuyAction() {
+  const { valor: preco } = usePrecoBox();
   const disabled = WESTERN_BOX_WOO_PRODUCT_ID === null;
   const buy = (qty: number = 1) => {
     if (disabled || WESTERN_BOX_WOO_PRODUCT_ID === null) return;
@@ -126,7 +127,7 @@ function useBuyAction() {
         title: "Western Box",
         handle: "western-box",
         variantId: String(WESTERN_BOX_WOO_PRODUCT_ID),
-        price: "149.90",
+        price: String(preco),
         quantity: Math.max(1, qty | 0),
         wooParentProductId: WESTERN_BOX_WOO_PRODUCT_ID,
         wooVariationId: null,
@@ -143,6 +144,7 @@ function useBuyAction() {
 // STICKY BUY BAR — barra fixa de rodapé (V3): CTA verde, full-width no mobile
 // ---------------------------------------------------------------------------
 function StickyBuyBar({ anchorRefs }: { anchorRefs: React.RefObject<HTMLElement>[] }) {
+  const { rotulo: precoRotulo } = usePrecoBox();
   const { disabled, buy } = useBuyAction();
   const [visible, setVisible] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
@@ -185,7 +187,7 @@ function StickyBuyBar({ anchorRefs }: { anchorRefs: React.RefObject<HTMLElement>
             <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
               <div className="flex items-baseline gap-3">
                 <span className="font-sans text-[20px] font-bold tabular-nums leading-none text-western-green-deep">
-                  {PRICE_LABEL}
+                  {precoRotulo}
                 </span>
                 <span className="text-meta">Cashback 100% · sem cadastro</span>
               </div>
@@ -239,6 +241,7 @@ function QtyStepper({ qty, setQty }: { qty: number; setQty: (n: number) => void 
 // PRODUCT TOP — galeria + painel de compra (o CTA é o herói da página)
 // ---------------------------------------------------------------------------
 function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLElement> }) {
+  const { rotulo: precoRotulo } = usePrecoBox();
   const { disabled, buy } = useBuyAction();
   const [active, setActive] = useState(0);
   const [qty, setQty] = useState(1);
@@ -351,7 +354,7 @@ function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLElement> }) 
             {/* Preço — aberto: a Western Box é o único item sem gate */}
             <div className="mt-8 border-b border-western-border-soft pb-8">
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <span className="text-price">{PRICE_LABEL}</span>
+                <span className="text-price">{precoRotulo}</span>
                 <span className="text-meta">à vista · sem pedido mínimo</span>
               </div>
               <span className="mt-4 inline-flex items-center gap-2 rounded-full bg-western-green-deep px-4 py-2 text-[14px] font-semibold text-western-cream">
@@ -404,6 +407,7 @@ function ProductTop({ topBuyRef }: { topBuyRef: React.RefObject<HTMLElement> }) 
 // MID BUY STRIP — segundo ponto de compra (compacto, depois do desejo)
 // ---------------------------------------------------------------------------
 function MidBuyStrip({ sectionRef }: { sectionRef: React.Ref<HTMLElement> }) {
+  const { rotulo: precoRotulo } = usePrecoBox();
   const { disabled, buy } = useBuyAction();
   return (
     <section ref={sectionRef} className="section-tight surface-ivory border-y border-western-border-soft">
@@ -416,7 +420,7 @@ function MidBuyStrip({ sectionRef }: { sectionRef: React.Ref<HTMLElement> }) {
             <div className="min-w-0">
               <p className="text-eyebrow">Pronto para decidir?</p>
               <p className="display-md mt-2 text-western-green-deep">
-                Western Box · <span className="tabular-nums">{PRICE_LABEL}</span>
+                Western Box · <span className="tabular-nums">{precoRotulo}</span>
               </p>
               <p className="text-meta mt-1">Com 100% de cashback no primeiro pedido</p>
             </div>
@@ -440,6 +444,7 @@ function MidBuyStrip({ sectionRef }: { sectionRef: React.Ref<HTMLElement> }) {
 // PAGE
 // ---------------------------------------------------------------------------
 export default function WesternBox() {
+  const { rotulo: precoRotulo } = usePrecoBox();
   const [acabamentoAtivo, setAcabamentoAtivo] = useState<(typeof ACABAMENTOS)[number]["id"]>("moledo");
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const ativo = ACABAMENTOS.find((a) => a.id === acabamentoAtivo)!;
@@ -756,7 +761,7 @@ export default function WesternBox() {
             de volta como crédito na sua primeira compra.
           </h2>
           <p className="mt-6 max-w-xl font-sans text-[16px] leading-[1.6] text-western-cream/85">
-            Os {PRICE_LABEL} investidos na Western Box voltam integralmente como crédito. Na
+            Os {precoRotulo} investidos na Western Box voltam integralmente como crédito. Na
             prática, você conhece nossos materiais sem perder esse investimento.
           </p>
         </div>
@@ -833,7 +838,7 @@ export default function WesternBox() {
                   Como funciona o cashback de 100%
                 </AccordionTrigger>
                 <AccordionContent className="text-body pb-5">
-                  Os {PRICE_LABEL} investidos na Western Box retornam integralmente como crédito no
+                  Os {precoRotulo} investidos na Western Box retornam integralmente como crédito no
                   seu primeiro pedido na Western Pools. O crédito é aplicado automaticamente no
                   fechamento e é válido por 12 meses a partir da entrega da caixa.
                 </AccordionContent>
@@ -885,7 +890,7 @@ export default function WesternBox() {
             Pronto para começar
           </p>
           <h2 className="display-lg mx-auto mt-4 max-w-2xl text-western-cream">
-            Receba a Western Box, descubra nossos acabamentos e transforme {PRICE_LABEL} em crédito.
+            Receba a Western Box, descubra nossos acabamentos e transforme {precoRotulo} em crédito.
           </h2>
           <div className="mx-auto mt-8 max-w-[420px]">
             <button
@@ -895,7 +900,7 @@ export default function WesternBox() {
               className="btn-gold tap-target w-full"
             >
               <ShoppingBag className="h-5 w-5" aria-hidden />
-              {disabled ? "Em breve" : `Adicionar ao carrinho · ${PRICE_LABEL}`}
+              {disabled ? "Em breve" : `Adicionar ao carrinho · ${precoRotulo}`}
             </button>
           </div>
           <p className="mt-4 text-[14px] text-western-cream/80">

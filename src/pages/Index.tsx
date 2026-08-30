@@ -33,6 +33,7 @@ import linhaCapaCascatas from "@/assets/linhas/cascatas.webp";
 import linhaCapaRevestimentos from "@/assets/linhas/revestimentos.webp";
 import linhaCapaAcessorios from "@/assets/linhas/acessorios.webp";
 import linhaCapaPedras from "@/assets/linhas/pedras-grandes.webp";
+import { usePrecoBox } from "@/hooks/usePrecoBox";
 
 /* DS V3 — eyebrow sobre fundo escuro/foto: mesma métrica do .text-eyebrow
  * (sans semibold 14px, tracking 0.06em), em dourado claro porque o bronze
@@ -85,6 +86,7 @@ const featuredItem = "snap-start shrink-0 w-[76vw] max-w-[300px] sm:w-auto sm:ma
 const FEATURED_SKU_CODES = ["CSB", "CSC", "PM2", "PM3", "PG2", "PG3", "PP1", "PP2"];
 
 export default function Index() {
+  const { rotulo: precoBox } = usePrecoBox();
   /* Mais vendidos fixados pelo dono (11/08/2026), nesta ordem. Grupos de
    * acabamento casam pelo SKU das variantes (WEST-CSB-M etc.) — o sufixo de
    * caixa (-CX*) não é acabamento e fica de fora do casamento. Se o catálogo
@@ -516,11 +518,11 @@ export default function Index() {
                 </h2>
                 <p className="text-body max-w-md mb-8">
                   A amostra que se paga: os{" "}
-                  <b className="text-western-green-deep font-semibold">R$ 149,90 voltam como crédito</b> no seu
+                  <b className="text-western-green-deep font-semibold">{precoBox} voltam como crédito</b> no seu
                   primeiro pedido. Aberta a todos, sem cadastro e sem mínimo.
                 </p>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-                  <span className="text-price">R$ 149,90</span>
+                  <span className="text-price">{precoBox}</span>
                   <Link to="/western-box" className="btn-primary w-full sm:w-auto">
                     Conhecer a Box <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
                   </Link>
