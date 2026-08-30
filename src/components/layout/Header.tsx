@@ -32,6 +32,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { usePartnerPricing } from "@/hooks/usePartnerPricing";
+import { unitarioComDesconto } from "@/lib/precoParceiro";
 
 /**
  * DS V3 — SHELL / HEADER.
@@ -119,6 +121,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { session, isAdmin, isApproved, empresa, signOut, user } = useAuth();
+  const { discountPct } = usePartnerPricing();
   const { items: wishItems } = useWishlist();
   const wishCount = wishItems.length;
 
@@ -356,7 +359,7 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
                 </p>
                 {price && isApproved && (
                   <p className="text-[14px] tabular-nums text-western-stone-warm">
-                    {formatBRL(price.amount, price.currencyCode)}
+                    {formatBRL(unitarioComDesconto(parseFloat(String(price.amount)), discountPct), price.currencyCode)}
                   </p>
                 )}
               </div>

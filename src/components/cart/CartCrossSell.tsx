@@ -7,6 +7,8 @@ import { cdnImg, formatBRL } from "@/lib/catalog/client";
 import { buildCartItem, useCartStore } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { usePartnerPricing } from "@/hooks/usePartnerPricing";
+import { unitarioComDesconto } from "@/lib/precoParceiro";
 
 interface Props {
   /** Coleção do primeiro item do carrinho (preferência principal). */
@@ -23,6 +25,7 @@ export default function CartCrossSell({
   onNavigate,
 }: Props) {
   const { isApproved } = useAuth();
+  const { discountPct } = usePartnerPricing();
   const addItem = useCartStore((s) => s.addItem);
   const [adding, setAdding] = useState<string | null>(null);
 
@@ -124,7 +127,7 @@ export default function CartCrossSell({
                 </Link>
                 {isApproved && minPrice ? (
                   <p className="font-sans text-[14px] text-western-stone-warm mt-0.5">
-                    a partir de {formatBRL(minPrice.amount, minPrice.currencyCode)}
+                    a partir de {formatBRL(unitarioComDesconto(parseFloat(String(minPrice.amount)), discountPct), minPrice.currencyCode)}
                   </p>
                 ) : (
                   <p className="font-sans text-[14px] text-western-stone-warm mt-0.5">

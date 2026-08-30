@@ -42,6 +42,9 @@ import {
   getInstallationConfig,
   resolveInstallationType,
 } from "@/data/installation";
+import { usePartnerPricing } from "@/hooks/usePartnerPricing";
+import { unitarioComDesconto } from "@/lib/precoParceiro";
+import GatedPrice from "@/components/shared/GatedPrice";
 
 /* Eram cópias à mão do .btn-primary/.btn-outline-forest (auditoria 2026-07-17:
  * a PDP tinha 24 de 27 CTAs fora do sistema). Agora são as classes do DS — o
@@ -69,6 +72,7 @@ function escapeRegExp(s: string) {
 export default function ProductPage() {
   const { handle = "" } = useParams();
   const { isApproved } = useAuth();
+  const { discountPct } = usePartnerPricing();
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", handle],
     queryFn: () => fetchProduct(handle),
@@ -287,6 +291,12 @@ export default function ProductPage() {
   const pendingOption = visibleOptions.find((o) => !activeOptions[o.name]);
   const acabPending = !!pendingOption && /acabament/i.test(pendingOption.name);
   const priceAmount = variant?.price.amount ?? product.priceRange.minVariantPrice.amount;
+  // A barra fixa recebe numero pronto, nao componente — entao o desconto do
+  // nivel precisa ser aplicado aqui, com a mesma aritmetica do WooCommerce.
+  const precoComDesconto = unitarioComDesconto(
+    typeof priceAmount === "number" ? priceAmount : parseFloat(String(priceAmount)),
+    discountPct,
+  );
   const priceCurrency =
     variant?.price.currencyCode ?? product.priceRange.minVariantPrice.currencyCode;
   const acabOption = visibleOptions.find((o) => /acabament/i.test(o.name));
@@ -366,7 +376,11 @@ export default function ProductPage() {
               <section className="mt-8 space-y-7" aria-label="Compra">
                 {/* 1 — Preço */}
                 <div>
-                  <p className="text-price">{formatBRL(priceAmount, priceCurrency)}</p>
+                  {/* Mesmo componente dos cards de listagem, de proposito. Aqui a PDP
+                      formatava o preco CRU, entao um parceiro Vitrine ou Partner via o
+                      valor com desconto no card e o valor cheio ao clicar. Parceiro
+                      Padrao (0%) nao percebia, porque para ele os dois sao iguais. */}
+                  <GatedPrice amount={priceAmount} currency={priceCurrency} className="text-price" />
                   <p className="text-meta mt-1.5">À vista · parcela no checkout</p>
                 </div>
 
@@ -744,9 +758,9 @@ export default function ProductPage() {
         productImage={images[0]?.url ?? null}
         productTitle={product.title}
         selectedFinish={acabOption ? activeOptions[acabOption.name] ?? null : null}
-        priceAmount={variant ? priceAmount : undefined}
+        priceAmount={variant ? String(precoComDesconto) : undefined}
         priceCurrency={variant ? priceCurrency : undefined}
-        fallbackPriceLabel={`a partir de ${formatBRL(priceAmount, priceCurrency)}`}
+        fallbackPriceLabel={`a partir de ${formatBRL(precoComDesconto, priceCurrency)}`}
         qty={qty}
         onQtyChange={setQty}
         onAdd={handleAdd}
