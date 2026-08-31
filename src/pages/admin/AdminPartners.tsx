@@ -186,6 +186,30 @@ export default function AdminPartners() {
  * Dados (compartilhados por lista e detalhe)
  * ═══════════════════════════════════════════════════════════════════════════ */
 
+/**
+ * 9.0909 -> "9,0909" · 5 -> "5" · 10 -> "10" · 0 -> "0"
+ *
+ * So mexe DEPOIS da virgula. A primeira versao usava /\.?0+$/ e comia o zero
+ * de numeros inteiros: 10 virava "1" e 0 virava vazio — um desconto de 10%
+ * apareceria como 1% no painel.
+ */
+function formatarPct(n: number): string {
+  const t = String(n);
+  if (!t.includes(".")) return t;
+  return t.replace(/0+$/, "").replace(/\.$/, "").replace(".", ",");
+}
+
+/**
+ * O que o percentual significa na tabela comercial (regra de 29/08/2026).
+ * O dono le a tabela em "quanto o parceiro paga", nao em percentual — e os
+ * numeros ficaram quebrados de proposito, para o PRECO fechar exato.
+ */
+const SIGNIFICADO_TIER: Record<Tier, string> = {
+  padrao: "paga o preço de tabela cheio",
+  vitrine: "paga 5% acima da tabela de atacado",
+  partner: "paga a tabela de atacado, sem acréscimo",
+};
+
 /** Percentual efetivo: override individual, senão o padrão do nível. */
 function descontoEfetivo(p: Partner, padroes: Record<string, number>) {
   const padrao = padroes[p.tier] ?? null;
@@ -1065,15 +1089,18 @@ function ParceiroDetalhe({
                 <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-bronze">
                   Desconto em vigor
                 </p>
+                {/* O percentual e verdadeiro mas nao comunica nada: 9,0909% nao
+                    diz ao dono o que o parceiro paga. A linha de baixo traduz
+                    para a regra comercial, que e como ele pensa a tabela. */}
                 <p className="mt-1 text-[20px] font-semibold tabular-nums text-western-green-deep">
-                  {usado == null ? "—" : `${usado}%`}
+                  {usado == null ? "—" : `${formatarPct(usado)}%`}
                 </p>
                 <p className="text-meta mt-1">
                   {usado == null
                     ? "Não consegui ler o padrão do nível."
                     : personalizado
-                      ? `personalizado (padrão do nível: ${padrao == null ? "—" : `${padrao}%`})`
-                      : `padrão do ${TIER_LABEL[p.tier]}`}
+                      ? `personalizado — o padrão do nível é ${padrao == null ? "—" : `${formatarPct(padrao)}%`}`
+                      : SIGNIFICADO_TIER[p.tier]}
                 </p>
               </div>
             )}

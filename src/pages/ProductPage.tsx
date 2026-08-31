@@ -16,6 +16,8 @@ import {
   ShieldCheck,
   FileText,
   Truck,
+  TrendingUp,
+  Store,
 } from "lucide-react";
 import { BUSINESS } from "@/config/business";
 import FinishSelector from "@/components/product/FinishSelector";
@@ -297,10 +299,11 @@ export default function ProductPage() {
   // parceiro — não do preço já descontado do nível dele.
   const precoTabela =
     typeof priceAmount === "number" ? priceAmount : parseFloat(String(priceAmount));
-  const precoComDesconto = unitarioComDesconto(
-    typeof priceAmount === "number" ? priceAmount : parseFloat(String(priceAmount)),
-    discountPct,
-  );
+  const precoComDesconto = unitarioComDesconto(precoTabela, discountPct);
+  // O que sobra por peça: o que ele cobra menos o que ele paga.
+  // Definido DEPOIS de precoComDesconto — a primeira versão referenciava uma
+  // variável ainda não declarada e teria quebrado a página em branco.
+  const retornoUnit = Math.max(0, vendaSugerida(precoTabela) - precoComDesconto);
   const priceCurrency =
     variant?.price.currencyCode ?? product.priceRange.minVariantPrice.currencyCode;
   const acabOption = visibleOptions.find((o) => /acabament/i.test(o.name));
@@ -380,26 +383,48 @@ export default function ProductPage() {
               <section className="mt-8 space-y-7" aria-label="Compra">
                 {/* 1 — Preço */}
                 <div>
-                  {/* Mesmo componente dos cards de listagem, de proposito. Aqui a PDP
-                      formatava o preco CRU, entao um parceiro Vitrine ou Partner via o
-                      valor com desconto no card e o valor cheio ao clicar. Parceiro
-                      Padrao (0%) nao percebia, porque para ele os dois sao iguais. */}
+                  {/* TRES NUMEROS, TRES PAPEIS
+                      Antes eles apareciam em sequencia sem rotulo: preco cheio
+                      riscado, preco do parceiro, venda sugerida. Quem olhava de
+                      relance via tres precos e tinha que descobrir qual era qual
+                      — e dois deles significam coisas OPOSTAS (um e o que ele
+                      economiza, o outro e o que ele cobra).
+                      Agora cada um tem rotulo, cor e peso proprios:
+                        verde-profundo = o que ele paga     (a decisao)
+                        bronze         = o que ele recebe   (o ganho)          */}
+                  <p className="text-eyebrow mb-1">Seu preço</p>
                   <GatedPrice amount={priceAmount} currency={priceCurrency} className="text-price" />
                   <p className="text-meta mt-1.5">À vista · parcela no checkout</p>
 
-                  {/* Venda sugerida — o segundo número que o parceiro precisa.
-                      Ele decide a compra comparando o que paga com o que pode
-                      cobrar; sem isso ele sai da página para fazer a conta.
-                      Fica abaixo e menor de propósito: o preço dele é a
-                      informação principal, esta é a referência. */}
                   <div className="mt-5 border-t border-western-border-soft pt-4">
                     <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-                      <span className="text-eyebrow">Venda sugerida</span>
+                      <span className="inline-flex items-center gap-2 text-eyebrow">
+                        <Store className="h-4 w-4 text-western-bronze" aria-hidden="true" />
+                        Você revende por
+                      </span>
                       <span className="font-sans text-[22px] font-semibold tabular-nums text-western-green-deep">
                         {formatBRL(vendaSugerida(precoTabela), priceCurrency)}
                       </span>
                     </div>
-                    <p className="text-meta mt-1">
+
+                    {/* O RETORNO — e este numero que faz ele decidir a quantidade.
+                        Acompanha o seletor de quantidade de proposito: ver
+                        "R$ 1.980,00 com 2 peças" enquanto mexe no stepper e o
+                        incentivo mais honesto que existe, porque e a conta real
+                        dele, nao uma promocao. */}
+                    {retornoUnit > 0 && (
+                      <div className="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-md bg-western-paper px-3 py-2.5">
+                        <span className="inline-flex items-center gap-2 font-sans text-[14px] font-semibold text-western-green-deep">
+                          <TrendingUp className="h-4 w-4 text-western-bronze" aria-hidden="true" />
+                          {qty > 1 ? `Seu retorno com ${qty} peças` : "Seu retorno por peça"}
+                        </span>
+                        <span className="font-sans text-[20px] font-bold tabular-nums text-western-bronze">
+                          {formatBRL(retornoUnit * qty, priceCurrency)}
+                        </span>
+                      </div>
+                    )}
+
+                    <p className="text-meta mt-2">
                       Preço de referência ao consumidor final.
                     </p>
                   </div>
