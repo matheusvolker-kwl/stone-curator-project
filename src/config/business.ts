@@ -20,8 +20,8 @@ export const BUSINESS = {
   prazoProducaoLabel: "15 dias úteis após confirmação do pedido",
 
   // Garantia
-  garantiaAnos: 1,
-  garantiaLabel: "1 ano",
+  garantiaAnos: 5,
+  garantiaLabel: "5 anos",
 
 
 

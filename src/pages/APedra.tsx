@@ -18,6 +18,7 @@ import quadriplex3d from "@/assets/a-pedra/quadriplex-3d.webp";
 import quadriplexObra from "@/assets/a-pedra/quadriplex-obra.webp";
 import pisavelDesk from "@/assets/a-pedra/pisavel.webp";
 import perfuravel from "@/assets/a-pedra/perfuravel.webp";
+import { BUSINESS } from "@/config/business";
 
 /**
  * /a-pedra — a página do ARGUMENTO. O nó ANTES da bifurcação
@@ -362,7 +363,7 @@ export default function APedra() {
                 </Link>
               </div>
               <p className="text-meta text-western-cream-muted/80 mt-6">
-                Ateliê desde 1993 · Garantia de 1 ano · Cajamar/SP
+                Ateliê desde 1993 · Garantia de {BUSINESS.garantiaLabel} · Cajamar/SP
               </p>
             </div>
           </Reveal>

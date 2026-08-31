@@ -223,7 +223,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Não tenho empresa nem CNPJ. Consigo mesmo assim?",
-    a: "Consegue, sim. A pedra avulsa vendemos só para profissionais, mas para a sua casa fazemos a obra completa: a pedra vai instalada, com garantia de 1 ano, sem você precisar de empresa nem se preocupar com nada.",
+    a: "Consegue, sim. A pedra avulsa vendemos só para profissionais, mas para a sua casa fazemos a obra completa: a pedra vai instalada, com garantia de 5 anos na peça, sem você precisar de empresa nem se preocupar com nada.",
   },
 ];
 
