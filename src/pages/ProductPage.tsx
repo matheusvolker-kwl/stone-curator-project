@@ -416,7 +416,7 @@ export default function ProductPage() {
                       <div className="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-md bg-western-paper px-3 py-2.5">
                         <span className="inline-flex items-center gap-2 font-sans text-[14px] font-semibold text-western-green-deep">
                           <TrendingUp className="h-4 w-4 text-western-bronze" aria-hidden="true" />
-                          {qty > 1 ? `Seu retorno com ${qty} peças` : "Seu retorno por peça"}
+                          {qty > 1 ? `Seu lucro com ${qty} peças` : "Seu lucro por peça"}
                         </span>
                         <span className="font-sans text-[20px] font-bold tabular-nums text-western-bronze">
                           {formatBRL(retornoUnit * qty, priceCurrency)}

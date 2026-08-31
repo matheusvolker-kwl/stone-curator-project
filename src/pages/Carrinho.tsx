@@ -492,7 +492,7 @@ export default function Carrinho() {
                       <div className="mt-2.5 flex items-baseline justify-between gap-4 rounded-md bg-western-paper px-3 py-2.5">
                         <span className="inline-flex items-center gap-2 font-sans text-[14px] font-semibold text-western-green-deep">
                           <TrendingUp className="h-4 w-4 text-western-bronze" aria-hidden="true" />
-                          Seu retorno
+                          Seu lucro
                         </span>
                         <span className="font-sans text-[20px] font-bold tabular-nums text-western-bronze">
                           {formatBRL(sugerido - subtotal, currency)}

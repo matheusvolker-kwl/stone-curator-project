@@ -220,7 +220,7 @@ export default function CartDrawer({
                 </div>
                 <div className="mt-1 flex items-baseline justify-between gap-3">
                   <span className="font-sans text-[13.5px] font-semibold text-western-green-deep">
-                    Seu retorno
+                    Seu lucro
                   </span>
                   <span className="font-sans text-[16px] font-bold tabular-nums text-western-bronze whitespace-nowrap">
                     {formatBRL(sugerido - subtotal, currency)}
