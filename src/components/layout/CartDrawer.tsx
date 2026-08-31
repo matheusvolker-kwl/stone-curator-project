@@ -2,15 +2,7 @@ import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/
 import { useCartStore } from "@/stores/cartStore";
 import QtyInput from "@/components/shared/QtyInput";
 import { formatBRL, cdnImg } from "@/lib/catalog/client";
-import {
-  Minus,
-  Plus,
-  Trash2,
-  Lock,
-  ArrowLeft,
-  ArrowRight,
-  Download,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Download, Lock, Minus, Plus, Trash2, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { BUSINESS } from "@/config/business";
@@ -210,11 +202,12 @@ export default function CartDrawer({
                 o parceiro dimensiona a compra pelo que ela devolve. Aqui em uma
                 linha só, porque a gaveta é consulta rápida. */}
             {isApproved && sugerido > 0 && (
-              <div className="flex items-baseline justify-between gap-3 border-t border-western-border-soft pt-3">
-                <span className="font-sans text-[13.5px] text-western-stone-warm">
+              <div className="flex items-baseline justify-between gap-3 rounded-md bg-western-paper px-3 py-2.5">
+                <span className="inline-flex items-center gap-2 font-sans text-[13.5px] text-western-stone-warm">
+                  <TrendingUp className="h-4 w-4 shrink-0 text-western-bronze" aria-hidden="true" />
                   Revende por {formatBRL(sugerido, currency)}
                 </span>
-                <span className="font-sans text-[15px] font-bold tabular-nums text-western-bronze whitespace-nowrap">
+                <span className="font-sans text-[16px] font-bold tabular-nums text-western-bronze whitespace-nowrap">
                   + {formatBRL(sugerido - subtotal, currency)}
                 </span>
               </div>

@@ -13,23 +13,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Clock,
-  Download,
-  FileText,
-  Loader2,
-  Lock,
-  MessageCircle,
-  Minus,
-  Plus,
-  ShieldCheck,
-  ShoppingBag,
-  Store,
-  Trash2,
-  Truck,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Clock, Download, FileText, Loader2, Lock, MessageCircle, Minus, Plus, ShieldCheck, ShoppingBag, Store, Trash2, TrendingUp, Truck } from "lucide-react";
 import { toast } from "sonner";
 
 import Seo from "@/components/seo/Seo";
@@ -494,18 +478,23 @@ export default function Carrinho() {
                   {showValues && sugerido > 0 && (
                     <div className="mt-4 border-t border-western-border-soft pt-4">
                       <div className="flex items-baseline justify-between gap-4">
-                        <span className="font-sans text-[14px] text-western-stone-warm">
-                          Revende por
+                        <span className="inline-flex items-center gap-2 font-sans text-[14px] text-western-stone-warm">
+                          <Store className="h-4 w-4 text-western-bronze" aria-hidden="true" />
+                          Você revende por
                         </span>
                         <span className="font-sans text-[16px] font-semibold tabular-nums text-western-green-deep">
                           {formatBRL(sugerido, currency)}
                         </span>
                       </div>
-                      <div className="mt-1.5 flex items-baseline justify-between gap-4">
-                        <span className="font-sans text-[14px] font-semibold text-western-green-deep">
-                          Retorno
+                      {/* Mesmo tratamento da página de produto: ícone e bronze
+                          sobre fundo papel marcam a família "ganho". O parceiro
+                          reconhece o bloco em qualquer tela sem precisar ler. */}
+                      <div className="mt-2.5 flex items-baseline justify-between gap-4 rounded-md bg-western-paper px-3 py-2.5">
+                        <span className="inline-flex items-center gap-2 font-sans text-[14px] font-semibold text-western-green-deep">
+                          <TrendingUp className="h-4 w-4 text-western-bronze" aria-hidden="true" />
+                          Seu retorno
                         </span>
-                        <span className="font-sans text-[19px] font-bold tabular-nums text-western-bronze">
+                        <span className="font-sans text-[20px] font-bold tabular-nums text-western-bronze">
                           {formatBRL(sugerido - subtotal, currency)}
                         </span>
                       </div>
