@@ -43,7 +43,7 @@ import {
   resolveInstallationType,
 } from "@/data/installation";
 import { usePartnerPricing } from "@/hooks/usePartnerPricing";
-import { unitarioComDesconto } from "@/lib/precoParceiro";
+import { unitarioComDesconto, vendaSugerida } from "@/lib/precoParceiro";
 import GatedPrice from "@/components/shared/GatedPrice";
 
 /* Eram cópias à mão do .btn-primary/.btn-outline-forest (auditoria 2026-07-17:
@@ -293,6 +293,10 @@ export default function ProductPage() {
   const priceAmount = variant?.price.amount ?? product.priceRange.minVariantPrice.amount;
   // A barra fixa recebe numero pronto, nao componente — entao o desconto do
   // nivel precisa ser aplicado aqui, com a mesma aritmetica do WooCommerce.
+  // A sugestão ao consumidor parte do preço de TABELA, igual para todo
+  // parceiro — não do preço já descontado do nível dele.
+  const precoTabela =
+    typeof priceAmount === "number" ? priceAmount : parseFloat(String(priceAmount));
   const precoComDesconto = unitarioComDesconto(
     typeof priceAmount === "number" ? priceAmount : parseFloat(String(priceAmount)),
     discountPct,
@@ -382,6 +386,23 @@ export default function ProductPage() {
                       Padrao (0%) nao percebia, porque para ele os dois sao iguais. */}
                   <GatedPrice amount={priceAmount} currency={priceCurrency} className="text-price" />
                   <p className="text-meta mt-1.5">À vista · parcela no checkout</p>
+
+                  {/* Venda sugerida — o segundo número que o parceiro precisa.
+                      Ele decide a compra comparando o que paga com o que pode
+                      cobrar; sem isso ele sai da página para fazer a conta.
+                      Fica abaixo e menor de propósito: o preço dele é a
+                      informação principal, esta é a referência. */}
+                  <div className="mt-5 border-t border-western-border-soft pt-4">
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+                      <span className="text-eyebrow">Venda sugerida</span>
+                      <span className="font-sans text-[22px] font-semibold tabular-nums text-western-green-deep">
+                        {formatBRL(vendaSugerida(precoTabela), priceCurrency)}
+                      </span>
+                    </div>
+                    <p className="text-meta mt-1">
+                      Preço de referência ao consumidor final.
+                    </p>
+                  </div>
                 </div>
 
                 {/* 2 — Acabamento */}

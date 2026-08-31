@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { totalComDesconto, unitarioComDesconto, somaComDesconto } from "./precoParceiro";
+import { totalComDesconto, unitarioComDesconto, somaComDesconto, vendaSugerida } from "./precoParceiro";
 
 /**
  * O que estes testes protegem: a vitrine mostra o preço já com desconto, mas
@@ -62,5 +62,26 @@ describe("preço do parceiro", () => {
     ];
     const esperado = comoOWooCobra(349.9, 1, 5) + comoOWooCobra(65, 3, 5);
     expect(somaComDesconto(linhas, 5)).toBeCloseTo(esperado, 2);
+  });
+});
+
+describe("venda sugerida ao consumidor", () => {
+  it("é o preço de tabela × 21/11, ao centavo", () => {
+    // valores conferidos contra a tabela comercial de 29/08/2026
+    expect(vendaSugerida(1430)).toBe(2730);
+    expect(vendaSugerida(990)).toBe(1890);
+    expect(vendaSugerida(1166)).toBe(2226);
+    expect(vendaSugerida(3943.5)).toBe(7528.5);
+  });
+
+  it("funciona em preço quebrado", () => {
+    // Pisada Pedra Pequena: tabela R$ 62,70 → público R$ 119,70
+    expect(vendaSugerida(62.7)).toBe(119.7);
+  });
+
+  it("é sempre maior que o preço de tabela", () => {
+    for (const p of [35, 62.7, 195, 1166, 3943.5, 5088]) {
+      expect(vendaSugerida(p)).toBeGreaterThan(p);
+    }
   });
 });

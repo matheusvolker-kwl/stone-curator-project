@@ -357,23 +357,33 @@ function HeroAprovado() {
             <div className="mt-5 h-6 w-64 animate-pulse rounded-sm bg-western-cream/15" />
           ) : (
             <div className="mt-5 flex flex-wrap items-center gap-x-8 gap-y-4">
-              <div>
-                <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/60">
-                  Seu nível
-                </p>
-                <p className="mt-1 text-[18px] font-semibold text-western-cream">
-                  {TIER_LABEL[tier as Tier] ?? tier}
-                </p>
-              </div>
+              {/* O nivel so aparece para quem TEM um acima do basico.
+                  Dizer "Parceiro Padrao" a quem esta na entrada revela que ha
+                  categorias melhores que ele nao tem — informacao que nao ajuda
+                  ele e enfraquece a proposta. Para Vitrine e Partner, o nome do
+                  plano E o beneficio, e a condicao ja vem aplicada no preco. */}
+              {tier !== "padrao" && (
+                <div>
+                  <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/60">
+                    Seu plano
+                  </p>
+                  <p className="mt-1 text-[18px] font-semibold text-western-cream">
+                    {TIER_LABEL[tier as Tier] ?? tier}
+                  </p>
+                </div>
+              )}
 
               <div>
                 <p className="text-[14px] font-semibold uppercase tracking-[0.06em] text-western-cream/60">
-                  {discountPct > 0 ? "Desconto" : "Sua condição"}
+                  Sua condição
                 </p>
-                <p className="mt-1 text-[18px] font-semibold tabular-nums text-western-gold">
-                  {discountPct > 0
-                    ? `${discountPct}% em toda a linha`
-                    : "Preço de atacado em toda a linha"}
+                {/* Sem percentual: a regra de 29/08 tornou os descontos nao
+                    redondos, e o parceiro nao precisa da mecanica — ele precisa
+                    do preco, que ja aparece descontado em toda a loja. */}
+                <p className="mt-1 text-[18px] font-semibold text-western-gold">
+                  {tier === "padrao"
+                    ? "Preço de atacado em toda a linha"
+                    : "Condição aplicada em toda a linha"}
                 </p>
               </div>
             </div>

@@ -152,16 +152,15 @@ export default function AccountLayout() {
                   <ChipEsqueleto />
                 ) : (
                   <>
-                    <Chip>{TIER_LABEL[pricing.tier]}</Chip>
-                    {/* O nivel Padrao nao tem desconto: mostrar "0% de desconto"
-                        e' pior que nao mostrar nada — o beneficio dele e o preco B2B. */}
-                    {pricing.discountPct > 0 ? (
-                      <Chip destaque>
-                        <span className="tabular-nums">{pricing.discountPct}%</span> de desconto
-                      </Chip>
-                    ) : (
-                      <Chip destaque>Preço de atacado</Chip>
-                    )}
+                    {/* Ver o comentario em AccountIndex: o nivel so aparece
+                        para quem esta acima da entrada. */}
+                    {pricing.tier !== "padrao" && <Chip>{TIER_LABEL[pricing.tier]}</Chip>}
+                    {/* O percentual saiu de proposito. Com a regra de 29/08 ele
+                        deixou de ser redondo (4,5455% / 9,0909%) — o parceiro
+                        veria um numero estranho que nao ajuda em nada. O que
+                        importa para ele e o PRECO, que ele ja ve na vitrine, e
+                        a categoria, que e o nome do plano dele. */}
+                    <Chip destaque>Preço de atacado</Chip>
                   </>
                 ))}
             </div>
@@ -267,14 +266,13 @@ function Hero({ situacao, perfil, pricing }: HeroProps) {
               <div className="h-12 w-40 animate-pulse rounded-lg bg-western-border-soft" />
             ) : (
               <>
-                <Dado rotulo="Seu nível">{TIER_LABEL[pricing.tier]}</Dado>
-                {pricing.discountPct > 0 ? (
-                  <Dado rotulo="Desconto do seu nível" numerico>
-                    {pricing.discountPct}%
-                  </Dado>
-                ) : (
-                  <Dado rotulo="Sua condição">Preço de atacado</Dado>
+                {pricing.tier !== "padrao" && (
+                  <Dado rotulo="Seu plano">{TIER_LABEL[pricing.tier]}</Dado>
                 )}
+                {/* Percentual fora daqui tambem: ver o comentario no chip acima. */}
+                <Dado rotulo="Sua condição">
+                  {pricing.tier === "padrao" ? "Preço de atacado" : "Condição aplicada"}
+                </Dado>
                 <Dado rotulo="Pagamento">
                   <span className="tabular-nums">
                     {parcelas_max > 1 ? `Em até ${parcelas_max}x` : "À vista"}
