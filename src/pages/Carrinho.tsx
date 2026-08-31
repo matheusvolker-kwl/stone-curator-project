@@ -45,7 +45,7 @@ import { formatBRL, cdnImg } from "@/lib/catalog/client";
 import { supabase } from "@/integrations/supabase/client";
 import { registerPedidoNovoLead } from "@/lib/leads/pedidoNovo";
 import { BUSINESS } from "@/config/business";
-import { totalComDesconto, unitarioComDesconto, somaComDesconto } from "@/lib/precoParceiro";
+import { totalComDesconto, unitarioComDesconto, somaComDesconto, vendaSugerida } from "@/lib/precoParceiro";
 
 const WHATS_URL = `https://wa.me/${BUSINESS.whatsappFabrica}`;
 
@@ -75,7 +75,7 @@ export default function Carrinho() {
 
   const currency = items[0]?.price.currencyCode ?? "BRL";
 
-  const { totalQty, subtotal, boxOnly } = useMemo(() => {
+  const { totalQty, subtotal, sugerido, boxOnly } = useMemo(() => {
     const qty = items.reduce((s, i) => s + i.quantity, 0);
     const liquido = somaComDesconto(
       items.map((i) => ({ precoUnitario: parseFloat(i.price.amount), quantidade: i.quantity })),
@@ -84,6 +84,12 @@ export default function Carrinho() {
     return {
       totalQty: qty,
       subtotal: liquido,
+      // Quanto este carrinho revende, pelo preço sugerido ao consumidor.
+      // Parte do preço de TABELA de cada item, nunca do preço já descontado.
+      sugerido: items.reduce(
+        (s, i) => s + vendaSugerida(parseFloat(i.price.amount)) * i.quantity,
+        0,
+      ),
       boxOnly: items.length > 0 && items.every(isWesternBox),
     };
   }, [items, discountPct]);
@@ -478,6 +484,36 @@ export default function Carrinho() {
                       </span>
                     )}
                   </div>
+
+                  {/* O QUE ESTE PEDIDO REVENDE
+                      O parceiro decide o tamanho da compra pelo que ela devolve,
+                      não pelo que ela custa. Ver os dois números lado a lado é o
+                      que transforma "R$ 3.020 é caro" em "R$ 3.020 viram
+                      R$ 6.342". Sem isso ele faz essa conta fora da loja — ou
+                      não faz, e compra menos. */}
+                  {showValues && sugerido > 0 && (
+                    <div className="mt-4 border-t border-western-border-soft pt-4">
+                      <div className="flex items-baseline justify-between gap-4">
+                        <span className="font-sans text-[14px] text-western-stone-warm">
+                          Revende por
+                        </span>
+                        <span className="font-sans text-[16px] font-semibold tabular-nums text-western-green-deep">
+                          {formatBRL(sugerido, currency)}
+                        </span>
+                      </div>
+                      <div className="mt-1.5 flex items-baseline justify-between gap-4">
+                        <span className="font-sans text-[14px] font-semibold text-western-green-deep">
+                          Retorno
+                        </span>
+                        <span className="font-sans text-[19px] font-bold tabular-nums text-western-bronze">
+                          {formatBRL(sugerido - subtotal, currency)}
+                        </span>
+                      </div>
+                      <p className="text-meta mt-2">
+                        Pelo preço sugerido ao consumidor final.
+                      </p>
+                    </div>
+                  )}
 
                   {/* Pedido mínimo — o visitante precisa saber da barreira ANTES de
                    * se cadastrar, não depois. Para o parceiro aprovado, a barra de

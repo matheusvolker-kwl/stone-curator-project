@@ -18,7 +18,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePartnerPricing } from "@/hooks/usePartnerPricing";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import EmptyCartHints from "@/components/cart/EmptyCartHints";
-import { totalComDesconto, unitarioComDesconto } from "@/lib/precoParceiro";
+import { totalComDesconto, unitarioComDesconto, vendaSugerida } from "@/lib/precoParceiro";
 
 /**
  * Drawer do carrinho — PRÉVIA, não checkout: o cliente confere o que somou e
@@ -52,6 +52,12 @@ export default function CartDrawer({
     totalComDesconto(parseFloat(amount), qty, discountPct);
   const unitPrice = (amount: string) => unitarioComDesconto(parseFloat(amount), discountPct);
   const subtotal = items.reduce((s, i) => s + lineTotal(i.price.amount, i.quantity), 0);
+  // Quanto este carrinho revende, pelo preço sugerido ao consumidor final.
+  // Sai do preço de TABELA de cada item, nunca do já descontado.
+  const sugerido = items.reduce(
+    (s, i) => s + vendaSugerida(parseFloat(i.price.amount)) * i.quantity,
+    0,
+  );
 
   // Pedido mínimo B2B — informativo (progresso no orçamento), nunca bloqueia o
   // checkout: a Western Box é vendida sem mínimo e sem cadastro.
@@ -199,6 +205,20 @@ export default function CartDrawer({
                 </span>
               )}
             </div>
+
+            {/* O retorno do pedido — mesmo raciocínio da página do carrinho:
+                o parceiro dimensiona a compra pelo que ela devolve. Aqui em uma
+                linha só, porque a gaveta é consulta rápida. */}
+            {isApproved && sugerido > 0 && (
+              <div className="flex items-baseline justify-between gap-3 border-t border-western-border-soft pt-3">
+                <span className="font-sans text-[13.5px] text-western-stone-warm">
+                  Revende por {formatBRL(sugerido, currency)}
+                </span>
+                <span className="font-sans text-[15px] font-bold tabular-nums text-western-bronze whitespace-nowrap">
+                  + {formatBRL(sugerido - subtotal, currency)}
+                </span>
+              </div>
+            )}
 
             {/* Pedido mínimo — barra + rótulo numa linha, nunca bloqueio */}
             {isApproved && (
