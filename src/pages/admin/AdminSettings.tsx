@@ -144,7 +144,13 @@ export default function AdminSettings() {
           type="number"
           min={0}
           max={100}
-          step="0.5"
+          /* step="any" de proposito. A regra comercial de 29/08/2026 produz
+             percentuais quebrados — 4,5455 no Vitrine e 9,0909 no Partner —
+             porque o que precisa ser exato e o PRECO que o parceiro paga, nao
+             o percentual. Com step="0.5" as setinhas empurravam para 4,5 ou 5
+             e o navegador podia recusar o valor ao salvar: quem viesse arrumar
+             outra coisa nesta tela quebraria os precos sem perceber. */
+          step="any"
           value={t.discount_pct}
           onChange={(e) =>
             update(t.tier, {
