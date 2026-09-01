@@ -155,8 +155,8 @@ export default function AccountLayout() {
                     {/* Ver o comentario em AccountIndex: o nivel so aparece
                         para quem esta acima da entrada. */}
                     {pricing.tier !== "padrao" && <Chip>{TIER_LABEL[pricing.tier]}</Chip>}
-                    {/* O percentual saiu de proposito. Com a regra de 29/08 ele
-                        deixou de ser redondo (4,5455% / 9,0909%) — o parceiro
+                    {/* O percentual saiu de proposito. Com a regra de 31/08 ele
+                        deixou de ser redondo (8,3333% / 16,6667%) — o parceiro
                         veria um numero estranho que nao ajuda em nada. O que
                         importa para ele e o PRECO, que ele ja ve na vitrine, e
                         a categoria, que e o nome do plano dele. */}

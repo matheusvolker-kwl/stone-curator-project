@@ -53,19 +53,22 @@ export function somaComDesconto(
 /**
  * Venda sugerida ao consumidor final, a partir do preço de tabela.
  *
- * A régua comercial de 29/08/2026 encadeia três coisas:
- *   preço de tabela   = tabela de atacado anterior × 1,10
- *   venda ao público  = tabela de atacado anterior × 2,10
- * Dividindo uma pela outra sobra 21/11 — ou seja, a venda sugerida é função
- * pura do preço de tabela e não precisa de campo novo em lugar nenhum.
+ * A régua comercial de 31/08/2026 é margem sobre o preço sugerido:
+ *   atacado (entrada) = sugerido × 0,60   → 40% de margem
+ *   vitrine           = sugerido × 0,55   → 45%
+ *   partner           = sugerido × 0,50   → 50%
+ * O preço de tabela do site é o do atacado, o degrau de entrada. Invertendo,
+ * a venda sugerida é ele × 5/3 — função pura do preço de tabela, sem precisar
+ * de campo novo em lugar nenhum.
  *
- * Conferido nos 50 produtos do catálogo em 29/08/2026: bate ao centavo em
- * todos, inclusive nos que têm preço quebrado (R$ 62,70 → R$ 119,70).
+ * Conferido nos 50 produtos da tabela R02FEV2025 em 31/08/2026: bate ao
+ * centavo em todos. O partner volta a pagar exatamente o atacado daquela
+ * tabela, que é de onde a régua inteira sai.
  *
  * IMPORTANTE: recebe o preço de TABELA (o cheio), nunca o preço já com o
  * desconto do nível — a sugestão ao consumidor é a mesma para todo parceiro.
  */
 export function vendaSugerida(precoTabela: number): number {
-  const c = Math.round(precoTabela * 100) * 21;
-  return Math.round(c / 11) / 100;
+  const c = Math.round(precoTabela * 100) * 5;
+  return Math.round(c / 3) / 100;
 }
