@@ -396,38 +396,39 @@ export default function ProductPage() {
                   <GatedPrice amount={priceAmount} currency={priceCurrency} className="text-price" />
                   <p className="text-meta mt-1.5">À vista · parcela no checkout</p>
 
-                  <div className="mt-5 border-t border-western-border-soft pt-4">
-                    <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-                      <span className="inline-flex items-center gap-2 text-eyebrow">
-                        <Store className="h-4 w-4 text-western-bronze" aria-hidden="true" />
-                        Você revende por
-                      </span>
-                      <span className="font-sans text-[22px] font-semibold tabular-nums text-western-green-deep">
-                        {formatBRL(vendaSugerida(precoTabela), priceCurrency)}
-                      </span>
-                    </div>
-
-                    {/* O RETORNO — e este numero que faz ele decidir a quantidade.
-                        Acompanha o seletor de quantidade de proposito: ver
-                        "R$ 1.980,00 com 2 peças" enquanto mexe no stepper e o
-                        incentivo mais honesto que existe, porque e a conta real
-                        dele, nao uma promocao. */}
-                    {retornoUnit > 0 && (
-                      <div className="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-md bg-western-paper px-3 py-2.5">
-                        <span className="inline-flex items-center gap-2 font-sans text-[14px] font-semibold text-western-green-deep">
-                          <TrendingUp className="h-4 w-4 text-western-bronze" aria-hidden="true" />
-                          {qty > 1 ? `Seu lucro com ${qty} peças` : "Seu lucro por peça"}
+                  {/* UM BLOCO SO PARA A CONTA DELE.
+                      Antes "revende por" ficava solto e o lucro num destaque
+                      separado: pareciam duas informacoes diferentes quando sao
+                      a mesma conta. O rodape virou cabecalho e amarra as duas —
+                      "SE revender pelo preco sugerido" e a condicao dos dois
+                      numeros, nao so do segundo.
+                      O lucro acompanha o seletor de quantidade: ver o numero
+                      crescer enquanto ele mexe no stepper e o incentivo mais
+                      honesto que existe, porque e a conta real dele. */}
+                  {retornoUnit > 0 && (
+                    <div className="mt-5 rounded-lg bg-western-paper px-4 py-3.5">
+                      <p className="inline-flex items-center gap-2 text-eyebrow">
+                        <TrendingUp className="h-4 w-4 text-western-bronze" aria-hidden="true" />
+                        Se revender pelo preço sugerido
+                      </p>
+                      <div className="mt-3 flex items-baseline justify-between gap-4">
+                        <span className="font-sans text-[14px] text-western-stone-warm">
+                          Você revende por
                         </span>
-                        <span className="font-sans text-[20px] font-bold tabular-nums text-western-bronze">
+                        <span className="font-sans text-[15px] font-semibold tabular-nums text-western-green-deep">
+                          {formatBRL(vendaSugerida(precoTabela) * qty, priceCurrency)}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex items-baseline justify-between gap-4 border-t border-western-border-soft pt-2">
+                        <span className="font-sans text-[14px] font-semibold text-western-green-deep">
+                          {qty > 1 ? `Seu lucro com ${qty} peças` : "Seu lucro"}
+                        </span>
+                        <span className="font-sans text-[22px] font-bold tabular-nums leading-none text-western-bronze">
                           {formatBRL(retornoUnit * qty, priceCurrency)}
                         </span>
                       </div>
-                    )}
-
-                    <p className="text-meta mt-2">
-                      Preço de referência ao consumidor final.
-                    </p>
-                  </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* 2 — Acabamento */}

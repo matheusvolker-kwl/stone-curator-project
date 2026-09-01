@@ -207,22 +207,25 @@ export default function CartDrawer({
                 imposto. O dono leu como cobranca adicional, e ele conhece a
                 regra; um parceiro leria pior. Cada numero passa a ter rotulo
                 proprio, e nenhum sinal aritmetico encosta em valor a pagar. */}
-            {isApproved && sugerido > 0 && (
-              <div className="rounded-md bg-western-paper px-3 py-2.5">
-                <div className="flex items-baseline justify-between gap-3">
-                  <span className="inline-flex items-center gap-2 font-sans text-[13.5px] text-western-stone-warm">
-                    <TrendingUp className="h-4 w-4 shrink-0 text-western-bronze" aria-hidden="true" />
+                        {isApproved && sugerido > 0 && (
+              <div className="rounded-lg bg-western-paper px-3.5 py-3">
+                <p className="inline-flex items-center gap-2 text-eyebrow">
+                  <TrendingUp className="h-4 w-4 text-western-bronze" aria-hidden="true" />
+                  Se revender pelo preço sugerido
+                </p>
+                <div className="mt-2.5 flex items-baseline justify-between gap-3">
+                  <span className="font-sans text-[13.5px] text-western-stone-warm">
                     Você revende por
                   </span>
                   <span className="font-sans text-[14px] font-semibold tabular-nums text-western-green-deep whitespace-nowrap">
                     {formatBRL(sugerido, currency)}
                   </span>
                 </div>
-                <div className="mt-1 flex items-baseline justify-between gap-3">
+                <div className="mt-1.5 flex items-baseline justify-between gap-3 border-t border-western-border-soft pt-1.5">
                   <span className="font-sans text-[13.5px] font-semibold text-western-green-deep">
                     Seu lucro
                   </span>
-                  <span className="font-sans text-[16px] font-bold tabular-nums text-western-bronze whitespace-nowrap">
+                  <span className="font-sans text-[19px] font-bold tabular-nums leading-none text-western-bronze whitespace-nowrap">
                     {formatBRL(sugerido - subtotal, currency)}
                   </span>
                 </div>

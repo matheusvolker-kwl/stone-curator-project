@@ -476,31 +476,27 @@ export default function Carrinho() {
                       R$ 6.342". Sem isso ele faz essa conta fora da loja — ou
                       não faz, e compra menos. */}
                   {showValues && sugerido > 0 && (
-                    <div className="mt-4 border-t border-western-border-soft pt-4">
-                      <div className="flex items-baseline justify-between gap-4">
-                        <span className="inline-flex items-center gap-2 font-sans text-[14px] text-western-stone-warm">
-                          <Store className="h-4 w-4 text-western-bronze" aria-hidden="true" />
+                    <div className="mt-4 rounded-lg bg-western-paper px-4 py-3.5">
+                      <p className="inline-flex items-center gap-2 text-eyebrow">
+                        <TrendingUp className="h-4 w-4 text-western-bronze" aria-hidden="true" />
+                        Se revender pelo preço sugerido
+                      </p>
+                      <div className="mt-3 flex items-baseline justify-between gap-4">
+                        <span className="font-sans text-[14px] text-western-stone-warm">
                           Você revende por
                         </span>
-                        <span className="font-sans text-[16px] font-semibold tabular-nums text-western-green-deep">
+                        <span className="font-sans text-[15px] font-semibold tabular-nums text-western-green-deep">
                           {formatBRL(sugerido, currency)}
                         </span>
                       </div>
-                      {/* Mesmo tratamento da página de produto: ícone e bronze
-                          sobre fundo papel marcam a família "ganho". O parceiro
-                          reconhece o bloco em qualquer tela sem precisar ler. */}
-                      <div className="mt-2.5 flex items-baseline justify-between gap-4 rounded-md bg-western-paper px-3 py-2.5">
-                        <span className="inline-flex items-center gap-2 font-sans text-[14px] font-semibold text-western-green-deep">
-                          <TrendingUp className="h-4 w-4 text-western-bronze" aria-hidden="true" />
+                      <div className="mt-2 flex items-baseline justify-between gap-4 border-t border-western-border-soft pt-2">
+                        <span className="font-sans text-[14px] font-semibold text-western-green-deep">
                           Seu lucro
                         </span>
-                        <span className="font-sans text-[20px] font-bold tabular-nums text-western-bronze">
+                        <span className="font-sans text-[22px] font-bold tabular-nums leading-none text-western-bronze">
                           {formatBRL(sugerido - subtotal, currency)}
                         </span>
                       </div>
-                      <p className="text-meta mt-2">
-                        Pelo preço sugerido ao consumidor final.
-                      </p>
                     </div>
                   )}
 
