@@ -51,25 +51,55 @@ function getMetaString(p: WooProduct, key: string): string | null {
 // lives in bundle_price.price.min.incl_tax. We also fall back to price_html
 // (already locale-rendered by WP) for any future exotic type.
 
+/** `&#082;&#036;` is how WP renders "R$". Left encoded, those digits become
+ *  numbers competing with the real price. */
+export function decodeEntities(s: string): string {
+  return s
+    .replace(/&#(\d+);/g, (_, d) => String.fromCharCode(Number(d)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCharCode(parseInt(h, 16)))
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&");
+}
+
+/**
+ * Read the price out of WP's rendered price_html.
+ *
+ * Three traps, all of them observed in production on 31/08/2026:
+ *
+ * 1. The currency symbol arrives as `&#082;&#036;`. Undecoded, "082" and "036"
+ *    are tokens — harmless while every price is above 82, silently wrong below.
+ *
+ * 2. WooCommerce ships a `<span class="screen-reader-text">` narrating the
+ *    price, and that sentence ENDS IN A PERIOD: "…era: R$ 594,00." The old
+ *    parser saw a dot after the comma, decided the token was US-formatted,
+ *    stripped the comma and read 59400. Seven kits were live at 100x their
+ *    price because of that period.
+ *
+ * 3. On sale, the html carries BOTH prices — `<del>` regular, `<ins>` current.
+ *    The old parser took the largest, so it advertised the price the customer
+ *    does NOT pay.
+ *
+ * So: drop the struck-through and screen-reader blocks first (what survives is
+ * what the customer actually pays), decode entities, then accept only
+ * well-formed BR currency — comma plus exactly two digits, not followed by
+ * another digit.
+ */
 function parsePriceFromHtml(html?: string): number {
   if (!html) return 0;
-  const text = html.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ");
-  const tokens = text.match(/[\d.,]+/g);
-  if (!tokens) return 0;
-  let best = 0;
-  for (const tok of tokens) {
-    let norm = tok;
-    // BR "4.235,00" -> comma is decimal sep (last comma after last dot)
-    if (tok.includes(",") && tok.lastIndexOf(",") > tok.lastIndexOf(".")) {
-      norm = tok.replace(/\./g, "").replace(",", ".");
-    } else {
-      // US "4,235.00" or plain "4235"
-      norm = tok.replace(/,/g, "");
-    }
-    const n = parseFloat(norm);
-    if (!Number.isNaN(n) && n > best) best = n;
+  const visivel = html
+    .replace(/<del\b[^>]*>[\s\S]*?<\/del>/gi, " ")
+    .replace(/<span[^>]*class="[^"]*screen-reader-text[^"]*"[^>]*>[\s\S]*?<\/span>/gi, " ");
+  const text = decodeEntities(visivel.replace(/<[^>]*>/g, " "));
+
+  const valores: number[] = [];
+  const re = /(\d{1,3}(?:\.\d{3})*|\d+),(\d{2})(?!\d)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    valores.push(Number(m[1].replace(/\./g, "") + "." + m[2]));
   }
-  return best;
+  if (!valores.length) return 0;
+  // A price range ("from X") leaves more than one: the lowest is the "from".
+  return Math.min(...valores);
 }
 
 export function resolveWooPrice(p: WooProduct): string {
