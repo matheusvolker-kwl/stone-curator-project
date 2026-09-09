@@ -49,9 +49,16 @@ export const BUSINESS = {
   emailComercial: "atendimento@westernstore.com.br",
   emailSuporte: "suporte@westernpools.com.br",
   emailNewsletter: "contato@westernpools.com.br",
-  razaoSocial: "Western Pools - Cascatas e Pedras Artesanais LTDA",
-  // CNPJ confirmado (mesmo usado no checkout Woo)
-  cnpj: "10.465.584/0001-24",
+  // ── ENTIDADE QUE ASSINA O SITE ──────────────────────────────────────────
+  // Trocada em 09/09/2026 por orientação jurídica: quem responde pela loja
+  // passa a ser a INDÚSTRIA. Razão social e CNPJ andam juntos — nunca troque
+  // um sem o outro, senão o rodapé passa a atribuir o CNPJ de uma empresa ao
+  // nome de outra. O endereço abaixo (Rua Colina, 38) já é o desta inscrição.
+  // ANTES (não reintroduzir): "Western Pools - Cascatas e Pedras Artesanais
+  // LTDA" · CNPJ 10.465.584/0001-24 — aquela empresa continua ativa e assina
+  // a proposta de obra B2C no HUB, mas não assina mais nada no site.
+  razaoSocial: "Western Pools Indústria e Comércio de Artefatos de Cimentos LTDA",
+  cnpj: "71.530.059/0001-30",
 
   // Pagamento — política em definição. Não exibir condições no site por enquanto.
 
