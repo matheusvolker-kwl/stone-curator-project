@@ -19,9 +19,11 @@ export const BUSINESS = {
   prazoProducaoDias: 15,
   prazoProducaoLabel: "15 dias úteis após confirmação do pedido",
 
-  // Garantia
-  garantiaAnos: 1,
-  garantiaLabel: "1 ano",
+  // Garantia — 5 anos (confirmado pelo dono em 09/09/2026). A branch `westernstore`,
+  // que alimenta o dominio, ja dizia 5; a `main` tinha ficado em 1 e um merge distraido
+  // rebaixaria a promessa no ar sem ninguem ver. As duas passam a dizer a mesma coisa.
+  garantiaAnos: 5,
+  garantiaLabel: "5 anos",
 
 
 
