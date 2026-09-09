@@ -16,11 +16,14 @@ export const BRAND = {
   hairline: '#E7DFCE',
   inkMuted: '#6E665A',
   atelieEndereco: 'Rua Colina, 38 — Jardim Paraíso · Cajamar/SP · 07794-075',
-  whatsappLabel: '+55 11 95896-7088',
-  whatsappLink: 'https://wa.me/5511958967088',
+  // (11) 99340-3487 é o telefone oficial de tudo desde 2026-08-14; 95896-7088 morreu.
+  whatsappLabel: '(11) 99340-3487',
+  whatsappLink: 'https://wa.me/5511993403487',
   atendimentoEmail: 'atendimento@westernstore.com.br',
-  razaoSocial: 'Western Pools - Cascatas e Pedras Artesanais LTDA',
-  cnpj: '10.465.584/0001-24',
+  // Entidade que assina, trocada em 09/09/2026 por orientação jurídica (ver
+  // src/config/business.ts). Razão social e CNPJ andam sempre juntos.
+  razaoSocial: 'Western Pools Indústria e Comércio de Artefatos de Cimentos LTDA',
+  cnpj: '71.530.059/0001-30',
   siteUrl: 'https://westernstore.com.br',
   horarioAtendimento: 'Seg–Sex · 9h às 17h',
   iconUrl: 'https://zibtysewpbeycngtbjjk.supabase.co/storage/v1/object/public/brand/icone-pedra.png',
