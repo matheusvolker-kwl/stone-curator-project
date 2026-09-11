@@ -11,6 +11,7 @@ import { usePartnerPricing } from "@/hooks/usePartnerPricing";
 import QuoteRequestModal from "@/components/cart/QuoteRequestModal";
 import EmptyCartHints from "@/components/cart/EmptyCartHints";
 import { totalComDesconto, unitarioComDesconto, vendaSugerida } from "@/lib/precoParceiro";
+import { agruparItens } from "@/lib/cart/grupos";
 
 /**
  * Drawer do carrinho — PRÉVIA, não checkout: o cliente confere o que somou e
@@ -96,84 +97,102 @@ export default function CartDrawer({
               <EmptyCartHints onNavigate={() => onOpenChange(false)} />
             </div>
           ) : (
-            <ul>
-              {items.map((item) => (
-                <li
-                  key={item.variantId}
-                  className="flex gap-3 py-3.5 border-b last:border-0 border-western-border-soft"
-                >
-                  <div className="w-16 h-16 flex-shrink-0 overflow-hidden rounded-lg bg-western-paper border border-western-border-soft">
-                    {item.productImage && (
-                      <img
-                        src={cdnImg(item.productImage, 160)}
-                        alt={item.productTitle}
-                        className="w-full h-full object-contain p-1"
-                      />
-                    )}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <h4 className="font-sans text-[15px] font-semibold leading-snug text-western-green-deep truncate">
-                        {item.productTitle}
-                      </h4>
-                      {isApproved ? (
-                        <p className="font-sans text-[15px] font-bold tabular-nums text-western-green-deep whitespace-nowrap">
-                          {formatBRL(
-                            lineTotal(item.price.amount, item.quantity),
-                            item.price.currencyCode,
-                          )}
-                        </p>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 font-sans text-[13px] font-semibold text-western-bronze whitespace-nowrap">
-                          <Lock className="h-3.5 w-3.5" /> Parceiro
-                        </span>
-                      )}
-                    </div>
-
-                    <p className="font-sans text-[13px] text-western-stone-warm mt-0.5 truncate">
-                      {item.selectedOptions.map((o) => o.value).join(" · ")}
-                      {isApproved && item.quantity > 1 && (
-                        <> · {formatBRL(unitPrice(item.price.amount), item.price.currencyCode)} / peça</>
-                      )}
-                    </p>
-
-                    <div className="flex items-center justify-between mt-2">
-                      <div className="inline-flex items-center rounded-md border border-western-border-strong bg-white overflow-hidden">
-                        <button
-                          onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
-                          className="h-8 w-8 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
-                          aria-label="Diminuir quantidade"
-                        >
-                          <Minus className="h-3.5 w-3.5" />
-                        </button>
-                        <QtyInput
-                          value={item.quantity}
-                          onCommit={(n) => updateQuantity(item.variantId, n)}
-                          ariaLabel={`Quantidade de ${item.productTitle}`}
-                          className="h-8 w-11 border-0 bg-transparent px-1 text-center font-sans text-[14px] font-semibold tabular-nums text-western-green-deep focus:outline-none"
-                        />
-                        <button
-                          onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                          className="h-8 w-8 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
-                          aria-label="Aumentar quantidade"
-                        >
-                          <Plus className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-
-                      <button
-                        onClick={() => removeItem(item.variantId)}
-                        className="h-8 w-8 flex items-center justify-center rounded-md text-western-stone-warm hover:text-status-error hover:bg-western-paper transition-colors"
-                        aria-label={`Remover ${item.productTitle}`}
+            <div className="pb-2">
+              {/* Blocos por categoria (pequenas, médias, grandes…), ordem
+                  alfabética natural dentro de cada um. Ver src/lib/cart/grupos.ts. */}
+              {agruparItens(items).map((grupo, gi) => (
+                <section key={grupo.handle} aria-labelledby={"grupo-drawer-" + grupo.handle}>
+                  <h3
+                    id={"grupo-drawer-" + grupo.handle}
+                    className={gi === 0 ? "text-eyebrow pt-3 pb-0.5" : "text-eyebrow pt-5 pb-0.5"}
+                  >
+                    {grupo.label}
+                    <span className="font-normal normal-case tracking-normal text-western-stone-warm">
+                      {" · "}
+                      {grupo.pecas} {grupo.pecas === 1 ? "peça" : "peças"}
+                    </span>
+                  </h3>
+                  <ul>
+                    {grupo.itens.map((item) => (
+                      <li
+                        key={item.variantId}
+                        className="flex gap-3 py-3.5 border-b last:border-0 border-western-border-soft"
                       >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-                </li>
+                        <div className="w-16 h-16 flex-shrink-0 overflow-hidden rounded-lg bg-western-paper border border-western-border-soft">
+                          {item.productImage && (
+                            <img
+                              src={cdnImg(item.productImage, 160)}
+                              alt={item.productTitle}
+                              className="w-full h-full object-contain p-1"
+                            />
+                          )}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <h4 className="font-sans text-[15px] font-semibold leading-snug text-western-green-deep truncate">
+                              {item.productTitle}
+                            </h4>
+                            {isApproved ? (
+                              <p className="font-sans text-[15px] font-bold tabular-nums text-western-green-deep whitespace-nowrap">
+                                {formatBRL(
+                                  lineTotal(item.price.amount, item.quantity),
+                                  item.price.currencyCode,
+                                )}
+                              </p>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 font-sans text-[13px] font-semibold text-western-bronze whitespace-nowrap">
+                                <Lock className="h-3.5 w-3.5" /> Parceiro
+                              </span>
+                            )}
+                          </div>
+
+                          <p className="font-sans text-[13px] text-western-stone-warm mt-0.5 truncate">
+                            {item.selectedOptions.map((o) => o.value).join(" · ")}
+                            {isApproved && item.quantity > 1 && (
+                              <> · {formatBRL(unitPrice(item.price.amount), item.price.currencyCode)} / peça</>
+                            )}
+                          </p>
+
+                          <div className="flex items-center justify-between mt-2">
+                            <div className="inline-flex items-center rounded-md border border-western-border-strong bg-white overflow-hidden">
+                              <button
+                                onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
+                                className="h-8 w-8 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+                                aria-label="Diminuir quantidade"
+                              >
+                                <Minus className="h-3.5 w-3.5" />
+                              </button>
+                              <QtyInput
+                                value={item.quantity}
+                                onCommit={(n) => updateQuantity(item.variantId, n)}
+                                ariaLabel={`Quantidade de ${item.productTitle}`}
+                                className="h-8 w-11 border-0 bg-transparent px-1 text-center font-sans text-[14px] font-semibold tabular-nums text-western-green-deep focus:outline-none"
+                              />
+                              <button
+                                onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
+                                className="h-8 w-8 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+                                aria-label="Aumentar quantidade"
+                              >
+                                <Plus className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+
+                            <button
+                              onClick={() => removeItem(item.variantId)}
+                              className="h-8 w-8 flex items-center justify-center rounded-md text-western-stone-warm hover:text-status-error hover:bg-western-paper transition-colors"
+                              aria-label={`Remover ${item.productTitle}`}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
               ))}
-            </ul>
+            </div>
           )}
         </div>
 

@@ -30,6 +30,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { registerPedidoNovoLead } from "@/lib/leads/pedidoNovo";
 import { BUSINESS } from "@/config/business";
 import { totalComDesconto, unitarioComDesconto, somaComDesconto, vendaSugerida } from "@/lib/precoParceiro";
+import { agruparItens } from "@/lib/cart/grupos";
 
 const WHATS_URL = `https://wa.me/${BUSINESS.whatsappFabrica}`;
 
@@ -325,107 +326,129 @@ export default function Carrinho() {
               )}
 
               {/* Linhas do orçamento */}
-              <ul className="rounded-xl border border-western-border-soft bg-white px-5 md:px-6">
-                {items.map((item, idx) => (
-                  <li
-                    key={item.variantId}
-                    className={`flex gap-4 py-4 ${
-                      idx === items.length - 1 ? "" : "border-b border-western-border-soft"
-                    }`}
-                  >
-                    <Link
-                      to={`/produtos/${item.productHandle}`}
-                      className="w-[72px] h-[72px] md:w-[84px] md:h-[84px] flex-shrink-0 overflow-hidden rounded-lg bg-western-paper border border-western-border-soft"
+              {/* Blocos por categoria, ordem alfabética natural dentro de cada um
+                  (pedido do dono, 11/09/2026). Ver src/lib/cart/grupos.ts. */}
+              <div className="rounded-xl border border-western-border-soft bg-white px-5 md:px-6 pb-1">
+                {agruparItens(items).map((grupo, gi) => (
+                  <section key={grupo.handle} aria-labelledby={"grupo-" + grupo.handle}>
+                    <h2
+                      id={"grupo-" + grupo.handle}
+                      className={
+                        gi === 0
+                          ? "text-eyebrow pt-5 pb-1"
+                          : "text-eyebrow pt-6 pb-1 border-t border-western-border-soft"
+                      }
                     >
-                      {item.productImage && (
-                        <img
-                          src={cdnImg(item.productImage, 200)}
-                          alt={item.productTitle}
-                          loading="lazy"
-                          className="w-full h-full object-contain p-1.5"
-                        />
-                      )}
-                    </Link>
-
-                    <div className="flex-1 min-w-0">
-                      {/* MODELO B: linha ÚNICA no desktop — nome · stepper · total ·
-                          remover, tudo alinhado na mesma régua. No mobile o nome
-                          ocupa a 1ª linha e os controles descem juntos pra 2ª. */}
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 md:flex-nowrap">
-                        <div className="min-w-0 flex-1 basis-full md:basis-auto">
-                          <h2 className="font-sans text-[15px] font-semibold leading-snug text-western-green-deep truncate">
-                            <Link
-                              to={`/produtos/${item.productHandle}`}
-                              className="hover:text-western-cta transition-colors"
-                            >
-                              {item.productTitle}
-                            </Link>
-                          </h2>
-                          <p className="font-sans text-[13px] text-western-stone-warm mt-0.5 truncate">
-                            {item.selectedOptions.map((o) => o.value).join(" · ")}
-                            {item.sku && <> · Ref. {item.sku}</>}
-                          </p>
-                        </div>
-
-                        <div className="inline-flex shrink-0 items-center rounded-lg border border-western-border-strong bg-white overflow-hidden">
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
-                            className="h-9 w-9 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
-                            aria-label={`Diminuir quantidade de ${item.productTitle}`}
-                          >
-                            <Minus className="h-3.5 w-3.5" aria-hidden="true" />
-                          </button>
-                          <QtyInput
-                            value={item.quantity}
-                            onCommit={(n) => updateQuantity(item.variantId, n)}
-                            ariaLabel={`Quantidade de ${item.productTitle}`}
-                            className="h-9 w-12 border-0 bg-transparent px-1 text-center font-sans text-[14px] font-semibold tabular-nums text-western-green-deep focus:outline-none"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                            className="h-9 w-9 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
-                            aria-label={`Aumentar quantidade de ${item.productTitle}`}
-                          >
-                            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
-                          </button>
-                        </div>
-
-                        <div className="shrink-0 text-right min-w-[96px]">
-                          {showValues ? (
-                            <>
-                              <p className="font-sans text-[15px] font-bold tabular-nums leading-tight text-western-green-deep whitespace-nowrap">
-                                {formatBRL(lineTotal(item), item.price.currencyCode)}
-                              </p>
-                              {item.quantity > 1 && (
-                                <p className="font-sans text-[13px] text-western-stone-warm whitespace-nowrap">
-                                  {formatBRL(unitPrice(item), item.price.currencyCode)} / peça
-                                </p>
-                              )}
-                            </>
-                          ) : (
-                            /* O gate é INFORMAÇÃO, não porta — a porta é o CTA do resumo. */
-                            <p className="inline-flex items-center gap-1.5 font-sans text-[13.5px] font-semibold text-western-bronze whitespace-nowrap">
-                              <Lock className="h-3.5 w-3.5 flex-shrink-0" aria-hidden="true" />
-                              Preço de parceiro
-                            </p>
-                          )}
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => removeItem(item.variantId)}
-                          className="h-9 w-9 shrink-0 flex items-center justify-center rounded-md text-western-stone-warm hover:text-status-error hover:bg-western-paper transition-colors"
-                          aria-label={`Remover ${item.productTitle} do carrinho`}
+                      {grupo.label}
+                      <span className="font-normal normal-case tracking-normal text-western-stone-warm">
+                        {" · "}
+                        {grupo.pecas} {grupo.pecas === 1 ? "peça" : "peças"}
+                      </span>
+                    </h2>
+                    <ul>
+                      {grupo.itens.map((item, idx) => (
+                        <li
+                          key={item.variantId}
+                          className={`flex gap-4 py-4 ${
+                            idx === grupo.itens.length - 1 ? "" : "border-b border-western-border-soft"
+                          }`}
                         >
-                          <Trash2 className="h-4 w-4" aria-hidden="true" />
-                        </button>
-                      </div>
-                    </div>
-                  </li>
+                          <Link
+                            to={`/produtos/${item.productHandle}`}
+                            className="w-[72px] h-[72px] md:w-[84px] md:h-[84px] flex-shrink-0 overflow-hidden rounded-lg bg-western-paper border border-western-border-soft"
+                          >
+                            {item.productImage && (
+                              <img
+                                src={cdnImg(item.productImage, 200)}
+                                alt={item.productTitle}
+                                loading="lazy"
+                                className="w-full h-full object-contain p-1.5"
+                              />
+                            )}
+                          </Link>
+
+                          <div className="flex-1 min-w-0">
+                            {/* MODELO B: linha ÚNICA no desktop — nome · stepper · total ·
+                                remover, tudo alinhado na mesma régua. No mobile o nome
+                                ocupa a 1ª linha e os controles descem juntos pra 2ª. */}
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 md:flex-nowrap">
+                              <div className="min-w-0 flex-1 basis-full md:basis-auto">
+                                <h3 className="font-sans text-[15px] font-semibold leading-snug text-western-green-deep truncate">
+                                  <Link
+                                    to={`/produtos/${item.productHandle}`}
+                                    className="hover:text-western-cta transition-colors"
+                                  >
+                                    {item.productTitle}
+                                  </Link>
+                                </h3>
+                                <p className="font-sans text-[13px] text-western-stone-warm mt-0.5 truncate">
+                                  {item.selectedOptions.map((o) => o.value).join(" · ")}
+                                  {item.sku && <> · Ref. {item.sku}</>}
+                                </p>
+                              </div>
+
+                              <div className="inline-flex shrink-0 items-center rounded-lg border border-western-border-strong bg-white overflow-hidden">
+                                <button
+                                  type="button"
+                                  onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
+                                  className="h-9 w-9 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+                                  aria-label={`Diminuir quantidade de ${item.productTitle}`}
+                                >
+                                  <Minus className="h-3.5 w-3.5" aria-hidden="true" />
+                                </button>
+                                <QtyInput
+                                  value={item.quantity}
+                                  onCommit={(n) => updateQuantity(item.variantId, n)}
+                                  ariaLabel={`Quantidade de ${item.productTitle}`}
+                                  className="h-9 w-12 border-0 bg-transparent px-1 text-center font-sans text-[14px] font-semibold tabular-nums text-western-green-deep focus:outline-none"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
+                                  className="h-9 w-9 flex items-center justify-center text-western-green-deep hover:bg-western-paper transition-colors"
+                                  aria-label={`Aumentar quantidade de ${item.productTitle}`}
+                                >
+                                  <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+                                </button>
+                              </div>
+
+                              <div className="shrink-0 text-right min-w-[96px]">
+                                {showValues ? (
+                                  <>
+                                    <p className="font-sans text-[15px] font-bold tabular-nums leading-tight text-western-green-deep whitespace-nowrap">
+                                      {formatBRL(lineTotal(item), item.price.currencyCode)}
+                                    </p>
+                                    {item.quantity > 1 && (
+                                      <p className="font-sans text-[13px] text-western-stone-warm whitespace-nowrap">
+                                        {formatBRL(unitPrice(item), item.price.currencyCode)} / peça
+                                      </p>
+                                    )}
+                                  </>
+                                ) : (
+                                  /* O gate é INFORMAÇÃO, não porta — a porta é o CTA do resumo. */
+                                  <p className="inline-flex items-center gap-1.5 font-sans text-[13.5px] font-semibold text-western-bronze whitespace-nowrap">
+                                    <Lock className="h-3.5 w-3.5 flex-shrink-0" aria-hidden="true" />
+                                    Preço de parceiro
+                                  </p>
+                                )}
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => removeItem(item.variantId)}
+                                className="h-9 w-9 shrink-0 flex items-center justify-center rounded-md text-western-stone-warm hover:text-status-error hover:bg-western-paper transition-colors"
+                                aria-label={`Remover ${item.productTitle} do carrinho`}
+                              >
+                                <Trash2 className="h-4 w-4" aria-hidden="true" />
+                              </button>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
                 ))}
-              </ul>
+              </div>
 
               {/* Cross-sell — combina com a composição (mesmo componente do drawer) */}
               {items.length > 0 && (
