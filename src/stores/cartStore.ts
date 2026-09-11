@@ -87,6 +87,28 @@ function notifyCartChanged(opts?: { toastLabel?: string; toastDescription?: stri
 }
 
 
+const CHAVE_CARRINHO = "western-cart";
+
+/* Gravação protegida. Sem isto, se o localStorage recusar a escrita (cota
+ * cheia, navegação privada restrita), o zustand já mudou a memória e só DEPOIS
+ * estoura: a peça aparece na tela e some no próximo carregamento, sem aviso.
+ * Agora o cliente é avisado na hora (id fixo = um aviso só, sem empilhar). */
+const storageSeguro = {
+  getItem: (nome: string) => localStorage.getItem(nome),
+  setItem: (nome: string, valor: string) => {
+    try {
+      localStorage.setItem(nome, valor);
+    } catch {
+      toast.error("Não foi possível salvar o carrinho neste navegador", {
+        id: "carrinho-sem-espaco",
+        description:
+          "As últimas peças podem se perder ao recarregar a página. Libere espaço no navegador ou use outro.",
+      });
+    }
+  },
+  removeItem: (nome: string) => localStorage.removeItem(nome),
+};
+
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
@@ -167,8 +189,8 @@ export const useCartStore = create<CartStore>()(
       clearCart: () => set({ items: [] }),
     }),
     {
-      name: "western-cart",
-      storage: createJSONStorage(() => localStorage),
+      name: CHAVE_CARRINHO,
+      storage: createJSONStorage(() => storageSeguro),
       partialize: (state) => ({ items: state.items }),
       /* VERSÃO DE SCHEMA — o carrinho vive no localStorage do visitante e
        * sobrevive a deploys. Linhas gravadas antes da migração para o Woo não
@@ -186,6 +208,29 @@ export const useCartStore = create<CartStore>()(
     },
   ),
 );
+
+/* SINCRONIA ENTRE ABAS — a causa do "produtos somem do carrinho" (11/09/2026).
+ *
+ * Cada aba lia o localStorage uma vez só, ao abrir, e a cada adição regravava o
+ * array inteiro que tinha na memória. Com duas abas abertas — o normal quando se
+ * monta um pedido grande abrindo produtos lado a lado — a aba antiga apagava o
+ * que tinha sido adicionado na outra. Não havia limite de quantidade nenhum.
+ *
+ * Agora toda aba recarrega o carrinho quando outra grava (o evento "storage" só
+ * dispara nas OUTRAS abas) e quando volta a ficar visível. key === null é o
+ * localStorage.clear() de outra aba. */
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (e) => {
+    if (e.key === CHAVE_CARRINHO || e.key === null) {
+      void useCartStore.persist.rehydrate();
+    }
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      void useCartStore.persist.rehydrate();
+    }
+  });
+}
 
 /**
  * Helper: build a CartItem from a product + variant id.
