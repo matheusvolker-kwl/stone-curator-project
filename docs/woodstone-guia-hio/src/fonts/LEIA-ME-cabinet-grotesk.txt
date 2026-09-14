@@ -1,0 +1,13 @@
+Cabinet Grotesk (fonte principal de títulos) ainda NÃO está neste repositório.
+
+O CSS já pede a fonte; enquanto os arquivos não estiverem aqui, o Chromium cai
+no fallback (Instrument Sans) e o guia continua sendo gerado normalmente.
+
+Para ativar, baixe em https://www.fontshare.com/fonts/cabinet-grotesk e coloque
+nesta pasta, com estes nomes exatos:
+
+    CabinetGrotesk-Extrabold.woff2   (ou .ttf)
+    CabinetGrotesk-Bold.woff2        (ou .ttf)
+    CabinetGrotesk-Medium.woff2      (ou .ttf)
+
+Depois rode `python3 build.py` e reimprima o PDF. Nada mais precisa mudar.

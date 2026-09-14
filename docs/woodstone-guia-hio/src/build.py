@@ -44,7 +44,7 @@ def tunecss():
 
 FOOT = """<div class="foot">
   <div class="foot-co">Western Pools Indústria e Comércio de Artefatos de Cimentos LTDA<br>71.530.059/0001-30</div>
-  <div class="foot-mid"><img class="w" src="assets/western.png" alt=""><div class="div"></div><img class="h" src="assets/hio.png" alt=""></div>
+  <div class="foot-mid"><img class="w" src="assets/western.png" alt="Western"><div class="div"></div><img class="a" src="assets/arboreal-logotipo.png" alt="ArboREAL"><div class="div"></div><img class="h" src="assets/hio.png" alt="HIO"></div>
   <div class="foot-pg">{n}&nbsp;&nbsp;/&nbsp;&nbsp;07</div>
 </div>"""
 
@@ -113,7 +113,9 @@ def page1():
   <div class="kicker" style="{m('p1_kicker',12.9)}">CONSULTA RÁPIDA · EQUIPE DE VENDAS HIO</div>
   <p class="lede" style="{m('p1_lede',12.6)}">Cinco peças de formas orgânicas que reúnem a pedra Western e o Pequiá maciço da<br>ArboREAL. <strong>Gaia e Origem estão em exposição na loja</strong> — o cliente vê e toca antes de decidir.</p>
   <div class="materia" style="{m('p1_materia',15.0)}">
-    <div class="lbl">A MATÉRIA</div>
+    <div class="lbl">A MATÉRIA
+      <span class="marks"><img src="assets/western.png" alt="Western"><i>×</i><img class="ar" src="assets/arboreal-logotipo.png" alt="ArboREAL"></span>
+    </div>
     <div class="txt">Pedra artesanal, construída a partir de molde extraído de uma rocha natural. O ambiente
     permanece preservado e a natureza é recriada à mão, peça por peça. <strong>100% sustentável.</strong></div>
   </div>
@@ -159,12 +161,13 @@ def product(pr, idx):
     <div class="tt"><h2>{pr["name"]}</h2><div class="sub">{pr["sub"]}</div></div>
     {badge}
   </div>
-  <img class="hero" src="assets/{pr["slug"]}-hero.jpg" alt="">
+  <img class="hero" src="assets/{pr["slug"]}-hero.jpg" alt="" style="object-position:{pr.get("fhero","50% 50%")}">
   <div class="duo">
     <div class="panel"><img src="assets/{pr["slug"]}-b.jpg" alt=""></div>
-    <img class="shot" src="assets/{pr["slug"]}-c.jpg" alt="">
+    <img class="shot" src="assets/{pr["slug"]}-c.jpg" alt="" style="object-position:{pr.get("fshot","50% 50%")}">
   </div>
-  <p class="desc">{pr["desc"]} <span class="oi">ONDE INDICAR</span> <span class="oit">{pr["onde"]}</span></p>
+  <p class="desc">{pr["desc"]}</p>
+  <div class="onde"><span class="oi">ONDE INDICAR</span><span class="oit">{pr["onde"]}</span></div>
   <div class="specs" style="{m('pp_specs',8.6)}">
     <div><div class="l">MEDIDAS</div><div class="v">{pr["med"]}</div></div>
     <div><div class="l">PESO</div><div class="v">{pr["peso"]}</div></div>
@@ -181,10 +184,10 @@ def product(pr, idx):
     <tr class="r4"><td class="hl"></td><td class="hl"></td><td></td><td></td><td></td></tr>
   </table>
   <p class="note" style="{m('pp_note1',6.4)}">Valor da parcela no cartão. <strong>2× e 3× sem juros, no preço de tabela.</strong> De 4× a 6× o acréscimo já está embutido.</p>
-  <div class="tonhead"><span class="seclabel">TONALIDADES DA PEDRA</span><span class="r">a madeira é sempre Pequiá maciço</span></div>
+  <div class="tonhead"><span class="seclabel">TONALIDADES DA PEDRA</span><span class="r">a madeira é sempre Pequiá maciço da <img class="arbo" src="assets/arboreal-logotipo.png" alt="ArboREAL"></span></div>
   <div class="rule-dark" style="margin-top:4.45pt"></div>
   <div class="tones">{tones}</div>
-  <p class="note" style="{m('pp_note2',5.6)}">Ambiente e estúdio: simulações em Moledo; detalhe: referência da matéria. Fotos reais de textura da pedra. <strong>Produção de 30 dias corridos por peça</strong>, contados da confirmação do pagamento; acima de 5 peças, consultar prazo. Para áreas externas, validar exposição, cobertura e manutenção com a Western.</p>
+  <p class="note" style="{m('pp_note2',5.6)}">Ambiente e estúdio simulados em Moledo; o detalhe é foto real da textura da pedra. <strong>Prazo de produção, frete e uso em área externa: páginas 01 e 07.</strong></p>
   {FOOT.format(n="0"+str(idx))}
 </section>"""
 
