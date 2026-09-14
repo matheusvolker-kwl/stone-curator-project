@@ -27,3 +27,15 @@ export function linhaRank(handle?: string | null): number {
 export function naturalTitleCompare(a: string, b: string): number {
   return a.localeCompare(b, "pt-BR", { numeric: true, sensitivity: "base" });
 }
+
+interface NoOrdenavel {
+  title: string;
+  collections?: { edges: Array<{ node: { handle: string } }> };
+}
+
+/** Ordem padrão do catálogo: linha carro-chefe primeiro, título natural dentro da linha. */
+export function compareCatalogo(a: NoOrdenavel, b: NoOrdenavel): number {
+  const ra = linhaRank(a.collections?.edges?.[0]?.node?.handle);
+  const rb = linhaRank(b.collections?.edges?.[0]?.node?.handle);
+  return ra - rb || naturalTitleCompare(a.title, b.title);
+}

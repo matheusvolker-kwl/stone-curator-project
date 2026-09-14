@@ -9,12 +9,14 @@ import ProductCard from "@/components/product/ProductCard";
 import Seo from "@/components/seo/Seo";
 import { LINHA_COVER_OVERRIDES } from "@/lib/lineCovers";
 import { LINHA_DESCRIPTIONS } from "@/lib/lineDescriptions";
-import { resolveSearch } from "@/lib/search/vocab";
+import { resolveSearch } from "@/lib/search/engine";
+import { compareCatalogo } from "@/lib/lineOrder";
 import {
   CATALOG_SCENES,
   PEDRAS_HANDLES,
   PEDRAS_VIRTUAL,
   PEDRAS_VIRTUAL_HANDLE,
+  withPedrasVirtual,
 } from "@/lib/catalogScenes";
 import type { ShopifyCollection } from "@/lib/catalog/types";
 
@@ -93,10 +95,21 @@ export default function Linhas() {
     staleTime: 60_000,
   });
 
-  // Busca inteligente: sinônimo + acento + atalhos de intenção (serviço/cena).
+  // Busca por relevância (código, nome, sinônimo, acabamento…). Empate segue a
+  // ordem do catálogo; a linha virtual "Pedras decorativas" também é achável.
+  const produtosEmOrdem = useMemo(
+    () => [...allProducts].sort((a, b) => compareCatalogo(a.node, b.node)),
+    [allProducts],
+  );
+  const linhasBuscaveis = useMemo(() => withPedrasVirtual(collections), [collections]);
   const smart = useMemo(
-    () => resolveSearch(q, collections, allProducts, isSeasonal, { linhas: 12, produtos: 48, atalhos: 4 }),
-    [q, collections, allProducts],
+    () =>
+      resolveSearch(q, linhasBuscaveis, produtosEmOrdem, isSeasonal, {
+        linhas: 12,
+        produtos: 48,
+        atalhos: 4,
+      }),
+    [q, linhasBuscaveis, produtosEmOrdem],
   );
   const products = smart.produtos;
   const atalhos = smart.atalhos;
@@ -155,7 +168,7 @@ export default function Linhas() {
     () =>
       searchLinhas.map((c) => ({
         handle: c.handle,
-        coverKey: c.handle,
+        coverKey: c.handle === PEDRAS_VIRTUAL_HANDLE ? PEDRAS_VIRTUAL.coverFrom : c.handle,
         image: c.image ?? null,
         title: c.title,
         count: c.productsCount ?? 0,
@@ -164,6 +177,35 @@ export default function Linhas() {
       })),
     [searchLinhas],
   );
+
+  // Ir para — atalhos de intenção. A busca leva quem digita serviço/cena
+  // ("projeto 3d", "instalação", "amostra", "piscina") pra tela certa. Se a
+  // busca já achou a peça pelo nome ou código, eles descem para depois das peças.
+  const renderAtalhos = () =>
+    q && atalhos.length > 0 ? (
+      <section className="mb-12 md:mb-16">
+        <h2 className="text-eyebrow mb-5">Ir para</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {atalhos.map((a) => (
+            <Link
+              key={a.id}
+              to={a.to}
+              className="group flex items-center gap-4 rounded-[12px] border border-western-border-soft bg-white p-4 transition-colors hover:border-western-cta"
+            >
+              <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[8px] bg-western-cta/10">
+                <ArrowRight className="h-5 w-5 text-western-cta" aria-hidden="true" />
+              </span>
+              <span className="min-w-0">
+                <span className="block font-sans text-[16px] font-semibold text-western-green-deep">
+                  {a.label}
+                </span>
+                <span className="text-meta">{a.desc}</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+    ) : null;
 
   return (
     <div className="surface-ivory">
@@ -222,37 +264,19 @@ export default function Linhas() {
           )}
         </header>
 
-        {/* Ir para — atalhos de intenção. A busca leva quem digita serviço/cena
-            ("projeto 3d", "instalação", "amostra", "piscina") pra tela certa. */}
-        {q && atalhos.length > 0 && (
-          <section className="mb-12 md:mb-16">
-            <h2 className="text-eyebrow mb-5">Ir para</h2>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {atalhos.map((a) => (
-                <Link
-                  key={a.id}
-                  to={a.to}
-                  className="group flex items-center gap-4 rounded-[12px] border border-western-border-soft bg-white p-4 transition-colors hover:border-western-cta"
-                >
-                  <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[8px] bg-western-cta/10">
-                    <ArrowRight className="h-5 w-5 text-western-cta" aria-hidden="true" />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block font-sans text-[16px] font-semibold text-western-green-deep">
-                      {a.label}
-                    </span>
-                    <span className="text-meta">{a.desc}</span>
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
+        {!smart.pecasPrimeiro && renderAtalhos()}
 
         {/* Peças encontradas na busca — ProductCard mantém o preço gated */}
         {q && products.length > 0 && (
           <section className="mb-14 md:mb-20">
-            <h2 className="text-eyebrow mb-6">Peças</h2>
+            <div className="mb-6 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+              <h2 className="text-eyebrow">Peças</h2>
+              {/* Cortar por categoria, tamanho ou peso: o catálogo com a mesma busca. */}
+              <Link to={`/produtos?q=${encodeURIComponent(q)}`} className="link-cta">
+                Refinar com filtros
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
             <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
               {products.map(({ node: p }) => (
                 <ProductCard key={p.handle} product={p} />
@@ -260,6 +284,8 @@ export default function Linhas() {
             </div>
           </section>
         )}
+
+        {smart.pecasPrimeiro && renderAtalhos()}
 
         {/* Índice de linhas */}
         {loadingCollections ? (

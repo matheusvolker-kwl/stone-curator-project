@@ -19,7 +19,14 @@ import logoVerde from "@/assets/logo-horizontal-verde.png";
 import CatalogMegaMenu from "./CatalogMegaMenu";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { resolveSearch } from "@/lib/search/vocab";
+import { codigoDoProduto, resolveSearch } from "@/lib/search/engine";
+import { compareCatalogo } from "@/lib/lineOrder";
+import { withPedrasVirtual } from "@/lib/catalogScenes";
+
+type SecaoBusca = "atalhos" | "linhas" | "produtos";
+type ItemBusca =
+  | { kind: "atalho"; to: string }
+  | { kind: "linha" | "produto"; handle: string };
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchCollections, fetchProducts, isSeasonal } from "@/lib/datasource";
@@ -160,22 +167,41 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
     staleTime: 60_000,
   });
 
+  // Empate de relevância segue a ordem do catálogo; a linha virtual "Pedras
+  // decorativas" entra na busca porque é por ela que se navega.
+  const produtosEmOrdem = useMemo(
+    () => [...allProducts].sort((a, b) => compareCatalogo(a.node, b.node)),
+    [allProducts],
+  );
+  const linhasBuscaveis = useMemo(() => withPedrasVirtual(allCollections), [allCollections]);
   const suggestions = useMemo(
-    () => resolveSearch(query, allCollections, allProducts, isSeasonal),
-    [query, allCollections, allProducts],
+    () => resolveSearch(query, linhasBuscaveis, produtosEmOrdem, isSeasonal),
+    [query, linhasBuscaveis, produtosEmOrdem],
   );
 
   useEffect(() => {
     setActiveIndex(-1);
   }, [query]);
 
+  // Achou peça pelo código ou nome → peças no topo; senão, os atalhos (serviço, cena).
+  const secoes = useMemo<SecaoBusca[]>(
+    () =>
+      suggestions.pecasPrimeiro
+        ? ["produtos", "linhas", "atalhos"]
+        : ["atalhos", "linhas", "produtos"],
+    [suggestions.pecasPrimeiro],
+  );
+
   const flatItems = useMemo(
-    () => [
-      ...suggestions.atalhos.map((a) => ({ kind: "atalho" as const, to: a.to })),
-      ...suggestions.linhas.map((c) => ({ kind: "linha" as const, handle: c.handle })),
-      ...suggestions.produtos.map((p) => ({ kind: "produto" as const, handle: p.node.handle })),
-    ],
-    [suggestions],
+    () =>
+      secoes.flatMap((s): ItemBusca[] =>
+        s === "atalhos"
+          ? suggestions.atalhos.map((a) => ({ kind: "atalho" as const, to: a.to }))
+          : s === "linhas"
+            ? suggestions.linhas.map((c) => ({ kind: "linha" as const, handle: c.handle }))
+            : suggestions.produtos.map((p) => ({ kind: "produto" as const, handle: p.node.handle })),
+      ),
+    [secoes, suggestions],
   );
 
   const closeSuggest = () => {
@@ -239,133 +265,141 @@ export default function Header({ onCartOpen }: { onCartOpen: () => void }) {
 
   const renderSuggestions = (idPrefix: string) => {
     if (!suggestOpen || suggestions.flatCount === 0) return null;
+    // O índice ativo segue a ordem de EXIBIÇÃO — as seções trocam de lugar.
     let idx = -1;
+    const opcao = (key: string, pick: () => void, conteudo: React.ReactNode) => {
+      idx += 1;
+      const i = idx;
+      const active = i === activeIndex;
+      return (
+        <li
+          key={key}
+          id={`${idPrefix}search-opt-${i}`}
+          role="option"
+          aria-selected={active}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            pick();
+          }}
+          onMouseEnter={() => setActiveIndex(i)}
+          className={`flex items-center gap-3 px-4 min-h-[56px] py-2 cursor-pointer transition-colors ${
+            active ? "bg-western-paper" : "hover:bg-western-paper"
+          }`}
+        >
+          {conteudo}
+        </li>
+      );
+    };
+    const titulo = (key: string, texto: string) => (
+      <li key={key} className="text-eyebrow px-4 pt-4 pb-2">
+        {texto}
+      </li>
+    );
+    const secao: Record<SecaoBusca, () => React.ReactNode[]> = {
+      atalhos: () =>
+        suggestions.atalhos.length === 0
+          ? []
+          : [
+              titulo("t-atalhos", "Ir para"),
+              ...suggestions.atalhos.map((a) =>
+                opcao(
+                  `atalho-${a.id}`,
+                  () => goToItem({ kind: "atalho", to: a.to }),
+                  <>
+                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-sm bg-western-cta/10">
+                      <ArrowRight className="h-5 w-5 text-western-cta" aria-hidden="true" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[15px] font-semibold text-western-green-deep">
+                        {a.label}
+                      </p>
+                      <p className="truncate text-[14px] text-western-stone-warm">{a.desc}</p>
+                    </div>
+                  </>,
+                ),
+              ),
+            ],
+      linhas: () =>
+        suggestions.linhas.length === 0
+          ? []
+          : [
+              titulo("t-linhas", "Categorias"),
+              ...suggestions.linhas.map((c) =>
+                opcao(
+                  `linha-${c.handle}`,
+                  () => goToItem({ kind: "linha", handle: c.handle }),
+                  <>
+                    <div className="h-11 w-11 flex-shrink-0 bg-western-paper rounded-sm overflow-hidden">
+                      {c.image?.url && (
+                        <img
+                          src={cdnImg(c.image.url, 80)}
+                          alt=""
+                          loading="lazy"
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <span className="text-[15px] font-medium text-western-green-deep truncate">
+                      {c.title}
+                    </span>
+                  </>,
+                ),
+              ),
+            ],
+      produtos: () =>
+        suggestions.produtos.length === 0
+          ? []
+          : [
+              titulo("t-produtos", "Peças"),
+              ...suggestions.produtos.map((p) => {
+                const node = p.node;
+                const img = node.images.edges[0]?.node;
+                const price = node.priceRange?.minVariantPrice;
+                // Código curto (PG3, CSC, KIT-PBS) — é assim que vendedor e parceiro falam.
+                const codigo = codigoDoProduto(node);
+                const preco =
+                  price && isApproved
+                    ? formatBRL(
+                        unitarioComDesconto(parseFloat(String(price.amount)), discountPct),
+                        price.currencyCode,
+                      )
+                    : null;
+                return opcao(
+                  `produto-${node.handle}`,
+                  () => goToItem({ kind: "produto", handle: node.handle }),
+                  <>
+                    <div className="h-11 w-11 flex-shrink-0 bg-western-paper rounded-sm overflow-hidden">
+                      {img?.url && (
+                        <img
+                          src={cdnImg(img.url, 80)}
+                          alt=""
+                          loading="lazy"
+                          className="w-full h-full object-contain p-1"
+                        />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[15px] font-medium text-western-green-deep truncate">
+                        {node.title}
+                      </p>
+                      {(codigo || preco) && (
+                        <p className="text-[14px] tabular-nums text-western-stone-warm">
+                          {[codigo && `Cód. ${codigo}`, preco].filter(Boolean).join(" · ")}
+                        </p>
+                      )}
+                    </div>
+                  </>,
+                );
+              }),
+            ],
+    };
     return (
       <ul
         id={`${idPrefix}search-suggestions`}
         role="listbox"
         className="bg-white border border-western-border-soft rounded-lg shadow-lg max-h-[60vh] overflow-y-auto overflow-hidden"
       >
-        {suggestions.atalhos.length > 0 && (
-          <li className="text-eyebrow px-4 pt-4 pb-2">Ir para</li>
-        )}
-        {suggestions.atalhos.map((a) => {
-          idx += 1;
-          const i = idx;
-          const active = i === activeIndex;
-          return (
-            <li
-              key={`atalho-${a.id}`}
-              id={`${idPrefix}search-opt-${i}`}
-              role="option"
-              aria-selected={active}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                goToItem({ kind: "atalho", to: a.to });
-              }}
-              onMouseEnter={() => setActiveIndex(i)}
-              className={`flex items-center gap-3 px-4 min-h-[56px] py-2 cursor-pointer transition-colors ${
-                active ? "bg-western-paper" : "hover:bg-western-paper"
-              }`}
-            >
-              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-sm bg-western-cta/10">
-                <ArrowRight className="h-5 w-5 text-western-cta" aria-hidden="true" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-[15px] font-semibold text-western-green-deep">
-                  {a.label}
-                </p>
-                <p className="truncate text-[14px] text-western-stone-warm">{a.desc}</p>
-              </div>
-            </li>
-          );
-        })}
-        {suggestions.linhas.length > 0 && (
-          <li className="text-eyebrow px-4 pt-4 pb-2">Linhas</li>
-        )}
-        {suggestions.linhas.map((c) => {
-          idx += 1;
-          const i = idx;
-          const active = i === activeIndex;
-          return (
-            <li
-              key={`linha-${c.handle}`}
-              id={`${idPrefix}search-opt-${i}`}
-              role="option"
-              aria-selected={active}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                goToItem({ kind: "linha", handle: c.handle });
-              }}
-              onMouseEnter={() => setActiveIndex(i)}
-              className={`flex items-center gap-3 px-4 min-h-[56px] py-2 cursor-pointer transition-colors ${
-                active ? "bg-western-paper" : "hover:bg-western-paper"
-              }`}
-            >
-              <div className="h-11 w-11 flex-shrink-0 bg-western-paper rounded-sm overflow-hidden">
-                {c.image?.url && (
-                  <img
-                    src={cdnImg(c.image.url, 80)}
-                    alt=""
-                    loading="lazy"
-                    className="w-full h-full object-cover"
-                  />
-                )}
-              </div>
-              <span className="text-[15px] font-medium text-western-green-deep truncate">
-                {c.title}
-              </span>
-            </li>
-          );
-        })}
-        {suggestions.produtos.length > 0 && (
-          <li className="text-eyebrow px-4 pt-4 pb-2">Peças</li>
-        )}
-        {suggestions.produtos.map((p) => {
-          idx += 1;
-          const i = idx;
-          const active = i === activeIndex;
-          const node = p.node;
-          const img = node.images.edges[0]?.node;
-          const price = node.priceRange?.minVariantPrice;
-          return (
-            <li
-              key={`produto-${node.handle}`}
-              id={`${idPrefix}search-opt-${i}`}
-              role="option"
-              aria-selected={active}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                goToItem({ kind: "produto", handle: node.handle });
-              }}
-              onMouseEnter={() => setActiveIndex(i)}
-              className={`flex items-center gap-3 px-4 min-h-[56px] py-2 cursor-pointer transition-colors ${
-                active ? "bg-western-paper" : "hover:bg-western-paper"
-              }`}
-            >
-              <div className="h-11 w-11 flex-shrink-0 bg-western-paper rounded-sm overflow-hidden">
-                {img?.url && (
-                  <img
-                    src={cdnImg(img.url, 80)}
-                    alt=""
-                    loading="lazy"
-                    className="w-full h-full object-contain p-1"
-                  />
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[15px] font-medium text-western-green-deep truncate">
-                  {node.title}
-                </p>
-                {price && isApproved && (
-                  <p className="text-[14px] tabular-nums text-western-stone-warm">
-                    {formatBRL(unitarioComDesconto(parseFloat(String(price.amount)), discountPct), price.currencyCode)}
-                  </p>
-                )}
-              </div>
-            </li>
-          );
-        })}
+        {secoes.flatMap((s) => secao[s]())}
       </ul>
     );
   };

@@ -1,64 +1,84 @@
-// Motor de busca inteligente — traduz a linguagem do cliente pro catálogo.
+// Vocabulário da busca — traduz a linguagem do cliente pro catálogo.
 //
-// Três camadas em cima do "includes" simples que existia:
-//  1. NORMALIZAÇÃO: sem acento, minúsculo, sem apóstrofo → "fóssil" = "fossil".
-//  2. SINÔNIMOS: expande o termo do cliente pros termos do catálogo →
-//     "queda d'água" acha cascatas, "parede de pedra" acha revestimentos.
-//  3. ATALHOS (intenção): quem busca SERVIÇO ou CENA ("projeto 3d",
-//     "instalação", "piscina", "amostra") não cai em "0 resultados" — é
-//     levado pra página certa (Guia, Contrate, Western Box…).
+// Duas camadas em cima do motor (engine.ts):
+//  1. SINÔNIMOS: "queda d'água" / "cachoeira" acham cascatas, "parede de
+//     pedra" acha revestimentos. Viram variações da busca, nunca filtros.
+//  2. ATALHOS (intenção): quem busca SERVIÇO ou CENA ("projeto 3d",
+//     "instalação", "amostra") não cai em "0 resultados" — é levado pra
+//     página certa (Guia, Contrate, Western Box…).
+//
+// Todo match aqui é por PALAVRA INTEIRA (com radical: "amostras" = "amostra").
+// Antes era por pedaço de texto, e "pedras deCORativas" abria a Western Box
+// porque "cor" é termo dela.
 
-/** Minúsculo, sem acento e sem pontuação de apóstrofo — base de todo match. */
-export function normalize(s: string): string {
-  return s
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/['´`’]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
+import { indexOfPhrase, normalize, stem, words } from "./texto";
 
-/** Sinônimos: frase/termo do cliente (será normalizado) → termos canônicos. */
+export { normalize };
+
+/** Sinônimos: expressão do cliente → termos do catálogo. */
 const SYNONYMS: Record<string, string[]> = {
   "queda d agua": ["cascata"],
   "queda de agua": ["cascata"],
-  "quedas d agua": ["cascata"],
-  "bica": ["cascata", "fonte"],
+  cachoeira: ["cascata"],
+  bica: ["cascata", "fonte"],
   "parede de pedra": ["revestimento"],
   parede: ["revestimento"],
   muro: ["revestimento"],
+  fachada: ["revestimento"],
   revestir: ["revestimento"],
   piso: ["pisada"],
   pisante: ["pisada"],
-  pisantes: ["pisada"],
   caminho: ["pisada"],
   travessia: ["pisada"],
-  fossil: ["fossil", "fosseis"],
-  fosseis: ["fossil", "fosseis"],
+  degrau: ["pisada"],
   rocha: ["pedra"],
-  rochas: ["pedra"],
-  "pedra de jardim": ["pedra"],
-  "pedra para jardim": ["pedra"],
-  "pedra pra jardim": ["pedra"],
-  matacao: ["pedra grande", "pedra"],
-  borda: ["pedra de borda"],
+  pedrinha: ["pedra pequena"],
+  pedregulho: ["pedra pequena"],
+  matacao: ["pedra grande"],
   "borda de piscina": ["pedra de borda"],
-  led: ["pedra led", "acessorio"],
   luz: ["pedra led"],
   iluminacao: ["pedra led"],
-  "espelho d agua": ["lago", "fonte"],
-  "espelho de agua": ["lago", "fonte"],
-  fontinha: ["fonte"],
+  luminaria: ["pedra led"],
+  som: ["pedra sonora"],
+  "caixa de som": ["pedra sonora"],
+  champanhe: ["pedra champanheira"],
+  champagne: ["pedra champanheira"],
+  "balde de gelo": ["pedra champanheira"],
   chafariz: ["fonte"],
+  fontinha: ["fonte"],
+  "espelho d agua": ["fonte", "lago"],
+  "espelho de agua": ["fonte", "lago"],
+  dinossauro: ["fossil"],
 };
+
+const SYNONYM_WORDS = Object.entries(SYNONYMS).map(
+  ([k, v]) => [words(k), v] as const,
+);
+
+/**
+ * Variações da busca: a própria (sempre a primeira) + uma por sinônimo
+ * encontrado, com a expressão trocada pelo termo do catálogo.
+ * "cachoeira granito" → [cachoeira granito], [cascata granito].
+ */
+export function variantesDaBusca(query: string): string[][] {
+  const base = words(query);
+  const out: string[][] = [base];
+  for (const [chave, termos] of SYNONYM_WORDS) {
+    const at = indexOfPhrase(base, chave);
+    if (at < 0) continue;
+    for (const termo of termos) {
+      out.push([...base.slice(0, at), ...words(termo), ...base.slice(at + chave.length)]);
+    }
+  }
+  return out.slice(0, 8);
+}
 
 export interface Atalho {
   id: string;
   label: string;
   desc: string;
   to: string;
-  /** termos normalizados que disparam este atalho */
+  /** termos (palavra ou expressão) que disparam este atalho */
   termos: string[];
 }
 
@@ -100,8 +120,8 @@ export const ATALHOS: Atalho[] = [
     desc: "Os 4 acabamentos na sua mão, sem cadastro",
     to: "/western-box",
     termos: [
-      "amostra", "amostras", "box", "kit de amostra", "acabamento", "acabamentos",
-      "cor", "cores", "textura", "quartzo", "arenito", "moledo", "granito",
+      "amostra", "box", "kit de amostra", "acabamento", "cor", "textura",
+      "quartzo", "arenito", "moledo", "granito",
     ],
   },
   {
@@ -109,7 +129,7 @@ export const ATALHOS: Atalho[] = [
     label: "Conjuntos prontos",
     desc: "Kits por tipo de projeto",
     to: "/conjuntos",
-    termos: ["conjunto", "conjuntos", "kit", "kits", "combo", "composicao pronta"],
+    termos: ["conjunto", "kit", "combo", "composicao pronta"],
   },
   {
     id: "cadastro",
@@ -117,7 +137,7 @@ export const ATALHOS: Atalho[] = [
     desc: "Preço de parceiro (atacado) com CNPJ",
     to: "/parceiro/cadastro",
     termos: [
-      "preco", "precos", "cadastro", "cadastrar", "atacado", "parceiro",
+      "preco", "cadastro", "cadastrar", "atacado", "parceiro",
       "tabela", "desconto", "valor", "quanto custa", "revenda",
     ],
   },
@@ -138,67 +158,25 @@ export const ATALHOS: Atalho[] = [
     to: "/obras",
     // "inspiracao"/"inspire" seguem aqui de propósito: a página mudou de nome,
     // quem procurava pelo nome antigo continua achando.
-    termos: ["inspiracao", "inspire", "exemplo", "exemplos", "obras", "galeria", "fotos", "cases"],
+    termos: ["inspiracao", "inspire", "exemplo", "obras", "galeria", "fotos", "cases"],
   },
 ];
 
-/** Expande a query em termos de match (query + tokens + sinônimos), normalizados. */
-export function expandTerms(query: string): string[] {
-  const n = normalize(query);
-  if (n.length < 2) return [];
-  const terms = new Set<string>([n]);
-  for (const tok of n.split(" ")) if (tok.length >= 2) terms.add(tok);
-  for (const [k, vals] of Object.entries(SYNONYMS)) {
-    if (n.includes(normalize(k))) for (const v of vals) terms.add(normalize(v));
-  }
-  return [...terms];
-}
-
-/** Atalhos de intenção que casam com a query. */
-export function matchAtalhos(query: string, limit = 3): Atalho[] {
-  const n = normalize(query);
-  if (n.length < 2) return [];
-  return ATALHOS.filter((a) => a.termos.some((t) => n.includes(t) || t.includes(n))).slice(0, limit);
-}
-
-interface CollLike {
-  title: string;
-  handle: string;
-  description?: string;
-}
-interface ProdLike {
-  node: { title: string; handle: string; tags?: string[] };
-}
-
-export interface SmartSearch<C, P> {
-  linhas: C[];
-  produtos: P[];
-  atalhos: Atalho[];
-  flatCount: number;
-}
-
-/** Resolve a busca: linhas + produtos (com sinônimo/acento) + atalhos de intenção. */
-export function resolveSearch<C extends CollLike, P extends ProdLike>(
-  query: string,
-  collections: C[],
-  products: P[],
-  isSeasonal?: (c: { handle: string; description?: string }) => boolean,
-  limits?: { linhas?: number; produtos?: number; atalhos?: number },
-): SmartSearch<C, P> {
-  const terms = expandTerms(query);
-  if (terms.length === 0) return { linhas: [], produtos: [], atalhos: [], flatCount: 0 };
-  const hit = (hay: string | undefined) => {
-    if (!hay) return false;
-    const h = normalize(hay);
-    return terms.some((t) => h.includes(t));
+/**
+ * Atalhos que casam com a busca, por palavra inteira. Com `soExato`, só o
+ * termo que É a busca inteira — usado quando a busca já achou peças e o
+ * atalho vira sugestão secundária ("kit" → peças kit + Conjuntos prontos).
+ */
+export function matchAtalhos(query: string, limit = 3, soExato = false): Atalho[] {
+  const q = words(query);
+  if (q.join("").length < 2) return [];
+  const radicais = q.map(stem).join(" ");
+  const casa = (termo: string) => {
+    const t = words(termo);
+    if (soExato) return t.map(stem).join(" ") === radicais;
+    if (indexOfPhrase(q, t) >= 0) return true;
+    // Digitando uma palavra só: "instal" já mostra "instalação".
+    return q.length === 1 && q[0].length >= 3 && t.length === 1 && t[0].startsWith(q[0]);
   };
-  const linhas = collections
-    .filter((c) => (isSeasonal ? !isSeasonal({ handle: c.handle, description: c.description }) : true))
-    .filter((c) => hit(c.title) || hit(c.handle))
-    .slice(0, limits?.linhas ?? 3);
-  const produtos = products
-    .filter((p) => hit(p.node.title) || (p.node.tags ?? []).some((t) => hit(t)))
-    .slice(0, limits?.produtos ?? 6);
-  const atalhos = matchAtalhos(query, limits?.atalhos ?? 3);
-  return { linhas, produtos, atalhos, flatCount: linhas.length + produtos.length + atalhos.length };
+  return ATALHOS.filter((a) => a.termos.some(casa)).slice(0, limit);
 }
