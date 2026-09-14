@@ -492,34 +492,38 @@ export default function Carrinho() {
                     )}
                   </div>
 
-                  {/* O QUE ESTE PEDIDO REVENDE
-                      O parceiro decide o tamanho da compra pelo que ela devolve,
-                      não pelo que ela custa. Ver os dois números lado a lado é o
-                      que transforma "R$ 3.020 é caro" em "R$ 3.020 viram
-                      R$ 6.342". Sem isso ele faz essa conta fora da loja — ou
-                      não faz, e compra menos. */}
+                  {/* SUGESTÃO DE REVENDA — nota, não valor do pedido.
+                      O parceiro dimensiona a compra pelo que ela devolve, então a
+                      conta continua visível. Mas ela é uma DICA: até 14/09/2026 o
+                      "Seu lucro" saía em 22px bronze, MAIOR que o Subtotal (20px),
+                      e a dica era lida como se fosse o que o parceiro paga.
+                      Agora o único número grande do resumo é o Subtotal; a revenda
+                      vem em corpo de nota (14px), rotulada como sugestão, e diz com
+                      todas as letras que não entra no pedido. Sem sinal de "+": um
+                      valor com "+" embaixo do subtotal se lê como cobrança. */}
                   {showValues && sugerido > 0 && (
-                    <div className="mt-4 rounded-lg bg-western-paper px-4 py-3.5">
-                      <p className="inline-flex items-center gap-2 text-eyebrow">
-                        <TrendingUp className="h-4 w-4 text-western-bronze" aria-hidden="true" />
-                        Se revender pelo preço sugerido
+                    <div className="mt-4 border-t border-western-border-soft pt-3.5">
+                      <p className="inline-flex items-center gap-1.5 font-sans text-[13px] font-semibold text-western-stone-warm">
+                        <TrendingUp className="h-3.5 w-3.5 text-western-bronze" aria-hidden="true" />
+                        Sugestão de revenda
                       </p>
-                      <div className="mt-3 flex items-baseline justify-between gap-4">
-                        <span className="font-sans text-[14px] text-western-stone-warm">
-                          Você revende por
-                        </span>
-                        <span className="font-sans text-[15px] font-semibold tabular-nums text-western-green-deep">
-                          {formatBRL(sugerido, currency)}
-                        </span>
-                      </div>
-                      <div className="mt-2 flex items-baseline justify-between gap-4 border-t border-western-border-soft pt-2">
-                        <span className="font-sans text-[14px] font-semibold text-western-green-deep">
-                          Seu lucro
-                        </span>
-                        <span className="font-sans text-[22px] font-bold tabular-nums leading-none text-western-bronze">
-                          {formatBRL(sugerido - subtotal, currency)}
-                        </span>
-                      </div>
+                      <dl className="mt-2 space-y-1 font-sans text-[14px]">
+                        <div className="flex items-baseline justify-between gap-4">
+                          <dt className="text-western-stone-warm">Preço sugerido ao consumidor</dt>
+                          <dd className="tabular-nums text-western-green-deep">
+                            {formatBRL(sugerido, currency)}
+                          </dd>
+                        </div>
+                        <div className="flex items-baseline justify-between gap-4">
+                          <dt className="text-western-stone-warm">Margem estimada</dt>
+                          <dd className="font-semibold tabular-nums text-western-bronze">
+                            {formatBRL(sugerido - subtotal, currency)}
+                          </dd>
+                        </div>
+                      </dl>
+                      <p className="mt-2 font-sans text-[13px] leading-snug text-western-stone-warm">
+                        Referência para a sua revenda — não entra no valor do pedido.
+                      </p>
                     </div>
                   )}
 

@@ -226,29 +226,20 @@ export default function CartDrawer({
                 imposto. O dono leu como cobranca adicional, e ele conhece a
                 regra; um parceiro leria pior. Cada numero passa a ter rotulo
                 proprio, e nenhum sinal aritmetico encosta em valor a pagar. */}
-                        {isApproved && sugerido > 0 && (
-              <div className="rounded-lg bg-western-paper px-3.5 py-3">
-                <p className="inline-flex items-center gap-2 text-eyebrow">
-                  <TrendingUp className="h-4 w-4 text-western-bronze" aria-hidden="true" />
-                  Se revender pelo preço sugerido
-                </p>
-                <div className="mt-2.5 flex items-baseline justify-between gap-3">
-                  <span className="font-sans text-[13.5px] text-western-stone-warm">
-                    Você revende por
-                  </span>
-                  <span className="font-sans text-[14px] font-semibold tabular-nums text-western-green-deep whitespace-nowrap">
-                    {formatBRL(sugerido, currency)}
-                  </span>
-                </div>
-                <div className="mt-1.5 flex items-baseline justify-between gap-3 border-t border-western-border-soft pt-1.5">
-                  <span className="font-sans text-[13.5px] font-semibold text-western-green-deep">
-                    Seu lucro
-                  </span>
-                  <span className="font-sans text-[19px] font-bold tabular-nums leading-none text-western-bronze whitespace-nowrap">
-                    {formatBRL(sugerido - subtotal, currency)}
-                  </span>
-                </div>
-              </div>
+            {/* Revenda em UMA linha de nota (13px), sem caixa e sem "+": a gaveta
+                é consulta rápida, e o único número grande dela é o Subtotal. Até
+                14/09/2026 a margem saía em 19px bronze, colada no Subtotal de 20px. */}
+            {isApproved && sugerido > 0 && (
+              <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 font-sans text-[13px] leading-snug text-western-stone-warm">
+                <TrendingUp className="h-3.5 w-3.5 self-center text-western-bronze" aria-hidden="true" />
+                <span>Revenda sugerida</span>
+                <span className="tabular-nums text-western-green-deep">{formatBRL(sugerido, currency)}</span>
+                <span aria-hidden="true">·</span>
+                <span>margem</span>
+                <span className="font-semibold tabular-nums text-western-bronze">
+                  {formatBRL(sugerido - subtotal, currency)}
+                </span>
+              </p>
             )}
 
             {/* Pedido mínimo — barra + rótulo numa linha, nunca bloqueio */}

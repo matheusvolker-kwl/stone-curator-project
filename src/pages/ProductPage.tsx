@@ -405,28 +405,34 @@ export default function ProductPage() {
                       O lucro acompanha o seletor de quantidade: ver o numero
                       crescer enquanto ele mexe no stepper e o incentivo mais
                       honesto que existe, porque e a conta real dele. */}
+                  {/* HIERARQUIA (14/09/2026): a margem saía em 22px bronze — do
+                      tamanho do "Seu preço" — e a dica era lida como valor a pagar.
+                      Agora o único número grande é o preço; a revenda é nota de
+                      14px, e o rótulo diz que é sugestão. O bronze segue marcando
+                      o que ele ganha, só que no tamanho de uma nota. */}
                   {retornoUnit > 0 && (
-                    <div className="mt-5 rounded-lg bg-western-paper px-4 py-3.5">
-                      <p className="inline-flex items-center gap-2 text-eyebrow">
-                        <TrendingUp className="h-4 w-4 text-western-bronze" aria-hidden="true" />
-                        Se revender pelo preço sugerido
+                    <div className="mt-5 border-t border-western-border-soft pt-3.5">
+                      <p className="inline-flex items-center gap-1.5 font-sans text-[13px] font-semibold text-western-stone-warm">
+                        <TrendingUp className="h-3.5 w-3.5 text-western-bronze" aria-hidden="true" />
+                        {qty > 1 ? "Sugestão de revenda · " + qty + " peças" : "Sugestão de revenda"}
                       </p>
-                      <div className="mt-3 flex items-baseline justify-between gap-4">
-                        <span className="font-sans text-[14px] text-western-stone-warm">
-                          Você revende por
-                        </span>
-                        <span className="font-sans text-[15px] font-semibold tabular-nums text-western-green-deep">
-                          {formatBRL(vendaSugerida(precoTabela) * qty, priceCurrency)}
-                        </span>
-                      </div>
-                      <div className="mt-2 flex items-baseline justify-between gap-4 border-t border-western-border-soft pt-2">
-                        <span className="font-sans text-[14px] font-semibold text-western-green-deep">
-                          {qty > 1 ? `Seu lucro com ${qty} peças` : "Seu lucro"}
-                        </span>
-                        <span className="font-sans text-[22px] font-bold tabular-nums leading-none text-western-bronze">
-                          {formatBRL(retornoUnit * qty, priceCurrency)}
-                        </span>
-                      </div>
+                      <dl className="mt-2 space-y-1 font-sans text-[14px]">
+                        <div className="flex items-baseline justify-between gap-4">
+                          <dt className="text-western-stone-warm">Preço sugerido ao consumidor</dt>
+                          <dd className="tabular-nums text-western-green-deep">
+                            {formatBRL(vendaSugerida(precoTabela) * qty, priceCurrency)}
+                          </dd>
+                        </div>
+                        <div className="flex items-baseline justify-between gap-4">
+                          <dt className="text-western-stone-warm">Margem estimada</dt>
+                          <dd className="font-semibold tabular-nums text-western-bronze">
+                            {formatBRL(retornoUnit * qty, priceCurrency)}
+                          </dd>
+                        </div>
+                      </dl>
+                      <p className="mt-2 font-sans text-[13px] leading-snug text-western-stone-warm">
+                        Referência para a sua revenda — não entra no preço do pedido.
+                      </p>
                     </div>
                   )}
                 </div>
