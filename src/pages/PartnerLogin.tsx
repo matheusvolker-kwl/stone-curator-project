@@ -10,6 +10,8 @@ import PasswordField from "@/components/forms/PasswordField";
 import FieldLabel from "@/components/forms/FieldLabel";
 import Seo from "@/components/seo/Seo";
 import { emailSchema } from "@/lib/forms/br";
+import { traduzirErroAuth } from "@/lib/auth/erros";
+import { ROTA_REDEFINIR_SENHA } from "@/lib/auth/recuperacao";
 
 const waClienteFinalUrl = `https://wa.me/${BUSINESS.whatsappFabrica}?text=${encodeURIComponent(
   "Olá Western! Sou cliente final e gostaria de comprar / fazer um projeto com pedras Western."
@@ -84,11 +86,17 @@ export default function PartnerLogin() {
     }
     setLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(r.data, {
-      redirectTo: `${window.location.origin}/parceiro/redefinir-senha`,
+      redirectTo: `${window.location.origin}${ROTA_REDEFINIR_SENHA}`,
     });
     setLoading(false);
-    if (error) toast.error(error.message);
-    else toast.success("Enviamos um e-mail com o link de redefinição.");
+    if (error) {
+      // Fica no formulário: o erro (ex.: pedidos demais) pede outra tentativa.
+      toast.error(traduzirErroAuth(error));
+      return;
+    }
+    toast.success("Pronto. Se o e-mail estiver cadastrado, o link chega em instantes.", {
+      description: "Confira também o spam e use sempre o link mais recente.",
+    });
     setShowReset(false);
   };
 
