@@ -60,7 +60,15 @@ export const BUSINESS = {
   razaoSocial: "Western Pools Indústria e Comércio de Artefatos de Cimentos LTDA",
   cnpj: "71.530.059/0001-30",
 
-  // Pagamento — política em definição. Não exibir condições no site por enquanto.
+  // ── PAGAMENTO — o que o checkout (Appmax) oferece a TODO parceiro ─────────
+  // Pix, boleto ou cartão de crédito em até 12× (com juros), igual para
+  // qualquer nível. Nível não muda forma de pagamento nem parcelamento: o
+  // checkout não lê o nível. Prazo de boleto especial é exceção cliente a
+  // cliente, no wp-admin do checkout — não se anuncia no site.
+  // (dono, 2026-09-15: "À vista" na conta do parceiro não era estratégico nem
+  // verdade — qualquer parceiro paga no cartão.)
+  formasPagamentoLabel: "Pix, boleto ou cartão",
+  parcelasCartaoMax: 12,
 
   // Acabamentos
   acabamentos: ["Quartzo", "Arenito", "Moledo", "Granito"] as const,

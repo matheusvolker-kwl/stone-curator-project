@@ -394,7 +394,9 @@ export default function ProductPage() {
                         bronze         = o que ele recebe   (o ganho)          */}
                   <p className="text-eyebrow mb-1">Seu preço</p>
                   <GatedPrice amount={priceAmount} currency={priceCurrency} className="text-price" />
-                  <p className="text-meta mt-1.5">À vista · parcela no checkout</p>
+                  <p className="text-meta mt-1.5">
+                    {BUSINESS.formasPagamentoLabel} em até {BUSINESS.parcelasCartaoMax}×
+                  </p>
 
                   {/* UM BLOCO SO PARA A CONTA DELE.
                       Antes "revende por" ficava solto e o lucro num destaque

@@ -664,7 +664,7 @@ export default function Carrinho() {
                         <span aria-hidden="true" className="text-western-border-strong">·</span>
                         <span>Boleto</span>
                         <span aria-hidden="true" className="text-western-border-strong">·</span>
-                        <span>Cartão até 12×</span>
+                        <span>Cartão até {BUSINESS.parcelasCartaoMax}×</span>
                       </div>
                     )}
 

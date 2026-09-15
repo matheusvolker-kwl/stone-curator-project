@@ -247,7 +247,9 @@ interface HeroProps {
 function Hero({ situacao, perfil, pricing }: HeroProps) {
   /* APROVADO — cockpit. O que ele ganhou, quanto, e para onde ir agora. */
   if (situacao === "aprovado") {
-    const { boleto, parcelas_max, kit_gratis } = pricing.paymentMethods;
+    // Só o kit é benefício de nível. Forma de pagamento e parcelamento são os
+    // mesmos para todo parceiro — o checkout não lê o nível (ver BUSINESS).
+    const { kit_gratis } = pricing.paymentMethods;
     return (
       <Card tom="positivo">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
@@ -261,7 +263,7 @@ function Hero({ situacao, perfil, pricing }: HeroProps) {
             </p>
           </div>
 
-          <div className="flex flex-shrink-0 flex-col gap-6 sm:flex-row sm:items-end sm:gap-10">
+          <div className="flex flex-shrink-0 flex-col gap-6 sm:flex-row sm:items-start sm:gap-10">
             {pricing.loading ? (
               <div className="h-12 w-40 animate-pulse rounded-lg bg-western-border-soft" />
             ) : (
@@ -270,15 +272,17 @@ function Hero({ situacao, perfil, pricing }: HeroProps) {
                   <Dado rotulo="Seu plano">{TIER_LABEL[pricing.tier]}</Dado>
                 )}
                 {/* Percentual fora daqui tambem: ver o comentario no chip acima. */}
-                <Dado rotulo="Sua condição">
+                <Dado
+                  rotulo="Sua condição"
+                  nota={kit_gratis ? "Kit de amostras por nossa conta" : undefined}
+                >
                   {pricing.tier === "padrao" ? "Preço de atacado" : "Condição aplicada"}
                 </Dado>
-                <Dado rotulo="Pagamento">
-                  <span className="tabular-nums">
-                    {parcelas_max > 1 ? `Em até ${parcelas_max}x` : "À vista"}
-                  </span>
-                  {boleto ? " · boleto" : ""}
-                  {kit_gratis ? " · kit cortesia" : ""}
+                {/* Antes: "À vista" para o nível de entrada — nem verdade (todo
+                    parceiro paga no cartão) nem estratégico. Agora é o que o
+                    checkout oferece a qualquer parceiro. */}
+                <Dado rotulo="Pagamento" nota={`Cartão em até ${BUSINESS.parcelasCartaoMax}×`}>
+                  {BUSINESS.formasPagamentoLabel}
                 </Dado>
               </>
             )}
@@ -445,10 +449,13 @@ function Card({ tom, children }: { tom: keyof typeof TOM_CARD; children: React.R
 function Dado({
   rotulo,
   numerico,
+  nota,
   children,
 }: {
   rotulo: string;
   numerico?: boolean;
+  /** linha de apoio em meta, abaixo do valor */
+  nota?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -461,6 +468,7 @@ function Dado({
       >
         {children}
       </p>
+      {nota && <p className="text-meta mt-1">{nota}</p>}
     </div>
   );
 }

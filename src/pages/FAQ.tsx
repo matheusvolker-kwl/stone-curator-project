@@ -193,8 +193,8 @@ const GRUPOS: Grupo[] = [
     itens: [
       {
         q: "Como funciona o pagamento e o parcelamento?",
-        text: "Pix, boleto ou cartão de crédito — no cartão, em até 12× (com juros).",
-        a: "Pix, boleto ou cartão de crédito — no cartão, em até 12× (com juros).",
+        text: `Pix, boleto ou cartão de crédito — no cartão, em até ${BUSINESS.parcelasCartaoMax}× (com juros).`,
+        a: `Pix, boleto ou cartão de crédito — no cartão, em até ${BUSINESS.parcelasCartaoMax}× (com juros).`,
       },
     ],
   },

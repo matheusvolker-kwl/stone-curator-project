@@ -334,9 +334,9 @@ function HeroCredenciamento({
 function HeroAprovado() {
   const { tier, discountPct, paymentMethods, loading } = usePartnerPricing();
 
+  // Forma de pagamento não é vantagem de nível: Pix, boleto e cartão em até
+  // 12× valem para todo parceiro (o checkout não lê o nível). Só o kit é do nível.
   const vantagens = [
-    paymentMethods.boleto ? "Boleto liberado" : null,
-    paymentMethods.parcelas_max > 1 ? `Até ${paymentMethods.parcelas_max}x sem juros` : null,
     paymentMethods.kit_gratis ? "Kit de amostras por nossa conta" : null,
   ].filter((v): v is string => v !== null);
 
