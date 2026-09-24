@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { ChevronDown, ArrowRight } from "lucide-react";
-import { BUSINESS } from "@/config/business";
+import { BUSINESS, parcelamentoCartao } from "@/config/business";
 import Seo from "@/components/seo/Seo";
 
 type Item = { q: string; a: React.ReactNode; text: string };
@@ -193,8 +193,8 @@ const GRUPOS: Grupo[] = [
     itens: [
       {
         q: "Como funciona o pagamento e o parcelamento?",
-        text: `Pix, boleto ou cartão de crédito — no cartão, em até ${BUSINESS.parcelasCartaoMax}× (com juros).`,
-        a: `Pix, boleto ou cartão de crédito — no cartão, em até ${BUSINESS.parcelasCartaoMax}× (com juros).`,
+        text: `Pix, boleto ou cartão de crédito — no cartão, ${parcelamentoCartao}. Pix e boleto são à vista.`,
+        a: `Pix, boleto ou cartão de crédito — no cartão, ${parcelamentoCartao}. Pix e boleto são à vista.`,
       },
     ],
   },

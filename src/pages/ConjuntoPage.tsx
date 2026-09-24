@@ -51,7 +51,7 @@ import { cdnImg } from "@/lib/catalog/client";
 import { fetchProductsByHandlesHydrated } from "@/lib/datasource";
 import { useCartStore, type CartItem } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
-import { BUSINESS } from "@/config/business";
+import { BUSINESS, parcelamentoCartao } from "@/config/business";
 import {
   faixaArea,
   getConjuntoByHandle,
@@ -359,7 +359,7 @@ export default function ConjuntoPage() {
                     />
                     {totalPreco > 0 && (
                       <p className="mt-2 text-meta">
-                        Em até 12× no checkout
+                        No cartão, {parcelamentoCartao}
                       </p>
                     )}
                     {isApproved && (

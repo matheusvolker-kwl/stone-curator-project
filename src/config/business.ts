@@ -60,15 +60,20 @@ export const BUSINESS = {
   razaoSocial: "Western Pools Indústria e Comércio de Artefatos de Cimentos LTDA",
   cnpj: "71.530.059/0001-30",
 
-  // ── PAGAMENTO — o que o checkout (Appmax) oferece a TODO parceiro ─────────
-  // Pix, boleto ou cartão de crédito em até 12× (com juros), igual para
-  // qualquer nível. Nível não muda forma de pagamento nem parcelamento: o
-  // checkout não lê o nível. Prazo de boleto especial é exceção cliente a
-  // cliente, no wp-admin do checkout — não se anuncia no site.
+  // ── PAGAMENTO — o que o checkout (Asaas) oferece a TODO parceiro ──────────
+  // Pix, boleto ou cartão de crédito em até 3× SEM JUROS, igual para qualquer
+  // nível (dono, 2026-09-24; no plugin da Asaas: parcelas 3, juros 0 em 1×,
+  // 2× e 3×). Nível não muda forma de pagamento nem parcelamento: o checkout
+  // não lê o nível. Boleto é à vista para todos; boleto PARCELADO é concessão
+  // do dono cliente a cliente, com as condições dele — não se anuncia no site.
   // (dono, 2026-09-15: "À vista" na conta do parceiro não era estratégico nem
   // verdade — qualquer parceiro paga no cartão.)
+  // Mudou o parcelamento? Troque SÓ estes campos: o texto sai de
+  // `parcelamentoCartao`, abaixo, em todas as telas.
+  processadorPagamento: "Asaas",
   formasPagamentoLabel: "Pix, boleto ou cartão",
-  parcelasCartaoMax: 12,
+  parcelasCartaoMax: 3,
+  parcelasSemJuros: true,
 
   // Acabamentos
   acabamentos: ["Quartzo", "Arenito", "Moledo", "Granito"] as const,
@@ -77,3 +82,8 @@ export const BUSINESS = {
   // Canais
   sketchupWarehouse: "https://3dwarehouse.sketchup.com/by/WesternPools",
 } as const;
+
+/** "em até 3× sem juros" — derivado dos campos de pagamento acima. Nunca escreva o número à mão. */
+export const parcelamentoCartao = `em até ${BUSINESS.parcelasCartaoMax}×${
+  BUSINESS.parcelasSemJuros ? " sem juros" : ""
+}`;

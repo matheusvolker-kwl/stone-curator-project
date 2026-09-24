@@ -28,7 +28,7 @@ import { usePublishStickyBarHeight } from "@/hooks/usePublishStickyBarHeight";
 import { formatBRL, cdnImg } from "@/lib/catalog/client";
 import { supabase } from "@/integrations/supabase/client";
 import { registerPedidoNovoLead } from "@/lib/leads/pedidoNovo";
-import { BUSINESS } from "@/config/business";
+import { BUSINESS, parcelamentoCartao } from "@/config/business";
 import { totalComDesconto, unitarioComDesconto, somaComDesconto, vendaSugerida } from "@/lib/precoParceiro";
 import { agruparItens } from "@/lib/cart/grupos";
 
@@ -664,7 +664,7 @@ export default function Carrinho() {
                         <span aria-hidden="true" className="text-western-border-strong">·</span>
                         <span>Boleto</span>
                         <span aria-hidden="true" className="text-western-border-strong">·</span>
-                        <span>Cartão até {BUSINESS.parcelasCartaoMax}×</span>
+                        <span>Cartão {parcelamentoCartao}</span>
                       </div>
                     )}
 

@@ -19,7 +19,7 @@ import {
   TrendingUp,
   Store,
 } from "lucide-react";
-import { BUSINESS } from "@/config/business";
+import { BUSINESS, parcelamentoCartao } from "@/config/business";
 import FinishSelector from "@/components/product/FinishSelector";
 import ComposicaoCena from "@/components/product/ComposicaoCena";
 import { useAuth } from "@/hooks/useAuth";
@@ -395,7 +395,7 @@ export default function ProductPage() {
                   <p className="text-eyebrow mb-1">Seu preço</p>
                   <GatedPrice amount={priceAmount} currency={priceCurrency} className="text-price" />
                   <p className="text-meta mt-1.5">
-                    {BUSINESS.formasPagamentoLabel} em até {BUSINESS.parcelasCartaoMax}×
+                    {BUSINESS.formasPagamentoLabel} {parcelamentoCartao}
                   </p>
 
                   {/* UM BLOCO SO PARA A CONTA DELE.

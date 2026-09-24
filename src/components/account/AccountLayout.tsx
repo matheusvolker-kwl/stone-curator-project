@@ -16,7 +16,7 @@ import { usePartnerPricing } from "@/hooks/usePartnerPricing";
 import { supabase } from "@/integrations/supabase/client";
 import { TIER_LABEL } from "@/components/admin/adminUtils";
 import { EstadoErro, StatusBadge } from "@/components/backoffice";
-import { BUSINESS } from "@/config/business";
+import { BUSINESS, parcelamentoCartao } from "@/config/business";
 
 /**
  * SHELL DA CONTA B2B.
@@ -281,7 +281,7 @@ function Hero({ situacao, perfil, pricing }: HeroProps) {
                 {/* Antes: "À vista" para o nível de entrada — nem verdade (todo
                     parceiro paga no cartão) nem estratégico. Agora é o que o
                     checkout oferece a qualquer parceiro. */}
-                <Dado rotulo="Pagamento" nota={`Cartão em até ${BUSINESS.parcelasCartaoMax}×`}>
+                <Dado rotulo="Pagamento" nota={`Cartão ${parcelamentoCartao}`}>
                   {BUSINESS.formasPagamentoLabel}
                 </Dado>
               </>

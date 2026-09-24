@@ -4,9 +4,11 @@
  * Portado do rodapé do kit V3 (shell.jsx "va-f-pay"), que o app não tinha
  * repassado. As bandeiras sao SVG inline (zero requisicao, nitidas em qualquer
  * DPI) sobre chips claros, para as marcas coloridas terem contraste mesmo sobre
- * o rodape verde. Pagamento real: Appmax (Pix, boleto, cartao ate 12x).
+ * o rodape verde. Pagamento real: Asaas (Pix, boleto, cartao) — os textos
+ * de processador e parcelamento vem de src/config/business.ts.
  */
 import { ShieldCheck, Lock, CreditCard, Wallet } from "lucide-react";
+import { BUSINESS, parcelamentoCartao } from "@/config/business";
 
 function Chip({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -104,9 +106,9 @@ export default function FormasDePagamento() {
       {/* 2×2 fixo: alinhamento coerente (era flex que quebrava 2+1). */}
       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 lg:max-w-md lg:justify-self-end">
         {[
-          { Icon: ShieldCheck, text: "Pagamento processado pela Appmax" },
+          { Icon: ShieldCheck, text: `Pagamento processado pela ${BUSINESS.processadorPagamento}` },
           { Icon: Lock, text: "Site seguro (SSL) — dados protegidos" },
-          { Icon: CreditCard, text: "Parcele em até 12× no cartão" },
+          { Icon: CreditCard, text: `Parcele ${parcelamentoCartao} no cartão` },
           { Icon: Wallet, text: "Pix e boleto à vista" },
         ].map(({ Icon, text }) => (
           <li key={text} className="flex items-start gap-2 text-[14px] text-western-cream-muted leading-[1.4]">
